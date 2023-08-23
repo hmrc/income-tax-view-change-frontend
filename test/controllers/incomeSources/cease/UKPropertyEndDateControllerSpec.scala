@@ -124,7 +124,7 @@ class UKPropertyEndDateControllerSpec extends TestSupport with MockAuthenticatio
         mockUKPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestUKPropertyEndDateController.submit()(fakeRequestCeaseUKPropertyDeclarationComplete.withMethod("POST")
@@ -180,7 +180,7 @@ class UKPropertyEndDateControllerSpec extends TestSupport with MockAuthenticatio
         mockUKPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestUKPropertyEndDateController.submitAgent()(fakeRequestConfirmedClient()
@@ -200,7 +200,7 @@ class UKPropertyEndDateControllerSpec extends TestSupport with MockAuthenticatio
         mockUKPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestUKPropertyEndDateController.submitAgent()(fakeRequestCeaseUKPropertyDeclarationCompleteAgent.withMethod("POST")

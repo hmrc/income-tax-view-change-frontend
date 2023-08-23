@@ -74,7 +74,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val moneyInYourAccountMoneyClaimARefundLink: String = "/report-quarterly/income-and-expenses/view/claim-refund"
   val moneyInYourAccountMoneyClaimARefundAgentLink: String = "/report-quarterly/income-and-expenses/view/agents/claim-refund"
 
-  class Setup(creditCharges: List[CreditDetailModel] = List.empty,
+  class TestSetup(creditCharges: List[CreditDetailModel] = List.empty,
               maybeAvailableCredit: Option[BigDecimal] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString") {
@@ -93,7 +93,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   }
 
   "display the Credits Summary page" when {
-    "a user have multiple credits" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, maybeAvailableCredit = testMaybeBalanceDetails) {
+    "a user have multiple credits" in new TestSetup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, maybeAvailableCredit = testMaybeBalanceDetails) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -128,7 +128,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
-    "a user has a credit and the Status is Fully allocated" in new Setup(creditCharges = creditAndRefundCreditDetailListFullyAllocatedMFA) {
+    "a user has a credit and the Status is Fully allocated" in new TestSetup(creditCharges = creditAndRefundCreditDetailListFullyAllocatedMFA) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -144,7 +144,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
-    "a user has a credit and the Status is Not yet allocated" in new Setup(creditCharges = creditAndRefundCreditDetailListNotYetAllocatedMFA) {
+    "a user has a credit and the Status is Not yet allocated" in new TestSetup(creditCharges = creditAndRefundCreditDetailListNotYetAllocatedMFA) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -160,7 +160,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
-    "a user has a credit and the Status is Partially allocated" in new Setup(creditCharges = creditAndRefundCreditDetailListPartiallyAllocatedMFA) {
+    "a user has a credit and the Status is Partially allocated" in new TestSetup(creditCharges = creditAndRefundCreditDetailListPartiallyAllocatedMFA) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -176,7 +176,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.getElementsByClass("govuk-link").last().text() shouldBe getPageHelpLinkTextBtn
     }
 
-    "a user has no credit" in new Setup(creditCharges = List.empty) {
+    "a user has no credit" in new TestSetup(creditCharges = List.empty) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -191,7 +191,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
 
   "displaying agent credit and refund page" should {
     "display the page" when {
-      "correct data is provided" in new Setup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, isAgent = true, maybeAvailableCredit = testMaybeBalanceDetails) {
+      "correct data is provided" in new TestSetup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, isAgent = true, maybeAvailableCredit = testMaybeBalanceDetails) {
         enable(MFACreditsAndDebits)
 
         document.title() shouldBe creditsSummaryTitleAgent

@@ -31,26 +31,26 @@ class FeedbackViewSpec extends ViewSpec {
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
-  class Setup(isAgent: Boolean = false) {
+  class TestSetup(isAgent: Boolean = false) {
     val view: Html = feedbackView(FeedbackForm.form, testCall, isAgent)
     val document: Document = Jsoup.parse(view.toString())
   }
 
   "The Feedback page" when {
     "an individual loads the page" should {
-      "have the correct title" in new Setup() {
+      "have the correct title" in new TestSetup() {
         document.title shouldBe msgs("htmlTitle", msgs("feedback.heading"))
       }
 
-      "have the correct heading" in new Setup() {
+      "have the correct heading" in new TestSetup() {
         document.select("h1").text shouldBe msgs("feedback.heading")
       }
 
-      "have the correct description about the feedback page" in new Setup() {
+      "have the correct description about the feedback page" in new TestSetup() {
         document.select("p.govuk-body").text shouldBe msgs("feedback.description")
       }
 
-      "have a set of radio buttons" in new Setup() {
+      "have a set of radio buttons" in new TestSetup() {
         val radios: Elements = document.select("fieldset")
         def radioButton(nthchild: Int): String = radios.select(s".govuk-radios__item:nth-child($nthchild)").text
 
@@ -62,26 +62,26 @@ class FeedbackViewSpec extends ViewSpec {
         radioButton(5) shouldBe msgs("feedback.veryBad")
       }
 
-      "have an input for a Full name" in new Setup() {
+      "have an input for a Full name" in new TestSetup() {
         document.select(".govuk-form-group:nth-of-type(2) .govuk-label").text shouldBe msgs("feedback.fullName")
       }
 
-      "have an input for an Email" in new Setup() {
+      "have an input for an Email" in new TestSetup() {
         document.select(".govuk-form-group:nth-of-type(3) .govuk-label").text shouldBe msgs("feedback.email")
       }
 
-      "have an input for Comments" in new Setup() {
+      "have an input for Comments" in new TestSetup() {
         document.select(".hmrc-character-count label").text shouldBe msgs("feedback.comments")
         document.select("#feedback-comments-hint").text shouldBe msgs("feedback.comments.hint")
       }
 
-      "have a send button" in new Setup() {
+      "have a send button" in new TestSetup() {
         document.select("button.govuk-button").text shouldBe msgs("feedback.send")
       }
     }
 
     "an agent loads the page" should {
-      "have the correct title" in new Setup(isAgent = true) {
+      "have the correct title" in new TestSetup(isAgent = true) {
         document.title shouldBe msgs("htmlTitle.agent", msgs("feedback.heading"))
       }
     }

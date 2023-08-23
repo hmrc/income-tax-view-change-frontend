@@ -54,9 +54,6 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
       }
     }
   }
-  val testDateFormatter = new ImplicitDateFormatter {
-    override implicit val languageUtils: LanguageUtils = languageUtils
-  }
 
   val ukPropertyFormFactory = new UKPropertyEndDateForm(testDateService)
   val ukPropertyForm = ukPropertyFormFactory(individualUser)

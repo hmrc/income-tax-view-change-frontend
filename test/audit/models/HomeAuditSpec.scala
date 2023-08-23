@@ -19,7 +19,8 @@ package audit.models
 import testConstants.BaseTestConstants._
 import auth.MtdItUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import org.scalatest.{MustMatchers, WordSpecLike}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -27,7 +28,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class HomeAuditSpec extends WordSpecLike with MustMatchers {
+class HomeAuditSpec extends AnyWordSpecLike with Matchers {
 
   val transactionName: String = "itsa-home-page"
   val auditType: String = "ItsaHomePage"

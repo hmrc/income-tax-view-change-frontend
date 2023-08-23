@@ -63,7 +63,6 @@ class AddBusinessTradeViewSpec extends ViewSpec {
       "have an input with associated hint and label" in new Setup(pageWithoutError) {
         val form: Element = layoutContent.selectHead("form")
         val label: Element = form.selectHead("label")
-        val hint: Element = layoutContent.selectHead(".govuk-hint")
 
 
         val input: Element = form.selectHead("input")

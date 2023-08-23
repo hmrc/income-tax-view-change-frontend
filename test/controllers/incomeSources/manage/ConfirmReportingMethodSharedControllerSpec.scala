@@ -69,12 +69,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   private lazy val manageObligationsController = controllers.incomeSources.manage.routes
     .ManageObligationsController
 
-  private lazy val confirmReportingMethodSharedController = controllers.incomeSources.manage.routes
-    .ConfirmReportingMethodSharedController
-
-  private lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes
-    .ManageIncomeSourceDetailsController
-
   val testIncomeSourceId = "XAIS00000099004"
 
   val testTaxYear = "2022-2023"

@@ -17,7 +17,7 @@
 package models
 
 import models.repaymentHistory.RepaymentHistoryModel
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, repaymentHistoryTwoRSI, validRepaymentHistoryOneRSIJson, validRepaymentHistoryTwoRSIJson}
 import testUtils.UnitSpec

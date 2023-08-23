@@ -17,7 +17,7 @@
 package models
 
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import testUtils.UnitSpec
 
 import java.time.LocalDate

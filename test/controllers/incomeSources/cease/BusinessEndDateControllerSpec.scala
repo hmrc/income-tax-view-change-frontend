@@ -126,7 +126,7 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockBusinessIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestBusinessEndDateController.submit(testSelfEmploymentId)(fakeRequestNoSession.withMethod("POST")
@@ -182,7 +182,7 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockBusinessIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestBusinessEndDateController.submitAgent(testSelfEmploymentId)(fakeRequestConfirmedClient()
@@ -202,7 +202,7 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockBusinessIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK)))
+          .thenReturn(Future.successful(HttpResponse(OK, "valid")))
 
         lazy val result: Future[Result] = {
           TestBusinessEndDateController.submitAgent(testSelfEmploymentId)(fakeRequestConfirmedClient().withMethod("POST")

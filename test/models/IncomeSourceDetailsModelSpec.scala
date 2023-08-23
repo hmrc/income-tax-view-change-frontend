@@ -17,7 +17,7 @@
 package models
 
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, _}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._

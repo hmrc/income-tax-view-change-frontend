@@ -17,10 +17,10 @@
 package views
 
 import play.twirl.api.Html
+import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import testUtils.ViewSpec
 import views.html.errorPages.UpliftFailed
 
-import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
 
 class UpliftFailedViewSpec extends ViewSpec {
 

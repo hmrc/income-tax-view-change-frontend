@@ -95,7 +95,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   def preMtdPayments(from: String, to: String) = s"${messages("whatYouOwe.pre-mtd-year", from, to)}"
 
-  class Setup(creditCharges: List[DocumentDetail] = List(),
+  class TestSetup(creditCharges: List[DocumentDetail] = List(),
               charges: WhatYouOweChargesList,
               currentTaxYear: Int = LocalDate.now().getYear,
               hasLpiWithDunningBlock: Boolean = false,
@@ -133,7 +133,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
   }
 
-  class AgentSetup(creditCharges: List[DocumentDetail] = List(),
+  class AgentTestSetup(creditCharges: List[DocumentDetail] = List(),
                    charges: WhatYouOweChargesList,
                    currentTaxYear: Int = LocalDate.now().getYear,
                    migrationYear: Int = LocalDate.now().getYear - 1,
@@ -371,14 +371,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "The What you owe view with financial details model" when {
       "the user has charges and access viewer before 30 days of due date" should {
 
-        "have the Balancing Payment title " in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+        "have the Balancing Payment title " in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
           val remainingBalanceHeader: Element = pageDocument.select("tr").first()
           remainingBalanceHeader.select("th").first().text() shouldBe dueDate
           remainingBalanceHeader.select("th").get(1).text() shouldBe paymentType
           remainingBalanceHeader.select("th").get(2).text() shouldBe taxYearSummary
           remainingBalanceHeader.select("th").last().text() shouldBe amountDue
         }
-        "Balancing Payment row data exists and should not contain hyperlink and overdue tag " in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+        "Balancing Payment row data exists and should not contain hyperlink and overdue tag " in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
 
           val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
           remainingBalanceTable.select("td").first().text() shouldBe LocalDate.now().plusDays(35).toLongDateShort
@@ -390,7 +390,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           findElementById("balancing-charge-type-overdue") shouldBe None
         }
-        "have POA data in same table" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+        "have POA data in same table" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
 
           val poa1Table: Element = pageDocument.select("tr").get(2)
           poa1Table.select("td").first().text() shouldBe LocalDate.now().plusDays(45).toLongDateShort
@@ -407,14 +407,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poa2Table.select("td").last().text() shouldBe "£75.00"
 
         }
-        "payment type drop down and content exists" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+        "payment type drop down and content exists" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
           pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
           pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1"
           pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1"
           pageDocument.getElementById("payment-details-content-2").text shouldBe s"$lpiHeading $lpiLine1"
 
         }
-        "should have payment processing bullets when payment due in more than 30 days" in new Setup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+        "should have payment processing bullets when payment due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -426,7 +426,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
 
-        "display the paragraph about payments under review and bullet points when there is a dunningLock" in new Setup(
+        "display the paragraph about payments under review and bullet points when there is a dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
@@ -441,7 +441,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
-        "display bullets and not display the paragraph about payments under review when there are no dunningLock" in new Setup(
+        "display bullets and not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks)) {
           findElementById("payment-under-review-info") shouldBe None
 
@@ -453,21 +453,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
-        "money in your account section with available credits" in new Setup(charges = whatYouOweDataWithAvailableCredits()) {
+        "money in your account section with available credits" in new TestSetup(charges = whatYouOweDataWithAvailableCredits()) {
           pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
             messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
             messages("whatYouOwe.moneyOnAccount-2") + " " +
             messages("whatYouOwe.moneyOnAccount-3") + "."
         }
 
-        "money in your account section with zero available credits" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        "money in your account section with zero available credits" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
           findElementById("money-in-your-account") shouldBe None
         }
 
       }
 
       "the user has charges and access viewer within 30 days of due date" should {
-        s"have the Balancing Payment header and table data" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        s"have the Balancing Payment header and table data" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
           val remainingBalanceHeader: Element = pageDocument.select("tr").first()
           remainingBalanceHeader.select("th").first().text() shouldBe dueDate
           remainingBalanceHeader.select("th").get(1).text() shouldBe paymentType
@@ -482,7 +482,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
 
         }
-        "have POA data in same table as balancing payment " in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        "have POA data in same table as balancing payment " in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
 
           val poa1Table: Element = pageDocument.select("tr").get(2)
           poa1Table.select("td").first().text() shouldBe LocalDate.now().toLongDateShort
@@ -499,7 +499,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poa2Table.select("td").last().text() shouldBe "£75.00"
 
         }
-        "have payment type drop down details" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        "have payment type drop down details" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
           pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
           pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1"
           pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1"
@@ -511,7 +511,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById("balancing-charge-type-overdue") shouldBe None
         }
 
-        "have Data for due within 30 days" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        "have Data for due within 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
 
           pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000124").url
@@ -519,21 +519,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             LocalDate.now().getYear).url
         }
-        "have data with POA2 with hyperlink and no overdue" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        "have data with POA2 with hyperlink and no overdue" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
 
           pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
             LocalDate.now().getYear, "1040000125").url
           findElementById("due-1-overdue") shouldBe None
         }
 
-        "have payment details and should not contain future payments and overdue payment headers" in new Setup(charges = whatYouOweDataWithDataDueIn30Days()) {
+        "have payment details and should not contain future payments and overdue payment headers" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
 
           pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(5000).url
 
         }
 
-        "display the paragraph about payments under review when there is a dunningLock" in new Setup(
+        "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
@@ -541,7 +541,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
           paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
         }
-        "should have payment processing bullets when there is dunningLock" in new Setup(
+        "should have payment processing bullets when there is dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks), dunningLock = true) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
@@ -552,11 +552,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
-        "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
+        "not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
           findElementById("payment-under-review-info") shouldBe None
         }
-        "should have payment processing bullets when there is no dunningLock" in new Setup(
+        "should have payment processing bullets when there is no dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
@@ -567,7 +567,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
-        s"display $paymentUnderReview when there is a dunningLock against a single charge" in new Setup(
+        s"display $paymentUnderReview when there is a dunningLock against a single charge" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
           val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
           val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(3)
@@ -575,7 +575,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearAndUnderReview
           dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2"
         }
-        "should have payment processing bullets when there is a single charge" in new Setup(
+        "should have payment processing bullets when there is a single charge" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
@@ -588,7 +588,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
 
-        s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new Setup(
+        s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
           val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
           val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(3)
@@ -596,7 +596,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearAndUnderReview
           dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2 $paymentUnderReview"
         }
-        "should have payment processing bullets when there is multiple charge" in new Setup(
+        "should have payment processing bullets when there is multiple charge" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
@@ -611,7 +611,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "the user has charges and access viewer after due date" should {
 
-        "have the mtd payments header, table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
+        "have the mtd payments header, table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new TestSetup(
           charges = whatYouOweDataWithOverdueDataAndInterest()) {
           val remainingBalanceHeader: Element = pageDocument.select("tr").first()
           remainingBalanceHeader.select("th").first().text() shouldBe dueDate
@@ -637,7 +637,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe overdueTag
         }
-        "have payment type dropdown details and bullet point list" in new Setup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
+        "have payment type dropdown details and bullet point list" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
           pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
           pageDocument.getElementById("payment-details-content-0").text shouldBe remainingBalance + " " + remainingBalanceLine1
           pageDocument.getElementById("payment-details-content-1").text shouldBe poaHeading + " " + poaLine1
@@ -652,7 +652,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
-          new Setup(charges = whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
             overdueTableHeader.select("th").get(1).text() shouldBe paymentType
@@ -671,7 +671,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               LocalDate.now().getYear).url
           }
 
-        "should have payment processing bullets when there is POA1 charge and lpi on poa 1 of 2" in new Setup(charges = whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
+        "should have payment processing bullets when there is POA1 charge and lpi on poa 1 of 2" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -683,7 +683,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
-          new Setup(charges = whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56), Some(1000))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningBlock(Some(34.56), Some(1000))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -712,7 +712,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
-          new Setup(charges = whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56), Some(0))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningBlockZero(Some(34.56), Some(0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -740,7 +740,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           }
 
-        "have overdue payments header, bullet points and data with POA1 charge type and No Late payment interest" in new Setup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
+        "have overdue payments header, bullet points and data with POA1 charge type and No Late payment interest" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(0)
           overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -768,7 +768,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
-        "have overdue payments header, bullet points and data with POA1 charge type" in new Setup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
+        "have overdue payments header, bullet points and data with POA1 charge type" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(0)
           overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -797,7 +797,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
-        "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new Setup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
+        "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
           overduePaymentsTableRow2.select("td").first().text() shouldBe LocalDate.now().minusDays(1).toLongDateShort
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe overdueTag + " " + poa2Text + s" 2"
@@ -808,7 +808,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("due-1-overdue").text shouldBe overdueTag
         }
 
-        "have accruing interest displayed below each overdue POA" in new Setup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
+        "have accruing interest displayed below each overdue POA" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
           def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"charge-interest-$index")
 
           overduePaymentsInterestTableRow("0").select("td").get(1).text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
@@ -817,7 +817,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsInterestTableRow("1").select("td").get(1).text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
           overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
         }
-        "should have payment processing bullets when there is accruing interest" in new Setup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
+        "should have payment processing bullets when there is accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -828,7 +828,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
 
-        "only show interest for POA when there is no late Payment Interest" in new Setup(charges = whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
+        "only show interest for POA when there is no late Payment Interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
           def overduePaymentsInterestTableRow(index: String): Element = pageDocument.getElementById(s"charge-interest-$index")
 
           Option(overduePaymentsInterestTableRow("0")).isDefined shouldBe false
@@ -837,18 +837,18 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsInterestTableRow("1").select("td").last().text() shouldBe "£24.05"
         }
 
-        "not have a paragraph explaining interest rates when there is no accruing interest" in new Setup(charges = whatYouOweDataWithOverdueData()) {
+        "not have a paragraph explaining interest rates when there is no accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
           findElementById(".interest-rate") shouldBe None
         }
 
-        "have payments data with button" in new Setup(charges = whatYouOweDataWithOverdueData()) {
+        "have payments data with button" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
 
           pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
         }
 
-        "display the paragraph about payments under review when there is a dunningLock" in new Setup(
+        "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
           charges = whatYouOweDataWithOverdueData(twoDunningLocks), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
@@ -857,12 +857,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
         }
 
-        "not display the paragraph about payments under review when there are no dunningLock" in new Setup(
+        "not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
           charges = whatYouOweDataWithOverdueData(twoDunningLocks)) {
           findElementById("payment-under-review-info") shouldBe None
         }
 
-        s"display $paymentUnderReview when there is a dunningLock against a single charge" in new Setup(
+        s"display $paymentUnderReview when there is a dunningLock against a single charge" in new TestSetup(
           charges = whatYouOweDataWithOverdueLPI(List(None, None), oneDunningLock)) {
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
@@ -871,7 +871,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe s"$overdueTag $poa2Text 2"
         }
 
-        s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new Setup(
+        s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
           charges = whatYouOweDataWithOverdueLPI(List(None, None), twoDunningLocks)) {
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
@@ -882,14 +882,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "the user has charges and access viewer with mixed dates" should {
-        s"have the title $whatYouOweTitle and notes" in new Setup(charges = whatYouOweDataWithMixedData1) {
+        s"have the title $whatYouOweTitle and notes" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
           pageDocument.title() shouldBe whatYouOweTitle
         }
-        s"not have MTD payments heading" in new Setup(charges = whatYouOweDataWithMixedData1) {
+        s"not have MTD payments heading" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
           findElementById("pre-mtd-payments-heading") shouldBe None
         }
 
-        "should have payment processing bullets when there is mixed dates" in new Setup(charges = whatYouOweDataWithMixedData1) {
+        "should have payment processing bullets when there is mixed dates" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -900,7 +900,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
 
-        s"have overdue table header, bullet points and data with hyperlink and overdue tag" in new Setup(charges = whatYouOweDataWithOverdueMixedData2(List(None, None, None))) {
+        s"have overdue table header, bullet points and data with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueMixedData2(List(None, None, None))) {
           val overdueTableHeader: Element = pageDocument.select("tr").first()
           overdueTableHeader.select("th").first().text() shouldBe dueDate
           overdueTableHeader.select("th").get(1).text() shouldBe paymentType
@@ -939,7 +939,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
       }
-      s"have payment data with button" in new Setup(charges = whatYouOweDataWithMixedData1) {
+      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
 
         pageDocument.getElementById("payment-button").text shouldBe payNow
 
@@ -951,7 +951,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the user has charges and access viewer with mixed dates and ACI value of zero" should {
 
-      s"have the mtd payments, bullets and table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new Setup(
+      s"have the mtd payments, bullets and table header and data with Balancing Payment data with no hyperlink but have overdue tag" in new TestSetup(
         charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
         val remainingBalanceHeader: Element = pageDocument.select("tr").first()
         remainingBalanceHeader.select("th").first().text() shouldBe dueDate
@@ -968,7 +968,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe overdueTag
       }
-      s"have overdue table header and data with hyperlink and overdue tag" in new Setup(charges = whatYouOweDataTestActiveWithMixedData2(List(None, None, None, None))) {
+      s"have overdue table header and data with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataTestActiveWithMixedData2(List(None, None, None, None))) {
         val overdueTableHeader: Element = pageDocument.select("tr").get(0)
         overdueTableHeader.select("th").first().text() shouldBe dueDate
         overdueTableHeader.select("th").get(1).text() shouldBe paymentType
@@ -1005,7 +1005,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
-      s"have payment data with button" in new Setup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
+      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
 
         pageDocument.getElementById("payment-button").text shouldBe payNow
 
@@ -1017,7 +1017,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the user has no charges" should {
 
-      s"have the title $whatYouOweTitle and page header and notes" in new Setup(charges = noChargesModel) {
+      s"have the title $whatYouOweTitle and page header and notes" in new TestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsDue
@@ -1026,14 +1026,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
 
-      "have the link to their previous Self Assessment online account in the sa-note" in new Setup(charges = noChargesModel) {
+      "have the link to their previous Self Assessment online account in the sa-note" in new TestSetup(charges = noChargesModel) {
         verifySelfAssessmentLink()
       }
 
-      "not have button Pay now" in new Setup(charges = noChargesModel) {
+      "not have button Pay now" in new TestSetup(charges = noChargesModel) {
         findElementById("payment-button") shouldBe None
       }
-      "not have payment processing bullets" in new Setup(charges = noChargesModel) {
+      "not have payment processing bullets" in new TestSetup(charges = noChargesModel) {
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
@@ -1043,19 +1043,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "codingOut is enabled" should {
-      "have coding out message displayed at the bottom of the page" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
+      "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
-      "have a class 2 Nics overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
+      "have a class 2 Nics overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = true) {
         Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
         pageDocument.getElementById("due-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
 
-      "should have payment processing bullets when there is coding out" in new Setup(charges = whatYouOweDataWithCodingOutNics2) {
+      "should have payment processing bullets when there is coding out" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
 
         pageDocument.getElementById("payments-made").text shouldBe paymentsMade
         val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -1066,7 +1066,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
 
-      "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
+      "have a cancelled paye self assessment entry" in new TestSetup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = true) {
         findElementById("coding-out-notice") shouldBe None
         pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
@@ -1075,15 +1075,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "codingOut is disabled" should {
-      "have no coding out message displayed" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
+      "have no coding out message displayed" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
         findElementById("coding-out-notice") shouldBe None
       }
-      "have a balancing charge overdue entry" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
+      "have a balancing charge overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
         pageDocument.select("#due-0 a").get(0).text() shouldBe "Balancing payment 1"
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
 
-      "have a cancelled paye self assessment entry" in new Setup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = false) {
+      "have a cancelled paye self assessment entry" in new TestSetup(charges = whatYouOweDataWithCancelledPayeSa, codingOutEnabled = false) {
         Option(pageDocument.getElementById("coding-out-notice")).isDefined shouldBe false
         Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
         //        pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
@@ -1092,7 +1092,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("coding-out-summary-link") shouldBe None
       }
 
-      "show only SA note and payment bullet points" in new Setup(charges = whatYouOweDataWithPayeSA, codingOutEnabled = false) {
+      "show only SA note and payment bullet points" in new TestSetup(charges = whatYouOweDataWithPayeSA, codingOutEnabled = false) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
         findElementById("coding-out-notice") shouldBe None
@@ -1106,7 +1106,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
 
-      "should have payment processing bullets" in new Setup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
+      "should have payment processing bullets" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, codingOutEnabled = false) {
 
         pageDocument.getElementById("payments-made").text shouldBe paymentsMade
         val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -1119,13 +1119,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "When codingOut is enabled - At crystallization, the user has the coding out requested amount fully collected" should {
-      "only show coding out content under header" in new Setup(charges = whatYouOweDataWithCodingOutFullyCollected, codingOutEnabled = true) {
+      "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected, codingOutEnabled = true) {
         pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
           "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02"
         pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
-      "show no payments due content when coding out is disabled" in new Setup(charges = noChargesModel, codingOutEnabled = false) {
+      "show no payments due content when coding out is disabled" in new TestSetup(charges = noChargesModel, codingOutEnabled = false) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsDue
@@ -1137,14 +1137,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   "MFA Debits is enabled" should {
-    "have an HMRC adjustment payment due" in new Setup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
+    "have an HMRC adjustment payment due" in new TestSetup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
       pageDocument.title() shouldBe whatYouOweTitle
       pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
       pageDocument.getElementById("due-0").text.contains(hmrcAdjustment)
       pageDocument.select("#due-0 a").get(0).text() shouldBe hmrcAdjustment + s" 1"
       pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
     }
-    "display the payment details content" in new Setup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
+    "display the payment details content" in new TestSetup(charges = whatYouOweDataWithMFADebits, MFADebitsEnabled = true) {
       pageDocument.getElementById("hmrc-adjustment-heading").text shouldBe hmrcAdjustmentHeading
       pageDocument.getElementById("hmrc-adjustment-line1").text shouldBe hmrcAdjustmentLine1
     }
@@ -1154,20 +1154,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "The What you owe view with financial details model" when {
       s"have the title '${
         messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
-      }'" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
         pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(
           LocalDate.now().getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(
           LocalDate.now().getYear).url
       }
-      "not have button Pay now with no chagres" in new AgentSetup(charges = noChargesModel) {
+      "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {
         findAgentElementById("payment-button") shouldBe None
       }
-      "not have button Pay now with charges" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         findAgentElementById("payment-button") shouldBe None
       }
-      "have payment type drop down details" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      "have payment type drop down details" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
         pageDocument.getElementById("payment-details-content-0").text shouldBe s"$remainingBalance $remainingBalanceLine1Agent"
         pageDocument.getElementById("payment-details-content-1").text shouldBe s"$poaHeading $poaLine1Agent"
@@ -1176,19 +1176,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payment-details-content-4").text shouldBe messages("whatYouOwe.cancelled-paye-sa.heading") + " " + messages("whatYouOwe.cancelled-paye-sa.line1.agent")
       }
 
-      "money in your account section with available credits" in new AgentSetup(charges = whatYouOweDataWithAvailableCredits()) {
+      "money in your account section with available credits" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
         pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
           messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
           messages("whatYouOwe.moneyOnAccount-agent-2") + " " +
           messages("whatYouOwe.moneyOnAccount-3") + "."
       }
 
-      "money in your account section with zero available credits" in new AgentSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      "money in your account section with zero available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         findAgentElementById("money-in-your-account") shouldBe None
       }
     }
 
-    "should have payment processing bullets when there is multiple charge" in new AgentSetup(
+    "should have payment processing bullets when there is multiple charge" in new AgentTestSetup(
       charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
 
       pageDocument.getElementById("payments-made").text shouldBe paymentsMadeAgent
@@ -1201,7 +1201,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "the user has no charges" should {
-      s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentSetup(charges = noChargesModel) {
+      s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentTestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
@@ -1215,29 +1215,29 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val unallocatedCreditMsg = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
     "show unallocated credits" when {
-      "user is an individual with the feature switch on" in new Setup(creditCharges = creditDocumentDetailList,
+      "user is an individual with the feature switch on" in new TestSetup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
 
-      "user is an agent with the feature switch on" in new AgentSetup(creditCharges = creditDocumentDetailList,
+      "user is an agent with the feature switch on" in new AgentTestSetup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days(), whatYouOweCreditAmountEnabled = true) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
       }
     }
 
     "not show unallocated credits" when {
-      "user is an individual with the feature switch off" in new Setup(creditCharges = creditDocumentDetailList,
+      "user is an individual with the feature switch off" in new TestSetup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         findElementById("unallocated-credit-note") shouldBe None
       }
 
-      "user is an agent with the feature switch on" in new AgentSetup(creditCharges = creditDocumentDetailList,
+      "user is an agent with the feature switch on" in new AgentTestSetup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         findAgentElementById("unallocated-credit-note") shouldBe None
       }
 
-      "user has no money in his account" in new Setup(creditCharges = creditDocumentDetailList,
+      "user has no money in his account" in new TestSetup(creditCharges = creditDocumentDetailList,
         charges = whatYouOweDataWithZeroMoneyInAccount(), whatYouOweCreditAmountEnabled = true) {
         findElementById("unallocated-credit-note") shouldBe None
       }

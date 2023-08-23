@@ -166,6 +166,8 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         mockForeignPropertyIncomeSourceWithLatency2023()
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
+
+      case _ =>
     }
 
 
