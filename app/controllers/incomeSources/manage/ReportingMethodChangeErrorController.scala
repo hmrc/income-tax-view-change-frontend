@@ -50,38 +50,40 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(id: Option[String],
-           incomeSourceKey: String,
-           isAgent: Boolean
+  def show(isAgent: Boolean,
+           id: Option[String],
+           incomeSourceKey: String
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     IncomeSourceType.get(incomeSourceKey) match {
-      case Right(value) => handleShowRequest(id, value, isAgent)
+      case Right(incomeSourceType) => handleShowRequest(isAgent, incomeSourceType, id)
       case Left(ex: Exception) =>
         Future.successful {
-          Logger("error").info(s"[ReportingMethodChangeErrorController][show]: Failed to fulfil show request: ${ex.getMessage}")
+          Logger("error").info(s"[ReportingMethodChangeErrorController][show]: " +
+            s"Failed to fulfil show request: ${ex.getMessage}")
           showInternalServerError(isAgent)
         }
     }
   }
 
-  private def handleShowRequest(soleTraderBusinessId: Option[String],
+  private def handleShowRequest(isAgent: Boolean,
                                 incomeSourceType: IncomeSourceType,
-                                isAgent: Boolean)
-                               (implicit user: MtdItUser[_]): Future[Result] = {
+                                soleTraderBusinessId: Option[String]
+                               )(implicit user: MtdItUser[_]): Future[Result] = {
     withIncomeSourcesFS {
       Future.successful(
         user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
           case Some(id) =>
             Ok(
               reportingMethodChangeError(
-                messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix,
+                isAgent = isAgent,
                 continueUrl = getContinueUrl(isAgent, incomeSourceType, id),
-                isAgent = isAgent
+                messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
               )
             )
           case None =>
-            Logger("error").info(s"[ReportingMethodChangeErrorController][handleShowRequest]: could not find incomeSourceId for $incomeSourceType")
+            Logger("error").info(s"[ReportingMethodChangeErrorController][handleShowRequest]: " +
+              s"could not find incomeSourceId for $incomeSourceType")
             showInternalServerError(isAgent)
         }
       )
@@ -90,12 +92,12 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
 
   private def getContinueUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType, incomeSourceId: String): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, SelfEmployment)  => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
-      case (true,  SelfEmployment)  => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
       case (false, UkProperty)      => routes.ManageIncomeSourceDetailsController.showUkProperty()
       case (true,  UkProperty)      => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
       case (false, ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignProperty()
       case (true,  ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
+      case (false, SelfEmployment)  => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
+      case (true,  SelfEmployment)  => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
     }).url
   }
 
@@ -104,7 +106,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     else itvcErrorHandlerAgent.showInternalServerError()
   }
 
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+  private def authenticatedAction(isAgent: Boolean
+                                 )(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     if (isAgent)
       Authenticated.async {
         implicit request =>
