@@ -108,12 +108,12 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     )(user, messages)))
   }
 
-  def convertToIncomeSourceType(incomeSource: String): Either[Throwable, IncomeSourceType] = {
+  def convertToIncomeSourceType(incomeSource: String): Either[Exception, IncomeSourceType] = {
     incomeSource match{
       case SelfEmployment.key => Right(SelfEmployment)
       case UkProperty.key => Right(SelfEmployment)
       case ForeignProperty.key => Right(ForeignProperty)
-      case _ => Left(new Error("Failed due to invalid incomeSourceType"))
+      case _ => Left(new Exception("Failed due to invalid incomeSourceType"))
     }
   }
 
@@ -136,7 +136,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
               routes.AddBusinessAddressController.show().url
           case UkProperty =>
             routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent, isChange = false).url
-          case _ =>
+          case ForeignProperty =>
             routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, isAgent, isChange = false).url
         }
         val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
