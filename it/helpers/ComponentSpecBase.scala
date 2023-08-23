@@ -139,6 +139,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "calculation-polling.timeout" -> "3000",
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
+    "microservice.services.address-lookup-frontend.port" -> mockPort,
     "auditing.enabled" -> "true"
   )
 
