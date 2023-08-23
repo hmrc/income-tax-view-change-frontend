@@ -28,6 +28,7 @@ trait SessionCookieCrumbler {
       val Regex = """(.*)=(.*)""".r
       map.split("&").view.map {
         case Regex(k, v) => Map(k -> v)
+        case _ => Map(""->"")
       }.view.reduce(_ ++ _)
     }
 

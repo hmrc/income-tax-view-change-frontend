@@ -24,6 +24,9 @@ import java.time.LocalDate
 object IncomeSourcesObligationsIntegrationTestConstants {
   val taxYear: Int = 2022
 
+  val datesModel2022: DatesModel = generateDatesModel(taxYear)
+  val datesModel2023: DatesModel = generateDatesModel(taxYear + 1)
+
   val testObligationsViewModel: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDatesYearOne = Seq(datesModel2022, datesModel2023),
     quarterlyObligationsDatesYearTwo = Seq(datesModel2023),
@@ -38,9 +41,6 @@ object IncomeSourcesObligationsIntegrationTestConstants {
       LocalDate.of(year, 4, 5),
       LocalDate.of(year, 5, 5), "EOPS", false)
   }
-
-  val datesModel2022: DatesModel = generateDatesModel(taxYear)
-  val datesModel2023: DatesModel = generateDatesModel(taxYear + 1)
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
     NextUpdatesModel("123", List(NextUpdateModel(

@@ -5,7 +5,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.BtaNavBarPartialConnectorStub
 import helpers.servicemocks.BtaNavBarPartialConnectorStub.testNavLinkJson
 import models.btaNavBar.{NavContent, NavLinks}
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
@@ -13,7 +13,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-class NavBarEnumFsConnectorISpec extends WordSpec with ComponentSpecBase with Injecting {
+class NavBarEnumFsConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
   val timeout: PatienceConfig = PatienceConfig(5.seconds)
