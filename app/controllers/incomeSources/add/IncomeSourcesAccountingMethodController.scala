@@ -113,7 +113,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       case SelfEmployment.key => Right(SelfEmployment)
       case UkProperty.key => Right(SelfEmployment)
       case ForeignProperty.key => Right(ForeignProperty)
-      case _ => Left(new Error("Invalid incomeSourceType"))
+      case _ => Left(new Error("Failed due to invalid incomeSourceType"))
     }
   }
 
