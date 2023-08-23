@@ -20,7 +20,7 @@ import testConstants.FinancialDetailsTestConstants._
 
 import java.time.LocalDate
 import models.financialDetails._
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import testUtils.UnitSpec
 

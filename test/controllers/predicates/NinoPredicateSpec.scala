@@ -71,12 +71,12 @@ class NinoPredicateSpec extends TestSupport with MockNinoLookupService with Eith
       "retrieve the NINO from the NINO lookup service and redirect" in {
         setupMockGetNino(testMtditid)(ninoServiceSuccess)
         val result = TestPredicate.refine(userNoNino)
-        status(result.map(_.left.get)) shouldBe Status.SEE_OTHER
+        status(result.map(_.swap.toOption.value)) shouldBe Status.SEE_OTHER
       }
       "throw an ISE if no NINO can be retrieved from lookup service" in {
         setupMockGetNino(testMtditid)(ninoServiceError)
         val result = TestPredicate.refine(userNoNino)
-        status(result.map(_.left.get)) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result.map(_.swap.toOption.value)) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
   }

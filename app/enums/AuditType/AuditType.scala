@@ -16,6 +16,8 @@
 
 package enums.AuditType
 
+import scala.language.implicitConversions
+
 sealed trait AuditType {
   val name: String
 

@@ -169,6 +169,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         mockUKPropertyIncomeSourceWithLatency2023()
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
+      case _ =>
     }
 
 

@@ -16,6 +16,8 @@
 
 package enums
 
+import scala.language.implicitConversions
+
 sealed trait CodingOutType {
   val name: String
 

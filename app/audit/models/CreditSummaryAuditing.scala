@@ -19,6 +19,7 @@ package audit.models
 import models.creditDetailModel.{CreditDetailModel, CreditType}
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
+import scala.language.implicitConversions
 
 object CreditSummaryAuditing {
 

@@ -18,12 +18,13 @@ package models
 
 import testConstants.FinancialDetailsTestConstants._
 import models.financialDetails._
-import org.scalatest.{Matchers, WordSpecLike}
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsObject, JsSuccess, Json}
 
 import java.time.LocalDate
 
-class PaymentSpec extends WordSpecLike with Matchers {
+class PaymentSpec extends AnyWordSpecLike with Matchers {
 
   val paymentFull: Payment = Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = Some(50.00),
     method = Some("method"), documentDescription = Some("docDescription"), lot = Some("lot"), lotItem = Some("lotItem"),

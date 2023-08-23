@@ -18,7 +18,7 @@ package models
 
 import testConstants.ChargeHistoryTestConstants._
 import models.chargeHistory.ChargesHistoryModel
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import testUtils.UnitSpec
 

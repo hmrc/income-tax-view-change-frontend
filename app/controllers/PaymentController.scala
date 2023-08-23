@@ -23,7 +23,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import connectors.PayApiConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
-import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
+import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup
@@ -56,7 +56,8 @@ class PaymentController @Inject()(val checkSessionTimeout: SessionTimeoutPredica
       case Some(utr) =>
         payApiConnector.startPaymentJourney(utr, paymentAmountInPence, isAgent).map {
           case model: PaymentJourneyModel => Redirect(model.nextUrl)
-          case _: PaymentJourneyErrorResponse => throw new Exception("Failed to start payments journey due to downstream response")
+          case PaymentJourneyErrorResponse(status, message) => throw new Exception(s"Failed to start payments journey due to downstream response, status: $status, message: $message")
+          case _: PaymentJourneyResponse => throw new Exception("Failed to start payments journey due to downstream response")
         }
       case _ =>
         Logger("application").error("Failed to start payments journey due to missing UTR")

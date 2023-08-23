@@ -33,7 +33,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.PaymentAllocation
 
 import java.time.LocalDate
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 
 class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {

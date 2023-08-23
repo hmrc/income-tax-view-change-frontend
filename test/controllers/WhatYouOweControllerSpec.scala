@@ -155,7 +155,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
       }
 
-      def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Option(300.00), None, None, None), List.empty)
+      def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None), List.empty)
 
       "show money in your account if the user has available credit in his account" in new Setup {
         enable(CreditsRefundsRepay)
@@ -186,7 +186,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         docAgent.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount-agent")
       }
 
-      def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Option(0.00), None, None, None), List.empty)
+      def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None), List.empty)
 
       "hide money in your account if the credit and refund feature switch is disabled" in new Setup {
         disable(CreditsRefundsRepay)

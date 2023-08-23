@@ -153,35 +153,6 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
     itvcHeaderCarrierForPartialsConverter.headerCarrierForPartialsToHeaderCarrier(hc)
   }
 
-  private def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    FeedbackForm.form.bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
-        postAction = if (isAgent) routes.FeedbackController.submitAgent else routes.FeedbackController.submit))),
-      formData => {
-        httpClient.POSTForm[HttpResponse](feedbackServiceSubmitUrl,
-          formData.toFormMap(user.headers.get(REFERER).getOrElse("N/A")))(readForm, partialsReadyHeaderCarrier, ec).map {
-          resp =>
-            resp.status match {
-              case OK if isAgent =>
-                Redirect(routes.FeedbackController.thankYouAgent)
-              case OK => Redirect(routes.FeedbackController.thankYou)
-              case status if isAgent =>
-                Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
-                agentItvcErrorHandler.showInternalServerError()
-              case status =>
-                Logger("application").error(s"Unexpected status code from feedback form: $status")
-                itvcErrorHandler.showInternalServerError()
-            }
-        }
-      }.recover {
-        case ex: Exception => {
-          Logger("application").error(s"Unexpected error code from feedback form: ${ex.toString}")
-          itvcErrorHandler.showInternalServerError()
-        }
-      }
-    )
-  }
-
   lazy val feedbackServiceSubmitUrl: String =
     s"${
       config.contactFrontendBaseUrl

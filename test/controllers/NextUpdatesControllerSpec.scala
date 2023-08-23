@@ -359,7 +359,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     "the user has all correct details" should {
       "return Status OK (200) when we have obligations" in new AgentTestsSetup {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBusinessIncomeSourceWithDeadlines
+        mockSingleBusinessIncomeSourceWithDeadlines()
         mockSingleBusinessIncomeSource()
         mockObligations
         mockNextUpdates(obligationsModel, controllers.routes.HomeController.showAgent.url, true)(HtmlFormat.empty)
@@ -373,7 +373,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
         mockNoObligations
-        mockNoIncomeSourcesWithDeadlines
+        mockNoIncomeSourcesWithDeadlines()
         mockShowInternalServerError()
 
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestConfirmedClient())

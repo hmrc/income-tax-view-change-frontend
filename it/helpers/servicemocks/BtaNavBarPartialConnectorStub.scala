@@ -59,7 +59,7 @@ object BtaNavBarPartialConnectorStub {
   def stubBtaNavPartialResponse()(status: Int, response: JsValue): Unit =
     WiremockHelper.stubGet(getBtaNavLinksUrl, status, response.toString())
 
-  def verifyBtaNavPartialResponse: Unit =
+  def verifyBtaNavPartialResponse(): Unit =
     WiremockHelper.verifyGet(getBtaNavLinksUrl)
 
 }

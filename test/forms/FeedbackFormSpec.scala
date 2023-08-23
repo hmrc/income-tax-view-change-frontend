@@ -16,10 +16,11 @@
 
 package forms
 
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.data.{Form, FormError}
 
-class FeedbackFormSpec extends WordSpec with MustMatchers {
+class FeedbackFormSpec extends AnyWordSpec with Matchers {
 
   def testFeedbackForm(rating: Option[String] = Some("5"),
                        name: String = "name",

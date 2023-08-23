@@ -45,6 +45,7 @@ import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSel
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
+import org.scalatest.matchers.should.Matchers
 
 import java.time.LocalDate
 import java.time.Month.APRIL

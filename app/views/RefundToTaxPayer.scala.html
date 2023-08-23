@@ -43,12 +43,6 @@
         btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
-@headingContent(year: Int) = {
-    <span id="accordion-with-summary-sections-heading-@year">
-    @messages("paymentHistory.button", year.toString)
-    </span>
-    }
-
 @getRepaymentHistoryData(repaymentHistoryModel: RepaymentHistoryModel) = @{
     repaymentHistoryModel.repaymentsViewerDetails.headOption.getOrElse(throw MissingFieldException("Repayment History Item"))
 }
