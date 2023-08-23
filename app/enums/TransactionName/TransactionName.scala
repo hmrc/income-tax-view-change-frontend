@@ -16,6 +16,8 @@
 
 package enums.TransactionName
 
+import scala.language.implicitConversions
+
 sealed trait TransactionName {
   val name: String
 

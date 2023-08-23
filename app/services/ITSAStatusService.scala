@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import connectors.IncomeTaxViewChangeConnector
-import models.itsaStatus.ITSAStatusResponseError
+import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
@@ -44,7 +44,7 @@ class ITSAStatusService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewCha
       case Right(itsaStatus) =>
         val isMandatedOrVoluntary = itsaStatus.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
         Future.successful(isMandatedOrVoluntary)
-      case Left(x: ITSAStatusResponseError) =>
+      case Left(x: ITSAStatusResponse) =>
         Logger("application").error(s"[ITSAStatusService][hasEligibleITSAStatusCurrentYear] $x")
         Future.failed(new InternalServerException("[ITSAStatusService][hasEligibleITSAStatusCurrentYear] - Failed to retrieve ITSAStatus"))
     }
