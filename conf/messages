@@ -1443,7 +1443,7 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-## Income Source Creased Obligation Page ##
+## Income Source Ceased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        =
 business-ceased.obligation.heading1.se.part2                        = Sole trader business
 business-ceased.obligation.heading1.uk-property.part2               = UK property
@@ -1568,3 +1568,7 @@ incomeSources.manage.uk-property-manage-details.accounting-method               
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property business
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method for foreign property income
+
+incomeSources.manage.businessReportingMethodError.text          = We were unable to update your sole trader business reporting frequency. You can try again later in 'manage your details'.
+incomeSources.manage.uKPropertyReportingMethodError.text        = We were unable to update your UK property business reporting frequency. You can try again later in 'manage your details'.
+incomeSources.manage.foreignPropertyReportingMethodError.text   = We were unable to update your foreign property business reporting frequency. You can try again later in 'manage your details'.

@@ -35,9 +35,6 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
   val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(b => b.cessation.forall(_.date.isEmpty)) ||
     properties.exists(p => p.cessation.forall(_.date.isEmpty))
 
-  def isOngoingBusinessOrPropertyIncome(id: String): Boolean = businesses.exists(b => b.incomeSourceId.equals(id) && b.cessation.forall(_.date.isEmpty)) ||
-    properties.exists(p => p.incomeSourceId.equals(id) && p.cessation.forall(_.date.isEmpty))
-
   override def toJson: JsValue = Json.toJson(this)
 
   def sanitise: IncomeSourceDetailsModel = {
@@ -55,6 +52,18 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
     yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd()).toList).getOrElse(List.empty[Int])
+  }
+
+  def getForeignProperty: Option[PropertyDetailsModel] = {
+    properties.find(_.isOngoingForeignProperty)
+  }
+
+  def getUKProperty: Option[PropertyDetailsModel] = {
+    properties.find(_.isOngoingUkProperty)
+  }
+
+  def getSoleTraderBusiness(id: String): Option[BusinessDetailsModel] = {
+    businesses.find(_.isOngoingSoleTraderBusiness(id))
   }
 }
 

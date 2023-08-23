@@ -23,6 +23,7 @@ sealed trait IncomeSourceType {
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
   val startDateSessionKey: String
+  val reportingMethodChangeErrorPrefix: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
@@ -30,7 +31,7 @@ case object SelfEmployment extends IncomeSourceType {
   override val startDateMessagesPrefix = "add-business-start-date"
   override val addStartDateCheckMessagesPrefix = "add-business-start-date-check"
   override val startDateSessionKey = SessionKeys.addBusinessStartDate
-
+  override val reportingMethodChangeErrorPrefix = "incomeSources.manage.businessReportingMethodError"
 }
 
 case object UkProperty extends IncomeSourceType {
@@ -38,6 +39,7 @@ case object UkProperty extends IncomeSourceType {
   override val startDateMessagesPrefix = "incomeSources.add.UKPropertyStartDate"
   override val addStartDateCheckMessagesPrefix = "add-uk-property-start-date-check"
   override val startDateSessionKey = SessionKeys.addUkPropertyStartDate
+  override val reportingMethodChangeErrorPrefix = "incomeSources.manage.uKPropertyReportingMethodError"
 }
 
 case object ForeignProperty extends IncomeSourceType {
@@ -45,6 +47,7 @@ case object ForeignProperty extends IncomeSourceType {
   override val startDateMessagesPrefix = "incomeSources.add.foreignProperty.startDate"
   override val addStartDateCheckMessagesPrefix = "add-foreign-property-start-date-check"
   override val startDateSessionKey = SessionKeys.foreignPropertyStartDate
+  override val reportingMethodChangeErrorPrefix = "incomeSources.manage.foreignPropertyReportingMethodError"
 }
 
 object IncomeSourceType {

@@ -1539,3 +1539,7 @@ incomeSources.manage.uk-property-manage-details.accounting-method               
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Busnes eiddo tramor
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu ar gyfer incwm o eiddo tramor
+
+incomeSources.manage.businessReportingMethodError.text          = ???
+incomeSources.manage.uKPropertyReportingMethodError.text        = ???
+incomeSources.manage.foreignPropertyReportingMethodError.text   = ???

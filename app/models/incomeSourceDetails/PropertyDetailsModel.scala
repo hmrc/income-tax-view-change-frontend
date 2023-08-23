@@ -35,6 +35,10 @@ case class PropertyDetailsModel(incomeSourceId: String,
 
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 
+  def isOngoingUkProperty: Boolean = isUkProperty && !isCeased
+
+  def isOngoingForeignProperty: Boolean = isForeignProperty && !isCeased
+
 }
 
 object PropertyDetailsModel {
