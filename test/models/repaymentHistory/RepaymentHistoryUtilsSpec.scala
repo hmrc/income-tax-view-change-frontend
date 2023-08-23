@@ -19,7 +19,7 @@ package models.repaymentHistory
 
 import models.financialDetails.Payment
 import models.repaymentHistory.RepaymentHistoryUtils._
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import testUtils.TestSupport
 
 import java.time.LocalDate

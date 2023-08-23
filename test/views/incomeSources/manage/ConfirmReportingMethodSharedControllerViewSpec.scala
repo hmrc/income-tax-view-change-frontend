@@ -72,11 +72,11 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     private lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
 
     val backUrl = ((isAgent, incomeSourceType) match {
-      case (false, UKProperty) => manageIncomeSourceDetailsController.showUkProperty
-      case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty
+      case (false, UKProperty) => manageIncomeSourceDetailsController.showUkProperty()
+      case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty()
       case (false, SoleTraderBusiness) => manageIncomeSourceDetailsController.showSoleTraderBusiness(id = testSelfEmploymentId)
-      case (true, UKProperty) => manageIncomeSourceDetailsController.showUkPropertyAgent
-      case (true, ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent
+      case (true, UKProperty) => manageIncomeSourceDetailsController.showUkPropertyAgent()
+      case (true, ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
       case (true, SoleTraderBusiness) => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id = testSelfEmploymentId)
     }).url
 
@@ -123,7 +123,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, error = false, incomeSourceType = UKProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
     }
     "render the continue button" in new Setup(isAgent = false, error = false, incomeSourceType = UKProperty) {
       document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
@@ -152,7 +152,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
     }
     "render the continue button" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
       document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
@@ -210,7 +210,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, error = false, incomeSourceType = UKProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
     }
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = UKProperty) {
       document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
@@ -239,7 +239,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent.url
+      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
     }
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
       document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")

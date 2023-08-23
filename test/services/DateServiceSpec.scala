@@ -18,6 +18,7 @@ package services
 
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import testUtils.TestSupport
+import scala.language.reflectiveCalls
 
 import java.time.LocalDate
 

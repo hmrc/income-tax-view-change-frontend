@@ -68,7 +68,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val linkAgentCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"
   val linkAgentPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
 
-  class Setup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
+  class TestSetup(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(documentDetailWithDueDateFinancialDetailListModel()),
               balance: Option[BalanceDetails] = Some(balanceDetailsModel()),
               creditAndRefundType: Option[UnallocatedCreditType] = None,
               isAgent: Boolean = false,
@@ -91,7 +91,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
   "displaying individual credit and refund page" should {
     "display the page" when {
-      "a user has requested a refund" in new Setup(isCutOverCreditsEnabled = true) {
+      "a user has requested a refund" in new TestSetup(isCutOverCreditsEnabled = true) {
 
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -104,7 +104,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
       }
 
-      "a user has not requested a refund" in new Setup(balance = Some(balanceDetailsModel(None, None)), isCutOverCreditsEnabled = true) {
+      "a user has not requested a refund" in new TestSetup(balance = Some(balanceDetailsModel(None, None)), isCutOverCreditsEnabled = true) {
 
         document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -118,7 +118,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       }
 
       "a user has a Refund claimed for full amount and claim is in a pending state" in
-        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(Some(-6.00))),
+        new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(Some(-6.00))),
           balance = Some(balanceDetailsModel(availableCredit = Some(0))),
           isCutOverCreditsEnabled = true
         ) {
@@ -135,7 +135,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a user has no available credit or current pending refunds" in
-        new Setup(balance = None) {
+        new TestSetup(balance = None) {
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -145,7 +145,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a user has a Credit from HMRC adjustment" in
-        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA()),
+        new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA()),
           balance = Some(balanceDetailsModel(
             firstPendingAmountRequested = Some(4.50),
             secondPendingAmountRequested = None,
@@ -166,7 +166,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a user has a Credit from HMRC adjustment for the previous taxYear" in
-        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(2017)),
+        new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(2017)),
           balance = Some(balanceDetailsModel(
             firstPendingAmountRequested = Some(4.50),
             secondPendingAmountRequested = None,
@@ -187,7 +187,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a user has a Multiple Credit from HMRC adjustment sorted in descending of credit" in
-        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
+        new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
           documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = Some(-1000.0))),
           balance = Some(balanceDetailsModel(
             firstPendingAmountRequested = Some(4.50),
@@ -211,7 +211,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a user has a multiple Refund claimed for full amount show sorted in descending of amount" in
-        new Setup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(),
+        new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(),
           documentDetailWithDueDateFinancialDetailListModel(Some(-1000.0))),
           balance = Some(balanceDetailsModel(availableCredit = Some(0))),
           isCutOverCreditsEnabled = true
@@ -232,7 +232,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a user has an unallocated credits from exactly one payment" in
-        new Setup(creditCharges = List(
+        new TestSetup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(Some(-500.00), dueDate = Some(LocalDate.of(2022, 1, 12)), originalAmount = Some(-1000))),
           balance = Some(
             balanceDetailsModel(
@@ -257,7 +257,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a user has an unallocated credits from exactly a single credit item (MFA Credit)" in
-        new Setup(creditCharges = List(
+        new TestSetup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
             dueDate = Some(LocalDate.of(2022, 1, 12)),
@@ -289,7 +289,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a user has an unallocated credits from exactly a single credit item (cut over credit)" in
-        new Setup(creditCharges = List(
+        new TestSetup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
             dueDate = Some(LocalDate.of(2022, 1, 12)),
@@ -320,7 +320,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button govuk-button--secondary").text() shouldBe checkBtn
         }
       "a user has an unallocated credits from exactly a single credit item (Balancing Charge Credit)" in
-        new Setup(creditCharges = List(
+        new TestSetup(creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
             dueDate = Some(LocalDate.of(2022, 1, 12)),
@@ -355,7 +355,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
   "displaying agent credit and refund page" should {
     "display the page" when {
-      "correct data is provided" in new Setup(isAgent = true, isCutOverCreditsEnabled = true) {
+      "correct data is provided" in new TestSetup(isAgent = true, isCutOverCreditsEnabled = true) {
 
         document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
@@ -367,13 +367,13 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         layoutContent.select("h2").first().text() shouldBe s"$subHeadingWithCreditsPart1 £7.00 $subHeadingWithCreditsPart2Agent"
         document.select("p").get(7).text() shouldBe (creditAndRefundAgentHasCreditBullet1Prt1 + " " + creditAndRefundAgentHasCreditBullet1Link + " " + creditAndRefundAgentHasCreditBullet1Prt2)
       }
-      "custom account has no credit" in new Setup(isAgent = true, balance = None) {
+      "custom account has no credit" in new TestSetup(isAgent = true, balance = None) {
 
         document.getElementsByClass("govuk-body").first().text() shouldBe creditAndRefundAgentNoCredit
       }
 
       "a client has an unallocated credits from exactly one payment" in
-        new Setup(isAgent = true, creditCharges = List(
+        new TestSetup(isAgent = true, creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(Some(-500.00), dueDate = Some(LocalDate.of(2022, 1, 12)), originalAmount = Some(-1000))),
           balance = Some(
             balanceDetailsModel(
@@ -397,7 +397,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a client has an unallocated credits from exactly a single credit item (MFA Credit)" in
-        new Setup(isAgent = true, creditCharges = List(
+        new TestSetup(isAgent = true, creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
             dueDate = Some(LocalDate.of(2022, 1, 12)),
@@ -428,7 +428,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         }
 
       "a client has an unallocated credits from a single credit item (cut over credit)" in
-        new Setup(isAgent = true, creditCharges = List(
+        new TestSetup(isAgent = true, creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
             dueDate = Some(LocalDate.of(2022, 1, 12)),
@@ -458,7 +458,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
         }
       "a client has an unallocated credits from a single credit item (Balancing charge credit)" in
-        new Setup(isAgent = true, creditCharges = List(
+        new TestSetup(isAgent = true, creditCharges = List(
           documentDetailWithDueDateFinancialDetailListModel(
             Some(-500.00),
             dueDate = Some(LocalDate.of(2022, 1, 12)),

@@ -17,7 +17,7 @@
 package implicits
 
 import implicits.ImplicitJsonValidationFormatter._
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import play.api.data.validation.ValidationError
 import play.api.libs.json.JsPath
 import testUtils.UnitSpec

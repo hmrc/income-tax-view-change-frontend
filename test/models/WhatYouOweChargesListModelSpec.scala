@@ -19,7 +19,7 @@ package models
 import testConstants.FinancialDetailsTestConstants._
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import services.DateService
 import testConstants.BaseTestConstants.app
 import testUtils.UnitSpec

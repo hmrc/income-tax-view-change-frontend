@@ -18,10 +18,11 @@ package forms.validation
 
 import forms.FeedbackForm
 import forms.validation.models.{FieldError, SummaryError}
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.must.Matchers
 import play.api.data.{Field, Form, FormError}
 
-class ErrorMessageHelperSpec extends WordSpec with MustMatchers {
+class ErrorMessageHelperSpec extends AnyWordSpec with Matchers {
   def testFeedbackForm(rating: Option[String] = Some("5"),
                        name: String = "name",
                        email: String = "email@email.com",

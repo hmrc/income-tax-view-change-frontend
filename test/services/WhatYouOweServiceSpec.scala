@@ -53,7 +53,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches
+    disableAllSwitches()
   }
 
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])

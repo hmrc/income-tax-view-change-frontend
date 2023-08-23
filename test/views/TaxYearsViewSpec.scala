@@ -36,7 +36,7 @@ class TaxYearsViewSpec extends ViewSpec {
   val saLinkAgent = s"${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}"
   val taxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.taxYears", year, yearPlusOne)}"
 
-  class Setup(calcs: List[Int],
+  class TestSetup(calcs: List[Int],
               itsaSubmissionFeatureSwitch: Boolean = false,
               utr: Option[String] = None, isAgent: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
@@ -48,42 +48,42 @@ class TaxYearsViewSpec extends ViewSpec {
   "individual" when {
     "The TaxYears view with itsaSubmissionFeatureSwitch FS disabled" when {
       "the view is displayed" should {
-        s"have the title '${messages("htmlTitle", messages("taxYears.heading"))}'" in new Setup(List(testYearPlusOne, testTaxYear)) {
+        s"have the title '${messages("htmlTitle", messages("taxYears.heading"))}'" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
           document.title() shouldBe messages("htmlTitle", messages("taxYears.heading"))
         }
 
-        "have a header" in new Setup(List(testYearPlusOne, testTaxYear)) {
+        "have a header" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
           layoutContent.selectHead("h1").text shouldBe messages("taxYears.heading")
         }
       }
 
       "the user has two tax years" should {
-        "display two tax years" in new Setup(List(testYearPlusOne, testTaxYear)) {
+        "display two tax years" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
           document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
           document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
         }
 
-        "display two view return links for the correct tax year" in new Setup(List(testYearPlusOne, testTaxYear)) {
+        "display two view return links for the correct tax year" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
           document.getElementById("viewSummary-link-2018").text() shouldBe
             s"$taxYearsViewSummary ${taxYear((testTaxYear - 1).toString, testTaxYear.toString)}"
           document.getElementById("viewSummary-link-2019").text() shouldBe
             s"${taxYearsViewSummary} ${taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
         }
 
-        "not display any update return link" in new Setup(List(testYearPlusOne, testTaxYear)) {
+        "not display any update return link" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
           Option(document.getElementById("updateReturn-link-2018")) shouldBe None
           Option(document.getElementById("updateReturn-link-2019")) shouldBe None
         }
       }
 
       "the user has three tax years records" should {
-        "display three tax years" in new Setup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
+        "display three tax years" in new TestSetup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
           document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
           document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
           document.selectHead("dl div:nth-child(3) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
         }
 
-        "display three view return links for the correct tax year" in new Setup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
+        "display three view return links for the correct tax year" in new TestSetup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
           document.getElementById("viewSummary-link-2018").text() shouldBe
             s"$taxYearsViewSummary ${taxYear((testTaxYear - 1).toString, testTaxYear.toString)}"
           document.getElementById("viewSummary-link-2019").text() shouldBe
@@ -92,7 +92,7 @@ class TaxYearsViewSpec extends ViewSpec {
             s"$taxYearsViewSummary ${taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)}"
         }
 
-        "not display any update return link" in new Setup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
+        "not display any update return link" in new TestSetup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
           Option(document.getElementById("updateReturn-link-2018")) shouldBe None
           Option(document.getElementById("updateReturn-link-2019")) shouldBe None
           Option(document.getElementById("updateReturn-link-2020")) shouldBe None
@@ -100,18 +100,18 @@ class TaxYearsViewSpec extends ViewSpec {
       }
 
       "the user has no taxYears" should {
-        s"have the paragraph '${messages("taxYears.noEstimates")}'" in new Setup(List()) {
+        s"have the paragraph '${messages("taxYears.noEstimates")}'" in new TestSetup(List()) {
           document.getElementById("no-taxYears").text shouldBe messages("taxYears.noEstimates")
         }
       }
 
       "the paragraph explaining about previous Self Assessments" should {
-        "appear if the user has a UTR" in new Setup(List(testYearPlusOne, testTaxYear), utr = Some("1234567890")) {
+        "appear if the user has a UTR" in new TestSetup(List(testYearPlusOne, testTaxYear), utr = Some("1234567890")) {
           layoutContent.select("#oldSa-para").text shouldBe saNote
           layoutContent.selectFirst("#oldSa-para").hasCorrectLinkWithNewTab(taxYearsOldSaLink, appConfig.saViewLandPService("1234567890"))
         }
 
-        "not appear if the user does not have a UTR" in new Setup(List(testYearPlusOne, testTaxYear)) {
+        "not appear if the user does not have a UTR" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
           Option(document.selectFirst("#content p")) shouldBe None
         }
       }
@@ -119,12 +119,12 @@ class TaxYearsViewSpec extends ViewSpec {
 
     "The TaxYears view with itsaSubmissionFeatureSwitch FS enabled" when {
       "the user has two tax years" should {
-        "display two tax years" in new Setup(List(testYearPlusOne, testTaxYear), true) {
+        "display two tax years" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
           document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
           document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
         }
 
-        "display two view return links for the correct tax year" in new Setup(List(testYearPlusOne, testTaxYear), true) {
+        "display two view return links for the correct tax year" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
 
           document.getElementById(s"viewSummary-link-$testTaxYear").attr("href") shouldBe
             controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear).url
@@ -137,23 +137,23 @@ class TaxYearsViewSpec extends ViewSpec {
             s"$taxYearsViewSummary ${taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
         }
 
-        "display two update return links for the correct tax year" in new Setup(List(testYearPlusOne, testTaxYear), true) {
+        "display two update return links for the correct tax year" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
           document.getElementById("updateReturn-link-2018").text() shouldBe
             s"${messages("taxYears.updateReturn")} ${taxYear((testTaxYear - 1).toString, testTaxYear.toString)}"
           document.getElementById("updateReturn-link-2019").text() shouldBe
             s"${messages("taxYears.updateReturn")} ${taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
         }
 
-        s"display the update return link for the $testYearPlusThree tax year and go to correct link" in new Setup(
+        s"display the update return link for the $testYearPlusThree tax year and go to correct link" in new TestSetup(
           List(testYearPlusFour, testYearPlusThree), true) {
           document.getElementById(s"updateReturn-link-$testYearPlusThree").attr("href") shouldBe mockAppConfig.submissionFrontendTaxYearsPage(testYearPlusThree)
         }
 
-        "display the update return link for the 2020 tax year and go to correct link" in new Setup(List(testYearPlusThree, testYearPlusTwo), true) {
+        "display the update return link for the 2020 tax year and go to correct link" in new TestSetup(List(testYearPlusThree, testYearPlusTwo), true) {
           document.getElementById(s"updateReturn-link-$testYearPlusTwo").attr("href") shouldBe mockAppConfig.submissionFrontendTaxYearsPage(testYearPlusTwo)
         }
 
-        "display the update return link for the 2019 tax year and go to correct link" in new Setup(List(testYearPlusOne, testTaxYear), true) {
+        "display the update return link for the 2019 tax year and go to correct link" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
           document.getElementById(s"updateReturn-link-$testYearPlusOne").attr("href") shouldBe mockAppConfig.submissionFrontendTaxYearsPage(testYearPlusOne)
         }
       }
@@ -161,11 +161,11 @@ class TaxYearsViewSpec extends ViewSpec {
   }
 
   "agent" when {
-    "display the agent view return link" in new Setup(List(testYearPlusOne), true, isAgent = true) {
+    "display the agent view return link" in new TestSetup(List(testYearPlusOne), true, isAgent = true) {
       document.getElementById(s"viewSummary-link-$testYearPlusOne").attr("href") shouldBe
         controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYearPlusOne).url
     }
-    "the paragraph explaining about previous Self Assessments" in new Setup(List(testYearPlusOne), isAgent = true) {
+    "the paragraph explaining about previous Self Assessments" in new TestSetup(List(testYearPlusOne), isAgent = true) {
       layoutContent.select("#oldSa-para-agent").text shouldBe s"${messages("taxYears.oldSa.agent.content.1")} $saLinkAgent. ${messages("taxYears.oldSa.agent.content.3")}"
       layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(saLinkAgent, appConfig.saForAgents)
     }
