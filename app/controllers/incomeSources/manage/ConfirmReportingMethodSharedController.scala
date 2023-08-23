@@ -90,7 +90,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
     val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearStartYearEndYear(taxYear)
-    val maybeIncomeSourceId: Option[String] = getIncomeSourceId(soleTraderBusinessId, incomeSourceType)
+    val maybeIncomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId)
 
     withIncomeSourcesFS {
       Future.successful(
@@ -200,16 +200,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def getReportingMethod(reportingMethod: String): Option[String] = {
     Set("annual", "quarterly")
       .find(_ == reportingMethod.toLowerCase)
-  }
-
-  private def getIncomeSourceId(soleTraderBusinessId: Option[String],
-                                incomeSourceType: IncomeSourceType)
-                               (implicit user: MtdItUser[_]): Option[String] = {
-    incomeSourceType match {
-      case SelfEmployment => soleTraderBusinessId.flatMap(user.incomeSources.getSoleTraderBusiness(_).map(_.incomeSourceId))
-      case UkProperty => user.incomeSources.getUKProperty.map(_.incomeSourceId)
-      case ForeignProperty => user.incomeSources.getForeignProperty.map(_.incomeSourceId)
-    }
   }
 
   private def getRedirectCalls(incomeSourceId: String,

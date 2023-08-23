@@ -71,7 +71,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                (implicit user: MtdItUser[_]): Future[Result] = {
     withIncomeSourcesFS {
       Future.successful(
-        getIncomeSourceId(soleTraderBusinessId, incomeSourceType) match {
+        user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
           case Some(id) =>
             Ok(
               reportingMethodChangeError(
@@ -97,16 +97,6 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
       case (false, ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignProperty()
       case (true,  ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
     }).url
-  }
-
-  private def getIncomeSourceId(soleTraderBusinessId: Option[String],
-                                incomeSourceType: IncomeSourceType)
-                               (implicit user: MtdItUser[_]): Option[String] = {
-    incomeSourceType match {
-      case SelfEmployment => soleTraderBusinessId.flatMap(user.incomeSources.getSoleTraderBusiness(_).map(_.incomeSourceId))
-      case UkProperty => user.incomeSources.getUKProperty.map(_.incomeSourceId)
-      case ForeignProperty => user.incomeSources.getForeignProperty.map(_.incomeSourceId)
-    }
   }
 
   private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
