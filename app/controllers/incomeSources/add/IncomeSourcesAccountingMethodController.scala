@@ -33,6 +33,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.IncomeSourcesAccountingMethod
 
+import java.lang.Error
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -112,7 +113,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       case SelfEmployment.key => Right(SelfEmployment)
       case UkProperty.key => Right(SelfEmployment)
       case ForeignProperty.key => Right(ForeignProperty)
-      case _ => Left(new Error)
+      case _ => Left(new Error("Invalid incomeSourceType"))
     }
   }
 
@@ -123,8 +124,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     convertToIncomeSourceType(incomeSourceType) match {
-      case Left(_) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[IncomeSourcesAccountingMethodController][handeRequest] Invalid incomeSourceType provided")
+      case Left(ex: Exception) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"[IncomeSourcesAccountingMethodController][handeRequest] ${ex.getMessage}")
         Future.successful(errorHandler.showInternalServerError())
       case Right(incomeSource) =>
         val backUrl = incomeSource match {
