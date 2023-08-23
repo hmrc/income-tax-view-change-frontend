@@ -204,50 +204,21 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                        isAgent: Boolean,
                        isChange: Boolean): (Call, Call, Call) = {
 
-    val postAction = routes.AddIncomeSourceStartDateController.submit(incomeSourceType.key, isAgent, isChange)
-
-    val successCall = routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType.key, isAgent, isChange)
-
     (
-      getBackUrl(isAgent, isChange, incomeSourceType),
-      postAction,
-      successCall
+      (isAgent, isChange, incomeSourceType) match {
+        case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
+        case (false, true,  SelfEmployment) => routes.CheckBusinessDetailsController.show()
+        case (true,  false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+        case (true,  true,  SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
+        case (false, false, _)              => routes.AddIncomeSourceController.show()
+        case (true,  false, _)              => routes.AddIncomeSourceController.showAgent()
+        case (false, true, UkProperty)      => routes.CheckUKPropertyDetailsController.show()
+        case (true,  true, UkProperty)      => routes.CheckUKPropertyDetailsController.showAgent()
+        case (false, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.show()
+        case (true,  true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.showAgent()
+      },
+      routes.AddIncomeSourceStartDateController.submit(incomeSourceType.key, isAgent, isChange),
+      routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType.key, isAgent, isChange)
     )
-  }
-
-  def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Call = {
-    if(isAgent)
-      agentCalls(isChange)(incomeSourceType)
-    else
-      individualCalls(isChange)(incomeSourceType)
-  }
-
-  private def agentCalls(isChange: Boolean): Map[IncomeSourceType, Call] =
-    if (isChange)
-      Map(
-        SelfEmployment -> routes.CheckBusinessDetailsController.showAgent(),
-        UkProperty -> routes.CheckUKPropertyDetailsController.showAgent(),
-        ForeignProperty -> routes.ForeignPropertyCheckDetailsController.showAgent()
-      )
-    else
-      Map(
-        SelfEmployment -> routes.AddBusinessNameController.showAgent(),
-        UkProperty -> routes.AddIncomeSourceController.showAgent(),
-        ForeignProperty -> routes.AddIncomeSourceController.showAgent()
-      )
-
-  private def individualCalls(isChange: Boolean): Map[IncomeSourceType, Call] = {
-    if (isChange)
-      Map(
-        SelfEmployment -> routes.CheckBusinessDetailsController.show(),
-        UkProperty -> routes.CheckUKPropertyDetailsController.show(),
-        ForeignProperty -> routes.ForeignPropertyCheckDetailsController.show()
-      )
-    else
-      Map(
-        SelfEmployment -> routes.AddBusinessNameController.show(),
-        UkProperty -> routes.AddIncomeSourceController.show(),
-        ForeignProperty -> routes.AddIncomeSourceController.show()
-      )
   }
 }
