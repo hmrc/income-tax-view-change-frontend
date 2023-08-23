@@ -64,24 +64,34 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
            isAgent: Boolean,
            isChange: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-
-    handleShowRequest(
-      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
-      isAgent = isAgent,
-      isUpdate = isChange
-    )
+    IncomeSourceType.get(incomeSourceKey) match {
+      case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
+        s"Failed fulfil show request: ${ex.getMessage}")
+        Future.successful(getErrorHandler(isAgent).showInternalServerError())
+      case Right(value) =>
+        handleShowRequest(
+          incomeSourceType = value,
+          isAgent = isAgent,
+          isUpdate = isChange
+        )
+    }
   }
 
   def submit(incomeSourceKey: String,
              isAgent: Boolean,
              isChange: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-
-    handleSubmitRequest(
-      incomeSourceType = IncomeSourceType.get(incomeSourceKey),
-      isAgent = isAgent,
-      isUpdate = isChange
-    )
+    IncomeSourceType.get(incomeSourceKey) match {
+      case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
+        s"Failed fulfil submit request: ${ex.getMessage}")
+        Future.successful(getErrorHandler(isAgent).showInternalServerError())
+      case Right(value) =>
+        handleSubmitRequest(
+          incomeSourceType = value,
+          isAgent = isAgent,
+          isUpdate = isChange
+        )
+    }
   }
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,

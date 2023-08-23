@@ -100,6 +100,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
           ObligationsModel(obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty))
         case (error: NextUpdatesErrorModel, _) => error
         case (_, error: NextUpdatesErrorModel) => error
+        case (_,_) => NextUpdatesErrorModel(500, "[NextUpdatesService][getNextUpdates] Invalid response from connector")
       }
     }
   }

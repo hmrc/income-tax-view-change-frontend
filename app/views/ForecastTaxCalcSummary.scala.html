@@ -36,7 +36,7 @@
     }
 }
 
-@dataItem2(message: String, value: Option[BigDecimal], value2: Option[BigDecimal], bold: Boolean = false) = {
+@dataItem2(message: String, value: Option[BigDecimal], value2: Option[BigDecimal], bold: Boolean) = {
     @if(value2.isDefined && value.isDefined){
         @if(bold){<p class="govuk-body-l govuk-!-font-weight-bold">} else {<p class="govuk-body-l">}
             @{messages(s"forecast_taxCalc.$message")}

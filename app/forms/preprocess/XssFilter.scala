@@ -47,6 +47,7 @@ trait XssFilter {
     def applyFilters(filters: Seq[Pattern], sanitizedOuput: String): String = filters match {
       case Nil => sanitizedOuput
       case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOuput).replaceAll(""))
+      case _ => sanitizedOuput
     }
 
     applyFilters(filters, input)
