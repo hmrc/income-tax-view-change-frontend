@@ -2,7 +2,7 @@ package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
@@ -19,6 +19,9 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")
+        AddressLookupStub.stubPostInitialiseAddressLookup
 
         When(s"I call GET $businessAddressShowAgentUrl")
         val result = IncomeTaxViewChangeFrontend.getAddBusinessAddress
@@ -38,11 +41,14 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
+        And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")
+        AddressLookupStub.stubPostInitialiseAddressLookup
+
         When(s"I call GET $changeBusinessAddressShowAgentUrl")
         val result = IncomeTaxViewChangeFrontend.getAddChangeBusinessAddress
 
         result should have(
-          httpStatus(SEE_OTHER),
+          httpStatus(444),
         )
       }
     }
