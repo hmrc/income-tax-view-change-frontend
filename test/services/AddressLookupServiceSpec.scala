@@ -101,6 +101,7 @@ class AddressLookupServiceSpec extends TestSupport
         val result: Future[Either[Throwable, Option[String]]] = TestAddressLookupService.initialiseAddressJourney(isAgent = false, isChange = true)
         result map {
           case Left(AddressError(value)) => value shouldBe "status: 418"
+          case Left(_) => Fail("Unexpected error. Should be an AddressError")
           case Right(_) => Fail("Error not returned")
         }
       }
