@@ -221,34 +221,37 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call, Call, Call) = {
 
-    val postAction = routes.ConfirmReportingMethodSharedController.submit(incomeSourceId, taxYear, changeTo, incomeSourceType.key, isAgent)
+    val postAction: Call = routes.ConfirmReportingMethodSharedController
+      .submit(incomeSourceId, taxYear, changeTo, incomeSourceType.key, isAgent)
 
-    val (backCall, successCall, errorCall) = (isAgent, incomeSourceType) match {
+    val errorCall: Call = routes.ReportingMethodChangeErrorController
+      .show(
+        id = if (incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None,
+        incomeSourceKey = incomeSourceType.key,
+        isAgent = isAgent
+      )
+
+    val (backCall, successCall) = (isAgent, incomeSourceType) match {
       case (false, SelfEmployment) =>
-        (routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId),
-         routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear, incomeSourceId),
-         routes.ReportingMethodChangeErrorController.show(Some(incomeSourceId), incomeSourceType.key, isAgent))
+        routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId) ->
+          routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear, incomeSourceId)
       case (true, SelfEmployment) =>
-         (routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId),
-          routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear, incomeSourceId),
-          routes.ReportingMethodChangeErrorController.show(Some(incomeSourceId), incomeSourceType.key, isAgent))
+        routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId) ->
+          routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear, incomeSourceId)
       case (false, UkProperty) =>
-         (routes.ManageIncomeSourceDetailsController.showUkProperty(),
-          routes.ManageObligationsController.showUKProperty(changeTo, taxYear),
-          routes.ReportingMethodChangeErrorController.show(None, incomeSourceType.key, isAgent))
+        routes.ManageIncomeSourceDetailsController.showUkProperty() ->
+          routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
       case (true, UkProperty) =>
-         (routes.ManageIncomeSourceDetailsController.showUkPropertyAgent(),
-          routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear),
-          routes.ReportingMethodChangeErrorController.show(None, incomeSourceType.key, isAgent))
+        routes.ManageIncomeSourceDetailsController.showUkPropertyAgent() ->
+          routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
       case (false, ForeignProperty) =>
-         (routes.ManageIncomeSourceDetailsController.showForeignProperty(),
-          routes.ManageObligationsController.showForeignProperty(changeTo, taxYear),
-          routes.ReportingMethodChangeErrorController.show(None, incomeSourceType.key, isAgent))
+        routes.ManageIncomeSourceDetailsController.showForeignProperty() ->
+          routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
       case (true, ForeignProperty) =>
-         (routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent(),
-          routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear),
-          routes.ReportingMethodChangeErrorController.show(None, incomeSourceType.key, isAgent))
+        routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent() ->
+          routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
     }
+
     (backCall, postAction, successCall, errorCall)
   }
 
