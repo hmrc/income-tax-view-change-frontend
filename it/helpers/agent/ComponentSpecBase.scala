@@ -492,6 +492,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-uk-property-success", session)
 
     def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-business-success", session)
+
+    def getAddChangeBusinessAddress: WSResponse =
+      get("/income-sources/add/change-business-address-lookup")
+
+    def getAddBusinessAddress: WSResponse =
+      get("/income-sources/add/business-address")
   }
 
   def unauthorisedTest(uri: String): Unit = {
