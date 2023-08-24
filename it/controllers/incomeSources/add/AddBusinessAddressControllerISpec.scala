@@ -36,7 +36,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")
-        AddressLookupStub.stubPostInitialiseAddressLookup
+        AddressLookupStub.stubPostInitialiseAddressLookup()
 
         When(s"I call GET $businessAddressShowUrl")
         val result = IncomeTaxViewChangeFrontend.getAddBusinessAddress
@@ -56,7 +56,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("address lookup service returns an ACCEPTED (202) HTTP status and has a location in its header")
-        AddressLookupStub.stubPostInitialiseAddressLookup
+        AddressLookupStub.stubPostInitialiseAddressLookup()
 
         When(s"I call GET $changeBusinessAddressShowUrl")
         val result = IncomeTaxViewChangeFrontend.getAddChangeBusinessAddress
