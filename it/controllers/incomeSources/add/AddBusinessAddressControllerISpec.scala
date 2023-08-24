@@ -27,7 +27,6 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
 
   val changeBusinessAddressShowUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = true).url
   val businessAddressShowUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url
-  val redirectUrl = "http://localhost:9028/lookup-address/b74c4721-de02-402e-9d7e-0d110eebe066/begin"
 
   s"calling GET $businessAddressShowUrl" should {
     "render the add business address page" when {
