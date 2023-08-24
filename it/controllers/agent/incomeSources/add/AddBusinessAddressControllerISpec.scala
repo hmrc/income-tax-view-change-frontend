@@ -64,7 +64,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.getAddChangeBusinessAddress
 
         result should have(
-          httpStatus(444),
+          httpStatus(SEE_OTHER),
         )
       }
     }
