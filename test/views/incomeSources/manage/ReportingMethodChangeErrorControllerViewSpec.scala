@@ -20,41 +20,34 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
 import views.html.incomeSources.manage.ReportingMethodChangeError
 
 class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
 
+  private lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+
   val reportingMethodChangeErrorView: ReportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
 
+  val testBusinessId = "000000"
+
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
-
-    private lazy val manageIncomeSourceDetailsController = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
-
-    val testBusinessId = "000000"
-
-    val continueUrl: String =
-      ((isAgent, incomeSourceType) match {
-        case (false, SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId)
-        case (true,  SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId)
-        case (false, UkProperty)      => manageIncomeSourceDetailsController.showUkProperty()
-        case (true,  UkProperty)      => manageIncomeSourceDetailsController.showUkPropertyAgent()
-        case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty()
-        case (true,  ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
-      }).url
-
-    lazy val view: HtmlFormat.Appendable =
-      reportingMethodChangeErrorView(
-        messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix,
-        continueUrl = continueUrl,
-        isAgent = isAgent
-      )
-
     lazy val document: Document = {
       Jsoup.parse(
-        contentAsString(view)
+        contentAsString(
+          reportingMethodChangeErrorView(
+            messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix,
+            continueUrl = ((isAgent, incomeSourceType) match {
+              case (false, SelfEmployment) => manageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId)
+              case (true, SelfEmployment) => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId)
+              case (false, UkProperty) => manageIncomeSourceDetailsController.showUkProperty()
+              case (true, UkProperty) => manageIncomeSourceDetailsController.showUkPropertyAgent()
+              case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty()
+              case (true, ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
+            }).url,
+            isAgent = isAgent
+          )
+        )
       )
     }
   }
@@ -64,10 +57,12 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("standardError.heading")
     }
     "render the paragraph text" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById(s"${UkProperty.reportingMethodChangeErrorPrefix}.text").text() shouldBe messages(s"${UkProperty.reportingMethodChangeErrorPrefix}.text")
+      document.getElementById(s"${UkProperty.reportingMethodChangeErrorPrefix}.text").text() shouldBe
+        messages(s"${UkProperty.reportingMethodChangeErrorPrefix}.text")
     }
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
+      document.getElementById("continue-button").attr("href") shouldBe
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
     }
     "not render the back button" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
       Option(document.getElementById("back")).isDefined shouldBe false
@@ -78,10 +73,12 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("standardError.heading")
     }
     "render the paragraph text" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById(s"${ForeignProperty.reportingMethodChangeErrorPrefix}.text").text() shouldBe messages(s"${ForeignProperty.reportingMethodChangeErrorPrefix}.text")
+      document.getElementById(s"${ForeignProperty.reportingMethodChangeErrorPrefix}.text").text() shouldBe
+        messages(s"${ForeignProperty.reportingMethodChangeErrorPrefix}.text")
     }
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
+      document.getElementById("continue-button").attr("href") shouldBe
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
     }
     "not render the back button" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
       Option(document.getElementById("back")).isDefined shouldBe false
@@ -92,10 +89,12 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("standardError.heading")
     }
     "render the paragraph text" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text").text() shouldBe messages(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text")
+      document.getElementById(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text").text() shouldBe
+        messages(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text")
     }
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId).url
+      document.getElementById("continue-button").attr("href") shouldBe
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId).url
     }
     "not render the back button" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       Option(document.getElementById("back")).isDefined shouldBe false
@@ -107,10 +106,12 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("standardError.heading")
     }
     "render the paragraph text" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementById(s"${UkProperty.reportingMethodChangeErrorPrefix}.text").text() shouldBe messages(s"${UkProperty.reportingMethodChangeErrorPrefix}.text")
+      document.getElementById(s"${UkProperty.reportingMethodChangeErrorPrefix}.text").text() shouldBe
+        messages(s"${UkProperty.reportingMethodChangeErrorPrefix}.text")
     }
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
+      document.getElementById("continue-button").attr("href") shouldBe
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
     }
     "not render the back button" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
       Option(document.getElementById("back")).isDefined shouldBe false
@@ -121,10 +122,12 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("standardError.heading")
     }
     "render the paragraph text" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementById(s"${ForeignProperty.reportingMethodChangeErrorPrefix}.text").text() shouldBe messages(s"${ForeignProperty.reportingMethodChangeErrorPrefix}.text")
+      document.getElementById(s"${ForeignProperty.reportingMethodChangeErrorPrefix}.text").text() shouldBe
+        messages(s"${ForeignProperty.reportingMethodChangeErrorPrefix}.text")
     }
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
+      document.getElementById("continue-button").attr("href") shouldBe
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
     }
     "not render the back button" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
       Option(document.getElementById("back")).isDefined shouldBe false
@@ -135,10 +138,12 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("standardError.heading")
     }
     "render the paragraph text" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text").text() shouldBe messages(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text")
+      document.getElementById(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text").text() shouldBe
+        messages(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text")
     }
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId).url
+      document.getElementById("continue-button").attr("href") shouldBe
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId).url
     }
     "not render the back button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       Option(document.getElementById("back")).isDefined shouldBe false
