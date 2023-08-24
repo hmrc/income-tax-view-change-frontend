@@ -36,16 +36,16 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
       Jsoup.parse(
         contentAsString(
           reportingMethodChangeErrorView(
+            isAgent = isAgent,
             messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix,
             continueUrl = ((isAgent, incomeSourceType) match {
-              case (false, SelfEmployment) => manageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId)
-              case (true, SelfEmployment) => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId)
-              case (false, UkProperty) => manageIncomeSourceDetailsController.showUkProperty()
-              case (true, UkProperty) => manageIncomeSourceDetailsController.showUkPropertyAgent()
+              case (false, SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId)
+              case (true,  SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId)
+              case (false, UkProperty)      => manageIncomeSourceDetailsController.showUkProperty()
+              case (true,  UkProperty)      => manageIncomeSourceDetailsController.showUkPropertyAgent()
               case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty()
-              case (true, ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
-            }).url,
-            isAgent = isAgent
+              case (true,  ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
+            }).url
           )
         )
       )
