@@ -172,12 +172,12 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   def getBackurl(isAgent: Boolean, mode: IncomeSourceType, incomeSourceId: String, changeTo: String, taxYear: String): String = {
     ((isAgent, mode) match {
-      case (false, UkProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, UkProperty.key, isAgent = false)
+      case (false, UkProperty)      => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, UkProperty.key, isAgent = false)
+      case (true,  UkProperty)      => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, UkProperty.key, isAgent = true)
       case (false, ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, ForeignProperty.key, isAgent = false)
-      case (false, SelfEmployment) => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, SelfEmployment.key, isAgent = false)
-      case (true, UkProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, UkProperty.key, isAgent = true)
-      case (true, ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, ForeignProperty.key, isAgent = true)
-      case (true, SelfEmployment) => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, SelfEmployment.key, isAgent = true)
+      case (true,  ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, ForeignProperty.key, isAgent = true)
+      case (false, SelfEmployment)  => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, SelfEmployment.key, isAgent = false)
+      case (true,  SelfEmployment)  => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, SelfEmployment.key, isAgent = true)
     }).url
   }
 
