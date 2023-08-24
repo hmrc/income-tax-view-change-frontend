@@ -51,7 +51,7 @@
         headingClasses = Some("govuk-heading-l")
     ))
 
-    @p(){ @getMessage("text") }
+    @p(id = Some(s"$messagesPrefix.text")){ @getMessage("text") }
 
     @govukButton(Button(
         content = Text(messages("base.continue")),
