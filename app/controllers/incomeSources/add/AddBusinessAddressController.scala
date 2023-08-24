@@ -51,28 +51,29 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                             )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false)
+      handleRequest(isAgent = false, isChange = isChange)
   }
 
-  def showAgent(): Action[AnyContent] =
+  def showAgent(isChange: Boolean): Action[AnyContent] =
     Authenticated.async {
       implicit request =>
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
-              handleRequest(isAgent = true)
+              handleRequest(isAgent = true, isChange = isChange)
           }
     }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       Future.successful(if (isAgent) Redirect(controllers.routes.HomeController.showAgent) else Redirect(controllers.routes.HomeController.show()))
     } else {
       addressLookupService.initialiseAddressJourney(
-        isAgent = isAgent
+        isAgent = isAgent,
+        isChange = isChange
       ) map {
         case Right(Some(location)) =>
           Redirect(location)
@@ -86,9 +87,18 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
   }
 
-  def handleSubmitRequest(isAgent: Boolean, id: Option[String])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def getRedirectUrl(isAgent: Boolean, isChange: Boolean): String = {
+    if (isChange) {
+      if (isAgent) routes.CheckBusinessDetailsController.showAgent().url else routes.CheckBusinessDetailsController.show().url
+    } else {
+      if (isAgent) routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType = SelfEmployment.key).url
+      else routes.IncomeSourcesAccountingMethodController.show(incomeSourceType = SelfEmployment.key).url
+    }
+  }
+
+  def handleSubmitRequest(isAgent: Boolean, id: Option[String], isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl = if (isAgent) routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment.key).url else routes.IncomeSourcesAccountingMethodController.show(SelfEmployment.key).url
+    val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
     val res = addressLookupService.fetchAddress(id)
     res map {
       case Right(value) =>
@@ -114,26 +124,18 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
   }
 
-  def submit(id: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleSubmitRequest(isAgent = false, id)
+    implicit user => handleSubmitRequest(isAgent = false, id, isChange = isChange)
   }
 
-  def agentSubmit(id: Option[String]): Action[AnyContent] = Authenticated.async {
+  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, id)
+            handleSubmitRequest(isAgent = true, id, isChange = isChange)
         }
 
-  }
-
-  def changeBusinessAddress(): Action[AnyContent] = Action {
-    Ok("Change Business Address  WIP")
-  }
-
-  def changeBusinessAddressAgent(): Action[AnyContent] = Action {
-    Ok("Agent Change Business Address  WIP")
   }
 }

@@ -164,6 +164,14 @@ POST         /agents/income-sources/add/business-name                     contro
 POST         /income-sources/add/change-business-name                     controllers.incomeSources.add.AddBusinessNameController.submitChange()
 POST         /agents/income-sources/add/change-business-name              controllers.incomeSources.add.AddBusinessNameController.submitChangeAgent()
 
+GET          /income-sources/add/business-address                         controllers.incomeSources.add.AddBusinessAddressController.show(isChange: Boolean = false)
+GET          /agents/income-sources/add/business-address                  controllers.incomeSources.add.AddBusinessAddressController.showAgent(isChange: Boolean = false)
+GET          /income-sources/add/business-address/id/                     controllers.incomeSources.add.AddBusinessAddressController.submit(id: Option[String], isChange: Boolean = false)
+GET          /agents/income-sources/add/business-address/id/              controllers.incomeSources.add.AddBusinessAddressController.agentSubmit(id: Option[String], isChange: Boolean = false)
+GET          /income-sources/add/change-business-address-lookup           controllers.incomeSources.add.AddBusinessAddressController.show(isChange: Boolean = true)
+GET          /agents/income-sources/add/change-business-address-lookup    controllers.incomeSources.add.AddBusinessAddressController.showAgent(isChange: Boolean = true)
+GET          /income-sources/add/change-business-address/id/              controllers.incomeSources.add.AddBusinessAddressController.submit(id: Option[String], isChange: Boolean = true)
+GET          /agents/income-sources/add/change-business-address/id/       controllers.incomeSources.add.AddBusinessAddressController.agentSubmit(id: Option[String], isChange: Boolean = true)
 GET          /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = false, isChange: Boolean = false)
 GET          /agents/income-sources/add/business-trade                    controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = true, isChange: Boolean = false)
 POST         /income-sources/add/business-trade                           controllers.incomeSources.add.AddBusinessTradeController.submit(isAgent: Boolean = false, isChange: Boolean = false)
@@ -172,11 +180,6 @@ GET          /income-sources/add/change-business-trade                    contro
 GET          /agents/income-sources/add/change-business-trade             controllers.incomeSources.add.AddBusinessTradeController.show(isAgent: Boolean = true, isChange: Boolean = true)
 POST         /income-sources/add/change-business-trade                    controllers.incomeSources.add.AddBusinessTradeController.submit(isAgent: Boolean = false, isChange: Boolean = true)
 POST         /agents/income-sources/add/change-business-trade             controllers.incomeSources.add.AddBusinessTradeController.submit(isAgent: Boolean = true, isChange: Boolean = true)
-
-GET          /income-sources/add/business-address                         controllers.incomeSources.add.AddBusinessAddressController.show()
-GET          /agents/income-sources/add/business-address                  controllers.incomeSources.add.AddBusinessAddressController.showAgent()
-GET          /income-sources/add/business-address/id/                     controllers.incomeSources.add.AddBusinessAddressController.submit(id: Option[String])
-GET          /agents/income-sources/add/business-address/id/              controllers.incomeSources.add.AddBusinessAddressController.agentSubmit(id: Option[String])
 
 GET          /income-sources/add/business-start-date                                   controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = false, isChange: Boolean = false)
 GET          /agents/income-sources/add/business-start-date                            controllers.incomeSources.add.AddIncomeSourceStartDateController.show(incomeSourceKey:   String = "SE", isAgent: Boolean = true,  isChange: Boolean = false)
@@ -266,8 +269,6 @@ GET          /agents/income-sources/add/business-check-details              cont
 
 GET          /income-sources/add/change-business-name                       controllers.incomeSources.add.AddBusinessNameController.changeBusinessName()
 GET          /agents/income-sources/add/change-business-name                controllers.incomeSources.add.AddBusinessNameController.changeBusinessNameAgent()
-GET          /income-sources/add/change-business-address-lookup             controllers.incomeSources.add.AddBusinessAddressController.changeBusinessAddress()
-GET          /agents/income-sources/add/change-business-address-lookup      controllers.incomeSources.add.AddBusinessAddressController.changeBusinessAddressAgent()
 GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: String = "SE")
 GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String = "SE")
 POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.CheckBusinessDetailsController.submit()
