@@ -138,7 +138,7 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
       document.getElementById(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text").text() shouldBe messages(s"${SelfEmployment.reportingMethodChangeErrorPrefix}.text")
     }
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId).url
+      document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId).url
     }
     "not render the back button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       Option(document.getElementById("back")).isDefined shouldBe false
