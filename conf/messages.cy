@@ -1162,6 +1162,12 @@ incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifydd
 incomeSources.add.checkUKPropertyDetails.change                 = Newid
 incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
 
+incomeSources.add.error.reportingMethodNotSaved.p1                  = Your {0} business was added, but we were unable to save the reporting frequency for one or more tax years.
+incomeSources.add.error.reportingMethodNotSaved.p2                  = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ''View and manage income sources''.
+incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasnachwr
+incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
+incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
+
 ## cease income sources
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
 cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)

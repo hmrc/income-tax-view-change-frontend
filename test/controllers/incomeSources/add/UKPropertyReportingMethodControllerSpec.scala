@@ -36,6 +36,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.UpdateIncomeSourceTestConstants.incomeSourceId
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
@@ -52,15 +53,15 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
   val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
   val mockDateService: DateService = mock(classOf[DateService])
-
+  val incomeSourceId: String = "XA00001234"
   val newTaxYear1ReportingMethod = "new_tax_year_1_reporting_method"
   val newTaxYear2ReportingMethod = "new_tax_year_2_reporting_method"
   val taxYear1 = s"${newTaxYear1ReportingMethod}_tax_year"
   val taxYear2 = s"${newTaxYear2ReportingMethod}_tax_year"
   val taxYear1ReportingMethod = "tax_year_1_reporting_method"
   val taxYear2ReportingMethod = "tax_year_2_reporting_method"
-  val redirectURL = "/report-quarterly/income-and-expenses/view/income-sources/add/error-uk-property-reporting-method-not-saved"
-  val redirectAgentURL = "/report-quarterly/income-and-expenses/view/agents/income-sources/add/error-uk-property-reporting-method-not-saved"
+  val redirectURL = s"/report-quarterly/income-and-expenses/view/income-sources/add/error-uk-property-reporting-method-not-saved?id=$incomeSourceId"
+  val redirectAgentURL = s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/error-uk-property-reporting-method-not-saved?id=$incomeSourceId"
 
   object TestUKPropertyReportingMethodController extends UKPropertyReportingMethodController(
     MockAuthenticationPredicate,

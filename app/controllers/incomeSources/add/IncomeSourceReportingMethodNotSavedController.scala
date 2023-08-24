@@ -16,71 +16,88 @@
 
 package controllers.incomeSources.add
 
-import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services._
-import views.html.errorPages.CustomNotFoundError
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.IncomeSourcesUtils
+import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceReportingMethodNotSavedController @Inject()(val authenticate: AuthenticationPredicate,
-                                                              val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                              val checkSessionTimeout: SessionTimeoutPredicate,
+
+@Singleton
+class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                                                              val authenticate: AuthenticationPredicate,
+                                                              val authorisedFunctions: AuthorisedFunctions,
+                                                              val retrieveNino: NinoPredicate,
+                                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                               val retrieveBtaNavBar: NavBarPredicate,
-                                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                              val retrieveNino: NinoPredicate,
-                                                              val customNotFoundErrorView: CustomNotFoundError)
-                                                             (implicit val appConfig: FrontendAppConfig,
-                                                              mcc: MessagesControllerComponents,
-                                                              val ec: ExecutionContext,
-                                                              val itvcErrorHandler: ItvcErrorHandler,
-                                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                                             )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+                                                              val view: IncomeSourceReportingMethodNotSaved)
+                                                             (implicit val ec: ExecutionContext,
+                                                              implicit override val mcc: MessagesControllerComponents,
+                                                              implicit val itvcAgentErrorHandler: AgentItvcErrorHandler,
+                                                              implicit val itvcErrorHandler: ItvcErrorHandler,
+                                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
+  with FeatureSwitching with IncomeSourcesUtils {
 
-  def showUKProperty(): Action[AnyContent] = show()
+  def handleRequest(id: String, isAgent: Boolean, incomeSourceType: String)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
-  def showUKPropertyAgent(): Action[AnyContent] = showAgent()
+    val errorHandler = if (isAgent) itvcAgentErrorHandler else itvcErrorHandler
 
-  def showForeignProperty(): Action[AnyContent] = show()
+    IncomeSourceType.get(incomeSourceType) match {
+      case Right(incomeType) =>
+        val action = incomeType match {
+          case UkProperty =>
+            val controller = controllers.incomeSources.add.routes.UKPropertyAddedController
+            if (isAgent) controller.showAgent(id) else controller.show(id)
+          case ForeignProperty =>
+            val controller = controllers.incomeSources.add.routes.ForeignPropertyAddedController
+            if (isAgent) controller.showAgent(id) else controller.show(id)
+          case SelfEmployment =>
+            val controller = controllers.incomeSources.add.routes.BusinessAddedObligationsController
+            if (isAgent) controller.showAgent(id) else controller.show(id)
+        }
+        val v = view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)
+        Future.successful(Ok(v))
 
-  def showForeignPropertyAgent(): Action[AnyContent] = showAgent()
+      case Left(_) => Future.successful(errorHandler.showInternalServerError())
+    }
 
-  def showBusiness(): Action[AnyContent] = show()
-
-  def showBusinessAgent(): Action[AnyContent] = showAgent()
-
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(isAgent = false)
   }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
+
+  def show(id: String, incomeSourceType: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        id = id,
+        isAgent = false,
+        incomeSourceType = incomeSourceType
+      )
+  }
+
+  def showAgent(id: String, incomeSourceType: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).map {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            errorHandler(isAgent = true).showInternalServerError()
+            handleRequest(
+              id = id,
+              isAgent = true,
+              incomeSourceType = incomeSourceType
+            )
         }
   }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    Future.successful {
-      errorHandler(isAgent).showInternalServerError()
-    }
-  }
-
-  def errorHandler(isAgent: Boolean): ShowInternalServerError = {
-    if (isAgent) itvcErrorHandlerAgent
-    else itvcErrorHandler
-  }
 
 }
