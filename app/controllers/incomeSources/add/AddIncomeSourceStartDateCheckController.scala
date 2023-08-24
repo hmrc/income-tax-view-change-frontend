@@ -238,9 +238,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       routes.AddIncomeSourceStartDateController.show(incomeSourceType.key, isAgent, isChange),
       routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType.key, isAgent, isChange),
       (isAgent, isChange, incomeSourceType) match {
-        case (false, true,  SelfEmployment) => routes.CheckBusinessDetailsController.show()
-        case (_,     true,  SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
-        case (_,     _,     SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
+        case (_,     false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
+        case (false, _,     SelfEmployment) => routes.CheckBusinessDetailsController.show()
+        case (_,     _,     SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
         case (false, false, _)              => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType.key)
         case (_,     false, _)              => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType.key)
         case (false, _,     UkProperty)     => routes.CheckUKPropertyDetailsController.show()
