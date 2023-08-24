@@ -31,18 +31,18 @@ import views.html.incomeSources.add.AddIncomeSourceStartDate
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
-  val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
-
   class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isUpdate: Boolean = false) extends TestSupport {
+
+    val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
 
     lazy val document: Document = {
       Jsoup.parse(
         contentAsString(
           addIncomeSourceStartDate(
             form = {
-              if(hasError) AddIncomeSourceStartDateForm(incomeSourceType.addStartDateCheckMessagesPrefix)
+              if(hasError) AddIncomeSourceStartDateForm(incomeSourceType.startDateMessagesPrefix)
                 .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.error.required"))
-              else AddIncomeSourceStartDateForm(incomeSourceType.addStartDateCheckMessagesPrefix)
+              else AddIncomeSourceStartDateForm(incomeSourceType.startDateMessagesPrefix)
             },
             postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType.key, isAgent, isUpdate),
             isAgent = isAgent,
