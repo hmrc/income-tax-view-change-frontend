@@ -1162,8 +1162,8 @@ incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifydd
 incomeSources.add.checkUKPropertyDetails.change                 = Newid
 incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
 
-incomeSources.add.error.reportingMethodNotSaved.p1                  = Your {0} business was added, but we were unable to save the reporting frequency for one or more tax years.
-incomeSources.add.error.reportingMethodNotSaved.p2                  = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ''View and manage income sources''.
+incomeSources.add.error.reportingMethodNotSaved.p1                  = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
+incomeSources.add.error.reportingMethodNotSaved.p2                  = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ''blynyddol'' yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr adran i weld a rheoli ffynonellau incwm.
 incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasnachwr
 incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
