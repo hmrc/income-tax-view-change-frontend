@@ -40,10 +40,12 @@
     messages(s"$messagesPrefix.$key", args: _*)
 }
 
-@mainTemplate(pageTitle = messages("standardError.heading"),
+@mainTemplate(
+    pageTitle = messages("standardError.heading"),
     backUrl = None,
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial
+) {
 
     @hmrcPageHeading(PageHeading(
         text = messages("standardError.heading"),
