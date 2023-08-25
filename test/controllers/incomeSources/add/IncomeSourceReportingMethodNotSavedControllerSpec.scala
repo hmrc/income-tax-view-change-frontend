@@ -137,7 +137,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show("", "")(fakeRequestWithActiveSession)
-        val document: Document = Jsoup.parse(contentAsString(result))
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -220,7 +219,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show("", "")(fakeRequestConfirmedClient())
-        val document: Document = Jsoup.parse(contentAsString(result))
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
