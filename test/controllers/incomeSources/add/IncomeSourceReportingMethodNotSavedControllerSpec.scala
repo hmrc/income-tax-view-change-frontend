@@ -52,7 +52,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
 
   object TestConstants {
-    val title: String = messages("standardError.heading")
+    val title: String = messages("incomeSources.add.error.standardError")
     val titleAgent: String = s"${messages("htmlTitle.agent", title)}"
     val titleIndividual: String = s"${messages("htmlTitle", title)}"
 

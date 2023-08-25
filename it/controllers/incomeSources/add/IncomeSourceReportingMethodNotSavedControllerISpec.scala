@@ -43,7 +43,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         val result = IncomeTaxViewChangeFrontend.getSEReportingMethodNotSaved(incomeSourceId, Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        val expectedText: String = messagesAPI("standardError.heading")
+        val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
 
         result should have(
           httpStatus(OK),
@@ -69,7 +69,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         val result = IncomeTaxViewChangeFrontend.getUkPropertyReportingMethodNotSaved(incomeSourceId, Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        val expectedText: String = messagesAPI("standardError.heading")
+        val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
 
         result should have(
           httpStatus(OK),
@@ -95,7 +95,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         val result = IncomeTaxViewChangeFrontend.getForeignPropertyReportingMethodNotSaved(incomeSourceId, Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        val expectedText: String = messagesAPI("standardError.heading")
+        val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
 
         result should have(
           httpStatus(OK),
