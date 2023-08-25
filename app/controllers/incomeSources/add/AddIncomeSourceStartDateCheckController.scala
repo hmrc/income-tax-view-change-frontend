@@ -80,6 +80,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
              isAgent: Boolean,
              isChange: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+
     IncomeSourceType.get(incomeSourceKey) match {
       case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
         s"Failed fulfil submit request: ${ex.getMessage}")
@@ -145,11 +146,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
               },
               formData => {
                 handleValidForm(
+                  isAgent = isAgent,
                   backCall = backCall,
                   validForm = formData,
                   successCall = successCall,
                   incomeSourceStartDate = startDate,
-                  isAgent = isAgent,
                   incomeSourceType = incomeSourceType
                 )
               }
@@ -186,9 +187,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
   private def handleValidForm(backCall: Call,
                               validForm: form,
+                              isAgent: Boolean,
                               successCall: Call,
                               incomeSourceStartDate: String,
-                              isAgent: Boolean,
                               incomeSourceType: IncomeSourceType)
                              (implicit mtdItUser: MtdItUser[_]): Result = {
 
