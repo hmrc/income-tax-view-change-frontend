@@ -122,9 +122,9 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         val backUrl = incomeSource match {
           case SelfEmployment =>
             if (isAgent)
-              routes.AddBusinessAddressController.showAgent().url
+              routes.AddBusinessAddressController.showAgent(isChange = false).url
             else
-              routes.AddBusinessAddressController.show().url
+              routes.AddBusinessAddressController.show(isChange = false).url
           case UkProperty =>
             routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, isAgent, isChange = false).url
           case ForeignProperty =>
@@ -157,7 +157,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     incomeSourceType match {
       case SelfEmployment.key =>
           (routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment.key),
-            routes.AddBusinessAddressController.show().url,
+            routes.AddBusinessAddressController.show(isChange = false).url,
             routes.CheckBusinessDetailsController.show())
       case UkProperty.key =>
           (routes.IncomeSourcesAccountingMethodController.submit(UkProperty.key),
@@ -174,7 +174,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     incomeSourceType match {
       case SelfEmployment.key =>
           (routes.IncomeSourcesAccountingMethodController.submitAgent(SelfEmployment.key),
-            routes.AddBusinessAddressController.showAgent().url,
+            routes.AddBusinessAddressController.showAgent(isChange = false).url,
             routes.CheckBusinessDetailsController.showAgent())
       case UkProperty.key =>
           (routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key),

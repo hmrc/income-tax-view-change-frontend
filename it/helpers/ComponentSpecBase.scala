@@ -45,6 +45,7 @@ import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSel
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
+import org.scalatest.matchers.should.Matchers
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -138,6 +139,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "calculation-polling.timeout" -> "3000",
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
+    "microservice.services.address-lookup-frontend.port" -> mockPort,
     "auditing.enabled" -> "true"
   )
 
@@ -329,7 +331,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)
     }
-
     def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
 
     def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -497,7 +498,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-uk-property-success", session)
 
-    def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-business-success", session)
+    def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-business-success",session)
+
+    def getAddChangeBusinessAddress: WSResponse =
+      get("/income-sources/add/change-business-address-lookup")
+
+    def getAddBusinessAddress: WSResponse =
+      get("/income-sources/add/business-address")
 
     def getSEReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-business-reporting-method-not-saved?id=$id", session)
 
