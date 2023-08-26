@@ -67,8 +67,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
   }
 
   private def getSuccessURL(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): String = {
-    lazy val addBusinessAddress: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show().url
-    lazy val addBusinessAddressAgent: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent().url
+    lazy val addBusinessAddress: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url
+    lazy val addBusinessAddressAgent: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
 
     (isAgent, isChange) match {
       case (true, true) => checkBusinessDetailsAgent

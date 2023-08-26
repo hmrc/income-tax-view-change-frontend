@@ -117,6 +117,15 @@ object WiremockHelper extends Eventually with IntegrationPatience {
       )
     )
 
+  def stubPostWithHeader(url: String, status: Integer, key: String, header: String): StubMapping =
+    stubFor(post(urlEqualTo(url))
+      .willReturn(
+        aResponse().
+          withStatus(status).
+          withHeader(key, header)
+      )
+    )
+
   def stubPut(url: String, status: Integer, responseBody: String): StubMapping =
     stubFor(put(urlEqualTo(url))
       .willReturn(
