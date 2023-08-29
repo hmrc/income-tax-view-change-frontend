@@ -42,18 +42,18 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     .ConfirmReportingMethodSharedController
 
   val confirmReportingMethodShowUKPropertyUrl: String = confirmReportingMethodSharedController
-    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, UkProperty.key, isAgent = false).url
+    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, UkProperty, isAgent = false).url
   val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, ForeignProperty.key, isAgent = false).url
+    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, ForeignProperty, isAgent = false).url
   val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .show(id = Some(testSelfEmploymentId), taxYear = taxYear, changeTo = annual, SelfEmployment.key, isAgent = false).url
+    .show(id = Some(testSelfEmploymentId), taxYear = taxYear, changeTo = annual, SelfEmployment, isAgent = false).url
 
   val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, UkProperty.key, isAgent = false).url
+    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, UkProperty, isAgent = false).url
   val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, ForeignProperty.key, isAgent = false).url
+    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, ForeignProperty, isAgent = false).url
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submit(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual, SelfEmployment.key, isAgent = false).url
+    .submit(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual, SelfEmployment, isAgent = false).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
     .showUKProperty(changeTo = annual, taxYear = taxYear).url

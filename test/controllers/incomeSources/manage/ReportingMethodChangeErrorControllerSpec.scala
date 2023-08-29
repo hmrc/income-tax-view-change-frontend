@@ -85,7 +85,7 @@ class ReportingMethodChangeErrorControllerSpec
 
         val document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
         status(result) shouldBe Status.OK
       }
       s"Calling .show with income source type: ${ForeignProperty} when user has a Foreign Property" in {
@@ -99,7 +99,7 @@ class ReportingMethodChangeErrorControllerSpec
 
         val document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
         status(result) shouldBe Status.OK
       }
       s"Calling .show with income source type: ${SelfEmployment} when user has a Sole Trader Business for the given incomeSourceId" in {
@@ -113,7 +113,9 @@ class ReportingMethodChangeErrorControllerSpec
 
         val document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId).url
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
+          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+            .showSoleTraderBusiness(testSelfEmploymentId).url
         status(result) shouldBe Status.OK
       }
     }
@@ -145,7 +147,9 @@ class ReportingMethodChangeErrorControllerSpec
 
         val document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
+          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+            .showUkPropertyAgent().url
         status(result) shouldBe Status.OK
       }
       s"Calling .show with income source type: ${ForeignProperty} when user has a Foreign Property" in {
@@ -159,7 +163,9 @@ class ReportingMethodChangeErrorControllerSpec
 
         val document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
+          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+            .showForeignPropertyAgent().url
         status(result) shouldBe Status.OK
       }
       s"Calling .show with income source type: ${SelfEmployment} when user has a Sole Trader Business for the given incomeSourceId" in {
@@ -173,7 +179,9 @@ class ReportingMethodChangeErrorControllerSpec
 
         val document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId).url
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
+          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
+            .showSoleTraderBusinessAgent(testSelfEmploymentId).url
         status(result) shouldBe Status.OK
       }
     }

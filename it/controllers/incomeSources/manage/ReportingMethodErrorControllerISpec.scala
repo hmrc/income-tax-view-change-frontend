@@ -33,11 +33,11 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
   private lazy val reportingMethodChangeErrorController = controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController
 
   val reportingMethodChangeErrorUKPropertyUrl: String = reportingMethodChangeErrorController
-    .show(None, UkProperty.key, isAgent = false).url
+    .show(None, UkProperty, isAgent = false).url
   val reportingMethodChangeErrorForeignPropertyUrl: String = reportingMethodChangeErrorController
-    .show(None, ForeignProperty.key, isAgent = false).url
+    .show(None, ForeignProperty, isAgent = false).url
   val reportingMethodChangeErrorBusinessUrl: String = reportingMethodChangeErrorController
-    .show(Some(testSelfEmploymentId), SelfEmployment.key, isAgent = false).url
+    .show(Some(testSelfEmploymentId), SelfEmployment, isAgent = false).url
 
   val continueButtonText: String = messagesAPI("base.continue")
 
@@ -79,8 +79,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(pageTitle),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(pageTitle)
         )
       }
     }
@@ -122,8 +121,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(pageTitle),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(pageTitle)
         )
       }
     }
@@ -167,8 +165,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(pageTitle),
-          elementTextByID("continue-button")(continueButtonText)
+          pageTitleIndividual(pageTitle)
         )
       }
     }
