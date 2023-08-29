@@ -58,27 +58,21 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   def show(id: Option[String],
            taxYear: String,
            changeTo: String,
-           incomeSourceKey: String,
+           incomeSourceType: IncomeSourceType,
            isAgent: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    IncomeSourceType.get(incomeSourceKey) match {
-      case Right(incomeSourceType) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, id)
-      case Left(ex: Exception) => Future.successful(logAndShowError(isAgent, s"[show]: Failed to fulfil show request: ${ex.getMessage}"))
-    }
+    handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, id)
   }
 
   def submit(id: String,
              taxYear: String,
              changeTo: String,
-             incomeSourceKey: String,
+             incomeSourceType: IncomeSourceType,
              isAgent: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    IncomeSourceType.get(incomeSourceKey) match {
-      case Right(incomeSourceType) => handleSubmitRequest(taxYear, changeTo, isAgent, id, incomeSourceType)
-      case Left(ex: Exception) => Future.successful(logAndShowError(isAgent, s"[submit]: Failed to fulfil submit request: ${ex.getMessage}"))
-    }
+    handleSubmitRequest(taxYear, changeTo, isAgent, id, incomeSourceType)
   }
 
   private def handleShowRequest(taxYear: String,
@@ -118,8 +112,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
     Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
-    if (isAgent) itvcErrorHandler.showInternalServerError()
-    else itvcErrorHandlerAgent.showInternalServerError()
+    (if (isAgent) itvcErrorHandler else itvcErrorHandlerAgent).showInternalServerError()
   }
 
   private def handleSubmitRequest(taxYear: String,
@@ -222,14 +215,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                               ): (Call, Call, Call, Call) = {
 
     val postAction: Call = routes.ConfirmReportingMethodSharedController
-      .submit(incomeSourceId, taxYear, changeTo, incomeSourceType.key, isAgent)
+      .submit(incomeSourceId, taxYear, changeTo, incomeSourceType, isAgent)
 
     val errorCall: Call = routes.ReportingMethodChangeErrorController
-      .show(
-        id = if (incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None,
-        incomeSourceKey = incomeSourceType.key,
-        isAgent = isAgent
-      )
+      .show(id = if(isAgent) Some(incomeSourceId) else None, incomeSourceType, isAgent)
 
     val (backCall, successCall) = (isAgent, incomeSourceType) match {
       case (false, SelfEmployment) =>

@@ -17,6 +17,8 @@
 package enums.IncomeSourceJourney
 
 import forms.utils.SessionKeys
+import play.api.libs.json.{JsString, Writes}
+import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {
   val key: String
@@ -58,5 +60,11 @@ object IncomeSourceType {
       case "SE" => Right(SelfEmployment)
       case _ => Left(new Exception("Invalid incomeSourceType"))
     }
+  }
+
+  implicit val incomeSourceTypeJSLBinder: JavascriptLiteral[IncomeSourceType] = (value: IncomeSourceType) => s"""'${value.toString}'"""
+
+  implicit def writes[T <: IncomeSourceType]: Writes[T] = Writes {
+    incomeSourceType => JsString(incomeSourceType.toString)
   }
 }

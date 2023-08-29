@@ -67,100 +67,49 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession)
+          Some(testSoleTraderBusinessIncomeSourceId), SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
     }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "invalid income source key is supplied in controller Call" in {
-
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val invalidIncomeSourceKey = "INVALID"
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), invalidIncomeSourceKey, isAgent = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      s"Calling .show with key: ${UkProperty.key} when user does not have a UK Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, UkProperty.key, isAgent = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      s"Calling .show with key: ${ForeignProperty.key} when user does not have a Foreign Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, ForeignProperty.key, isAgent = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      s"Calling .show with key: ${SelfEmployment.key} when user does not have a Sole Trader Business with the given incomeSourceId" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val testSoleTraderBusinessIncomeSourceId = "ABC"
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
     s"return ${Status.OK}: render Reporting Method Change Error Page" when {
-      s"Calling .show with key: ${UkProperty.key} when user has a UK Property" in {
+      s"Calling .show with income source type: ${UkProperty} when user has a UK Property" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, UkProperty.key, isAgent = false)(fakeRequestWithActiveSession)
+          None, UkProperty, isAgent = false)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
         document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
         status(result) shouldBe Status.OK
       }
-      s"Calling .show with key: ${ForeignProperty.key} when user has a Foreign Property" in {
+      s"Calling .show with income source type: ${ForeignProperty} when user has a Foreign Property" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, ForeignProperty.key, isAgent = false)(fakeRequestWithActiveSession)
+          None, ForeignProperty, isAgent = false)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
         document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
         status(result) shouldBe Status.OK
       }
-      s"Calling .show with key: ${SelfEmployment.key} when user has a Sole Trader Business for the given incomeSourceId" in {
+      s"Calling .show with income source type: ${SelfEmployment} when user has a Sole Trader Business for the given incomeSourceId" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSelfEmploymentId), SelfEmployment.key, isAgent = false)(fakeRequestWithActiveSession)
+          Some(testSelfEmploymentId), SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -178,100 +127,49 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
+          Some(testSoleTraderBusinessIncomeSourceId), SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "invalid income source key is supplied in controller Call" in {
-
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val invalidIncomeSourceKey = "INVALID"
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), invalidIncomeSourceKey, isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      s"Calling .show with key: ${UkProperty.key} when user does not have a UK Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, UkProperty.key, isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      s"Calling .show with key: ${ForeignProperty.key} when user does not have a Foreign Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, ForeignProperty.key, isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-      s"Calling .show with key: ${SelfEmployment.key} when user does not have a Sole Trader Business with the given incomeSourceId" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val testSoleTraderBusinessIncomeSourceId = "ABC"
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
     s"return ${Status.OK}: render Reporting Method Change Error Page" when {
-      s"Calling .show with key: ${UkProperty.key} when user has a UK Property" in {
+      s"Calling .show with key: ${UkProperty} when user has a UK Property" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, UkProperty.key, isAgent = true)(fakeRequestConfirmedClient())
+          None, UkProperty, isAgent = true)(fakeRequestConfirmedClient())
 
         val document = Jsoup.parse(contentAsString(result))
 
         document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
         status(result) shouldBe Status.OK
       }
-      s"Calling .show with key: ${ForeignProperty.key} when user has a Foreign Property" in {
+      s"Calling .show with income source type: ${ForeignProperty} when user has a Foreign Property" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, ForeignProperty.key, isAgent = true)(fakeRequestConfirmedClient())
+          None, ForeignProperty, isAgent = true)(fakeRequestConfirmedClient())
 
         val document = Jsoup.parse(contentAsString(result))
 
         document.getElementById("continue-button").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
         status(result) shouldBe Status.OK
       }
-      s"Calling .show with key: ${SelfEmployment.key} when user has a Sole Trader Business for the given incomeSourceId" in {
+      s"Calling .show with income source type: ${SelfEmployment} when user has a Sole Trader Business for the given incomeSourceId" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSelfEmploymentId), SelfEmployment.key, isAgent = true)(fakeRequestConfirmedClient())
+          Some(testSelfEmploymentId), SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
 
         val document = Jsoup.parse(contentAsString(result))
 

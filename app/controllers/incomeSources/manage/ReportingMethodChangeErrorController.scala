@@ -23,7 +23,6 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import play.api.Logger
-import play.api.MarkerContext.NoMarker
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -51,24 +50,16 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
   with FeatureSwitching with IncomeSourcesUtils {
 
   def show(id: Option[String],
-           incomeSourceKey: String,
+           incomeSourceType: IncomeSourceType,
            isAgent: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    IncomeSourceType.get(incomeSourceKey) match {
-      case Right(incomeSourceType) => handleShowRequest(isAgent, incomeSourceType, id)
-      case Left(ex: Exception) =>
-        Future.successful {
-          Logger("error").info(s"[ReportingMethodChangeErrorController][show]: " +
-            s"Failed to fulfil show request: ${ex.getMessage}")
-          showInternalServerError(isAgent)
-        }
+      handleShowRequest(id, incomeSourceType, isAgent)
     }
-  }
 
-  private def handleShowRequest(isAgent: Boolean,
+  private def handleShowRequest(soleTraderBusinessId: Option[String],
                                 incomeSourceType: IncomeSourceType,
-                                soleTraderBusinessId: Option[String]
+                                isAgent: Boolean
                                )(implicit user: MtdItUser[_]): Future[Result] = {
     withIncomeSourcesFS {
       Future.successful(
@@ -78,7 +69,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
               reportingMethodChangeError(
                 isAgent = isAgent,
                 manageIncomeSourcesUrl = getManageIncomeSourcesUrl(isAgent),
-                manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(isAgent, incomeSourceType, id),
+                manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(id, isAgent, incomeSourceType),
                 messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
               )
             )
@@ -96,7 +87,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     else routes.ManageIncomeSourceController.show()
   }.url
 
-  private def getManageIncomeSourceDetailsUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType, incomeSourceId: String): String = {
+  private def getManageIncomeSourceDetailsUrl(incomeSourceId: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
       case (false, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkProperty()
       case (true, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
