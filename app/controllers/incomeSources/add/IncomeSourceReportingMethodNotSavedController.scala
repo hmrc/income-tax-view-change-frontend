@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -56,16 +56,13 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
 
     IncomeSourceType.get(incomeSourceType) match {
       case Right(incomeType) =>
-        val action = incomeType match {
-          case UkProperty =>
-            val controller = controllers.incomeSources.add.routes.UKPropertyAddedController
-            if (isAgent) controller.showAgent(id) else controller.show(id)
-          case ForeignProperty =>
-            val controller = controllers.incomeSources.add.routes.ForeignPropertyAddedController
-            if (isAgent) controller.showAgent(id) else controller.show(id)
-          case SelfEmployment =>
-            val controller = controllers.incomeSources.add.routes.BusinessAddedObligationsController
-            if (isAgent) controller.showAgent(id) else controller.show(id)
+        val action: Call = (incomeType, isAgent) match {
+          case (UkProperty, true) => controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(id)
+          case (UkProperty, false) => controllers.incomeSources.add.routes.UKPropertyAddedController.show(id)
+          case (ForeignProperty, true) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
+          case (ForeignProperty, false) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
+          case (SelfEmployment, true) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent(id)
+          case (SelfEmployment, false) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(id)
         }
 
         Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))
