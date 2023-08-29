@@ -67,8 +67,8 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
             val controller = controllers.incomeSources.add.routes.BusinessAddedObligationsController
             if (isAgent) controller.showAgent(id) else controller.show(id)
         }
-        val v = view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)
-        Future.successful(Ok(v))
+
+        Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))
 
       case Left(_) => Future.successful(errorHandler.showInternalServerError())
     }

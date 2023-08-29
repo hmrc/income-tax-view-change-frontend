@@ -20,33 +20,36 @@
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 @this(
-mainTemplate: unifiedLayout,
-h1: h1,
-p: p,
-formWithCSRF: FormWithCSRF,
-continueButton: ContinueButton,
-)
+    mainTemplate: unifiedLayout,
+    h1: h1,
+    p: p,
+    formWithCSRF: FormWithCSRF,
+    continueButton: ContinueButton)
 
 @(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@businessType = @{
+@incomeSourceTypeText = @{
   incomeSourceType match {
-    case  _:SelfEmployment.type => messages("incomeSources.add.error.reportingMethodNotSaved.se")
-    case _:UkProperty.type => messages("incomeSources.add.error.reportingMethodNotSaved.uk")
-    case _:ForeignProperty.type => messages("incomeSources.add.error.reportingMethodNotSaved.fp")
+    case _: SelfEmployment.type => messages("incomeSources.add.error.reportingMethodNotSaved.se")
+    case _: UkProperty.type => messages("incomeSources.add.error.reportingMethodNotSaved.uk")
+    case _: ForeignProperty.type => messages("incomeSources.add.error.reportingMethodNotSaved.fp")
   }
 }
 
 @mainTemplate(pageTitle = messages("incomeSources.add.error.standardError"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
 
-@h1(msg = "incomeSources.add.error.standardError", classes="govuk-heading-l govuk-!-margin-bottom-5")
+    @h1(msg = "incomeSources.add.error.standardError", classes="govuk-heading-l govuk-!-margin-bottom-5")
 
-@p(id = Some("paragraph-1")){@messages("incomeSources.add.error.reportingMethodNotSaved.p1", businessType)}
+    @p(id = Some("paragraph-1")){
+        @messages("incomeSources.add.error.reportingMethodNotSaved.p1", incomeSourceTypeText)
+    }
 
-@p(id = Some("paragraph-2")){@messages("incomeSources.add.error.reportingMethodNotSaved.p2")}
+    @p(id = Some("paragraph-2")){
+        @messages("incomeSources.add.error.reportingMethodNotSaved.p2")
+    }
 
-@formWithCSRF(action = continueAction , Symbol("id") -> "error-reporting-method-not-saved-form") {
-    @continueButton(Some(messages("base.continue")))
-}
+    @formWithCSRF(action = continueAction , Symbol("id") -> "error-reporting-method-not-saved-form") {
+        @continueButton(Some(messages("base.continue")))
+    }
 
 }
