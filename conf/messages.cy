@@ -1540,6 +1540,6 @@ incomeSources.manage.uk-property-manage-details.accounting-method               
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Busnes eiddo tramor
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu ar gyfer incwm o eiddo tramor
 
-incomeSources.manage.businessReportingMethodError.text          = ???
-incomeSources.manage.uKPropertyReportingMethodError.text        = ???
-incomeSources.manage.foreignPropertyReportingMethodError.text   = ???
+incomeSources.manage.businessReportingMethodError.text          = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
+incomeSources.manage.uKPropertyReportingMethodError.text        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
+incomeSources.manage.foreignPropertyReportingMethodError.text   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
