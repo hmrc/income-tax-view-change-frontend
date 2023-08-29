@@ -213,10 +213,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           )
       case (Some(form.responseYes), _) =>
         Redirect(successCall)
-      case (Some(_), _) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Empty response, isAgent = $isAgent")
-        if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
-      case (None, _) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
-        if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
+      case  _ => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
+        getErrorHandler(isAgent).showInternalServerError()
     }
   }
 
