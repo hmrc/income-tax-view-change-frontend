@@ -113,15 +113,15 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
   }
 
   "IncomeSourcesAccountingMethod - Individual" should {
-    incomeSourcesAccountingMethodTest(prefixSoleTrader, false, SelfEmployment.key)
-    incomeSourcesAccountingMethodTest(prefixUKProperty, false, UkProperty.key)
-    incomeSourcesAccountingMethodTest(prefixForeignProperty, false, ForeignProperty.key)
+    incomeSourcesAccountingMethodTest(prefixSoleTrader, isAgent = false, SelfEmployment.key)
+    incomeSourcesAccountingMethodTest(prefixUKProperty, isAgent = false, UkProperty.key)
+    incomeSourcesAccountingMethodTest(prefixForeignProperty, isAgent = false, ForeignProperty.key)
   }
 
   "IncomeSourcesAccountingMethod - Agent" should {
-    incomeSourcesAccountingMethodTest(prefixSoleTrader, true, SelfEmployment.key)
-    incomeSourcesAccountingMethodTest(prefixUKProperty, true, UkProperty.key)
-    incomeSourcesAccountingMethodTest(prefixForeignProperty, true, ForeignProperty.key)
+    incomeSourcesAccountingMethodTest(prefixSoleTrader, isAgent = true, SelfEmployment.key)
+    incomeSourcesAccountingMethodTest(prefixUKProperty, isAgent = true, UkProperty.key)
+    incomeSourcesAccountingMethodTest(prefixForeignProperty, isAgent = true, ForeignProperty.key)
   }
 
 }
