@@ -34,7 +34,7 @@
     inputRadios: input_radios,
     detailsDropdown: detailsDropdown)
 
-@(incomeSourcesType: String, form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(cashOrAccrualsFlag: Option[String] = None, incomeSourcesType: String, form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
 @prefix = @{"incomeSources.add." + incomeSourcesType + ".AccountingMethod"}
 
@@ -63,6 +63,7 @@
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
+    useFallbackBackLink = true,
     isAgent = isAgent,
     btaNavPartial = btaNavPartial) {
 
@@ -88,6 +89,7 @@
                     id = Some(s"$prefix-cash-basis-radio"),
                     value = Some("cash"),
                     content = Text(getMessage("radio-1-title")),
+                    checked = if(cashOrAccrualsFlag.getOrElse("") == "cash") true else false,
                     hint = Some(Hint(
                         id = Some(s"$prefix-radio-hint-1"),
                         classes = "govuk-hint govuk-radios__hint",
@@ -98,6 +100,7 @@
                     id = Some(s"$prefix-traditional-radio"),
                     value = Some("traditional"),
                     content = Text(getMessage("radio-2-title")),
+                    checked = if(cashOrAccrualsFlag.getOrElse("") == "accruals") true else false,
                     hint = Some(Hint(
                         id = Some(s"$prefix-radio-hint-2"),
                         classes = "govuk-hint govuk-radios__hint",
