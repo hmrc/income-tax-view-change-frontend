@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
@@ -23,13 +22,13 @@
 @this(
         mainTemplate: unifiedLayout,
         govukButton: GovukButton,
-        hmrcPageHeading: HmrcPageHeading,
-        p: p
+        hmrcPageHeading: HmrcPageHeading
 )
 
 @(
         messagesPrefix: String,
-        continueUrl: String,
+        manageIncomeSourceDetailsUrl: String,
+        manageIncomeSourcesUrl: String,
         isAgent: Boolean
 )(
         implicit messages: Messages,
@@ -39,6 +38,8 @@
 @getMessage(key: String, args: String*) = @{
     messages(s"$messagesPrefix.$key", args: _*)
 }
+
+@genericPrefix = @{ "incomeSources.manage.reportingMethodError" }
 
 @mainTemplate(
     pageTitle = messages("standardError.heading"),
@@ -52,11 +53,7 @@
         headingClasses = Some("govuk-heading-l")
     ))
 
-    @p(id = Some(s"$messagesPrefix.text")){ @getMessage("text") }
-
-    @govukButton(Button(
-        content = Text(messages("base.continue")),
-        href = Some(continueUrl),
-        attributes = Map("id" -> "continue-button")
-    ))
+    <p class="govuk-body" id="reportingMethodError.p1"> @getMessage("p1")</p>
+    <p class="govuk-body" id="reportingMethodError.p2"> @getMessage("p2") <a href="@manageIncomeSourceDetailsUrl" class="govuk-link">@messages(s"$genericPrefix.hyperlink1")</a>.</p>
+    <p class="govuk-body" id="reportingMethodError.p3"> @messages(s"$genericPrefix.p3") <a href="@manageIncomeSourcesUrl" class="govuk-link">@messages(s"$genericPrefix.hyperlink2")</a>.</p>
 }

@@ -77,7 +77,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
             Ok(
               reportingMethodChangeError(
                 isAgent = isAgent,
-                continueUrl = getContinueUrl(isAgent, incomeSourceType, id),
+                manageIncomeSourcesUrl = getManageIncomeSourcesUrl(isAgent),
+                manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(isAgent, incomeSourceType, id),
                 messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
               )
             )
@@ -90,14 +91,19 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     }
   }
 
-  private def getContinueUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType, incomeSourceId: String): String = {
+  private def getManageIncomeSourcesUrl(isAgent: Boolean): String = {
+    if(isAgent) routes.ManageIncomeSourceController.showAgent()
+    else routes.ManageIncomeSourceController.show()
+  }.url
+
+  private def getManageIncomeSourceDetailsUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType, incomeSourceId: String): String = {
     ((isAgent, incomeSourceType) match {
       case (false, UkProperty)      => routes.ManageIncomeSourceDetailsController.showUkProperty()
-      case (_,     UkProperty)      => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
+      case (true,  UkProperty)      => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
       case (false, ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignProperty()
-      case (_,     ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
-      case (false, _)               => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
-      case (_,     _)               => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
+      case (true,  ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
+      case (false, SelfEmployment)  => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
+      case (true,  SelfEmployment)  => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
     }).url
   }
 
