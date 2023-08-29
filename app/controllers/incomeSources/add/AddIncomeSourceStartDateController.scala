@@ -67,7 +67,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     IncomeSourceType.get(incomeSourceKey) match {
       case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
         s"Failed fulfil show request: ${ex.getMessage}")
-        Future.successful(getErrorHandler(isAgent).showInternalServerError())
+        Future.successful(showInternalServerError(isAgent))
       case Right(value) =>
         handleShowRequest(
           incomeSourceType = value,
@@ -84,7 +84,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     IncomeSourceType.get(incomeSourceKey) match {
       case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
         s"Failed fulfil submit request: ${ex.getMessage}")
-        Future.successful(getErrorHandler(isAgent).showInternalServerError())
+        Future.successful(showInternalServerError(isAgent))
       case Right(value) =>
         handleSubmitRequest(
           incomeSourceType = value,
@@ -117,7 +117,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
           case (_, Left(ex)) =>
             Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
               s"Failed to get income source start date from session, reason: ${ex.getMessage}")
-            getErrorHandler(isAgent).showInternalServerError()
+            showInternalServerError(isAgent)
         }
       } else Ok(customNotFoundErrorView())
     )
@@ -180,9 +180,9 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       }
   }
 
-  private def getErrorHandler(isAgent: Boolean): ShowInternalServerError = {
-    if (isAgent) itvcErrorHandlerAgent
-    else itvcErrorHandler
+  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler)
+      .showInternalServerError()
   }
 
   private def getFilledForm(form: Form[DateFormElement],

@@ -66,7 +66,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     IncomeSourceType.get(incomeSourceKey) match {
       case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest]: " +
         s"Failed fulfil show request: ${ex.getMessage}")
-        Future.successful(getErrorHandler(isAgent).showInternalServerError())
+        Future.successful(showInternalServerError(isAgent))
       case Right(value) =>
         handleShowRequest(
           incomeSourceType = value,
@@ -84,7 +84,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     IncomeSourceType.get(incomeSourceKey) match {
       case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
         s"Failed fulfil submit request: ${ex.getMessage}")
-        Future.successful(getErrorHandler(isAgent).showInternalServerError())
+        Future.successful(showInternalServerError(isAgent))
       case Right(value) =>
         handleSubmitRequest(
           incomeSourceType = value,
@@ -115,7 +115,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           case (Left(ex), _) =>
             Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
               s"Failed to get income source start date from session, reason: ${ex.getMessage}")
-            getErrorHandler(isAgent).showInternalServerError()
+            showInternalServerError(isAgent)
         }
       else Ok(customNotFoundErrorView())
     )
@@ -158,7 +158,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           case (Left(ex), _) =>
             Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
               s"Failed to get income source start date from session, reason: ${ex.getMessage}")
-            getErrorHandler(isAgent).showInternalServerError()
+            showInternalServerError(isAgent)
         }
       else Ok(customNotFoundErrorView())
     )
@@ -180,9 +180,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       }
   }
 
-  private def getErrorHandler(isAgent: Boolean): ShowInternalServerError = {
-    if (isAgent) itvcErrorHandlerAgent
-    else itvcErrorHandler
+  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler)
+      .showInternalServerError()
   }
 
   private def handleValidForm(backCall: Call,
@@ -213,8 +213,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           )
       case (Some(form.responseYes), _) =>
         Redirect(successCall)
-      case  _ => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
-        getErrorHandler(isAgent).showInternalServerError()
+      case  _ =>
+        Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
+        showInternalServerError(isAgent)
     }
   }
 

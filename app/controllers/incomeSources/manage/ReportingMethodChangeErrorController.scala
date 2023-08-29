@@ -108,8 +108,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
   }
 
   private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    if (isAgent) itvcErrorHandler.showInternalServerError()
-    else itvcErrorHandlerAgent.showInternalServerError()
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler)
+      .showInternalServerError()
   }
 
   private def authenticatedAction(isAgent: Boolean
