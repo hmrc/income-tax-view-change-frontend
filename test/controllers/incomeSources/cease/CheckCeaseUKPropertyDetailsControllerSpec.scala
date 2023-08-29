@@ -62,7 +62,6 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
     app.injector.instanceOf[CheckCeaseUKPropertyDetails],
     mockUpdateIncomeSourceService,
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 

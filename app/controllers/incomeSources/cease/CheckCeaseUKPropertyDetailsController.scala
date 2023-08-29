@@ -21,12 +21,12 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.UkProperty
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseUKPropertyDetails
 
@@ -44,14 +44,13 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
                                                       val service: UpdateIncomeSourceService,
                                                       val customNotFoundErrorView: CustomNotFoundError)
                                                      (implicit val appConfig: FrontendAppConfig,
-                                                      mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def handleRequest(isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -89,7 +88,7 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Future[Result] = {
     lazy val (redirectAction, errorHandler) = {
       if (isAgent)
         (routes.UKPropertyCeasedObligationsController.showAgent(), itvcErrorHandlerAgent)
@@ -107,11 +106,11 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
             Redirect(redirectAction.url)
           case r: UpdateIncomeSourceResponseError =>
             Logger("application").error(s"${if (isAgent) "[Agent]"}[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${r.status} ${r.reason}")
-            errorHandler.showInternalServerError()
+            Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, UkProperty.key))
         }
       }
     } else {
-      Future.successful(NotFound)
+      Future.successful(NotFound(customNotFoundErrorView()(user, messages)))
     } recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}[CheckCeaseUKPropertyDetailsController][submit] Error Submitting Cease Date : ${ex.getMessage}")

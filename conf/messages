@@ -1568,3 +1568,9 @@ incomeSources.manage.uk-property-manage-details.accounting-method               
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property business
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method for foreign property income
+
+incomeSources.cease.error.UK.notCeased.text                       = Your UK property business could not be ceased. We have not saved your answers. Please try again later.
+incomeSources.cease.error.FP.notCeased.text                       = Your foreign property business could not be ceased. We have not saved your answers. Please try again later.
+incomeSources.cease.error.SE.notCeased.text                       = Your sole trader business could not be ceased. We have not saved your answers. Please try again later.
+incomeSources.cease.error.notCeased.link.prefix                    = Back to
+incomeSources.cease.error.notCeased.link.text                     = cease an income source.

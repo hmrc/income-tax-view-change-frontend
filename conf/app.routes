@@ -342,6 +342,12 @@ GET          /agents/income-sources/cease/cease-uk-property-success             
 GET          /income-sources/cease/cease-foreign-property-success                          controllers.incomeSources.cease.ForeignPropertyCeasedObligationsController.show()
 GET          /agents/income-sources/cease/cease-foreign-property-success                   controllers.incomeSources.cease.ForeignPropertyCeasedObligationsController.showAgent()
 
+GET         /income-sources/cease/error-uk-property-not-ceased                              controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = false, incomeSourceType = "UK")
+GET         /agents/income-sources/cease/error-uk-property-not-ceased                       controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType = "UK")
+GET         /income-sources/cease/error-foreign-property-not-ceased                         controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = false, incomeSourceType = "FP")
+GET         /agents/income-sources/cease/error-foreign-property-not-ceased                  controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType = "FP")
+GET         /income-sources/cease/error-business-not-ceased                                 controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = false, incomeSourceType = "SE")
+GET         /agents/income-sources/cease/error-business-not-ceased                          controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType = "SE")
 
 # Income Sources - Manage
 GET          /income-sources/manage/view-and-manage-income-sources                         controllers.incomeSources.manage.ManageIncomeSourceController.show()

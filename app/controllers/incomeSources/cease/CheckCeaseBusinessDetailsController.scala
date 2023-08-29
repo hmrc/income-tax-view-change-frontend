@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
@@ -60,6 +61,7 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
     if (incomeSourcesEnabled) {
       (request.session.get(ceaseBusinessIncomeSourceId), request.session.get(ceaseBusinessEndDate)) match {
         case (Some(incomeSourceId), Some(cessationEndDate)) =>
+          println(Console.MAGENTA + incomeSourceId + " " + cessationEndDate + Console.WHITE)
           incomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(sources, incomeSourceId, cessationEndDate) match {
             case Right(viewModel) =>
               Future.successful(Ok(view(
@@ -69,7 +71,11 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
             case Left(ex) =>
               Logger("application").error(
                 s"[CheckCeaseBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              Future.successful(errorHandler.showInternalServerError())
+              //              Future.successful(errorHandler.showInternalServerError())
+              Future {
+                Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
+              }
+
           }
         case _ =>
           Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
@@ -82,7 +88,7 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
       case ex: Exception =>
         Logger("application").error(s"[ClientConfirmedController][handleRequest]${if (isAgent) "[Agent] "}" +
           s"Error getting CheckCeaseBusinessDetails page: ${ex.getMessage}")
-        errorHandler.showInternalServerError()
+        Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
     }
   }
 
@@ -120,13 +126,15 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
         case (Some(incomeSourceId), Some(cessationEndDate)) =>
           updateIncomeSourceservice
             .updateCessationDatev2(user.nino, incomeSourceId, cessationEndDate).flatMap {
-            case Right(_) =>
-              Future.successful(Redirect(redirectAction.url))
-            case _ =>
-              Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
-                s" Unsuccessful update response received")
-              Future(itvcErrorHandler.showInternalServerError())
-          }
+              case Right(_) =>
+                Future.successful(Redirect(redirectAction.url))
+              case _ =>
+                Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
+                  s" Unsuccessful update response received")
+                Future.successful {
+                  Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
+                }
+            }
         case _ =>
           Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
             s" Could not get incomeSourceId or ceaseBusinessEndDate from session")
