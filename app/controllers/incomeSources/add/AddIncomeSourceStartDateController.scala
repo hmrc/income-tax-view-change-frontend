@@ -60,38 +60,28 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def show(incomeSourceKey: String,
+  def show(incomeSourceType: IncomeSourceType,
            isAgent: Boolean,
            isChange: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-    IncomeSourceType.get(incomeSourceKey) match {
-      case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
-        s"Failed fulfil show request: ${ex.getMessage}")
-        Future.successful(showInternalServerError(isAgent))
-      case Right(value) =>
-        handleShowRequest(
-          incomeSourceType = value,
-          isAgent = isAgent,
-          isUpdate = isChange
-        )
-    }
+
+    handleShowRequest(
+      incomeSourceType = incomeSourceType,
+      isAgent = isAgent,
+      isUpdate = isChange
+    )
   }
 
-  def submit(incomeSourceKey: String,
+  def submit(incomeSourceType: IncomeSourceType,
              isAgent: Boolean,
              isChange: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-    IncomeSourceType.get(incomeSourceKey) match {
-      case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
-        s"Failed fulfil submit request: ${ex.getMessage}")
-        Future.successful(showInternalServerError(isAgent))
-      case Right(value) =>
-        handleSubmitRequest(
-          incomeSourceType = value,
-          isAgent = isAgent,
-          isUpdate = isChange
-        )
-    }
+
+    handleSubmitRequest(
+      incomeSourceType = incomeSourceType,
+      isAgent = isAgent,
+      isUpdate = isChange
+    )
   }
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,
@@ -227,8 +217,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         case (false, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.show()
         case (true, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.showAgent()
       },
-      routes.AddIncomeSourceStartDateController.submit(incomeSourceType.key, isAgent, isChange),
-      routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType.key, isAgent, isChange)
+      routes.AddIncomeSourceStartDateController.submit(incomeSourceType, isAgent, isChange),
+      routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType, isAgent, isChange)
     )
   }
 }

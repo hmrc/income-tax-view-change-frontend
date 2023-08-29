@@ -54,8 +54,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
            isAgent: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-      handleShowRequest(id, incomeSourceType, isAgent)
-    }
+    handleShowRequest(id, incomeSourceType, isAgent)
+  }
 
   private def handleShowRequest(soleTraderBusinessId: Option[String],
                                 incomeSourceType: IncomeSourceType,

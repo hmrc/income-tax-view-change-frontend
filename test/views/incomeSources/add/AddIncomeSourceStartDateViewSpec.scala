@@ -44,7 +44,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
                 .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.error.required"))
               else AddIncomeSourceStartDateForm(incomeSourceType.startDateMessagesPrefix)
             },
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType.key, isAgent, isUpdate),
+            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType, isAgent, isUpdate),
             isAgent = isAgent,
             messagesPrefix = incomeSourceType.startDateMessagesPrefix,
             backUrl = (isAgent, isUpdate, incomeSourceType) match {

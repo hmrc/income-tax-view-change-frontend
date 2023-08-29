@@ -58,40 +58,28 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
-  def show(incomeSourceKey: String,
+  def show(incomeSourceType: IncomeSourceType,
            isAgent: Boolean,
            isChange: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    IncomeSourceType.get(incomeSourceKey) match {
-      case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest]: " +
-        s"Failed fulfil show request: ${ex.getMessage}")
-        Future.successful(showInternalServerError(isAgent))
-      case Right(value) =>
-        handleShowRequest(
-          incomeSourceType = value,
-          isAgent = isAgent,
-          isChange = isChange
-        )
-    }
+    handleShowRequest(
+      incomeSourceType = incomeSourceType,
+      isAgent = isAgent,
+      isChange = isChange
+    )
   }
 
-  def submit(incomeSourceKey: String,
+  def submit(incomeSourceType: IncomeSourceType,
              isAgent: Boolean,
              isChange: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    IncomeSourceType.get(incomeSourceKey) match {
-      case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
-        s"Failed fulfil submit request: ${ex.getMessage}")
-        Future.successful(showInternalServerError(isAgent))
-      case Right(value) =>
-        handleSubmitRequest(
-          incomeSourceType = value,
-          isAgent = isAgent,
-          isChange = isChange
-        )
-    }
+    handleSubmitRequest(
+      incomeSourceType = incomeSourceType,
+      isAgent = isAgent,
+      isChange = isChange
+    )
   }
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,
@@ -235,8 +223,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                        isChange: Boolean,
                        incomeSourceType: IncomeSourceType): (Call, Call, Call) = {
     (
-      routes.AddIncomeSourceStartDateController.show(incomeSourceType.key, isAgent, isChange),
-      routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType.key, isAgent, isChange),
+      routes.AddIncomeSourceStartDateController.show(incomeSourceType, isAgent, isChange),
+      routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType, isAgent, isChange),
       (isAgent, isChange, incomeSourceType) match {
         case (false, true, SelfEmployment) => routes.CheckBusinessDetailsController.show()
         case (true, true, SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
