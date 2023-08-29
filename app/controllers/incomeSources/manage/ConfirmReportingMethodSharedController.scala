@@ -218,7 +218,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       .submit(incomeSourceId, taxYear, changeTo, incomeSourceType, isAgent)
 
     val errorCall: Call = routes.ReportingMethodChangeErrorController
-      .show(id = if(isAgent) Some(incomeSourceId) else None, incomeSourceType, isAgent)
+      .show(id = if(incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None, incomeSourceType, isAgent)
 
     val (backCall, successCall) = (isAgent, incomeSourceType) match {
       case (false, SelfEmployment) =>
