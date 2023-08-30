@@ -17,14 +17,10 @@
 package views.incomeSources.manage
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import testUtils.TestSupport
-import forms.incomeSources.add.AddBusinessReportingMethodForm
 import models.core.AddressModel
-import models.incomeSourceDetails.viewmodels.{BusinessReportingMethodViewModel, ManageIncomeSourceDetailsViewModel, ViewBusinessDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.data.Form
-import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testSelfEmploymentId
@@ -82,7 +78,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     latencyDetails = None,
     incomeSourceType = SelfEmployment
   )
-  
+
   val ukViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = None,
@@ -190,7 +186,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
   }
 
-  class ukSetup(isAgent: Boolean, error: Boolean = false ) {
+  class ukSetup(isAgent: Boolean, error: Boolean = false) {
     val backUrl: String = if (isAgent) {
       controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
     } else {
