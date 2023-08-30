@@ -55,213 +55,48 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     }
   }
 
-  "AddIncomeSourceStartDateCheck page - Individual - UK Property" should {
-    "render the heading" in new Setup(false, false, UkProperty) {
-      document.getElementsByClass("govuk-fieldset__legend--l").text() shouldBe messages("radioForm.checkDate.heading")
-    }
-    "render the date entered in Add Income Source Start Date page" in new Setup(false, false, UkProperty) {
-      document.getElementById("start-date-check-hint").text shouldBe formattedStartDate
-    }
-    "render the radio form" in new Setup(false, false, UkProperty) {
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
-      document.getElementsByClass("govuk-radios").size() shouldBe 1
-    }
-    "render the back link with the correct URL" in new Setup(false, false, UkProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
-    }
-    "render the continue button" in new Setup(false, false, UkProperty) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
-    }
-    "render the input error" in new Setup(false, true, UkProperty) {
-      document.getElementById("start-date-check-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages(s"${UkProperty.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the error summary" in new Setup(false, true, UkProperty) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${UkProperty.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the back url which redirects to Add Income Source Start Date Page" in new Setup(false, false, UkProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
-    }
-    "render the back url which redirects to Add Income Source Start Date Change page" in new Setup(false, false, UkProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
-    }
-  }
-
-  "AddIncomeSourceStartDateCheck page - Agent - UK Property" should {
-    "render the heading" in new Setup(true, false, UkProperty) {
-      document.getElementsByClass("govuk-fieldset__legend--l").text() shouldBe messages("radioForm.checkDate.heading")
-    }
-    "render the date entered in Add Income Source Start Date page" in new Setup(true, false, UkProperty) {
-      document.getElementById("start-date-check-hint").text shouldBe formattedStartDate
-    }
-    "render the radio form" in new Setup(true, false, UkProperty) {
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
-      document.getElementsByClass("govuk-radios").size() shouldBe 1
-    }
-    "render the back link with the correct URL" in new Setup(true, false, UkProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
-    }
-    "render the continue button" in new Setup(true, false, UkProperty) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
-    }
-    "render the input error" in new Setup(true, true, UkProperty) {
-      document.getElementById("start-date-check-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages(s"${UkProperty.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the error summary" in new Setup(true, true, UkProperty) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${UkProperty.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the back url which redirects to Add Income Source Start Date Page" in new Setup(true, false, UkProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true).url
-    }
-    "render the back url which redirects to Add Income Source Start Date Change page" in new Setup(true, false, UkProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true).url
+  def executeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+    s"${if (isAgent) "Agent" else "Individual"}: AddIncomeSourceStartDateCheckView - $incomeSourceType" should {
+      "render the heading" in new Setup(isAgent, hasError = false, incomeSourceType) {
+        document.getElementsByClass("govuk-fieldset__legend--l").text() shouldBe messages("radioForm.checkDate.heading")
+      }
+      "render the date entered in Add Income Source Start Date page" in new Setup(isAgent, hasError = false, incomeSourceType) {
+        document.getElementById("start-date-check-hint").text shouldBe formattedStartDate
+      }
+      "render the radio form" in new Setup(isAgent, hasError = false, incomeSourceType) {
+        document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
+        document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
+        document.getElementsByClass("govuk-radios").size() shouldBe 1
+      }
+      "render the back link with the correct URL for Normal journey" in new Setup(isAgent, hasError = false, incomeSourceType, isChange = false) {
+        document.getElementById("back").text() shouldBe messages("base.back")
+        document.getElementById("back").attr("href") shouldBe
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, incomeSourceType).url
+      }
+      "render the back link with the correct URL for Change journey" in new Setup(isAgent, hasError = false, incomeSourceType, isChange = true) {
+        document.getElementById("back").text() shouldBe messages("base.back")
+        document.getElementById("back").attr("href") shouldBe
+          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = true, incomeSourceType).url
+      }
+      "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
+        document.getElementById("continue-button").text() shouldBe messages("base.continue")
+      }
+      "render the input error" in new Setup(isAgent, hasError = true, incomeSourceType) {
+        document.getElementById("start-date-check-error").text() shouldBe messages("base.error-prefix") + " " +
+          messages(s"${incomeSourceType.addStartDateCheckMessagesPrefix}.error")
+      }
+      "render the error summary" in new Setup(isAgent, hasError = true, incomeSourceType) {
+        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+        document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe
+          messages(s"${incomeSourceType.addStartDateCheckMessagesPrefix}.error")
+      }
     }
   }
 
-  "AddIncomeSourceStartDateCheck page - Individual - Foreign Property" should {
-    "render the heading" in new Setup(false, false, ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__legend--l").text() shouldBe messages("radioForm.checkDate.heading")
-    }
-    "render the date entered in Add Income Source Start Date page" in new Setup(false, false, ForeignProperty) {
-      document.getElementById("start-date-check-hint").text shouldBe formattedStartDate
-    }
-    "render the radio form" in new Setup(false, false, ForeignProperty) {
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
-      document.getElementsByClass("govuk-radios").size() shouldBe 1
-    }
-    "render the back link with the correct URL" in new Setup(false, false, ForeignProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
-    }
-    "render the continue button" in new Setup(false, false, ForeignProperty) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
-    }
-    "render the input error" in new Setup(false, true, ForeignProperty) {
-      document.getElementById("start-date-check-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages(s"${ForeignProperty.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the error summary" in new Setup(false, true, ForeignProperty) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${ForeignProperty.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the back url which redirects to Add Income Source Start Date Page" in new Setup(false, false, ForeignProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
-    }
-    "render the back url which redirects to Add Income Source Start Date Check page" in new Setup(false, false, ForeignProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
-    }
-  }
-
-  "AddIncomeSourceStartDateCheck page - Agent - Foreign Property" should {
-    "render the heading" in new Setup(true, false, ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__legend--l").text() shouldBe messages("radioForm.checkDate.heading")
-    }
-    "render the date entered in Add Income Source Start Date page" in new Setup(true, false, ForeignProperty) {
-      document.getElementById("start-date-check-hint").text shouldBe formattedStartDate
-    }
-    "render the radio form" in new Setup(true, false, ForeignProperty) {
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
-      document.getElementsByClass("govuk-radios").size() shouldBe 1
-    }
-    "render the back link with the correct URL" in new Setup(true, false, ForeignProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
-    }
-    "render the continue button" in new Setup(true, false, ForeignProperty) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
-    }
-    "render the input error" in new Setup(true, true, ForeignProperty) {
-      document.getElementById("start-date-check-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages(s"${ForeignProperty.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the error summary" in new Setup(true, true, ForeignProperty) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${ForeignProperty.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the back url which redirects to Add Income Source Start Date Page" in new Setup(true, false, ForeignProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true).url
-    }
-    "render the back url which redirects to Add Income Source Start Date Change Page" in new Setup(true, false, ForeignProperty, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true).url
-    }
-  }
-
-  "AddIncomeSourceStartDateCheck page - Individual - Sole Trader Business" should {
-    "render the heading" in new Setup(false, false, SelfEmployment) {
-      document.getElementsByClass("govuk-fieldset__legend--l").text() shouldBe messages("radioForm.checkDate.heading")
-    }
-    "render the date entered in Add Income Source Start Date page" in new Setup(false, false, SelfEmployment) {
-      document.getElementById("start-date-check-hint").text shouldBe formattedStartDate
-    }
-    "render the radio form" in new Setup(false, false, SelfEmployment) {
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
-      document.getElementsByClass("govuk-radios").size() shouldBe 1
-    }
-    "render the back link with the correct URL" in new Setup(false, false, SelfEmployment) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-    }
-    "render the continue button" in new Setup(false, false, SelfEmployment) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
-    }
-    "render the input error" in new Setup(false, true, SelfEmployment) {
-      document.getElementById("start-date-check-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages(s"${SelfEmployment.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the error summary" in new Setup(false, true, SelfEmployment) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${SelfEmployment.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the back url which redirects to Add Income Source Start Date Page" in new Setup(false, false, SelfEmployment, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true).url
-    }
-    "render the back url which redirects to Add Income Source Start Date Change Page" in new Setup(false, false, SelfEmployment, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true).url
-    }
-  }
-
-  "AddIncomeSourceStartDateCheck page - Agent - Sole Trader Business" should {
-    "render the heading" in new Setup(true, false, SelfEmployment) {
-      document.getElementsByClass("govuk-fieldset__legend--l").text() shouldBe messages("radioForm.checkDate.heading")
-    }
-    "render the date entered in Add Income Source Start Date page" in new Setup(true, false, SelfEmployment) {
-      document.getElementById("start-date-check-hint").text shouldBe formattedStartDate
-    }
-    "render the radio form" in new Setup(true, false, SelfEmployment) {
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
-      document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
-      document.getElementsByClass("govuk-radios").size() shouldBe 1
-    }
-    "render the back link with the correct URL" in new Setup(true, false, SelfEmployment) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
-    }
-    "render the continue button" in new Setup(true, false, SelfEmployment) {
-      document.getElementById("continue-button").text() shouldBe messages("base.continue")
-    }
-    "render the input error" in new Setup(true, true, SelfEmployment) {
-      document.getElementById("start-date-check-error").text() shouldBe messages("base.error-prefix") + " " +
-        messages(s"${SelfEmployment.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the error summary" in new Setup(true, true, SelfEmployment) {
-      document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-      document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe messages(s"${SelfEmployment.addStartDateCheckMessagesPrefix}.error")
-    }
-    "render the back url which redirects to Add Income Source Start Date Page" in new Setup(true, false, SelfEmployment, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
-    }
-    "render the back url which redirects to Add Income Source Start Date Change Page" in new Setup(true, false, SelfEmployment, true) {
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
-    }
+  for {
+    isAgent <- Seq(false, true)
+    incomeSourceType <- Seq(UkProperty, ForeignProperty, SelfEmployment)
+  } yield {
+    executeTest(isAgent, incomeSourceType)
   }
 }
