@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.UKPropertyReportingMethodViewModel
@@ -145,8 +146,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                               (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     val updatedForm = AddUKPropertyReportingMethodForm.updateErrorMessagesWithValues(errors)
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showUKPropertyAgent() else
-      routes.IncomeSourceNotAddedController.showUKProperty()
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty.key) else
+      routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key)
     val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit(id)
 

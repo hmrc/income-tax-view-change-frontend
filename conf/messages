@@ -1136,6 +1136,12 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date start
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
 incomeSources.add.addIncomeSources.unknown                          = Unknown
 
+incomeSources.add.error.standardError                            = Sorry, there is a problem with the service
+incomeSources.add.error.incomeSourceNotSaved.p1                  = Your {0} business could not be added. We have not saved your answers. Please try again later.
+incomeSources.add.error.incomeSourceNotSaved.se                  = sole trader
+incomeSources.add.error.incomeSourceNotSaved.uk                  = UK property
+incomeSources.add.error.incomeSourceNotSaved.fp                  = foreign property
+
 ## cease income sources
 cease-income-sources.heading                  = Cease an income source
 cease-income-sources.self-employment.h1       = Self employment (sole trader)

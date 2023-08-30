@@ -1162,6 +1162,12 @@ incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifydd
 incomeSources.add.checkUKPropertyDetails.change                 = Newid
 incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
 
+incomeSources.add.error.standardError                            = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+incomeSources.add.error.incomeSourceNotSaved.p1                  = Nid oedd modd ychwanegu eich busnes {0}. Nid ydym wedi cadw’ch atebion. Rhowch gynnig arall arni yn nes ymlaen.
+incomeSources.add.error.incomeSourceNotSaved.se                  = unig fasnachwr
+incomeSources.add.error.incomeSourceNotSaved.uk                  = eiddo yn y DU
+incomeSources.add.error.incomeSourceNotSaved.fp                  = eiddo tramor
+
 ## cease income sources
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
 cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)

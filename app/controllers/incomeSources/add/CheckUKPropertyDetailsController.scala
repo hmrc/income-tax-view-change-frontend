@@ -132,7 +132,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val errorHandler = getErrorHandler(isAgent)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty.key)
+      else routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key)
 
     withIncomeSourcesFS {
       getUKPropertyDetailsFromSession(user) match {
@@ -141,8 +142,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
               withIncomeSourcesRemovedFromSession {
-                if (isAgent) Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKPropertyAgent())
-                else Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty())
+                Redirect(redirectErrorUrl)
               }
             case Right(CreateIncomeSourceResponse(id)) =>
               val redirectUrl = getUKPropertyReportingMethodUrl(isAgent, id)
@@ -154,8 +154,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
               Logger("application").error(
                 s"[CheckUKPropertyDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
               withIncomeSourcesRemovedFromSession {
-                if (isAgent) Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKPropertyAgent())
-                else Redirect(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showUKProperty())
+                Redirect(redirectErrorUrl)
               }
           }
         case Left(ex: Throwable) =>
@@ -163,7 +162,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
             s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
           Future.successful {
             withIncomeSourcesRemovedFromSession {
-              errorHandler.showInternalServerError()
+              Redirect(redirectErrorUrl)
             }
           }
       }

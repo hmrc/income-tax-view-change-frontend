@@ -282,12 +282,12 @@ GET          /income-sources/add/change-uk-property-accounting-method           
 GET          /agents/income-sources/add/change-uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String = "UK")
 
 
-GET          /income-sources/add/error-business-not-added                                       controllers.incomeSources.add.IncomeSourceNotAddedController.showBusiness()
-GET          /agents/income-sources/add/error-business-not-added                                controllers.incomeSources.add.IncomeSourceNotAddedController.showBusinessAgent()
-GET          /income-sources/add/error-foreign-property-not-added                               controllers.incomeSources.add.IncomeSourceNotAddedController.showForeignProperty()
-GET          /agents/income-sources/add/error-foreign-property-not-added                        controllers.incomeSources.add.IncomeSourceNotAddedController.showForeignPropertyAgent()
-GET          /income-sources/add/error-uk-property-not-added                                    controllers.incomeSources.add.IncomeSourceNotAddedController.showUKProperty()
-GET          /agents/income-sources/add/error-uk-property-not-added                             controllers.incomeSources.add.IncomeSourceNotAddedController.showUKPropertyAgent()
+GET          /income-sources/add/error-business-not-added                                       controllers.incomeSources.add.IncomeSourceNotAddedController.show(incomeSourceType: String = "SE")
+GET          /agents/income-sources/add/error-business-not-added                                controllers.incomeSources.add.IncomeSourceNotAddedController.showAgent(incomeSourceType: String = "SE")
+GET          /income-sources/add/error-foreign-property-not-added                               controllers.incomeSources.add.IncomeSourceNotAddedController.show(incomeSourceType: String = "FP")
+GET          /agents/income-sources/add/error-foreign-property-not-added                        controllers.incomeSources.add.IncomeSourceNotAddedController.showAgent(incomeSourceType: String = "FP")
+GET          /income-sources/add/error-uk-property-not-added                                    controllers.incomeSources.add.IncomeSourceNotAddedController.show(incomeSourceType: String = "UK")
+GET          /agents/income-sources/add/error-uk-property-not-added                             controllers.incomeSources.add.IncomeSourceNotAddedController.showAgent(incomeSourceType: String = "UK")
 
 GET          /income-sources/add/error-business-reporting-method-not-saved                      controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showBusiness()
 GET          /agents/income-sources/add/error-business-reporting-method-not-saved               controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showBusinessAgent()
