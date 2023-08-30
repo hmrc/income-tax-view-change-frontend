@@ -58,9 +58,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
-  def show(incomeSourceType: IncomeSourceType,
-           isAgent: Boolean,
-           isChange: Boolean
+  def show(isAgent: Boolean,
+           isChange: Boolean,
+           incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     handleShowRequest(
@@ -70,9 +70,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     )
   }
 
-  def submit(incomeSourceType: IncomeSourceType,
-             isAgent: Boolean,
-             isChange: Boolean
+  def submit(isAgent: Boolean,
+             isChange: Boolean,
+             incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     handleSubmitRequest(
@@ -223,8 +223,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                        isChange: Boolean,
                        incomeSourceType: IncomeSourceType): (Call, Call, Call) = {
     (
-      routes.AddIncomeSourceStartDateController.show(incomeSourceType, isAgent, isChange),
-      routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType, isAgent, isChange),
+      routes.AddIncomeSourceStartDateController.show(isAgent, isChange, incomeSourceType),
+      routes.AddIncomeSourceStartDateCheckController.submit(isAgent, isChange, incomeSourceType),
       (isAgent, isChange, incomeSourceType) match {
         case (false, true, SelfEmployment) => routes.CheckBusinessDetailsController.show()
         case (true, true, SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()

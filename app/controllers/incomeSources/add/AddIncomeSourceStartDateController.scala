@@ -60,9 +60,9 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def show(incomeSourceType: IncomeSourceType,
-           isAgent: Boolean,
-           isChange: Boolean
+  def show(isAgent: Boolean,
+           isChange: Boolean,
+           incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     handleShowRequest(
@@ -72,9 +72,9 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     )
   }
 
-  def submit(incomeSourceType: IncomeSourceType,
-             isAgent: Boolean,
-             isChange: Boolean
+  def submit(isAgent: Boolean,
+             isChange: Boolean,
+             incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     handleSubmitRequest(
@@ -217,8 +217,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         case (false, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.show()
         case (true, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.showAgent()
       },
-      routes.AddIncomeSourceStartDateController.submit(incomeSourceType, isAgent, isChange),
-      routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType, isAgent, isChange)
+      routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType),
+      routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
     )
   }
 }
