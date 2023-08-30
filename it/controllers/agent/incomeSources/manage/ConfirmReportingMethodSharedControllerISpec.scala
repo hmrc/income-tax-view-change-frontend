@@ -42,18 +42,18 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     .ConfirmReportingMethodSharedController
 
   val confirmReportingMethodShowUKPropertyUrl: String = confirmReportingMethodSharedController
-    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, UkProperty, isAgent = true).url
+    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
   val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, ForeignProperty, isAgent = true).url
+    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
   val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .show(id = Some(testSelfEmploymentId), taxYear = taxYear, changeTo = annual, SelfEmployment, isAgent = true).url
+    .show(id = Some(testSelfEmploymentId), taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
 
   val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, UkProperty, isAgent = true).url
+    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
   val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, ForeignProperty, isAgent = true).url
+    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submit(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual, SelfEmployment, isAgent = true).url
+    .submit(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
     .showAgentUKProperty(changeTo = annual, taxYear = taxYear).url
@@ -336,7 +336,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(Some(testSelfEmploymentId), SelfEmployment, isAgent = true).url)
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(Some(testSelfEmploymentId), incomeSourceType = SelfEmployment, isAgent = true).url)
         )
       }
     }
@@ -363,7 +363,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(None, ForeignProperty, isAgent = true).url)
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(None, incomeSourceType = ForeignProperty, isAgent = true).url)
         )
       }
     }
@@ -390,7 +390,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(None, UkProperty, isAgent = true).url)
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(None, incomeSourceType = UkProperty, isAgent = true).url)
         )
       }
     }

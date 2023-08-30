@@ -67,7 +67,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
+          Some(testSoleTraderBusinessIncomeSourceId), incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
@@ -81,7 +81,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, UkProperty, isAgent = false)(fakeRequestWithActiveSession)
+          None, incomeSourceType = UkProperty, isAgent = false)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -95,7 +95,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, ForeignProperty, isAgent = false)(fakeRequestWithActiveSession)
+          None, incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -109,7 +109,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSelfEmploymentId), SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
+          Some(testSelfEmploymentId), incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -129,7 +129,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+          Some(testSoleTraderBusinessIncomeSourceId), incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
@@ -143,7 +143,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, UkProperty, isAgent = true)(fakeRequestConfirmedClient())
+          None, incomeSourceType = UkProperty, isAgent = true)(fakeRequestConfirmedClient())
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -159,7 +159,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, ForeignProperty, isAgent = true)(fakeRequestConfirmedClient())
+          None, incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient())
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -175,7 +175,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSelfEmploymentId), SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+          Some(testSelfEmploymentId), incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
 
         val document = Jsoup.parse(contentAsString(result))
 

@@ -172,12 +172,12 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   def getBackurl(isAgent: Boolean, mode: IncomeSourceType, incomeSourceId: String, changeTo: String, taxYear: String): String = {
     ((isAgent, mode) match {
-      case (false, UkProperty)      => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, UkProperty, isAgent = false)
-      case (true,  UkProperty)      => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, UkProperty, isAgent = true)
-      case (false, ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, ForeignProperty, isAgent = false)
-      case (true,  ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, ForeignProperty, isAgent = true)
-      case (false, SelfEmployment)  => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, SelfEmployment, isAgent = false)
-      case (true,  SelfEmployment)  => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, SelfEmployment, isAgent = true)
+      case (false, UkProperty)      => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent = false, UkProperty)
+      case (true,  UkProperty)      => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent = true, UkProperty)
+      case (false, ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent = false, ForeignProperty)
+      case (true,  ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent = true, ForeignProperty)
+      case (false, SelfEmployment)  => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, isAgent = false, SelfEmployment)
+      case (true,  SelfEmployment)  => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, isAgent = true, SelfEmployment)
     }).url
   }
 

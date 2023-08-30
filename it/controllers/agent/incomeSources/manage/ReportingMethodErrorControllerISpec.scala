@@ -32,11 +32,11 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
   private lazy val reportingMethodChangeErrorController = controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController
 
   val reportingMethodChangeErrorUKPropertyUrl: String = reportingMethodChangeErrorController
-    .show(None, UkProperty, isAgent = true).url
+    .show(None, incomeSourceType = UkProperty, isAgent = true).url
   val reportingMethodChangeErrorForeignPropertyUrl: String = reportingMethodChangeErrorController
-    .show(None, ForeignProperty, isAgent = true).url
+    .show(None, incomeSourceType = ForeignProperty, isAgent = true).url
   val reportingMethodChangeErrorBusinessUrl: String = reportingMethodChangeErrorController
-    .show(Some(testSelfEmploymentId), SelfEmployment, isAgent = true).url
+    .show(Some(testSelfEmploymentId), incomeSourceType = SelfEmployment, isAgent = true).url
 
   val continueButtonText: String = messagesAPI("base.continue")
 

@@ -58,8 +58,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   def show(id: Option[String],
            taxYear: String,
            changeTo: String,
-           incomeSourceType: IncomeSourceType,
-           isAgent: Boolean
+           isAgent: Boolean,
+           incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, id)
@@ -68,8 +68,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   def submit(id: String,
              taxYear: String,
              changeTo: String,
-             incomeSourceType: IncomeSourceType,
-             isAgent: Boolean
+             isAgent: Boolean,
+             incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     handleSubmitRequest(taxYear, changeTo, isAgent, id, incomeSourceType)
@@ -215,10 +215,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                               ): (Call, Call, Call, Call) = {
 
     val postAction: Call = routes.ConfirmReportingMethodSharedController
-      .submit(incomeSourceId, taxYear, changeTo, incomeSourceType, isAgent)
+      .submit(incomeSourceId, taxYear, changeTo, isAgent, incomeSourceType)
 
     val errorCall: Call = routes.ReportingMethodChangeErrorController
-      .show(id = if(incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None, incomeSourceType, isAgent)
+      .show(id = if(incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None, isAgent, incomeSourceType)
 
     val (backCall, successCall) = (isAgent, incomeSourceType) match {
       case (false, SelfEmployment) =>

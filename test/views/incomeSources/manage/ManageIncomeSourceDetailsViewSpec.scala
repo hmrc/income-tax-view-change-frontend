@@ -144,7 +144,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
-      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(Some(id), taxYear, changeTo, SelfEmployment, isAgent).url
+      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(Some(id), taxYear, changeTo, incomeSourceType = SelfEmployment, isAgent = isAgent).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -167,7 +167,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     def changeReportingMethodUrl2(id: String, taxYear: String, changeTo: String): String = {
-      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(Some(id), taxYear, changeTo, SelfEmployment, isAgent).url
+      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(Some(id), taxYear, changeTo, isAgent, SelfEmployment).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -190,7 +190,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, UkProperty, isAgent).url
+      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, UkProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -212,7 +212,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, UkProperty, isAgent).url
+      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, UkProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -234,7 +234,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, ForeignProperty, isAgent).url
+      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, ForeignProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -256,7 +256,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, ForeignProperty, isAgent).url
+      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, ForeignProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
