@@ -1162,6 +1162,13 @@ incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifydd
 incomeSources.add.checkUKPropertyDetails.change                 = Newid
 incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
 
+incomeSources.add.error.standardError                               = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+incomeSources.add.error.reportingMethodNotSaved.p1                  = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
+incomeSources.add.error.reportingMethodNotSaved.p2                  = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ''blynyddol'' yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr adran i weld a rheoli ffynonellau incwm.
+incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasnachwr
+incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
+incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
+
 ## cease income sources
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben
 cease-income-sources.self-employment.h1       = Hunangyflogaeth (unig fasnachwr)

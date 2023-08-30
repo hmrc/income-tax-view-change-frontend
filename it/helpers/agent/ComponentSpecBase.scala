@@ -22,12 +22,13 @@ import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.CeaseForeignPropertyForm
 import forms.agent.ClientsUTRForm
+import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
 import forms.incomeSources.cease.CeaseUKPropertyForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
 import org.scalatest._
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.http.HeaderNames
@@ -39,8 +40,10 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 
 import java.time.LocalDate
+import java.time.Month.APRIL
 import javax.inject.Singleton
 import scala.concurrent.Future
 import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
@@ -427,17 +430,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post("/income-sources/cease/uk-property-check-details", additionalCookies)(Map.empty)
 
     def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      val formData = form.toFormMap.map { case (k, v) => k -> Seq(v.getOrElse("")) }
       post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", additionalCookies = additionalCookies)(formData)
     }
 
     def postAddUKPropertyReportingMethod(form: AddUKPropertyReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      val formData = form.toFormMap.map { case (k, v) => k -> Seq(v.getOrElse("")) }
       post(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
     def postAddForeignPropertyReportingMethod(form: AddForeignPropertyReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      val formData = form.toFormMap.map { case (k, v) => k -> Seq(v.getOrElse("")) }
       post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
@@ -498,6 +501,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddBusinessAddress: WSResponse =
       get("/income-sources/add/business-address")
+
+    def getSEReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-business-reporting-method-not-saved?id=$id", session)
+
+    def getUkPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved?id=$id", session)
+
+    def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
   }
 
   def unauthorisedTest(uri: String): Unit = {

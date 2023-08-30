@@ -1136,6 +1136,13 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date start
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
 incomeSources.add.addIncomeSources.unknown                          = Unknown
 
+incomeSources.add.error.standardError                               = Sorry, there is a problem with the service
+incomeSources.add.error.reportingMethodNotSaved.p1                  = Your {0} business was added, but we were unable to save the reporting frequency for one or more tax years.
+incomeSources.add.error.reportingMethodNotSaved.p2                  = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ''View and manage income sources''.
+incomeSources.add.error.reportingMethodNotSaved.se                  = sole trader
+incomeSources.add.error.reportingMethodNotSaved.uk                  = UK property
+incomeSources.add.error.reportingMethodNotSaved.fp                  = foreign property
+
 ## cease income sources
 cease-income-sources.heading                  = Cease an income source
 cease-income-sources.self-employment.h1       = Self employment (sole trader)

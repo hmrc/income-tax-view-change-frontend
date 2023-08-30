@@ -290,12 +290,13 @@ GET          /agents/income-sources/add/error-foreign-property-not-added        
 GET          /income-sources/add/error-uk-property-not-added                                    controllers.incomeSources.add.IncomeSourceNotAddedController.showUKProperty()
 GET          /agents/income-sources/add/error-uk-property-not-added                             controllers.incomeSources.add.IncomeSourceNotAddedController.showUKPropertyAgent()
 
-GET          /income-sources/add/error-business-reporting-method-not-saved                      controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showBusiness()
-GET          /agents/income-sources/add/error-business-reporting-method-not-saved               controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showBusinessAgent()
-GET          /income-sources/add/error-foreign-property-reporting-method-not-saved              controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showForeignProperty()
-GET          /agents/income-sources/add/error-foreign-property-reporting-method-not-saved       controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showForeignPropertyAgent()
-GET          /income-sources/add/error-uk-property-reporting-method-not-saved                  controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showUKProperty()
-GET          /agents/income-sources/add/error-uk-property-reporting-method-not-saved            controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showUKPropertyAgent()
+GET          /income-sources/add/error-business-reporting-method-not-saved                     controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.show(id: String, incomeSourceType: String = "SE")
+GET          /agents/income-sources/add/error-business-reporting-method-not-saved              controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showAgent(id: String, incomeSourceType:String = "SE")
+GET          /income-sources/add/error-uk-property-reporting-method-not-saved                 controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.show(id: String, incomeSourceType: String = "UK")
+GET          /agents/income-sources/add/error-uk-property-reporting-method-not-saved          controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showAgent(id: String, incomeSourceType: String = "UK")
+GET          /income-sources/add/error-foreign-property-reporting-method-not-saved             controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.show(id: String, incomeSourceType: String = "FP")
+GET          /agents/income-sources/add/error-foreign-property-reporting-method-not-saved      controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showAgent(id: String, incomeSourceType: String = "FP")
+
 
 # Income Sources - Cease
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()
