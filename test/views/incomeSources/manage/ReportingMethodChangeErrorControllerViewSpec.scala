@@ -98,10 +98,10 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
     }
   }
 
-  executeTest(isAgent = false, UkProperty)
-  executeTest(isAgent = false, SelfEmployment)
-  executeTest(isAgent = false, ForeignProperty)
-  executeTest(isAgent = true,  UkProperty)
-  executeTest(isAgent = true,  SelfEmployment)
-  executeTest(isAgent = true,  ForeignProperty)
+  for {
+    isAgent <- Seq(false, true)
+    incomeSourceType <- Seq(UkProperty, ForeignProperty, SelfEmployment)
+  } yield {
+    executeTest(isAgent, incomeSourceType)
+  }
 }
