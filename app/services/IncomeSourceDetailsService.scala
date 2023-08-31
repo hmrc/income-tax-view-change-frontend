@@ -16,13 +16,11 @@
 
 package services
 
-import auth.{MtdItUser, MtdItUserWithNino}
-import config.featureswitch.TimeMachineAddYear
+import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
-import exceptions.MissingFieldException
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
@@ -149,7 +147,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         } else None,
         viewCeasedBusinesses = if (ceasedBusinessExists) {
           maybeCeasedBusinesses.map { business =>
-            ViewCeasedBusinessDetailsViewModel(
+            CeasedBusinessDetailsViewModel(
               tradingName = business.tradingName,
               tradingStartDate = business.tradingStartDate,
               cessationDate = business.cessation.flatMap(_.date).get
@@ -197,7 +195,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         } else None,
         ceasedBusinesses = if (ceasedBusinessExists) {
           maybeCeasedBusinesses.map { business =>
-            CeaseCeasedBusinessDetailsViewModel(
+            CeasedBusinessDetailsViewModel(
               tradingName = business.tradingName,
               tradingStartDate = business.tradingStartDate,
               cessationDate = business.cessation.flatMap(_.date).get
