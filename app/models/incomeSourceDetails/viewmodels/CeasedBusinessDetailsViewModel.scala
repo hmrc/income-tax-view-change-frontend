@@ -16,8 +16,11 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import enums.IncomeSourceJourney.IncomeSourceType
+
 import java.time.LocalDate
 
 case class CeasedBusinessDetailsViewModel(tradingName: Option[String],
+                                          incomeSourceType: IncomeSourceType,
                                           tradingStartDate: Option[LocalDate],
                                           cessationDate: LocalDate)
