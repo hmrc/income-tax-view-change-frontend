@@ -20,16 +20,11 @@ import enums.IncomeSourceJourney.SelfEmployment
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.data.{Form, FormError}
 import play.api.mvc.Call
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import services.DateService
-import testConstants.BaseTestConstants.testNavHtml
 import testUtils.TestSupport
 import views.html.incomeSources.add.CheckBusinessDetails
-
 import java.time.LocalDate
 
 class CheckBusinessDetailsViewSpec extends TestSupport {
@@ -37,18 +32,16 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
   val checkBusinessDetailsView: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
 
 
-
-
   val viewModelMax: CheckBusinessDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("Test Business"),
     businessStartDate = Some(LocalDate.of(2022, 1, 1)),
     businessTrade = "Test Trade",
-    businessAddressLine1 = "Test Business Address Line 1",
-    businessPostalCode = Some("Test Business Postal Code"),
+    businessAddressLine1 = "64 Zoo Lane",
+    businessPostalCode = Some("ZO0 1AN"),
     incomeSourcesAccountingMethod = Some("ACCRUALS"),
     accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
     businessAddressLine2 = None,
-    businessAddressLine3 = None,
+    businessAddressLine3 = Some("Cbeebies"),
     businessAddressLine4 = None,
     businessCountryCode = Some("UK"),
     cashOrAccrualsFlag = "ACCRUALS",
@@ -56,15 +49,15 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
   )
 
   val postAction: Call = {
-      controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
+    controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
   }
+
   class Setup(isAgent: Boolean, error: Boolean = false) {
 
     val businessName = "Test Business"
     val businessStartDate = "1 January 2022"
     val businessTrade = "Test Trade"
-    val businessAddressLine1 = "Test Business Address Line 1"
-    val businessPostalCode = "Test Business Postal Code"
+    val businessAddressAsString = "64 Zoo Lane Cbeebies ZO0 1AN UK"
     val businessAccountingMethod = "Traditional accounting"
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else
@@ -101,7 +94,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe businessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe businessTrade
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe businessAddressLine1 + " " + businessPostalCode
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe businessAddressAsString
       document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe businessAccountingMethod
 
     }
@@ -132,7 +125,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe businessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe businessTrade
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe businessAddressLine1 + " " + businessPostalCode
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe businessAddressAsString
       document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe businessAccountingMethod
 
 

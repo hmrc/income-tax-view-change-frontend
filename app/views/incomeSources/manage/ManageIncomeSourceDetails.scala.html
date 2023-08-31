@@ -45,7 +45,8 @@
         isAgent: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
-    @import play.twirl.api.HtmlFormat
+
+@import play.twirl.api.HtmlFormat
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
