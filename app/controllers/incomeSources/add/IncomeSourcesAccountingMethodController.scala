@@ -33,7 +33,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.IncomeSourcesAccountingMethod
 
-import java.lang.Error
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,7 +53,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean, errorHandler: ShowInternalServerError, incomeSourceType: String)
+  def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean, errorHandler: ShowInternalServerError, incomeSourceType: String, cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
 
@@ -86,6 +85,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         }
       case None =>
         Future.successful(Ok(view(
+          cashOrAccrualsFlag = cashOrAccrualsFlag,
           incomeSourcesType = incomeSourceType,
           form = IncomeSourcesAccountingMethodForm(incomeSourceType),
           postAction = postAction,
@@ -96,9 +96,10 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     }
   }
 
-  private def loadIncomeSourceAccountingMethod(isAgent: Boolean, errorHandler: ShowInternalServerError, incomeSourceType: String)
+  private def loadIncomeSourceAccountingMethod(isAgent: Boolean, incomeSourceType: String, cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
     Future.successful(Ok(view(
+      cashOrAccrualsFlag = cashOrAccrualsFlag,
       incomeSourcesType = incomeSourceType,
       form = IncomeSourcesAccountingMethodForm(incomeSourceType),
       postAction = postAction,
@@ -108,48 +109,30 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     )(user, messages)))
   }
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: String)
+  def handleRequest(isAgent: Boolean, incomeSourceType: String, cashOrAccrualsFlag: Option[String] = None, backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    IncomeSourceType.get(incomeSourceType) match {
-      case Left(ex: Exception) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error generating backUrl: ${ex.getMessage}")
-        Future.successful(errorHandler.showInternalServerError())
-      case Right(incomeSource) =>
-        val backUrl = incomeSource match {
-          case SelfEmployment =>
-            if (isAgent)
-              routes.AddBusinessAddressController.showAgent(isChange = false).url
-            else
-              routes.AddBusinessAddressController.show(isChange = false).url
-          case UkProperty =>
-            routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, UkProperty).url
-          case ForeignProperty =>
-            routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, ForeignProperty).url
-        }
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
+      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
 
-        val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
-          controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
-
-        if (incomeSourcesEnabled) {
-          if (incomeSourceType == SelfEmployment.key) {
-            handleUserActiveBusinessesCashOrAccruals(isAgent = isAgent, errorHandler = errorHandler, incomeSourceType)(
-              user = user, backUrl = backUrl, postAction = postAction, messages = messages)
-          } else {
-            loadIncomeSourceAccountingMethod(isAgent = isAgent, errorHandler = errorHandler, incomeSourceType)(
-              user = user, backUrl = backUrl, postAction = postAction, messages = messages)
-          }
-        } else {
-          Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-        } recover {
-          case ex: Exception =>
-            Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-              s"Error getting BusinessEndDate page: ${ex.getMessage}")
-            errorHandler.showInternalServerError()
-        }
+    if (incomeSourcesEnabled) {
+      if (incomeSourceType == SelfEmployment.key) {
+        handleUserActiveBusinessesCashOrAccruals(isAgent, errorHandler, incomeSourceType, cashOrAccrualsFlag)(
+          user, backUrl, postAction, messages)
+      } else {
+        loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, cashOrAccrualsFlag)(
+          user, backUrl, postAction, messages)
+      }
+    } else {
+      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting BusinessEndDate page: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
     }
   }
 
@@ -217,9 +200,18 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
+        val backUrl = incomeSourceType match {
+          case SelfEmployment.key =>
+              routes.AddBusinessAddressController.show(isChange = false).url
+          case UkProperty.key =>
+            routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, false, isChange = false).url
+          case _ =>
+            routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, false, isChange = false).url
+        }
         handleRequest(
           isAgent = false,
-          incomeSourceType
+          incomeSourceType = incomeSourceType,
+          backUrl = backUrl
         )
     }
 
@@ -228,9 +220,18 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
+            val backUrl = incomeSourceType match {
+              case SelfEmployment.key =>
+                routes.AddBusinessAddressController.showAgent(isChange = false).url
+              case UkProperty.key =>
+                routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, true, isChange = false).url
+              case _ =>
+                routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, true, isChange = false).url
+            }
             handleRequest(
               isAgent = true,
-              incomeSourceType
+              incomeSourceType = incomeSourceType,
+              backUrl = backUrl
             )
         }
   }
@@ -250,11 +251,45 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         }
   }
 
-  def changeIncomeSourcesAccountingMethod(incomeSourceType: String): Action[AnyContent] = Action {
-    Ok("Change Business Accounting Method  WIP")
-  }
+  def changeIncomeSourcesAccountingMethod(incomeSourceType: String): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        val backUrl = incomeSourceType match {
+          case SelfEmployment.key =>
+            routes.CheckBusinessDetailsController.show().url
+          case UkProperty.key =>
+            routes.CheckUKPropertyDetailsController.show().url
+          case _ =>
+            routes.ForeignPropertyCheckDetailsController.show().url
+        }
+        handleRequest(
+          isAgent = false,
+          incomeSourceType = incomeSourceType,
+          cashOrAccrualsFlag = user.session.data.get(addIncomeSourcesAccountingMethod),
+          backUrl = backUrl
+        )
+    }
 
-  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String): Action[AnyContent] = Action {
-    Ok("Agent Change Business Accounting Method  WIP")
+  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            val backUrl = incomeSourceType match {
+              case SelfEmployment.key =>
+                routes.CheckBusinessDetailsController.showAgent().url
+              case UkProperty.key =>
+                routes.CheckUKPropertyDetailsController.showAgent().url
+              case _ =>
+                routes.ForeignPropertyCheckDetailsController.showAgent().url
+            }
+            handleRequest(
+              isAgent = true,
+              incomeSourceType = incomeSourceType,
+              cashOrAccrualsFlag = mtdItUser.session.data.get(addIncomeSourcesAccountingMethod),
+              backUrl = backUrl
+            )
+        }
   }
 }

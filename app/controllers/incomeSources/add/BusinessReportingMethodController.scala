@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
@@ -130,8 +131,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   private def handleFormErrors(formWithErrors: Form[AddBusinessReportingMethodForm], id: String, isAgent: Boolean)
                               (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showBusinessAgent() else
-      routes.IncomeSourceReportingMethodNotSavedController.showBusiness()
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = SelfEmployment.key) else
+      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment.key)
     val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
 
@@ -179,8 +180,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                    (implicit user: MtdItUser[_]): Future[Result] = {
     val redirectUrl: Call = if (isAgent) routes.BusinessAddedObligationsController.showAgent(id) else
       routes.BusinessAddedObligationsController.show(id)
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showBusinessAgent() else
-      routes.IncomeSourceReportingMethodNotSavedController.showBusiness()
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = SelfEmployment.key) else
+      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment.key)
 
     val futures = newReportingMethods.map(taxYearSpecific =>
       updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
