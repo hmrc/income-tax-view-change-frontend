@@ -89,7 +89,7 @@
                     id = Some(s"$prefix-cash-basis-radio"),
                     value = Some("cash"),
                     content = Text(getMessage("radio-1-title")),
-                    checked = if(cashOrAccrualsFlag.getOrElse("") == "cash") true else false,
+                    checked = cashOrAccrualsFlag.getOrElse("") == "cash",
                     hint = Some(Hint(
                         id = Some(s"$prefix-radio-hint-1"),
                         classes = "govuk-hint govuk-radios__hint",
@@ -100,7 +100,7 @@
                     id = Some(s"$prefix-traditional-radio"),
                     value = Some("traditional"),
                     content = Text(getMessage("radio-2-title")),
-                    checked = if(cashOrAccrualsFlag.getOrElse("") == "accruals") true else false,
+                    checked = cashOrAccrualsFlag.getOrElse("") == "accruals",
                     hint = Some(Hint(
                         id = Some(s"$prefix-radio-hint-2"),
                         classes = "govuk-hint govuk-radios__hint",
