@@ -204,9 +204,9 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           case SelfEmployment.key =>
               routes.AddBusinessAddressController.show(isChange = false).url
           case UkProperty.key =>
-            routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, false, isChange = false).url
+            routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, UkProperty).url
           case _ =>
-            routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, false, isChange = false).url
+            routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, ForeignProperty).url
         }
         handleRequest(
           isAgent = false,
@@ -224,9 +224,9 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
               case SelfEmployment.key =>
                 routes.AddBusinessAddressController.showAgent(isChange = false).url
               case UkProperty.key =>
-                routes.AddIncomeSourceStartDateCheckController.show(UkProperty.key, true, isChange = false).url
+                routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, UkProperty).url
               case _ =>
-                routes.AddIncomeSourceStartDateCheckController.show(ForeignProperty.key, true, isChange = false).url
+                routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, ForeignProperty).url
             }
             handleRequest(
               isAgent = true,
