@@ -23,7 +23,7 @@
     mainTemplate: unifiedLayout,
     h1: h1,
     p: p,
-    formWithCSRF: FormWithCSRF,
+    link: link,
     continueButton: ContinueButton)
 
 @(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
@@ -48,8 +48,11 @@
         @messages("incomeSources.add.error.reportingMethodNotSaved.p2")
     }
 
-    @formWithCSRF(action = continueAction , Symbol("id") -> "error-reporting-method-not-saved-form") {
-        @continueButton(Some(messages("base.continue")))
-    }
+    @link(id = Some("continue-button"),
+        link = continueAction.url,
+        classes = "govuk-button",
+        role = Some("button"),
+        messageKey = messages("base.continue"))
+
 
 }
