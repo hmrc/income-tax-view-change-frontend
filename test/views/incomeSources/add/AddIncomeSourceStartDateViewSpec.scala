@@ -21,13 +21,14 @@ import forms.incomeSources.add.AddIncomeSourceStartDateForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError
+import play.api.mvc.Call
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.incomeSources.add.AddIncomeSourceStartDate
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isUpdate: Boolean = false) extends TestSupport {
+  class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isChange: Boolean = false) extends TestSupport {
 
     val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
 
@@ -40,23 +41,13 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
                 .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.error.required"))
               else AddIncomeSourceStartDateForm(incomeSourceType.startDateMessagesPrefix)
             },
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submit(isAgent, isUpdate, incomeSourceType),
+            postAction = Call("", ""),
             isAgent = isAgent,
             messagesPrefix = incomeSourceType.startDateMessagesPrefix,
-            backUrl = ((isAgent, isUpdate, incomeSourceType) match {
-              case (false, false, UkProperty)      => controllers.incomeSources.add.routes.AddIncomeSourceController.show()
-              case (true,  false, UkProperty)      => controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
-              case (false, true,  UkProperty)      => controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
-              case (true,  true,  UkProperty)      => controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent()
-              case (false, false, ForeignProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.show()
-              case (true,  false, ForeignProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
-              case (false, true,  ForeignProperty) => controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show()
-              case (true,  true,  ForeignProperty) => controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent()
-              case (false, false, SelfEmployment)  => controllers.incomeSources.add.routes.AddBusinessNameController.show()
-              case (true,  false, SelfEmployment)  => controllers.incomeSources.add.routes.AddBusinessNameController.showAgent()
-              case (false, true,  SelfEmployment)  => controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
-              case (true,  true,  SelfEmployment)  => controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
-            }).url
+            backUrl = {
+              if(isChange) getBackUrlChange(isAgent, incomeSourceType)
+              else getBackUrl(isAgent, incomeSourceType)
+            }
           )
         )
       )
@@ -84,7 +75,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         document.getElementById("back").attr("href") shouldBe getBackUrl(isAgent, incomeSourceType)
       }
       "render the back link which with correct redirect for change journey" in new Setup(
-        isAgent, hasError = false, incomeSourceType, isUpdate = true) {
+        isAgent, hasError = false, incomeSourceType, isChange = true) {
         document.getElementById("back").text() shouldBe messages("base.back")
         document.getElementById("back").attr("href") shouldBe getBackUrlChange(isAgent, incomeSourceType)
       }

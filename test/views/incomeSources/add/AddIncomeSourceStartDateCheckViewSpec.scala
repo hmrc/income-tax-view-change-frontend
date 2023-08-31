@@ -21,6 +21,7 @@ import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services.DateService
 import testUtils.TestSupport
@@ -45,10 +46,10 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
                 .withError(FormError("start-date-check", s"${incomeSourceType.addStartDateCheckMessagesPrefix}.error"))
               else AddIncomeSourceStartDateCheckForm(incomeSourceType.addStartDateCheckMessagesPrefix)
             },
-            postAction = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(isAgent, isChange, incomeSourceType),
+            postAction = Call("", ""),
             isAgent = isAgent,
             incomeSourceStartDate = formattedStartDate,
-            backUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange, incomeSourceType).url
+            backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
           )
         )
       )
@@ -70,13 +71,11 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
       }
       "render the back link with the correct URL for Normal journey" in new Setup(isAgent, hasError = false, incomeSourceType, isChange = false) {
         document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, incomeSourceType).url
+        document.getElementById("back").attr("href") shouldBe getBackUrl(isAgent, isChange = false, incomeSourceType)
       }
       "render the back link with the correct URL for Change journey" in new Setup(isAgent, hasError = false, incomeSourceType, isChange = true) {
         document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe
-          controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent, isChange = true, incomeSourceType).url
+        document.getElementById("back").attr("href") shouldBe getBackUrl(isAgent, isChange = true, incomeSourceType)
       }
       "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -91,6 +90,11 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
           messages(s"${incomeSourceType.addStartDateCheckMessagesPrefix}.error")
       }
     }
+  }
+
+  def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController
+      .show(isAgent, isChange, incomeSourceType).url
   }
 
   for {

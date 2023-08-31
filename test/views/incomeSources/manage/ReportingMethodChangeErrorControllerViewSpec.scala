@@ -40,15 +40,8 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
           reportingMethodChangeErrorView(
             isAgent = isAgent,
             messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix,
-            manageIncomeSourceDetailsUrl = ((isAgent, incomeSourceType) match {
-              case (false, SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId)
-              case (true,  SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId)
-              case (false, UkProperty)      => manageIncomeSourceDetailsController.showUkProperty()
-              case (true,  UkProperty)      => manageIncomeSourceDetailsController.showUkPropertyAgent()
-              case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty()
-              case (true,  ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
-            }).url,
-            manageIncomeSourcesUrl = (if(isAgent) manageIncomeSourceController.showAgent() else manageIncomeSourceController.show()).url
+            manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(isAgent, incomeSourceType),
+            manageIncomeSourcesUrl = getManageIncomeSourcesUrl(isAgent)
           )
         )
       )
@@ -72,14 +65,7 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
           messages("incomeSources.manage.reportingMethodError.hyperlink1")
         ) shouldBe true
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
-          ((isAgent, incomeSourceType) match {
-            case (false, SelfEmployment) => manageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId)
-            case (true, SelfEmployment) => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId)
-            case (false, UkProperty) => manageIncomeSourceDetailsController.showUkProperty()
-            case (true, UkProperty) => manageIncomeSourceDetailsController.showUkPropertyAgent()
-            case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty()
-            case (true, ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
-          }).url
+          getManageIncomeSourceDetailsUrl(isAgent, incomeSourceType)
       }
       "render p3 text and link" in new Setup(isAgent, incomeSourceType) {
         document.getElementById("reportingMethodError.p3").text().contains(
@@ -89,13 +75,27 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
           messages("incomeSources.manage.reportingMethodError.hyperlink2")
         ) shouldBe true
         document.getElementById("reportingMethodError.p3-link").attr("href") shouldBe
-          (if(isAgent) controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
-          else controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url)
+          getManageIncomeSourcesUrl(isAgent)
       }
       "not render the back button" in new Setup(isAgent, incomeSourceType) {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
     }
+  }
+
+  def getManageIncomeSourceDetailsUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
+    ((isAgent, incomeSourceType) match {
+      case (false, SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusiness(testBusinessId)
+      case (true,  SelfEmployment)  => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testBusinessId)
+      case (false, UkProperty)      => manageIncomeSourceDetailsController.showUkProperty()
+      case (true,  UkProperty)      => manageIncomeSourceDetailsController.showUkPropertyAgent()
+      case (false, ForeignProperty) => manageIncomeSourceDetailsController.showForeignProperty()
+      case (true,  ForeignProperty) => manageIncomeSourceDetailsController.showForeignPropertyAgent()
+    }).url
+  }
+
+  def getManageIncomeSourcesUrl(isAgent: Boolean): String = {
+    (if(isAgent)manageIncomeSourceController.showAgent() else manageIncomeSourceController.show()).url
   }
 
   for {
