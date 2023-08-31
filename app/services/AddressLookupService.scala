@@ -33,9 +33,11 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
                                     (implicit ec: ExecutionContext) {
   case class AddressError(status: String) extends RuntimeException
 
-  def initialiseAddressJourney(isAgent: Boolean)(implicit hc: HeaderCarrier, request: RequestHeader): Future[Either[Throwable, Option[String]]] = {
+  def initialiseAddressJourney(isAgent: Boolean, isChange: Boolean)
+                              (implicit hc: HeaderCarrier, request: RequestHeader): Future[Either[Throwable, Option[String]]] = {
     addressLookupConnector.initialiseAddressLookup(
-      isAgent = isAgent
+      isAgent = isAgent,
+      isChange = isChange
     ) map {
       case Left(UnexpectedPostStatusFailure(status)) =>
         Logger("application").info(s"[AddressLookupService][initialiseAddressJourney] - error during initialise $status")
@@ -59,7 +61,7 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
             Logger("application").info(s"[AddressLookupService][fetchAddress] - failed to get details for $id")
             Left(AddressError("Not found"))
           case Right(Some(model)) => Right(model)
-      }
+        }
       case None =>
         Logger("application").error(s"[AddressLookupService][fetchAddress] - No id provided")
         Future(Left(AddressError("No id provided")))

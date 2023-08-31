@@ -16,10 +16,10 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -99,9 +99,9 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     val error: String = messages("incomeSources.add.businessReportingMethod.error")
     val incomeSourceId: String = "XA00001234"
     val updateForm: AddBusinessReportingMethodForm = AddBusinessReportingMethodForm(Some("Q"), Some("A"), Some("2022"), Some("A"), Some("2023"), Some("Q"))
-    val updateFormMap = updateForm.toFormMap.map(x => x._1 -> x._2.get)
+    val updateFormMap: Map[String, String] = updateForm.toFormMap.map(x => x._1 -> x._2.get)
     val unchangedUpdateForm: AddBusinessReportingMethodForm = AddBusinessReportingMethodForm(Some("A"), Some("Q"), Some("2022"), Some("A"), Some("2023"), Some("Q"))
-    val unchangedUpdateFormMap = unchangedUpdateForm.toFormMap.map(x => x._1 -> x._2.get)
+    val unchangedUpdateFormMap: Map[String, String] = unchangedUpdateForm.toFormMap.map(x => x._1 -> x._2.get)
     val inTaxYear1: BusinessReportingMethodViewModel = BusinessReportingMethodViewModel(Some("2022"), Some("A"), Some("2023"), Some("Q"))
     val inTaxYear2_TaxYear1Crystallised: BusinessReportingMethodViewModel = BusinessReportingMethodViewModel(None, None, Some("2022"), None)
     val inTaxYear2_TaxYear1NotCrystallised: BusinessReportingMethodViewModel = BusinessReportingMethodViewModel(Some("2021"), None, Some("2022"), None)
@@ -425,7 +425,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showBusiness().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment.key).url)
       }
       "some internal failure in the update action (one call)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
@@ -452,7 +452,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showBusiness().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment.key).url)
       }
     }
   }
@@ -705,7 +705,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showBusinessAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment.key).url)
       }
 
       "some internal failure in the update action (one call)" in {
@@ -733,7 +733,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showBusinessAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment.key).url)
       }
     }
   }

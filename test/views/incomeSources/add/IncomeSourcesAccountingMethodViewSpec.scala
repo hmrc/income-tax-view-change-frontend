@@ -64,6 +64,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
+        cashOrAccrualsFlag = Some(""),
         incomeSourceType,
         form,
         postAction = postAction,
@@ -72,6 +73,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     )
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
+        cashOrAccrualsFlag = Some(""),
         incomeSourceType,
         form = form.withError(s"$incomeSourcePrefix", s"$incomeSourcePrefix.no-selection"),
         postAction = postAction,
@@ -99,8 +101,8 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
       document.getElementsByClass("govuk-radios").size() shouldBe 1
     }
     "render the back link with the correct URL for" + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl
     }
     "render the input error for" + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType, true) {
       document.getElementById(s"$prefix-error").text() shouldBe messages("base.error-prefix") + " " +
@@ -111,15 +113,15 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
   }
 
   "IncomeSourcesAccountingMethod - Individual" should {
-    incomeSourcesAccountingMethodTest(prefixSoleTrader, false, SelfEmployment.key)
-    incomeSourcesAccountingMethodTest(prefixUKProperty, false, UkProperty.key)
-    incomeSourcesAccountingMethodTest(prefixForeignProperty, false, ForeignProperty.key)
+    incomeSourcesAccountingMethodTest(prefixSoleTrader, isAgent = false, SelfEmployment.key)
+    incomeSourcesAccountingMethodTest(prefixUKProperty, isAgent = false, UkProperty.key)
+    incomeSourcesAccountingMethodTest(prefixForeignProperty, isAgent = false, ForeignProperty.key)
   }
 
   "IncomeSourcesAccountingMethod - Agent" should {
-    incomeSourcesAccountingMethodTest(prefixSoleTrader, true, SelfEmployment.key)
-    incomeSourcesAccountingMethodTest(prefixUKProperty, true, UkProperty.key)
-    incomeSourcesAccountingMethodTest(prefixForeignProperty, true, ForeignProperty.key)
+    incomeSourcesAccountingMethodTest(prefixSoleTrader, isAgent = true, SelfEmployment.key)
+    incomeSourcesAccountingMethodTest(prefixUKProperty, isAgent = true, UkProperty.key)
+    incomeSourcesAccountingMethodTest(prefixForeignProperty, isAgent = true, ForeignProperty.key)
   }
 
 }

@@ -16,10 +16,10 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -97,15 +97,15 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
     val error: String = messages("incomeSources.add.foreignPropertyReportingMethod.error")
     val incomeSourceId: String = "XA00001234"
     val updateForm: AddForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm(Some("Q"), Some("A"), Some("2022"), Some("A"), Some("2023"), Some("Q"))
-    val updateFormMap = updateForm.toFormMap.map(x => x._1 -> x._2.get)
+    val updateFormMap: Map[String, String] = updateForm.toFormMap.map(x => x._1 -> x._2.get)
     val unchangedUpdateForm: AddForeignPropertyReportingMethodForm = AddForeignPropertyReportingMethodForm(Some("A"), Some("Q"), Some("2022"), Some("A"), Some("2023"), Some("Q"))
-    val unchangedUpdateFormMap = unchangedUpdateForm.toFormMap.map(x => x._1 -> x._2.get)
+    val unchangedUpdateFormMap: Map[String, String] = unchangedUpdateForm.toFormMap.map(x => x._1 -> x._2.get)
     val inTaxYear1: ForeignPropertyReportingMethodViewModel = ForeignPropertyReportingMethodViewModel(Some("2022"), Some("A"), Some("2023"), Some("Q"))
     val inTaxYear2_TaxYear1Crystallised: ForeignPropertyReportingMethodViewModel = ForeignPropertyReportingMethodViewModel(None, None, Some("2022"), None)
     val inTaxYear2_TaxYear1NotCrystallised: ForeignPropertyReportingMethodViewModel = ForeignPropertyReportingMethodViewModel(Some("2021"), None, Some("2022"), None)
     val inTaxYear3_Expired: ForeignPropertyReportingMethodViewModel = ForeignPropertyReportingMethodViewModel(None)
-    val radioMustBeSelectedError_TY1 = messages("incomeSources.add.foreignPropertyReportingMethod.error", "2021", "2022")
-    val radioMustBeSelectedError_TY2 = messages("incomeSources.add.foreignPropertyReportingMethod.error", "2022", "2023")
+    val radioMustBeSelectedError_TY1: String = messages("incomeSources.add.foreignPropertyReportingMethod.error", "2021", "2022")
+    val radioMustBeSelectedError_TY2: String = messages("incomeSources.add.foreignPropertyReportingMethod.error", "2022", "2023")
     val testNino: String = "AB123456C"
     val testAgentNino: String = "AA111111A"
     val isAgent: Boolean = true
@@ -352,8 +352,8 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "Update success and redirect to foreign property added page" when {
       "all mandatory fields are selected" in {
-        val tySpecific1 = TaxYearSpecific("2022", false)
-        val tySpecific2 = TaxYearSpecific("2023", true)
+        val tySpecific1 = TaxYearSpecific("2022", latencyIndicator = false)
+        val tySpecific2 = TaxYearSpecific("2023", latencyIndicator = true)
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         mockBothIncomeSources()
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
@@ -427,7 +427,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showForeignProperty().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty.key).url)
       }
       "some internal failure in the update action (one call)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
@@ -454,7 +454,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showForeignProperty().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty.key).url)
       }
     }
   }
@@ -462,7 +462,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
   "Agent - ForeignPropertyReportingMethodController" should {
     "return 200 OK" when {
       "navigating to the page with FS Enabled and no back button" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
 
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -476,7 +476,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
       "navigating to the page with FS Disabled" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
         disable(IncomeSources)
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
@@ -493,7 +493,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "return 303 SEE_OTHER and redirect to foreign property added page" when {
       "registering foreign property in Tax Year 3 and beyond (latency expired)" in {
-        mockAndBasicSetup(LATENCY_PERIOD_EXPIRED, true)
+        mockAndBasicSetup(LATENCY_PERIOD_EXPIRED, isAgent = true)
 
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
@@ -503,7 +503,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
       }
 
       "ITSA Status returned is not MTD Mandated or MTD Voluntary" in {
-        mockAndBasicSetup(NON_ELIGIBLE_ITS_STATUS, true)
+        mockAndBasicSetup(NON_ELIGIBLE_ITS_STATUS, isAgent = true)
 
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
@@ -513,7 +513,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "Show select reporting method with TY1 & TY2" when {
       "registering foreign property in Latency Years" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -537,7 +537,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "Show select reporting method with only TY2" when {
       "registering foreign property within Tax Year 2, Tax Year 1 is crystallised" in {
-        mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED, true)
+        mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED, isAgent = true)
 
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -560,7 +560,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "display error message" when {
       "Tax Year 2 reporting method is not selected (Tax Year 1 Crystallised)" in {
-        mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED, true)
+        mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED, isAgent = true)
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             taxYear2 -> "2023",
@@ -578,7 +578,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
       }
 
       "Tax Year 1 reporting method is not selected" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             taxYear1 -> "2022",
@@ -597,7 +597,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
       }
 
       "Tax Year 2 reporting method is not selected" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             taxYear1 -> "2022",
@@ -616,7 +616,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
       }
 
       "Tax Year 1 & Tax Year 2 reporting method is not selected" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             taxYear1 -> "2022",
@@ -637,7 +637,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "Update success and redirect to foreign property added page" when {
       "all mandatory fields are selected" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
@@ -662,7 +662,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "Update not required and redirect to foreign property added page" when {
       "all mandatory fields are selected and values unchanged" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
 
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
@@ -681,7 +681,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
 
     "Update failed and error page shown" when {
       "some internal failure in the update action (both calls)" in {
-        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, isAgent = true)
 
         val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
@@ -707,7 +707,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showForeignPropertyAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty.key).url)
       }
       "some internal failure in the update action (one call)" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
@@ -736,7 +736,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showForeignPropertyAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty.key).url)
       }
     }
   }

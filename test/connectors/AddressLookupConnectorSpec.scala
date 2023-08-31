@@ -16,27 +16,16 @@
 
 package connectors
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import controllers.routes
-import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
-import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
-import org.mockito.stubbing.OngoingStubbing
-import play.api.libs.json.{JsObject, JsString, JsValue}
-import org.scalactic.{Fail, Pass}
-import play.api.i18n.{Lang, MessagesApi}
 import mocks.MockHttp
+import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
-import play.api.Logger
-import play.api.http.Status.{ACCEPTED, IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
-import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import org.scalactic.Fail
+import play.api.http.Status.{ACCEPTED, OK}
+import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
-
-import scala.concurrent.Future
+import testUtils.TestSupport
+import uk.gov.hmrc.http.HttpResponse
 
 class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with MockHttp {
 
@@ -80,7 +69,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = false)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
             case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
@@ -94,7 +83,37 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(agentContinueUrl, agentFeedbackUrl, agentEnglishBanner, agentWelshBanner))(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, isChange = false)
+          result map {
+            case Left(_) => Fail("Error returned from lookup service")
+            case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
+          }
+        }
+      }
+      "return the redirect location when on the change page" when {
+        "location returned from the lookup-service (individual) and isChange = true" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          beforeEach()
+
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(changeIndividualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = ACCEPTED,
+            json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
+
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = true)
+          result map {
+            case Left(_) => Fail("Error returned from lookup service")
+            case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
+          }
+        }
+        "location returned from lookup-service (agent) when isChange = true" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
+          disableAllSwitches()
+          enable(IncomeSources)
+          beforeEach()
+
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(changeAgentContinueUrl, agentFeedbackUrl, agentEnglishBanner, agentWelshBanner))(HttpResponse(status = ACCEPTED,
+            json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
+
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, isChange = true)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
             case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
@@ -111,7 +130,21 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(individualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = OK,
             json = JsString(""), headers = Map.empty))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = false)
+          result map {
+            case Left(UnexpectedPostStatusFailure(status)) => status shouldBe OK
+            case Right(_) => Fail("error should be returned")
+          }
+        }
+        "non-standard status returned from lookup-service on change page" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          beforeEach()
+
+          setupMockHttpPost(TestAddressLookupConnector.addressLookupInitializeUrl, addressJson(changeIndividualContinueUrl, individualFeedbackUrl, individualEnglishBanner, individualWelshBanner))(HttpResponse(status = OK,
+            json = JsString(""), headers = Map.empty))
+
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, isChange = true)
           result map {
             case Left(UnexpectedPostStatusFailure(status)) => status shouldBe OK
             case Right(_) => Fail("error should be returned")
@@ -120,8 +153,11 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       }
     }
 
-    lazy val individualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None).url
-    lazy val agentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None).url
+    lazy val individualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = false).url
+    lazy val agentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = false).url
+
+    lazy val changeIndividualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = true).url
+    lazy val changeAgentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = true).url
 
     lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
     lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url
