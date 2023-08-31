@@ -64,6 +64,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
+        cashOrAccrualsFlag = Some(""),
         incomeSourceType,
         form,
         postAction = postAction,
@@ -72,6 +73,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     )
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
+        cashOrAccrualsFlag = Some(""),
         incomeSourceType,
         form = form.withError(s"$incomeSourcePrefix", s"$incomeSourcePrefix.no-selection"),
         postAction = postAction,
