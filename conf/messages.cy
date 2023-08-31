@@ -1167,6 +1167,7 @@ incomeSources.add.error.incomeSourceNotSaved.p1                  = Nid oedd modd
 incomeSources.add.error.incomeSourceNotSaved.se                  = unig fasnachwr
 incomeSources.add.error.incomeSourceNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.incomeSourceNotSaved.fp                  = eiddo tramor
+incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Eich ffynonellau incwm
 
 ## cease income sources
 cease-income-sources.heading                  = Dod â ffynhonnell incwm i ben

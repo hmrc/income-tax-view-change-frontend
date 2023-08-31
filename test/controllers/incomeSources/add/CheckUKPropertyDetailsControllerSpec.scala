@@ -19,6 +19,8 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.UkProperty
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -28,12 +30,13 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.CreateBusinessDetailsService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import utils.IncomeSourcesUtils
@@ -51,7 +54,12 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
 
   val date = "2023-05-01"
   val propertyStartDate: LocalDate = LocalDate.parse(date)
+  val testUKPropertyStartDate: String = LocalDate.of(2023, 1, 2).toString
   val cash = messages("incomeSources.add.accountingMethod.cash")
+
+
+  lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key).url
+  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty.key).url
 
   object TestCheckUKPropertyDetailsController extends CheckUKPropertyDetailsController(
     checkUKPropertyDetails = app.injector.instanceOf[CheckUKPropertyDetails],
@@ -129,6 +137,29 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.show(incomeSourceId).url
 
+      }
+    }
+
+    "redirect to custom error page on submit" when {
+      "UK property model can't be created on submit" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetIncomeSourceDetails()(noIncomeDetails)
+
+        when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any())).
+          thenReturn(Future(Left(new Error(s"Failed to created incomeSources"))))
+        val result = TestCheckUKPropertyDetailsController.submit()(
+          fakeRequestWithActiveSession
+            .withSession(
+              SessionKeys.addUkPropertyStartDate -> testUKPropertyStartDate,
+              SessionKeys.addIncomeSourcesAccountingMethod -> cash
+            )
+        )
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(errorUrl)
       }
     }
 
@@ -221,6 +252,30 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.showAgent(incomeSourceId).url
 
+      }
+    }
+
+    "redirect to custom error page on submit" when {
+      "foreign property model successfully created and user clicks continue button (agent)" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        val incomeSourceId = "incomeSourceId"
+        when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any()))
+          .thenReturn(Future {
+            Right(CreateIncomeSourceResponse(incomeSourceId))
+          })
+
+        val result = TestCheckUKPropertyDetailsController.submitAgent()(
+          fakeRequestConfirmedClient()
+            .withSession(
+              addUkPropertyStartDate -> testUKPropertyStartDate
+            ))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(agentErrorUrl)
       }
     }
 

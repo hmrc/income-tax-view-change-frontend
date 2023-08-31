@@ -42,14 +42,14 @@ continueButton: ContinueButton)
  backUrl = None,
  btaNavPartial = user.btaNavPartial) {
 
-@h1(msg = "incomeSources.add.error.standardError", classes = "govuk-heading-l govuk-!-margin-bottom-5")
+ @h1(msg = "incomeSources.add.error.standardError", classes = "govuk-heading-l govuk-!-margin-bottom-5")
 
-@p(id = Some("paragraph-1")){
-@messages("incomeSources.add.error.incomeSourceNotSaved.p1", incomeSourceTypeText)
-}
+ @p(id = Some("paragraph-1")){
+  @messages("incomeSources.add.error.incomeSourceNotSaved.p1", incomeSourceTypeText)
+ }
 
-@formWithCSRF(action = continueAction , Symbol("id") -> "error-income-source-not-saved-form") {
-@continueButton(Some(messages("base.continue")))
-}
+ @formWithCSRF(action = continueAction , Symbol("id") -> "error-income-source-not-saved-form") {
+  @continueButton(Some(messages("incomeSources.add.error.incomeSourceNotSaved.incomeSources")))
+ }
 
 }

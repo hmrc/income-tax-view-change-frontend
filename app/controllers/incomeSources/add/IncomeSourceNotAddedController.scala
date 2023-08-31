@@ -49,7 +49,7 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
   def handleRequest(isAgent: Boolean, incomeSourceType: String)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
-    val action: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent() else
+    val incomeSourceRedirect: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent() else
       controllers.incomeSources.add.routes.AddIncomeSourceController.show()
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -58,7 +58,7 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
         Future.successful(Ok(incomeSourceNotAddedError(
           isAgent,
           incomeSourceType = incomeType,
-          continueAction = action
+          continueAction = incomeSourceRedirect
         )))
       case Left(_) => Future.successful(errorHandler.showInternalServerError())
     }

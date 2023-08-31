@@ -1141,6 +1141,8 @@ incomeSources.add.error.incomeSourceNotSaved.p1                  = Your {0} busi
 incomeSources.add.error.incomeSourceNotSaved.se                  = sole trader
 incomeSources.add.error.incomeSourceNotSaved.uk                  = UK property
 incomeSources.add.error.incomeSourceNotSaved.fp                  = foreign property
+incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Your income sources
+
 
 ## cease income sources
 cease-income-sources.heading                  = Cease an income source
