@@ -18,6 +18,7 @@ package controllers.agent.incomeSources.add
 
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys._
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -31,6 +32,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
   val checkBusinessDetailsShowUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
   val checkBusinessDetailsSubmitUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent().url
   val addBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(testSelfEmploymentId).url
+  val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(SelfEmployment.key).url
 
   val sessionData: Map[String, String] = Map(businessName -> "Test Business",
     businessStartDate -> "2022-01-01",
@@ -144,6 +146,34 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
+        )
+      }
+    }
+
+    s"redirect to $errorPageUrl" when {
+      "error in response from API" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        val formData: Map[String, Seq[String]] = Map(
+          "addBusinessName" -> Seq(""),
+          "addBusinessTrade" -> Seq(""),
+          "addBusinessStartDate" -> Seq(""),
+          "addBusinessAddressLine1" -> Seq(""),
+          "addBusinessPostalCode" -> Seq(""),
+          "addIncomeSourcesAccountingMethod" -> Seq("")
+        )
+
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, List.empty)
+
+        When(s"I call $checkBusinessDetailsSubmitUrlAgent")
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(errorPageUrl)
         )
       }
     }

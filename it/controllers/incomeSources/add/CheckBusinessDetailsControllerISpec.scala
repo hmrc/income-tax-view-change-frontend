@@ -17,6 +17,7 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -30,6 +31,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
   val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
   val checkBusinessDetailsSubmitUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit().url
   val addBusinessReportingMethodUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(testSelfEmploymentId).url
+  val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(SelfEmployment.key).url
 
   val sessionData: Map[String, String] = Map(businessName -> "Test Business",
     businessStartDate -> "2022-01-01",
@@ -143,6 +145,31 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         )
       }
     }
-  }
 
+    s"redirect to $errorPageUrl" when {
+      "error in response from API" in {
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        val formData: Map[String, Seq[String]] = Map(
+          "addBusinessName" -> Seq(""),
+          "addBusinessTrade" -> Seq(""),
+          "addBusinessStartDate" -> Seq(""),
+          "addBusinessAddressLine1" -> Seq(""),
+          "addBusinessPostalCode" -> Seq(""),
+          "addIncomeSourcesAccountingMethod" -> Seq("")
+        )
+
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, List.empty)
+
+        When(s"I call $checkBusinessDetailsSubmitUrl")
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", sessionData)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(errorPageUrl)
+        )
+      }
+    }
+  }
 }

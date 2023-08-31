@@ -84,6 +84,5 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
             )
         }
   }
-
 }
 
