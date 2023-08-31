@@ -23,7 +23,7 @@ import java.time.LocalDate
 case class CeaseIncomeSourcesViewModel(soleTraderBusinesses: List[CeaseBusinessDetailsViewModel],
                                      ukProperty: Option[CeasePropertyDetailsViewModel],
                                      foreignProperty: Option[CeasePropertyDetailsViewModel],
-                                     ceasedBusinesses: List[CeaseCeasedBusinessDetailsViewModel])
+                                     ceasedBusinesses: List[CeasedBusinessDetailsViewModel])
 
 case class CeaseBusinessDetailsViewModel(incomeSourceId: String, tradingName: Option[String], tradingStartDate: Option[LocalDate])
 
@@ -34,7 +34,3 @@ case class CheckCeaseBusinessDetailsViewModel(incomeSourceId: String,
                                              )
 
 case class CeasePropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
-
-case class CeaseCeasedBusinessDetailsViewModel(tradingName: Option[String],
-                                          tradingStartDate: Option[LocalDate],
-                                          cessationDate: LocalDate)
