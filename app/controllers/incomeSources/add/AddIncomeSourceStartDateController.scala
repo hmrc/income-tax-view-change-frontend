@@ -93,18 +93,18 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     Future.successful(
       if (isEnabled(IncomeSources)) {
-        (getCalls(incomeSourceType, isAgent, isUpdate), getFilledForm(form(messagesPrefix), incomeSourceType, isUpdate)) match {
-          case ((backCall, postAction, _), Right(form)) =>
+        getFilledForm(form(messagesPrefix), incomeSourceType, isUpdate) match {
+          case Right(form) =>
             Ok(
               addIncomeSourceStartDate(
                 form = form,
                 isAgent = isAgent,
-                backUrl = backCall.url,
-                postAction = postAction,
-                messagesPrefix = messagesPrefix
+                messagesPrefix = messagesPrefix,
+                backUrl = getBackUrl(incomeSourceType, isAgent, isUpdate),
+                postAction = getPostAction(incomeSourceType, isAgent, isUpdate)
               )
             )
-          case (_, Left(ex)) =>
+          case Left(ex) =>
             Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
               s"Failed to get income source start date from session, reason: ${ex.getMessage}")
             showInternalServerError(isAgent)
@@ -123,33 +123,30 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     Future.successful(
       if (isEnabled(IncomeSources)) {
-        getCalls(incomeSourceType, isAgent, isUpdate) match {
-          case (backCall, postAction, redirectCall) =>
-            form(messagesPrefix).bindFromRequest().fold(
-              formWithErrors =>
-                BadRequest(
-                  addIncomeSourceStartDate(
-                    isAgent = isAgent,
-                    form = formWithErrors,
-                    backUrl = backCall.url,
-                    postAction = postAction,
-                    messagesPrefix = messagesPrefix
-                  )
-                ),
-              formData =>
-                Redirect(redirectCall)
-                  .addingToSession(
-                    (incomeSourceType match {
-                      case SelfEmployment =>
-                        SessionKeys.addBusinessStartDate
-                      case UkProperty =>
-                        SessionKeys.addUkPropertyStartDate
-                      case ForeignProperty =>
-                        SessionKeys.foreignPropertyStartDate
-                    }) -> formData.date.toString
-                  )
-            )
-        }
+        form(messagesPrefix).bindFromRequest().fold(
+          formWithErrors =>
+            BadRequest(
+              addIncomeSourceStartDate(
+                isAgent = isAgent,
+                form = formWithErrors,
+                backUrl = getBackUrl(incomeSourceType, isAgent, isUpdate),
+                postAction = getPostAction(incomeSourceType, isAgent, isUpdate),
+                messagesPrefix = messagesPrefix
+              )
+            ),
+          formData =>
+            Redirect(getSuccessUrl(incomeSourceType, isAgent, isUpdate))
+              .addingToSession(
+                (incomeSourceType match {
+                  case SelfEmployment =>
+                    SessionKeys.addBusinessStartDate
+                  case UkProperty =>
+                    SessionKeys.addUkPropertyStartDate
+                  case ForeignProperty =>
+                    SessionKeys.foreignPropertyStartDate
+                }) -> formData.date.toString
+              )
+        )
       } else Ok(customNotFoundErrorView())
     )
   }
@@ -171,8 +168,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   }
 
   private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler)
-      .showInternalServerError()
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 
   private def getFilledForm(form: Form[DateFormElement],
@@ -190,8 +186,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             )
           )
         )
-      case (Some(date), true) =>
-        Left(new Error(s"Could not parse $date as a LocalDate"))
+      case (Some(date), true) => Left(new Error(s"Could not parse $date as a LocalDate"))
       case _ => Right(form)
     }
   }
@@ -200,25 +195,29 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     user.session.get(incomeSourceType.startDateSessionKey)
   }
 
-  private def getCalls(incomeSourceType: IncomeSourceType,
-                       isAgent: Boolean,
-                       isChange: Boolean): (Call, Call, Call) = {
+  private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
+    routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType)
+  }
 
-    (
-      (isAgent, isChange, incomeSourceType) match {
-        case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-        case (false, true, SelfEmployment) => routes.CheckBusinessDetailsController.show()
-        case (true, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
-        case (true, true, SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
-        case (false, false, _) => routes.AddIncomeSourceController.show()
-        case (true, false, _) => routes.AddIncomeSourceController.showAgent()
-        case (false, true, UkProperty) => routes.CheckUKPropertyDetailsController.show()
-        case (true, true, UkProperty) => routes.CheckUKPropertyDetailsController.showAgent()
-        case (false, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.show()
-        case (true, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.showAgent()
-      },
-      routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType),
-      routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
-    )
+  private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
+    routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+  }
+
+  private def getBackUrl(incomeSourceType: IncomeSourceType,
+                         isAgent: Boolean,
+                         isChange: Boolean): String = {
+
+    ((isAgent, isChange, incomeSourceType) match {
+      case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
+      case (false, true, SelfEmployment) => routes.CheckBusinessDetailsController.show()
+      case (true, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+      case (true, true, SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
+      case (false, false, _) => routes.AddIncomeSourceController.show()
+      case (true, false, _) => routes.AddIncomeSourceController.showAgent()
+      case (false, true, UkProperty) => routes.CheckUKPropertyDetailsController.show()
+      case (true, true, UkProperty) => routes.CheckUKPropertyDetailsController.showAgent()
+      case (false, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.show()
+      case (true, true, ForeignProperty) => routes.ForeignPropertyCheckDetailsController.showAgent()
+    }).url
   }
 }
