@@ -115,7 +115,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                  (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.addStartDateCheckMessagesPrefix
-
     Future.successful(
       if (isEnabled(IncomeSources))
         getAndValidateStartDate(incomeSourceType) match {
@@ -219,11 +218,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   }
 
   private def getBackUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): String = {
-    routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType).url
+    routes.AddIncomeSourceStartDateController.show(isAgent, isChange, incomeSourceType).url
   }
 
   private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+    routes.AddIncomeSourceStartDateCheckController.submit(isAgent, isChange, incomeSourceType)
   }
 
   private def getSuccessUrl(incomeSourceType: IncomeSourceType,
