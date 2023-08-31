@@ -15,16 +15,13 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import enums.IncomeSourceJourney.SelfEmployment
+@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import views.html.helpers.injected.ErrorSummary
-@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-@import enums.IncomeSourceJourney.SelfEmployment
-
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
 
 @this(
         mainTemplate: unifiedLayout,
@@ -49,6 +46,7 @@
         origin: Option[String] = None
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
+@import play.twirl.api.HtmlFormat
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
@@ -69,9 +67,9 @@
 
 @changeBusinessTradeURL = @{
     if(isAgent) {
-        controllers.incomeSources.add.routes.AddBusinessTradeController.show(true, true).url
+        controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = true).url
     } else {
-        controllers.incomeSources.add.routes.AddBusinessTradeController.show(false, true).url
+        controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = true).url
     }
 }
 
@@ -89,6 +87,16 @@
     } else {
         controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(SelfEmployment.key).url
     }
+}
+
+@getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
+    List(Some(address1),
+        address2,
+        address3,
+        address4,
+        postCode,
+        countryCode
+    ).flatten.filter(_.nonEmpty).mkString("<br>")
 }
 
 @mainTemplate(
@@ -144,7 +152,14 @@
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
                 <dd class="govuk-summary-list__value" id="business-address-value">@{
-                    viewModel.businessAddressLine1 + " " + viewModel.businessPostalCode.getOrElse("")
+                    HtmlFormat.raw(getLongAddressFromBusinessAddressDetails(
+                        address1 = viewModel.businessAddressLine1,
+                        address2 = viewModel.businessAddressLine2,
+                        address3 = viewModel.businessAddressLine3,
+                        address4 = viewModel.businessAddressLine4,
+                        postCode = viewModel.businessPostalCode,
+                        countryCode = viewModel.businessCountryCode,
+                    ))
                 }</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link" href=@changeBusinessAddressURL>

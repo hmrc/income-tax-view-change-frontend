@@ -55,24 +55,21 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmploymentText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
-      document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe action.url
-      document.getElementById("error-reporting-method-not-saved-form").attr("method") shouldBe action.method
+      document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new TestSetup(isAgent = false, incomeSourceType = UkProperty) {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
-      document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe action.url
-      document.getElementById("error-reporting-method-not-saved-form").attr("method") shouldBe action.method
+      document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new TestSetup(isAgent = false, incomeSourceType = ForeignProperty) {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
-      document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe action.url
-      document.getElementById("error-reporting-method-not-saved-form").attr("method") shouldBe action.method
+      document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
   }
@@ -81,24 +78,21 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", selfEmploymentText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
-      document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe action.url
-      document.getElementById("error-reporting-method-not-saved-form").attr("method") shouldBe action.method
+      document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new TestSetup(isAgent = true, incomeSourceType = UkProperty) {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
-      document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe action.url
-      document.getElementById("error-reporting-method-not-saved-form").attr("method") shouldBe action.method
+      document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new TestSetup(isAgent = true, incomeSourceType = ForeignProperty) {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignPropertyText)
       document.getElementById("paragraph-2").text() shouldBe messages("incomeSources.add.error.reportingMethodNotSaved.p2")
-      document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe action.url
-      document.getElementById("error-reporting-method-not-saved-form").attr("method") shouldBe action.method
+      document.getElementById("continue-button").attr("href") shouldBe action.url
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
   }
