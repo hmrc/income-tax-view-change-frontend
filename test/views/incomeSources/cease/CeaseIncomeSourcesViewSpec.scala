@@ -16,8 +16,9 @@
 
 package views.incomeSources.cease
 
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import implicits.ImplicitDateFormatter
-import models.incomeSourceDetails.viewmodels.{CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -37,7 +38,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         ukProperty = Some(CeasePropertyDetailsViewModel(None)),
         foreignProperty = Some(CeasePropertyDetailsViewModel(None)),
         ceasedBusinesses = List(
-          CeaseCeasedBusinessDetailsViewModel(None, None, testCessation2.date.get)
+          CeasedBusinessDetailsViewModel(None, SelfEmployment, None, testCessation2.date.get),
+          CeasedBusinessDetailsViewModel(None, ForeignProperty, None, testCessation2.date.get),
+          CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation2.date.get)
         )
       )
     } else {
@@ -46,8 +49,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         ukProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         foreignProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         ceasedBusinesses = List(
-          CeaseCeasedBusinessDetailsViewModel(Some(testTradeName), Some(testStartDate), testCessation.date.get),
-          CeaseCeasedBusinessDetailsViewModel(Some(testTradeName2), Some(testStartDate2), testCessation2.date.get)
+          CeasedBusinessDetailsViewModel(tradingName = Some(testTradeName), incomeSourceType = SelfEmployment, tradingStartDate = Some(testStartDate), cessationDate = testCessation.date.get),
+          CeasedBusinessDetailsViewModel(tradingName = None, incomeSourceType = ForeignProperty, tradingStartDate = Some(testStartDate), cessationDate = testCessation.date.get),
+          CeasedBusinessDetailsViewModel(tradingName = None, incomeSourceType = UkProperty, tradingStartDate = Some(testStartDate2), cessationDate = testCessation2.date.get)
         )
       )
     }

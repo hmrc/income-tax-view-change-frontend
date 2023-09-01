@@ -16,6 +16,7 @@
 
 package views.incomeSources.add
 
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -35,8 +36,9 @@ class AddIncomeSourcesViewSpec extends TestSupport {
     ukProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
     foreignProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
     ceasedBusinesses = List(
-      CeasedBusinessDetailsViewModel(Some(testTradeName), Some(testStartDate), testCessation.date.get),
-      CeasedBusinessDetailsViewModel(Some(testTradeName2), Some(testStartDate2), testCessation2.date.get)
+      CeasedBusinessDetailsViewModel(Some(testTradeName), SelfEmployment, Some(testStartDate), testCessation.date.get),
+      CeasedBusinessDetailsViewModel(None, UkProperty, Some(testStartDate), testCessation.date.get),
+      CeasedBusinessDetailsViewModel(None, ForeignProperty, Some(testStartDate2), testCessation2.date.get)
     )
   )
 
@@ -45,8 +47,9 @@ class AddIncomeSourcesViewSpec extends TestSupport {
     ukProperty = Some(PropertyDetailsViewModel(None)),
     foreignProperty = Some(PropertyDetailsViewModel(None)),
     ceasedBusinesses = List(
-      CeasedBusinessDetailsViewModel(None, None, testCessation.date.get),
-      CeasedBusinessDetailsViewModel(None, None, testCessation2.date.get)
+      CeasedBusinessDetailsViewModel(None, SelfEmployment, None, testCessation.date.get),
+      CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation.date.get),
+      CeasedBusinessDetailsViewModel(None, ForeignProperty, None, testCessation2.date.get)
     )
   )
 

@@ -16,6 +16,7 @@
 
 package testConstants
 
+import enums.IncomeSourceJourney.SelfEmployment
 import models.core._
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails}
@@ -290,8 +291,23 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate2)
   )
 
+  val ceasedUkPropertyDetailsViewModel = CeasedBusinessDetailsViewModel(
+    tradingName = Some(testTradeName),
+    incomeSourceType = SelfEmployment,
+    tradingStartDate = Some(testStartDate),
+    cessationDate = testEndDate
+  )
+
+  val ceasedForeignPropertyDetailsViewModel = CeasedBusinessDetailsViewModel(
+    tradingName = Some(testTradeName),
+    incomeSourceType = SelfEmployment,
+    tradingStartDate = Some(testStartDate),
+    cessationDate = testEndDate
+  )
+
   val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
     tradingName = Some(testTradeName),
+    incomeSourceType = SelfEmployment,
     tradingStartDate = Some(testStartDate),
     cessationDate = testEndDate
   )

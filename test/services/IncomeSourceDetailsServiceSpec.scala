@@ -17,9 +17,10 @@
 package services
 
 import audit.mocks.MockAuditingService
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
-import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel, ViewCeasedBusinessDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import org.scalacheck.Gen
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants._
@@ -123,8 +124,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
           ukProperty = None,
           foreignProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
           ceasedBusinesses = List(
-            CeasedBusinessDetailsViewModel(Some(testTradeName), Some(testStartDate), testCessation.date.get),
-            CeasedBusinessDetailsViewModel(Some(testTradeName2), Some(testStartDate2), testCessation2.date.get)
+            CeasedBusinessDetailsViewModel(None, ForeignProperty, Some(testStartDate), testCessation.date.get),
+            CeasedBusinessDetailsViewModel(Some(testTradeName2), SelfEmployment, Some(testStartDate2), testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, Some(testStartDate2), testCessation2.date.get)
           )
         )
         )
@@ -156,8 +158,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
           ukProperty = None,
           foreignProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
           ceasedBusinesses = List(
-            CeaseCeasedBusinessDetailsViewModel(Some(testTradeName), Some(testStartDate), testCessation.date.get),
-            CeaseCeasedBusinessDetailsViewModel(Some(testTradeName2), Some(testStartDate2), testCessation2.date.get)
+            CeasedBusinessDetailsViewModel(Some(testTradeName), SelfEmployment, Some(testStartDate), testCessation.date.get),
+            CeasedBusinessDetailsViewModel(None, ForeignProperty, Some(testStartDate2), testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, Some(testStartDate2), testCessation2.date.get)
           )
         ))
       }
@@ -188,8 +191,9 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
           viewUkProperty = None,
           viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
           viewCeasedBusinesses = List(
-            ViewCeasedBusinessDetailsViewModel(testTradeNameOption, testStartDateOption, testCessation.date.get),
-            ViewCeasedBusinessDetailsViewModel(testTradeNameOption2, testStartDateOption2, testCessation2.date.get)
+            CeasedBusinessDetailsViewModel(None, UkProperty, testStartDateOption, testCessation.date.get),
+            CeasedBusinessDetailsViewModel(testTradeNameOption2, ForeignProperty, testStartDateOption2, testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, SelfEmployment, testStartDateOption2, testCessation2.date.get)
           )
         ))
       }
