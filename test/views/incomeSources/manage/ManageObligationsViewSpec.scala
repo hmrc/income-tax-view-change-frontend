@@ -16,6 +16,7 @@
 
 package views.incomeSources.manage
 
+import enums.IncomeSourceJourney.UkProperty
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
@@ -63,7 +64,7 @@ class ManageObligationsViewSpec extends ViewSpec {
   val quarterly = "quarterly"
   val annually = "annual"
 
-  val backUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(annually, taxYearString).url
+  val backUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, annually, taxYearString, incomeSourceType = UkProperty, isAgent = false).url
 
   val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
