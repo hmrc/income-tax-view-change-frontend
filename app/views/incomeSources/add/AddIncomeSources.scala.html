@@ -15,25 +15,27 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import exceptions.MissingFieldException
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 @import enums.IncomeSourceJourney._
+@import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
 
-@this(mainTemplate: unifiedLayout,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    h1: h1,
-    h2: h2,
-    p: p,
-    link: link,
-    hr: hr,
-    govukTable: GovukTable)
+@this(
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+        ceasedBusinesses: CeasedBusinesses
+)
 
 @(sources: AddIncomeSourcesViewModel,
-    isAgent: Boolean,
-    backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+        isAgent: Boolean,
+        backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -45,10 +47,15 @@
     messages("incomeSources.add.addIncomeSources.unknown")
 }
 
-@ukProperty = @{ sources.ukProperty }
-@foreignProperty = @{ sources.foreignProperty }
-@ceasedBusinesses = @{ sources.ceasedBusinesses }
-@soleTraderBusinesses = @{ sources.soleTraderBusinesses }
+@ukProperty = @{
+    sources.ukProperty
+}
+@foreignProperty = @{
+    sources.foreignProperty
+}
+@soleTraderBusinesses = @{
+    sources.soleTraderBusinesses
+}
 
 @addBusinessNameURL = @{
     if(isAgent) controllers.incomeSources.add.routes.AddBusinessNameController.showAgent().url
@@ -72,7 +79,8 @@
         id = Some("incomeSources.add.addIncomeSources-h1"))
 
     @p(id = Some("self-employment-p1")) {
-        @getMessage("selfEmployment.text") }
+        @getMessage("selfEmployment.text")
+    }
 
     @h2(msg = getMessage("selfEmployment.heading"),
         optId = Some("self-employment-h2"))
@@ -96,7 +104,8 @@
                 TableRow(
                     content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> s"table-row-trading-start-date-$index"))
-            )},
+            )
+            },
             attributes = Map("id" -> "sole-trader-businesses-table")
         ))
     } else {
@@ -115,7 +124,8 @@
     @if(ukProperty.nonEmpty) {
 
         @p(id = Some("uk-property-p1")) {
-            @getMessage("ukProperty.text") }
+            @getMessage("ukProperty.text")
+        }
 
         @govukTable(Table(
             head = Some(List(
@@ -147,7 +157,8 @@
     @if(foreignProperty.nonEmpty) {
 
         @p(id = Some("foreign-property-p1")) {
-            @getMessage("foreignProperty.text") }
+            @getMessage("foreignProperty.text")
+        }
 
         @govukTable(Table(
             head = Some(List(
@@ -172,7 +183,7 @@
         @hr()
     }
 
-    @if(ceasedBusinesses.nonEmpty) {
+    @if(sources.ceasedBusinesses.nonEmpty) @{
         ceasedBusinesses(sources.ceasedBusinesses)
     }
 }

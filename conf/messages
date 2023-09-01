@@ -1130,6 +1130,10 @@ incomeSources.add.addIncomeSources.ukProperty.link                  = Add income
 incomeSources.add.addIncomeSources.foreignProperty.heading          = Foreign Property
 incomeSources.add.addIncomeSources.foreignProperty.text             = You only need to tell us you have foreign property income once.
 incomeSources.add.addIncomeSources.foreignProperty.link             = Add income from foreign property
+incomeSources.add.addIncomeSources.ceasedBusinesses.heading         = Businesses that have ceased
+incomeSources.add.addIncomeSources.tableHead.businessName           = Business name
+incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date started
+incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
 incomeSources.add.addIncomeSources.unknown                          = Unknown
 
 incomeSources.add.error.standardError                               = Sorry, there is a problem with the service
@@ -1149,6 +1153,8 @@ cease-income-sources.uk-property.h1           = UK property
 cease-income-sources.uk-property.p1           = You should only cease your UK property if you no longer receive any income from it.
 cease-income-sources.foreign-property.h1      = Foreign property
 cease-income-sources.foreign-property.p1      = You should only cease your foreign property if you no longer receive any income from it.
+cease-income-sources.ceased-businesses.h1     = Businesses that have ceased
+cease-income-sources.table-head.date-ended    = Date ended
 cease-income-sources.unknown                  = Unknown
 
 ## view Income Sources
@@ -1156,8 +1162,13 @@ view-income-sources.heading                  = View and manage income sources
 view-income-sources.self-employed-h2         = Sole trader businesses
 view-income-sources.uk-property-h2           = UK property
 view-income-sources.foreign-property-h2      = Foreign property
+view-income-sources.ceased-businesses-h2     = Businesses that have ceased
+view-income-sources.table-head.business-name = Business name
+view-income-sources.table-head.date-started  = Date started
+view-income-sources.table-head.date-ended    = Date ended
 view-income-sources.choose                   = Choose
 view-income-sources.unknown-field            = Unknown
+
 
 # add Business page
 add-business-name.heading                                         = What is the name of your business?

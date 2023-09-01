@@ -1149,6 +1149,10 @@ incomeSources.add.addIncomeSources.ukProperty.link                 = Ychwanegu i
 incomeSources.add.addIncomeSources.foreignProperty.heading          = Eiddo tramor
 incomeSources.add.addIncomeSources.foreignProperty.text             = Dim ond unwaith y mae angen i chi roi gwybod i ni fod gennych incwm o eiddo tramor.
 incomeSources.add.addIncomeSources.foreignProperty.link             = Ychwanegu incwm o eiddo tramor
+incomeSources.add.addIncomeSources.ceasedBusinesses.heading         = Busnesau sydd wedi dod i ben
+incomeSources.add.addIncomeSources.tableHead.businessName           = Enw’r busnes
+incomeSources.add.addIncomeSources.tableHead.dateStarted            = Dyddiad cychwyn
+incomeSources.add.addIncomeSources.tableHead.dateEnded              = Y dyddiad dod i ben
 incomeSources.add.addIncomeSources.unknown                          = Anhysbys
 
 incomeSources.add.checkUKPropertyDetails.heading                = Gwirio’ch manylion
@@ -1175,6 +1179,8 @@ cease-income-sources.uk-property.h1           = Eiddo yn y DU
 cease-income-sources.uk-property.p1           = Dylech ond dod â’ch eiddo yn y DU i ben os nad ydych yn cael unrhyw incwm oddi wrtho mwyach.
 cease-income-sources.foreign-property.h1      = Eiddo tramor
 cease-income-sources.foreign-property.p1      = Dylech ond dod â’ch eiddo tramor i ben os nad ydych yn cael unrhyw incwm oddi wrtho mwyach.
+cease-income-sources.ceased-businesses.h1     = Busnesau sydd wedi dod i ben
+cease-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 cease-income-sources.unknown                  = Anhysbys
 
 ## view Income Sources
@@ -1182,6 +1188,10 @@ view-income-sources.heading                  = Bwrw golwg dros eich ffynonellau 
 view-income-sources.self-employed-h2         = Busnesau unig fasnachwr
 view-income-sources.uk-property-h2           = Eiddo yn y DU
 view-income-sources.foreign-property-h2      = Eiddo tramor
+view-income-sources.ceased-businesses-h2     = Busnesau sydd wedi dod i ben
+view-income-sources.table-head.business-name = Enw’r busnes
+view-income-sources.table-head.date-started  = Dyddiad cychwyn
+view-income-sources.table-head.date-ended    = Y dyddiad dod i ben
 view-income-sources.choose                   = Dewis
 view-income-sources.unknown-field            = Anhysbys
 
