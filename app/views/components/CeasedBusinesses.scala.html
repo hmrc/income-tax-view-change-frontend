@@ -1,25 +1,25 @@
 @*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
+* Copyright 2023 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 @import implicits.ImplicitDateFormatterImpl
 @import models.incomeSourceDetails.viewmodels.CeasedBusinessDetailsViewModel
 @import views.html.components.h2
 @import enums.IncomeSourceJourney.{SelfEmployment, UkProperty, ForeignProperty}
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
 @import uk.gov.hmrc.govukfrontend.views.Aliases._
+@import enums.IncomeSourceJourney.IncomeSourceType
 
 @this(
         implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -35,7 +35,7 @@
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"cease-income-sources.$key", args: _*)
+    messages(s"incomeSources.ceased-income-sources.$key", args: _*)
 }
 
 @formattingUnknownValues(value: Option[String]) = @{
@@ -45,36 +45,37 @@
 @columnOneValue(business: CeasedBusinessDetailsViewModel) = @{
     business.incomeSourceType match {
         case SelfEmployment => formattingUnknownValues(business.tradingName)
-        case UkProperty => "UK Property"
-        case ForeignProperty => "Foreign Property"
+        case UkProperty => getMessage("uk-property")
+        case ForeignProperty => getMessage("foreign-property")
     }
 }
 
-@h2(msg = getMessage("ceased-businesses.h1"),
+@h2(msg = getMessage("heading"),
     optId = Some("ceased-businesses-h2"))
 
 @govukTable(Table(
     head = Some(List(
         HeadCell(
             content = Text(getMessage("table-head.business-name")),
-            attributes = Map("id" -> "table-head-business-start-name-ceased")),
+            attributes = Map("id" -> "ceased-businesses-table-head-name")),
         HeadCell(
             content = Text(getMessage("table-head.date-started")),
-            attributes = Map("id" -> "table-head-date-started-ceased")),
+            attributes = Map("id" -> "ceased-businesses-table-head-date-started")),
         HeadCell(
             content = Text(getMessage("table-head.date-ended")),
-            attributes = Map("id" -> "table-head-date-ended-ceased"))
+            attributes = Map("id" -> "ceased-businesses-table-head-date-ended"))
     )),
     rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
         TableRow(
             content = Text(columnOneValue(business)),
-            attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
+            attributes = Map("id" -> s"ceased-business-table-row-trading-name-$index")),
         TableRow(
             content = Text(formattingUnknownValues(business.tradingStartDate.map(_.toLongDate))),
-            attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
+            attributes = Map("id" -> s"ceased-business-table-row-trading-name-$index")),
         TableRow(
             content = Text(business.cessationDate.toLongDate),
-            attributes = Map("id" -> s"table-row-cessation-date-$index")),
-    )},
+            attributes = Map("id" -> s"ceased-business-table-row-trading-name-$index")),
+    )
+    },
     attributes = Map("id" -> "ceased-businesses-table")
 ))
