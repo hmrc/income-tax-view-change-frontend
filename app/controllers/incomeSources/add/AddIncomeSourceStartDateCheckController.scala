@@ -63,7 +63,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
            isChange: Boolean
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    IncomeSourceType.get(incomeSourceKey) match {
+    IncomeSourceType(incomeSourceKey) match {
       case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest]: " +
         s"Failed fulfil show request: ${ex.getMessage}")
         Future.successful(getErrorHandler(isAgent).showInternalServerError())
@@ -80,7 +80,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
              isAgent: Boolean,
              isChange: Boolean
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-    IncomeSourceType.get(incomeSourceKey) match {
+    IncomeSourceType(incomeSourceKey) match {
       case Left(ex: Exception) => Logger("application").error(s"[AddIncomeSourceStartDateController][handleShowRequest]: " +
         s"Failed fulfil submit request: ${ex.getMessage}")
         Future.successful(getErrorHandler(isAgent).showInternalServerError())

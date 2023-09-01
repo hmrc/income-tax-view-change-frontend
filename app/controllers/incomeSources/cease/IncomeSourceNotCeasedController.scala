@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
@@ -49,18 +50,6 @@ class IncomeSourceNotCeasedController @Inject()(val authenticate: Authentication
       handleRequest(isAgent, incomeSourceType)
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: String)(implicit user: MtdItUser[_]): Future[Result] = {
-    val pageTitle = messagesApi.preferred(user)("standardError.heading")
-    val heading = messagesApi.preferred(user)("standardError.heading")
-    val message = messagesApi.preferred(user)(s"incomeSources.cease.error.$incomeSourceType.notCeased.text")
-    val linkText = messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.text")
-    val linkUrl = if(isAgent) routes.CeaseIncomeSourceController.showAgent().url else routes.CeaseIncomeSourceController.show().url
-    val linkPrefix = Some(messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.prefix"))
-    Future.successful {
-      Ok(errorTemplate(pageTitle, heading, message, linkPrefix, linkText, linkUrl, isAgent = isAgent))
-    }
-  }
-
   private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     if (isAgent) {
       Authenticated.async { implicit request =>
@@ -77,4 +66,34 @@ class IncomeSourceNotCeasedController @Inject()(val authenticate: Authentication
     }
   }
 
+  private def handleRequest(isAgent: Boolean, incomeSourceType: String)(implicit user: MtdItUser[_]): Future[Result] = {
+    IncomeSourceType(incomeSourceType) match {
+      case Left(_) => handleError(isAgent)
+      case Right(incomeSourceType) => handleSuccess(isAgent, incomeSourceType.key)
+    }
+  }
+
+  private def handleError(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    if (isAgent)
+      Future.successful {
+        agentItvcErrorHandler.showInternalServerError()
+      }
+    else
+      Future.successful {
+        itvcErrorHandler.showInternalServerError()
+      }
+  }
+
+  private def handleSuccess(isAgent: Boolean, incomeSourceType: String)(implicit user: MtdItUser[_]): Future[Result] = {
+    val pageTitle = messagesApi.preferred(user)("standardError.heading")
+    val heading = messagesApi.preferred(user)("standardError.heading")
+    val message = messagesApi.preferred(user)(s"incomeSources.cease.error.$incomeSourceType.notCeased.text")
+    val linkText = messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.text")
+    val linkUrl = if (isAgent) routes.CeaseIncomeSourceController.showAgent().url else routes.CeaseIncomeSourceController.show().url
+    val linkPrefix = Some(messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.prefix"))
+
+    Future.successful {
+      Ok(errorTemplate(pageTitle, heading, message, linkPrefix, linkText, linkUrl, isAgent = isAgent))
+    }
+  }
 }

@@ -30,7 +30,6 @@ case object SelfEmployment extends IncomeSourceType {
   override val startDateMessagesPrefix = "add-business-start-date"
   override val addStartDateCheckMessagesPrefix = "add-business-start-date-check"
   override val startDateSessionKey = SessionKeys.addBusinessStartDate
-
 }
 
 case object UkProperty extends IncomeSourceType {
@@ -48,7 +47,7 @@ case object ForeignProperty extends IncomeSourceType {
 }
 
 object IncomeSourceType {
-  def get(key: String): Either[Exception,IncomeSourceType] = {
+  def apply(key: String): Either[Exception, IncomeSourceType] = {
     key match {
       case "FP" => Right(ForeignProperty)
       case "UK" => Right(UkProperty)

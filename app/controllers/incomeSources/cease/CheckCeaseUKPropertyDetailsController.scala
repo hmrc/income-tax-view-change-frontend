@@ -25,7 +25,7 @@ import enums.IncomeSourceJourney.UkProperty
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseUKPropertyDetails
@@ -45,6 +45,7 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
                                                       val customNotFoundErrorView: CustomNotFoundError)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       val ec: ExecutionContext,
+                                                      implicit override val mcc: MessagesControllerComponents,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {

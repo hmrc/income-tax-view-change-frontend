@@ -114,7 +114,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    IncomeSourceType.get(incomeSourceType) match {
+    IncomeSourceType(incomeSourceType) match {
       case Left(ex: Exception) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error generating backUrl: ${ex.getMessage}")
         Future.successful(errorHandler.showInternalServerError())
