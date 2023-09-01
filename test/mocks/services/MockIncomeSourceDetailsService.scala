@@ -16,6 +16,7 @@
 
 package mocks.services
 
+import controllers.predicates.Authorise
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}

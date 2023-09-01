@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
-class AddIncomeSourceStartDateCheckController @Inject()(authenticate: AuthenticationPredicate,
+class AddIncomeSourceStartDateCheckController @Inject()(authorise: Authorise,
                                                         val authorisedFunctions: AuthorisedFunctions,
                                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -61,7 +61,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   def show(isAgent: Boolean,
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = authorise.action(isAgent) { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
@@ -73,7 +73,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   def submit(isAgent: Boolean,
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = authorise.action(isAgent) { implicit user =>
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
@@ -149,22 +149,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         }
       else Ok(customNotFoundErrorView())
     )
-  }
-
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
   }
 
   private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {

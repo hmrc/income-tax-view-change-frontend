@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{Authorise, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
 import forms.utils.SessionKeys
@@ -66,7 +66,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
 
   object TestAddIncomeSourceStartDateCheckController
-    extends AddIncomeSourceStartDateCheckController(authenticate = MockAuthenticationPredicate,
+    extends AddIncomeSourceStartDateCheckController(authorise = mock(classOf[Authorise]),
       authorisedFunctions = mockAuthService,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,

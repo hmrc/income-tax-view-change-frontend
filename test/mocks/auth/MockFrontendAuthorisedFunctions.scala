@@ -18,7 +18,8 @@ package mocks.auth
 
 import testConstants.BaseTestConstants._
 import org.scalamock.scalatest.MockFactory
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import controllers.predicates.Authorise
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -53,6 +54,12 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
             override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = body.apply(retrievalValue.asInstanceOf[A])
           }
         })
+  }
+
+  def setupMockAuth(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Unit = {
+    when(
+      mock(classOf[Authorise]).action(any())(any()))
+      .thenReturn(authenticatedCodeBlock(MtdItUser[_]))
   }
 
   def setupMockAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit =
