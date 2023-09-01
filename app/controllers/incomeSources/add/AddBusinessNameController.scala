@@ -24,11 +24,13 @@ import controllers.predicates._
 import forms.BusinessNameForm
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.incomeSources.add.AddBusinessName
+import utils.IncomeSourcesUtils
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,12 +43,13 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          incomeSourceDetailsService: IncomeSourceDetailsService)
+                                          incomeSourceDetailsService: IncomeSourceDetailsService,
+                                          val sessionService: SessionService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit override val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
   lazy val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   lazy val backUrlAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
@@ -58,8 +61,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   lazy val submitChangeAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChange()
   lazy val submitChangeActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent()
 
-  lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = false, isChange = false )
-  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = true, isChange = false )
+  lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = false, isChange = false)
+  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = true, isChange = false)
   lazy val checkDetailsRedirect: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
   lazy val checkDetailsRedirectAgent: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
 
@@ -70,7 +73,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       handleRequest(
         isAgent = false,
         backUrl = backUrl,
-        isChange = isChangeRequest(user)
+        isChange = false
       )
   }
 
@@ -83,39 +86,36 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
               handleRequest(
                 isAgent = true,
                 backUrl = backUrlAgent,
-                isChange = isChangeRequest(request)
+                isChange = false
               )
           }
     }
 
-  private def isChangeRequest(request: RequestHeader): Boolean = {
-    request.uri.contains("change")
+  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    withIncomeSourcesFS {
+      sessionService.get(SessionKeys.businessName).map {
+        case Right(nameOpt) =>
+          val filledForm = nameOpt match {
+            case Some(name) => BusinessNameForm.form.fill(BusinessNameForm(name))
+            case None => BusinessNameForm.form
+          }
+          val submitAction = getSubmitAction(isAgent: Boolean, isChange: Boolean)
+          Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
+
+        case Left(error) =>
+          Logger("application").error(s"[AddBusinessNameController][handleRequest] $error")
+          errorHandler.showInternalServerError()
+      }
+    }
   }
 
-  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-
-    if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(
-        if (isAgent) controllers.routes.HomeController.showAgent
-        else controllers.routes.HomeController.show()
-      ))
-    } else {
-      Future {
-        val filledForm = user.session.get(SessionKeys.businessName) match {
-          case Some(name) => BusinessNameForm.form.fill(BusinessNameForm(name))
-          case None => BusinessNameForm.form
-        }
-        (isAgent, isChange) match {
-          case (false, false) =>
-            Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = false))
-          case (true, false) =>
-            Ok(addBusinessView(filledForm, isAgent, submitActionAgent, backUrl, useFallbackLink = false))
-          case (false, true) =>
-            Ok(addBusinessView(filledForm, isAgent, submitChangeAction, backUrl, useFallbackLink = true))
-          case (true, true) =>
-            Ok(addBusinessView(filledForm, isAgent, submitChangeActionAgent, backUrl, useFallbackLink = true))
-        }
-      }
+  private def getSubmitAction(isAgent: Boolean, isChange: Boolean) = {
+    (isAgent, isChange) match {
+      case (false, false) => submitAction
+      case (true, false) => submitActionAgent
+      case (false, true) => submitChangeAction
+      case (true, true) => submitChangeActionAgent
     }
   }
 
@@ -158,7 +158,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
     }
 
-      BusinessNameForm.form.bindFromRequest().fold(
+    BusinessNameForm.form.bindFromRequest().fold(
       formWithErrors => {
         Future {
           Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal, useFallbackLink = true))
