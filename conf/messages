@@ -1450,7 +1450,7 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-## Income Source Creased Obligation Page ##
+## Income Source Ceased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        =
 business-ceased.obligation.heading1.se.part2                        = Sole trader business
 business-ceased.obligation.heading1.uk-property.part2               = UK property
@@ -1575,3 +1575,16 @@ incomeSources.manage.uk-property-manage-details.accounting-method               
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property business
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method for foreign property income
+
+incomeSources.manage.reportingMethodError.hyperlink1            = manage your details
+incomeSources.manage.reportingMethodError.hyperlink2            = view and manage income sources
+incomeSources.manage.reportingMethodError.p3                    = Or go back to
+
+incomeSources.manage.businessReportingMethodError.p1            = We were unable to update your sole trader business reporting frequency.
+incomeSources.manage.businessReportingMethodError.p2            = You can try to change your sole trader business reporting frequency again in
+
+incomeSources.manage.uKPropertyReportingMethodError.p1        = We were unable to update your UK property business reporting frequency.
+incomeSources.manage.uKPropertyReportingMethodError.p2        = You can try to change your UK property business reporting frequency again in
+
+incomeSources.manage.foreignPropertyReportingMethodError.p1   = We were unable to update your foreign property business reporting frequency.
+incomeSources.manage.foreignPropertyReportingMethodError.p2   = You can try to change your foreign property business reporting frequency again in

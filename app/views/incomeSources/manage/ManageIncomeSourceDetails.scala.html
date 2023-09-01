@@ -56,25 +56,12 @@
 @changeReportingMethodUrl(id: String, taxYear: String, changeTo: String) = @{
     viewModel.incomeSourceType match {
         case SelfEmployment =>
-            if(isAgent){
-                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id, taxYear, changeTo: String).url
-            } else {
-                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id, taxYear, changeTo: String).url
-            }
-        case UkProperty =>
-            if(isAgent){
-                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKPropertyAgent(taxYear, changeTo: String).url
-            } else {
-                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear, changeTo: String).url
-            }
-        case ForeignProperty =>
-            if(isAgent){
-                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignPropertyAgent(taxYear, changeTo: String).url
-            } else {
-                controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignProperty(taxYear, changeTo: String).url
-            }
+            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(Some(id), taxYear, changeTo, isAgent, SelfEmployment).url
+        case UkProperty  =>
+            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, UkProperty).url
+        case ForeignProperty  =>
+            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, ForeignProperty).url
     }
-
 }
 
 @changeToValue(currentMethod: String) = @{

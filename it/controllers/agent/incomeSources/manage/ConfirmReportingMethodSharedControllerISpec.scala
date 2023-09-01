@@ -17,11 +17,12 @@
 package controllers.agent.incomeSources.manage
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.updateIncomeSource.UpdateIncomeSourceResponseModel
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
@@ -41,18 +42,18 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     .ConfirmReportingMethodSharedController
 
   val confirmReportingMethodShowUKPropertyUrl: String = confirmReportingMethodSharedController
-    .showUKPropertyAgent(taxYear = testPropertyIncomeId, changeTo = annual).url
+    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
   val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .showForeignPropertyAgent(taxYear = testPropertyIncomeId, changeTo = annual).url
+    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
   val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .showSoleTraderBusinessAgent(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
+    .show(id = Some(testSelfEmploymentId), taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
 
   val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submitUKPropertyAgent(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
+    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
   val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submitForeignPropertyAgent(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual).url
+    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submitSoleTraderBusinessAgent(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual).url
+    .submit(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
     .showAgentUKProperty(changeTo = annual, taxYear = taxYear).url
@@ -309,6 +310,87 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.routes.HomeController.showAgent.url)
+        )
+      }
+    }
+  }
+
+  s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
+    "redirect to the Sole Trader Business Reporting Method Change Error Page" when {
+      "API 1771 returns an Error response" in {
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        And("API 1776 updateTaxYearSpecific returns a success response")
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
+
+        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+        )
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(Some(testSelfEmploymentId), incomeSourceType = SelfEmployment, isAgent = true).url)
+        )
+      }
+    }
+  }
+
+  s"calling POST $confirmReportingMethodSubmitForeignPropertyUrl" should {
+    "redirect to the Foreign Property Reporting Method Change Error Page" when {
+      "API 1771 returns an Error response" in {
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        And("API 1776 updateTaxYearSpecific returns a success response")
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
+
+        val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+        )
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(None, incomeSourceType = ForeignProperty, isAgent = true).url)
+        )
+      }
+    }
+  }
+
+  s"calling POST $confirmReportingMethodSubmitUKPropertyUrl" should {
+    "redirect to the UK Property Reporting Method Change Error Page" when {
+      "API 1771 returns an Error response" in {
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        And("API 1776 updateTaxYearSpecific returns a success response")
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
+
+        val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
+        )
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(None, incomeSourceType = UkProperty, isAgent = true).url)
         )
       }
     }
