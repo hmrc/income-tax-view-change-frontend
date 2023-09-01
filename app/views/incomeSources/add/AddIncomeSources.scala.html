@@ -173,33 +173,6 @@
     }
 
     @if(ceasedBusinesses.nonEmpty) {
-        @h2(msg = getMessage("ceasedBusinesses.heading"),
-            optId = Some("ceased-businesses-h2"))
-
-        @govukTable(Table(
-            head = Some(List(
-                HeadCell(
-                    content = Text(getMessage("tableHead.businessName")),
-                    attributes = Map("id" -> "table-head-business-start-name-ceased")),
-                HeadCell(
-                    content = Text(getMessage("tableHead.dateStarted")),
-                    attributes = Map("id" -> "table-head-date-started-ceased")),
-                HeadCell(
-                    content = Text(getMessage("tableHead.dateEnded")),
-                    attributes = Map("id" -> "table-head-date-ended-ceased"))
-            )),
-            rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
-                TableRow(
-                    content = Text(business.tradingName.getOrElse(messageForEmptyField)),
-                    attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
-                TableRow(
-                    content = Text(business.tradingStartDate.map(_.toLongDate).getOrElse(messageForEmptyField)),
-                    attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
-                TableRow(
-                    content = Text(business.cessationDate.toLongDate),
-                    attributes = Map("id" -> s"table-row-cessation-date-$index")),
-            )},
-            attributes = Map("id" -> "ceased-businesses-table")
-        ))
+        ceasedBusinesses(sources.ceasedBusinesses)
     }
 }

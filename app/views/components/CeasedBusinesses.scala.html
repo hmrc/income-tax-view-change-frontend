@@ -18,10 +18,13 @@
 @import models.incomeSourceDetails.viewmodels.CeasedBusinessDetailsViewModel
 @import views.html.components.h2
 @import enums.IncomeSourceJourney.{SelfEmployment, UkProperty, ForeignProperty}
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
+@import uk.gov.hmrc.govukfrontend.views.Aliases._
 
 @this(
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        h2: h2
+        h2: h2,
+        govukTable: GovukTable
 )
 
 @(
@@ -48,29 +51,30 @@
 }
 
 @h2(msg = getMessage("ceased-businesses.h1"),
-    optId = Some("ceased-businesses-h1"))
+    optId = Some("ceased-businesses-h2"))
 
-<table class="govuk-table govuk-!-margin-bottom-3" id="ceased-businesses-table">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header" scope="col" id="table-head-business-name-ceased">@getMessage("table-head.business-name")</th>
-            <th class="govuk-table__header" scope="col" id="table-head-date-started-ceased">@getMessage("table-head.date-started")</th>
-            <th class="govuk-table__header" scope="col" id="table-head-date-ended-ceased">@getMessage("table-head.date-ended")</th>
-        </tr>
-    </thead>
-    <tbody>
-    @for((item, index) <- ceasedBusinesses.zipWithIndex) {
-        <tr class="govuk-table__row">
-            <td class="govuk-table__cell" id="@{
-                s"table-row-trading-name-$index-ceased"
-            }">@columnOneValue(item)</td>
-            <td class="govuk-table__cell" id="@{
-                s"table-row-trading-start-date-$index-ceased"
-            }">@formattingUnknownValues(item.tradingStartDate.map(_.toLongDate))</td>
-            <td class="govuk-table__cell" id="@{
-                s"table-row-trading-end-date-$index-ceased"
-            }">@item.cessationDate.toLongDate</td>
-        </tr>
-    }
-    </tbody>
-</table>
+@govukTable(Table(
+    head = Some(List(
+        HeadCell(
+            content = Text(getMessage("table-head.business-name")),
+            attributes = Map("id" -> "table-head-business-start-name-ceased")),
+        HeadCell(
+            content = Text(getMessage("table-head.date-started")),
+            attributes = Map("id" -> "table-head-date-started-ceased")),
+        HeadCell(
+            content = Text(getMessage("table-head.date-ended")),
+            attributes = Map("id" -> "table-head-date-ended-ceased"))
+    )),
+    rows = ceasedBusinesses.zipWithIndex.map { case (business, index) => Seq(
+        TableRow(
+            content = Text(columnOneValue(business)),
+            attributes = Map("id" -> s"table-row-trading-name-ceased-$index")),
+        TableRow(
+            content = Text(formattingUnknownValues(business.tradingStartDate.map(_.toLongDate))),
+            attributes = Map("id" -> s"table-row-trading-start-date-ceased-$index")),
+        TableRow(
+            content = Text(business.cessationDate.toLongDate),
+            attributes = Map("id" -> s"table-row-cessation-date-$index")),
+    )},
+    attributes = Map("id" -> "ceased-businesses-table")
+))
