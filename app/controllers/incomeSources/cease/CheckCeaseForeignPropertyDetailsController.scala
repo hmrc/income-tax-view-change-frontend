@@ -17,19 +17,19 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.utils.SessionKeys.ceaseForeignPropertyEndDate
 import implicits.ImplicitDateFormatter
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.IncomeSourcesUtils
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseForeignPropertyDetails
 
 import javax.inject.Inject
@@ -52,11 +52,11 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter with IncomeSourcesUtils {
 
-  lazy val backUrl: String = routes.ForeignPropertyEndDateController.show().url
-  lazy val backUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
+  lazy val backUrl: String = routes.BusinessEndDateController.show(None, ForeignProperty.key).url
+  lazy val backUrlAgent: String = routes.BusinessEndDateController.showAgent(None, ForeignProperty.key).url
 
-  lazy val changeUrl: String = routes.ForeignPropertyEndDateController.show().url
-  lazy val changeUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
+  lazy val changeUrl: String = routes.BusinessEndDateController.show(None, ForeignProperty.key).url
+  lazy val changeUrlAgent: String = routes.BusinessEndDateController.showAgent(None, ForeignProperty.key).url
 
   lazy val successCall: Call = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.show()
   lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.showAgent()

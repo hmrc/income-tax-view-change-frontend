@@ -17,12 +17,13 @@
 package views.incomeSources.cease
 
 import auth.MtdItUser
+import enums.IncomeSourceJourney.SelfEmployment
 import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testSelfEmploymentId, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.BusinessDetailsTestConstants.{address, businessIncomeSourceId, testEndDate, testStartDate, testTradeName}
+import testConstants.BusinessDetailsTestConstants.{address, businessIncomeSourceId, testTradeName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, businessesAndPropertyIncome}
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -76,8 +77,8 @@ class CheckCeaseBusinessDetailsViewSpec extends TestSupport with ViewSpec{
   val businessNameLabel = messages("incomeSources.ceaseBusiness.checkDetails.businessName")
   val businessAddressLabel = messages("incomeSources.ceaseBusiness.checkDetails.businessAddress")
   val buttonLabel = messages("incomeSources.ceaseBusiness.checkDetails.confirm")
-  val changeUrl = controllers.incomeSources.cease.routes.BusinessEndDateController.show(testSelfEmploymentId).url
-  val changeUrlAgent = controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(testSelfEmploymentId).url
+  val changeUrl = controllers.incomeSources.cease.routes.BusinessEndDateController.show(Some(testSelfEmploymentId), SelfEmployment.key).url
+  val changeUrlAgent = controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(Some(testSelfEmploymentId), SelfEmployment.key).url
   val formAction = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submit().url
   val formActionAgent = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submitAgent().url
 

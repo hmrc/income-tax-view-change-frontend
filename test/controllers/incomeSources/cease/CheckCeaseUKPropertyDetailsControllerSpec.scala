@@ -19,28 +19,23 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
-import controllers.predicates.{IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import forms.incomeSources.cease.UKPropertyEndDateForm
-import forms.utils.SessionKeys.ceaseUKPropertyEndDate
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.UkProperty
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
-import models.updateIncomeSource.{UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, verify, when}
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.UpdateIncomeSourceService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
-import testConstants.UpdateIncomeSourceTestConstants
-import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, successHttpResponse, successResponse, successResponseJson}
+import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, successResponse}
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.{CheckCeaseUKPropertyDetails, UKPropertyEndDate}
+import views.html.incomeSources.cease.CheckCeaseUKPropertyDetails
 
 import scala.concurrent.Future
 
@@ -158,7 +153,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
   }
 
   "Agent - CheckCeaseUKPropertyDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(None, UkProperty.key).url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)

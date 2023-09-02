@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 @import java.time.format.DateTimeFormatter
+@import enums.IncomeSourceJourney.{SelfEmployment, UkProperty, ForeignProperty}
 
 @this(
         mainTemplate: unifiedLayout,
@@ -45,8 +46,8 @@
 }
 
 @ceaseSoleTraderBusinessURL(incomeSourceId: String) = @{
-    if(isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(incomeSourceId).url
-    else controllers.incomeSources.cease.routes.BusinessEndDateController.show(incomeSourceId).url
+    if(isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(Some(incomeSourceId), SelfEmployment.key).url
+    else controllers.incomeSources.cease.routes.BusinessEndDateController.show(Some(incomeSourceId), SelfEmployment.key).url
 }
 
 @ceaseUkPropertyURL = @{

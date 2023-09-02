@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.CeaseForeignPropertyForm
 import forms.utils.SessionKeys.ceaseForeignPropertyDeclare
 import play.api.Logger
@@ -104,11 +105,11 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
       if (isAgent)
         (routes.CeaseForeignPropertyController.submitAgent,
           routes.CeaseIncomeSourceController.showAgent(),
-          routes.ForeignPropertyEndDateController.showAgent())
+          routes.BusinessEndDateController.showAgent(None, ForeignProperty.key))
       else
         (routes.CeaseForeignPropertyController.submit,
           routes.CeaseIncomeSourceController.show(),
-          routes.ForeignPropertyEndDateController.show())
+          routes.BusinessEndDateController.show(None, ForeignProperty.key))
     }
 
     CeaseForeignPropertyForm.form.bindFromRequest().fold(

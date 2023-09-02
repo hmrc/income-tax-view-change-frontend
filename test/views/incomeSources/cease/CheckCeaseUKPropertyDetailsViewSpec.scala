@@ -17,10 +17,8 @@
 package views.incomeSources.cease
 
 import auth.MtdItUser
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import enums.IncomeSourceJourney.UkProperty
 import play.api.test.FakeRequest
-import play.api.test.Helpers.contentAsString
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testRetrievedUserName, testSaUtr, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessAndPropertyAligned, businessesAndPropertyIncome}
@@ -53,8 +51,8 @@ class CheckCeaseUKPropertyDetailsViewSpec extends TestSupport with ViewSpec{
     saUtr = Some("1234567890"),
     credId = Some(testCredId),
     userType = Some(testUserTypeAgent),
-    arn = Some(testArn)
-  )(FakeRequest().withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> businessEndDate))
+   arn = Some(testArn)
+ )(FakeRequest().withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> businessEndDate))
 
   lazy val viewAgent: HtmlFormat.Appendable = checkCeaseUKPropertyDetailsView(true)(agentUserConfirmedClientWithSession(), implicitly)
   lazy val view: HtmlFormat.Appendable = checkCeaseUKPropertyDetailsView(false)(individualUseWithSession, implicitly)
@@ -63,18 +61,18 @@ class CheckCeaseUKPropertyDetailsViewSpec extends TestSupport with ViewSpec{
   val heading = messages("incomeSources.ceaseUKProperty.checkDetails.heading")
   val businessStopDateLabel = messages("incomeSources.ceaseUKProperty.checkDetails.content")
   val buttonLabel = messages("incomeSources.ceaseUKProperty.checkDetails.confirm")
-  val changeUrl = controllers.incomeSources.cease.routes.UKPropertyEndDateController.show().url
-  val changeUrlAgent = controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url
+  val changeUrl = controllers.incomeSources.cease.routes.BusinessEndDateController.show(None, UkProperty.key).url
+  val changeUrlAgent = controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(None, UkProperty.key).url
   val formAction = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.submit().url
   val formActionAgent = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.submitAgent().url
 
   "CheckCeaseUKPropertyDetailsView - Individual" should {
 
     "render the page " in new Setup(view) {
-        document.hasPageHeading(heading)
-        document.getElementById("caption").text() shouldBe  caption
-        document.getElementById("businessStopDateLabel").text() shouldBe businessStopDateLabel
-        document.getElementById("businessStopDate").text() shouldBe businessEndShortLongDate
+      document.hasPageHeading(heading)
+      document.getElementById("caption").text() shouldBe caption
+      document.getElementById("businessStopDateLabel").text() shouldBe businessStopDateLabel
+      document.getElementById("businessStopDate").text() shouldBe businessEndShortLongDate
         document.getElementById("change").attr("href") shouldBe changeUrl
         document.getElementById("continue-button").text() shouldBe buttonLabel
         document.form.attr("action") shouldBe formAction

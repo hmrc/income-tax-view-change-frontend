@@ -17,17 +17,19 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.BusinessEndDateForm
-import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId}
+import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.BusinessEndDate
 
@@ -50,98 +52,153 @@ class BusinessEndDateController @Inject()(val authenticate: AuthenticationPredic
                                           val ec: ExecutionContext,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(id: String): Action[AnyContent] =
+
+  private def getActions(isAgent: Boolean, incomeSourceType: String, id: Option[String]): (Call, Call, Call, IncomeSourceType) = {
+    IncomeSourceType.get(incomeSourceType) match {
+      case Right(incomeSourceTypeValue) =>
+        (incomeSourceTypeValue, isAgent) match {
+          case (UkProperty, true) =>
+            (routes.CeaseUKPropertyController.showAgent(),
+              routes.BusinessEndDateController.submitAgent(id = id, incomeSourceType = UkProperty.key),
+              routes.CheckCeaseUKPropertyDetailsController.showAgent(),
+              UkProperty)
+          case (UkProperty, false) =>
+            (routes.CeaseUKPropertyController.show(),
+              routes.BusinessEndDateController.submit(id = id, incomeSourceType = UkProperty.key),
+              routes.CheckCeaseUKPropertyDetailsController.show(),
+              UkProperty)
+          case (ForeignProperty, true) =>
+            (routes.CeaseForeignPropertyController.showAgent(),
+              routes.BusinessEndDateController.submitAgent(id = id, incomeSourceType = ForeignProperty.key),
+              routes.CheckCeaseForeignPropertyDetailsController.showAgent(),
+              ForeignProperty)
+          case (ForeignProperty, false) =>
+            (routes.CeaseForeignPropertyController.show(),
+              routes.BusinessEndDateController.submit(id = id, incomeSourceType = ForeignProperty.key),
+              routes.CheckCeaseForeignPropertyDetailsController.show(),
+              ForeignProperty)
+          case (SelfEmployment, true) =>
+            (routes.CeaseIncomeSourceController.showAgent(),
+              routes.BusinessEndDateController.submitAgent(id = id, incomeSourceType = SelfEmployment.key),
+              routes.CheckCeaseBusinessDetailsController.showAgent(),
+              SelfEmployment)
+          case (SelfEmployment, false) =>
+            (routes.CeaseIncomeSourceController.show(),
+              routes.BusinessEndDateController.submit(id = id, incomeSourceType = SelfEmployment.key),
+              routes.CheckCeaseBusinessDetailsController.show(),
+              SelfEmployment)
+        }
+      case Left(exception) => throw exception
+    }
+  }
+
+  def show(id: Option[String], incomeSourceType: String): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
-          id
+          incomeSourceType = incomeSourceType,
+          id = id
         )
     }
 
-  def showAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(id: Option[String], incomeSourceType: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
               isAgent = true,
-              id
+              incomeSourceType = incomeSourceType,
+              id = id
             )
         }
   }
 
-  def handleRequest(isAgent: Boolean, id: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-
-    val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
-      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.BusinessEndDateController.submitAgent(id) else
-      controllers.incomeSources.cease.routes.BusinessEndDateController.submit(id)
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-    if (incomeSourcesEnabled) {
-      Future.successful(Ok(businessEndDate(
-        BusinessEndDateForm = businessEndDateForm.apply(user, id),
+  def handleRequest(id: Option[String], incomeSourceType: String, isAgent: Boolean)
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
+    Future {
+      val (backAction, postAction, _, incomeSourceTypeValue) = getActions(isAgent, incomeSourceType, id)
+      Ok(businessEndDate(
+        businessEndDateForm = businessEndDateForm(incomeSourceTypeValue, id),
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl,
-        btaNavPartial = user.btaNavPartial
-      )(user, messages)))
-    } else {
-      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting BusinessEndDate page: ${ex.getMessage}")
-        errorHandler.showInternalServerError()
+        backUrl = backAction.url,
+        incomeSourceType = incomeSourceTypeValue
+      )(user, messages))
     }
+
+  } recover {
+    case ex: Exception =>
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"[BusinessEndDateController][handleRequest]: Error getting BusinessEndDate page: ${ex.getMessage}")
+      errorHandler.showInternalServerError()
   }
 
-  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(id: Option[String], incomeSourceType: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleSubmitRequest(id = id, isAgent = false)
+      handleSubmitRequest(
+        isAgent = false,
+        incomeSourceType = incomeSourceType,
+        id = id)
   }
 
-  def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def submitAgent(id: Option[String], incomeSourceType: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(id = id, isAgent = true)
+            handleSubmitRequest(
+              isAgent = true,
+              incomeSourceType = incomeSourceType,
+              id = id)
         }
   }
 
-  def handleSubmitRequest(id: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleSubmitRequest(id: Option[String], incomeSourceType: String, isAgent: Boolean)
+                         (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
+    Future {
+      val (backAction, postAction, redirectAction, incomeSourceTypeValue) = getActions(isAgent, incomeSourceType, id)
+      businessEndDateForm.apply(incomeSourceTypeValue, id).bindFromRequest().fold(
 
-    val (postAction, backAction, redirectAction) = {
-      if (isAgent)
-        (routes.BusinessEndDateController.submitAgent _,
-          routes.CeaseIncomeSourceController.showAgent(),
-          routes.CheckCeaseBusinessDetailsController.showAgent())
-      else
-        (routes.BusinessEndDateController.submit _,
-          routes.CeaseIncomeSourceController.show(),
-          routes.CheckCeaseBusinessDetailsController.show())
+        hasErrors => BadRequest(businessEndDate(
+          businessEndDateForm = hasErrors,
+          postAction = postAction,
+          backUrl = backAction.url,
+          isAgent = isAgent,
+          incomeSourceType = incomeSourceTypeValue
+        )(user, messages)),
+
+        validatedInput => {
+          if (incomeSourceTypeValue == SelfEmployment) {
+
+            val incomeSourceId = id.getOrElse(
+              throw new InternalServerException("[BusinessEndDateController][handleSubmitRequest]: Missing income source ID")
+            )
+
+            Redirect(redirectAction)
+              .addingToSession(incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString)
+              .addingToSession(ceaseBusinessIncomeSourceId -> incomeSourceId)
+
+          } else {
+
+            Redirect(redirectAction)
+              .addingToSession(incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString)
+
+          }
+        })
+    } recover {
+      case ex: Exception =>
+        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"[BusinessEndDateController][handleSubmitRequest]: Error getting BusinessEndDate page: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
     }
-
-    businessEndDateForm.apply(user, id).bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(businessEndDate(
-        BusinessEndDateForm = hasErrors,
-        postAction = postAction(id),
-        backUrl = backAction.url,
-        isAgent = isAgent,
-        btaNavPartial = user.btaNavPartial
-      ))),
-      validatedInput =>
-        Future.successful(Redirect(redirectAction)
-          .addingToSession(ceaseBusinessEndDate -> validatedInput.date.toString)
-          .addingToSession(ceaseBusinessIncomeSourceId -> id))
-    )
   }
+
 }

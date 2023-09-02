@@ -17,6 +17,7 @@
 package controllers.incomeSources.cease
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.ForeignProperty
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -24,7 +25,7 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 class CeaseForeignPropertyControllerISpec extends ComponentSpecBase {
-  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.ForeignPropertyEndDateController.show().url
+  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.show(None, ForeignProperty.key).url
   val showCeaseForeignPropertyControllerUrl: String = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
   val checkboxErrorMessage: String = messagesAPI("incomeSources.ceaseForeignProperty.checkboxError")
   val checkboxLabelMessage: String = messagesAPI("incomeSources.ceaseForeignProperty.checkboxLabel")

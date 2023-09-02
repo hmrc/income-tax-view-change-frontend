@@ -46,10 +46,6 @@ import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
 import scala.concurrent.Future
-import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
-
-import java.time.Month.APRIL
 
 @Singleton
 class TestDateService extends DateServiceInterface {
@@ -507,6 +503,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getUkPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved?id=$id", session)
 
     def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
+
+    def getBusinessEndDate(session: Map[String, String]): WSResponse = get(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentId", session)
   }
 
   def unauthorisedTest(uri: String): Unit = {
