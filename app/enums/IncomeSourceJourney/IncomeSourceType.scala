@@ -17,6 +17,8 @@
 package enums.IncomeSourceJourney
 
 import forms.utils.SessionKeys
+import play.api.libs.json.{JsString, Writes}
+import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {
   val key: String
@@ -25,6 +27,7 @@ sealed trait IncomeSourceType {
   val endDateMessagePrefix: String
   val startDateSessionKey: String
   val endDateSessionKey: String
+  val reportingMethodChangeErrorPrefix: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
@@ -34,7 +37,7 @@ case object SelfEmployment extends IncomeSourceType {
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
   override val startDateSessionKey: String = SessionKeys.addBusinessStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseBusinessEndDate
-
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
 }
 
 case object UkProperty extends IncomeSourceType {
@@ -44,6 +47,7 @@ case object UkProperty extends IncomeSourceType {
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
   override val startDateSessionKey: String = SessionKeys.addUkPropertyStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseUKPropertyEndDate
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
 }
 
 case object ForeignProperty extends IncomeSourceType {
@@ -53,6 +57,7 @@ case object ForeignProperty extends IncomeSourceType {
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
   override val startDateSessionKey: String = SessionKeys.foreignPropertyStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseForeignPropertyEndDate
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
 }
 
 object IncomeSourceType {
@@ -63,5 +68,11 @@ object IncomeSourceType {
       case "SE" => Right(SelfEmployment)
       case _ => Left(new Exception("Invalid incomeSourceType"))
     }
+  }
+
+  implicit val incomeSourceTypeJSLBinder: JavascriptLiteral[IncomeSourceType] = (value: IncomeSourceType) => s"""'${value.toString}'"""
+
+  implicit def writes[T <: IncomeSourceType]: Writes[T] = Writes {
+    incomeSourceType => JsString(incomeSourceType.toString)
   }
 }

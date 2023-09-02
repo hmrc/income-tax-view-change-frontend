@@ -102,7 +102,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleIndividual
         document.getElementById("paragraph-1").text() shouldBe TestConstants.paragraphTextSelfEmployment
-        document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe TestConstants.selfEmploymentAddedUrl
+        document.getElementById("continue-button").attr("href") shouldBe TestConstants.selfEmploymentAddedUrl
       }
 
       "business type is UK property" in {
@@ -115,7 +115,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleIndividual
         document.getElementById("paragraph-1").text() shouldBe TestConstants.paragraphTextUkProperty
-        document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe TestConstants.ukPropertyAddedUrl
+        document.getElementById("continue-button").attr("href") shouldBe TestConstants.ukPropertyAddedUrl
       }
 
       "business type is foreign property" in {
@@ -128,7 +128,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleIndividual
         document.getElementById("paragraph-1").text() shouldBe TestConstants.paragraphTextForeignProperty
-        document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe TestConstants.foreignPropertyAddedUrl
+        document.getElementById("continue-button").attr("href") shouldBe TestConstants.foreignPropertyAddedUrl
       }
 
       "business type is invalid" in {
@@ -184,7 +184,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleAgent
         document.getElementById("paragraph-1").text() shouldBe TestConstants.paragraphTextSelfEmployment
-        document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe TestConstants.selfEmploymentAddedAgentUrl
+        document.getElementById("continue-button").attr("href") shouldBe TestConstants.selfEmploymentAddedAgentUrl
       }
 
       "business type is UK property" in {
@@ -197,7 +197,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleAgent
         document.getElementById("paragraph-1").text() shouldBe TestConstants.paragraphTextUkProperty
-        document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe TestConstants.ukPropertyAddedAgentUrl
+        document.getElementById("continue-button").attr("href") shouldBe TestConstants.ukPropertyAddedAgentUrl
       }
 
       "business type is foreign property" in {
@@ -210,7 +210,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleAgent
         document.getElementById("paragraph-1").text() shouldBe TestConstants.paragraphTextForeignProperty
-        document.getElementById("error-reporting-method-not-saved-form").attr("action") shouldBe TestConstants.foreignPropertyAddedAgentUrl
+        document.getElementById("continue-button").attr("href") shouldBe TestConstants.foreignPropertyAddedAgentUrl
       }
 
       "business type is invalid" in {

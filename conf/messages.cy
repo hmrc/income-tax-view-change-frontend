@@ -1164,7 +1164,7 @@ incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac y
 
 incomeSources.add.error.standardError                               = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 incomeSources.add.error.reportingMethodNotSaved.p1                  = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
-incomeSources.add.error.reportingMethodNotSaved.p2                  = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ''blynyddol'' yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr adran i weld a rheoli ffynonellau incwm.
+incomeSources.add.error.reportingMethodNotSaved.p2                  = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ''blynyddol'' yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr ''adran i weld a rheoli ffynonellau incwm''.
 incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasnachwr
 incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
@@ -1528,3 +1528,20 @@ incomeSources.manage.uk-property-manage-details.accounting-method               
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Busnes eiddo tramor
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu ar gyfer incwm o eiddo tramor
+
+incomeSources.manage.businessReportingMethodError.text          = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
+incomeSources.manage.uKPropertyReportingMethodError.text        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
+incomeSources.manage.foreignPropertyReportingMethodError.text   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
+
+incomeSources.manage.reportingMethodError.hyperlink1            = rheoli eich manylion
+incomeSources.manage.reportingMethodError.hyperlink2            = weld a rheoli ffynonellau incwm
+incomeSources.manage.reportingMethodError.p3                    = Neu ewch yn ôl i
+
+incomeSources.manage.businessReportingMethodError.p1            = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
+incomeSources.manage.businessReportingMethodError.p2            = Gallwch geisio newid pa mor aml y mae’ch busnes unig fasnachwr yn cyflwyno adroddiadau eto yn
+
+incomeSources.manage.uKPropertyReportingMethodError.p1        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
+incomeSources.manage.uKPropertyReportingMethodError.p2        = Gallwch geisio newid pa mor aml y mae’ch busnes eiddo yn y DU yn cyflwyno adroddiadau eto yn
+
+incomeSources.manage.foreignPropertyReportingMethodError.p1   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
+incomeSources.manage.foreignPropertyReportingMethodError.p2   = Gallwch geisio newid pa mor aml y mae’ch busnes eiddo tramor yn cyflwyno adroddiadau eto yn
