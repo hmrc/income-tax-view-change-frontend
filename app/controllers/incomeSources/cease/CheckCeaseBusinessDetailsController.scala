@@ -61,7 +61,6 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
     if (incomeSourcesEnabled) {
       (request.session.get(ceaseBusinessIncomeSourceId), request.session.get(ceaseBusinessEndDate)) match {
         case (Some(incomeSourceId), Some(cessationEndDate)) =>
-          println(Console.MAGENTA + incomeSourceId + " " + cessationEndDate + Console.WHITE)
           incomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(sources, incomeSourceId, cessationEndDate) match {
             case Right(viewModel) =>
               Future.successful(Ok(view(
@@ -71,11 +70,9 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
             case Left(ex) =>
               Logger("application").error(
                 s"[CheckCeaseBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              //              Future.successful(errorHandler.showInternalServerError())
               Future {
                 Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
               }
-
           }
         case _ =>
           Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +

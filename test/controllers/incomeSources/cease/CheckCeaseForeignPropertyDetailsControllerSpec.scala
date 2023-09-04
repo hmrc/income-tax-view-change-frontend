@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.ForeignProperty
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -144,8 +145,12 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         status(result) shouldBe Status.SEE_OTHER
       }
     }
-    s"return 500 INTERNAL_SERVER_ERROR" when {
+    s"return 303 SEE_OTHER" when {
       "UpdateIncomeSourceError model returned from UpdateIncomeSourceService" in {
+        val incomeSourceNotCeasedErrorPageUrl: Some[String] = {
+          Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = false, ForeignProperty.key).url)
+        }
+
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
@@ -156,7 +161,9 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         lazy val result: Future[Result] = {
           TestCheckCeaseForeignPropertyDetailsController.submit(cessationDate)(fakeRequestWithCeaseForeignPropertyDate(cessationDate))
         }
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe incomeSourceNotCeasedErrorPageUrl
+
       }
     }
     s"return 500 INTERNAL_SERVER_ERROR" when {

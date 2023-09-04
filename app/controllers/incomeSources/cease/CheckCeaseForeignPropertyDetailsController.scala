@@ -27,7 +27,7 @@ import implicits.ImplicitDateFormatter
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request, Result}
-import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
+import services.{IncomeSourceDetailsService, UpdateIncomeSourceError, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
@@ -152,9 +152,9 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
         val incomeSourceId = foreignPropertyIncomeSources.head.incomeSourceId
         updateIncomeSourceservice
           .updateCessationDatev2(user.nino, incomeSourceId, cessationDate).flatMap {
-            case Right(_) =>
+            case Right(UpdateIncomeSourceSuccess(_)) =>
               Future.successful(Redirect(successCall))
-            case _ =>
+            case Left(UpdateIncomeSourceError(_)) =>
               Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
                 s" Unsuccessful update response received")
               Future.successful {
