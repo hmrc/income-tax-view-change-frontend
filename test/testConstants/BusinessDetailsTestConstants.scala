@@ -16,10 +16,10 @@
 
 package testConstants
 
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import models.core._
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails}
+import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, PropertyDetailsModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
@@ -47,6 +47,8 @@ object BusinessDetailsTestConstants {
   val testBusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2017, Month.JUNE, 1), end = LocalDate.of(year2018, Month.MAY, 30))
   val test2019BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2018, Month.MARCH, 5), end = LocalDate.of(year2019, Month.MARCH, 6))
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2019, Month.MARCH, 6), end = LocalDate.of(year2018, Month.MARCH, 6))
+  val columnOneUkProperty = "UK property"
+  val columnOneForeignProperty = "Foreign property"
   val testTradeName = "nextUpdates.business"
   val testTradeName2 = "nextUpdates.business2"
   val testTradeNameOption: Option[String] = Some("nextUpdates.business")
@@ -62,6 +64,7 @@ object BusinessDetailsTestConstants {
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
+  val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)), Some("It was a stupid idea anyway"))
   val testMtdItId = "XIAT0000000000A"
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
@@ -70,6 +73,7 @@ object BusinessDetailsTestConstants {
   val testStartDate2Formatted = "1 January 2021"
   val testStartDateOption: Option[LocalDate] = Some(LocalDate.parse("2022-01-01"))
   val testStartDateOption2: Option[LocalDate] = Some(LocalDate.parse("2021-01-01"))
+  val testStartDateOption3: Option[LocalDate] = Some(LocalDate.parse("2013-01-01"))
   val testEndDate = LocalDate.parse("2023-01-01")
   val testUnknownValue = "Unknown"
   val testLatencyDetails = LatencyDetails(
@@ -388,11 +392,10 @@ object BusinessDetailsTestConstants {
     accountingPeriod = Some(testBusinessAccountingPeriod),
     tradingName = Some(testTradeName2),
     firstAccountingPeriodEndDate = None,
-    tradingStartDate = Some(testStartDate2),
+    tradingStartDate = Some(testStartDate3),
     cessation = Some(testCessation2),
     address = Some(address)
   )
-
 
   val oldUseralignedBusiness = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,

@@ -83,7 +83,7 @@ object IncomeSourceDetailsTestConstants {
     countryCode = "GB"
   ))
 
-  val foreignPropertyAndCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetails))
+  val foreignPropertyAndCeasedBusinessesIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness2), List(foreignPropertyDetails, ceasedUKPropertyDetailsCessation3, ceasedForeignPropertyDetailsCessation2))
   val foreignPropertyAndCeasedBusinessIncomeNoStartDate = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(ceasedBusiness, ceasedBusiness2), List(foreignPropertyDetailsNoStartDate))
 
 

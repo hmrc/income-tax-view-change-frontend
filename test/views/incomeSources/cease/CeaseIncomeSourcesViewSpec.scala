@@ -38,9 +38,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         ukProperty = Some(CeasePropertyDetailsViewModel(None)),
         foreignProperty = Some(CeasePropertyDetailsViewModel(None)),
         ceasedBusinesses = List(
-          CeasedBusinessDetailsViewModel(None, SelfEmployment, None, testCessation2.date.get),
+          CeasedBusinessDetailsViewModel(None, SelfEmployment, None, testCessation.date.get),
           CeasedBusinessDetailsViewModel(None, ForeignProperty, None, testCessation2.date.get),
-          CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation2.date.get)
+          CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation3.date.get)
         )
       )
     } else {
@@ -49,7 +49,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         ukProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         foreignProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         ceasedBusinesses = List(
-          CeasedBusinessDetailsViewModel(tradingName = Some(testTradeName), incomeSourceType = SelfEmployment, tradingStartDate = Some(testStartDate), cessationDate = testCessation.date.get),
+          CeasedBusinessDetailsViewModel(tradingName = Some(testTradeName), incomeSourceType = SelfEmployment, tradingStartDate = Some(testStartDate3), cessationDate = testCessation3.date.get),
           CeasedBusinessDetailsViewModel(tradingName = None, incomeSourceType = ForeignProperty, tradingStartDate = Some(testStartDate), cessationDate = testCessation.date.get),
           CeasedBusinessDetailsViewModel(tradingName = None, incomeSourceType = UkProperty, tradingStartDate = Some(testStartDate2), cessationDate = testCessation2.date.get)
         )
@@ -70,7 +70,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
-    def getMessage(key: String, args: String*) = {
+    def getMessage(key: String, args: String*): String = {
       messages(s"cease-income-sources.$key", args: _*)
     }
 
@@ -165,34 +165,45 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(false) {
         val table = document.getElementById("ceased-businesses-table")
 
-        document.getElementById("ceased-businesses-h1").text() shouldBe getMessage("ceased-businesses.h1")
+        document.getElementById("ceased-businesses-heading").text() shouldBe messages("incomeSources.ceased-income-sources.heading")
 
-        table.getElementById("table-head-business-name-ceased").text() shouldBe getMessage("table-head.business-name")
-        table.getElementById("table-head-date-started-ceased").text() shouldBe getMessage("table-head.date-started")
-        table.getElementById("table-head-date-ended-ceased").text() shouldBe getMessage("table-head.date-ended")
+        table.getElementById("ceased-businesses-table-head-name").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.business-name")
+        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-started")
+        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-ended")
 
-        table.getElementById("table-row-trading-name-0-ceased").text() shouldBe testTradeName
-        table.getElementById("table-row-trading-start-date-0-ceased").text() shouldBe testStartDate.toLongDate
-        table.getElementById("table-row-trading-end-date-0-ceased").text() shouldBe testCessation.date.get.toLongDate
+        table.getElementById("ceased-business-table-row-trading-name-0").text() shouldBe testTradeName
+        table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe testStartDate3.toLongDate
+        table.getElementById("ceased-business-table-row-date-ended-0").text() shouldBe testCessation3.date.get.toLongDate
 
-        table.getElementById("table-row-trading-name-1-ceased").text() shouldBe testTradeName2
-        table.getElementById("table-row-trading-start-date-1-ceased").text() shouldBe testStartDate2.toLongDate
-        table.getElementById("table-row-trading-end-date-1-ceased").text() shouldBe testCessation2.date.get.toLongDate
+        table.getElementById("ceased-business-table-row-trading-name-1").text() shouldBe columnOneUkProperty
+        table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe testStartDate2.toLongDate
+        table.getElementById("ceased-business-table-row-date-ended-1").text() shouldBe testCessation2.date.get.toLongDate
+
+        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe columnOneForeignProperty
+        table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe testStartDate.toLongDate
+        table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate
       }
 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
         val table = document.getElementById("ceased-businesses-table")
 
-        document.getElementById("ceased-businesses-h1").text() shouldBe getMessage("ceased-businesses.h1")
+        document.getElementById("ceased-businesses-heading").text() shouldBe messages("incomeSources.ceased-income-sources.heading")
 
-        table.getElementById("table-head-business-name-ceased").text() shouldBe getMessage("table-head.business-name")
-        table.getElementById("table-head-date-started-ceased").text() shouldBe getMessage("table-head.date-started")
-        table.getElementById("table-head-date-ended-ceased").text() shouldBe getMessage("table-head.date-ended")
+        table.getElementById("ceased-businesses-table-head-name").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.business-name")
+        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-started")
+        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-ended")
 
-        table.getElementById("table-row-trading-name-0-ceased").text() shouldBe getMessage("unknown")
-        table.getElementById("table-row-trading-start-date-0-ceased").text() shouldBe getMessage("unknown")
-        table.getElementById("table-row-trading-end-date-0-ceased").text() shouldBe testCessation2.date.get.toLongDate
-      }
+        table.getElementById("ceased-business-table-row-trading-name-0").text() shouldBe columnOneUkProperty
+        table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-ended-0").text() shouldBe testCessation3.date.get.toLongDate
+
+        table.getElementById("ceased-business-table-row-trading-name-1").text() shouldBe columnOneForeignProperty
+        table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-ended-1").text() shouldBe testCessation2.date.get.toLongDate
+
+        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate}
     }
   }
 
@@ -269,34 +280,45 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(true) {
         val table = document.getElementById("ceased-businesses-table")
 
-        document.getElementById("ceased-businesses-h1").text() shouldBe getMessage("ceased-businesses.h1")
+        document.getElementById("ceased-businesses-heading").text() shouldBe messages("incomeSources.ceased-income-sources.heading")
 
-        table.getElementById("table-head-business-name-ceased").text() shouldBe getMessage("table-head.business-name")
-        table.getElementById("table-head-date-started-ceased").text() shouldBe getMessage("table-head.date-started")
-        table.getElementById("table-head-date-ended-ceased").text() shouldBe getMessage("table-head.date-ended")
+        table.getElementById("ceased-businesses-table-head-name").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.business-name")
+        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-started")
+        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-ended")
 
-        table.getElementById("table-row-trading-name-0-ceased").text() shouldBe testTradeName
-        table.getElementById("table-row-trading-start-date-0-ceased").text() shouldBe testStartDate.toLongDate
-        table.getElementById("table-row-trading-end-date-0-ceased").text() shouldBe testCessation.date.get.toLongDate
+        table.getElementById("ceased-business-table-row-trading-name-0").text() shouldBe testTradeName
+        table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe testStartDate3.toLongDate
+        table.getElementById("ceased-business-table-row-date-ended-0").text() shouldBe testCessation3.date.get.toLongDate
 
-        table.getElementById("table-row-trading-name-1-ceased").text() shouldBe testTradeName2
-        table.getElementById("table-row-trading-start-date-1-ceased").text() shouldBe testStartDate2.toLongDate
-        table.getElementById("table-row-trading-end-date-1-ceased").text() shouldBe testCessation2.date.get.toLongDate
+        table.getElementById("ceased-business-table-row-trading-name-1").text() shouldBe columnOneUkProperty
+        table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe testStartDate2.toLongDate
+        table.getElementById("ceased-business-table-row-date-ended-1").text() shouldBe testCessation2.date.get.toLongDate
+
+        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe columnOneForeignProperty
+        table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe testStartDate.toLongDate
+        table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate
       }
 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
         val table = document.getElementById("ceased-businesses-table")
 
-        document.getElementById("ceased-businesses-h1").text() shouldBe getMessage("ceased-businesses.h1")
+        document.getElementById("ceased-businesses-heading").text() shouldBe messages("incomeSources.ceased-income-sources.heading")
 
-        table.getElementById("table-head-business-name-ceased").text() shouldBe getMessage("table-head.business-name")
-        table.getElementById("table-head-date-started-ceased").text() shouldBe getMessage("table-head.date-started")
-        table.getElementById("table-head-date-ended-ceased").text() shouldBe getMessage("table-head.date-ended")
+        table.getElementById("ceased-businesses-table-head-name").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.business-name")
+        table.getElementById("ceased-businesses-table-head-date-started").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-started")
+        table.getElementById("ceased-businesses-table-head-date-ended").text() shouldBe messages("incomeSources.ceased-income-sources.table-head.date-ended")
 
-        table.getElementById("table-row-trading-name-0-ceased").text() shouldBe getMessage("unknown")
-        table.getElementById("table-row-trading-start-date-0-ceased").text() shouldBe getMessage("unknown")
-        table.getElementById("table-row-trading-end-date-0-ceased").text() shouldBe testCessation2.date.get.toLongDate
-      }
+        table.getElementById("ceased-business-table-row-trading-name-0").text() shouldBe columnOneUkProperty
+        table.getElementById("ceased-business-table-row-date-started-0").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-ended-0").text() shouldBe testCessation3.date.get.toLongDate
+
+        table.getElementById("ceased-business-table-row-trading-name-1").text() shouldBe columnOneForeignProperty
+        table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-ended-1").text() shouldBe testCessation2.date.get.toLongDate
+
+        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate}
     }
   }
 }
