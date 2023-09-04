@@ -17,6 +17,7 @@
 package services
 
 import auth.MtdItUser
+import play.api.mvc.{RequestHeader, Result}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,6 +28,12 @@ class SessionService @Inject()() {
   def get(key: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     Future {
       Right(user.session.get(key))
+    }
+  }
+
+  def set(key: String, value: String, result: Result)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
+    Future {
+      Right(result.addingToSession(key -> value))
     }
   }
 }

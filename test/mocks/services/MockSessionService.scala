@@ -19,6 +19,7 @@ package mocks.services
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
+import play.api.mvc.{RequestHeader, Result}
 import services.SessionService
 import testUtils.UnitSpec
 
@@ -37,5 +38,10 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     when(
       mockSessionService.get(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Right(response)))
+
+  def setupMockSetSession(key: String, value: String, result: Result)(implicit header: RequestHeader): Unit =
+    when(
+      mockSessionService.set(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(Right(result.addingToSession(key -> value))))
 
 }

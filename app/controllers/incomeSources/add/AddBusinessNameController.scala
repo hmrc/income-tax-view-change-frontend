@@ -150,7 +150,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val (backUrlLocal, submitActionLocal, redirectLocal) = (isAgent, isChange) match {
       case (false, false) => (backUrl, submitAction, redirect)
       case (true, false) => (backUrlAgent, submitActionAgent, redirectAgent)
@@ -165,9 +165,12 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         }
       },
       formData => {
-        Future.successful {
-          Redirect(redirectLocal)
-            .addingToSession(SessionKeys.businessName -> formData.name)
+        val redirect = Redirect(redirectLocal)
+        sessionService.set(SessionKeys.businessName, formData.name, redirect).map {
+          case Right(result) => result
+          case Left(error) =>
+            Logger("application").error(s"[AddBusinessNameController][handleRequest] $error")
+            errorHandler.showInternalServerError()
         }
       }
     )

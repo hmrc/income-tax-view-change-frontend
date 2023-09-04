@@ -28,6 +28,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockClientDetailsService, MockSessionService}
 import org.mockito.Mockito.mock
 import org.scalatest.matchers.must.Matchers._
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
@@ -131,10 +132,13 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockGetSession(Some("value"))
+        val redirect = Redirect(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = false, isChange = false).url)
+        setupMockSetSession(SessionKeys.businessName, validBusinessName, redirect)
 
         val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           SessionKeys.businessName -> validBusinessName
         ))
+
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = false, isChange = false).url)
@@ -237,13 +241,17 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockGetSession(Some("value"))
+        val redirectUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(
+          incomeSourceKey = "SE", isAgent = false, isChange = false).url
+        val redirect = Redirect(redirectUrl)
+        setupMockSetSession(SessionKeys.businessName, validBusinessName, redirect)
 
         val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           SessionKeys.businessName -> validBusinessName
         ))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = true, isChange = false).url)
+        redirectLocation(result) mustBe Some(redirectUrl)
         session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
       }
     }
@@ -308,6 +316,9 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockGetSession(Some("value"))
+          val redirectUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+          val redirect = Redirect(redirectUrl)
+          setupMockSetSession(SessionKeys.businessName, validBusinessName, redirect)
 
           val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
             SessionKeys.businessName -> validBusinessName,
@@ -319,7 +330,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           )
           )
 
-          redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)
+          redirectLocation(result) mustBe Some(redirectUrl)
           session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
         }
       }
@@ -416,13 +427,15 @@ class AddBusinessNameControllerSpec extends TestSupport
         val validBusinessName: String = "Test Business"
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
+        val redirectUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
+        val redirect = Redirect(redirectUrl)
+        setupMockSetSession(SessionKeys.businessName, validBusinessName, redirect)
         val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           SessionKeys.businessName -> validBusinessName
         ))
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)
+        redirectLocation(result) mustBe Some(redirectUrl)
         session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
       }
     }
