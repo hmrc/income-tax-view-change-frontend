@@ -150,8 +150,15 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
               withIncomeSourcesRemovedFromSession {
                 Redirect(redirect(id).url)
               }
+          }.recover {
+            case ex: Throwable =>
+              Logger("application").error(
+                s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
+              withIncomeSourcesRemovedFromSession {
+                Redirect(errorHandler)
+              }
           }
-        case None => Logger("application").error(
+        case _ => Logger("application").error(
           s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Error: Unable to build view model on submit")
           Future.successful(Redirect(errorHandler))
       }
