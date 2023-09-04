@@ -172,12 +172,12 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   def getBackurl(isAgent: Boolean, mode: IncomeSourceType, incomeSourceId: String, changeTo: String, taxYear: String): String = {
     ((isAgent, mode) match {
-      case (false, UkProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKProperty(taxYear = taxYear, changeTo = changeTo)
-      case (false, ForeignProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignProperty(taxYear = taxYear, changeTo = changeTo)
-      case (false, SelfEmployment) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusiness(id = incomeSourceId, taxYear = taxYear, changeTo = changeTo)
-      case (true, UkProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showUKPropertyAgent(taxYear = taxYear, changeTo = changeTo)
-      case (true, ForeignProperty) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showForeignPropertyAgent(taxYear = taxYear, changeTo = changeTo)
-      case (true, SelfEmployment) => controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.showSoleTraderBusinessAgent(id = incomeSourceId, taxYear = taxYear, changeTo = changeTo)
+      case (false, UkProperty)      => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent = false, UkProperty)
+      case (true,  UkProperty)      => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent = true, UkProperty)
+      case (false, ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent = false, ForeignProperty)
+      case (true,  ForeignProperty) => routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent = true, ForeignProperty)
+      case (false, SelfEmployment)  => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, isAgent = false, SelfEmployment)
+      case (true,  SelfEmployment)  => routes.ConfirmReportingMethodSharedController.show(Some(incomeSourceId), taxYear, changeTo, isAgent = true, SelfEmployment)
     }).url
   }
 

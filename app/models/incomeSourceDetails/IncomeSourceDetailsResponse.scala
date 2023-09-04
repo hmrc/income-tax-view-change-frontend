@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface
@@ -35,9 +36,6 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
   val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(b => b.cessation.forall(_.date.isEmpty)) ||
     properties.exists(p => p.cessation.forall(_.date.isEmpty))
 
-  def isOngoingBusinessOrPropertyIncome(id: String): Boolean = businesses.exists(b => b.incomeSourceId.equals(id) && b.cessation.forall(_.date.isEmpty)) ||
-    properties.exists(p => p.incomeSourceId.equals(id) && p.cessation.forall(_.date.isEmpty))
-
   override def toJson: JsValue = Json.toJson(this)
 
   def sanitise: IncomeSourceDetailsModel = {
@@ -55,6 +53,27 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
     yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd()).toList).getOrElse(List.empty[Int])
+  }
+
+  def getForeignProperty: Option[PropertyDetailsModel] = {
+    properties.find(_.isOngoingForeignProperty)
+  }
+
+  def getUKProperty: Option[PropertyDetailsModel] = {
+    properties.find(_.isOngoingUkProperty)
+  }
+
+  def getSoleTraderBusiness(id: String): Option[BusinessDetailsModel] = {
+    businesses.find(_.isOngoingSoleTraderBusiness(id))
+  }
+
+  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
+    (incomeSourceType, soleTraderBusinessId) match {
+      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.incomeSourceId)
+      case (UkProperty, _) => getUKProperty.map(_.incomeSourceId)
+      case (ForeignProperty, _) => getForeignProperty.map(_.incomeSourceId)
+      case _ => None
+    }
   }
 }
 

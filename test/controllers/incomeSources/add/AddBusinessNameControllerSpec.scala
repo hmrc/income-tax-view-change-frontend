@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import controllers.routes
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.BusinessNameForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
@@ -141,7 +142,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = false, isChange = false).url)
+        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url)
         session(result).get(SessionKeys.businessName) mustBe Some(validBusinessName)
       }
 
@@ -242,7 +243,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockGetSession(Some("value"))
         val redirectUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(
-          incomeSourceKey = "SE", isAgent = false, isChange = false).url
+          incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
         val redirect = Redirect(redirectUrl)
         setupMockSetSession(SessionKeys.businessName, validBusinessName, redirect)
 
