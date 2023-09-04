@@ -62,8 +62,8 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else
       controllers.routes.HomeController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(SelfEmployment.key, isAgent = true, isChange = false) else
-      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(SelfEmployment.key, isAgent = false, isChange = false)
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false) else
+      controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)
 
 
     lazy val view: HtmlFormat.Appendable = {
