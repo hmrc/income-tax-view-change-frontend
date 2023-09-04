@@ -39,7 +39,7 @@
 }
 
 @formattingUnknownValues(value: Option[String]) = @{
-    value.getOrElse(getMessage("unknown"))
+    value.getOrElse(messages("incomeSources.generic.unknown"))
 }
 
 @columnOneValue(business: CeasedBusinessDetailsViewModel) = @{
