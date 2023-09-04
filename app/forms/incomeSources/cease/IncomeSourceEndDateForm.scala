@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.InternalServerException
 import java.time.LocalDate
 import javax.inject.Inject
 
-class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constraints {
+class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Constraints {
 
   val dateMustBeComplete = "dateForm.error.dayMonthAndYear.required"
   val dateMustNotBeMissingDayField = "dateForm.error.day.required"
@@ -58,7 +58,7 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
             .headOption.getOrElse(LocalDate.MIN)
           List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate))
         case SelfEmployment =>
-          val incomeSourceId = id.getOrElse(throw new InternalServerException("[BusinessEndDateForm][apply]: Missing income source ID"))
+          val incomeSourceId = id.get
           val businessStartDate = user.incomeSources.businesses
             .find(_.incomeSourceId == incomeSourceId).flatMap(_.tradingStartDate).getOrElse(LocalDate.MIN)
           List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate),
@@ -69,7 +69,7 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
     }
 
     Form(
-      mapping("business-end-date" -> tuple(
+      mapping("income-source-end-date" -> tuple(
         "day" -> default(text(), ""),
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))

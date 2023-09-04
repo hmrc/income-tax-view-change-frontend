@@ -206,7 +206,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
   }
 
   "Agent - CheckCeaseBusinessDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(Some(testSelfEmploymentId), SelfEmployment.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(testSelfEmploymentId), SelfEmployment.key).url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)

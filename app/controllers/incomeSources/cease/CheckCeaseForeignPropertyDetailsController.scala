@@ -52,11 +52,11 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter with IncomeSourcesUtils {
 
-  lazy val backUrl: String = routes.BusinessEndDateController.show(None, ForeignProperty.key).url
-  lazy val backUrlAgent: String = routes.BusinessEndDateController.showAgent(None, ForeignProperty.key).url
+  lazy val backUrl: String = routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url
+  lazy val backUrlAgent: String = routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url
 
-  lazy val changeUrl: String = routes.BusinessEndDateController.show(None, ForeignProperty.key).url
-  lazy val changeUrlAgent: String = routes.BusinessEndDateController.showAgent(None, ForeignProperty.key).url
+  lazy val changeUrl: String = routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url
+  lazy val changeUrlAgent: String = routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url
 
   lazy val successCall: Call = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.show()
   lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.showAgent()

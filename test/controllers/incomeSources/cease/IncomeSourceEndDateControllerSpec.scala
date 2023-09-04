@@ -20,7 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.cease.BusinessEndDateForm
+import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
@@ -34,25 +34,25 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.BusinessEndDate
+import views.html.incomeSources.cease.IncomeSourceEndDate
 
 import scala.concurrent.Future
 
-class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
+class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
   with FeatureSwitching {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
 
-  object TestBusinessEndDateController extends BusinessEndDateController(
+  object TestIncomeSourceEndDateController extends IncomeSourceEndDateController(
     MockAuthenticationPredicate,
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
-    app.injector.instanceOf[BusinessEndDateForm],
+    app.injector.instanceOf[IncomeSourceEndDateForm],
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
-    app.injector.instanceOf[BusinessEndDate],
+    app.injector.instanceOf[IncomeSourceEndDate],
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
@@ -79,32 +79,32 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
           (incomeSourceTypeValue, isAgent) match {
             case (UkProperty, true) =>
               (routes.CeaseUKPropertyController.showAgent(),
-                routes.BusinessEndDateController.submitAgent(id = id, incomeSourceType = UkProperty.key),
+                routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = UkProperty.key),
                 routes.CheckCeaseUKPropertyDetailsController.showAgent(),
                 UkProperty)
             case (UkProperty, false) =>
               (routes.CeaseUKPropertyController.show(),
-                routes.BusinessEndDateController.submit(id = id, incomeSourceType = UkProperty.key),
+                routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = UkProperty.key),
                 routes.CheckCeaseUKPropertyDetailsController.show(),
                 UkProperty)
             case (ForeignProperty, true) =>
               (routes.CeaseForeignPropertyController.showAgent(),
-                routes.BusinessEndDateController.submitAgent(id = id, incomeSourceType = ForeignProperty.key),
+                routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = ForeignProperty.key),
                 routes.CheckCeaseForeignPropertyDetailsController.showAgent(),
                 ForeignProperty)
             case (ForeignProperty, false) =>
               (routes.CeaseForeignPropertyController.show(),
-                routes.BusinessEndDateController.submit(id = id, incomeSourceType = ForeignProperty.key),
+                routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = ForeignProperty.key),
                 routes.CheckCeaseForeignPropertyDetailsController.show(),
                 ForeignProperty)
             case (SelfEmployment, true) =>
               (routes.CeaseIncomeSourceController.showAgent(),
-                routes.BusinessEndDateController.submitAgent(id = id, incomeSourceType = SelfEmployment.key),
+                routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = SelfEmployment.key),
                 routes.CheckCeaseBusinessDetailsController.showAgent(),
                 SelfEmployment)
             case (SelfEmployment, false) =>
               (routes.CeaseIncomeSourceController.show(),
-                routes.BusinessEndDateController.submit(id = id, incomeSourceType = SelfEmployment.key),
+                routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = SelfEmployment.key),
                 routes.CheckCeaseBusinessDetailsController.show(),
                 SelfEmployment)
           }
@@ -114,27 +114,27 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
 
     def testShowResponse(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean): Unit = {
       val result: Future[Result] = if (isAgent)
-        TestBusinessEndDateController.showAgent(id, incomeSourceType.key)(fakeRequestConfirmedClient())
+        TestIncomeSourceEndDateController.showAgent(id, incomeSourceType.key)(fakeRequestConfirmedClient())
       else
-        TestBusinessEndDateController.show(id, incomeSourceType.key)(fakeRequestWithActiveSession)
+        TestIncomeSourceEndDateController.show(id, incomeSourceType.key)(fakeRequestWithActiveSession)
 
       val document: Document = Jsoup.parse(contentAsString(result))
-      val (backAction, postAction, _, _) = TestBusinessEndDateController.getActions(
+      val (backAction, postAction, _, _) = TestIncomeSourceEndDateController.getActions(
         isAgent = isAgent,
         incomeSourceType = incomeSourceType.key,
         id = id)
 
       status(result) shouldBe OK
-      document.title shouldBe TestBusinessEndDateController.title(incomeSourceType, isAgent = isAgent)
-      document.select("h1").text shouldBe TestBusinessEndDateController.heading(incomeSourceType)
+      document.title shouldBe TestIncomeSourceEndDateController.title(incomeSourceType, isAgent = isAgent)
+      document.select("h1").text shouldBe TestIncomeSourceEndDateController.heading(incomeSourceType)
       document.getElementById("back").attr("href") shouldBe backAction.url
-      document.getElementById("business-end-date-form").attr("action") shouldBe postAction.url
+      document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
     }
 
   }
 
-  "Individual - BusinessEndDateController.show" should {
+  "Individual - IncomeSourceEndDateController.show" should {
     def stage() = {
       setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
       disableAllSwitches()
@@ -148,19 +148,19 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
       "navigating to the page with FS Enabled with income source type as Self Employment" in {
         stage()
         val incomeSourceType = SelfEmployment
-        TestBusinessEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent)
+        TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent)
       }
 
       "navigating to the page with FS Enabled with income source type as Foreign Property" in {
         stage()
         val incomeSourceType = ForeignProperty
-        TestBusinessEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent)
+        TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent)
       }
 
       "navigating to the page with FS Enabled with income source type as UK Property" in {
         stage()
         val incomeSourceType = UkProperty
-        TestBusinessEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent)
+        TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent)
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -169,13 +169,13 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockBusinessIncomeSource()
 
         val incomeSourceType = SelfEmployment
-        val result: Future[Result] = TestBusinessEndDateController.show(Some(testSelfEmploymentId), incomeSourceType.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceEndDateController.show(Some(testSelfEmploymentId), incomeSourceType.key)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
         val incomeSourceType = SelfEmployment
-        val result: Future[Result] = TestBusinessEndDateController.show(Some(testSelfEmploymentId), incomeSourceType.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceEndDateController.show(Some(testSelfEmploymentId), incomeSourceType.key)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -183,19 +183,19 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
       "income source ID is missing and income source type is Self Employment " in {
         stage()
         val incomeSourceType = SelfEmployment
-        val result: Future[Result] = TestBusinessEndDateController.show(None, incomeSourceType.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceEndDateController.show(None, incomeSourceType.key)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
       "income source ID is missing and income source type is empty " in {
         stage()
-        val result: Future[Result] = TestBusinessEndDateController.show(None, incomeSourceType = "")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceEndDateController.show(None, incomeSourceType = "")(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
     }
   }
-  "Individual - BusinessEndDateController.submit" should {
+  "Individual - IncomeSourceEndDateController.submit" should {
     s"return 303 SEE_OTHER" when {
       "Self Employment - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -204,9 +204,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
 
 
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
@@ -222,9 +222,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
 
 
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submit(None, UkProperty.key)(fakeRequestNoSession.withMethod("POST")
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submit(None, UkProperty.key)(fakeRequestNoSession.withMethod("POST")
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
@@ -238,9 +238,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
 
 
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submit(None, ForeignProperty.key)(fakeRequestNoSession.withMethod("POST")
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submit(None, ForeignProperty.key)(fakeRequestNoSession.withMethod("POST")
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
@@ -256,9 +256,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
 
 
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession.withMethod("POST")
-            .withFormUrlEncodedBody("business-end-date.day" -> "", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession.withMethod("POST")
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.BAD_REQUEST
@@ -273,9 +273,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockBusinessIncomeSource()
         val incomeSourceType = SelfEmployment
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submit(None, incomeSourceType.key)(fakeRequestNoSession
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submit(None, incomeSourceType.key)(fakeRequestNoSession
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -285,16 +285,16 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         enable(IncomeSources)
         mockBusinessIncomeSource()
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submit(None, incomeSourceType = "")(fakeRequestNoSession
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submit(None, incomeSourceType = "")(fakeRequestNoSession
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
     }
   }
-  "Agent - BusinessEndDateController.showAgent" should {
+  "Agent - IncomeSourceEndDateController.showAgent" should {
     def stage() = {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
       disableAllSwitches()
@@ -308,19 +308,19 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
       "navigating to the page with FS Enabled with income source type as Self Employment" in {
         stage()
         val incomeSourceType = SelfEmployment
-        TestBusinessEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent)
+        TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent)
       }
 
       "navigating to the page with FS Enabled with income source type as Foreign Property" in {
         stage()
         val incomeSourceType = ForeignProperty
-        TestBusinessEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent)
+        TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent)
       }
 
       "navigating to the page with FS Enabled with income source type as UK Property" in {
         stage()
         val incomeSourceType = UkProperty
-        TestBusinessEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent)
+        TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent)
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -329,13 +329,13 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockBusinessIncomeSource()
 
         val incomeSourceType = SelfEmployment
-        val result: Future[Result] = TestBusinessEndDateController.show(Some(testSelfEmploymentId), incomeSourceType.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceEndDateController.show(Some(testSelfEmploymentId), incomeSourceType.key)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
         val incomeSourceType = SelfEmployment
-        val result: Future[Result] = TestBusinessEndDateController.show(Some(testSelfEmploymentId), incomeSourceType.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceEndDateController.show(Some(testSelfEmploymentId), incomeSourceType.key)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -343,19 +343,19 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
       "income source ID is missing and income source type is Self Employment " in {
         stage()
         val incomeSourceType = SelfEmployment
-        val result: Future[Result] = TestBusinessEndDateController.showAgent(None, incomeSourceType.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceEndDateController.showAgent(None, incomeSourceType.key)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
       "income source ID is missing and income source type is empty " in {
         stage()
-        val result: Future[Result] = TestBusinessEndDateController.showAgent(None, incomeSourceType = "")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceEndDateController.showAgent(None, incomeSourceType = "")(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
     }
   }
-  "Agent - BusinessEndDateController.submitAgent" should {
+  "Agent - IncomeSourceEndDateController.submitAgent" should {
     s"return 303 SEE_OTHER" when {
       "Self Employment - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -363,10 +363,10 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockBusinessIncomeSource()
 
 
-        lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+        val result: Future[Result] = {
+          TestIncomeSourceEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestConfirmedClient()
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
@@ -380,9 +380,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockUKPropertyIncomeSource()
 
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submitAgent(None, UkProperty.key)(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submitAgent(None, UkProperty.key)(fakeRequestConfirmedClient()
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
@@ -395,9 +395,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockForeignPropertyIncomeSource()
 
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submitAgent(None, ForeignProperty.key)(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submitAgent(None, ForeignProperty.key)(fakeRequestConfirmedClient()
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.SEE_OTHER
@@ -413,9 +413,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
 
 
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestConfirmedClient().withMethod("POST")
-            .withFormUrlEncodedBody("business-end-date.day" -> "", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestConfirmedClient().withMethod("POST")
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
 
         status(result) shouldBe Status.BAD_REQUEST
@@ -430,9 +430,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         mockBusinessIncomeSource()
         val incomeSourceType = SelfEmployment
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submitAgent(None, incomeSourceType.key)(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submitAgent(None, incomeSourceType.key)(fakeRequestConfirmedClient()
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -442,9 +442,9 @@ class BusinessEndDateControllerSpec extends TestSupport with MockAuthenticationP
         enable(IncomeSources)
         mockBusinessIncomeSource()
         lazy val result: Future[Result] = {
-          TestBusinessEndDateController.submitAgent(None, incomeSourceType = "")(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody("business-end-date.day" -> "27", "business-end-date.month" -> "8",
-              "business-end-date.year" -> "2022"))
+          TestIncomeSourceEndDateController.submitAgent(None, incomeSourceType = "")(fakeRequestConfirmedClient()
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
         }
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

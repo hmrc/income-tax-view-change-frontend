@@ -25,7 +25,7 @@
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(incomeSourceType: IncomeSourceType, businessEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(incomeSourceType: IncomeSourceType, incomeSourceEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
   messages(s"${incomeSourceType.endDateMessagePrefix}.$key",args:_*)
@@ -40,14 +40,14 @@
 @mainTemplate(pageTitle = getMessage("heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
  @errorSummary(
-  form = businessEndDateForm
+  form = incomeSourceEndDateForm
  )
 
- @formWithCSRF(action = postAction, Symbol("id") -> "business-end-date-form") {
+ @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
 
   @dateInput(
    content = getMessage("heading"),
-   field = businessEndDateForm("business-end-date"),
+   field = incomeSourceEndDateForm("income-source-end-date"),
    hintContent = Some(HtmlContent(getHintContent)),
    pageHeading = true
   )

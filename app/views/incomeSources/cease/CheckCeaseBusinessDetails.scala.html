@@ -38,16 +38,16 @@
 
 @getChangeHref = @{
    if(isAgent){
-     controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(Some(sources.incomeSourceId), SelfEmployment.key).url
-   }else{
-     controllers.incomeSources.cease.routes.BusinessEndDateController.show(Some(sources.incomeSourceId), SelfEmployment.key).url
+     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(sources.incomeSourceId), SelfEmployment.key).url
+   } else {
+     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(sources.incomeSourceId), SelfEmployment.key).url
    }
 }
 
 @getSubmitHref = @{
   if(isAgent){
     controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submitAgent()
-  }else{
+  } else {
     controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submit()
   }
 }

@@ -24,17 +24,17 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
-class BusinessEndDateControllerISpec extends ComponentSpecBase {
-  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.show(Some(testPropertyIncomeId), SelfEmployment.key).url
-  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(Some(testPropertyIncomeId), SelfEmployment.key).url
+class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
+  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(testPropertyIncomeId), SelfEmployment.key).url
+  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(Some(testPropertyIncomeId), SelfEmployment.key).url
   val checkCeaseBusinessDetailsShowUrl: String = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url
 
-  val dateUKPropertyShowUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.show(None, UkProperty.key).url
-  val dateUKPropertySubmitUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(None, UkProperty.key).url
+  val dateUKPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty.key).url
+  val dateUKPropertySubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(None, UkProperty.key).url
   val checkYourCeaseDetailsUkPropertyShowUrl: String = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show().url
 
-  val dateForeignPropertyShowUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.show(None, ForeignProperty.key).url
-  val dateForeignPropertySubmitUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.submit(None, ForeignProperty.key).url
+  val dateForeignPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url
+  val dateForeignPropertySubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(None, ForeignProperty.key).url
   val checkYourCeaseDetailsForeignPropertyShowUrl: String = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.show().url
 
 
@@ -55,17 +55,17 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
-          elementTextByID("business-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
     }
   }
   s"calling POST $dateBusinessSubmitUrl" should {
-    "redirect to showBusinessEndDateControllerUrl" when {
+    s"redirect to $checkCeaseBusinessDetailsShowUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("business-end-date.day" -> Seq("27"), "business-end-date.month" -> Seq("8"), "business-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("27"), "income-source-end-date.month" -> Seq("8"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -79,7 +79,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("business-end-date.day" -> Seq("aa"), "business-end-date.month" -> Seq("5"), "business-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("5"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -88,7 +88,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("business-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
             messagesAPI("incomeSources.cease.endDate.selfEmployment.error.invalid"))
         )
       }
@@ -109,7 +109,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
-          elementTextByID("business-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -119,7 +119,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("business-end-date.day" -> Seq("20"), "business-end-date.month" -> Seq("12"), "business-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -133,7 +133,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("business-end-date.day" -> Seq("aa"), "business-end-date.month" -> Seq("12"), "business-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -142,7 +142,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("business-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
             messagesAPI("incomeSources.cease.endDate.ukProperty.error.invalid"))
         )
       }
@@ -163,7 +163,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
-          elementTextByID("business-end-date-hint")(hintText),
+          elementTextByID("income-source-end-date-hint")(hintText),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -173,7 +173,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("business-end-date.day" -> Seq("20"), "business-end-date.month" -> Seq("12"), "business-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -187,7 +187,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("business-end-date.day" -> Seq("aa"), "business-end-date.month" -> Seq("12"), "business-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -196,7 +196,7 @@ class BusinessEndDateControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(BAD_REQUEST),
-          elementTextByID("business-end-date-error")(messagesAPI("base.error-prefix") + " " +
+          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
             messagesAPI("incomeSources.cease.endDate.foreignProperty.error.invalid"))
         )
       }

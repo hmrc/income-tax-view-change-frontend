@@ -26,7 +26,7 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 
 class CeaseUKPropertyControllerISpec extends ComponentSpecBase with FeatureSwitching {
-  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(None, UkProperty.key).url
+  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key).url
   val showCeaseUKPropertyControllerUrl: String = controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url
   val radioErrorMessage: String = messagesAPI("incomeSources.ceaseUKProperty.radioError")
   val radioLabelMessage: String = messagesAPI("incomeSources.ceaseUKProperty.radioLabel")

@@ -18,7 +18,7 @@ package views.incomeSources.cease
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.cease.BusinessEndDateForm
+import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.models.DateFormElement
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,12 +30,12 @@ import testConstants.BaseTestConstants.{testMtditid, testNino, testSelfEmploymen
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyWithSoleTraderIncomeSource
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import views.html.incomeSources.cease.BusinessEndDate
+import views.html.incomeSources.cease.IncomeSourceEndDate
 
-class BusinessEndDateViewSpec extends TestSupport {
+class IncomeSourceEndDateViewSpec extends TestSupport {
 
-  val BusinessEndDateView: BusinessEndDate = app.injector.instanceOf[BusinessEndDate]
-  val businessEndDateForm: BusinessEndDateForm = app.injector.instanceOf[BusinessEndDateForm]
+  val IncomeSourceEndDateView: IncomeSourceEndDate = app.injector.instanceOf[IncomeSourceEndDate]
+  val incomeSourceEndDateForm: IncomeSourceEndDateForm = app.injector.instanceOf[IncomeSourceEndDateForm]
 
   val testUser: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
@@ -56,22 +56,22 @@ class BusinessEndDateViewSpec extends TestSupport {
     val testBackUrl: String = "/test/back/path"
     val view = incomeSourceType match {
       case SelfEmployment =>
-        val form: Form[DateFormElement] = businessEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
-        BusinessEndDateView(SelfEmployment, form, testPostActionCall, isAgent, testBackUrl)
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
+        IncomeSourceEndDateView(SelfEmployment, form, testPostActionCall, isAgent, testBackUrl)
       case _ =>
-        val form: Form[DateFormElement] = businessEndDateForm.apply(incomeSourceType, None)
-        BusinessEndDateView(incomeSourceType, form, testPostActionCall, isAgent, testBackUrl)
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(incomeSourceType, None)
+        IncomeSourceEndDateView(incomeSourceType, form, testPostActionCall, isAgent, testBackUrl)
     }
 
     val viewError = incomeSourceType match {
       case SelfEmployment =>
-        val form: Form[DateFormElement] = businessEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
-        val errorFormSE = form.withError(FormError("business-end-date", "dateForm.error.monthAndYear.required"))
-        BusinessEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
+        val errorFormSE = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
+        IncomeSourceEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
       case _ =>
-        val form: Form[DateFormElement] = businessEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
-        val errorFormSE = form.withError(FormError("business-end-date", "dateForm.error.monthAndYear.required"))
-        BusinessEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
+        val form: Form[DateFormElement] = incomeSourceEndDateForm.apply(SelfEmployment, Some(testSelfEmploymentId))
+        val errorFormSE = form.withError(FormError("income-source-end-date", "dateForm.error.monthAndYear.required"))
+        IncomeSourceEndDateView(SelfEmployment, errorFormSE, testPostActionCall, isAgent, testBackUrl)
     }
 
 
@@ -89,7 +89,7 @@ class BusinessEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
     }
     "render the hint" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("business-end-date-hint").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
     }
     "render the date form" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -105,7 +105,7 @@ class BusinessEndDateViewSpec extends TestSupport {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("business-end-date-error").text() shouldBe messages("base.error-prefix") + " " +
+      document.getElementById("income-source-end-date-error").text() shouldBe messages("base.error-prefix") + " " +
         messages("dateForm.error.monthAndYear.required")
     }
     "render the error summary" in new Setup(isAgent = false, error = true, incomeSourceType = SelfEmployment) {
@@ -125,7 +125,7 @@ class BusinessEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages("incomeSources.cease.endDate.ukProperty.heading")
     }
     "render the hint" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("business-end-date-hint").text() shouldBe messages("dateForm.hint")
+      document.getElementById("income-source-end-date-hint").text() shouldBe messages("dateForm.hint")
     }
     "render the date form" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
@@ -141,7 +141,7 @@ class BusinessEndDateViewSpec extends TestSupport {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("business-end-date-error").text() shouldBe messages("base.error-prefix") + " " +
+      document.getElementById("income-source-end-date-error").text() shouldBe messages("base.error-prefix") + " " +
         messages("dateForm.error.monthAndYear.required")
     }
     "render the error summary" in new Setup(isAgent = true, error = true, incomeSourceType = SelfEmployment) {

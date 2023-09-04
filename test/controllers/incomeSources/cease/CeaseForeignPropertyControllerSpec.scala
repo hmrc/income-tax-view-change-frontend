@@ -37,7 +37,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.{BusinessEndDate, CeaseForeignProperty}
+import views.html.incomeSources.cease.{IncomeSourceEndDate, CeaseForeignProperty}
 
 import scala.concurrent.Future
 
@@ -45,7 +45,7 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockCeaseForeignProperty: CeaseForeignProperty = app.injector.instanceOf[CeaseForeignProperty]
-  val mockBusinessEndDate: BusinessEndDate = mock(classOf[BusinessEndDate])
+  val mockBusinessEndDate: IncomeSourceEndDate = mock(classOf[IncomeSourceEndDate])
 
   object TestCeaseForeignPropertyController extends CeaseForeignPropertyController(
     MockAuthenticationPredicate,
@@ -99,7 +99,7 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
   }
 
   "Individual - CeaseForeignPropertyController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessEndDateController.show(None, ForeignProperty.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url}" when {
       "form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -115,7 +115,7 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
         }
         result.futureValue.session(fakeRequestCeaseForeignPropertyDeclarationComplete).get(ceaseForeignPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.BusinessEndDateController.show(None, ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -183,7 +183,7 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
   }
 
   "Agent - CeaseForeignPropertyController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(None, ForeignProperty.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -199,7 +199,7 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
         }
         result.futureValue.session(fakeRequestCeaseForeignPropertyDeclarationComplete).get(ceaseForeignPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(None, ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url)
       }
     }
     "return 400 BAD_REQUEST" when {

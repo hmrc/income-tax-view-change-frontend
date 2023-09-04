@@ -99,11 +99,11 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
       if (isAgent)
         (routes.CeaseUKPropertyController.submitAgent,
           routes.CeaseIncomeSourceController.showAgent(),
-          routes.BusinessEndDateController.showAgent(None, UkProperty.key))
+          routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key))
       else
         (routes.CeaseUKPropertyController.submit,
           routes.CeaseIncomeSourceController.show(),
-          routes.BusinessEndDateController.show(None, UkProperty.key))
+          routes.IncomeSourceEndDateController.show(None, UkProperty.key))
     }
     CeaseUKPropertyForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(view(

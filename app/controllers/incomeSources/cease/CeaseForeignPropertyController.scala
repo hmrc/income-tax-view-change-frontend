@@ -105,11 +105,11 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
       if (isAgent)
         (routes.CeaseForeignPropertyController.submitAgent,
           routes.CeaseIncomeSourceController.showAgent(),
-          routes.BusinessEndDateController.showAgent(None, ForeignProperty.key))
+          routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key))
       else
         (routes.CeaseForeignPropertyController.submit,
           routes.CeaseIncomeSourceController.show(),
-          routes.BusinessEndDateController.show(None, ForeignProperty.key))
+          routes.IncomeSourceEndDateController.show(None, ForeignProperty.key))
     }
 
     CeaseForeignPropertyForm.form.bindFromRequest().fold(
