@@ -74,7 +74,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     }
 
     def getActions(isAgent: Boolean, incomeSourceType: String, id: Option[String]): (Call, Call, Call, IncomeSourceType) = {
-      IncomeSourceType.get(incomeSourceType) match {
+      IncomeSourceType(incomeSourceType) match {
         case Right(incomeSourceTypeValue) =>
           (incomeSourceTypeValue, isAgent) match {
             case (UkProperty, true) =>
