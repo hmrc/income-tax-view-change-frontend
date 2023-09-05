@@ -37,7 +37,8 @@ import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 
-import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
 
 
 class AddBusinessAddressControllerSpec extends TestSupport

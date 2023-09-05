@@ -224,19 +224,19 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       case (false, SelfEmployment) =>
         routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId) ->
           routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear, incomeSourceId)
-      case (true, SelfEmployment) =>
+      case (_,     SelfEmployment) =>
         routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId) ->
           routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear, incomeSourceId)
-      case (false, UkProperty) =>
+      case (false, UkProperty)     =>
         routes.ManageIncomeSourceDetailsController.showUkProperty() ->
           routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-      case (true, UkProperty) =>
+      case (_,     UkProperty)     =>
         routes.ManageIncomeSourceDetailsController.showUkPropertyAgent() ->
           routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-      case (false, ForeignProperty) =>
+      case (false, _)              =>
         routes.ManageIncomeSourceDetailsController.showForeignProperty() ->
           routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-      case (true, ForeignProperty) =>
+      case _                       =>
         routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent() ->
           routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
     }
