@@ -17,22 +17,17 @@
 package views.incomeSources.manage
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.ForeignProperty
-import forms.incomeSources.cease.UKPropertyEndDateForm
 import forms.incomeSources.manage.ConfirmReportingMethodForm
-import forms.models.DateFormElement
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import services.DateService
-import testConstants.BaseTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{ukPlusForeignPropertyWithSoleTraderIncomeSource, ukPropertyIncome}
+import testConstants.BaseTestConstants.{testMtditid, testNino, testSelfEmploymentId}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyWithSoleTraderIncomeSource
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import views.html.incomeSources.cease.UKPropertyEndDate
 import views.html.incomeSources.manage.ConfirmReportingMethod
 
 class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
@@ -285,7 +280,10 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
   }
 
   private sealed trait IncomeSourceType
+
   private case object UKProperty extends IncomeSourceType
+
   private case object ForeignProperty extends IncomeSourceType
+
   private case object SoleTraderBusiness extends IncomeSourceType
 }

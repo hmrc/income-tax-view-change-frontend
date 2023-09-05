@@ -22,6 +22,7 @@
 @import exceptions.MissingSessionKey
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import enums.IncomeSourceJourney.UkProperty
 
 
 
@@ -37,16 +38,16 @@
 
 @getChangeHref = @{
    if(isAgent){
-     controllers.incomeSources.cease.routes.UKPropertyEndDateController.showAgent().url
-   }else{
-     controllers.incomeSources.cease.routes.UKPropertyEndDateController.show().url
+     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key).url
+   } else {
+     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty.key).url
    }
 }
 
 @getSubmitHref = @{
   if(isAgent){
     controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.submitAgent()
-  }else{
+  } else {
     controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.submit()
   }
 }
