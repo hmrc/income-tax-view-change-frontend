@@ -86,8 +86,8 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
   def getAddIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Try[AddIncomeSourcesViewModel] = Try {
     val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-    val ukProperty = sources.properties.find(_.isUkProperty)
-    val foreignProperty = sources.properties.find(_.isForeignProperty)
+    val ukProperty = sources.properties.find(_.isUkProperty).filterNot(_.isCeased)
+    val foreignProperty = sources.properties.find(_.isForeignProperty).filterNot(_.isCeased)
 
     AddIncomeSourcesViewModel(
       soleTraderBusinesses = soleTraderBusinesses.map { business =>

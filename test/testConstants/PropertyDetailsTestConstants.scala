@@ -37,7 +37,7 @@ object PropertyDetailsTestConstants {
 
   val testPropertyCessation = CessationModel(Some(LocalDate.of(2018, 1, 1)), Some("It was a stupid idea anyway"))
   val testPropertyCessation2 = CessationModel(Some(LocalDate.of(2023, 6, 6)), Some("It was a stupid idea anyway"))
-  val testPropertyCessation3 = CessationModel(Some(LocalDate.of(2022, 2, 2)), Some("It was a stupid idea anyway"))
+  val testPropertyCessation3 = CessationModel(Some(LocalDate.of(2020, 2, 2)), Some("It was a stupid idea anyway"))
 
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
