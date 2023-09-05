@@ -2,6 +2,7 @@ package controllers.agent.incomeSources.add
 
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys.businessName
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -16,7 +17,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val addBusinessNameSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent().url
   val changeBusinessNameShowUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
   val changeBusinessNameSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent().url
-  val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceKey = "SE", isAgent = true, isChange = false).url
+  val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
   val checkBusinessDetailsUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
   val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url

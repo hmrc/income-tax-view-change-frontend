@@ -1162,9 +1162,15 @@ incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifydd
 incomeSources.add.checkUKPropertyDetails.change                 = Newid
 incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
 
-incomeSources.add.error.standardError                               = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+incomeSources.add.error.standardError                            = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+incomeSources.add.error.incomeSourceNotSaved.p1                  = Nid oedd modd ychwanegu eich busnes {0}. Nid ydym wedi cadw’ch atebion. Rhowch gynnig arall arni yn nes ymlaen.
+incomeSources.add.error.incomeSourceNotSaved.se                  = unig fasnachwr
+incomeSources.add.error.incomeSourceNotSaved.uk                  = eiddo yn y DU
+incomeSources.add.error.incomeSourceNotSaved.fp                  = eiddo tramor
+incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Eich ffynonellau incwm
+
 incomeSources.add.error.reportingMethodNotSaved.p1                  = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
-incomeSources.add.error.reportingMethodNotSaved.p2                  = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ''blynyddol'' yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr adran i weld a rheoli ffynonellau incwm.
+incomeSources.add.error.reportingMethodNotSaved.p2                  = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ''blynyddol'' yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr ''adran i weld a rheoli ffynonellau incwm''.
 incomeSources.add.error.reportingMethodNotSaved.se                  = unig fasnachwr
 incomeSources.add.error.reportingMethodNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp                  = eiddo tramor
@@ -1258,8 +1264,10 @@ dateForm.error.year.required                                        = Mae’n rh
 dateForm.error.dayAndMonth.required                                 = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
 dateForm.error.dayAndYear.required                                  = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
 dateForm.error.monthAndYear.required                                = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
-dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
 dateForm.error.dayMonthAndYear.required                             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
+dateForm.error.future                                               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
+dateFrom.error.beforeStartDate                                      = TNi all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
+dateForm.check.heading                                              = A yw’r dyddiad hwn yn gywir?
 
 #Generic radio form messages
 radioForm.checkDate.heading                                         = A yw’r dyddiad hwn yn gywir?
@@ -1269,37 +1277,23 @@ radioForm.no                                                        = Na
 #Generic income sources messages
 incomeSources.generic.unknown                                    = Anhysbys
 
+incomeSources.cease.endDate.selfEmployment.heading                               = Y dyddiad gwnaeth eich busnes hunangyflogedig stopio
+incomeSources.cease.endDate.selfEmployment.error.invalid                         = Mae’n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
+incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
+
 incomeSources.ceaseUKProperty.heading                            = Dod ag eiddo yn y DU i ben
 incomeSources.ceaseUKProperty.radioLabel                         = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo yn y DU.
 incomeSources.ceaseUKProperty.radioError                         = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo yn y DU
-incomeSources.cease.UKPropertyEndDate.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
-incomeSources.cease.UKPropertyEndDate.hint                       = Er enghraifft, 27 3 2020
-incomeSources.cease.UKPropertyEndDate.error.incomplete           = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
-incomeSources.cease.UKPropertyEndDate.error.incompleteDay        = Mae’n rhaid i’r dyddiad gynnwys diwrnod
-incomeSources.cease.UKPropertyEndDate.error.incompleteMonth      = Mae’n rhaid i’r dyddiad gynnwys mis
-incomeSources.cease.UKPropertyEndDate.error.incompleteYear       = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
-incomeSources.cease.UKPropertyEndDate.error.incompleteDayMonth   = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
-incomeSources.cease.UKPropertyEndDate.error.incompleteDayYear    = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
-incomeSources.cease.UKPropertyEndDate.error.incompleteMonthYear  = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
-incomeSources.cease.UKPropertyEndDate.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
-incomeSources.cease.UKPropertyEndDate.error.future               = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
-incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
+
+incomeSources.cease.endDate.ukProperty.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
+incomeSources.cease.endDate.ukProperty.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
 
 incomeSources.ceaseForeignProperty.heading                              = Dod ag eiddo tramor i ben
 incomeSources.ceaseForeignProperty.checkboxLabel                        = Rwy’n datgan nad wyf bellach yn cael incwm o unrhyw eiddo tramor.
 incomeSources.ceaseForeignProperty.checkboxError                        = Mae’n rhaid i chi ddatgan nad ydych chi bellach yn cael incwm o unrhyw eiddo tramor
-incomeSources.cease.ForeignPropertyEndDate.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
-incomeSources.cease.ForeignPropertyEndDate.hint                         = Er enghraifft, 27 3 2020
-incomeSources.cease.ForeignPropertyEndDate.error.incomplete             = Mae’n rhaid i’r dyddiad gynnwys diwrnod, mis a blwyddyn
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteDay          = Mae’n rhaid i’r dyddiad gynnwys diwrnod
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonth        = Mae’n rhaid i’r dyddiad gynnwys mis
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteYear         = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayMonth     = Mae’n rhaid i’r dyddiad gynnwys diwrnod a mis
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayYear      = Mae’n rhaid i’r dyddiad gynnwys diwrnod a blwyddyn
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonthYear    = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
-incomeSources.cease.ForeignPropertyEndDate.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
-incomeSources.cease.ForeignPropertyEndDate.error.future                 = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
-incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate        = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
+
+incomeSources.cease.endDate.foreignProperty.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
+incomeSources.cease.endDate.foreignProperty.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
 
 incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
 incomeSources.add.foreignProperty.startDate.hint                     = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo tramor ar osod yn y lle cyntaf.
@@ -1365,12 +1359,6 @@ add-business-start-date-check.heading                = A yw’r dyddiad hwn yn g
 add-business-start-date-check.radio.yes              = Iawn
 add-business-start-date-check.radio.no               = Na
 add-business-start-date-check.error                  = Dewiswch ’Iawn’ os yw dyddiad dechrau’ch busnes yn gywir
-
-incomeSources.cease.BusinessEndDate.heading                               = Y dyddiad gwnaeth eich busnes hunangyflogedig stopio
-incomeSources.cease.BusinessEndDate.error.invalid                         = Mae’n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
-incomeSources.cease.BusinessEndDate.error.future                          = Ni allwch nodi dyddiad dod i ben sydd y tu hwnt i’r diwrnod presennol na dyddiad yn y dyfodol
-incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = Ni all y dyddiad dod i ben ar gyfer y busnes fod cyn y dyddiad dechrau
-incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
 
 incomeSources.ceaseBusiness.checkDetails.heading                    = Gwirio’ch manylion
 incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Busnesau unig fasnachwr
@@ -1546,6 +1534,45 @@ incomeSources.manage.uk-property-manage-details.accounting-method               
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Busnes eiddo tramor
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu ar gyfer incwm o eiddo tramor
+
+incomeSources.cease.error.UK.notCeased.text                       = Nid oedd modd dod â’ch busnes eiddo yn y DU i ben. Rhowch gynnig arall arni yn nes ymlaen.
+incomeSources.cease.error.FP.notCeased.text                       = Nid oedd modd dod â’ch busnes eiddo tramor i ben. Rhowch gynnig arall arni yn nes ymlaen.
+incomeSources.cease.error.SE.notCeased.text                       = Nid oedd modd dod â’ch busnes unig fasnachwr i ben. Rhowch gynnig arall arni yn nes ymlaen.
+incomeSources.cease.error.notCeased.link.prefix                    = Yn ôl i
+incomeSources.cease.error.notCeased.link.text                     = ddod â ffynhonnell incwm i ben.
+
+incomeSources.manage.businessReportingMethodError.text          = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
+incomeSources.manage.uKPropertyReportingMethodError.text        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
+incomeSources.manage.foreignPropertyReportingMethodError.text   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
+
+incomeSources.manage.reportingMethodError.hyperlink1            = rheoli eich manylion
+incomeSources.manage.reportingMethodError.hyperlink2            = weld a rheoli ffynonellau incwm
+incomeSources.manage.reportingMethodError.p3                    = Neu ewch yn ôl i
+
+incomeSources.manage.businessReportingMethodError.p1            = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
+incomeSources.manage.businessReportingMethodError.p2            = Gallwch geisio newid pa mor aml y mae’ch busnes unig fasnachwr yn cyflwyno adroddiadau eto yn
+
+incomeSources.manage.uKPropertyReportingMethodError.p1        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
+incomeSources.manage.uKPropertyReportingMethodError.p2        = Gallwch geisio newid pa mor aml y mae’ch busnes eiddo yn y DU yn cyflwyno adroddiadau eto yn
+
+incomeSources.manage.foreignPropertyReportingMethodError.p1   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
+incomeSources.manage.foreignPropertyReportingMethodError.p2   = Gallwch geisio newid pa mor aml y mae’ch busnes eiddo tramor yn cyflwyno adroddiadau eto yn
+incomeSources.manage.businessReportingMethodError.text          = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
+incomeSources.manage.uKPropertyReportingMethodError.text        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
+incomeSources.manage.foreignPropertyReportingMethodError.text   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
+
+incomeSources.manage.reportingMethodError.hyperlink1            = rheoli eich manylion
+incomeSources.manage.reportingMethodError.hyperlink2            = weld a rheoli ffynonellau incwm
+incomeSources.manage.reportingMethodError.p3                    = Neu ewch yn ôl i
+
+incomeSources.manage.businessReportingMethodError.p1            = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes unig fasnachwr.
+incomeSources.manage.businessReportingMethodError.p2            = Gallwch geisio newid pa mor aml y mae’ch busnes unig fasnachwr yn cyflwyno adroddiadau eto yn
+
+incomeSources.manage.uKPropertyReportingMethodError.p1        = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo yn y DU.
+incomeSources.manage.uKPropertyReportingMethodError.p2        = Gallwch geisio newid pa mor aml y mae’ch busnes eiddo yn y DU yn cyflwyno adroddiadau eto yn
+
+incomeSources.manage.foreignPropertyReportingMethodError.p1   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
+incomeSources.manage.foreignPropertyReportingMethodError.p2   = Gallwch geisio newid pa mor aml y mae’ch busnes eiddo tramor yn cyflwyno adroddiadau eto yn
 
 # ceased income sources
 incomeSources.ceased-income-sources.heading                     =   Busnesau sydd wedi dod i ben

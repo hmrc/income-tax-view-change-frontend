@@ -1136,9 +1136,15 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Date start
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Date ended
 incomeSources.add.addIncomeSources.unknown                          = Unknown
 
-incomeSources.add.error.standardError                               = Sorry, there is a problem with the service
+incomeSources.add.error.standardError                            = Sorry, there is a problem with the service
+incomeSources.add.error.incomeSourceNotSaved.p1                  = Your {0} business could not be added. We have not saved your answers. Please try again later.
+incomeSources.add.error.incomeSourceNotSaved.se                  = sole trader
+incomeSources.add.error.incomeSourceNotSaved.uk                  = UK property
+incomeSources.add.error.incomeSourceNotSaved.fp                  = foreign property
+incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Your income sources
+
 incomeSources.add.error.reportingMethodNotSaved.p1                  = Your {0} business was added, but we were unable to save the reporting frequency for one or more tax years.
-incomeSources.add.error.reportingMethodNotSaved.p2                  = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ''View and manage income sources''.
+incomeSources.add.error.reportingMethodNotSaved.p2                  = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ''view and manage income sources''.
 incomeSources.add.error.reportingMethodNotSaved.se                  = sole trader
 incomeSources.add.error.reportingMethodNotSaved.uk                  = UK property
 incomeSources.add.error.reportingMethodNotSaved.fp                  = foreign property
@@ -1258,6 +1264,8 @@ dateForm.error.dayAndMonth.required                                 = The date m
 dateForm.error.dayAndYear.required                                  = The date must include a day and a year
 dateForm.error.monthAndYear.required                                = The date must include a month and a year
 dateForm.error.dayMonthAndYear.required                             = The date must include a day, a month and a year
+dateForm.error.future                                               = You cannot provide a cessation date that is beyond the current day or a date in the future
+dateFrom.error.beforeStartDate                                      = The cessation date cannot be earlier than the start date for the business
 dateForm.check.heading                                              = Is this date correct?
 
 #Generic radio form messages
@@ -1268,37 +1276,23 @@ radioForm.no                                                        = No
 #Generic income sources messages
 incomeSources.generic.unknown                                    = Unknown
 
+incomeSources.cease.endDate.selfEmployment.heading                               = Date your self-employed business stopped
+incomeSources.cease.endDate.selfEmployment.error.invalid                         = The date your self-employed business stopped trading must be a real date
+incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
+
 incomeSources.ceaseUKProperty.heading                            = Cease UK property
 incomeSources.ceaseUKProperty.radioLabel                         = I declare that I no longer get an income from any property in the UK.
 incomeSources.ceaseUKProperty.radioError                         = You must declare that you no longer get an income from any property in the UK
-incomeSources.cease.UKPropertyEndDate.heading                    = Date your UK property business stopped
-incomeSources.cease.UKPropertyEndDate.hint                       = For example, 27 3 2020
-incomeSources.cease.UKPropertyEndDate.error.incomplete           = The date must include a day, a month and a year
-incomeSources.cease.UKPropertyEndDate.error.incompleteDay        = The date must include a day
-incomeSources.cease.UKPropertyEndDate.error.incompleteMonth      = The date must include a month
-incomeSources.cease.UKPropertyEndDate.error.incompleteYear       = The date must include a year
-incomeSources.cease.UKPropertyEndDate.error.incompleteDayMonth   = The date must include a day and a month
-incomeSources.cease.UKPropertyEndDate.error.incompleteDayYear    = The date must include a day and a year
-incomeSources.cease.UKPropertyEndDate.error.incompleteMonthYear  = The date must include a month and a year
-incomeSources.cease.UKPropertyEndDate.error.invalid              = The date your UK property business stopped must be a real date
-incomeSources.cease.UKPropertyEndDate.error.future               = You cannot provide a cessation date that is beyond the current day or a date in the future
-incomeSources.cease.UKPropertyEndDate.error.beforeStartDate      = The cessation date cannot be earlier than the start date for the business
+
+incomeSources.cease.endDate.ukProperty.heading                    = Date your UK property business stopped
+incomeSources.cease.endDate.ukProperty.error.invalid              = The date your UK property business stopped must be a real date
 
 incomeSources.ceaseForeignProperty.heading                              = Cease foreign property
 incomeSources.ceaseForeignProperty.checkboxLabel                        = I declare that I no longer get an income from any foreign property.
 incomeSources.ceaseForeignProperty.checkboxError                        = You must declare that you no longer get an income from any foreign property
-incomeSources.cease.ForeignPropertyEndDate.heading                      = Date your foreign property business stopped
-incomeSources.cease.ForeignPropertyEndDate.hint                         = For example, 27 3 2020
-incomeSources.cease.ForeignPropertyEndDate.error.incomplete             = The date must include a day, a month and a year
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteDay          = The date must include a day
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonth        = The date must include a month
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteYear         = The date must include a year
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayMonth     = The date must include a day and a month
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteDayYear      = The date must include a day and a year
-incomeSources.cease.ForeignPropertyEndDate.error.incompleteMonthYear    = The date must include a month and a year
-incomeSources.cease.ForeignPropertyEndDate.error.invalid                = The date your foreign property business stopped must be a real date
-incomeSources.cease.ForeignPropertyEndDate.error.future                 = You cannot provide a cessation date that is beyond the current day or a date in the future
-incomeSources.cease.ForeignPropertyEndDate.error.beforeStartDate        = The cessation date cannot be earlier than the start date for the business
+
+incomeSources.cease.endDate.foreignProperty.heading                      = Date your foreign property business stopped
+incomeSources.cease.endDate.foreignProperty.error.invalid                = The date your foreign property business stopped must be a real date
 
 incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
 incomeSources.add.foreignProperty.startDate.hint                     = This is the date that letting or renting out any foreign property first started.
@@ -1391,12 +1385,6 @@ incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = May 2017, you us
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
 incomeSources.add.SE.AccountingMethod.no-selection            = Enter the accounting method you use for your sole trader business
 
-incomeSources.cease.BusinessEndDate.heading                               = Date your self-employed business stopped
-incomeSources.cease.BusinessEndDate.error.invalid                         = The date your self-employed business stopped trading must be a real date
-incomeSources.cease.BusinessEndDate.error.future                          = You cannot provide a cessation date that is beyond the current day or a date in the future
-incomeSources.cease.BusinessEndDate.error.beforeStartDate                 = The cessation date cannot be earlier than the start date for the business
-incomeSources.cease.BusinessEndDate.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
-
 incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
 incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Sole trader business
 incomeSources.ceaseBusiness.checkDetails.dateStopped                = Date business stopped
@@ -1450,7 +1438,7 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
-## Income Source Creased Obligation Page ##
+## Income Source Ceased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        =
 business-ceased.obligation.heading1.se.part2                        = Sole trader business
 business-ceased.obligation.heading1.uk-property.part2               = UK property
@@ -1575,6 +1563,37 @@ incomeSources.manage.uk-property-manage-details.accounting-method               
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property business
 incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method for foreign property income
+
+incomeSources.cease.error.UK.notCeased.text                       = Your UK property business could not be ceased. We have not saved your answers. Please try again later.
+incomeSources.cease.error.FP.notCeased.text                       = Your foreign property business could not be ceased. We have not saved your answers. Please try again later.
+incomeSources.cease.error.SE.notCeased.text                       = Your sole trader business could not be ceased. We have not saved your answers. Please try again later.
+incomeSources.cease.error.notCeased.link.prefix                    = Back to
+incomeSources.cease.error.notCeased.link.text                     = cease an income source.
+
+incomeSources.manage.reportingMethodError.hyperlink1            = manage your details
+incomeSources.manage.reportingMethodError.hyperlink2            = view and manage income sources
+incomeSources.manage.reportingMethodError.p3                    = Or go back to
+
+incomeSources.manage.businessReportingMethodError.p1            = We were unable to update your sole trader business reporting frequency.
+incomeSources.manage.businessReportingMethodError.p2            = You can try to change your sole trader business reporting frequency again in
+
+incomeSources.manage.uKPropertyReportingMethodError.p1        = We were unable to update your UK property business reporting frequency.
+incomeSources.manage.uKPropertyReportingMethodError.p2        = You can try to change your UK property business reporting frequency again in
+
+incomeSources.manage.foreignPropertyReportingMethodError.p1   = We were unable to update your foreign property business reporting frequency.
+incomeSources.manage.foreignPropertyReportingMethodError.p2   = You can try to change your foreign property business reporting frequency again in
+incomeSources.manage.reportingMethodError.hyperlink1            = manage your details
+incomeSources.manage.reportingMethodError.hyperlink2            = view and manage income sources
+incomeSources.manage.reportingMethodError.p3                    = Or go back to
+
+incomeSources.manage.businessReportingMethodError.p1            = We were unable to update your sole trader business reporting frequency.
+incomeSources.manage.businessReportingMethodError.p2            = You can try to change your sole trader business reporting frequency again in
+
+incomeSources.manage.uKPropertyReportingMethodError.p1        = We were unable to update your UK property business reporting frequency.
+incomeSources.manage.uKPropertyReportingMethodError.p2        = You can try to change your UK property business reporting frequency again in
+
+incomeSources.manage.foreignPropertyReportingMethodError.p1   = We were unable to update your foreign property business reporting frequency.
+incomeSources.manage.foreignPropertyReportingMethodError.p2   = You can try to change your foreign property business reporting frequency again in
 
 # ceased income sources
 incomeSources.ceased-income-sources.heading                     =   Businesses that have ceased

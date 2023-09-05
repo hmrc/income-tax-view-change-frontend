@@ -84,15 +84,14 @@ lazy val microservice = Project(appName, file("."))
   .settings(playSettings: _*)
   .settings(scalaSettings: _*)
   .settings(scalaVersion := currentScalaVersion)
-  .settings(publishingSettings: _*)
   .settings(scoverageSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(majorVersion := 1)
   .settings(scalacOptions += "-Wconf:cat=lint-multiarg-infix:silent")
   .settings(scalacOptions += "-Xfatal-warnings")
   .settings(
-    Keys.fork in Test := true,
-    javaOptions in Test += "-Dlogger.resource=logback-test.xml"
+    Test / Keys.fork := true,
+    Test / javaOptions += "-Dlogger.resource=logback-test.xml"
   )
   .settings(
     libraryDependencies ++= appDependencies,
@@ -107,16 +106,16 @@ lazy val microservice = Project(appName, file("."))
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
   .configs(IntegrationTest)
   .settings(
-    Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest) (base => Seq(base / "it")).value,
+    IntegrationTest / Keys.fork := false,
+    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    parallelExecution in IntegrationTest := false,
+    IntegrationTest / parallelExecution := false,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
     ),
-    RoutesKeys.routesImport := Seq.empty,
+    RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._"),
     scalacOptions += "-Wconf:cat=unused-imports:s,cat=unused-params:s"
   )
   .settings(resolvers ++= Seq(

@@ -17,19 +17,19 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.utils.SessionKeys.ceaseForeignPropertyEndDate
 import implicits.ImplicitDateFormatter
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request, Result}
-import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
+import services.{IncomeSourceDetailsService, UpdateIncomeSourceError, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.IncomeSourcesUtils
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseForeignPropertyDetails
 
 import javax.inject.Inject
@@ -52,11 +52,11 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter with IncomeSourcesUtils {
 
-  lazy val backUrl: String = routes.ForeignPropertyEndDateController.show().url
-  lazy val backUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
+  lazy val backUrl: String = routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url
+  lazy val backUrlAgent: String = routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url
 
-  lazy val changeUrl: String = routes.ForeignPropertyEndDateController.show().url
-  lazy val changeUrlAgent: String = routes.ForeignPropertyEndDateController.showAgent().url
+  lazy val changeUrl: String = routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url
+  lazy val changeUrlAgent: String = routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url
 
   lazy val successCall: Call = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.show()
   lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.showAgent()
@@ -92,7 +92,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
       handleSubmitRequest(
         successCall = successCall,
         cessationDate = cessationDate,
-        itvcErrorHandler = itvcErrorHandler
+        isAgent = false
       )
   }
 
@@ -104,7 +104,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
             handleSubmitRequest(
               cessationDate = cessationDate,
               successCall = successCallAgent,
-              itvcErrorHandler = itvcErrorHandlerAgent
+              isAgent = true
             )
         }
   }
@@ -134,28 +134,32 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
 
   def handleSubmitRequest(successCall: Call,
                           cessationDate: String,
-                          itvcErrorHandler: ShowInternalServerError)
+                          isAgent: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
 
     withIncomeSourcesFS {
       val foreignPropertyIncomeSources = user.incomeSources.properties.filter(_.isForeignProperty)
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
       if (foreignPropertyIncomeSources.isEmpty) {
         Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
           s" Failed to retrieve incomeSourceId for foreign property")
-        Future(itvcErrorHandler.showInternalServerError())
+        Future.successful {
+          errorHandler.showInternalServerError()
+        }
       } else {
         val incomeSourceId = foreignPropertyIncomeSources.head.incomeSourceId
-
         updateIncomeSourceservice
           .updateCessationDatev2(user.nino, incomeSourceId, cessationDate).flatMap {
-          case Right(_) =>
-            Future.successful(Redirect(successCall))
-          case _ =>
-            Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
-              s" Unsuccessful update response received")
-            Future(itvcErrorHandler.showInternalServerError())
-        }
+            case Right(UpdateIncomeSourceSuccess(_)) =>
+              Future.successful(Redirect(successCall))
+            case Left(UpdateIncomeSourceError(_)) =>
+              Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
+                s" Unsuccessful update response received")
+              Future.successful {
+                Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, ForeignProperty.key))
+              }
+          }
       }
     }
   }

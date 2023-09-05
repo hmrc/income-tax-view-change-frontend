@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.SelfEmployment
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -205,7 +206,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
   }
 
   "Agent - CheckCeaseBusinessDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(testSelfEmploymentId).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(testSelfEmploymentId), SelfEmployment.key).url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)

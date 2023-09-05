@@ -52,8 +52,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
-  lazy val checkBusinessStartDate: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(SelfEmployment.key, isAgent = false, isChange = false).url
-  lazy val checkBusinessStartDateAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(SelfEmployment.key, isAgent = true, isChange = false).url
+  lazy val checkBusinessStartDate: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, SelfEmployment).url
+  lazy val checkBusinessStartDateAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, SelfEmployment).url
   lazy val checkBusinessDetails: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
   lazy val checkBusinessDetailsAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
 

@@ -17,43 +17,62 @@
 package enums.IncomeSourceJourney
 
 import forms.utils.SessionKeys
+import play.api.libs.json.{JsString, Writes}
+import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {
   val key: String
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
+  val endDateMessagePrefix: String
   val startDateSessionKey: String
+  val endDateSessionKey: String
+  val reportingMethodChangeErrorPrefix: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
   override val key = "SE"
-  override val startDateMessagesPrefix = "add-business-start-date"
-  override val addStartDateCheckMessagesPrefix = "add-business-start-date-check"
-  override val startDateSessionKey = SessionKeys.addBusinessStartDate
-
+  override val startDateMessagesPrefix: String = "add-business-start-date"
+  override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
+  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
+  override val startDateSessionKey: String = SessionKeys.addBusinessStartDate
+  override val endDateSessionKey: String = SessionKeys.ceaseBusinessEndDate
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
 }
 
 case object UkProperty extends IncomeSourceType {
   override val key = "UK"
-  override val startDateMessagesPrefix = "incomeSources.add.UKPropertyStartDate"
-  override val addStartDateCheckMessagesPrefix = "add-uk-property-start-date-check"
-  override val startDateSessionKey = SessionKeys.addUkPropertyStartDate
+  override val startDateMessagesPrefix: String = "incomeSources.add.UKPropertyStartDate"
+  override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
+  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
+  override val startDateSessionKey: String = SessionKeys.addUkPropertyStartDate
+  override val endDateSessionKey: String = SessionKeys.ceaseUKPropertyEndDate
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
 }
 
 case object ForeignProperty extends IncomeSourceType {
   override val key = "FP"
-  override val startDateMessagesPrefix = "incomeSources.add.foreignProperty.startDate"
-  override val addStartDateCheckMessagesPrefix = "add-foreign-property-start-date-check"
-  override val startDateSessionKey = SessionKeys.foreignPropertyStartDate
+  override val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
+  override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
+  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
+  override val startDateSessionKey: String = SessionKeys.foreignPropertyStartDate
+  override val endDateSessionKey: String = SessionKeys.ceaseForeignPropertyEndDate
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
 }
 
 object IncomeSourceType {
-  def get(key: String): Either[Exception,IncomeSourceType] = {
+  def apply(key: String): Either[Exception, IncomeSourceType] = {
     key match {
       case "FP" => Right(ForeignProperty)
       case "UK" => Right(UkProperty)
       case "SE" => Right(SelfEmployment)
       case _ => Left(new Exception("Invalid incomeSourceType"))
     }
+  }
+
+  implicit val incomeSourceTypeJSLBinder: JavascriptLiteral[IncomeSourceType] = (value: IncomeSourceType) => s"""'${value.toString}'"""
+
+  implicit def writes[T <: IncomeSourceType]: Writes[T] = Writes {
+    incomeSourceType => JsString(incomeSourceType.toString)
   }
 }

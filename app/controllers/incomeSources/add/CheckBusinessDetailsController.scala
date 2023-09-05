@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
-import models.createIncomeSource.CreateIncomeSourceResponse
+import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
@@ -60,6 +60,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
   lazy val incomeSourcesAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment.key).url
   lazy val agentIncomeSourcesAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment.key).url
+
 
   private def getBackURL(referer: Option[String]): String = {
     referer.map(URI.create(_).getPath) match {
@@ -128,29 +129,38 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     }
   }
 
+
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withIncomeSourcesFS {
+
       val (redirect, errorHandler) = {
         if (isAgent)
-          (routes.BusinessReportingMethodController.showAgent _, itvcErrorHandlerAgent)
+          (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment.key).url)
         else
-          (routes.BusinessReportingMethodController.show _, itvcErrorHandler)
+          (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url)
       }
       getBusinessDetailsFromSession(user).toOption match {
         case Some(viewModel: CheckBusinessDetailsViewModel) =>
           businessDetailsService.createBusinessDetails(viewModel).map {
             case Left(ex) => Logger("application").error(
               s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Unable to create income source: ${ex.getMessage}")
-              errorHandler.showInternalServerError()
+              Redirect(errorHandler)
 
             case Right(CreateIncomeSourceResponse(id)) =>
               withIncomeSourcesRemovedFromSession {
                 Redirect(redirect(id).url)
               }
+          }.recover {
+            case ex: Throwable =>
+              Logger("application").error(
+                s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
+              withIncomeSourcesRemovedFromSession {
+                Redirect(errorHandler)
+              }
           }
-        case None => Logger("application").error(
+        case _ => Logger("application").error(
           s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Error: Unable to build view model on submit")
-          Future.successful(errorHandler.showInternalServerError())
+          Future.successful(Redirect(errorHandler))
       }
     }
   }

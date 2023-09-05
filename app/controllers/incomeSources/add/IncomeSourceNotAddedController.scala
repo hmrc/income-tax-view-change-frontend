@@ -17,12 +17,15 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import enums.IncomeSourceJourney.IncomeSourceType
+import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.IncomeSourcesUtils
+import views.html.incomeSources.add.IncomeSourceNotAddedError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,48 +37,52 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val businessDetailsService: CreateBusinessDetailsService,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val retrieveBtaNavBar: NavBarPredicate)
+                                               val retrieveBtaNavBar: NavBarPredicate,
+                                               val incomeSourceNotAddedError: IncomeSourceNotAddedError)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
                                                val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController {
+                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
 
-  def showUKProperty(): Action[AnyContent] = show()
 
-  def showUKPropertyAgent(): Action[AnyContent] = showAgent()
+  def handleRequest(isAgent: Boolean, incomeSourceType: String)
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
-  def showForeignProperty(): Action[AnyContent] = show()
+    val incomeSourceRedirect: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent() else
+      controllers.incomeSources.add.routes.AddIncomeSourceController.show()
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def showForeignPropertyAgent(): Action[AnyContent] = showAgent()
-
-  def showBusiness(): Action[AnyContent] = show()
-
-  def showBusinessAgent(): Action[AnyContent] = showAgent()
-
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(isAgent = false)
-  }
-
-  def showAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).map {
-          implicit mtdItUser =>
-            errorHandler(isAgent = true).showInternalServerError()
-        }
-  }
-
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    Future.successful {
-      errorHandler(isAgent).showInternalServerError()
+    IncomeSourceType.apply(incomeSourceType) match {
+      case Right(incomeType) =>
+        Future.successful(Ok(incomeSourceNotAddedError(
+          isAgent,
+          incomeSourceType = incomeType,
+          continueAction = incomeSourceRedirect
+        )))
+      case Left(_) => Future.successful(errorHandler.showInternalServerError())
     }
   }
 
-  def errorHandler(isAgent: Boolean): ShowInternalServerError = {
-    if (isAgent) itvcErrorHandlerAgent
-    else itvcErrorHandler
+  def show(incomeSourceType: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleRequest(
+        isAgent = false,
+        incomeSourceType = incomeSourceType
+      )
+  }
+
+  def showAgent(incomeSourceType: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              isAgent = true,
+              incomeSourceType = incomeSourceType
+            )
+        }
   }
 }
+

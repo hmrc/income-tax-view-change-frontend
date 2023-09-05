@@ -22,6 +22,7 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
 @import exceptions.MissingFieldException
+@import enums.IncomeSourceJourney.SelfEmployment
 
 
 
@@ -37,16 +38,16 @@
 
 @getChangeHref = @{
    if(isAgent){
-     controllers.incomeSources.cease.routes.BusinessEndDateController.showAgent(sources.incomeSourceId).url
-   }else{
-     controllers.incomeSources.cease.routes.BusinessEndDateController.show(sources.incomeSourceId).url
+     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(sources.incomeSourceId), SelfEmployment.key).url
+   } else {
+     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(sources.incomeSourceId), SelfEmployment.key).url
    }
 }
 
 @getSubmitHref = @{
   if(isAgent){
     controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submitAgent()
-  }else{
+  } else {
     controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submit()
   }
 }
