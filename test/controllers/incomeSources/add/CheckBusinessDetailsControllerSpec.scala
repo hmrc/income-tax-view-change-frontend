@@ -16,10 +16,10 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -77,43 +77,114 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
   }
 
 
-  "CheckBusinessDetailsController" should {
+  "CheckBusinessDetailsController- Individual" should {
+    ".show" should {
+      "return 200 OK" when {
+        "the session contains full business details and FS enabled" in {
+          disableAllSwitches()
+          enable(IncomeSources)
 
-    "return 200 OK" when {
-      "the session contains full business details and FS enabled" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          val result = TestCheckBusinessDetailsController.show()(
+            fakeRequestWithActiveSession
+              .withSession(
+                SessionKeys.businessName -> testBusinessStartDate,
+                SessionKeys.businessStartDate -> testBusinessStartDate,
+                SessionKeys.businessTrade -> testBusinessTrade,
+                SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+                SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
+                SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+                SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
+              ))
 
-        val result = TestCheckBusinessDetailsController.show()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.businessName -> testBusinessStartDate,
-              SessionKeys.businessStartDate -> testBusinessStartDate,
-              SessionKeys.businessTrade -> testBusinessTrade,
-              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-              SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
-              SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
-              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            ))
+          val document: Document = Jsoup.parse(contentAsString(result))
+          val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
 
-        val document: Document = Jsoup.parse(contentAsString(result))
-        val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
+          status(result) shouldBe OK
+          document.title shouldBe TestCheckBusinessDetailsController.title
+          document.select("h1:nth-child(1)").text shouldBe TestCheckBusinessDetailsController.heading
+          changeDetailsLinks.first().text shouldBe TestCheckBusinessDetailsController.link
+        }
+      }
 
+      "return 303 and redirect an individual back to the home page" when {
+        "the IncomeSources FS is disabled" in {
+          disable(IncomeSources)
+          mockSingleBusinessIncomeSource()
 
-        status(result) shouldBe OK
-        document.title shouldBe TestCheckBusinessDetailsController.title
-        document.select("h1:nth-child(1)").text shouldBe TestCheckBusinessDetailsController.heading
-        changeDetailsLinks.first().text shouldBe TestCheckBusinessDetailsController.link
+          val result: Future[Result] = TestCheckBusinessDetailsController.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        }
 
+        "called with an unauthenticated user" in {
+          setupMockAuthorisationException()
+          val result: Future[Result] = TestCheckBusinessDetailsController.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.SEE_OTHER
+        }
+      }
 
+      "return 500 INTERNAL_SERVER_ERROR" when {
+        "there is session data missing" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+            .thenReturn(Future {
+              Right(CreateIncomeSourceResponse("incomeSourceId"))
+            })
+
+          val result = TestCheckBusinessDetailsController.show()(
+            fakeRequestWithActiveSession
+              .withSession(
+                SessionKeys.businessName -> testBusinessStartDate,
+                SessionKeys.businessStartDate -> testBusinessStartDate,
+                SessionKeys.businessTrade -> testBusinessTrade,
+                SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+              ))
+
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
       }
     }
 
-    "return 303" when {
-      "data is submitted and redirect next page" in {
+    ".submit" should {
+
+      "return 303" when {
+        "data is correct and redirect next page" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+            .thenReturn(Future {
+              Right(CreateIncomeSourceResponse("incomeSourceId"))
+            })
+
+          val result = TestCheckBusinessDetailsController.submit()(
+            fakeRequestWithActiveSession
+              .withSession(
+                SessionKeys.businessName -> testBusinessStartDate,
+                SessionKeys.businessStartDate -> testBusinessStartDate,
+                SessionKeys.businessTrade -> testBusinessTrade,
+                SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+                SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
+                SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
+                SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+                SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
+              ))
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.show("incomeSourceId").url)
+        }
+      }
+
+      "redirect to custom error page when unable to create business" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -132,98 +203,101 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
               SessionKeys.businessTrade -> testBusinessTrade,
               SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
               SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
+              SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod
+            ))
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url)
+      }
+    }
+  }
+
+  "CheckBusinessDetailsController - Agent" should {
+    ".show" should {
+      "return 200 OK" when {
+        "the session contains full business details and FS enabled" in {
+          disableAllSwitches()
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          enable(IncomeSources)
+
+          mockSingleBusinessIncomeSource()
+          when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+            .thenReturn(Future {
+              Right(CreateIncomeSourceResponse("incomeSourceId"))
+            })
+
+          val result = TestCheckBusinessDetailsController.showAgent()(
+            fakeRequestConfirmedClient().withSession(
+              SessionKeys.businessName -> testBusinessStartDate,
+              SessionKeys.businessStartDate -> testBusinessStartDate,
+              SessionKeys.businessTrade -> testBusinessTrade,
+              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
+              SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
+              SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
+              SessionKeys.addBusinessPostalCode -> testBusinessPostCode
+            ))
+
+          status(result) shouldBe Status.OK
+
+          val document: Document = Jsoup.parse(contentAsString(result))
+
+          val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
+          changeDetailsLinks.first().text shouldBe TestCheckBusinessDetailsController.link
+
+
+        }
+      }
+      "return 303 SEE_OTHER and redirect to home page" when {
+        "navigating to the page with FS Disabled" in {
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          disable(IncomeSources)
+          mockSingleBusinessIncomeSource()
+
+          val result: Future[Result] = TestCheckBusinessDetailsController.showAgent()(fakeRequestConfirmedClientwithFullBusinessDetails())
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        }
+        "called with an unauthenticated user" in {
+          setupMockAgentAuthorisationException()
+          val result: Future[Result] = TestCheckBusinessDetailsController.showAgent()(fakeRequestConfirmedClient())
+
+          status(result) shouldBe Status.SEE_OTHER
+        }
+      }
+    }
+
+    ".submit" should {
+      "return 303 and create business " when {
+        "data is correct" in {
+          disableAllSwitches()
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          enable(IncomeSources)
+
+          mockSingleBusinessIncomeSource()
+          when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+            .thenReturn(Future {
+              Right(CreateIncomeSourceResponse("incomeSourceId"))
+            })
+
+          val result = TestCheckBusinessDetailsController.submitAgent()(
+            fakeRequestConfirmedClient().withSession(
+              SessionKeys.businessName -> testBusinessStartDate,
+              SessionKeys.businessStartDate -> testBusinessStartDate,
+              SessionKeys.businessTrade -> testBusinessTrade,
+              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
+              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
               SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
               SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
               SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
             ))
 
-        status(result) shouldBe Status.SEE_OTHER
-
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("incomeSourceId").url)
+        }
       }
-    }
-
-    "return 303 and redirect an individual back to the home page" when {
-      "the IncomeSources FS is disabled" in {
-        disable(IncomeSources)
-        mockSingleBusinessIncomeSource()
-
-        val result: Future[Result] = TestCheckBusinessDetailsController.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
-
-      "called with an unauthenticated user" in {
-        setupMockAuthorisationException()
-        val result: Future[Result] = TestCheckBusinessDetailsController.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-
-
-    "return 500 INTERNAL_SERVER_ERROR" when {
-      "there is session data missing" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
-          .thenReturn(Future {
-            Right(CreateIncomeSourceResponse("incomeSourceId"))
-          })
-
-        val result = TestCheckBusinessDetailsController.show()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.businessName -> testBusinessStartDate,
-              SessionKeys.businessStartDate -> testBusinessStartDate,
-              SessionKeys.businessTrade -> testBusinessTrade,
-              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-            ))
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-    }
-  }
-
-  "Agent - AddUKPropertyBusinessController.showAgent" should {
-    "return 200 OK" when {
-      "the session contains full business details and FS enabled" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        enable(IncomeSources)
-
-        mockSingleBusinessIncomeSource()
-        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
-          .thenReturn(Future {
-            Right(CreateIncomeSourceResponse("incomeSourceId"))
-          })
-
-        val result = TestCheckBusinessDetailsController.showAgent()(
-          fakeRequestConfirmedClient().withSession(
-            SessionKeys.businessName -> testBusinessStartDate,
-            SessionKeys.businessStartDate -> testBusinessStartDate,
-            SessionKeys.businessTrade -> testBusinessTrade,
-            SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-            SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
-            SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
-            SessionKeys.addBusinessPostalCode -> testBusinessPostCode
-          ))
-
-        status(result) shouldBe Status.OK
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
-        changeDetailsLinks.first().text shouldBe TestCheckBusinessDetailsController.link
-
-
-      }
-    }
-
-    "return 303 " when {
-      "data is submitted and redirect to next page" in {
+      "redirect to custom error page when unable to create business" in {
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -242,35 +316,12 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
             SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
             SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
-            SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
-            SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
           ))
 
         status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment.key).url)
 
-      }
-    }
-
-    "return 303 SEE_OTHER and redirect to home page" when {
-      "navigating to the page with FS Disabled" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        disable(IncomeSources)
-        mockSingleBusinessIncomeSource()
-
-        val result: Future[Result] = TestCheckBusinessDetailsController.showAgent()(fakeRequestConfirmedClientwithFullBusinessDetails())
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-      }
-      "called with an unauthenticated user" in {
-        setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestCheckBusinessDetailsController.showAgent()(fakeRequestConfirmedClient())
-
-        status(result) shouldBe Status.SEE_OTHER
       }
     }
   }
-
 }
-
-

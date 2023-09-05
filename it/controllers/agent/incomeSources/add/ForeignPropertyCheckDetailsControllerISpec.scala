@@ -19,7 +19,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
   val foreignPropertyCheckDetailsSubmitAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent().url
   val foreignPropertyReportingMethodShowAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("ABC123456789").url
 
-  val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignPropertyAgent().url
+  val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(ForeignProperty.key).url
 
   val sessionData: Map[String, String] = Map(
     foreignPropertyStartDate -> "2023-01-01",

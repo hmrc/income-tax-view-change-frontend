@@ -17,11 +17,12 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndUkProperty, noPropertyOrBusinessResponse}
 
@@ -30,6 +31,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
   val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
   val checkBusinessDetailsSubmitUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit().url
   val addBusinessReportingMethodUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(testSelfEmploymentId).url
+  val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(SelfEmployment.key).url
 
   val sessionData: Map[String, String] = Map(businessName -> "Test Business",
     businessStartDate -> "2022-01-01",
@@ -125,7 +127,36 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
       }
     }
 
-    s"return BAD_REQUEST $checkBusinessDetailsShowUrl" when {
+    s"redirect to error page $checkBusinessDetailsShowUrl" when {
+
+    }
+
+    s"redirect to business not added $errorPageUrl" when {
+      "error in response from API" in {
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        val formData: Map[String, Seq[String]] = Map(
+          "addBusinessName" -> Seq("Test Business Name"),
+          "addBusinessTrade" -> Seq("Test Business Trade"),
+          "addBusinessStartDate" -> Seq("2011-11-11"),
+          "addBusinessAddressLine1" -> Seq("Test Business Address"),
+          "addBusinessPostalCode" -> Seq("SE15 1WR"),
+          "addIncomeSourcesAccountingMethod" -> Seq("CASH"),
+          "addBusinessAccountingPeriodEndDate" -> Seq("2023-11-11")
+        )
+
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponse(testMtditid)
+
+        When(s"I call $checkBusinessDetailsSubmitUrl")
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/business-check-details", sessionData)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(errorPageUrl)
+        )
+      }
+
       "user session has no details" in {
         val formData: Map[String, Seq[String]] = Map("addBusinessName" -> Seq(""),
           "addBusinessTrade" -> Seq(""),
@@ -136,13 +167,13 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method")(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details")(formData)
 
         result should have(
-          httpStatus(BAD_REQUEST),
+          httpStatus(SEE_OTHER),
+          redirectURI(errorPageUrl)
         )
       }
     }
   }
-
 }

@@ -344,7 +344,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
   private def redirectCallAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
 
-  val redirectErrorCall: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignProperty()
-  val redirectErrorCallAgent: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showForeignPropertyAgent()
+  val redirectErrorCall: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key)
+  val redirectErrorCallAgent: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty.key)
 
 }
