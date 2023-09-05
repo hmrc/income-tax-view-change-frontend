@@ -24,7 +24,7 @@
     link: link
 )
 
-@(pageTitle: String, heading: String, message: String, linkPrefix: Option[String], linkText: String, linkUrl: String, isAgent: Boolean)(implicit request : Request[_], messages: Messages)
+@(pageTitle: String, heading: String, message: String, linkPrefix: Option[String], linkText: String, linkUrl: String, isAgent: Boolean)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(pageTitle = pageTitle, isAgent = isAgent, isErrorPage = true) {
 

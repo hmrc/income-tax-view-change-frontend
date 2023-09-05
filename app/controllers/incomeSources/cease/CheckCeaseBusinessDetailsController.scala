@@ -70,7 +70,7 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
             case Left(ex) =>
               Logger("application").error(
                 s"[CheckCeaseBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              Future {
+              Future.successful {
                 Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
               }
           }
