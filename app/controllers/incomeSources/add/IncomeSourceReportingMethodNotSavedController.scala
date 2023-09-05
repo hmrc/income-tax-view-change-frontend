@@ -54,7 +54,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
 
     val errorHandler = if (isAgent) itvcAgentErrorHandler else itvcErrorHandler
 
-    IncomeSourceType.get(incomeSourceType) match {
+    IncomeSourceType(incomeSourceType) match {
       case Right(incomeType) =>
         val action: Call = (incomeType, isAgent) match {
           case (UkProperty, true) => controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(id)
@@ -95,6 +95,4 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
             )
         }
   }
-
-
 }

@@ -61,7 +61,7 @@ case object ForeignProperty extends IncomeSourceType {
 }
 
 object IncomeSourceType {
-  def get(key: String): Either[Exception, IncomeSourceType] = {
+  def apply(key: String): Either[Exception, IncomeSourceType] = {
     key match {
       case "FP" => Right(ForeignProperty)
       case "UK" => Right(UkProperty)

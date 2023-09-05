@@ -28,7 +28,6 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.IncomeSourceEndDate
@@ -56,7 +55,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
 
   private def getActions(isAgent: Boolean, incomeSourceType: String, id: Option[String]): Future[(Call, Call, Call, IncomeSourceType)] = {
-    IncomeSourceType.get(incomeSourceType) match {
+    IncomeSourceType(incomeSourceType) match {
       case Right(incomeSourceTypeValue) =>
         Future.successful(
           (incomeSourceTypeValue, isAgent) match {
@@ -120,7 +119,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   }
 
   def handleRequest(id: Option[String], incomeSourceType: String, isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     getActions(isAgent, incomeSourceType, id).map {

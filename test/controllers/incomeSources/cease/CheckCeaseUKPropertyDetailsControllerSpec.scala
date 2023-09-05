@@ -57,8 +57,9 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
     app.injector.instanceOf[CheckCeaseUKPropertyDetails],
     mockUpdateIncomeSourceService,
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
-    mcc = app.injector.instanceOf[MessagesControllerComponents],
-    ec, app.injector.instanceOf[ItvcErrorHandler],
+    ec,
+    app.injector.instanceOf[MessagesControllerComponents],
+    app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
     val title: String = s"${messages("htmlTitle", messages("incomeSources.ceaseUKProperty.checkDetails.heading"))}"
