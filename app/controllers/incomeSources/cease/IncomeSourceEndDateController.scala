@@ -179,8 +179,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       incomeSourceEndDateForm.apply(incomeSourceTypeValue, id).bindFromRequest().fold(
 
         hasErrors => {
-          val debug = hasErrors
-          println(debug)
           BadRequest(incomeSourceEndDate(
             incomeSourceEndDateForm = hasErrors,
             postAction = postAction,
