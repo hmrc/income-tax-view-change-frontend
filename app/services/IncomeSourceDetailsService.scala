@@ -210,25 +210,34 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     val ceasedSEBusinesses = sources.businesses.filter(_.isCeased)
     val ceasedPropertyBusinesses = sources.properties.filter(_.isCeased)
 
-    ceasedSEBusinesses.map { business =>
-      CeasedBusinessDetailsViewModel(
+    val ceasedSEBusinessesViewModels: List[CeasedBusinessDetailsViewModel] =
+      for {
+        business <- ceasedSEBusinesses
+        cessationDate <- business.cessation.flatMap(_.date)
+      } yield CeasedBusinessDetailsViewModel(
         tradingName = business.tradingName,
         incomeSourceType = SelfEmployment,
         tradingStartDate = business.tradingStartDate,
-        cessationDate = business.cessation.flatMap(_.date).get
+        cessationDate = cessationDate
       )
-    } ++ ceasedPropertyBusinesses.map { property =>
-      CeasedBusinessDetailsViewModel(
-        tradingName = None,
-        incomeSourceType = property.incomeSourceType match {
-          case Some("02-uk-property") => UkProperty
-          case Some("03-foreign-property") => ForeignProperty
-          case _ => throw MissingFieldException("Property income source type is missing or not an expected value")
-        },
-        tradingStartDate = property.tradingStartDate,
-        cessationDate = property.cessation.flatMap(_.date).get
-      )
+
+    val ceasedPropertyBusinessesViewModels: List[CeasedBusinessDetailsViewModel] = {
+      for {
+        property <- ceasedPropertyBusinesses
+        cessationDate <- property.cessation.flatMap(_.date)
+      } yield
+        CeasedBusinessDetailsViewModel(
+          tradingName = None,
+          incomeSourceType = property.incomeSourceType match {
+            case Some("02-uk-property") => UkProperty
+            case Some("03-foreign-property") => ForeignProperty
+            case _ => throw MissingFieldException("Property income source type is missing or not an expected value")
+          },
+          tradingStartDate = property.tradingStartDate,
+          cessationDate = cessationDate
+        )
     }
+    ceasedSEBusinessesViewModels ++ ceasedPropertyBusinessesViewModels
   }
 }
 
