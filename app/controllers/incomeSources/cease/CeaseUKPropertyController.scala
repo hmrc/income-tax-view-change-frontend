@@ -21,15 +21,16 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.cease.CeaseUKPropertyForm
 import forms.utils.SessionKeys.ceaseUKPropertyDeclare
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.incomeSources.cease.CeaseUKProperty
 import views.html.errorPages.CustomNotFoundError
+import views.html.incomeSources.cease.CeaseUKProperty
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -98,11 +99,11 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
       if (isAgent)
         (routes.CeaseUKPropertyController.submitAgent,
           routes.CeaseIncomeSourceController.showAgent(),
-          routes.UKPropertyEndDateController.showAgent())
+          routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key))
       else
         (routes.CeaseUKPropertyController.submit,
           routes.CeaseIncomeSourceController.show(),
-          routes.UKPropertyEndDateController.show())
+          routes.IncomeSourceEndDateController.show(None, UkProperty.key))
     }
     CeaseUKPropertyForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(view(

@@ -17,18 +17,19 @@
 package forms.incomeSources.cease
 
 import auth.MtdItUser
-import exceptions.MissingFieldException
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
 import forms.validation.Constraints
 import play.api.data.Form
 import play.api.data.Forms.{default, mapping, text, tuple}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import services.DateService
+import uk.gov.hmrc.http.InternalServerException
 
 import java.time.LocalDate
 import javax.inject.Inject
 
-class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constraints {
+class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Constraints {
 
   val dateMustBeComplete = "dateForm.error.dayMonthAndYear.required"
   val dateMustNotBeMissingDayField = "dateForm.error.day.required"
@@ -37,36 +38,51 @@ class BusinessEndDateForm @Inject()(val dateService: DateService) extends Constr
   val dateMustNotBeMissingDayAndMonthField = "dateForm.error.dayAndMonth.required"
   val dateMustNotBeMissingDayAndYearField = "dateForm.error.dayAndYear.required"
   val dateMustNotBeMissingMonthAndYearField = "dateForm.error.monthAndYear.required"
-  val dateMustNotBeInvalid = "incomeSources.cease.BusinessEndDate.error.invalid"
-  val dateMustNotBeInFuture = "incomeSources.cease.BusinessEndDate.error.future"
-  val dateMustBeAfterBusinessStartDate = "incomeSources.cease.BusinessEndDate.error.beforeStartDate"
-  val dateMustNotBeBefore6April2015 = "incomeSources.cease.BusinessEndDate.error.beforeEarliestDate"
+  val dateMustNotBeInvalid = "error.invalid"
+  val dateMustNotBeInFuture = "dateForm.error.future"
+  val dateMustBeAfterBusinessStartDate = "dateFrom.error.beforeStartDate"
+  val dateMustNotBeBefore6April2015 = "incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate"
 
-  def apply (implicit user: MtdItUser[_], id: String): Form[DateFormElement] = {
+  def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
-    val minimumDate: LocalDate = LocalDate.of(2015, 4, 6)
+    val messagePrefix = incomeSourceType.endDateMessagePrefix
+    val dateConstraints: List[Constraint[LocalDate]] = {
 
-    val businessStartDate = user.incomeSources.businesses
-      .find(_.incomeSourceId == id)
-      .flatMap(_.tradingStartDate)
+      val minimumDateConstraints = incomeSourceType match {
+        case UkProperty =>
+          val businessStartDate = user.incomeSources.properties.filter(_.isUkProperty).flatMap(_.tradingStartDate)
+            .headOption.getOrElse(LocalDate.MIN)
+          List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate))
+        case ForeignProperty =>
+          val businessStartDate = user.incomeSources.properties.filter(_.isForeignProperty).flatMap(_.tradingStartDate)
+            .headOption.getOrElse(LocalDate.MIN)
+          List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate))
+        case SelfEmployment =>
+          val incomeSourceId = id.get
+          val businessStartDate = user.incomeSources.businesses
+            .find(_.incomeSourceId == incomeSourceId).flatMap(_.tradingStartDate).getOrElse(LocalDate.MIN)
+          List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate),
+            minDate(LocalDate.of(2015, 4, 6), dateMustNotBeBefore6April2015))
+      }
+
+      minimumDateConstraints :+ maxDate(currentDate, dateMustNotBeInFuture)
+    }
 
     Form(
-      mapping("business-end-date" -> tuple(
+      mapping("income-source-end-date" -> tuple(
         "day" -> default(text(), ""),
         "month" -> default(text(), ""),
         "year" -> default(text(), ""))
         .verifying(firstError(
           checkRequiredFields,
-          validDate(dateMustNotBeInvalid)
+          validDate(s"$messagePrefix.$dateMustNotBeInvalid")
         )).transform[LocalDate](
         {
           case (day, month, year) =>
             LocalDate.of(year.toInt, month.toInt, day.toInt)
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-      ).verifying(firstError(maxDate(currentDate, dateMustNotBeInFuture),
-        minDate(minimumDate, dateMustNotBeBefore6April2015),
-        minDate(businessStartDate.getOrElse(LocalDate.MIN), dateMustBeAfterBusinessStartDate)))
+      ).verifying(firstError(dateConstraints: _*))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 

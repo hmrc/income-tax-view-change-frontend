@@ -24,32 +24,40 @@ sealed trait IncomeSourceType {
   val key: String
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
+  val endDateMessagePrefix: String
   val startDateSessionKey: String
+  val endDateSessionKey: String
   val reportingMethodChangeErrorPrefix: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
   override val key = "SE"
-  override val startDateMessagesPrefix = "add-business-start-date"
-  override val addStartDateCheckMessagesPrefix = "add-business-start-date-check"
-  override val startDateSessionKey = SessionKeys.addBusinessStartDate
-  override val reportingMethodChangeErrorPrefix = "incomeSources.manage.businessReportingMethodError"
+  override val startDateMessagesPrefix: String = "add-business-start-date"
+  override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
+  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
+  override val startDateSessionKey: String = SessionKeys.addBusinessStartDate
+  override val endDateSessionKey: String = SessionKeys.ceaseBusinessEndDate
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
 }
 
 case object UkProperty extends IncomeSourceType {
   override val key = "UK"
-  override val startDateMessagesPrefix = "incomeSources.add.UKPropertyStartDate"
-  override val addStartDateCheckMessagesPrefix = "add-uk-property-start-date-check"
-  override val startDateSessionKey = SessionKeys.addUkPropertyStartDate
-  override val reportingMethodChangeErrorPrefix = "incomeSources.manage.uKPropertyReportingMethodError"
+  override val startDateMessagesPrefix: String = "incomeSources.add.UKPropertyStartDate"
+  override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
+  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
+  override val startDateSessionKey: String = SessionKeys.addUkPropertyStartDate
+  override val endDateSessionKey: String = SessionKeys.ceaseUKPropertyEndDate
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
 }
 
 case object ForeignProperty extends IncomeSourceType {
   override val key = "FP"
-  override val startDateMessagesPrefix = "incomeSources.add.foreignProperty.startDate"
-  override val addStartDateCheckMessagesPrefix = "add-foreign-property-start-date-check"
-  override val startDateSessionKey = SessionKeys.foreignPropertyStartDate
-  override val reportingMethodChangeErrorPrefix = "incomeSources.manage.foreignPropertyReportingMethodError"
+  override val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
+  override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
+  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
+  override val startDateSessionKey: String = SessionKeys.foreignPropertyStartDate
+  override val endDateSessionKey: String = SessionKeys.ceaseForeignPropertyEndDate
+  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
 }
 
 object IncomeSourceType {

@@ -21,10 +21,15 @@
 @import views.html.components.dateInput
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
+@import enums.IncomeSourceJourney.IncomeSourceType
 
 @this(mainTemplate: unifiedLayout, dateInput: dateInput, continueButton: ContinueButton, formWithCSRF: FormWithCSRF, errorSummary: ErrorSummary, p: p)
 
-@(BusinessEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(incomeSourceType: IncomeSourceType, incomeSourceEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+  messages(s"${incomeSourceType.endDateMessagePrefix}.$key",args:_*)
+}
 
 @getHintContent = {
   @p(classes = "govuk-hint") {
@@ -32,17 +37,17 @@
   }
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.cease.BusinessEndDate.heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = btaNavPartial) {
+@mainTemplate(pageTitle = getMessage("heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
  @errorSummary(
-  form = BusinessEndDateForm
+  form = incomeSourceEndDateForm
  )
 
- @formWithCSRF(action = postAction, Symbol("id") -> "business-end-date-form") {
+ @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
 
   @dateInput(
-   content = messages("incomeSources.cease.BusinessEndDate.heading"),
-   field = BusinessEndDateForm("business-end-date"),
+   content = getMessage("heading"),
+   field = incomeSourceEndDateForm("income-source-end-date"),
    hintContent = Some(HtmlContent(getHintContent)),
    pageHeading = true
   )

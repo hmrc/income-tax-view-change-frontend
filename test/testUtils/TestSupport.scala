@@ -79,7 +79,9 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
-  implicit val individualUser: MtdItUser[_] = MtdItUser(
+  implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
+
+  def getIndividualUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
     userName = Some(testRetrievedUserName),
@@ -89,7 +91,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     credId = Some(testCredId),
     userType = Some(testUserTypeIndividual),
     arn = None
-  )(FakeRequest())
+  )(request)
 
   implicit val serviceInfo: Html = Html("")
 

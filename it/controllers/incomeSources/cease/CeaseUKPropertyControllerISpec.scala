@@ -17,6 +17,7 @@
 package controllers.incomeSources.cease
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.UkProperty
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -24,7 +25,7 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 class CeaseUKPropertyControllerISpec extends ComponentSpecBase {
-  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.UKPropertyEndDateController.show().url
+  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty.key).url
   val showCeaseUKPropertyControllerUrl: String = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
   val radioErrorMessage: String = messagesAPI("incomeSources.ceaseUKProperty.radioError")
   val radioLabelMessage: String = messagesAPI("incomeSources.ceaseUKProperty.radioLabel")
