@@ -53,7 +53,7 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
       controllers.incomeSources.add.routes.AddIncomeSourceController.show()
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    IncomeSourceType.get(incomeSourceType) match {
+    IncomeSourceType.apply(incomeSourceType) match {
       case Right(incomeType) =>
         Future.successful(Ok(incomeSourceNotAddedError(
           isAgent,
