@@ -71,9 +71,13 @@ object BusinessDetailsTestConstants {
   val testStartDate3 = LocalDate.parse("2013-01-01")
   val testStartDateFormatted = "1 January 2022"
   val testStartDate2Formatted = "1 January 2021"
+  val testStartDate3Formatted = "1 January 2013"
   val testStartDateOption: Option[LocalDate] = Some(LocalDate.parse("2022-01-01"))
   val testStartDateOption2: Option[LocalDate] = Some(LocalDate.parse("2021-01-01"))
   val testStartDateOption3: Option[LocalDate] = Some(LocalDate.parse("2013-01-01"))
+  val testCessationDate: String = "1 January 2018"
+  val testCessationDate2: String = "1 January 2019"
+  val testCessationDate3: String = "1 January 2022"
   val testEndDate = LocalDate.parse("2023-01-01")
   val testUnknownValue = "Unknown"
   val testLatencyDetails = LatencyDetails(

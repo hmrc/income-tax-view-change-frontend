@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testConstants.BusinessDetailsTestConstants.{testCessation, testCessation2, testStartDate, testStartDate2, testStartDateFormatted, testTradeName, testTradeName2, testUnknownValue}
+import testConstants.BusinessDetailsTestConstants._
 import testUtils.TestSupport
 import views.html.incomeSources.add.AddIncomeSources
 
@@ -31,14 +31,15 @@ class AddIncomeSourcesViewSpec extends TestSupport {
   val backUrl: String = controllers.routes.HomeController.show().url
   val backUrlAgent: String = controllers.routes.HomeController.showAgent.url
 
+
   val viewModelMax: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(
     soleTraderBusinesses = List(BusinessDetailsViewModel(Some(testTradeName), Some(testStartDate))),
     ukProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
     foreignProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
     ceasedBusinesses = List(
-      CeasedBusinessDetailsViewModel(Some(testTradeName), SelfEmployment, Some(testStartDate), testCessation.date.get),
-      CeasedBusinessDetailsViewModel(None, UkProperty, Some(testStartDate), testCessation.date.get),
-      CeasedBusinessDetailsViewModel(None, ForeignProperty, Some(testStartDate2), testCessation2.date.get)
+      CeasedBusinessDetailsViewModel(Some(testTradeName), SelfEmployment, Some(testStartDate3), testCessation.date.get),
+      CeasedBusinessDetailsViewModel(None, UkProperty, Some(testStartDate3), testCessation2.date.get),
+      CeasedBusinessDetailsViewModel(None, ForeignProperty, Some(testStartDate3), testCessation3.date.get)
     )
   )
 
@@ -48,8 +49,7 @@ class AddIncomeSourcesViewSpec extends TestSupport {
     foreignProperty = Some(PropertyDetailsViewModel(None)),
     ceasedBusinesses = List(
       CeasedBusinessDetailsViewModel(None, SelfEmployment, None, testCessation.date.get),
-      CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation.date.get),
-      CeasedBusinessDetailsViewModel(None, ForeignProperty, None, testCessation2.date.get)
+      CeasedBusinessDetailsViewModel(None, UkProperty, None, testCessation2.date.get)
     )
   )
 
@@ -77,8 +77,19 @@ class AddIncomeSourcesViewSpec extends TestSupport {
         document.getElementById("table-row-trading-start-date-foreign").text shouldBe testStartDateFormatted
       }
       "Ceased business trading name and trading start date are present in the response" in new Setup(viewModelMax, isAgent = false) {
-        document.getElementById("table-row-trading-name-ceased-0").text shouldBe testTradeName
-        document.getElementById("table-row-trading-start-date-ceased-0").text shouldBe testStartDateFormatted
+
+        document.getElementById("ceased-business-table-row-trading-name-0").text shouldBe columnOneForeignProperty
+        document.getElementById("ceased-business-table-row-date-started-0").text shouldBe testStartDate3Formatted
+        document.getElementById("ceased-business-table-row-date-ended-0").text shouldBe testCessationDate3
+
+        document.getElementById("ceased-business-table-row-trading-name-1").text shouldBe columnOneUkProperty
+        document.getElementById("ceased-business-table-row-date-started-1").text shouldBe testStartDate3Formatted
+        document.getElementById("ceased-business-table-row-date-ended-1").text shouldBe testCessationDate2
+
+        document.getElementById("ceased-business-table-row-trading-name-2").text shouldBe testTradeName
+        document.getElementById("ceased-business-table-row-date-started-2").text shouldBe testStartDate3Formatted
+        document.getElementById("ceased-business-table-row-date-ended-2").text shouldBe testCessationDate
+
       }
     }
     "display `Unknown` when data missing from optional fields" when {
@@ -93,8 +104,14 @@ class AddIncomeSourcesViewSpec extends TestSupport {
         document.getElementById("table-row-trading-start-date-foreign").text shouldBe testUnknownValue
       }
       "Ceased business trading name and trading start date are not present in the response" in new Setup(viewModelMin, isAgent = false) {
-        document.getElementById("table-row-trading-name-ceased-0").text shouldBe testUnknownValue
-        document.getElementById("table-row-trading-start-date-ceased-0").text shouldBe testUnknownValue
+        document.getElementById("ceased-business-table-row-trading-name-0").text shouldBe columnOneUkProperty
+        document.getElementById("ceased-business-table-row-date-started-0").text shouldBe testUnknownValue
+        document.getElementById("ceased-business-table-row-date-ended-0").text shouldBe testCessationDate2
+
+        document.getElementById("ceased-business-table-row-trading-name-1").text shouldBe testUnknownValue
+        document.getElementById("ceased-business-table-row-date-started-1").text shouldBe testUnknownValue
+        document.getElementById("ceased-business-table-row-date-ended-1").text shouldBe testCessationDate
+
       }
     }
   }
