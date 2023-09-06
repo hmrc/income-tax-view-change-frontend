@@ -1,8 +1,5 @@
 # microservice specific routes
 
-# Play frontend hmrc routes
-->          /hmrc-frontend                                                hmrcfrontend.Routes
-
 # Play frontend hmrc route for Assets
 GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file)
 
