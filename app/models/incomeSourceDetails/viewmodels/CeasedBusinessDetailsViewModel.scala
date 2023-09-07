@@ -16,13 +16,11 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import enums.IncomeSourceJourney.IncomeSourceType
+
 import java.time.LocalDate
 
-case class AddIncomeSourcesViewModel(soleTraderBusinesses: List[BusinessDetailsViewModel],
-                                     ukProperty: Option[PropertyDetailsViewModel],
-                                     foreignProperty: Option[PropertyDetailsViewModel],
-                                     ceasedBusinesses: List[CeasedBusinessDetailsViewModel])
-
-case class BusinessDetailsViewModel(tradingName: Option[String], tradingStartDate: Option[LocalDate])
-
-case class PropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
+case class CeasedBusinessDetailsViewModel(tradingName: Option[String],
+                                          incomeSourceType: IncomeSourceType,
+                                          tradingStartDate: Option[LocalDate],
+                                          cessationDate: LocalDate)
