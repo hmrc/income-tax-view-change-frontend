@@ -143,6 +143,7 @@
         bodyEndBlock = None,
         headerBlock = Some(siteHeader),
         footerBlock = Some(footerLinks()),
-        scriptsBlock = Some(scripts())
+        scriptsBlock = Some(scripts()),
+        assetPath = Some(uk.gov.hmrc.hmrcfrontend.controllers.routes.Assets.at("govuk").url)
     )(content)
 }
