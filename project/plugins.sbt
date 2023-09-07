@@ -16,3 +16,5 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.3")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 
 addSbtPlugin("io.github.irundaia" % "sbt-sassify" % "1.5.2")
+
+addSbtPlugin("io.kamon" % "sbt-kanela-runner-play-2.8" % "2.0.10")

@@ -80,6 +80,7 @@ lazy val scoverageSettings = {
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(JavaAgent)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(playSettings: _*)
   .settings(scalaSettings: _*)
@@ -121,3 +122,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(resolvers ++= Seq(
     Resolver.jcenterRepo
   ))
+
+libraryDependencies += "io.kamon" %% "kamon-bundle" % "2.5.9"
+libraryDependencies += "io.kamon" %% "kamon-prometheus" % "2.5.9"
+

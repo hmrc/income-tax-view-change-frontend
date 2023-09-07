@@ -24,6 +24,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import kamon.Kamon
 
 import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
@@ -84,6 +85,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
+    Kamon.counter("home.controller.hit").withoutTags().increment()
+
     implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
     nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations.flatMap { latestDeadlineDate =>
 
@@ -135,6 +138,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     }.recover {
       case ex =>
+        Kamon.counter("app.errors").withoutTags().increment()
         Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
         itvcErrorHandler.showInternalServerError()
     }

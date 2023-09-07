@@ -23,6 +23,7 @@ import config.featureswitch.{FeatureSwitching, IvUplift}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
 import models.OriginEnum
+import play.api.inject.ApplicationLifecycle
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
@@ -34,6 +35,7 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import kamon.Kamon
 
 @Singleton
 class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
@@ -44,7 +46,8 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         mcc: MessagesControllerComponents,
                                         val auditingService: AuditingService,
-                                        val headerExtractor: HeaderExtractor
+                                        val headerExtractor: HeaderExtractor,
+                                        applicationLifecycle: ApplicationLifecycle
                                        )
   extends BaseController with AuthRedirects with ActionBuilder[MtdItUserOptionNino, AnyContent]
     with ActionFunction[Request, MtdItUserOptionNino] with FeatureSwitching {
@@ -54,14 +57,33 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
   val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
 
-  override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
+  def init() = {
+    Kamon.initWithoutAttaching(appConfig.config.underlying)
 
+    // For Kamon 2.3.0 and earlier versions
+    //   - The reconfigure call ensures that Kamon is configured with
+    //     Play's configuration file from `conf/application.conf`
+    //   - The second line starts reporters and system metrics collection
+    Kamon.reconfigure(appConfig.config.underlying)
+    Kamon.loadModules()
+  }
+
+  init()
+
+  applicationLifecycle.addStopHook(() => {
+    Future.successful( Kamon.stop() )
+  })
+
+
+  override def invokeBlock[A](request: Request[A], f: MtdItUserOptionNino[A] => Future[Result]): Future[Result] = {
+    val startedTimer = Kamon.timer("authentication").withoutTags().start()
     implicit val hc: HeaderCarrier = headerExtractor.extractHeader(request, request.session)
 
     implicit val req: Request[A] = request
 
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
       case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel => {
+        startedTimer.stop()
         if (confidenceLevel.level < requiredConfidenceLevel && isEnabled(IvUplift)) {
           affinityGroup match {
             case Some(Organisation) => {
@@ -78,15 +100,19 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
       }
     } recover {
       case _: InsufficientEnrolments =>
+        startedTimer.stop()
         Logger("application").info("[AuthenticationPredicate][async] No HMRC-MTD-IT Enrolment and/or No NINO.")
         Redirect(controllers.errors.routes.NotEnrolledController.show)
       case _: BearerTokenExpired =>
+        startedTimer.stop()
         Logger("application").info("[AuthenticationPredicate][async] Bearer Token Timed Out.")
         Redirect(controllers.timeout.routes.SessionTimeoutController.timeout)
       case _: AuthorisationException =>
+        startedTimer.stop()
         Logger("application").info("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
         Redirect(controllers.routes.SignInController.signIn)
       case s =>
+        startedTimer.stop()
         Logger("application").error(s"[AuthenticationPredicate][async] Unexpected Error Caught. Show ISE.\n$s\n", s)
         itvcErrorHandler.showInternalServerError()
     }
