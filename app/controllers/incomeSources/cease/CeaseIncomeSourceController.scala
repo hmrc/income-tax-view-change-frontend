@@ -21,6 +21,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import kamon.Kamon
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -75,6 +76,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       if (isDisabled(IncomeSources)) {
         Future.successful(Redirect(controllers.routes.HomeController.show()))
       } else {
+        Kamon.counter("income.source.hit").withTag("type", "cease").increment()
         showCeaseIncomeSourceView(sources, isAgent, backUrl)
       }
   }
