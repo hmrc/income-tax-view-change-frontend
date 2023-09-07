@@ -39,10 +39,10 @@ object PropertyDetailsTestConstants {
   val testPropertyCessation2 = CessationModel(Some(LocalDate.of(2023, 6, 6)), Some("It was a stupid idea anyway"))
   val testPropertyCessation3 = CessationModel(Some(LocalDate.of(2020, 2, 2)), Some("It was a stupid idea anyway"))
 
-  val testStartDate = LocalDate.parse("2022-01-01")
-  val testStartDate2 = LocalDate.parse("2021-01-01")
-  val testPropertyStartDateOption: Option[LocalDate] = Some(LocalDate.parse("2022-01-01"))
-  val testPropertyStartDateOption2: Option[LocalDate] = Some(LocalDate.parse("2021-01-01"))
+  val testStartDate = LocalDate.of(2022, 1, 1)
+  val testStartDate2 = LocalDate.of(2021, 1, 1)
+  val testPropertyStartDateOption: Option[LocalDate] = Some(LocalDate.of(2022, 1, 1))
+  val testPropertyStartDateOption2: Option[LocalDate] = Some(LocalDate.of(2021, 1, 1))
   val testIncomeType = "property-unspecified"
   val ukIncomeType = "02-uk-property"
   val foreignIncomeType = "03-foreign-property"
@@ -112,7 +112,7 @@ object PropertyDetailsTestConstants {
     cessation = Some(testPropertyCessation)
   )
 
-  val ceasedUKPropertyDetailsCessation3 = PropertyDetailsModel(
+  val ceasedUKPropertyDetailsCessation2020 = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
@@ -130,11 +130,20 @@ object PropertyDetailsTestConstants {
     cessation = Some(testPropertyCessation)
   )
 
-  val ceasedForeignPropertyDetailsCessation2 = PropertyDetailsModel(
+  val ceasedForeignPropertyDetailsCessation2023 = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDate2),
+    cessation = Some(testPropertyCessation2)
+  )
+
+  val ceasedForeignPropertyDetailsNoIncomeSourceType = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = None,
     tradingStartDate = Some(testStartDate2),
     cessation = Some(testPropertyCessation2)
   )

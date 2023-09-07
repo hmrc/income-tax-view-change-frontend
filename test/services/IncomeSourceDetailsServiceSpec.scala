@@ -198,4 +198,38 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       }
     }
   }
+
+  "The IncomeSourceDetailsService.getCeasedBusinesses method" when {
+    "a user has a business without a cessation date" should {
+      "return the list of ceased income sources without the income source without a cessation date" in {
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome)
+
+        result shouldBe Right(ViewIncomeSourcesViewModel(
+          viewSoleTraderBusinesses = Nil,
+          viewUkProperty = None,
+          viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
+          viewCeasedBusinesses = List(
+            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
+            CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
+          )
+        ))
+      }
+    }
+    "a user has a property business without an income source type" should {
+      "return the list of ceased income sources without the income source without an income source type" in {
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedPropertyIncomeWithNoIncomeSourceType)
+
+        result shouldBe Right(ViewIncomeSourcesViewModel(
+          viewSoleTraderBusinesses = Nil,
+          viewUkProperty = None,
+          viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
+          viewCeasedBusinesses = List(
+//            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get)
+          )
+        ))
+      }
+    }
+  }
 }

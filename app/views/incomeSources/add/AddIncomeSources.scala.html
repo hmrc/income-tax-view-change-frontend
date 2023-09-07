@@ -47,16 +47,6 @@
     messages("incomeSources.add.addIncomeSources.unknown")
 }
 
-@ukProperty = @{
-    sources.ukProperty
-}
-@foreignProperty = @{
-    sources.foreignProperty
-}
-@soleTraderBusinesses = @{
-    sources.soleTraderBusinesses
-}
-
 @addBusinessNameURL = @{
     if(isAgent) controllers.incomeSources.add.routes.AddBusinessNameController.showAgent().url
     else controllers.incomeSources.add.routes.AddBusinessNameController.show().url
@@ -85,7 +75,7 @@
     @h2(msg = getMessage("selfEmployment.heading"),
         optId = Some("self-employment-h2"))
 
-    @if(soleTraderBusinesses.nonEmpty) {
+    @if(sources.soleTraderBusinesses.nonEmpty) {
 
         @govukTable(Table(
             head = Some(List(
@@ -96,7 +86,7 @@
                     content = Text(getMessage("tableHead.dateStarted")),
                     attributes = Map("id" -> "table-head-date-started"))
             )),
-            rows = soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+            rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
                 TableRow(
                     content = Text(business.tradingName.getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> s"table-row-trading-name-$index")),
@@ -121,7 +111,7 @@
     @h2(msg = getMessage("ukProperty.heading"),
         optId = Some("uk-property-h2"))
 
-    @if(ukProperty.nonEmpty) {
+    @if(sources.ukProperty.nonEmpty) {
 
         @p(id = Some("uk-property-p1")) {
             @getMessage("ukProperty.text")
@@ -135,7 +125,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
+                    content = Text(sources.ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> "table-row-trading-start-date-uk")
                 )
             )),
@@ -154,7 +144,7 @@
     @h2(msg = getMessage("foreignProperty.heading"),
         optId = Some("foreign-property-h2"))
 
-    @if(foreignProperty.nonEmpty) {
+    @if(sources.foreignProperty.nonEmpty) {
 
         @p(id = Some("foreign-property-p1")) {
             @getMessage("foreignProperty.text")
@@ -168,7 +158,7 @@
             )),
             rows = Seq(Seq(
                 TableRow(
-                    content = Text(foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
+                    content = Text(sources.foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)).getOrElse(messageForEmptyField)),
                     attributes = Map("id" -> "table-row-trading-start-date-foreign"))
             )),
             attributes = Map("id" -> "foreign-property-table")
@@ -186,4 +176,7 @@
     @if(sources.ceasedBusinesses.nonEmpty) @{
         ceasedBusinesses(sources.ceasedBusinesses)
     }
+
+    <br>
+
 }

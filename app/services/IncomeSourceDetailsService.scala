@@ -86,8 +86,8 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
   def getAddIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Try[AddIncomeSourcesViewModel] = Try {
     val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-    val ukProperty = sources.properties.find(_.isUkProperty).filterNot(_.isCeased)
-    val foreignProperty = sources.properties.find(_.isForeignProperty).filterNot(_.isCeased)
+    val ukProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
+    val foreignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
 
     AddIncomeSourcesViewModel(
       soleTraderBusinesses = soleTraderBusinesses.map { business =>
@@ -116,9 +116,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
 
-    val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
-    val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
-
     Try {
       ViewIncomeSourcesViewModel(
         viewSoleTraderBusinesses = if (soleTraderBusinessesExists) {
@@ -140,9 +137,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             maybeForeignProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
-        viewCeasedBusinesses = if (ceasedBusinessExists) {
-          getCeasedBusinesses(sources = sources)
-        } else Nil
+        getCeasedBusinesses(sources = sources)
       )
     }.toEither
   }
@@ -157,9 +152,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
     val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
-
-    val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
-    val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
 
     Try {
       CeaseIncomeSourcesViewModel(
@@ -182,9 +174,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             maybeForeignProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
-        ceasedBusinesses = if (ceasedBusinessExists) {
-          getCeasedBusinesses(sources = sources)
-        } else Nil
+        getCeasedBusinesses(sources = sources)
       )
     }.toEither
   }
@@ -207,12 +197,9 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
   }
 
   private def getCeasedBusinesses(sources: IncomeSourceDetailsModel): List[CeasedBusinessDetailsViewModel] = {
-    val ceasedSEBusinesses = sources.businesses.filter(_.isCeased)
-    val ceasedPropertyBusinesses = sources.properties.filter(_.isCeased)
-
-    val ceasedSEBusinessesViewModels: List[CeasedBusinessDetailsViewModel] =
+    val viewModelsForCeasedSEBusinesses = {
       for {
-        business <- ceasedSEBusinesses
+        business <- sources.businesses.filter(_.isCeased)
         cessationDate <- business.cessation.flatMap(_.date)
       } yield CeasedBusinessDetailsViewModel(
         tradingName = business.tradingName,
@@ -220,24 +207,29 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         tradingStartDate = business.tradingStartDate,
         cessationDate = cessationDate
       )
-
-    val ceasedPropertyBusinessesViewModels: List[CeasedBusinessDetailsViewModel] = {
+    }
+    val viewModelsForCeasedPropertyBusinesses = {
       for {
-        property <- ceasedPropertyBusinesses
+        property <- sources.properties.filter(_.isCeased)
+        incomeSourceType <- property.incomeSourceType match {
+          case Some("02-uk-property") => Some(UkProperty)
+          case Some("03-foreign-property") => Some(ForeignProperty)
+          case _ => None
+        }
         cessationDate <- property.cessation.flatMap(_.date)
-      } yield
+      } yield {
         CeasedBusinessDetailsViewModel(
           tradingName = None,
-          incomeSourceType = property.incomeSourceType match {
-            case Some("02-uk-property") => UkProperty
-            case Some("03-foreign-property") => ForeignProperty
-            case _ => throw MissingFieldException("Property income source type is missing or not an expected value")
-          },
+          incomeSourceType = incomeSourceType,
           tradingStartDate = property.tradingStartDate,
           cessationDate = cessationDate
         )
+      }
     }
-    ceasedSEBusinessesViewModels ++ ceasedPropertyBusinessesViewModels
+    println(s"1. $viewModelsForCeasedSEBusinesses")
+    println(s"2. $viewModelsForCeasedPropertyBusinesses")
+    println(s"2. ${viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses}")
+    viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
   }
 }
 
