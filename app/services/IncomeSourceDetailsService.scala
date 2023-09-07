@@ -226,9 +226,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         )
       }
     }
-    println(s"1. $viewModelsForCeasedSEBusinesses")
-    println(s"2. $viewModelsForCeasedPropertyBusinesses")
-    println(s"2. ${viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses}")
     viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
   }
 }
