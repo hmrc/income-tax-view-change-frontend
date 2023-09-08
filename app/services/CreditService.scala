@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import kamon.Kamon
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -28,6 +29,7 @@ class CreditService @Inject()(val financialDetailsService: FinancialDetailsServi
                              (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
 
   def getCreditCharges()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[List[FinancialDetailsModel]] = {
+    Kamon.counter("service.layer").withTag("type", "getcreditcharges").increment()
     financialDetailsService.getAllCreditChargesandPaymentsFinancialDetails.map {
       case financialDetails if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>
         throw new Exception("[CreditService][getCreditCharges] Error response while getting Unpaid financial details")

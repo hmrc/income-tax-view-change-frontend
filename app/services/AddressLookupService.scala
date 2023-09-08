@@ -18,6 +18,7 @@ package services
 
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
+import kamon.Kamon
 import models.incomeSourceDetails.BusinessAddressModel
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
@@ -35,6 +36,7 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
 
   def initialiseAddressJourney(isAgent: Boolean, isChange: Boolean)
                               (implicit hc: HeaderCarrier, request: RequestHeader): Future[Either[Throwable, Option[String]]] = {
+    Kamon.counter("service.layer").withTag("type", "addresslookup.init").increment()
     addressLookupConnector.initialiseAddressLookup(
       isAgent = isAgent,
       isChange = isChange
@@ -49,6 +51,7 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
   }
 
   def fetchAddress(id: Option[String])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
+    Kamon.counter("service.layer").withTag("type", "addresslookup.fetch").increment()
     id match {
       case Some(value) =>
         addressLookupConnector.getAddressDetails(value) map {

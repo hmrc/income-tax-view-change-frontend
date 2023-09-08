@@ -20,6 +20,7 @@ import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
+import kamon.Kamon
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,6 +34,7 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
 
   //TODO: We should use updateCessationDatev2 method
   def updateCessationDate(implicit request: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception, UpdateIncomeSourceResponse]] = {
+    Kamon.counter("service.layer").withTag("type", "updatecessationdate").increment()
     val nino: String = request.nino
     val incomeSourceId: Option[String] = request.incomeSources.properties.filter(_.isUkProperty).map(_.incomeSourceId).headOption
     request.session.get(ceaseUKPropertyEndDate) match {
@@ -48,6 +50,7 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
 
   def updateCessationDatev2(nino: String, incomeSourceId: String, cessationDate: String)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
+    Kamon.counter("service.layer").withTag("type", "updateCessation").increment()
     connector.updateCessationDate(
       nino = nino,
       incomeSourceId = incomeSourceId,
@@ -60,6 +63,7 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
 
   def updateTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateIncomeSourceResponse] = {
+    Kamon.counter("service.layer").withTag("type", "updatetaxyearspecific").increment()
     connector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific).map {
       case res: UpdateIncomeSourceResponseModel =>
         Logger("application").info(s"Updated tax year specific reporting method : $res")

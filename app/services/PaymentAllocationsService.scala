@@ -19,6 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.IncomeTaxViewChangeConnector
+import kamon.Kamon
 import models.core.Nino
 import models.financialDetails.FinancialDetailsModel
 import models.paymentAllocationCharges._
@@ -37,7 +38,7 @@ class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTa
 
   def getPaymentAllocation(nino: Nino, documentNumber: String)
                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
-
+    Kamon.counter("service.layer").withTag("type", "getpaymentallocation").increment()
     incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(nino, documentNumber) flatMap {
       case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel if documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.isEmpty && documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLotItem.isEmpty =>
         Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, Seq.empty)))

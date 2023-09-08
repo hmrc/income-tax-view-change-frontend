@@ -17,6 +17,7 @@
 package services
 
 import connectors.IncomeTaxCalculationConnector
+import kamon.Kamon
 import models.liabilitycalculation.LiabilityCalculationResponseModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,6 +30,7 @@ class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalcu
 
   def getLatestCalculation(mtditid: String, nino: String, calcId: String, taxYear: Int)
                           (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
+    Kamon.counter("service.layer").withTag("type", "calculation").increment()
     Logger("application").debug(s"[CalculationService][getLatestCalculation] - " +
       s"Requesting calc data from the backend by calc id and taxYear: $calcId - $taxYear")
     incomeTaxCalculationConnector.getCalculationResponseByCalcId(mtditid, nino, calcId, taxYear)

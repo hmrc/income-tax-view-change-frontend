@@ -20,6 +20,7 @@ import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import exceptions.MissingFieldException
+import kamon.Kamon
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
@@ -64,6 +65,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
   def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
                                                               mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
+    Kamon.counter("service.layer").withTag("type", "getincomesourcedetails").increment()
     if (cacheKey.isDefined) {
       getCachedIncomeSources(cacheKey.get).flatMap {
         case Some(sources: IncomeSourceDetailsModel) =>

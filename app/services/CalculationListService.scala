@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
+import kamon.Kamon
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
 import play.api.Logger
@@ -32,6 +33,7 @@ class CalculationListService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVi
 
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
+    Kamon.counter("service.layer").withTag("type", "calculationlist").increment()
     Logger("application").debug(s"[CalculationService][getLatestCalculation] - " +
       s"Requesting legacy calculation list (1404) data from the backend with nino / taxYearEnd: ${nino.value} - $taxYearEnd")
     incomeTaxViewChangeConnector.getLegacyCalculationList(nino, taxYearEnd)
@@ -39,6 +41,7 @@ class CalculationListService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVi
 
   def getCalculationList(nino: Nino, taxYearRange: String)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
+    Kamon.counter("service.layer").withTag("type", "calculationlist").increment()
     Logger("application").debug(s"[CalculationService][getLatestCalculation] - " +
       s"Requesting calculation list (1896) data from the backend with nino / taxYearRange: ${nino.value} - $taxYearRange")
     incomeTaxViewChangeConnector.getCalculationList(nino, taxYearRange)

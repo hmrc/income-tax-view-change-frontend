@@ -19,6 +19,7 @@ package services
 import java.time.LocalDate
 import auth.MtdItUser
 import connectors._
+import kamon.Kamon
 
 import javax.inject.{Inject, Singleton}
 import models.nextUpdates._
@@ -88,7 +89,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
   }
 
   def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
-
+    Kamon.counter("service.layer").withTag("type", "getcreditcharges").increment()
     for {
       previousObligations <- incomeTaxViewChangeConnector.getPreviousObligations(fromDate, toDate)
       openObligations <- incomeTaxViewChangeConnector.getNextUpdates()

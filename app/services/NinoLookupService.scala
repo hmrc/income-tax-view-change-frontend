@@ -17,6 +17,8 @@
 package services
 
 import connectors.IncomeTaxViewChangeConnector
+import kamon.Kamon
+
 import javax.inject.{Inject, Singleton}
 import models.core.NinoResponse
 import play.api.Logger
@@ -28,6 +30,7 @@ import scala.concurrent.Future
 class NinoLookupService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
 
   def getNino(mtdRef: String)(implicit hc: HeaderCarrier): Future[NinoResponse] = {
+    Kamon.counter("service.layer").withTag("type", "getnino").increment()
     Logger("application").debug(s"[NinoLookupService][getNino] - Requesting NINO from connector for user with MtdRef: $mtdRef")
     incomeTaxViewChangeConnector.getNino(mtdRef)
   }
