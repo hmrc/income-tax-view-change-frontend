@@ -54,7 +54,8 @@ object IncomeSourceDetailsTestConstants {
   val businessIncome3 = IncomeSourceDetailsModel(testMtditid2, Some("2018"), List(soleTraderBusiness, soleTraderBusiness2), List())
   val businessIncome4 = IncomeSourceDetailsModel(testMtditid2, Some("2018"), List(soleTraderBusiness3), List())
   val ukPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(), List(ukPropertyDetails))
-  val ukPropertyWithSoleTraderBusiness = IncomeSourceDetailsModel(testMtdItId, None, List(business2018), List(ukPropertyDetails))
+  val ukPropertyIncomeWithCeasedUkPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(), List(ukPropertyDetails))
+  val ukPropertyWithSoleTraderBusiness = IncomeSourceDetailsModel(testMtdItId, None, List(business2018), List(ukPropertyDetails, ceasedUKPropertyDetailsCessation2020))
   val ukPlusForeignPropertyWithSoleTraderIncomeSource = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails, foreignPropertyDetails))
   val ukPropertyAndSoleTraderBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness), List(ukPropertyDetails))
   val ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), List(soleTraderBusiness, ceasedBusiness), List(ukPropertyDetails, foreignPropertyDetails))
@@ -89,6 +90,7 @@ object IncomeSourceDetailsTestConstants {
 
 
   val foreignPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails))
+  val foreignPropertyIncomeWithCeasedForiegnPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails, ceasedForeignPropertyDetailsCessation2023))
 
   val ceaseBusinessDetailsModel = CeaseIncomeSourcesViewModel(
     soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),

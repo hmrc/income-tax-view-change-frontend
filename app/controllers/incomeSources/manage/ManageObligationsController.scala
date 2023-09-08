@@ -22,12 +22,14 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
+import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourceDetails.TaxYear.getTaxYearStartYearEndYear
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.{GetActivePropertyBusinesses, IncomeSourcesUtils}
 import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
@@ -38,12 +40,13 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val authorisedFunctions: AuthorisedFunctions,
                                             val retrieveNino: NinoPredicate,
                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
-                                            nextUpdatesService: NextUpdatesService)
+                                            nextUpdatesService: NextUpdatesService,
+                                            getActivePropertyBusinesses: GetActivePropertyBusinesses)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
@@ -150,7 +153,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         getTaxYearStartYearEndYear(taxYear) match {
           case Some(years) =>
             if (changeTo == "annual" || changeTo == "quarterly") {
-              getIncomeSourceId(mode, incomeSourceId) match {
+              getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
                 case Left(error) => showError(isAgent, {
                   error.getMessage
                 })
@@ -183,7 +186,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
-      s"[BusinessAddedObligationsController][handleRequest] - $message")
+      s"[BusinessAddedObligationsController][handleRequest] - $message. isAgent = $isAgent")
     if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
     else Future.successful(itvcErrorHandler.showInternalServerError())
   }
@@ -204,18 +207,21 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def getIncomeSourceId(mode: IncomeSourceType, id: String)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+  def getIncomeSourceId(mode: IncomeSourceType, id: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+
     mode match {
       case SelfEmployment => Right(id)
       case UkProperty =>
-        user.incomeSources.properties.find(x => x.isUkProperty).map(_.incomeSourceId) match {
-          case Some(incomeSourceId) => Right(incomeSourceId)
-          case None => Left(new Error("Failed to find incomeSource Id"))
+        getActivePropertyBusinesses.getActiveUkPropertyFromUserIncomeSources match {
+          case Right(Some(foreignProperty: PropertyDetailsModel)) => Right(foreignProperty.incomeSourceId)
+          case Left(error: Error) => Left(error)
+          case _ => Left(new Error("Unknown error"))
         }
       case ForeignProperty =>
-        user.incomeSources.properties.find(x => x.isForeignProperty).map(_.incomeSourceId) match {
-          case Some(incomeSourceId) => Right(incomeSourceId)
-          case None => Left(new Error("Failed to find incomeSource Id"))
+        getActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources match {
+          case Right(Some(foreignProperty: PropertyDetailsModel)) => Right(foreignProperty.incomeSourceId)
+          case Left(error: Error) => Left(error)
+          case _ => Left(new Error("Unknown error"))
         }
     }
   }

@@ -36,8 +36,9 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncome, ukPropertyIncome}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testUtils.TestSupport
+import utils.GetActivePropertyBusinesses
 import views.html.incomeSources.manage.ManageObligations
 
 import java.time.LocalDate
@@ -64,7 +65,8 @@ class ManageObligationsControllerSpec extends TestSupport
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
     obligationsView = app.injector.instanceOf[ManageObligations],
-    mockNextUpdatesService
+    mockNextUpdatesService,
+    getActivePropertyBusinesses = app.injector.instanceOf[GetActivePropertyBusinesses]
   )(
     ec = ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -130,8 +132,8 @@ class ManageObligationsControllerSpec extends TestSupport
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-    if (isUkProperty) setupMockGetIncomeSourceDetails()(ukPropertyIncome)
-    else setupMockGetIncomeSourceDetails()(foreignPropertyIncome)
+    if (isUkProperty) setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
+    else setupMockGetIncomeSourceDetails()(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
       DatesModel(day, day, day, "EOPS", isFinalDec = false)

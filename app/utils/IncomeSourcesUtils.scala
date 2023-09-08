@@ -17,10 +17,12 @@
 package utils
 
 import auth.MtdItUser
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys._
-import models.incomeSourceDetails.BusinessDetailsModel
+import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -139,6 +141,26 @@ object IncomeSourcesUtils {
           case Some(MissingKey(msg)) => msg
         }
         Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
+    }
+  }
+}
+
+class GetActivePropertyBusinesses {
+  def getActiveForeignPropertyFromUserIncomeSources(implicit user: MtdItUser[_]): Either[Throwable, Option[PropertyDetailsModel]] = {
+    val activeForeignProperty = user.incomeSources.properties.filterNot(_.isCeased).filter(_.isForeignProperty)
+    activeForeignProperty match {
+      case list: List[PropertyDetailsModel] if list.length == 1 => Right(Some(list.head))
+      case list: List[PropertyDetailsModel] if list.length > 1 => Left(new Error("Too many active foreign properties found. There should only be one."))
+      case _ => Left(new Error("No active foreign properties found."))
+    }
+  }
+
+  def getActiveUkPropertyFromUserIncomeSources(implicit user: MtdItUser[_]): Either[Throwable, Option[PropertyDetailsModel]] = {
+    val activeUkProperty = user.incomeSources.properties.filterNot(_.isCeased).filter(_.isUkProperty)
+    activeUkProperty match {
+      case list: List[PropertyDetailsModel] if list.length == 1 => Right(Some(list.head))
+      case list: List[PropertyDetailsModel] if list.length > 1 => Left(new Error("Too many active foreign properties found. There should only be one."))
+      case _ => Left(new Error("No active foreign properties found."))
     }
   }
 }
