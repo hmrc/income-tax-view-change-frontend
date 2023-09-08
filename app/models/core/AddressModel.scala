@@ -23,7 +23,11 @@ case class AddressModel(addressLine1: String,
                         addressLine3: Option[String],
                         addressLine4: Option[String],
                         postCode: Option[String],
-                        countryCode: String)
+                        countryCode: String) {
+
+  def abbreviatedCountryCode: String = "United Kingdom"
+
+}
 
 object AddressModel {
   implicit val format: Format[AddressModel] = Json.format[AddressModel]

@@ -30,7 +30,11 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessCountryCode: Option[String],
                                          incomeSourcesAccountingMethod: Option[String],
                                          cashOrAccrualsFlag: String,
-                                         skippedAccountingMethod: Boolean)
+                                         skippedAccountingMethod: Boolean) {
+
+  def abbreviatedCountryCode: Option[String] = Some("United Kingdom")
+
+}
 
 case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String)
 
