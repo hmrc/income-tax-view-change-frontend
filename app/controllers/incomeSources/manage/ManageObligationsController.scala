@@ -186,7 +186,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
-      s"[BusinessAddedObligationsController][handleRequest] - $message. isAgent = $isAgent")
+      s"${if (isAgent) "[Agent]"}[BusinessAddedObligationsController][handleRequest] - $message")
     if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
     else Future.successful(itvcErrorHandler.showInternalServerError())
   }
@@ -213,13 +213,13 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       case SelfEmployment => Right(id)
       case UkProperty =>
         getActivePropertyBusinesses.getActiveUkPropertyFromUserIncomeSources match {
-          case Right(Some(foreignProperty: PropertyDetailsModel)) => Right(foreignProperty.incomeSourceId)
+          case Right(ukProperty: PropertyDetailsModel) => Right(ukProperty.incomeSourceId)
           case Left(error: Error) => Left(error)
           case _ => Left(new Error("Unknown error"))
         }
       case ForeignProperty =>
         getActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources match {
-          case Right(Some(foreignProperty: PropertyDetailsModel)) => Right(foreignProperty.incomeSourceId)
+          case Right(foreignProperty: PropertyDetailsModel) => Right(foreignProperty.incomeSourceId)
           case Left(error: Error) => Left(error)
           case _ => Left(new Error("Unknown error"))
         }

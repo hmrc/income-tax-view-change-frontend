@@ -31,6 +31,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
+import utils.GetActivePropertyBusinesses
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import java.time.LocalDate
@@ -53,6 +54,7 @@ class UKPropertyCeasedObligationsControllerSpec extends TestSupport with MockAut
     view,
     mockDateService,
     mockNextUpdatesService,
+    app.injector.instanceOf[GetActivePropertyBusinesses]
   )(appConfig,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
@@ -109,7 +111,7 @@ class UKPropertyCeasedObligationsControllerSpec extends TestSupport with MockAut
       "FS enabled with newly added UK Property and obligations view model" in {
         enable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockUKPropertyIncomeSource()
+        mockUKPropertyIncomeSourceWithCeasedUkProperty()
 
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 4, 6))
 

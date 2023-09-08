@@ -80,6 +80,8 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
 
   def mockUKPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(ukPropertyIncome)
 
+  def mockUKPropertyIncomeSourceWithCeasedUkProperty(): Unit = setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
+
   def mockForeignPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails()(foreignPropertyIncome)
 
   def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
