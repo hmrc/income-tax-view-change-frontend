@@ -85,7 +85,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    Kamon.counter("home.controller.hit").withoutTags().increment()
+    if (isAgent) {
+      Kamon.counter("home.controller.hit").withTag("type", "agent").increment()
+    } else {
+      Kamon.counter("home.controller.hit").withTag("type", "individual").increment()
+    }
+    //Kamon.counter("home.controller.hit").withoutTags().increment()
 
     implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
     nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations.flatMap { latestDeadlineDate =>
