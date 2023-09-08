@@ -73,9 +73,9 @@ class CeaseIncomeSourcesControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
-          elementTextByID("ceased-businesses-h1")(ceasedBusinessMessage),
-          elementTextByID("table-head-date-ended-ceased")(ceasedDateMessage),
-          elementTextByID("table-row-trading-name-0-ceased")(ceasedBusinessName),
+          elementTextByID("ceased-businesses-heading")(ceasedBusinessMessage),
+          elementTextByID("ceased-businesses-table-head-date-ended")(ceasedDateMessage),
+          elementTextByID("ceased-business-table-row-trading-name-0")(ceasedBusinessName),
           elementTextByID("cease-link-foreign")(ceaseMessage),
           elementTextByID("table-head-date-started-foreign")(startDateMessage),
           elementTextByID("table-row-trading-start-date-foreign")(foreignPropertyStartDate)

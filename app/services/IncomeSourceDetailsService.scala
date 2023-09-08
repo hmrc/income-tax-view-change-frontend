@@ -16,13 +16,13 @@
 
 package services
 
-import auth.{MtdItUser, MtdItUserWithNino}
-import config.featureswitch.TimeMachineAddYear
+import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import exceptions.MissingFieldException
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
@@ -86,9 +86,8 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
   def getAddIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Try[AddIncomeSourcesViewModel] = Try {
     val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-    val ukProperty = sources.properties.find(_.isUkProperty)
-    val foreignProperty = sources.properties.find(_.isForeignProperty)
-    val ceasedBusinesses = sources.businesses.filter(_.isCeased)
+    val ukProperty = sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
+    val foreignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
 
     AddIncomeSourcesViewModel(
       soleTraderBusinesses = soleTraderBusinesses.map { business =>
@@ -102,13 +101,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
       foreignProperty = foreignProperty.map { property =>
         PropertyDetailsViewModel(property.tradingStartDate)
       },
-      ceasedBusinesses = ceasedBusinesses.map { business =>
-        CeasedBusinessDetailsViewModel(
-          business.tradingName,
-          business.tradingStartDate,
-          business.cessation.flatMap(_.date).get
-        )
-      }
+      ceasedBusinesses = getCeasedBusinesses(sources = sources)
     )
   }
 
@@ -122,9 +115,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
     val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
-
-    val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
-    val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
 
     Try {
       ViewIncomeSourcesViewModel(
@@ -147,15 +137,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             maybeForeignProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
-        viewCeasedBusinesses = if (ceasedBusinessExists) {
-          maybeCeasedBusinesses.map { business =>
-            ViewCeasedBusinessDetailsViewModel(
-              tradingName = business.tradingName,
-              tradingStartDate = business.tradingStartDate,
-              cessationDate = business.cessation.flatMap(_.date).get
-            )
-          }
-        } else Nil
+        getCeasedBusinesses(sources = sources)
       )
     }.toEither
   }
@@ -170,9 +152,6 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
 
     val maybeForeignProperty = sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
     val foreignPropertyExists = maybeForeignProperty.nonEmpty
-
-    val maybeCeasedBusinesses = sources.businesses.filter(_.isCeased)
-    val ceasedBusinessExists = maybeCeasedBusinesses.nonEmpty
 
     Try {
       CeaseIncomeSourcesViewModel(
@@ -195,15 +174,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
             maybeForeignProperty.flatMap(_.tradingStartDate)
           ))
         } else None,
-        ceasedBusinesses = if (ceasedBusinessExists) {
-          maybeCeasedBusinesses.map { business =>
-            CeaseCeasedBusinessDetailsViewModel(
-              tradingName = business.tradingName,
-              tradingStartDate = business.tradingStartDate,
-              cessationDate = business.cessation.flatMap(_.date).get
-            )
-          }
-        } else Nil
+        getCeasedBusinesses(sources = sources)
       )
     }.toEither
   }
@@ -223,6 +194,39 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
         )
       }
     }.toEither
+  }
+
+  private def getCeasedBusinesses(sources: IncomeSourceDetailsModel): List[CeasedBusinessDetailsViewModel] = {
+    val viewModelsForCeasedSEBusinesses = {
+      for {
+        business <- sources.businesses.filter(_.isCeased)
+        cessationDate <- business.cessation.flatMap(_.date)
+      } yield CeasedBusinessDetailsViewModel(
+        tradingName = business.tradingName,
+        incomeSourceType = SelfEmployment,
+        tradingStartDate = business.tradingStartDate,
+        cessationDate = cessationDate
+      )
+    }
+    val viewModelsForCeasedPropertyBusinesses = {
+      for {
+        property <- sources.properties.filter(_.isCeased)
+        incomeSourceType <- property.incomeSourceType match {
+          case Some("02-uk-property") => Some(UkProperty)
+          case Some("03-foreign-property") => Some(ForeignProperty)
+          case _ => None
+        }
+        cessationDate <- property.cessation.flatMap(_.date)
+      } yield {
+        CeasedBusinessDetailsViewModel(
+          tradingName = None,
+          incomeSourceType = incomeSourceType,
+          tradingStartDate = property.tradingStartDate,
+          cessationDate = cessationDate
+        )
+      }
+    }
+    viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
   }
 }
 

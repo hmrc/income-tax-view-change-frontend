@@ -124,6 +124,8 @@
 
 }
 
+@hmrcFrontendAssetPath = @{uk.gov.hmrc.hmrcfrontend.controllers.routes.Assets.at("govuk").url}
+
 @if(mainClass.isDefined){
     @govukLayout(
         pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
@@ -133,6 +135,7 @@
         headerBlock = Some(siteHeader),
         footerBlock = Some(footerLinks()),
         scriptsBlock = Some(scripts()),
+        assetPath = Some(hmrcFrontendAssetPath),
         mainContentLayout = Some(mainContentLayout(mainClass.get)(_))
     )(content)
 } else {
@@ -143,6 +146,7 @@
         bodyEndBlock = None,
         headerBlock = Some(siteHeader),
         footerBlock = Some(footerLinks()),
-        scriptsBlock = Some(scripts())
+        scriptsBlock = Some(scripts()),
+        assetPath = Some(hmrcFrontendAssetPath)
     )(content)
 }

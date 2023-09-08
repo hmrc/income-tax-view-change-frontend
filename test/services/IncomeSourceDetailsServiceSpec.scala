@@ -17,15 +17,15 @@
 package services
 
 import audit.mocks.MockAuditingService
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
-import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseCeasedBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel, ViewCeasedBusinessDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
-import org.scalacheck.Gen
+import models.incomeSourceDetails.viewmodels._
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
+import testConstants.PropertyDetailsTestConstants.{testPropertyCessation2, testPropertyCessation3, testPropertyStartDateOption, testPropertyStartDateOption2, viewUkPropertyDetailsViewModel}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 import testUtils.TestSupport
 
 import scala.util.Success
@@ -114,17 +114,18 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       }
     }
     "a user has a foreign property and a ceased businesses" should {
-      "return an AddIncomeSourcesViewModel with a foreign property and ceased businesses" in {
+      "return an AddIncomeSourcesViewModel with a foreign property, ceased business, ceased uk property and ceased foreign property" in {
 
-        val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(foreignPropertyAndCeasedBusinessIncome)
+        val result = TestIncomeSourceDetailsService.getAddIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome)
 
         result shouldBe Success(AddIncomeSourcesViewModel(
           soleTraderBusinesses = Nil,
           ukProperty = None,
           foreignProperty = Some(PropertyDetailsViewModel(Some(testStartDate))),
           ceasedBusinesses = List(
-            CeasedBusinessDetailsViewModel(Some(testTradeName), Some(testStartDate), testCessation.date.get),
-            CeasedBusinessDetailsViewModel(Some(testTradeName2), Some(testStartDate2), testCessation2.date.get)
+            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
+            CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
           )
         )
         )
@@ -147,17 +148,18 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       }
     }
     "a user has a foreign property and a ceased businesses" should {
-      "return a CeaseIncomeSourcesViewModel with a foreign property and ceased businesses" in {
+      "return an AddIncomeSourcesViewModel with a foreign property, ceased business, ceased uk property and ceased foreign property" in {
 
-        val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(foreignPropertyAndCeasedBusinessIncome)
+        val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome)
 
         result shouldBe Right(CeaseIncomeSourcesViewModel(
           soleTraderBusinesses = Nil,
           ukProperty = None,
           foreignProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
           ceasedBusinesses = List(
-            CeaseCeasedBusinessDetailsViewModel(Some(testTradeName), Some(testStartDate), testCessation.date.get),
-            CeaseCeasedBusinessDetailsViewModel(Some(testTradeName2), Some(testStartDate2), testCessation2.date.get)
+            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
+            CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
           )
         ))
       }
@@ -179,17 +181,52 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
       }
     }
     "a user has a foreign property and a ceased businesses" should {
-      "return a ViewIncomeSourcesViewModel with a foreign property and ceased businesses" in {
+      "return an AddIncomeSourcesViewModel with a foreign property, ceased business, ceased uk property and ceased foreign property" in {
 
-        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessIncome)
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome)
 
         result shouldBe Right(ViewIncomeSourcesViewModel(
           viewSoleTraderBusinesses = Nil,
           viewUkProperty = None,
           viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
           viewCeasedBusinesses = List(
-            ViewCeasedBusinessDetailsViewModel(testTradeNameOption, testStartDateOption, testCessation.date.get),
-            ViewCeasedBusinessDetailsViewModel(testTradeNameOption2, testStartDateOption2, testCessation2.date.get)
+            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
+            CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
+          )
+        ))
+      }
+    }
+  }
+
+  "The IncomeSourceDetailsService.getCeasedBusinesses method" when {
+    "a user has a business without a cessation date" should {
+      "return the list of ceased income sources without the income source without a cessation date" in {
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome)
+
+        result shouldBe Right(ViewIncomeSourcesViewModel(
+          viewSoleTraderBusinesses = Nil,
+          viewUkProperty = None,
+          viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
+          viewCeasedBusinesses = List(
+            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
+            CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
+          )
+        ))
+      }
+    }
+    "a user has a property business without an income source type" should {
+      "return the list of ceased income sources without the income source without an income source type" in {
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedPropertyIncomeWithNoIncomeSourceType)
+
+        result shouldBe Right(ViewIncomeSourcesViewModel(
+          viewSoleTraderBusinesses = Nil,
+          viewUkProperty = None,
+          viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
+          viewCeasedBusinesses = List(
+//            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
+            CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get)
           )
         ))
       }
