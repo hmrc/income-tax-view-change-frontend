@@ -29,9 +29,14 @@ class BusinessNameFormSpec extends AnyWordSpec with Matchers {
 
     "return a valid form" when {
       "valid business name entered" in {
-        val result = form("Test Business").value
+        val result = BusinessNameForm.checkBusinessNameWithTradeName(form("Test Business"),Some("value")).value
         result mustBe Some(BusinessNameForm("Test Business"))
       }
+      "no business trade name provided and business name is valid" in {
+        val result = BusinessNameForm.checkBusinessNameWithTradeName(form("Test Business"), None).value
+        result mustBe Some(BusinessNameForm("Test Business"))
+      }
+
     }
 
     "return an error" when {
@@ -49,6 +54,11 @@ class BusinessNameFormSpec extends AnyWordSpec with Matchers {
       "the business name contains invalid characters" in {
         val result = form("Test Business *").errors
         result mustBe Seq(FormError(SessionKeys.businessName, BusinessNameForm.businessNameInvalidChar))
+      }
+
+      "the business name is same as business trade name" in {
+        val result = BusinessNameForm.checkBusinessNameWithTradeName(form("Plumbing"),Some("Plumbing")).errors
+        result mustBe Seq(FormError(SessionKeys.businessName, BusinessNameForm.businessNameInvalid))
       }
     }
   }

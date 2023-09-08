@@ -36,6 +36,7 @@ object BusinessNameForm {
   val businessNameEmptyError: String = "add-business-name.form.error.required"
   val businessNameLengthIncorrect: String = "add-business-name.form.error.maxLength"
   val businessNameInvalidChar: String = "add-business-name.form.error.invalidNameFormat"
+  val businessNameInvalid: String = "add-business-name.form.error.invalidName"
 
   val containsValidChar: Constraint[String] = Constraint(value =>
     if (validBusinessName.pattern.matcher(value).matches()) {
@@ -53,14 +54,22 @@ object BusinessNameForm {
     }
   )
 
-  val nonEmptyBusinessName: Constraint[String] = Constraint( value =>
+  val nonEmptyBusinessName: Constraint[String] = Constraint(value =>
     if (value.isEmpty) Invalid(businessNameEmptyError) else Valid
   )
 
   val form: Form[BusinessNameForm] = Form(mapping(
     SessionKeys.businessName -> text.verifying(nonEmptyBusinessName andThen containsValidChar andThen isValidNameLength)
-  )(BusinessNameForm.apply)(BusinessNameForm.unapply)
-  )
+  )(BusinessNameForm.apply)(BusinessNameForm.unapply))
+
+  def checkBusinessNameWithTradeName(form: Form[BusinessNameForm], businessTradeName: Option[String]): Form[BusinessNameForm] = {
+    businessTradeName match {
+      case Some(tradeName) if !form.hasErrors && form.get.name.equals(tradeName) =>
+        form.withError(SessionKeys.businessName, businessNameInvalid)
+      case _ =>
+        form
+    }
+  }
 }
 
 
