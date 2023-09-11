@@ -25,7 +25,7 @@ case class AddressModel(addressLine1: String,
                         postCode: Option[String],
                         countryCode: String) {
 
-  def abbreviatedCountryCode: String = "United Kingdom"
+  def countryName: String = "United Kingdom"
 
 }
 

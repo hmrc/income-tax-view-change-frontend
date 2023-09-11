@@ -32,7 +32,7 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          cashOrAccrualsFlag: String,
                                          skippedAccountingMethod: Boolean) {
 
-  def abbreviatedCountryCode: Option[String] = Some("United Kingdom")
+  def countryName: Option[String] = Some("United Kingdom")
 
 }
 
