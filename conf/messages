@@ -1602,4 +1602,6 @@ incomeSources.ceased-income-sources.table-head.date-started     =   Date started
 incomeSources.ceased-income-sources.table-head.date-ended       =   Date ended
 incomeSources.ceased-income-sources.uk-property                 =   UK property
 incomeSources.ceased-income-sources.foreign-property            =   Foreign property
+incomeSources.ceased-income-sources.unknown-sole-trader         =   Sole trader business
+
 

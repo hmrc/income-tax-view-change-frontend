@@ -1581,4 +1581,5 @@ incomeSources.ceased-income-sources.table-head.date-started     =   Dyddiad cych
 incomeSources.ceased-income-sources.table-head.date-ended       =   Y dyddiad dod i ben
 incomeSources.ceased-income-sources.uk-property                 =   Eiddo yn y DU
 incomeSources.ceased-income-sources.foreign-property            =   Eiddo tramor
+incomeSources.ceased-income-sources.unknown-sole-trader         =   Busnesau unig fasnachwr
 

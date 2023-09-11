@@ -108,7 +108,7 @@ class AddIncomeSourcesViewSpec extends TestSupport {
         document.getElementById("ceased-business-table-row-date-started-0").text shouldBe testUnknownValue
         document.getElementById("ceased-business-table-row-date-ended-0").text shouldBe testCessationDate2
 
-        document.getElementById("ceased-business-table-row-trading-name-1").text shouldBe testUnknownValue
+        document.getElementById("ceased-business-table-row-trading-name-1").text shouldBe testUnknownSoleTraderBusinessValue
         document.getElementById("ceased-business-table-row-date-started-1").text shouldBe testUnknownValue
         document.getElementById("ceased-business-table-row-date-ended-1").text shouldBe testCessationDate
 
