@@ -16,14 +16,14 @@
 
 package forms
 
-import forms.utils.SessionKeys
+import forms.incomeSources.add.BusinessNameForm
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 
 class BusinessNameFormSpec extends AnyWordSpec with Matchers {
 
-  def form(value: String): Form[BusinessNameForm] = BusinessNameForm.form.bind(Map(SessionKeys.businessName -> value))
+  def form(value: String): Form[BusinessNameForm] = BusinessNameForm.form.bind(Map(BusinessNameForm.businessName -> value))
 
   "BusinessNameForm" must {
 
@@ -37,20 +37,21 @@ class BusinessNameFormSpec extends AnyWordSpec with Matchers {
     "return an error" when {
       "the business name is empty" in {
         val result = form("").errors
-        result mustBe Seq(FormError(SessionKeys.businessName, BusinessNameForm.businessNameEmptyError))
+        result mustBe Seq(FormError(BusinessNameForm.businessName, BusinessNameForm.businessNameEmptyError))
       }
 
       "the business name is too long" in {
-        val result = form("Lorem ipsum dolor sit amet consectetur adipiscing elit " +
-          "Phasellus vel ante ut tellus interdum fermentum Suspendisse potenti").errors
-        result mustBe Seq(FormError(SessionKeys.businessName, BusinessNameForm.businessNameLengthIncorrect))
+        val overMaxLength: String = (1 to BusinessNameForm.MAX_LENGTH + 1).map(_ => "a").mkString
+        val result = form(overMaxLength).errors
+        result mustBe Seq(
+          FormError(BusinessNameForm.businessName, BusinessNameForm.businessNameLengthIncorrect, Seq(BusinessNameForm.MAX_LENGTH))
+        )
       }
 
       "the business name contains invalid characters" in {
         val result = form("Test Business *").errors
-        result mustBe Seq(FormError(SessionKeys.businessName, BusinessNameForm.businessNameInvalidChar))
+        result mustBe Seq(FormError(BusinessNameForm.businessName, BusinessNameForm.businessNameInvalidChar, Seq(BusinessNameForm.permittedChars)))
       }
     }
   }
-
 }

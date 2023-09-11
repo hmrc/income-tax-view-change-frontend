@@ -24,7 +24,7 @@ import play.api.data.{Form, FormError}
 
 class BusinessTradeFormSpec extends AnyWordSpec with Matchers {
 
-  def form(value: String): Form[BusinessTradeForm] = BusinessTradeForm.form.bind(Map(SessionKeys.businessTrade -> value))
+  def form(value: String): Form[BusinessTradeForm] = BusinessTradeForm.form.bind(Map(BusinessTradeForm.businessTrade -> value))
 
   "BusinessTradeForm" must {
 
@@ -38,23 +38,25 @@ class BusinessTradeFormSpec extends AnyWordSpec with Matchers {
     "return an error" when {
       "the business trade is empty" in {
         val result = form("").errors
-        result mustBe Seq(FormError(SessionKeys.businessTrade, BusinessTradeForm.tradeEmptyError))
+        result mustBe Seq(FormError(BusinessTradeForm.businessTrade, BusinessTradeForm.tradeEmptyError))
       }
 
       "the business trade is too short" in {
         val result = form("A").errors
-        result mustBe Seq(FormError(SessionKeys.businessTrade, BusinessTradeForm.tradeShortError))
+        result mustBe Seq(FormError(BusinessTradeForm.businessTrade, BusinessTradeForm.tradeShortError, Seq(BusinessTradeForm.MIN_LENGTH)))
       }
 
       "the business trade is too long" in {
-        val result = form("Lorem ipsum dolor sit amet consectetur adipiscing elit " +
-          "Phasellus vel ante ut tellus interdum fermentum Suspendisse potenti").errors
-        result mustBe Seq(FormError(SessionKeys.businessTrade, BusinessTradeForm.tradeLongError))
+
+        val overMaxLength: String = (1 to BusinessTradeForm.MAX_LENGTH + 1).map(_ => "a").mkString
+        val result = form(overMaxLength).errors
+
+        result mustBe Seq(FormError(BusinessTradeForm.businessTrade, BusinessTradeForm.tradeLongError, Seq(BusinessTradeForm.MAX_LENGTH)))
       }
 
       "the business trade contains invalid characters" in {
         val result = form("Test Business *").errors
-        result mustBe Seq(FormError(SessionKeys.businessTrade, BusinessTradeForm.tradeInvalidCharError))
+        result mustBe Seq(FormError(BusinessTradeForm.businessTrade, BusinessTradeForm.tradeInvalidCharError, Seq(BusinessTradeForm.permittedChars)))
       }
     }
   }

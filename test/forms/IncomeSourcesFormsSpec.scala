@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.incomeSources.add.BusinessTradeForm
+import forms.incomeSources.add.{BusinessNameForm, BusinessTradeForm}
 import forms.incomeSources.cease.UKPropertyEndDateForm
 import generators.IncomeSourceGens.{Day, businessNameGenerator, businessTradeGenerator, dateGenerator}
 import implicits.ImplicitDateFormatter
@@ -59,11 +59,11 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
   val ukPropertyForm = ukPropertyFormFactory(individualUser)
 
   val businessNameForm = (optValue: Option[String]) => BusinessNameForm.form.bind(
-    optValue.fold[Map[String, String]](Map.empty)(value => Map(BusinessNameForm.bnf -> value))
+    optValue.fold[Map[String, String]](Map.empty)(value => Map("business-name" -> value))
   )
 
   val businessTradeForm = (optValue: Option[String]) => BusinessTradeForm.form.bind(
-    optValue.fold[Map[String, String]](Map.empty)(value => Map("addBusinessTrade" -> value))
+    optValue.fold[Map[String, String]](Map.empty)(value => Map("business-trade" -> value))
   )
 
   val ukPropertyFormUnderTest = (date: Day) => ukPropertyForm.bind(
@@ -73,7 +73,7 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
   )
 
   property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
-    (charsList.length > 0 && charsList.length <= BusinessNameForm.businessNameLength) ==> {
+    (charsList.length > 0 && charsList.length <= BusinessNameForm.MAX_LENGTH) ==> {
       val businessName = charsList.mkString("")
       businessNameForm(Some(businessName)).errors.isEmpty
     }
