@@ -29,7 +29,8 @@
         p: p,
         link: link,
         hr: hr,
-        govukTable: GovukTable
+        govukTable: GovukTable,
+        ceasedBusinesses: CeasedBusinesses
 )
 
 @(
@@ -70,7 +71,6 @@
 
 @ukProperty = @{ sources.viewUkProperty }
 @foreignProperty = @{ sources.viewForeignProperty }
-@ceasedBusinesses = @{ sources.viewCeasedBusinesses }
 @soleTraderBusinesses = @{ sources.viewSoleTraderBusinesses }
 
 
@@ -169,27 +169,10 @@
 
     }
 
-    @if(ceasedBusinesses.nonEmpty) {
-        @h2(msg = getMessage("ceased-businesses-h2"),
-            optId = Some("ceased-businesses-h2"))
-
-        <table class="govuk-table govuk-!-margin-bottom-3" id="ceased-businesses-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col" id="table-head-business-name-ceased">@getMessage("table-head.business-name")</th>
-                    <th class="govuk-table__header" scope="col" id="table-head-date-started-ceased">@getMessage("table-head.date-started")</th>
-                    <th class="govuk-table__header" scope="col" id="table-head-date-ended-ceased">@getMessage("table-head.date-ended")</th>
-                </tr>
-            </thead>
-            <tbody>
-            @for((business, index) <- ceasedBusinesses.zipWithIndex) {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index-ceased"}">@business.tradingName.getOrElse(getMessage("unknown-field"))</td>
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index-ceased"}">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-end-date-$index-ceased"}">@business.cessationDate.toLongDate</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+    @if(sources.viewCeasedBusinesses.nonEmpty) @{
+        ceasedBusinesses(sources.viewCeasedBusinesses)
     }
+
+    <br>
+
 }
