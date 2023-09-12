@@ -202,7 +202,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe messages("incomeSources.generic.unknown")
         table.getElementById("ceased-business-table-row-date-ended-1").text() shouldBe testCessation2.date.get.toLongDate
 
-        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.ceased-income-sources.unknown-sole-trader")
         table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe messages("incomeSources.generic.unknown")
         table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate}
     }
@@ -317,7 +317,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         table.getElementById("ceased-business-table-row-date-started-1").text() shouldBe messages("incomeSources.generic.unknown")
         table.getElementById("ceased-business-table-row-date-ended-1").text() shouldBe testCessation2.date.get.toLongDate
 
-        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.generic.unknown")
+        table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.ceased-income-sources.unknown-sole-trader")
         table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe messages("incomeSources.generic.unknown")
         table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate}
     }
