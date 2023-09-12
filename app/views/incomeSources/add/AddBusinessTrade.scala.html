@@ -44,6 +44,10 @@
 
 @(businessTradeForm: Form[BusinessTradeForm], postAction: Call, isAgent: Boolean, backURL: String, sameNameError: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
+@businessTrade = @{
+    "business-trade"
+}
+
 @field = @{
     businessTradeForm("business-trade")
 }
@@ -60,9 +64,9 @@ btaNavPartial = user.btaNavPartial) {
 
         @govukInput(
             Input(
-                id = "business-trade",
-                name = "business-trade",
-                classes = "govuk-input--width-30",
+                id = businessTrade,
+                name = businessTrade,
+                classes = "govuk-!-width-three-quarters",
                 label = Label(
                     isPageHeading = true,
                     classes = "govuk-label--l",
