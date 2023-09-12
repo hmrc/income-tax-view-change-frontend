@@ -34,6 +34,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
+import utils.GetActivePropertyBusinesses
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import java.time.LocalDate
@@ -62,7 +63,8 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
     nextUpdatesService = mockNextUpdatesService,
-    dateService = app.injector.instanceOf[DateServiceInterface]
+    dateService = app.injector.instanceOf[DateServiceInterface],
+    getActivePropertyBusinesses = app.injector.instanceOf[GetActivePropertyBusinesses]
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -96,7 +98,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
       "navigating to the page with FS Enabled" in {
         disableAllSwitches()
         enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
+        mockForeignPropertyIncomeSourceWithCeasedForeignProperty()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
           "123456",
@@ -134,7 +136,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
     "return 303 SEE_OTHER" when {
       "navigating to the page with FS Disabled" in {
         disable(IncomeSources)
-        mockForeignPropertyIncomeSource()
+        mockForeignPropertyIncomeSourceWithCeasedForeignProperty()
 
         val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
@@ -163,7 +165,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
+        mockForeignPropertyIncomeSourceWithCeasedForeignProperty()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
           "123",
@@ -202,7 +204,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
       "navigating to the page with FS Disabled" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         disable(IncomeSources)
-        mockForeignPropertyIncomeSource()
+        mockForeignPropertyIncomeSourceWithCeasedForeignProperty()
 
         val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER

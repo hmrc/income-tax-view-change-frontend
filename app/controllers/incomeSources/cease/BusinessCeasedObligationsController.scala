@@ -57,7 +57,6 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
       .flatMap(_.tradingName)
   }
 
-
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

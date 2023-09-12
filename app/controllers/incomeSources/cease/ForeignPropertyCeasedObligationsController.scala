@@ -22,12 +22,14 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.ForeignProperty
+import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{GetActivePropertyBusinesses, IncomeSourcesUtils}
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import javax.inject.Inject
@@ -42,7 +44,8 @@ class ForeignPropertyCeasedObligationsController @Inject()(val authenticate: Aut
                                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                            val obligationsView: IncomeSourceCeasedObligations,
                                                            val nextUpdatesService: NextUpdatesService,
-                                                           val dateService: DateServiceInterface)
+                                                           val dateService: DateServiceInterface,
+                                                           getActivePropertyBusinesses: GetActivePropertyBusinesses)
                                                           (implicit val appConfig: FrontendAppConfig,
                                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                            val itvcErrorHandler: ItvcErrorHandler,
@@ -52,23 +55,25 @@ class ForeignPropertyCeasedObligationsController @Inject()(val authenticate: Aut
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      val foreignPropertyIncomeSources = user.incomeSources.properties.filter(_.isForeignProperty)
-      foreignPropertyIncomeSources.headOption match {
-        case Some(property) =>
-          nextUpdatesService.getObligationsViewModel(property.incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
+      getActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources match {
+        case Left(error) => showError(isAgent = isAgent, message = error.getMessage)
+        case Right(foreignProperty: PropertyDetailsModel) =>
+          nextUpdatesService.getObligationsViewModel(foreignProperty.incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
               businessName = None,
               sources = viewModel,
               isAgent = isAgent,
               incomeSourceType = ForeignProperty))
           }
-        case None =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[ForeignPropertyCeasedObligationsController][handleRequest]:Failed to retrieve foreign property details")
-          Future.successful(errorHandler.showInternalServerError())
       }
-
     }
+  }
+
+  def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    Logger("application").error(
+      s"${if (isAgent) "[Agent]"}[ForeignPropertyCeasedObligationsController][handleRequest] - $message")
+    if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+    else Future.successful(itvcErrorHandler.showInternalServerError())
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
