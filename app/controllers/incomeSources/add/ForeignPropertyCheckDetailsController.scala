@@ -28,7 +28,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
 import play.api.Logger
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
+import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -47,7 +47,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val retrieveBtaNavBar: NavBarPredicate,
-                                                      val businessDetailsService: CreateBusinessDetailsService)
+                                                      val businessDetailsService: CreateBusinessDetailsService,
+                                                      val sessionService: SessionService)
                                                      (implicit val ec: ExecutionContext,
                                                       implicit override val mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
@@ -107,31 +108,64 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
   def getDetails(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckForeignPropertyViewModel]] = {
 
+    sessionService.get(foreignPropertyStartDate).flatMap { startDate: Either[Throwable, Option[String]] =>
+      sessionService.get(addIncomeSourcesAccountingMethod).map { accMethod: Either[Throwable, Option[String]] =>
+        val errors: Seq[String] = getErrors(startDate, accMethod)
+        val result: Option[CheckForeignPropertyViewModel] = getResult(startDate, accMethod)
+
+        result match {
+          case Some(checkForeignPropertyViewModel) =>
+            Right(checkForeignPropertyViewModel)
+          case None =>
+            Left(new IllegalArgumentException(s"Missing required session data: ${errors.map(x => x.mkString(" "))}"))
+        }
+      }
+    }
+
+  }
+
+  def getResult(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Option[CheckForeignPropertyViewModel] = {
+    startDate match {
+      case Left(_) => None
+      case Right(dateMaybe) =>
+        accMethod match {
+          case Left(_) => None
+          case Right(methodMaybe) =>
+            for {
+              foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+              cashOrAccrualsFlag <- methodMaybe
+            } yield {
+              CheckForeignPropertyViewModel(
+                tradingStartDate = foreignPropertyStartDate,
+                cashOrAccrualsFlag = cashOrAccrualsFlag)
+            }
+
+
+      }
+    }
+  }
+  def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
     case class MissingKey(msg: String)
 
-    val errors: Seq[String] = Seq(
-      user.session.data.get(foreignPropertyStartDate).orElse(Option(MissingKey("MissingKey: addForeignPropertyStartDate"))),
-      user.session.data.get(addIncomeSourcesAccountingMethod).orElse(Option(MissingKey("MissingKey: addIncomeSourcesAccountingMethod")))
-    ).collect {
-      case Some(MissingKey(msg)) => MissingKey(msg)
-    }.map(e => e.msg)
-
-    val result: Option[CheckForeignPropertyViewModel] = for {
-      foreignPropertyStartDate <- user.session.data.get(foreignPropertyStartDate).map(LocalDate.parse)
-      cashOrAccrualsFlag <- user.session.data.get(addIncomeSourcesAccountingMethod)
-    } yield {
-      CheckForeignPropertyViewModel(
-        tradingStartDate = foreignPropertyStartDate,
-        cashOrAccrualsFlag = cashOrAccrualsFlag)
-    }
-    Future.successful(
-      result match {
-        case Some(checkForeignPropertyViewModel) =>
-          Right(checkForeignPropertyViewModel)
-        case None =>
-          Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
+    Seq(
+      startDate match {
+        case Right(nameOpt) => nameOpt match {
+          case Some(name) => name
+          case None => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+        }
+        case Left(_) => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+      },
+      accMethod match {
+        case Right(nameOpt) => nameOpt match {
+          case Some(name) => name
+          case None => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+        }
+        case Left(_) => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
       }
-    )
+    ).map {
+      case Some(MissingKey(msg)) => msg
+      case _ => ""
+    }.filterNot(x => x == "")
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

@@ -21,12 +21,13 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import services.SessionService
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching {
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
@@ -71,12 +72,13 @@ object IncomeSourcesUtils {
 
   case class MissingKey(msg: String)
 
-  def getBusinessDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
+  def getBusinessDetailsFromSession(implicit user: MtdItUser[_]/*,ec: ExecutionContext*/): Either[Throwable, CheckBusinessDetailsViewModel] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
+    //val sessionService: SessionService = new SessionService
 
     val result: Option[Either[Throwable, CheckBusinessDetailsViewModel]] = for {
-      businessName <- user.session.data.get(businessName)
+      businessName <- user.session.data.get(businessName)//sessionService.get(businessName)
       businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
       businessTrade <- user.session.data.get(businessTrade)
       businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
