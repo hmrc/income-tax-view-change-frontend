@@ -149,10 +149,10 @@ object IncomeSourcesUtils {
     }
   }
 
-  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckUKPropertyViewModel] = {
+  def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
     val result: Option[Either[Throwable, CheckUKPropertyViewModel]] = for {
-      tradingStartDate <- user.session.data.get(addUkPropertyStartDate)
-      cashOrAccrualsFlag <- user.session.data.get(addIncomeSourcesAccountingMethod)
+      tradingStartDate <- sessionService.get(addUkPropertyStartDate)
+      cashOrAccrualsFlag <- sessionService.get(addIncomeSourcesAccountingMethod)
     } yield {
       Right(CheckUKPropertyViewModel(
         tradingStartDate = LocalDate.parse(tradingStartDate),

@@ -28,7 +28,7 @@ import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
+import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -49,7 +49,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val businessDetailsService: CreateBusinessDetailsService,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val createBusinessDetailsService: CreateBusinessDetailsService,
-                                                 val retrieveBtaNavBar: NavBarPredicate)
+                                                 val retrieveBtaNavBar: NavBarPredicate,
+                                                 val sessionService: SessionService)
                                                 (implicit val appConfig: FrontendAppConfig,
                                                  mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext,
@@ -102,16 +103,16 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     val errorHandler = getErrorHandler(isAgent)
 
     withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(user).toOption match {
+      getUKPropertyDetailsFromSession(sessionService)(user, ec).map(_.toOption).map {
         case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
-          Future.successful(Ok(
+          Ok(
             checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
               isAgent = isAgent,
               backUrl = backUrl,
-              postAction = postAction)))
+              postAction = postAction))
         case None => Logger("application").error(
           s"[CheckUKPropertyDetailsController][handleRequest] - Error: Unable to build UK property details")
-          Future.successful(errorHandler.showInternalServerError())
+          errorHandler.showInternalServerError()
       }
     }
   }
@@ -136,35 +137,40 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
       else routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key)
 
     withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(user) match {
+      getUKPropertyDetailsFromSession(sessionService)(user, ec) flatMap {
         case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
-          businessDetailsService.createUKProperty(checkUKPropertyViewModel).map {
+          businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              withIncomeSourcesRemovedFromSession {
+              newWithIncomeSourcesRemovedFromSession(
+                Redirect(redirectErrorUrl),
+                sessionService,
                 Redirect(redirectErrorUrl)
-              }
+              )
             case Right(CreateIncomeSourceResponse(id)) =>
-              val redirectUrl = getUKPropertyReportingMethodUrl(isAgent, id)
-              withIncomeSourcesRemovedFromSession {
-                Redirect(redirectUrl)
-              }
+              newWithIncomeSourcesRemovedFromSession(
+                Redirect(getUKPropertyReportingMethodUrl(isAgent, id)),
+                sessionService,
+                Redirect(redirectErrorUrl)
+              )
           }.recover {
             case ex: Throwable =>
               Logger("application").error(
                 s"[CheckUKPropertyDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
-              withIncomeSourcesRemovedFromSession {
+              newWithIncomeSourcesRemovedFromSession(
+                Redirect(redirectErrorUrl),
+                sessionService,
                 Redirect(redirectErrorUrl)
-              }
+              )
           }
         case Left(ex: Throwable) =>
           Logger("application").error(
             s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
-          Future.successful {
-            withIncomeSourcesRemovedFromSession {
+            newWithIncomeSourcesRemovedFromSession(
+              Redirect(redirectErrorUrl),
+              sessionService,
               Redirect(redirectErrorUrl)
-            }
-          }
+          )
       }
     }
   }

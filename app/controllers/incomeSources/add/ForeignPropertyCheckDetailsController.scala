@@ -209,16 +209,10 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     getDetails(user) flatMap {
       case Right(viewModel: CheckForeignPropertyViewModel) =>
         businessDetailsService.createForeignProperty(viewModel).flatMap {
-          case Left(ex) => if (isAgent) {
+          case Left(ex) =>
             Logger("application").error(
               s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
             Future.successful(Redirect(redirectErrorUrl))
-          }
-          else {
-            Logger("application").error(
-              s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-            Future.successful(Redirect(redirectErrorUrl))
-          }
 
           case Right(CreateIncomeSourceResponse(id)) =>
             newWithIncomeSourcesRemovedFromSession(
