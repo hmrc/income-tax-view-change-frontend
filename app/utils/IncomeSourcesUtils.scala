@@ -17,6 +17,7 @@
 package utils
 
 import auth.MtdItUser
+import config.ShowInternalServerError
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.BusinessDetailsModel
@@ -41,9 +42,39 @@ trait IncomeSourcesUtils extends FeatureSwitching {
     }
   }
 
+  def newWithIncomeSourcesRemovedFromSession(redirect: Result, sessionService: SessionService, errorRedirect: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val incomeSourcesSessionKeys = Seq(
+      "addUkPropertyStartDate",
+      "addForeignPropertyStartDate",
+      "addBusinessName",
+      "addBusinessTrade",
+      "addIncomeSourcesAccountingMethod",
+      "addBusinessStartDate",
+      "addBusinessAccountingPeriodStartDate",
+      "addBusinessAccountingPeriodEndDate",
+      "addBusinessStartDate",
+      "addBusinessAddressLine1",
+      "addBusinessAddressLine2",
+      "addBusinessAddressLine3",
+      "addBusinessAddressLine4",
+      "addBusinessPostalCode",
+      "addBusinessCountryCode",
+      "ceaseForeignPropertyDeclare",
+      "ceaseForeignPropertyEndDate",
+      "ceaseUKPropertyDeclare",
+      "ceaseUKPropertyEndDate"
+    ) //TODO: check this is all the keys
+
+    sessionService.remove(incomeSourcesSessionKeys, redirect).map {
+      case Left(_) => errorRedirect
+      case Right(result) => result
+    }
+  }
+
   def withIncomeSourcesRemovedFromSession(redirect: Result)(implicit user: MtdItUser[_]): Result = {
     val incomeSourcesSessionKeys = Seq(
       "addUkPropertyStartDate",
+      "addForeignPropertyStartDate",
       "addBusinessName",
       "addBusinessTrade",
       "addIncomeSourcesAccountingMethod",
@@ -72,10 +103,9 @@ object IncomeSourcesUtils {
 
   case class MissingKey(msg: String)
 
-  def getBusinessDetailsFromSession(implicit user: MtdItUser[_]/*,ec: ExecutionContext*/): Either[Throwable, CheckBusinessDetailsViewModel] = {
+  def getBusinessDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
-    //val sessionService: SessionService = new SessionService
 
     val result: Option[Either[Throwable, CheckBusinessDetailsViewModel]] = for {
       businessName <- user.session.data.get(businessName)//sessionService.get(businessName)

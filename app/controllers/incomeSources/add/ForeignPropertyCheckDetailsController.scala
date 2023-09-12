@@ -139,8 +139,6 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                 tradingStartDate = foreignPropertyStartDate,
                 cashOrAccrualsFlag = cashOrAccrualsFlag)
             }
-
-
       }
     }
   }
@@ -210,22 +208,24 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
     getDetails(user) flatMap {
       case Right(viewModel: CheckForeignPropertyViewModel) =>
-        businessDetailsService.createForeignProperty(viewModel).map {
+        businessDetailsService.createForeignProperty(viewModel).flatMap {
           case Left(ex) => if (isAgent) {
             Logger("application").error(
               s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-            Redirect(redirectErrorUrl)
+            Future.successful(Redirect(redirectErrorUrl))
           }
           else {
             Logger("application").error(
               s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-            Redirect(redirectErrorUrl)
+            Future.successful(Redirect(redirectErrorUrl))
           }
 
           case Right(CreateIncomeSourceResponse(id)) =>
-            withIncomeSourcesRemovedFromSession(
+            newWithIncomeSourcesRemovedFromSession(
               if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
-              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
+              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url),
+              sessionService,
+              Redirect(redirectErrorUrl)
             )
 
         }
