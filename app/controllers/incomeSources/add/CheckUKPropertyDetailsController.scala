@@ -154,14 +154,16 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                 Redirect(redirectErrorUrl)
               )
           }.recover {
-            case ex: Throwable =>
-              Logger("application").error(
-                s"[CheckUKPropertyDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
-              newWithIncomeSourcesRemovedFromSession(
-                Redirect(redirectErrorUrl),
-                sessionService,
-                Redirect(redirectErrorUrl)
-              )
+            case ex: Exception =>
+              if (isAgent) {
+                Logger("application").error(
+                  s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+                getErrorHandler(isAgent).showInternalServerError()
+              } else {
+                Logger("application").error(
+                  s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+                getErrorHandler(isAgent).showInternalServerError()
+              }
           }
         case Left(ex: Throwable) =>
           Logger("application").error(
