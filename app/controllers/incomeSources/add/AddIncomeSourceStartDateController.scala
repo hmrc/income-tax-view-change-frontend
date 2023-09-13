@@ -135,16 +135,11 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
               )
             ),
           formData =>
-            Redirect(getSuccessUrl(incomeSourceType, isAgent, isUpdate))
+            Redirect(
+              getSuccessUrl(incomeSourceType, isAgent, isUpdate)
+            )
               .addingToSession(
-                (incomeSourceType match {
-                  case SelfEmployment =>
-                    SessionKeys.addBusinessStartDate
-                  case UkProperty =>
-                    SessionKeys.addUkPropertyStartDate
-                  case ForeignProperty =>
-                    SessionKeys.foreignPropertyStartDate
-                }) -> formData.date.toString
+                incomeSourceType.startDateSessionKey -> formData.date.toString
               )
         )
       } else Ok(customNotFoundErrorView())

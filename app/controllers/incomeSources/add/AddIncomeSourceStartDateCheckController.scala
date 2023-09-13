@@ -185,11 +185,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       case (Some(form.responseNo), _) =>
         Redirect(backUrl)
           .removingFromSession(
-            incomeSourceType match {
-              case SelfEmployment => businessStartDate
-              case UkProperty => addUkPropertyStartDate
-              case ForeignProperty => foreignPropertyStartDate
-            }
+            incomeSourceType.startDateSessionKey
           )
       case (Some(form.responseYes), SelfEmployment) =>
         Redirect(successUrl)
