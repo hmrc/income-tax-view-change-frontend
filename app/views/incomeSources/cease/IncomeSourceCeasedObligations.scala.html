@@ -26,32 +26,58 @@
 
 
 @this(
-        mainTemplate: unifiedLayout,
-        h1: h1,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        continueButton: ContinueButton,
-        formWithCSRF: FormWithCSRF,
-        errorSummary: ErrorSummary,
-        govukTable: GovukTable
+  mainTemplate: unifiedLayout,
+  h1: h1,
+  implicitDateFormatter: ImplicitDateFormatterImpl,
+  continueButton: ContinueButton,
+  formWithCSRF: FormWithCSRF,
+  errorSummary: ErrorSummary
 )
 
 @(sources: ObligationsViewModel, backUrl: Option[String] = Some(""), isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
+@sources = @{
+    ObligationsViewModel(
+        quarterlyObligationsDatesYearOne = Seq(
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+        ),
+        quarterlyObligationsDatesYearTwo = Seq(
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+        ),
+        eopsObligationsDates = Seq(
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+        ),
+        finalDeclarationDates = Seq(
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
+        ),
+        currentTaxYear = 2022,
+        showPrevTaxYears = true
+    )
+}
+
 @getMessage(key: String, args: String*) = @{
-    messages(s"business-ceased.obligation.$key", args: _*)
+  messages(s"business-ceased.obligation.$key", args: _*)
 }
 
 @businessNameFinal = @{ businessName.getOrElse(getMessage("heading1.se.part2")) }
 
 @getPageTitle = @{
 
-    incomeSourceType match {
+incomeSourceType match {
         case  _:SelfEmployment.type =>
             s"""${getMessage("heading1.se.part1")} ${businessNameFinal} ${getMessage("heading1.base")}""".trim()
 
         case _:UkProperty.type =>
             s"${getMessage("heading1.uk-property.part2")} " +
-                    s"${getMessage("heading1.base")}".trim()
+            s"${getMessage("heading1.base")}".trim()
 
         case _:ForeignProperty.type =>
             s"""${getMessage("heading1.foreign-property.part2")} ${getMessage("heading1.base")}"""
@@ -68,13 +94,13 @@
 
 @bannerHtmlContent(head:String, h1:String, base:String) = {
     <div class="govuk-panel__body govuk-!-margin-bottom-3">
-    @head
+        @head
     </div>
     <h1 class="govuk-panel__title">
-    @h1
+        @h1
     </h1>
     <div class="govuk-panel__body">
-    @base
+        @base
     </div>
 }
 
@@ -85,135 +111,180 @@
         case _:UkProperty.type =>
             bannerHtmlContent("",getMessage("heading1.uk-property.part2"),getMessage("heading1.base"))
         case _:ForeignProperty.type =>
-            bannerHtmlContent("",getMessage("heading1.foreign-property.part2"),getMessage("heading1.base"))
+        bannerHtmlContent("",getMessage("heading1.foreign-property.part2"),getMessage("heading1.base"))
     }
 }
 
-@quarerlyObligationsTaxYearOneHeader = @{
-    val head = getMessage("table.heading-1")
-    val to = getMessage("to")
-    val fromYear = sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear
-    val toYear = fromYear + 1
 
-    s"$head $fromYear $to $toYear"
-}
-
-@quarerlyObligationsTaxYearTwoHeader = @{
-    val head = getMessage("table.heading-1")
-    val to = getMessage("to")
-    val fromYear = sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear
-    val toYear = fromYear + 1
-
-    s"$head $fromYear $to $toYear"
-}
-
-@taxYearCell(datesModel: DatesModel) = @{
-    val fromDate = datesModel.inboundCorrespondenceFrom.toLongDate
-    val to = getMessage("to")
-    val toDate = datesModel.inboundCorrespondenceTo.toLongDate
-
-    s"$fromDate $to $toDate"
-}
 
 @import implicitDateFormatter.longDate
-
 @mainTemplate(pageTitle = getPageTitle,
-    backUrl = backUrl,
-    isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial,
-    useFallbackBackLink = true) {
+  backUrl = backUrl,
+  isAgent = isAgent,
+  btaNavPartial = user.btaNavPartial,
+  useFallbackBackLink = true) {
 
     @formWithCSRF(action = getCeaseIncomeSourceCall) {
 
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
-        @getBannerContent()
+            @getBannerContent()
         </div>
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getMessage("heading2.text")
+                @getMessage("heading2.text")
             </label>
         </h2>
 
 
-        @if(sources.quarterlyObligationsDatesYearOne.nonEmpty) {
-            <div class="box-simple" id="quarterly">
-                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
-                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
+        @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
+        <div class="box-simple" id="quarterly">
+            <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
+            <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
-                @govukTable(Table(
-                    head = Some(List(
-                        HeadCell(Text(quarerlyObligationsTaxYearOneHeader)),
-                        HeadCell(Text(getMessage("table.heading-2")))
-                    )),
-                    rows = sources.quarterlyObligationsDatesYearOne.map { datesModel =>
-                        Seq(
-                            TableRow(Text(taxYearCell(datesModel))),
-                            TableRow(Text(datesModel.inboundCorrespondenceDue.toLongDate))
-                        )
-                    }
-                ))
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header govuk">
+                        @{
+                            val head = getMessage("table.heading-1")
+                            val to = getMessage("to")
+                            val fromYear = sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear
+                            val toYear = fromYear + 1
 
-                @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty) {
-
-                    @govukTable(Table(
-                        head = Some(List(
-                            HeadCell(Text(quarerlyObligationsTaxYearTwoHeader)),
-                            HeadCell(Text(getMessage("table.heading-2")))
-                        )),
-                        rows = sources.quarterlyObligationsDatesYearTwo.map { datesModel =>
-                            Seq(
-                                TableRow(Text(taxYearCell(datesModel))),
-                                TableRow(Text(datesModel.inboundCorrespondenceDue.toLongDate))
-                            )
+                            s"""$head $fromYear $to $toYear"""
                         }
-                    ))
+                        </th>
+                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
+                </tr>
+                </thead>
+
+                <tbody class="govuk-table__body">
+                @sources.quarterlyObligationsDatesYearOne.map{ x =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        @{
+                            val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                            val to = getMessage("to")
+                            val toDate = x.inboundCorrespondenceTo.toLongDate
+
+                            s"""$fromDate $to $toDate"""
+                        }
+                    </td>
+                    <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                </tr>
                 }
-            </div>
-        }
+                </tbody>
+            </table>
 
-        @if(sources.eopsObligationsDates.nonEmpty) {
-            <div class="box-simple" id="eops">
-                <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
-                <p class="govuk-body"> @getMessage("eops-p1") </p>
+                @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty){
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header govuk">
+                                @{
+                                    val head = getMessage("table.heading-1")
+                                    val to = getMessage("to")
+                                    val fromYear = sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear
+                                    val toYear = fromYear + 1
 
-                @govukTable(Table(
-                    head = Some(List(
-                        HeadCell(Text(getMessage("table.heading-1"))),
-                        HeadCell(Text(getMessage("table.heading-2")))
-                    )),
-                    rows = sources.eopsObligationsDates.map { datesModel =>
-                        Seq(
-                            TableRow(Text(taxYearCell(datesModel))),
-                            TableRow(Text(datesModel.inboundCorrespondenceDue.toLongDate))
-                        )
+                                    s"""$head $fromYear $to $toYear"""
+                                }
+                            </th>
+                            <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
+                        </tr>
+                        </thead>
+
+                        <tbody class="govuk-table__body">
+                        @sources.quarterlyObligationsDatesYearTwo.map{ x =>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                @{
+                                    val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                                    val to = getMessage("to")
+                                    val toDate = x.inboundCorrespondenceTo.toLongDate
+
+                                    s"""$fromDate $to $toDate"""
+                                }
+                            </td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                        </tr>
+                        }
+                        </tbody>
                     }
-                ))
-            </div>
+                </table>
+        </div>
         }
+
+        @if(sources.eopsObligationsDates.nonEmpty){
+        <div class="box-simple" id="eops">
+            <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
+            <p class="govuk-body"> @getMessage("eops-p1") </p>
+
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-1")</th>
+                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
+                </tr>
+                </thead>
+
+                <tbody class="govuk-table__body">
+                @sources.eopsObligationsDates.map{ x =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        @{
+                            val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                            val to = getMessage("to")
+                            val toDate = x.inboundCorrespondenceTo.toLongDate
+
+                            s"""$fromDate $to $toDate"""
+                        }
+                    </td>
+                    <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        }
+
 
         @if(sources.finalDeclarationDates.nonEmpty) {
-            <div class="box-simple" id="finalDeclaration">
-                <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-                <p class="govuk-body"> @getMessage("final-declaration-text") </p>
+        <div class="box-simple" id="finalDeclaration">
+            <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
+            <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
-                @govukTable(Table(
-                    head = Some(List(
-                        HeadCell(Text(getMessage("table.heading-1"))),
-                        HeadCell(Text(getMessage("table.heading-2")))
-                    )),
-                    rows = sources.finalDeclarationDates.map { datesModel =>
-                        Seq(
-                            TableRow(Text(taxYearCell(datesModel))),
-                            TableRow(Text(datesModel.inboundCorrespondenceDue.toLongDate))
-                        )
-                    }
-                ))
-            </div>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-1")</th>
+                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
+                </tr>
+                </thead>
+
+                <tbody class="govuk-table__body">
+                @sources.finalDeclarationDates.map{ x =>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        @{
+                            val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                            val to = getMessage("to")
+                            val toDate = x.inboundCorrespondenceTo.toLongDate
+
+                            s"""$fromDate $to $toDate"""
+                        }
+                    </td>
+                    <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                </tr>
+                }
+                </tbody>
+            </table>
+        </div>
         }
 
         <div class="govuk-!-margin-top-8">
-        @continueButton(Some(getMessage("income-sources-button")))
+            @continueButton( Some(getMessage("income-sources-button")) )
         </div>
     }
 }
