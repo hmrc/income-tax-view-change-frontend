@@ -23,17 +23,22 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
+import forms.models.DateFormElement
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.IncomeSourceEndDate
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPredicate,
@@ -45,7 +50,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                               val retrieveNino: NinoPredicate,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
-                                              val customNotFoundErrorView: CustomNotFoundError)
+                                              val customNotFoundErrorView: CustomNotFoundError,
+                                              val sessionService: SessionService)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
@@ -101,7 +107,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         handleRequest(
           isAgent = false,
           incomeSourceType = incomeSourceType,
-          id = id
+          id = id,
+          isChange = false
         )
     }
 
@@ -113,12 +120,39 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
             handleRequest(
               isAgent = true,
               incomeSourceType = incomeSourceType,
-              id = id
+              id = id,
+              isChange = false
             )
         }
   }
 
-  def handleRequest(id: Option[String], incomeSourceType: String, isAgent: Boolean)
+  def showChange(id: Option[String], incomeSourceType: String): Action[AnyContent] =
+    (checkSessionTimeout andThen authenticate andThen retrieveNino
+      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      implicit user =>
+        handleRequest(
+          isAgent = false,
+          incomeSourceType = incomeSourceType,
+          id = id,
+          isChange = false
+        )
+    }
+
+  def showChangeAgent(id: Option[String], incomeSourceType: String): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleRequest(
+              isAgent = true,
+              incomeSourceType = incomeSourceType,
+              id = id,
+              isChange = false
+            )
+        }
+  }
+
+  def handleRequest(id: Option[String],  isAgent: Boolean, isChange: Boolean, incomeSourceType: String)
                    (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -129,13 +163,22 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
           case (SelfEmployment, None) =>
             errorHandler.showInternalServerError()
           case _ =>
-            Ok(incomeSourceEndDate(
-              incomeSourceEndDateForm = incomeSourceEndDateForm(incomeSourceTypeValue, id),
-              postAction = postAction,
-              isAgent = isAgent,
-              backUrl = backAction.url,
-              incomeSourceType = incomeSourceTypeValue
-            )(user, messages))
+            getFilledForm(incomeSourceEndDateForm(incomeSourceTypeValue, id), incomeSourceTypeValue, isUpdate = true) match {
+              case Right(form) =>
+                Ok(
+                  incomeSourceEndDate(
+                    incomeSourceEndDateForm = form,
+                    postAction = postAction,
+                    isAgent = isAgent,
+                    backUrl = backAction.url,
+                    incomeSourceType = incomeSourceTypeValue
+                  )(user, messages)
+                )
+              case Left(ex) =>
+                Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+                  s"[IncomeSourceEndDateController][handleRequest]: Failed to get income source start date from session, reason: ${ex.getMessage}")
+                errorHandler.showInternalServerError()
+            }
         }
     }
 
@@ -154,7 +197,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       handleSubmitRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType,
-        id = id)
+        id = id,
+        isChange = false)
   }
 
   def submitAgent(id: Option[String], incomeSourceType: String): Action[AnyContent] = Authenticated.async {
@@ -165,11 +209,12 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
             handleSubmitRequest(
               isAgent = true,
               incomeSourceType = incomeSourceType,
-              id = id)
+              id = id,
+              isChange = false)
         }
   }
 
-  def handleSubmitRequest(id: Option[String], incomeSourceType: String, isAgent: Boolean)
+  def handleSubmitRequest(id: Option[String], isAgent: Boolean, isChange:Boolean, incomeSourceType: String)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -212,6 +257,30 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"[IncomeSourceEndDateController][handleSubmitRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage}")
       errorHandler.showInternalServerError()
+  }
+
+  private def getFilledForm(form: Form[DateFormElement],
+                            incomeSourceType: IncomeSourceType,
+                            isUpdate: Boolean)(implicit user: MtdItUser[_]): Either[Throwable, Form[DateFormElement]] = {
+
+    val maybeStartDate = getEndDate(incomeSourceType)
+
+    (maybeStartDate, isUpdate) match {
+      case (Some(date), true) if Try(LocalDate.parse(date)).toOption.isDefined =>
+        Right(
+          form.fill(
+            DateFormElement(
+              LocalDate.parse(date)
+            )
+          )
+        )
+      case (Some(date), true) => Left(new Error(s"Could not parse $date as a LocalDate"))
+      case _ => Right(form)
+    }
+  }
+
+  private def getEndDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[String] = {
+    user.session.get(incomeSourceType.endDateSessionKey)
   }
 
 }

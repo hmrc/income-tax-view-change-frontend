@@ -38,9 +38,9 @@
 
 @getChangeHref = @{
    if(isAgent){
-     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(sources.incomeSourceId), SelfEmployment.key).url
+     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(sources.incomeSourceId), SelfEmployment.key).url
    } else {
-     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(sources.incomeSourceId), SelfEmployment.key).url
+     controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(sources.incomeSourceId), SelfEmployment.key).url
    }
 }
 

@@ -23,6 +23,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
@@ -39,7 +40,7 @@ import views.html.incomeSources.cease.IncomeSourceEndDate
 import scala.concurrent.Future
 
 class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-  with FeatureSwitching {
+  with FeatureSwitching with MockSessionService{
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
 
@@ -53,7 +54,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[IncomeSourceEndDate],
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[CustomNotFoundError],
+    sessionService = mockSessionService)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
