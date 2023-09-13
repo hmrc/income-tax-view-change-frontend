@@ -186,9 +186,9 @@ object IncomeSourcesUtils {
       startDate match {
         case Right(nameOpt) => nameOpt match {
           case Some(name) => name
-          case None => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+          case None => Some(MissingKey("MissingKey: addUKPropertyStartDate"))
         }
-        case Left(_) => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+        case Left(_) => Some(MissingKey("MissingKey: addUKPropertyStartDate"))
       },
       accMethod match {
         case Right(nameOpt) => nameOpt match {
