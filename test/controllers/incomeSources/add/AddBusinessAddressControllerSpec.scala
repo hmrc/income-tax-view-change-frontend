@@ -31,7 +31,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.{AddressLookupService, IncomeSourceDetailsService}
+import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -71,7 +71,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
-      ec = ec
+      ec = ec,
+      sessionService = app.injector.instanceOf[SessionService]
     )
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))

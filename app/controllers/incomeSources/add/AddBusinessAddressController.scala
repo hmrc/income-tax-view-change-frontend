@@ -98,11 +98,12 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
   }
 
-  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], redirect: Result)(implicit request: Request[_]): Future[Either[Throwable, Result]] = {
+  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], redirect: Result)
+                          (implicit request: Request[_]): Future[Either[Throwable, Result]] = {
     // multiple key / value pair update example
     addressLookUpResult match {
       case Right(value) =>
-        val kvPairs : Map[String, String] = Map(
+        val keyValuePairs : Map[String, String] = Map(
           SessionKeys.addBusinessAddressLine1 -> {
             if (value.address.lines.isDefinedAt(0)) value.address.lines.head else ""
           },
@@ -120,16 +121,16 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
           },
           SessionKeys.addBusinessCountryCode -> "GB"
         )
-        kvPairs.foldLeft[ Future[Either[Throwable, Result]] ]( Future{ Right(redirect) }) { (acc, kv) =>
-          val e = for {
+        keyValuePairs.foldLeft[Future[Either[Throwable, Result]]](Future{Right(redirect)}) {(acc, keyValue) =>
+          val result = for {
             a <- acc
           } yield a match {
-            case Right(r) =>
-              sessionService.set(kv._1, kv._2, r)
+            case Right(res) =>
+              sessionService.set(keyValue._1, keyValue._2, res)
             case Left(ex) =>
               Future{ Left(ex) }
           }
-          e.flatten
+          result.flatten
         }
       case Left(ex) =>
         Future.successful(Left(ex))
