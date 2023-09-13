@@ -34,7 +34,9 @@ import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessTrade
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 
 @Singleton
@@ -128,11 +130,16 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       val backURL = getBackURL(isAgent, isChange)
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-      val businessName = sessionService.get(SessionKeys.businessName) map {
+      val businessNameMayBe = sessionService.get(SessionKeys.businessName).map {
         case Right(businessName) => businessName
         case Left(ex) =>
           Logger("application").error(s"${if (isAgent) "[Agent]"}[AddBusinessTradeController][handleSubmitRequest] Error ${ex.getMessage}")
           errorHandler.showInternalServerError()
+      }
+
+      val businessName = Await.result(businessNameMayBe, Duration.Inf) match {
+        case Some(businessName) => businessName
+        case _ => ""
       }
 
       BusinessTradeForm.form.bindFromRequest().fold(
