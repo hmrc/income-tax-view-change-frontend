@@ -307,6 +307,8 @@ POST         /income-sources/cease/business-end-date                      contro
 POST         /agents/income-sources/cease/business-end-date               controllers.incomeSources.cease.IncomeSourceEndDateController.submitAgent(id: Option[String], incomeSourceType: String = "SE")
 GET          /income-sources/cease/change-business-end-date               controllers.incomeSources.cease.IncomeSourceEndDateController.showChange(id: Option[String], incomeSourceType: String = "SE")
 GET          /agents/income-sources/cease/change-business-end-date        controllers.incomeSources.cease.IncomeSourceEndDateController.showChangeAgent(id: Option[String], incomeSourceType: String = "SE")
+POST         /income-sources/cease/change-business-end-date                      controllers.incomeSources.cease.IncomeSourceEndDateController.submitChange(id: Option[String], incomeSourceType: String = "SE")
+POST         /agents/income-sources/cease/change-business-end-date               controllers.incomeSources.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String], incomeSourceType: String = "SE")
 
 GET          /income-sources/cease/business-check-details                 controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.show()
 GET          /agents/income-sources/cease/business-check-details          controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.showAgent()
@@ -323,7 +325,8 @@ POST         /income-sources/cease/uk-property-end-date                   contro
 POST         /agents/income-sources/cease/uk-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.submitAgent(id: Option[String] = None, incomeSourceType: String = "UK")
 GET          /income-sources/cease/change-uk-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.showChange(id: Option[String] = None, incomeSourceType: String = "UK")
 GET          /agents/income-sources/cease/change-uk-property-end-date     controllers.incomeSources.cease.IncomeSourceEndDateController.showChangeAgent(id: Option[String] = None, incomeSourceType: String = "UK")
-
+POST         /income-sources/cease/change-uk-property-end-date                   controllers.incomeSources.cease.IncomeSourceEndDateController.submitChange(id: Option[String] = None, incomeSourceType: String = "UK")
+POST         /agents/income-sources/cease/change-uk-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String] = None, incomeSourceType: String = "UK")
 
 GET          /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show()
 GET          /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()
@@ -340,6 +343,8 @@ POST         /income-sources/cease/foreign-property-end-date              contro
 POST         /agents/income-sources/cease/foreign-property-end-date       controllers.incomeSources.cease.IncomeSourceEndDateController.submitAgent(id: Option[String] = None, incomeSourceType: String = "FP")
 GET          /income-sources/cease/change-foreign-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.showChange(id: Option[String] = None, incomeSourceType: String = "FP")
 GET          /agents/income-sources/cease/change-foreign-property-end-date     controllers.incomeSources.cease.IncomeSourceEndDateController.showChangeAgent(id: Option[String] = None, incomeSourceType: String = "FP")
+POST         /income-sources/cease/change-foreign-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.submitChange(id: Option[String] = None, incomeSourceType: String = "FP")
+POST         /agents/income-sources/cease/change-foreign-property-end-date     controllers.incomeSources.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String] = None, incomeSourceType: String = "FP")
 
 GET          /income-sources/cease/foreign-property-check-details         controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.show()
 GET          /agents/income-sources/cease/foreign-property-check-details  controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.showAgent()
