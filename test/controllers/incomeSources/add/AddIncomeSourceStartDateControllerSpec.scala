@@ -33,7 +33,7 @@ import org.jsoup.nodes.Document
 import play.api.http.Status
 import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.Helpers._
-import services.DateService
+import services.{DateService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -76,7 +76,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     retrieveBtaNavBar = MockNavBarPredicate,
     customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError],
-    incomeSourceDetailsService = mockIncomeSourceDetailsService
+    incomeSourceDetailsService = mockIncomeSourceDetailsService,
+    sessionService = app.injector.instanceOf[SessionService]
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
