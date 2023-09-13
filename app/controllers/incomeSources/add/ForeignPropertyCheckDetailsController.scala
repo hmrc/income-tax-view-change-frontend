@@ -139,9 +139,10 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                 tradingStartDate = foreignPropertyStartDate,
                 cashOrAccrualsFlag = cashOrAccrualsFlag)
             }
-      }
+        }
     }
   }
+
   def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
     case class MissingKey(msg: String)
 

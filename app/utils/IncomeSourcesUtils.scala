@@ -108,7 +108,7 @@ object IncomeSourcesUtils {
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
 
     val result: Option[Either[Throwable, CheckBusinessDetailsViewModel]] = for {
-      businessName <- user.session.data.get(businessName)//sessionService.get(businessName)
+      businessName <- user.session.data.get(businessName) //sessionService.get(businessName)
       businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
       businessTrade <- user.session.data.get(businessTrade)
       businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
@@ -162,7 +162,7 @@ object IncomeSourcesUtils {
                   foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
                   cashOrAccrualsFlag <- methodMaybe
                 } yield {
-                 CheckUKPropertyViewModel(
+                  CheckUKPropertyViewModel(
                     tradingStartDate = foreignPropertyStartDate,
                     cashOrAccrualsFlag = cashOrAccrualsFlag)
                 }
