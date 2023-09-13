@@ -18,7 +18,6 @@ package views.incomeSources.add
 
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessTradeForm
-import forms.utils.SessionKeys
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -38,18 +37,23 @@ class AddBusinessTradeViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
-  val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-  val agentBackUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  val backUrl: String = {
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
+  }
+  val agentBackUrl: String = {
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  }
 
   val addBusinessTradeView: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 
-  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, isAgent = false, backUrl, sameNameError = false)
-  val changePageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, false, backUrl, false, Some("Oops wrong trade"))
+  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, isAgent = false, backUrl)
+  val changePageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form.fill(BusinessTradeForm("Oops wrong trade")),
+    testCall, isAgent = false, backUrl)
 
   def pageWithError(error: String = BusinessTradeForm.tradeEmptyError): Html = {
-    val modifiedForm = BusinessTradeForm.form.withError(SessionKeys.businessTrade, error)
+    val modifiedForm = BusinessTradeForm.form.withError(BusinessTradeForm.businessTrade, error)
       .fill(BusinessTradeForm("??Invalid Name??"))
-    addBusinessTradeView(modifiedForm, testCall, false, backUrl, false)
+    addBusinessTradeView(modifiedForm, testCall, isAgent = false, backUrl)
   }
 
   "The add business trade page" when {
@@ -63,18 +67,14 @@ class AddBusinessTradeViewSpec extends ViewSpec {
       "have an input with associated hint and label" in new Setup(pageWithoutError) {
         val form: Element = layoutContent.selectHead("form")
         val label: Element = form.selectHead("label")
-
-
         val input: Element = form.selectHead("input")
 
         label.text shouldBe AddBusinessTradeMessages.heading
-
-
         label.attr("for") shouldBe input.attr("id")
-        input.attr("id") shouldBe SessionKeys.businessTrade
-        input.attr("name") shouldBe SessionKeys.businessTrade
+        input.attr("id") shouldBe BusinessTradeForm.businessTrade
+        input.attr("name") shouldBe BusinessTradeForm.businessTrade
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessTrade}-hint"
+        input.attr("aria-describedby") shouldBe s"${BusinessTradeForm.businessTrade}-hint"
       }
       "have a continue button" in new Setup(pageWithoutError) {
         val button: Element = layoutContent.selectHead("form").selectHead("button")
@@ -92,27 +92,19 @@ class AddBusinessTradeViewSpec extends ViewSpec {
       ) foreach { case (errorKey, errorMessage) =>
         s"for the error '$errorMessage'" should {
 
-          "have the error message display with the input described by it" in new Setup(pageWithError(errorKey)) {
-            val form: Element = layoutContent.selectHead("form")
-            form.selectHead("div").attr("class").contains("govuk-form-group--error") shouldBe true
+          "render the error summary" in new Setup(pageWithError(errorKey)) {
+            layoutContent.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+            layoutContent.getElementsByClass("govuk-error-summary__body").text() shouldBe errorMessage
+          }
 
-
-            val error: Element = form.selectHead("span")
-            val input: Element = form.selectHead("input")
-
-            error.attr("id") shouldBe s"${SessionKeys.businessTrade}-error-2"
-            error.text shouldBe s"${AddBusinessTradeMessages.errorPrefix} $errorMessage"
-            val errorPrefix: Element = error.selectHead("span > span")
-            errorPrefix.attr("class") shouldBe "govuk-visually-hidden"
-            errorPrefix.text shouldBe AddBusinessTradeMessages.errorPrefix
-
-            input.attr("aria-describedby") shouldBe s"${SessionKeys.businessTrade}-hint ${SessionKeys.businessTrade}-error"
+          "render the error message" in new Setup(pageWithError(errorKey)) {
+            layoutContent.getElementById("business-trade-error").text() shouldBe s"${AddBusinessTradeMessages.errorPrefix} $errorMessage"
           }
         }
       }
     }
     "pre-populate the previously saved business trade on change route" in new Setup(changePageWithoutError) {
-      document.getElementById("addBusinessTrade").attr("value") shouldBe "Oops wrong trade"
+      document.getElementById("business-trade").attr("value") shouldBe "Oops wrong trade"
     }
   }
 
