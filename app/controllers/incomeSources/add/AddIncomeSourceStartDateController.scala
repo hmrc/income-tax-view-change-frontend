@@ -31,7 +31,7 @@ import play.api.data.Form
 import play.api.http.HttpVerbs
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService}
+import services.{DateService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDate
@@ -50,7 +50,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
-                                                   incomeSourceDetailsService: IncomeSourceDetailsService)
+                                                   incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                   sessionService: SessionService)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -91,9 +92,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    Future.successful(
       if (isEnabled(IncomeSources)) {
-        getFilledForm(form(messagesPrefix), incomeSourceType, isUpdate) match {
+        getFilledForm(form(messagesPrefix), incomeSourceType, isUpdate) map {
           case Right(form) =>
             Ok(
               addIncomeSourceStartDate(
@@ -109,8 +109,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
               s"Failed to get income source start date from session, reason: ${ex.getMessage}")
             showInternalServerError(isAgent)
         }
-      } else Ok(customNotFoundErrorView())
-    )
+      } else Future.successful(Ok(customNotFoundErrorView()))
   }
 
 
@@ -173,12 +172,10 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
   private def getFilledForm(form: Form[DateFormElement],
                             incomeSourceType: IncomeSourceType,
-                            isUpdate: Boolean)(implicit user: MtdItUser[_]): Either[Throwable, Form[DateFormElement]] = {
+                            isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Either[Throwable, Form[DateFormElement]]] = {
 
-    val maybeStartDate = getStartDate(incomeSourceType)
-
-    (maybeStartDate, isUpdate) match {
-      case (Some(date), true) if Try(LocalDate.parse(date)).toOption.isDefined =>
+    getStartDate(incomeSourceType) map {
+      case Some(date) if isUpdate && Try(LocalDate.parse(date)).toOption.isDefined =>
         Right(
           form.fill(
             DateFormElement(
@@ -186,13 +183,16 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             )
           )
         )
-      case (Some(date), true) => Left(new Error(s"Could not parse $date as a LocalDate"))
+      case Some(date) if isUpdate => Left(new Error(s"Could not parse $date as a LocalDate"))
       case _ => Right(form)
     }
   }
 
-  private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[String] = {
-    user.session.get(incomeSourceType.startDateSessionKey)
+  private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[String]] = {
+    sessionService.get(incomeSourceType.startDateSessionKey) map {
+      case Left(_) => None
+      case Right(date) => date
+    }
   }
 
   private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
