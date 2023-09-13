@@ -150,27 +150,56 @@ object IncomeSourcesUtils {
   }
 
   def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
-    val result: Option[Either[Throwable, CheckUKPropertyViewModel]] = for {
-      tradingStartDate <- sessionService.get(addUkPropertyStartDate)
-      cashOrAccrualsFlag <- sessionService.get(addIncomeSourcesAccountingMethod)
-    } yield {
-      Right(CheckUKPropertyViewModel(
-        tradingStartDate = LocalDate.parse(tradingStartDate),
-        cashOrAccrualsFlag = cashOrAccrualsFlag
-      ))
-    }
-
-    result match {
-      case Some(propertyDetails) =>
-        propertyDetails
-      case None =>
-        val errors: Seq[String] = Seq(
-          user.session.data.get(addUkPropertyStartDate).orElse(Some(MissingKey(s"MissingKey: $addUkPropertyStartDate"))),
-          user.session.data.get(businessTrade).orElse(Some(MissingKey(s"MissingKey: $businessTrade")))
-        ).collect {
-          case Some(MissingKey(msg)) => msg
+    sessionService.get(addUkPropertyStartDate).flatMap { startDate: Either[Throwable, Option[String]] =>
+      sessionService.get(addIncomeSourcesAccountingMethod).map { accMethod: Either[Throwable, Option[String]] =>
+        val result = startDate match {
+          case Left(_) => None
+          case Right(dateMaybe) =>
+            accMethod match {
+              case Left(_) => None
+              case Right(methodMaybe) =>
+                for {
+                  foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+                  cashOrAccrualsFlag <- methodMaybe
+                } yield {
+                 CheckUKPropertyViewModel(
+                    tradingStartDate = foreignPropertyStartDate,
+                    cashOrAccrualsFlag = cashOrAccrualsFlag)
+                }
+            }
         }
-        Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
+        result match {
+          case Some(propertyDetails) =>
+            Right(propertyDetails)
+          case None =>
+            val errors: Seq[String] = getErrors(startDate, accMethod)
+            Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
+        }
+      }
     }
+  }
+
+  def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
+    case class MissingKey(msg: String)
+
+    Seq(
+      startDate match {
+        case Right(nameOpt) => nameOpt match {
+          case Some(name) => name
+          case None => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+        }
+        case Left(_) => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+      },
+      accMethod match {
+        case Right(nameOpt) => nameOpt match {
+          case Some(name) => name
+          case None => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+        }
+        case Left(_) => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+      }
+    ).map {
+      case Some(MissingKey(msg)) => msg
+      case _ => ""
+    }.filterNot(x => x == "")
   }
 }
