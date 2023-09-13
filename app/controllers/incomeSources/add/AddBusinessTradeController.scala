@@ -128,8 +128,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       val backURL = getBackURL(isAgent, isChange)
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-      val businessTrade = sessionService.get(SessionKeys.businessTrade) map {
-        case Right(businessTrade) => businessTrade
+      val businessName = sessionService.get(SessionKeys.businessName) map {
+        case Right(businessName) => businessName
         case Left(ex) =>
           Logger("application").error(s"${if (isAgent) "[Agent]"}[AddBusinessTradeController][handleSubmitRequest] Error ${ex.getMessage}")
           errorHandler.showInternalServerError()
@@ -139,7 +139,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
         formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
         formData =>
 
-          if (formData.trade == businessTrade) {
+          if (formData.trade == businessName) {
             Future {
               Ok(
                 addBusinessTradeView(BusinessTradeForm.form, postAction, isAgent = isAgent, backURL, sameNameError = true)
