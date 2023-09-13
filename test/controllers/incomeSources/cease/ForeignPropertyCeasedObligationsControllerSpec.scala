@@ -19,6 +19,7 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.ForeignProperty
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -27,12 +28,12 @@ import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
-import play.api.http.Status.{OK, SEE_OTHER}
+import org.mockito.Mockito.{mock, reset, when}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testPropertyIncomeId}
 import testUtils.TestSupport
 import utils.GetActivePropertyBusinesses
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
@@ -52,6 +53,12 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
   with FeatureSwitching {
 
   val mockDateService: DateService = mock(classOf[DateService])
+  val mockGetActivePropertyBusinesses: GetActivePropertyBusinesses = mock(classOf[GetActivePropertyBusinesses])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockGetActivePropertyBusinesses)
+  }
 
   object TestForeignPropertyObligationsController extends ForeignPropertyCeasedObligationsController(
     obligationsView = app.injector.instanceOf[IncomeSourceCeasedObligations],
@@ -64,7 +71,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
     retrieveBtaNavBar = MockNavBarPredicate,
     nextUpdatesService = mockNextUpdatesService,
     dateService = app.injector.instanceOf[DateServiceInterface],
-    getActivePropertyBusinesses = app.injector.instanceOf[GetActivePropertyBusinesses]
+    getActivePropertyBusinesses = mockGetActivePropertyBusinesses
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -98,7 +105,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
       "navigating to the page with FS Enabled" in {
         disableAllSwitches()
         enable(IncomeSources)
-        mockForeignPropertyIncomeSourceWithCeasedForeignProperty()
+        mockForeignPropertyIncomeSource()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
           "123456",
@@ -126,6 +133,21 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
+        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          .thenReturn(
+            Right(
+              PropertyDetailsModel(
+                incomeSourceId = testPropertyIncomeId,
+                accountingPeriod = None,
+                firstAccountingPeriodEndDate = None,
+                incomeSourceType = Some("03-foreign-property"),
+                tradingStartDate = None,
+                cessation = None,
+                cashOrAccruals = None,
+                latencyDetails = None
+              )
+            )
+          )
 
         val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -136,7 +158,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
     "return 303 SEE_OTHER" when {
       "navigating to the page with FS Disabled" in {
         disable(IncomeSources)
-        mockForeignPropertyIncomeSourceWithCeasedForeignProperty()
+        mockForeignPropertyIncomeSource()
 
         val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
@@ -155,6 +177,36 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
+      "user has no active foreign properties" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockNoIncomeSources()
+
+        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          .thenReturn(
+            Left(
+              new Error("No active foreign properties found.")
+            )
+          )
+
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "user has more than one active foreign properties" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
+
+        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          .thenReturn(
+            Left(
+              new Error("Too many active foreign properties found. There should only be one.")
+            )
+          )
+
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
     }
   }
 
@@ -165,7 +217,6 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
-        mockForeignPropertyIncomeSourceWithCeasedForeignProperty()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
           "123",
@@ -193,6 +244,21 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
+        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          .thenReturn(
+            Right(
+              PropertyDetailsModel(
+                incomeSourceId = testPropertyIncomeId,
+                accountingPeriod = None,
+                firstAccountingPeriodEndDate = None,
+                incomeSourceType = Some("03-foreign-property"),
+                tradingStartDate = None,
+                cessation = None,
+                cashOrAccruals = None,
+                latencyDetails = None
+              )
+            )
+          )
 
         val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -204,7 +270,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
       "navigating to the page with FS Disabled" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         disable(IncomeSources)
-        mockForeignPropertyIncomeSourceWithCeasedForeignProperty()
+        mockForeignPropertyIncomeSource()
 
         val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
@@ -217,6 +283,40 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         status(result) shouldBe SEE_OTHER
       }
     }
+
+    "return 500 INTERNAL_SERVER_ERROR" when {
+      "user has no active foreign properties" in {
+        disableAllSwitches()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        enable(IncomeSources)
+        mockNoIncomeSources()
+
+        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          .thenReturn(
+            Left(
+              new Error("No active foreign properties found.")
+            )
+          )
+
+        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "user has more than one active foreign properties" in {
+        disableAllSwitches()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        enable(IncomeSources)
+        mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
+
+        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          .thenReturn(
+            Left(
+              new Error("Too many active foreign properties found. There should only be one.")
+            )
+          )
+
+        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
   }
 }
-

@@ -90,6 +90,7 @@ object IncomeSourceDetailsTestConstants {
 
 
   val foreignPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails))
+  val twoActiveForeignPropertyIncomes = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails, foreignPropertyDetails2))
   val foreignPropertyIncomeWithCeasedForiegnPropertyIncome = IncomeSourceDetailsModel(testMtdItId, Some("2018"), Nil, List(foreignPropertyDetails, ceasedForeignPropertyDetailsCessation2023))
 
   val ceaseBusinessDetailsModel = CeaseIncomeSourcesViewModel(
