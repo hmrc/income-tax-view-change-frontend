@@ -16,7 +16,6 @@
 
 package forms.incomeSources.add
 
-
 import forms.validation.CustomConstraints
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
@@ -35,14 +34,24 @@ object BusinessNameForm extends CustomConstraints {
   val businessNameEmptyError: String = "add-business-name.form.error.required"
   val businessNameLengthIncorrect: String = "add-business-name.form.error.maxLength"
   val businessNameInvalidChar: String = "add-business-name.form.error.invalidNameFormat"
+  val businessNameInvalid: String = "add-business-name.form.error.invalidName"
 
   private val isValidChars: Constraint[String] = pattern(regex = permittedChars, error = businessNameInvalidChar)
   private val isNotTooLong: Constraint[String] = maxLength(MAX_LENGTH, businessNameLengthIncorrect)
   private val nonEmptyBusinessName: Constraint[String] = nonEmpty(errorMessage = businessNameEmptyError)
 
-  // Form definition
   val form: Form[BusinessNameForm] = Form(mapping(
     businessName -> text
       .verifying(firstError(nonEmptyBusinessName, isValidChars, isNotTooLong))
-  )(BusinessNameForm.apply)(BusinessNameForm.unapply))
+  )(BusinessNameForm.apply)(BusinessNameForm.unapply)
+  )
+
+  def checkBusinessNameWithTradeName(form: Form[BusinessNameForm], businessTradeName: Option[String]): Form[BusinessNameForm] = {
+    businessTradeName match {
+      case Some(tradeName) if !form.hasErrors && form.get.name.equals(tradeName) =>
+        form.withError(businessName, businessNameInvalid)
+      case _ =>
+        form
+    }
+  }
 }
