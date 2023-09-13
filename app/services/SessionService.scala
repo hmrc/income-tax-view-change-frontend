@@ -36,5 +36,11 @@ class SessionService @Inject()() {
       Right(result.addingToSession(key -> value))
     }
   }
+
+  def setList(result: Result, keyValue: (String, String)*)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
+    Future {
+      Right(result.addingToSession(keyValue: _*))
+    }
+  }
 }
 
