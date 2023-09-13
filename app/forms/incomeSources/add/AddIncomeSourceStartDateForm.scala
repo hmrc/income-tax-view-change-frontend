@@ -17,7 +17,7 @@
 package forms.incomeSources.add
 
 import forms.models.DateFormElement
-import forms.validation.Constraints
+import forms.validation.CustomConstraints
 import implicits.ImplicitDateFormatter
 import play.api.data.Form
 import play.api.data.Forms.{default, mapping, text, tuple}
@@ -27,7 +27,7 @@ import services.DateServiceInterface
 
 import java.time.LocalDate
 
-object AddIncomeSourceStartDateForm extends Constraints {
+object AddIncomeSourceStartDateForm extends CustomConstraints {
 
   def apply(messagesPrefix: String)(implicit messages: Messages, dateService: DateServiceInterface, dateFormatter: ImplicitDateFormatter): Form[DateFormElement] = {
 

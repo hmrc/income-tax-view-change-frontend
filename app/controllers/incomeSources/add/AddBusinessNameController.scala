@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
-import forms.BusinessNameForm
+import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
