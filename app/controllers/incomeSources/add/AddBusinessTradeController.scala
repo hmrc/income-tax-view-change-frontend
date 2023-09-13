@@ -34,9 +34,7 @@ import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessTrade
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.util.{Failure, Success}
+import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
@@ -129,33 +127,27 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       val postAction = routes.AddBusinessTradeController.submit(isAgent, isChange)
       val backURL = getBackURL(isAgent, isChange)
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-      val businessNameMayBe = sessionService.get(SessionKeys.businessName).map {
-        case Right(businessName) => businessName
+      val businessNameFuture = sessionService.get(SessionKeys.businessName) map {
+        case Right(businessName) => businessName.getOrElse("")
         case Left(ex) =>
           Logger("application").error(s"${if (isAgent) "[Agent]"}[AddBusinessTradeController][handleSubmitRequest] Error ${ex.getMessage}")
           errorHandler.showInternalServerError()
       }
-
-      val businessName = Await.result(businessNameMayBe, Duration.Inf) match {
-        case Some(businessName) => businessName
-        case _ => ""
-      }
-
-      BusinessTradeForm.form.bindFromRequest().fold(
-        formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
-        formData =>
-
-          if (formData.trade == businessName) {
-            Future {
-              Ok(
-                addBusinessTradeView(BusinessTradeForm.form, postAction, isAgent = isAgent, backURL, sameNameError = true)
-              )
-            } //TODO: move this to form validation
-          } else {
-            handleSuccess(formData.trade, isAgent, isChange)
-          }
-      )
+      businessNameFuture.flatMap(businessName => {
+        BusinessTradeForm.form.bindFromRequest().fold(
+          formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
+          formData =>
+            if (formData.trade == businessName) {
+              Future {
+                Ok(
+                  addBusinessTradeView(BusinessTradeForm.form, postAction, isAgent = isAgent, backURL, sameNameError = true)
+                )
+              } //TODO: move this to form validation
+            } else {
+              handleSuccess(formData.trade, isAgent, isChange)
+            }
+        )
+      })
     }
   }
 
