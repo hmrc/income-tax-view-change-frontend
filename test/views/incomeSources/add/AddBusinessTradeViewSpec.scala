@@ -37,18 +37,23 @@ class AddBusinessTradeViewSpec extends ViewSpec {
     val errorPrefix: String = messages("base.error-prefix")
   }
 
-  val backUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-  val agentBackUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  val backUrl: String = {
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
+  }
+  val agentBackUrl: String = {
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  }
 
   val addBusinessTradeView: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
 
-  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, isAgent = false, backUrl, sameNameError = false)
-  val changePageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form.fill(BusinessTradeForm("Oops wrong trade")), testCall, false, backUrl, false)
+  val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, isAgent = false, backUrl)
+  val changePageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form.fill(BusinessTradeForm("Oops wrong trade")),
+    testCall, isAgent = false, backUrl)
 
   def pageWithError(error: String = BusinessTradeForm.tradeEmptyError): Html = {
     val modifiedForm = BusinessTradeForm.form.withError(BusinessTradeForm.businessTrade, error)
       .fill(BusinessTradeForm("??Invalid Name??"))
-    addBusinessTradeView(modifiedForm, testCall, isAgent = false, backUrl, sameNameError = false)
+    addBusinessTradeView(modifiedForm, testCall, isAgent = false, backUrl)
   }
 
   "The add business trade page" when {

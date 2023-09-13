@@ -396,7 +396,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
       val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-        SessionKeys.businessName -> businessName
+        BusinessNameForm.businessName -> businessName
       ))
 
       status(result) mustBe OK

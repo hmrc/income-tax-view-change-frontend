@@ -161,39 +161,39 @@ class AddBusinessTradeControllerSpec extends TestSupport
       }
 
       "return to add business trade page" when {
-//        "trade name is same as business name" in {
-//          disableAllSwitches()
-//          enable(IncomeSources)
-//
-//          val sameNameAsTrade = "Test Name"
-//          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-//          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-//
-//          val result: Future[Result] =
-//            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
-//              BusinessTradeForm.businessTrade -> sameNameAsTrade
-//            ))
-//
-//          status(result) mustBe OK
-//          contentAsString(result) must include("You cannot enter the same trade and same business name")
-//        }
-//        "trade name is same as business name for agent" in {
-//          disableAllSwitches()
-//          enable(IncomeSources)
-//
-//          val sameNameAsTrade = "Test Name"
-//          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-//          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-//
-//          val result: Future[Result] =
-//            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClientwithBusinessName()
-//              .withFormUrlEncodedBody(
-//                BusinessTradeForm.businessTrade -> sameNameAsTrade
-//              ))
-//
-//          status(result) mustBe OK
-//          contentAsString(result) must include("You cannot enter the same trade and same business name")
-//        }
+        "trade name is same as business name" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          val sameNameAsTrade = "Test Name"
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val result: Future[Result] =
+            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
+              BusinessTradeForm.businessTrade -> sameNameAsTrade
+            ))
+
+          status(result) mustBe OK
+          contentAsString(result) must include("You cannot enter the same trade and same business name")
+        }
+        "trade name is same as business name for agent" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          val sameNameAsTrade = "Test Name"
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+          val result: Future[Result] =
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClientwithBusinessName()
+              .withFormUrlEncodedBody(
+                BusinessTradeForm.businessTrade -> sameNameAsTrade
+              ))
+
+          status(result) mustBe OK
+          contentAsString(result) must include("You cannot enter the same trade and same business name")
+        }
 
         "trade name contains invalid characters" in {
           disableAllSwitches()

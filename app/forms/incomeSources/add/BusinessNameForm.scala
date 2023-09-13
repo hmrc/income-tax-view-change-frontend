@@ -41,14 +41,14 @@ object BusinessNameForm extends CustomConstraints {
   private val nonEmptyBusinessName: Constraint[String] = nonEmpty(errorMessage = businessNameEmptyError)
 
   val form: Form[BusinessNameForm] = Form(mapping(
-    businessName -> text
+    businessName.trim() -> text
       .verifying(firstError(nonEmptyBusinessName, isValidChars, isNotTooLong))
   )(BusinessNameForm.apply)(BusinessNameForm.unapply)
   )
 
   def checkBusinessNameWithTradeName(form: Form[BusinessNameForm], businessTradeName: Option[String]): Form[BusinessNameForm] = {
     businessTradeName match {
-      case Some(tradeName) if !form.hasErrors && form.get.name.equals(tradeName) =>
+      case Some(tradeName) if !form.hasErrors && form.get.name.trim.toLowerCase.equals(tradeName.trim.toLowerCase) =>
         form.withError(businessName, businessNameInvalid)
       case _ =>
         form
