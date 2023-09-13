@@ -158,11 +158,11 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
               if (isAgent) {
                 Logger("application").error(
                   s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-                getErrorHandler(isAgent).showInternalServerError()
+                Redirect(redirectErrorUrl)
               } else {
                 Logger("application").error(
                   s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-                getErrorHandler(isAgent).showInternalServerError()
+                Redirect(redirectErrorUrl)
               }
           }
         case Left(ex: Throwable) =>
