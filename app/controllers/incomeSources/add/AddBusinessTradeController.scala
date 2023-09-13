@@ -24,10 +24,11 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessTrade
@@ -45,7 +46,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,
                                            val itvcErrorHandler: ItvcErrorHandler,
-                                           incomeSourceDetailsService: IncomeSourceDetailsService)
+                                           incomeSourceDetailsService: IncomeSourceDetailsService,
+                                           val sessionService: SessionService)
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                            implicit override val mcc: MessagesControllerComponents,
@@ -99,18 +101,18 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       handleRequest(isAgent, isChange)
   }
 
-  private def getBusinessTradeFromSession(implicit user: MtdItUser[_]): Option[String] = {
-    user.session.get(SessionKeys.businessTrade)
-  }
-
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val businessTradeFromSession = if (isChange) getBusinessTradeFromSession else None
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       val backURL = getBackURL(isAgent, isChange)
       val postAction = controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
 
-      Future {
-        Ok(addBusinessTradeView(BusinessTradeForm.form, postAction, isAgent, backURL, sameNameError = false, businessTradeFromSession))
+      sessionService.get(SessionKeys.businessTrade) map {
+        case Right(businessTrade) =>
+          Ok(addBusinessTradeView(BusinessTradeForm.form, postAction, isAgent, backURL, sameNameError = false, businessTrade))
+        case Left(ex) =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"}[AddBusinessTradeController][handleRequest] Error ${ex.getMessage}")
+          errorHandler.showInternalServerError()
       }
     }
   }
@@ -124,11 +126,20 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     withIncomeSourcesFS {
       val postAction = routes.AddBusinessTradeController.submit(isAgent, isChange)
       val backURL = getBackURL(isAgent, isChange)
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+      val businessTrade = sessionService.get(SessionKeys.businessTrade) map {
+        case Right(businessTrade) => businessTrade
+        case Left(ex) =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"}[AddBusinessTradeController][handleSubmitRequest] Error ${ex.getMessage}")
+          errorHandler.showInternalServerError()
+      }
 
       BusinessTradeForm.form.bindFromRequest().fold(
         formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
         formData =>
-          if (formData.trade == user.session.get(SessionKeys.businessName).get) {
+
+          if (formData.trade == businessTrade) {
             Future {
               Ok(
                 addBusinessTradeView(BusinessTradeForm.form, postAction, isAgent = isAgent, backURL, sameNameError = true)
@@ -152,10 +163,13 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
   def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val successURL = getSuccessURL(isAgent, isChange)
-
-    Future {
-      Redirect(successURL)
-        .addingToSession(SessionKeys.businessTrade -> businessTrade)
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    val redirect = Redirect(successURL)
+    sessionService.set(SessionKeys.businessTrade, businessTrade, redirect).map {
+      case Right(result) => result
+      case Left(error) =>
+        Logger("application").error(s"[AddBusinessTradeController][handleSuccess] $error")
+        errorHandler.showInternalServerError()
     }
   }
 }
