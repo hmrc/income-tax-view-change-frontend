@@ -1,18 +1,18 @@
 @*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2023 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
@@ -26,31 +26,31 @@
 
 
 @this(
-  mainTemplate: unifiedLayout,
-  h1: h1,
-  implicitDateFormatter: ImplicitDateFormatterImpl,
-  continueButton: ContinueButton,
-  formWithCSRF: FormWithCSRF,
-  errorSummary: ErrorSummary
+        mainTemplate: unifiedLayout,
+        h1: h1,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary
 )
 
 @(sources: ObligationsViewModel, backUrl: Option[String] = Some(""), isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
-  messages(s"business-ceased.obligation.$key", args: _*)
+    messages(s"business-ceased.obligation.$key", args: _*)
 }
 
 @businessNameFinal = @{ businessName.getOrElse(getMessage("heading1.se.part2")) }
 
 @getPageTitle = @{
 
-incomeSourceType match {
+    incomeSourceType match {
         case  _:SelfEmployment.type =>
             s"""${getMessage("heading1.se.part1")} ${businessNameFinal} ${getMessage("heading1.base")}""".trim()
 
         case _:UkProperty.type =>
             s"${getMessage("heading1.uk-property.part2")} " +
-            s"${getMessage("heading1.base")}".trim()
+                    s"${getMessage("heading1.base")}".trim()
 
         case _:ForeignProperty.type =>
             s"""${getMessage("heading1.foreign-property.part2")} ${getMessage("heading1.base")}"""
@@ -67,13 +67,13 @@ incomeSourceType match {
 
 @bannerHtmlContent(head:String, h1:String, base:String) = {
     <div class="govuk-panel__body govuk-!-margin-bottom-3">
-        @head
+    @head
     </div>
     <h1 class="govuk-panel__title">
-        @h1
+    @h1
     </h1>
     <div class="govuk-panel__body">
-        @base
+    @base
     </div>
 }
 
@@ -84,7 +84,7 @@ incomeSourceType match {
         case _:UkProperty.type =>
             bannerHtmlContent("",getMessage("heading1.uk-property.part2"),getMessage("heading1.base"))
         case _:ForeignProperty.type =>
-        bannerHtmlContent("",getMessage("heading1.foreign-property.part2"),getMessage("heading1.base"))
+            bannerHtmlContent("",getMessage("heading1.foreign-property.part2"),getMessage("heading1.base"))
     }
 }
 
@@ -92,84 +92,48 @@ incomeSourceType match {
 
 @import implicitDateFormatter.longDate
 @mainTemplate(pageTitle = getPageTitle,
-  backUrl = backUrl,
-  isAgent = isAgent,
-  btaNavPartial = user.btaNavPartial,
-  useFallbackBackLink = true) {
+    backUrl = backUrl,
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true) {
 
     @formWithCSRF(action = getCeaseIncomeSourceCall) {
 
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
-            @getBannerContent()
+        @getBannerContent()
         </div>
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-                @getMessage("heading2.text")
+            @getMessage("heading2.text")
             </label>
         </h2>
 
 
         @if(sources.quarterlyObligationsDatesYearOne.nonEmpty){
-        <div class="box-simple" id="quarterly">
-            <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
-            <p class="govuk-body"> @getMessage("quarterly-p1") </p>
+            <div class="box-simple" id="quarterly">
+                <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
+                <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk">
-                        @{
-                            val head = getMessage("table.heading-1")
-                            val to = getMessage("to")
-                            val fromYear = sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear
-                            val toYear = fromYear + 1
-
-                            s"""$head $fromYear $to $toYear"""
-                        }
-                        </th>
-                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
-                </tr>
-                </thead>
-
-                <tbody class="govuk-table__body">
-                @sources.quarterlyObligationsDatesYearOne.map{ x =>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                        @{
-                            val fromDate = x.inboundCorrespondenceFrom.toLongDate
-                            val to = getMessage("to")
-                            val toDate = x.inboundCorrespondenceTo.toLongDate
-
-                            s"""$fromDate $to $toDate"""
-                        }
-                    </td>
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
-                </tr>
-                }
-                </tbody>
-            </table>
-
-                @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty){
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header govuk">
-                                @{
-                                    val head = getMessage("table.heading-1")
-                                    val to = getMessage("to")
-                                    val fromYear = sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear
-                                    val toYear = fromYear + 1
+                            @{
+                                val head = getMessage("table.heading-1")
+                                val to = getMessage("to")
+                                val fromYear = sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear
+                                val toYear = fromYear + 1
 
-                                    s"""$head $fromYear $to $toYear"""
-                                }
+                                s"""$head $fromYear $to $toYear"""
+                            }
                             </th>
                             <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
                         </tr>
-                        </thead>
+                    </thead>
 
-                        <tbody class="govuk-table__body">
-                        @sources.quarterlyObligationsDatesYearTwo.map{ x =>
+                    <tbody class="govuk-table__body">
+                    @sources.quarterlyObligationsDatesYearOne.map{ x =>
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">
                                 @{
@@ -182,82 +146,117 @@ incomeSourceType match {
                             </td>
                             <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
                         </tr>
+                    }
+                    </tbody>
+
+                    @if(sources.quarterlyObligationsDatesYearTwo.nonEmpty){
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header govuk">
+                                @{
+                                    val head = getMessage("table.heading-1")
+                                    val to = getMessage("to")
+                                    val fromYear = sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear
+                                    val toYear = fromYear + 1
+
+                                    s"""$head $fromYear $to $toYear"""
+                                }
+                                </th>
+                                <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="govuk-table__body">
+                        @sources.quarterlyObligationsDatesYearTwo.map{ x =>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">
+                                    @{
+                                        val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                                        val to = getMessage("to")
+                                        val toDate = x.inboundCorrespondenceTo.toLongDate
+
+                                        s"""$fromDate $to $toDate"""
+                                    }
+                                </td>
+                                <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                            </tr>
                         }
                         </tbody>
                     }
                 </table>
-        </div>
+            </div>
         }
 
         @if(sources.eopsObligationsDates.nonEmpty){
-        <div class="box-simple" id="eops">
-            <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
-            <p class="govuk-body"> @getMessage("eops-p1") </p>
+            <div class="box-simple" id="eops">
+                <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
+                <p class="govuk-body"> @getMessage("eops-p1") </p>
 
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-1")</th>
-                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
-                </tr>
-                </thead>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-1")</th>
+                            <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
+                        </tr>
+                    </thead>
 
-                <tbody class="govuk-table__body">
-                @sources.eopsObligationsDates.map{ x =>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                        @{
-                            val fromDate = x.inboundCorrespondenceFrom.toLongDate
-                            val to = getMessage("to")
-                            val toDate = x.inboundCorrespondenceTo.toLongDate
+                    <tbody class="govuk-table__body">
+                    @sources.eopsObligationsDates.map{ x =>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                @{
+                                    val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                                    val to = getMessage("to")
+                                    val toDate = x.inboundCorrespondenceTo.toLongDate
 
-                            s"""$fromDate $to $toDate"""
-                        }
-                    </td>
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
-                </tr>
-                }
-                </tbody>
-            </table>
-        </div>
+                                    s"""$fromDate $to $toDate"""
+                                }
+                            </td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
         }
 
 
         @if(sources.finalDeclarationDates.nonEmpty) {
-        <div class="box-simple" id="finalDeclaration">
-            <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
-            <p class="govuk-body"> @getMessage("final-declaration-text") </p>
+            <div class="box-simple" id="finalDeclaration">
+                <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
+                <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-1")</th>
-                    <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
-                </tr>
-                </thead>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-1")</th>
+                            <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
+                        </tr>
+                    </thead>
 
-                <tbody class="govuk-table__body">
-                @sources.finalDeclarationDates.map{ x =>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">
-                        @{
-                            val fromDate = x.inboundCorrespondenceFrom.toLongDate
-                            val to = getMessage("to")
-                            val toDate = x.inboundCorrespondenceTo.toLongDate
+                    <tbody class="govuk-table__body">
+                    @sources.finalDeclarationDates.map{ x =>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                @{
+                                    val fromDate = x.inboundCorrespondenceFrom.toLongDate
+                                    val to = getMessage("to")
+                                    val toDate = x.inboundCorrespondenceTo.toLongDate
 
-                            s"""$fromDate $to $toDate"""
-                        }
-                    </td>
-                    <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
-                </tr>
-                }
-                </tbody>
-            </table>
-        </div>
+                                    s"""$fromDate $to $toDate"""
+                                }
+                            </td>
+                            <td class="govuk-table__cell">@(x.inboundCorrespondenceDue.toLongDate)</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
         }
 
+
         <div class="govuk-!-margin-top-8">
-            @continueButton( Some(getMessage("income-sources-button")) )
+        @continueButton( Some(getMessage("income-sources-button")) )
         </div>
     }
 }
