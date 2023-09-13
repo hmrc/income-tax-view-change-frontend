@@ -36,33 +36,6 @@
 
 @(sources: ObligationsViewModel, backUrl: Option[String] = Some(""), isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@sources = @{
-    ObligationsViewModel(
-        quarterlyObligationsDatesYearOne = Seq(
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-        ),
-        quarterlyObligationsDatesYearTwo = Seq(
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-        ),
-        eopsObligationsDates = Seq(
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-        ),
-        finalDeclarationDates = Seq(
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-            DatesModel(LocalDate.of(2022, 1, 6), LocalDate.of(2020, 4, 5), LocalDate.of(2020, 5, 5), "EOPS", true),
-        ),
-        currentTaxYear = 2022,
-        showPrevTaxYears = true
-    )
-}
-
 @getMessage(key: String, args: String*) = @{
   messages(s"business-ceased.obligation.$key", args: _*)
 }
