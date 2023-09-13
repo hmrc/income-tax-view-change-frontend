@@ -24,10 +24,11 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.utils.SessionKeys
+import models.incomeSourceDetails.BusinessAddressModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{AddressLookupService, IncomeSourceDetailsService}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 import javax.inject.Inject
@@ -47,7 +48,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                              val appConfig: FrontendAppConfig,
                                              val ec: ExecutionContext,
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                             mcc: MessagesControllerComponents
+                                             mcc: MessagesControllerComponents,
+                                             val sessionService: SessionService
                                             )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
@@ -96,13 +98,11 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
   }
 
-  def handleSubmitRequest(isAgent: Boolean, id: Option[String], isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
-    val res = addressLookupService.fetchAddress(id)
-    res map {
+  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], redirect: Result)(implicit request: Request[_]): Future[Either[Throwable, Result]] = {
+    // multiple key / value pair update example
+    addressLookUpResult match {
       case Right(value) =>
-        Redirect(redirectUrl).addingToSession(
+        val kvPairs : Map[String, String] = Map(
           SessionKeys.addBusinessAddressLine1 -> {
             if (value.address.lines.isDefinedAt(0)) value.address.lines.head else ""
           },
@@ -115,18 +115,49 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
           SessionKeys.addBusinessAddressLine4 -> {
             if (value.address.lines.isDefinedAt(3)) value.address.lines(3) else ""
           },
-          SessionKeys.addBusinessPostalCode -> value.address.postcode.getOrElse(""), // check what postcode null value should be
+          SessionKeys.addBusinessPostalCode -> {
+            value.address.postcode.getOrElse("")
+          },
           SessionKeys.addBusinessCountryCode -> "GB"
         )
-      case Left(value) =>
-        Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: $value")
+        kvPairs.foldLeft[ Future[Either[Throwable, Result]] ]( Future{ Right(redirect) }) { (acc, kv) =>
+          val e = for {
+            a <- acc
+          } yield a match {
+            case Right(r) =>
+              sessionService.set(kv._1, kv._2, r)
+            case Left(ex) =>
+              Future{ Left(ex) }
+          }
+          e.flatten
+        }
+      case Left(ex) =>
+        Future.successful(Left(ex))
+    }
+  }
+
+
+  def handleSubmitRequest(isAgent: Boolean, id: Option[String], isChange: Boolean)(implicit user: MtdItUser[_],
+                                                                                   ec: ExecutionContext, request: Request[_]): Future[Result] = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
+    val redirect = Redirect(redirectUrl)
+    for {
+      addressLookUpResult <- addressLookupService.fetchAddress(id)
+      sessionResult <- setUpSession(addressLookUpResult, redirect)(request)
+    } yield sessionResult match {
+      case Right(updateResult) =>
+        updateResult
+      case Left(ex) =>
+        Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: $ex ")
         errorHandler.showInternalServerError()
     }
   }
 
   def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleSubmitRequest(isAgent = false, id, isChange = isChange)
+    implicit user =>
+      handleSubmitRequest(isAgent = false, id, isChange = isChange)
   }
 
   def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = Authenticated.async {
