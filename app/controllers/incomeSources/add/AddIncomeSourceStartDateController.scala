@@ -120,11 +120,10 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    Future.successful(
       if (isEnabled(IncomeSources)) {
         form(messagesPrefix).bindFromRequest().fold(
           formWithErrors =>
-            BadRequest(
+            Future.successful(BadRequest(
               addIncomeSourceStartDate(
                 isAgent = isAgent,
                 form = formWithErrors,
@@ -132,22 +131,23 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                 postAction = getPostAction(incomeSourceType, isAgent, isUpdate),
                 messagesPrefix = messagesPrefix
               )
-            ),
-          formData =>
-            Redirect(getSuccessUrl(incomeSourceType, isAgent, isUpdate))
-              .addingToSession(
-                (incomeSourceType match {
-                  case SelfEmployment =>
-                    SessionKeys.addBusinessStartDate
-                  case UkProperty =>
-                    SessionKeys.addUkPropertyStartDate
-                  case ForeignProperty =>
-                    SessionKeys.foreignPropertyStartDate
-                }) -> formData.date.toString
-              )
+            )),
+          formData => {
+            val key = incomeSourceType match {
+              case SelfEmployment =>
+                SessionKeys.addBusinessStartDate
+              case UkProperty =>
+                SessionKeys.addUkPropertyStartDate
+              case ForeignProperty =>
+                SessionKeys.foreignPropertyStartDate
+            }
+            sessionService.set(key, formData.date.toString, Redirect(getSuccessUrl(incomeSourceType, isAgent, isUpdate))) map {
+              case Left(_) => Ok(customNotFoundErrorView())
+              case Right(result) => result
+            }
+          }
         )
-      } else Ok(customNotFoundErrorView())
-    )
+      } else Future.successful(Ok(customNotFoundErrorView()))
   }
 
   private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
