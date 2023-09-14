@@ -141,13 +141,20 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
               case ForeignProperty =>
                 SessionKeys.foreignPropertyStartDate
             }
-            sessionService.set(key, formData.date.toString, Redirect(getSuccessUrl(incomeSourceType, isAgent, isUpdate))) map {
+            setStorage(key, formData.date.toString, Redirect(getSuccessUrl(incomeSourceType, isAgent, isUpdate))) map {
               case Left(_) => Ok(customNotFoundErrorView())
               case Right(result) => result
             }
           }
         )
       } else Future.successful(Ok(customNotFoundErrorView()))
+  }
+
+  private def setStorage(key: String, value: String, result: Result)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
+    sessionService.set(key, value, result)
+  }
+  private def getStorage(key: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
+    sessionService.get(key)
   }
 
   private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
@@ -175,23 +182,31 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                             isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Either[Throwable, Form[DateFormElement]]] = {
 
     getStartDate(incomeSourceType) map {
-      case Some(date) if isUpdate && Try(LocalDate.parse(date)).toOption.isDefined =>
-        Right(
-          form.fill(
-            DateFormElement(
-              LocalDate.parse(date)
+      case Left(ex: Exception) =>
+        Left(new Error(s"Error retrieving start date from session storage: ${ex.getMessage}"))
+      case Left(_) => Left(new Error("Unknown error occurred when retrieving start date from session storage"))
+      case Right(date) =>
+        if (isUpdate)
+          Right(
+            form.fill(
+              DateFormElement(date)
             )
           )
-        )
-      case Some(date) if isUpdate => Left(new Error(s"Could not parse $date as a LocalDate"))
-      case _ => Right(form)
+        else Right(form)
     }
   }
 
-  private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[String]] = {
-    sessionService.get(incomeSourceType.startDateSessionKey) map {
-      case Left(_) => None
-      case Right(date) => date
+  private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable,LocalDate]] = {
+    getStorage(incomeSourceType.startDateSessionKey) map {
+      case Left(x) => Left(x)
+      case Right(dateMaybe) =>
+        dateMaybe match {
+          case Some(date) => Try(LocalDate.parse(date)).toOption match {
+            case Some(value) => Right(value)
+            case None => Left(new Error(s"Could not parse $dateMaybe as a LocalDate"))
+          }
+          case None => Left(new Error(s"Could not find session storage value for $incomeSourceType.startDateSessionKey"))
+        }
     }
   }
 

@@ -150,7 +150,26 @@ object IncomeSourcesUtils {
   }
 
   def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
-    sessionService.get(addUkPropertyStartDate).flatMap { startDate: Either[Throwable, Option[String]] =>
+    for {
+      startDate <- sessionService.get(addUkPropertyStartDate)
+      accMethod <- sessionService.get(addIncomeSourcesAccountingMethod)
+    } yield (startDate, accMethod) match {
+      case (Right(dateMaybe), Right(methodMaybe)) =>
+        val maybeModel = for {
+          foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+          cashOrAccrualsFlag <- methodMaybe
+        } yield {
+          CheckUKPropertyViewModel(
+            tradingStartDate = foreignPropertyStartDate,
+            cashOrAccrualsFlag = cashOrAccrualsFlag)
+        }
+        maybeModel.map(Right(_))
+          .getOrElse(Left(new Error("Unable to construct model")))
+      case (_, _) =>
+        Left(new Error("Some error"))
+    }
+
+    /*sessionService.get(addUkPropertyStartDate).flatMap { startDate: Either[Throwable, Option[String]] =>
       sessionService.get(addIncomeSourcesAccountingMethod).map { accMethod: Either[Throwable, Option[String]] =>
         val result = startDate match {
           case Left(_) => None
@@ -176,30 +195,21 @@ object IncomeSourcesUtils {
             Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
         }
       }
-    }
+    }*/
   }
 
   def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
-    case class MissingKey(msg: String)
 
-    Seq(
-      startDate match {
+    def checkError(field: Either[Throwable, Option[String]]): String = {
+      field match {
         case Right(nameOpt) => nameOpt match {
           case Some(name) => name
-          case None => Some(MissingKey("MissingKey: addUKPropertyStartDate"))
+          case None => "MissingKey: addUKPropertyStartDate"
         }
-        case Left(_) => Some(MissingKey("MissingKey: addUKPropertyStartDate"))
-      },
-      accMethod match {
-        case Right(nameOpt) => nameOpt match {
-          case Some(name) => name
-          case None => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
-        }
-        case Left(_) => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+        case Left(_) => "MissingKey: addUKPropertyStartDate"
       }
-    ).map {
-      case Some(MissingKey(msg)) => msg
-      case _ => ""
-    }.filterNot(x => x == "")
+    }
+
+    Seq(checkError(startDate), checkError(accMethod))
   }
 }
