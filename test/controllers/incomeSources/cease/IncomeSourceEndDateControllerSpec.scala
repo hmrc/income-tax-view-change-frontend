@@ -33,7 +33,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId, testSelfEmploymentId2}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
@@ -42,7 +42,7 @@ import views.html.incomeSources.cease.IncomeSourceEndDate
 import scala.concurrent.Future
 
 class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-  with FeatureSwitching with MockSessionService{
+  with FeatureSwitching with MockSessionService {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val validCeaseDate: String = "2022-08-27"
