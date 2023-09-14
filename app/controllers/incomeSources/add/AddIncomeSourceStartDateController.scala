@@ -181,19 +181,19 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                             incomeSourceType: IncomeSourceType,
                             isUpdate: Boolean)(implicit user: MtdItUser[_]): Future[Either[Throwable, Form[DateFormElement]]] = {
 
-    getStartDate(incomeSourceType) map {
-      case Left(ex: Exception) =>
-        Left(new Error(s"Error retrieving start date from session storage: ${ex.getMessage}"))
-      case Left(_) => Left(new Error("Unknown error occurred when retrieving start date from session storage"))
-      case Right(date) =>
-        if (isUpdate)
-          Right(
-            form.fill(
-              DateFormElement(date)
+    if (isUpdate){
+      getStartDate(incomeSourceType) map {
+        case Right(date) =>
+            Right(
+              form.fill(
+                DateFormElement(date)
+              )
             )
-          )
-        else Right(form)
+        case Left(ex) =>
+          Left(new Error(s"Error occurred while retrieving start date from session storage: ${ex.getMessage}"))
+      }
     }
+    else Future(Right(form))
   }
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable,LocalDate]] = {

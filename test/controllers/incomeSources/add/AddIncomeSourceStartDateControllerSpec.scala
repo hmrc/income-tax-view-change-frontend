@@ -624,7 +624,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
+
+        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient().withSession(ForeignProperty.startDateSessionKey -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
@@ -640,7 +641,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient().withSession(UkProperty.startDateSessionKey -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
@@ -656,7 +657,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(fakeRequestConfirmedClient().withSession(SelfEmployment.startDateSessionKey -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("add-business-start-date.heading"))
