@@ -65,7 +65,6 @@ class AddBusinessTradeControllerSpec extends TestSupport
       retrieveBtaNavBar = MockNavBarPredicate,
       sessionService = app.injector.instanceOf[SessionService],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      sessionService = app.injector.instanceOf[SessionService]
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
