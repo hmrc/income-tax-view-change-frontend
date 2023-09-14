@@ -18,11 +18,12 @@ package utils
 
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
-import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import services.SessionService
 import testUtils.TestSupport
 
 import java.time.LocalDate
+import scala.language.postfixOps
 
 class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
 
@@ -41,6 +42,8 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     cashOrAccrualsFlag = "Cash",
     skippedAccountingMethod = false
   )
+
+  val sessionService = app.injector.instanceOf[SessionService]
 
   val checkUKPropertyViewModel = CheckUKPropertyViewModel(
     tradingStartDate = LocalDate.of(2023, 5, 1),
@@ -62,18 +65,17 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     "user has business details in session" should {
       "return CheckBusinessDetailsViewModel" in {
         implicit val user = individualUser.copy()(fakeRequest)
-        val result = IncomeSourcesUtils.getBusinessDetailsFromSession
-        result shouldBe Right(viewModelMax)
+        val result = IncomeSourcesUtils.getBusinessDetailsFromSession(sessionService)
+        result.futureValue shouldBe viewModelMax
       }
     }
 
     "user is missing business details in session" should {
       "returns an exception" in {
-        val result = IncomeSourcesUtils.getBusinessDetailsFromSession
-        result.isLeft shouldBe true
+        val result = IncomeSourcesUtils.getBusinessDetailsFromSession(sessionService)
+        result.failed.futureValue shouldBe an[Exception]
       }
     }
-
   }
 
   "getUKPropertyDetailsFromSession" when {
@@ -101,7 +103,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
         val redirect = withIncomeSourcesRemovedFromSession {
           Redirect("nowhere")
         }
-        
+
         redirect.session.get("addUkPropertyStartDate") shouldBe None
         redirect.session.get("addBusinessName") shouldBe None
         redirect.session.get("addBusinessTrade") shouldBe None

@@ -22,12 +22,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
-import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
+import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
+import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -47,7 +46,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
-                                               val businessDetailsService: CreateBusinessDetailsService)
+                                               val businessDetailsService: CreateBusinessDetailsService,
+                                               val sessionService: SessionService)
                                               (implicit val ec: ExecutionContext,
                                                implicit override val mcc: MessagesControllerComponents,
                                                val appConfig: FrontendAppConfig,
@@ -105,26 +105,25 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
 
     withIncomeSourcesFS {
-      Future {
-        getBusinessDetailsFromSession(user) match {
-          case Right(viewModel) =>
-            Ok(checkBusinessDetails(
-              viewModel = viewModel,
-              postAction = postAction,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          case Left(ex) =>
-            if (isAgent) {
-              Logger("application").error(
-                s"[Agent][CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandlerAgent.showInternalServerError()
-            } else {
-              Logger("application").error(
-                s"[CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
-            }
-        }
+      getBusinessDetailsFromSession(sessionService)(user, ec).flatMap {
+        viewModel =>
+          Future.successful(Ok(checkBusinessDetails(
+            viewModel = viewModel,
+            postAction = postAction,
+            isAgent = isAgent,
+            backUrl = backUrl
+          )))
+      }.recover {
+        case ex: Throwable =>
+          if (isAgent) {
+            Logger("application").error(
+              s"[Agent][CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+            itvcErrorHandlerAgent.showInternalServerError()
+          } else {
+            Logger("application").error(
+              s"[CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+          }
       }
     }
   }
@@ -139,28 +138,19 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         else
           (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url)
       }
-      getBusinessDetailsFromSession(user).toOption match {
-        case Some(viewModel: CheckBusinessDetailsViewModel) =>
-          businessDetailsService.createBusinessDetails(viewModel).map {
-            case Left(ex) => Logger("application").error(
-              s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Unable to create income source: ${ex.getMessage}")
-              Redirect(errorHandler)
-
+      getBusinessDetailsFromSession(sessionService)(user, ec).flatMap {
+        viewModel =>
+          businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession {
-                Redirect(redirect(id).url)
-              }
-          }.recover {
-            case ex: Throwable =>
-              Logger("application").error(
-                s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
-              withIncomeSourcesRemovedFromSession {
-                Redirect(errorHandler)
-              }
+              newWithIncomeSourcesRemovedFromSession(Redirect(redirect(id).url), sessionService, Redirect(errorHandler))
+            case Left(ex) => Future.failed(ex)
           }
-        case _ => Logger("application").error(
-          s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Error: Unable to build view model on submit")
-          Future.successful(Redirect(errorHandler))
+      }.recover {
+        case ex: Throwable =>
+          Logger("application").error(
+            s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
+          newWithIncomeSourcesRemovedFromSession(Redirect(errorHandler), sessionService, Redirect(errorHandler))
+          Redirect(errorHandler)
       }
     }
   }

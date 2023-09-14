@@ -18,15 +18,18 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching {
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
@@ -37,6 +40,35 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       }
     } else {
       codeBlock
+    }
+  }
+
+  def newWithIncomeSourcesRemovedFromSession(redirect: Result, sessionService: SessionService, errorRedirect: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val incomeSourcesSessionKeys = Seq(
+      "addUkPropertyStartDate",
+      "addForeignPropertyStartDate",
+      "addBusinessName",
+      "addBusinessTrade",
+      "addIncomeSourcesAccountingMethod",
+      "addBusinessStartDate",
+      "addBusinessAccountingPeriodStartDate",
+      "addBusinessAccountingPeriodEndDate",
+      "addBusinessStartDate",
+      "addBusinessAddressLine1",
+      "addBusinessAddressLine2",
+      "addBusinessAddressLine3",
+      "addBusinessAddressLine4",
+      "addBusinessPostalCode",
+      "addBusinessCountryCode",
+      "ceaseForeignPropertyDeclare",
+      "ceaseForeignPropertyEndDate",
+      "ceaseUKPropertyDeclare",
+      "ceaseUKPropertyEndDate"
+    ) //TODO: check this is all the keys
+
+    sessionService.remove(incomeSourcesSessionKeys, redirect).map {
+      case Left(_) => errorRedirect
+      case Right(result) => result
     }
   }
 
@@ -71,49 +103,49 @@ object IncomeSourcesUtils {
 
   case class MissingKey(msg: String)
 
-  def getBusinessDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
+  def getBusinessDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[CheckBusinessDetailsViewModel] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
 
-    val result: Option[Either[Throwable, CheckBusinessDetailsViewModel]] = for {
-      businessName <- user.session.data.get(businessName)
-      businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
-      businessTrade <- user.session.data.get(businessTrade)
-      businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
-      businessAccountingMethod <- user.session.data.get(addIncomeSourcesAccountingMethod)
-      accountingPeriodEndDate <- user.session.data.get(addBusinessAccountingPeriodEndDate).map(LocalDate.parse)
-    } yield {
-      Right(CheckBusinessDetailsViewModel(
-        businessName = Some(businessName),
-        businessStartDate = Some(businessStartDate),
-        accountingPeriodEndDate = accountingPeriodEndDate,
-        businessTrade = businessTrade,
-        businessAddressLine1 = businessAddressLine1,
-        businessAddressLine2 = user.session.data.get(addBusinessAddressLine2),
-        businessAddressLine3 = user.session.data.get(addBusinessAddressLine3),
-        businessAddressLine4 = user.session.data.get(addBusinessAddressLine4),
-        businessPostalCode = user.session.data.get(addBusinessPostalCode),
-        businessCountryCode = user.session.data.get(addBusinessCountryCode),
-        incomeSourcesAccountingMethod = user.session.data.get(addIncomeSourcesAccountingMethod),
-        cashOrAccrualsFlag = businessAccountingMethod,
-        skippedAccountingMethod = skipAccountingMethod
-      ))
-    }
+    val result = for {
+      businessName <- sessionService.get(SessionKeys.businessName)
+      businessStartDate <- sessionService.get(SessionKeys.businessStartDate)
+      businessTrade <- sessionService.get(SessionKeys.businessTrade)
+      businessAddressLine1 <- sessionService.get(SessionKeys.addBusinessAddressLine1)
+      businessAccountingMethod <- sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod)
+      accountingPeriodEndDate <- sessionService.get(SessionKeys.addBusinessAccountingPeriodEndDate)
+      businessAddressLine2 <- sessionService.get(SessionKeys.addBusinessAddressLine2)
+      businessAddressLine3 <- sessionService.get(SessionKeys.addBusinessAddressLine3)
+      businessAddressLine4 <- sessionService.get(SessionKeys.addBusinessAddressLine4)
+      businessPostalCode <- sessionService.get(SessionKeys.addBusinessPostalCode)
+      businessCountryCode <- sessionService.get(SessionKeys.addBusinessCountryCode)
+      incomeSourcesAccountingMethod <- sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod)
+    } yield (businessName, businessStartDate, businessTrade, businessAddressLine1,
+      businessAccountingMethod, accountingPeriodEndDate, businessAddressLine2,
+      businessAddressLine3, businessAddressLine4, businessPostalCode, businessCountryCode,
+      incomeSourcesAccountingMethod)
 
-    result match {
-      case Some(checkBusinessDetailsViewModel) =>
-        checkBusinessDetailsViewModel
-      case None =>
-        val errors: Seq[String] = Seq(
-          user.session.data.get(businessName).orElse(Some(MissingKey("MissingKey: addBusinessName"))),
-          user.session.data.get(businessStartDate).orElse(Some(MissingKey("MissingKey: addBusinessStartDate"))),
-          user.session.data.get(businessTrade).orElse(Some(MissingKey("MissingKey: addBusinessTrade"))),
-          user.session.data.get(addBusinessAddressLine1).orElse(Some(MissingKey("MissingKey: addBusinessAddressLine1"))),
-          user.session.data.get(addBusinessPostalCode).orElse(Some(MissingKey("MissingKey: addBusinessPostalCode")))
-        ).collect {
-          case Some(MissingKey(msg)) => msg
-        }
-        Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
+    result.flatMap {
+      case (Right(businessName), Right(businessStartDate), Right(Some(businessTrade)),
+      Right(Some(businessAddressLine1)), Right(Some(businessAccountingMethod)), Right(accountingPeriodEndDate),
+      Right(businessAddressLine2), Right(businessAddressLine3), Right(businessAddressLine4), Right(businessPostalCode),
+      Right(businessCountryCode), Right(incomeSourcesAccountingMethod)) =>
+        Future.successful(CheckBusinessDetailsViewModel(
+          businessName = businessName,
+          businessStartDate = businessStartDate.map(LocalDate.parse(_)),
+          accountingPeriodEndDate = accountingPeriodEndDate.map(LocalDate.parse(_)).get,
+          businessTrade = businessTrade,
+          businessAddressLine1 = businessAddressLine1,
+          businessAddressLine2 = businessAddressLine2,
+          businessAddressLine3 = businessAddressLine3,
+          businessAddressLine4 = businessAddressLine4,
+          businessPostalCode = businessPostalCode,
+          businessCountryCode = businessCountryCode,
+          incomeSourcesAccountingMethod = incomeSourcesAccountingMethod,
+          cashOrAccrualsFlag = businessAccountingMethod,
+          skippedAccountingMethod = skipAccountingMethod
+        ))
+      case ex => Future.failed(MissingSessionKey("[IncomeSourcesUtils][getBusinessDetailsFromSession]" + ex))
     }
   }
 
