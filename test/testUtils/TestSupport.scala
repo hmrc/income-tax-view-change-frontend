@@ -93,6 +93,18 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     arn = None
   )(request)
 
+  def getIndividualUserWithTwoActiveForeignProperties(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = MtdItUser(
+    mtditid = testMtditid,
+    nino = testNino,
+    userName = Some(testRetrievedUserName),
+    incomeSources = twoActiveForeignPropertyIncomes,
+    btaNavPartial = None,
+    saUtr = Some(testSaUtr),
+    credId = Some(testCredId),
+    userType = Some(testUserTypeIndividual),
+    arn = None
+  )(request)
+
   implicit val serviceInfo: Html = Html("")
 
   implicit class JsoupParse(x: Future[Result]) {

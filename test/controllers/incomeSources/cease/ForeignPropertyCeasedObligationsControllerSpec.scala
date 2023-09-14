@@ -19,7 +19,6 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.ForeignProperty
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -177,6 +176,8 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
+    }
+    "return 303 SEE_OTHER" when {
       "user has no active foreign properties" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -208,7 +209,6 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
-  }
 
 
   "Agent - ForeignPropertyAddedObligationsController.showAgent" should {
