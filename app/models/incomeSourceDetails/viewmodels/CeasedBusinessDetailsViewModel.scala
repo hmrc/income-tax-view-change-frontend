@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package models.core
+package models.incomeSourceDetails.viewmodels
 
-import play.api.libs.json.{Format, Json}
+import enums.IncomeSourceJourney.IncomeSourceType
 
-case class AddressModel(addressLine1: String,
-                        addressLine2: Option[String],
-                        addressLine3: Option[String],
-                        addressLine4: Option[String],
-                        postCode: Option[String],
-                        countryCode: String) {
+import java.time.LocalDate
 
-  def countryName: String = "United Kingdom"
-
-}
-
-object AddressModel {
-  implicit val format: Format[AddressModel] = Json.format[AddressModel]
-}
+case class CeasedBusinessDetailsViewModel(tradingName: Option[String],
+                                          incomeSourceType: IncomeSourceType,
+                                          tradingStartDate: Option[LocalDate],
+                                          cessationDate: LocalDate)

@@ -46,6 +46,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "Test Road"
   val testBusinessPostCode: String = "B32 1PQ"
+  val testBusinessCountryCode: String = "United Kingdom"
   val testBusinessAccountingMethod: String = "Traditional accounting"
   val continueButtonText: String = messagesAPI("base.confirm-and-continue")
 
@@ -71,7 +72,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           elementTextByID("business-name-value")(testBusinessName),
           elementTextByID("business-date-value")(testBusinessStartDate),
           elementTextByID("business-trade-value")(testBusinessTrade),
-          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode),
+          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCode),
           elementTextByID("business-accounting-value")(testBusinessAccountingMethod),
           elementTextByID("confirm-button")(continueButtonText)
         )
@@ -95,7 +96,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
           elementTextByID("business-name-value")(testBusinessName),
           elementTextByID("business-date-value")(testBusinessStartDate),
           elementTextByID("business-trade-value")(testBusinessTrade),
-          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode),
+          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCode),
           elementTextByID("business-accounting-value")(noAccountingMethod),
           elementTextByID("confirm-button")(continueButtonText)
         )

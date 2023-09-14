@@ -1,0 +1,85 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+@import implicits.ImplicitDateFormatterImpl
+@import models.incomeSourceDetails.viewmodels.CeasedBusinessDetailsViewModel
+@import uk.gov.hmrc.govukfrontend.views.Aliases._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
+@import views.html.components.h2
+@import java.time.LocalDate
+
+@this(
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h2: h2,
+        govukTable: GovukTable
+)
+
+@(
+        ceasedBusinesses: List[CeasedBusinessDetailsViewModel]
+)(implicit messages: Messages,
+        user: auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"incomeSources.ceased-income-sources.$key", args: _*)
+}
+
+@columnOneValue(business: CeasedBusinessDetailsViewModel) = @{
+    business.incomeSourceType match {
+        case SelfEmployment => business.tradingName.getOrElse(getMessage("unknown-sole-trader"))
+        case UkProperty => getMessage("uk-property")
+        case ForeignProperty => getMessage("foreign-property")
+    }
+}
+
+@orderedCeasedBusinesses(businesses: List[CeasedBusinessDetailsViewModel]) = @{
+    businesses.sortWith((a, b) => a.cessationDate.isAfter(b.cessationDate))
+}
+
+@h2(msg = getMessage("heading"),
+    optId = Some("ceased-businesses-heading"))
+
+@govukTable(Table(
+    head = Some(List(
+        HeadCell(
+            content = Text(getMessage("table-head.business-name")),
+            attributes = Map("id" -> "ceased-businesses-table-head-name")),
+        HeadCell(
+            content = Text(getMessage("table-head.date-started")),
+            attributes = Map("id" -> "ceased-businesses-table-head-date-started")),
+        HeadCell(
+            content = Text(getMessage("table-head.date-ended")),
+            attributes = Map("id" -> "ceased-businesses-table-head-date-ended"))
+    )),
+    rows = orderedCeasedBusinesses(ceasedBusinesses).zipWithIndex.map { case (business, index) => Seq(
+        TableRow(
+            content = Text(columnOneValue(business)),
+            attributes = Map("id" -> s"ceased-business-table-row-trading-name-$index")),
+        TableRow(
+            content = Text(business.tradingStartDate match {
+                case Some(date) => date.toLongDate
+                case None => messages("incomeSources.generic.unknown")
+            }),
+            attributes = Map("id" -> s"ceased-business-table-row-date-started-$index")),
+        TableRow(
+            content = Text(business.cessationDate.toLongDate),
+            attributes = Map("id" -> s"ceased-business-table-row-date-ended-$index")),
+    )
+    },
+    attributes = Map("id" -> "ceased-businesses-table")
+))

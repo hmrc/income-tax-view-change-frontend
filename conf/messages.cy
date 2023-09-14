@@ -1208,6 +1208,7 @@ add-business-name.p2                                              = Gall enw’r
 add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
 add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
+add-business-name.form.error.invalidName                          = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
 
 ## Add business trade page
 add-business-trade.heading                  = Beth yw masnach eich busnes?
@@ -1573,3 +1574,13 @@ incomeSources.manage.uKPropertyReportingMethodError.p2        = Gallwch geisio n
 
 incomeSources.manage.foreignPropertyReportingMethodError.p1   = Nid oedd modd i ni ddiweddaru’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer eich busnes eiddo tramor.
 incomeSources.manage.foreignPropertyReportingMethodError.p2   = Gallwch geisio newid pa mor aml y mae’ch busnes eiddo tramor yn cyflwyno adroddiadau eto yn
+
+# ceased income sources
+incomeSources.ceased-income-sources.heading                     =   Busnesau sydd wedi dod i ben
+incomeSources.ceased-income-sources.table-head.business-name    =   Enw’r busnes
+incomeSources.ceased-income-sources.table-head.date-started     =   Dyddiad cychwyn
+incomeSources.ceased-income-sources.table-head.date-ended       =   Y dyddiad dod i ben
+incomeSources.ceased-income-sources.uk-property                 =   Eiddo yn y DU
+incomeSources.ceased-income-sources.foreign-property            =   Eiddo tramor
+incomeSources.ceased-income-sources.unknown-sole-trader         =   Busnesau unig fasnachwr
+

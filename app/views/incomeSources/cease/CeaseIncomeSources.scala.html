@@ -21,6 +21,9 @@
 @import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 @import java.time.format.DateTimeFormatter
 @import enums.IncomeSourceJourney.{SelfEmployment, UkProperty, ForeignProperty}
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
 
 @this(
         mainTemplate: unifiedLayout,
@@ -30,7 +33,8 @@
         p: p,
         link: link,
         hr: hr,
-        govukTable: GovukTable
+        govukTable: GovukTable,
+        ceasedBusinesses: CeasedBusinesses
 )
 
 @(sources: CeaseIncomeSourcesViewModel,
@@ -165,27 +169,10 @@
 
     }
 
-    @if(sources.ceasedBusinesses.nonEmpty) {
-        @h2(msg = getMessage("ceased-businesses.h1"),
-            optId = Some("ceased-businesses-h1"))
-
-        <table class="govuk-table govuk-!-margin-bottom-3" id="ceased-businesses-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col" id="table-head-business-name-ceased">@getMessage("table-head.business-name")</th>
-                    <th class="govuk-table__header" scope="col" id="table-head-date-started-ceased">@getMessage("table-head.date-started")</th>
-                    <th class="govuk-table__header" scope="col" id="table-head-date-ended-ceased">@getMessage("table-head.date-ended")</th>
-                </tr>
-            </thead>
-            <tbody>
-            @for((item, index) <- sources.ceasedBusinesses.zipWithIndex) {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index-ceased"}">@noneToUnknown(item.tradingName)</td>
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index-ceased"}">@noneToUnknown(item.tradingStartDate.map(_.toLongDate))</td>
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-end-date-$index-ceased"}">@item.cessationDate.toLongDate</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+    @if(sources.ceasedBusinesses.nonEmpty) @{
+        ceasedBusinesses(sources.ceasedBusinesses)
     }
+
+    <br>
+
 }

@@ -16,11 +16,11 @@
 
 package forms.incomeSources.add
 
-import forms.validation.Constraints
+import forms.validation.CustomConstraints
 import play.api.data.Form
 import play.api.data.Forms._
 
-object AddBusinessReportingMethodForm extends Constraints {
+object AddBusinessReportingMethodForm extends CustomConstraints {
   val newTaxYear1ReportingMethod = "new_tax_year_1_reporting_method"
   val newTaxYear2ReportingMethod = "new_tax_year_2_reporting_method"
   val taxYear1 = s"${newTaxYear1ReportingMethod}_tax_year"

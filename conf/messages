@@ -1337,6 +1337,7 @@ add-business-name.p2                                              = The business
 add-business-name.form.error.required                             = Enter your name or the name of your business
 add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
 add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
+add-business-name.form.error.invalidName                          = You cannot enter the same trade and same business name
 
 ## Add business trade page
 add-business-trade.heading                  = What is the trade of your business?
@@ -1594,3 +1595,14 @@ incomeSources.manage.uKPropertyReportingMethodError.p2        = You can try to c
 
 incomeSources.manage.foreignPropertyReportingMethodError.p1   = We were unable to update your foreign property business reporting frequency.
 incomeSources.manage.foreignPropertyReportingMethodError.p2   = You can try to change your foreign property business reporting frequency again in
+
+# ceased income sources
+incomeSources.ceased-income-sources.heading                     =   Businesses that have ceased
+incomeSources.ceased-income-sources.table-head.business-name    =   Business name
+incomeSources.ceased-income-sources.table-head.date-started     =   Date started
+incomeSources.ceased-income-sources.table-head.date-ended       =   Date ended
+incomeSources.ceased-income-sources.uk-property                 =   UK property
+incomeSources.ceased-income-sources.foreign-property            =   Foreign property
+incomeSources.ceased-income-sources.unknown-sole-trader         =   Sole trader business
+
+

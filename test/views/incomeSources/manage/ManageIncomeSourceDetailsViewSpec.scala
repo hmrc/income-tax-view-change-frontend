@@ -49,7 +49,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val cash = messages("incomeSources.manage.business-manage-details.cash-accounting")
   val traditional = messages("incomeSources.manage.business-manage-details.traditional-accounting")
   val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
-  val expectedViewAddressString1: String = "Line 1 Line 2 Line 3 Line 4 LN12 2NL NI"
+  val expectedViewAddressString1: String = "Line 1 Line 2 Line 3 Line 4 LN12 2NL United Kingdom"
   val expectedBusinessName: String = "nextUpdates.business"
   val expectedBusinessStartDate: String = "1 January 2022"
 

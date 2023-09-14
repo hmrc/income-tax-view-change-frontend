@@ -1,15 +1,30 @@
-package controllers.agent.incomeSources.add
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
+import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys.businessName
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
-
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
@@ -45,7 +60,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleAgent("add-business-name.heading"),
-          elementTextByID("addBusinessName-hint > p")(formHint),
+          elementTextByID("business-name-hint > p")(formHint),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -79,7 +94,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
         val formData: Map[String, Seq[String]] = {
           Map(
-            "addBusinessName" -> Seq("Test Business")
+            BusinessNameForm.businessName -> Seq("Test Business")
           )
         }
 
@@ -99,14 +114,14 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
       val formData: Map[String, Seq[String]] = {
         Map(
-          "addBusinessName" -> Seq("£££")
+          BusinessNameForm.businessName -> Seq("£££")
         )
       }
 
       val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-name", clientDetailsWithConfirmation)(formData)
       result should have(
         httpStatus(OK),
-        elementTextByID("addBusinessName-error")(messagesAPI("base.error-prefix") + " " +
+        elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
           messagesAPI("add-business-name.form.error.invalidNameFormat"))
       )
     }
@@ -128,7 +143,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleAgent("add-business-name.heading"),
-          elementTextByID("addBusinessName-hint > p")(formHint),
+          elementTextByID("business-name-hint > p")(formHint),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -161,7 +176,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
         val formData: Map[String, Seq[String]] = {
           Map(
-            "addBusinessName" -> Seq("Test Business")
+            BusinessNameForm.businessName -> Seq("Test Business")
           )
         }
 
@@ -180,14 +195,14 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
       val formData: Map[String, Seq[String]] = {
         Map(
-          "addBusinessName" -> Seq("£££")
+          BusinessNameForm.businessName -> Seq("£££")
         )
       }
 
       val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name", clientDetailsWithConfirmation)(formData)
       result should have(
         httpStatus(OK),
-        elementTextByID("addBusinessName-error")(messagesAPI("base.error-prefix") + " " +
+        elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
           messagesAPI("add-business-name.form.error.invalidNameFormat"))
       )
     }

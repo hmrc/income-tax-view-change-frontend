@@ -95,7 +95,7 @@ class CheckCeaseBusinessDetailsViewSpec extends TestSupport with ViewSpec{
       address.addressLine3.get+" "+
       address.addressLine4.get+" "+
       address.postCode.get+" "+
-      address.countryCode
+      address.countryName
     document.getElementById("change").attr("href") shouldBe (if(isAgent) changeUrlAgent else changeUrl)
     document.getElementById("continue-button").text() shouldBe buttonLabel
     document.form.attr("action") shouldBe (if(isAgent) formActionAgent else formAction)

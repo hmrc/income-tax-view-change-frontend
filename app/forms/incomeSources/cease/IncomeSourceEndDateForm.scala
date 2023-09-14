@@ -19,17 +19,16 @@ package forms.incomeSources.cease
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
-import forms.validation.Constraints
+import forms.validation.CustomConstraints
 import play.api.data.Form
 import play.api.data.Forms.{default, mapping, text, tuple}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 import services.DateService
-import uk.gov.hmrc.http.InternalServerException
 
 import java.time.LocalDate
 import javax.inject.Inject
 
-class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Constraints {
+class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends CustomConstraints {
 
   val dateMustBeComplete = "dateForm.error.dayMonthAndYear.required"
   val dateMustNotBeMissingDayField = "dateForm.error.day.required"

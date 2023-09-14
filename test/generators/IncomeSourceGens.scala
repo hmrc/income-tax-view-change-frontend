@@ -31,7 +31,7 @@ object IncomeSourceGens {
 
   case class Day(day: String, month: String, year: String)
 
-  val businessNameGenerator: Gen[List[Char]] = Gen.listOf( Gen.oneOf(businessNamePermittedCharacters))
+  val businessNameGenerator: Gen[List[Char]] = Gen.listOf(Gen.oneOf(businessNamePermittedCharacters))
 
   val businessTradeGenerator: Gen[List[Char]] = {
     for {
@@ -39,19 +39,21 @@ object IncomeSourceGens {
       twoChars <- Gen.listOfN(2, Gen.oneOf(alphabet))
     } yield {
       val candidate = Random.shuffle(twoChars ++ body)
-      if (candidate.length > BusinessTradeForm.maxLength)
-        candidate.take(BusinessTradeForm.maxLength)
+      if (candidate.length > BusinessTradeForm.MAX_LENGTH)
+        candidate.take(BusinessTradeForm.MAX_LENGTH)
       else
         candidate
     }
   }
 
-  val dateGenerator = (currentDate: LocalDate)  => {
+  val dateGenerator = (currentDate: LocalDate) => {
     for {
       day <- Gen.oneOf(1 to 5)
       month <- Gen.oneOf(1 to 12)
       year <- Gen.oneOf(1965 to 2075)
-      if Try{ LocalDate.of(year, month, day) }.toOption.isDefined
+      if Try {
+        LocalDate.of(year, month, day)
+      }.toOption.isDefined
       if LocalDate.of(year, month, day).toEpochDay < currentDate.toEpochDay
     } yield Day(day.toString, month.toString, year.toString)
   }
