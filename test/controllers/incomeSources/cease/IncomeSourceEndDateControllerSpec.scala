@@ -243,13 +243,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockGetSession(Some("value"))
+        setupMockGetSession(Some(testSelfEmploymentId))
         val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url)
-        setupMockSetSession(SessionKeys.ceaseBusinessEndDate, validCeaseDate, redirect)
+        setupMockSetListSession(redirect, Map(SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
 
-        val result: Future[Result] = TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession.withFormUrlEncodedBody(
-          SessionKeys.ceaseBusinessEndDate -> validCeaseDate
-        ))
+        lazy val result: Future[Result] = {
+          TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession.withMethod("POST")
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
+        }
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
@@ -408,10 +410,12 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockBusinessIncomeSource()
+        setupMockGetSession(Some(testSelfEmploymentId))
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url)
+        setupMockSetListSession(redirect, Map(SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
 
-
-        val result: Future[Result] = {
-          TestIncomeSourceEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestConfirmedClient()
+        lazy val result: Future[Result] = {
+          TestIncomeSourceEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestConfirmedClient().withMethod("POST")
             .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
               "income-source-end-date.year" -> "2022"))
         }
@@ -519,6 +523,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       val isAgent = false
 
       "navigating to the page with FS Enabled with income source type as Self Employment" in {
+        stage()
         val incomeSourceType = SelfEmployment
         TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent, isChange = true)
       }
@@ -574,14 +579,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockGetSession(Some("value"))
+        setupMockGetSession(Some(testSelfEmploymentId))
         val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url)
-        setupMockSetSession(SessionKeys.ceaseBusinessEndDate, validCeaseDate, redirect)
+        setupMockSetListSession(redirect, Map(SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
 
-
-        val result: Future[Result] = TestIncomeSourceEndDateController.submitChange(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession.withFormUrlEncodedBody(
-          SessionKeys.ceaseBusinessEndDate -> validCeaseDate
-        ))
+        lazy val result: Future[Result] = {
+          TestIncomeSourceEndDateController.submitChange(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession.withMethod("POST")
+            .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
+              "income-source-end-date.year" -> "2022"))
+        }
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
@@ -724,10 +730,12 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockBusinessIncomeSource()
+        setupMockGetSession(Some(testSelfEmploymentId))
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url)
+        setupMockSetListSession(redirect, Map(SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
 
-
-        val result: Future[Result] = {
-          TestIncomeSourceEndDateController.submitChangeAgent(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestConfirmedClient()
+        lazy val result: Future[Result] = {
+          TestIncomeSourceEndDateController.submitChangeAgent(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestConfirmedClient().withMethod("POST")
             .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
               "income-source-end-date.year" -> "2022"))
         }

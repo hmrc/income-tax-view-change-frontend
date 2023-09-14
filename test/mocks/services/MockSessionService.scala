@@ -45,9 +45,9 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(Future.successful(Right(result.addingToSession(key -> value))))
 
 
-  def setupMockSetListSession(keyValue: (String, String)*, result: Result,)(implicit header: RequestHeader): Unit =
+  def setupMockSetListSession(result: Result, keyValue: Map[String, String])(implicit header: RequestHeader): Unit =
     when(
-      mockSessionService.setList(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(Right(result.addingToSession(keyValue: _*)))
-    )
+      mockSessionService.setList(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(Right(result.addingToSession(keyValue.toSeq: _*)))
+      )
 }

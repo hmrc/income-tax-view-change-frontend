@@ -295,7 +295,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
           case _ =>
             val redirect = Redirect(redirectAction)
-            sessionService.set(SessionKeys.ceaseBusinessEndDate, validatedInput.date.toString, redirect).flatMap {
+            sessionService.set(incomeSourceTypeValue.endDateSessionKey, validatedInput.date.toString, redirect).flatMap {
               case Right(value) => Future.successful(value)
               case Left(exception) => Future.failed(exception)
             }
