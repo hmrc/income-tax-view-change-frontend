@@ -108,7 +108,7 @@
                 address.addressLine3,
                 address.addressLine4,
                 address.postCode,
-                Some(address.countryCode)
+                Some(address.countryName)
             ).flatten
             Some(nonNoneFields.mkString("<br>"))
         case None => None

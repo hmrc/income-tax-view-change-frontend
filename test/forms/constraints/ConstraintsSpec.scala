@@ -16,11 +16,11 @@
 
 package forms.constraints
 
-import forms.validation.Constraints
+import forms.validation.CustomConstraints
 import play.api.data.validation.{Invalid, Valid}
 import testUtils.TestSupport
 
-class ConstraintsSpec extends Constraints with TestSupport {
+class ConstraintsSpec extends CustomConstraints with TestSupport {
 
   val maxLength = 2
   val errMsg = "Too Long"

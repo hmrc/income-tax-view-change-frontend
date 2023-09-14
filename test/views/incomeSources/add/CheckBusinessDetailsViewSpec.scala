@@ -43,7 +43,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
     businessAddressLine2 = None,
     businessAddressLine3 = Some("Cbeebies"),
     businessAddressLine4 = None,
-    businessCountryCode = Some("UK"),
+    businessCountryCode = Some("United Kingdom"),
     cashOrAccrualsFlag = "ACCRUALS",
     skippedAccountingMethod = true
   )
@@ -57,7 +57,7 @@ class CheckBusinessDetailsViewSpec extends TestSupport {
     val businessName = "Test Business"
     val businessStartDate = "1 January 2022"
     val businessTrade = "Test Trade"
-    val businessAddressAsString = "64 Zoo Lane Cbeebies ZO0 1AN UK"
+    val businessAddressAsString = "64 Zoo Lane Cbeebies ZO0 1AN United Kingdom"
     val businessAccountingMethod = "Traditional accounting"
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else
