@@ -33,7 +33,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId, testSelfEmploymentId2}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
@@ -246,7 +246,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockGetSession(Some("value"))
         val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url)
         setupMockSetSession(SessionKeys.ceaseBusinessEndDate, validCeaseDate, redirect)
-
 
         val result: Future[Result] = TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment.key)(fakeRequestNoSession.withFormUrlEncodedBody(
           SessionKeys.ceaseBusinessEndDate -> validCeaseDate
