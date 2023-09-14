@@ -16,13 +16,13 @@
 
 package forms.validation
 
-import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
 
 import java.time.LocalDate
 import java.time.format.{DateTimeFormatter, ResolverStyle}
 import scala.util.Try
 
-trait Constraints {
+trait CustomConstraints extends Constraints {
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
@@ -53,11 +53,6 @@ trait Constraints {
       }
   }
 
-  protected def nonEmptyDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
-    case (_, _, "") | ("", _, _) | (_, "", _) => Invalid(errKey, args: _*)
-    case _ => Valid
-  }
-
   protected def nonEmptyDateFields(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
     case ("", "", "") => Invalid(errKey, args: _*)
     case ("", "", _) => Invalid(errKey + "DayMonth", args: _*)
@@ -66,17 +61,6 @@ trait Constraints {
     case ("", _, _) => Invalid(errKey + "Day", args: _*)
     case (_, "", _) => Invalid(errKey + "Month", args: _*)
     case (_, _, "") => Invalid(errKey + "Year", args: _*)
-    case _ => Valid
-  }
-
-  protected def dateCheck(errKey: DatePartErrorMessageKeys, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
-    case ("", "", "") => Invalid(errKey.containsNothing, args: _*)
-    case (_, "", "") => Invalid(errKey.containsOnlyDay, args: _*)
-    case ("", _, "") => Invalid(errKey.containsOnlyMonth, args: _*)
-    case ("", "", _) => Invalid(errKey.containsOnlyYear, args: _*)
-    case ("", _, _) => Invalid(errKey.containsOnlyMonthYear, args: _*)
-    case (_, "", _) => Invalid(errKey.containsOnlyDayYear, args: _*)
-    case (_, _, "") => Invalid(errKey.containsOnlyDayMonth, args: _*)
     case _ => Valid
   }
 
@@ -95,12 +79,4 @@ trait Constraints {
       case _ =>
         Valid
     }
-
-  case class DatePartErrorMessageKeys(containsNothing: String,
-                                      containsOnlyDay: String,
-                                      containsOnlyMonth: String,
-                                      containsOnlyYear: String,
-                                      containsOnlyDayMonth: String,
-                                      containsOnlyDayYear: String,
-                                      containsOnlyMonthYear: String)
 }

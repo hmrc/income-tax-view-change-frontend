@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package forms
+package forms.incomeSources.add
 
-import forms.utils.ConstraintUtil.ConstraintUtil
-import forms.utils.SessionKeys
+import forms.validation.CustomConstraints
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation._
@@ -26,41 +25,33 @@ import scala.util.matching.Regex
 
 case class BusinessNameForm(name: String)
 
-object BusinessNameForm {
+object BusinessNameForm extends CustomConstraints {
+  val businessName = "business-name"
+  val MAX_LENGTH: Int = 105
 
-  private val validBusinessName: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
-  val businessNameLength: Int = 105
-  val bnf: String = "addBusinessName"
-  val invalidName: String = "Invalid Name Characters £££"
+  val permittedChars: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
 
   val businessNameEmptyError: String = "add-business-name.form.error.required"
   val businessNameLengthIncorrect: String = "add-business-name.form.error.maxLength"
   val businessNameInvalidChar: String = "add-business-name.form.error.invalidNameFormat"
+  val businessNameInvalid: String = "add-business-name.form.error.invalidName"
 
-  val containsValidChar: Constraint[String] = Constraint(value =>
-    if (validBusinessName.pattern.matcher(value).matches()) {
-      Valid
-    } else {
-      Invalid(businessNameInvalidChar)
-    }
-  )
-
-  val isValidNameLength: Constraint[String] = Constraint(value =>
-    if (value.length <= businessNameLength) {
-      Valid
-    } else {
-      Invalid(businessNameLengthIncorrect)
-    }
-  )
-
-  val nonEmptyBusinessName: Constraint[String] = Constraint( value =>
-    if (value.isEmpty) Invalid(businessNameEmptyError) else Valid
-  )
+  private val isValidChars: Constraint[String] = pattern(regex = permittedChars, error = businessNameInvalidChar)
+  private val isNotTooLong: Constraint[String] = maxLength(MAX_LENGTH, businessNameLengthIncorrect)
+  private val nonEmptyBusinessName: Constraint[String] = nonEmpty(errorMessage = businessNameEmptyError)
 
   val form: Form[BusinessNameForm] = Form(mapping(
-    SessionKeys.businessName -> text.verifying(nonEmptyBusinessName andThen containsValidChar andThen isValidNameLength)
+    businessName.trim() -> text
+      .verifying(firstError(nonEmptyBusinessName, isValidChars, isNotTooLong))
   )(BusinessNameForm.apply)(BusinessNameForm.unapply)
   )
+
+  def checkBusinessNameWithTradeName(form: Form[BusinessNameForm], businessTradeName: Option[String]): Form[BusinessNameForm] = {
+    businessTradeName match {
+      case Some(tradeName) if !form.hasErrors && form.get.name.trim.toLowerCase.equals(tradeName.trim.toLowerCase) =>
+        form.withError(businessName, businessNameInvalid)
+      case _ =>
+        form
+    }
+  }
 }
-
-

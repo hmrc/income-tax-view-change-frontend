@@ -18,7 +18,7 @@ package forms.incomeSources.cease
 
 import auth.MtdItUser
 import forms.models.DateFormElement
-import forms.validation.Constraints
+import forms.validation.CustomConstraints
 import play.api.data.Form
 import play.api.data.Forms._
 import services.DateService
@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 
 
 @Singleton
-class ForeignPropertyEndDateForm @Inject()(val dateService: DateService) extends Constraints {
+class ForeignPropertyEndDateForm @Inject()(val dateService: DateService) extends CustomConstraints {
 
   val dateMustBeEntered = "incomeSources.cease.ForeignPropertyEndDate.error.incomplete"
   val dateMustBeReal = "incomeSources.cease.ForeignPropertyEndDate.error.invalid"

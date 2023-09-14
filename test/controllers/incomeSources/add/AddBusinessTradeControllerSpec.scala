@@ -63,12 +63,13 @@ class AddBusinessTradeControllerSpec extends TestSupport
       addBusinessTradeView = app.injector.instanceOf[AddBusinessTrade],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+      sessionService = app.injector.instanceOf[SessionService],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       sessionService = app.injector.instanceOf[SessionService]
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
+      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       ec = ec
     )
@@ -133,7 +134,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> validBusinessTrade
+              BusinessTradeForm.businessTrade -> validBusinessTrade
             ))
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url)
@@ -151,7 +152,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClientwithBusinessName().withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> validBusinessTrade
+              BusinessTradeForm.businessTrade -> validBusinessTrade
             ))
 
           status(result) mustBe SEE_OTHER
@@ -171,7 +172,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> sameNameAsTrade
+              BusinessTradeForm.businessTrade -> sameNameAsTrade
             ))
 
           status(result) mustBe OK
@@ -188,7 +189,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClientwithBusinessName()
               .withFormUrlEncodedBody(
-                SessionKeys.businessTrade -> sameNameAsTrade
+                BusinessTradeForm.businessTrade -> sameNameAsTrade
               ))
 
           status(result) mustBe OK
@@ -205,7 +206,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+              BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
           status(result) mustBe OK
@@ -221,7 +222,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+              BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
           status(result) mustBe OK
@@ -238,7 +239,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+              BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
           status(result) mustBe OK
@@ -254,7 +255,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+              BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
           status(result) mustBe OK
@@ -271,7 +272,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = true)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+              BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
           status(result) mustBe OK
@@ -287,7 +288,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+              BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
           status(result) mustBe OK
@@ -304,7 +305,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+              BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
           status(result) mustBe OK
@@ -320,7 +321,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-              SessionKeys.businessTrade -> invalidBusinessTradeEmpty
+              BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
           status(result) mustBe OK

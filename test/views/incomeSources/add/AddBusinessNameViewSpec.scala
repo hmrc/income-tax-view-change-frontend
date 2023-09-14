@@ -16,8 +16,7 @@
 
 package views.incomeSources.add
 
-import forms.BusinessNameForm
-import forms.utils.SessionKeys
+import forms.incomeSources.add.BusinessNameForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.data.{Form, FormError}
@@ -74,7 +73,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = {
       addBusinessName(
-        addBusinessNameForm.withError(FormError("addBusinessName",
+        addBusinessNameForm.withError(FormError(BusinessNameForm.businessName,
           "add-business-name.form.error.required")),
         isAgent,
         postAction,
@@ -93,7 +92,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
 
     lazy val changeViewWithError: HtmlFormat.Appendable = {
       addBusinessName(
-        changeBusinessNameForm.withError(FormError("addBusinessName",
+        changeBusinessNameForm.withError(FormError(BusinessNameForm.businessName,
           "add-business-name.form.error.required")),
         isAgent,
         postAction,
@@ -148,10 +147,10 @@ class AddBusinessNameViewSpec extends ViewSpec {
         label.text shouldBe AddBusinessNameMessages.heading
         label.attr("for") shouldBe input.attr("id")
         hint.text contains AddBusinessNameMessages.paragraph1
-        input.attr("id") shouldBe SessionKeys.businessName
-        input.attr("name") shouldBe SessionKeys.businessName
+        input.attr("id") shouldBe BusinessNameForm.businessName
+        input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
+        input.attr("aria-describedby") shouldBe s"${BusinessNameForm.businessName}-hint"
         input.attr("value") shouldBe ("")
 
       }
@@ -164,6 +163,10 @@ class AddBusinessNameViewSpec extends ViewSpec {
       "render the error summary" in new TestSetup(false, true, false) {
         document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+      }
+      "render the error message" in new TestSetup(false, true, false) {
+        document.getElementById("business-name-error").text() shouldBe
+          s"${messages("base.error-prefix")} ${messages("add-business-name.form.error.required")}"
       }
     }
   }
@@ -190,10 +193,10 @@ class AddBusinessNameViewSpec extends ViewSpec {
         label.text shouldBe AddBusinessNameMessages.heading
         label.attr("for") shouldBe input.attr("id")
         hint.text contains AddBusinessNameMessages.paragraph1
-        input.attr("id") shouldBe SessionKeys.businessName
-        input.attr("name") shouldBe SessionKeys.businessName
+        input.attr("id") shouldBe BusinessNameForm.businessName
+        input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
+        input.attr("aria-describedby") shouldBe s"${BusinessNameForm.businessName}-hint"
         input.attr("value") shouldBe (testBusinessName)
       }
       "have a continue button" in new TestSetup(false, false, true) {
@@ -202,9 +205,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
       }
     }
     "there is an error on the page" should {
-      "render the error summary" in new TestSetup(false, true, false) {
+      "render the error summary" in new TestSetup(false, true, true) {
         document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+      }
+      "render the error message" in new TestSetup(false, true, true) {
+        document.getElementById("business-name-error").text() shouldBe
+          s"${messages("base.error-prefix")} ${messages("add-business-name.form.error.required")}"
       }
     }
   }
@@ -231,10 +238,10 @@ class AddBusinessNameViewSpec extends ViewSpec {
         label.text shouldBe AddBusinessNameMessages.heading
         label.attr("for") shouldBe input.attr("id")
         hint.text contains AddBusinessNameMessages.paragraph1
-        input.attr("id") shouldBe SessionKeys.businessName
-        input.attr("name") shouldBe SessionKeys.businessName
+        input.attr("id") shouldBe BusinessNameForm.businessName
+        input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
+        input.attr("aria-describedby") shouldBe s"${BusinessNameForm.businessName}-hint"
         input.attr("value") shouldBe ("")
 
       }
@@ -244,9 +251,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
       }
     }
     "there is an error on the page" should {
-      "render the error summary" in new TestSetup(false, true, false) {
+      "render the error summary" in new TestSetup(true, true, false) {
         document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+      }
+      "render the error message" in new TestSetup(true, true, false) {
+        document.getElementById("business-name-error").text() shouldBe
+          s"${messages("base.error-prefix")} ${messages("add-business-name.form.error.required")}"
       }
     }
   }
@@ -272,10 +283,10 @@ class AddBusinessNameViewSpec extends ViewSpec {
         label.text shouldBe AddBusinessNameMessages.heading
         label.attr("for") shouldBe input.attr("id")
         hint.text contains AddBusinessNameMessages.paragraph1
-        input.attr("id") shouldBe SessionKeys.businessName
-        input.attr("name") shouldBe SessionKeys.businessName
+        input.attr("id") shouldBe BusinessNameForm.businessName
+        input.attr("name") shouldBe BusinessNameForm.businessName
         input.attr("type") shouldBe "text"
-        input.attr("aria-describedby") shouldBe s"${SessionKeys.businessName}-hint"
+        input.attr("aria-describedby") shouldBe s"${BusinessNameForm.businessName}-hint"
         input.attr("value") shouldBe (testBusinessName)
       }
       "have a continue button" in new TestSetup(true, false, true) {
@@ -284,9 +295,13 @@ class AddBusinessNameViewSpec extends ViewSpec {
       }
     }
     "there is an error on the page" should {
-      "render the error summary" in new TestSetup(false, true, false) {
+      "render the error summary" in new TestSetup(true, true, false) {
         document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
         document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+      }
+      "render the error message" in new TestSetup(true, true, false) {
+        document.getElementById("business-name-error").text() shouldBe
+          s"${messages("base.error-prefix")} ${messages("add-business-name.form.error.required")}"
       }
     }
   }
