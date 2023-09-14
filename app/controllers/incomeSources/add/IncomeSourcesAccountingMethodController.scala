@@ -21,14 +21,14 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
-import forms.utils.SessionKeys.addIncomeSourcesAccountingMethod
+import forms.utils.SessionKeys
 import models.incomeSourceDetails.BusinessDetailsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.IncomeSourcesAccountingMethod
@@ -45,7 +45,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                         val retrieveNino: NinoPredicate,
                                                         val view: IncomeSourcesAccountingMethod,
-                                                        val customNotFoundErrorView: CustomNotFoundError)
+                                                        val customNotFoundErrorView: CustomNotFoundError,
+                                                        val sessionService: SessionService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                    mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext,
@@ -71,12 +72,20 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             "cash"
           }
           if (isAgent) {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent())
-              .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethodIsAccruals))
+            sessionService.set(SessionKeys.addIncomeSourcesAccountingMethod, accountingMethodIsAccruals, Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url)).flatMap {
+              case Right(result) => Future.successful(result)
+              case Left(exception) => Future.failed(exception)
+            }
           } else {
-            Future.successful(Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show())
-              .addingToSession(addIncomeSourcesAccountingMethod -> accountingMethodIsAccruals))
+            sessionService.set(SessionKeys.addIncomeSourcesAccountingMethod, accountingMethodIsAccruals, Redirect(controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url)).flatMap {
+              case Right(result) => Future.successful(result)
+              case Left(exception) => Future.failed(exception)
+            }
           }
+        }.recover {
+          case exception =>
+            Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] ${exception.getMessage}")
+            errorHandler.showInternalServerError()
         }
         else {
           Logger("application").error(s"${if (isAgent) "[Agent]"}" +
@@ -136,37 +145,37 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     }
   }
 
-   private def actionIndividualSubmitRequest(incomeSourceType: String): (Call, String, Call) = {
+  private def actionIndividualSubmitRequest(incomeSourceType: String): (Call, String, Call) = {
     incomeSourceType match {
       case SelfEmployment.key =>
-          (routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment.key),
-            routes.AddBusinessAddressController.show(isChange = false).url,
-            routes.CheckBusinessDetailsController.show())
+        (routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment.key),
+          routes.AddBusinessAddressController.show(isChange = false).url,
+          routes.CheckBusinessDetailsController.show())
       case UkProperty.key =>
-          (routes.IncomeSourcesAccountingMethodController.submit(UkProperty.key),
-            routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, UkProperty).url,
-            routes.CheckUKPropertyDetailsController.show())
+        (routes.IncomeSourcesAccountingMethodController.submit(UkProperty.key),
+          routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, UkProperty).url,
+          routes.CheckUKPropertyDetailsController.show())
       case _ =>
-          (routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty.key),
-            routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, ForeignProperty).url,
-            routes.ForeignPropertyCheckDetailsController.show())
+        (routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty.key),
+          routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, ForeignProperty).url,
+          routes.ForeignPropertyCheckDetailsController.show())
     }
   }
 
   private def actionAgentSubmitRequest(incomeSourceType: String): (Call, String, Call) = {
     incomeSourceType match {
       case SelfEmployment.key =>
-          (routes.IncomeSourcesAccountingMethodController.submitAgent(SelfEmployment.key),
-            routes.AddBusinessAddressController.showAgent(isChange = false).url,
-            routes.CheckBusinessDetailsController.showAgent())
+        (routes.IncomeSourcesAccountingMethodController.submitAgent(SelfEmployment.key),
+          routes.AddBusinessAddressController.showAgent(isChange = false).url,
+          routes.CheckBusinessDetailsController.showAgent())
       case UkProperty.key =>
-          (routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key),
-            routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, UkProperty).url,
-            routes.CheckUKPropertyDetailsController.showAgent())
+        (routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key),
+          routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, UkProperty).url,
+          routes.CheckUKPropertyDetailsController.showAgent())
       case _ =>
-          (routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key),
-            routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, ForeignProperty).url,
-            routes.ForeignPropertyCheckDetailsController.showAgent())
+        (routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key),
+          routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, ForeignProperty).url,
+          routes.ForeignPropertyCheckDetailsController.showAgent())
     }
   }
 
@@ -186,12 +195,21 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       ))),
       validatedInput => {
         if (validatedInput.equals(Some("cash"))) {
-          Future.successful(Redirect(redirect)
-            .addingToSession(addIncomeSourcesAccountingMethod -> "cash"))
+          sessionService.set(SessionKeys.addIncomeSourcesAccountingMethod, "cash", Redirect(redirect)).flatMap {
+            case Right(result) => Future.successful(result)
+            case Left(exception) => Future.failed(exception)
+          }
         } else {
-          Future.successful(Redirect(redirect)
-            .addingToSession(addIncomeSourcesAccountingMethod -> "accruals"))
+          sessionService.set(SessionKeys.addIncomeSourcesAccountingMethod, "accruals", Redirect(redirect)).flatMap {
+            case Right(result) => Future.successful(result)
+            case Left(exception) => Future.failed(exception)
+          }
         }
+      }.recover {
+        case exception =>
+          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+          Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] ${exception.getMessage}")
+          errorHandler.showInternalServerError()
       }
     )
   }
@@ -202,7 +220,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       implicit user =>
         val backUrl = incomeSourceType match {
           case SelfEmployment.key =>
-              routes.AddBusinessAddressController.show(isChange = false).url
+            routes.AddBusinessAddressController.show(isChange = false).url
           case UkProperty.key =>
             routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, UkProperty).url
           case _ =>
@@ -263,12 +281,20 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           case _ =>
             routes.ForeignPropertyCheckDetailsController.show().url
         }
-        handleRequest(
-          isAgent = false,
-          incomeSourceType = incomeSourceType,
-          cashOrAccrualsFlag = user.session.data.get(addIncomeSourcesAccountingMethod),
-          backUrl = backUrl
-        )
+        sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod).flatMap {
+          case Right(cashOrAccrualsFlag) =>
+            handleRequest(
+              isAgent = false,
+              incomeSourceType = incomeSourceType,
+              cashOrAccrualsFlag = cashOrAccrualsFlag,
+              backUrl = backUrl
+            )
+          case Left(exception) => Future.failed(exception)
+        }.recover {
+          case exception =>
+            Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethod] ${exception.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+        }
     }
 
   def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: String): Action[AnyContent] = Authenticated.async {
@@ -284,12 +310,20 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
               case _ =>
                 routes.ForeignPropertyCheckDetailsController.showAgent().url
             }
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType,
-              cashOrAccrualsFlag = mtdItUser.session.data.get(addIncomeSourcesAccountingMethod),
-              backUrl = backUrl
-            )
+            sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod).flatMap {
+              case Right(cashOrAccrualsFlag) =>
+                handleRequest(
+                  isAgent = true,
+                  incomeSourceType = incomeSourceType,
+                  cashOrAccrualsFlag = cashOrAccrualsFlag,
+                  backUrl = backUrl
+                )
+              case Left(exception) => Future.failed(exception)
+            }.recover {
+              case exception =>
+                Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethodAgent] ${exception.getMessage}")
+                itvcErrorHandlerAgent.showInternalServerError()
+            }
         }
   }
 }
