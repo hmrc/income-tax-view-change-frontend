@@ -18,11 +18,8 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import exceptions.MissingSessionKey
-import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
-import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.SessionService
@@ -102,52 +99,6 @@ trait IncomeSourcesUtils extends FeatureSwitching {
 object IncomeSourcesUtils {
 
   case class MissingKey(msg: String)
-
-  def getBusinessDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[CheckBusinessDetailsViewModel] = {
-    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
-    val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
-
-    val result = for {
-      businessName <- sessionService.get(SessionKeys.businessName)
-      businessStartDate <- sessionService.get(SessionKeys.businessStartDate)
-      businessTrade <- sessionService.get(SessionKeys.businessTrade)
-      businessAddressLine1 <- sessionService.get(SessionKeys.addBusinessAddressLine1)
-      businessAccountingMethod <- sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod)
-      accountingPeriodEndDate <- sessionService.get(SessionKeys.addBusinessAccountingPeriodEndDate)
-      businessAddressLine2 <- sessionService.get(SessionKeys.addBusinessAddressLine2)
-      businessAddressLine3 <- sessionService.get(SessionKeys.addBusinessAddressLine3)
-      businessAddressLine4 <- sessionService.get(SessionKeys.addBusinessAddressLine4)
-      businessPostalCode <- sessionService.get(SessionKeys.addBusinessPostalCode)
-      businessCountryCode <- sessionService.get(SessionKeys.addBusinessCountryCode)
-      incomeSourcesAccountingMethod <- sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod)
-    } yield (businessName, businessStartDate, businessTrade, businessAddressLine1,
-      businessAccountingMethod, accountingPeriodEndDate, businessAddressLine2,
-      businessAddressLine3, businessAddressLine4, businessPostalCode, businessCountryCode,
-      incomeSourcesAccountingMethod)
-
-    result.flatMap {
-      case (Right(businessName), Right(businessStartDate), Right(Some(businessTrade)),
-      Right(Some(businessAddressLine1)), Right(Some(businessAccountingMethod)), Right(accountingPeriodEndDate),
-      Right(businessAddressLine2), Right(businessAddressLine3), Right(businessAddressLine4), Right(businessPostalCode),
-      Right(businessCountryCode), Right(incomeSourcesAccountingMethod)) =>
-        Future.successful(CheckBusinessDetailsViewModel(
-          businessName = businessName,
-          businessStartDate = businessStartDate.map(LocalDate.parse(_)),
-          accountingPeriodEndDate = accountingPeriodEndDate.map(LocalDate.parse(_)).get,
-          businessTrade = businessTrade,
-          businessAddressLine1 = businessAddressLine1,
-          businessAddressLine2 = businessAddressLine2,
-          businessAddressLine3 = businessAddressLine3,
-          businessAddressLine4 = businessAddressLine4,
-          businessPostalCode = businessPostalCode,
-          businessCountryCode = businessCountryCode,
-          incomeSourcesAccountingMethod = incomeSourcesAccountingMethod,
-          cashOrAccrualsFlag = businessAccountingMethod,
-          skippedAccountingMethod = skipAccountingMethod
-        ))
-      case ex => Future.failed(MissingSessionKey("[IncomeSourcesUtils][getBusinessDetailsFromSession]" + ex))
-    }
-  }
 
   def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckUKPropertyViewModel] = {
     val result: Option[Either[Throwable, CheckUKPropertyViewModel]] = for {

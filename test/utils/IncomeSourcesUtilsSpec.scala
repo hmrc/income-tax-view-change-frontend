@@ -61,23 +61,6 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     addIncomeSourcesAccountingMethod -> checkUKPropertyViewModel.cashOrAccrualsFlag
   )
 
-  "getBusinessDetailsFromSession" when {
-    "user has business details in session" should {
-      "return CheckBusinessDetailsViewModel" in {
-        implicit val user = individualUser.copy()(fakeRequest)
-        val result = IncomeSourcesUtils.getBusinessDetailsFromSession(sessionService)
-        result.futureValue shouldBe viewModelMax
-      }
-    }
-
-    "user is missing business details in session" should {
-      "returns an exception" in {
-        val result = IncomeSourcesUtils.getBusinessDetailsFromSession(sessionService)
-        result.failed.futureValue shouldBe an[Exception]
-      }
-    }
-  }
-
   "getUKPropertyDetailsFromSession" when {
     "user has uk property details in session" should {
       "return CheckBusinessDetailsViewModel" in {

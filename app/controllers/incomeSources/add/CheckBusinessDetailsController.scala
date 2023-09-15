@@ -22,18 +22,21 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import utils.IncomeSourcesUtils.getBusinessDetailsFromSession
 import views.html.incomeSources.add.CheckBusinessDetails
 
 import java.net.URI
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -105,7 +108,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
 
     withIncomeSourcesFS {
-      getBusinessDetailsFromSession(sessionService)(user, ec).flatMap {
+      getBusinessDetailsFromSession(user, ec).flatMap {
         viewModel =>
           Future.successful(Ok(checkBusinessDetails(
             viewModel = viewModel,
@@ -138,7 +141,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         else
           (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url)
       }
-      getBusinessDetailsFromSession(sessionService)(user, ec).flatMap {
+      getBusinessDetailsFromSession(user, ec).flatMap {
         viewModel =>
           businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
@@ -168,6 +171,52 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           implicit mtdItUser =>
             handleSubmitRequest(isAgent = true)
         }
+  }
+
+  private def getBusinessDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[CheckBusinessDetailsViewModel] = {
+    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+    val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
+
+    val result = for {
+      businessName <- sessionService.get(SessionKeys.businessName)
+      businessStartDate <- sessionService.get(SessionKeys.businessStartDate)
+      businessTrade <- sessionService.get(SessionKeys.businessTrade)
+      businessAddressLine1 <- sessionService.get(SessionKeys.addBusinessAddressLine1)
+      businessAccountingMethod <- sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod)
+      accountingPeriodEndDate <- sessionService.get(SessionKeys.addBusinessAccountingPeriodEndDate)
+      businessAddressLine2 <- sessionService.get(SessionKeys.addBusinessAddressLine2)
+      businessAddressLine3 <- sessionService.get(SessionKeys.addBusinessAddressLine3)
+      businessAddressLine4 <- sessionService.get(SessionKeys.addBusinessAddressLine4)
+      businessPostalCode <- sessionService.get(SessionKeys.addBusinessPostalCode)
+      businessCountryCode <- sessionService.get(SessionKeys.addBusinessCountryCode)
+      incomeSourcesAccountingMethod <- sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod)
+    } yield (businessName, businessStartDate, businessTrade, businessAddressLine1,
+      businessAccountingMethod, accountingPeriodEndDate, businessAddressLine2,
+      businessAddressLine3, businessAddressLine4, businessPostalCode, businessCountryCode,
+      incomeSourcesAccountingMethod)
+
+    result.flatMap {
+      case (Right(businessName), Right(businessStartDate), Right(Some(businessTrade)),
+      Right(Some(businessAddressLine1)), Right(Some(businessAccountingMethod)), Right(accountingPeriodEndDate),
+      Right(businessAddressLine2), Right(businessAddressLine3), Right(businessAddressLine4), Right(businessPostalCode),
+      Right(businessCountryCode), Right(incomeSourcesAccountingMethod)) =>
+        Future.successful(CheckBusinessDetailsViewModel(
+          businessName = businessName,
+          businessStartDate = businessStartDate.map(LocalDate.parse(_)),
+          accountingPeriodEndDate = accountingPeriodEndDate.map(LocalDate.parse(_)).get,
+          businessTrade = businessTrade,
+          businessAddressLine1 = businessAddressLine1,
+          businessAddressLine2 = businessAddressLine2,
+          businessAddressLine3 = businessAddressLine3,
+          businessAddressLine4 = businessAddressLine4,
+          businessPostalCode = businessPostalCode,
+          businessCountryCode = businessCountryCode,
+          incomeSourcesAccountingMethod = incomeSourcesAccountingMethod,
+          cashOrAccrualsFlag = businessAccountingMethod,
+          skippedAccountingMethod = skipAccountingMethod
+        ))
+      case ex => Future.failed(MissingSessionKey("[IncomeSourcesUtils][getBusinessDetailsFromSession]" + ex))
+    }
   }
 
 }
