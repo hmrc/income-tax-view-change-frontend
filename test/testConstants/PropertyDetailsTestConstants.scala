@@ -20,7 +20,7 @@ import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import models.nextUpdates.NextUpdateModel
-import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 
 import java.time.LocalDate
@@ -189,6 +189,16 @@ object PropertyDetailsTestConstants {
 
   val ukPropertyDetails = PropertyDetailsModel(
     incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None,
+    latencyDetails = None
+  )
+
+  val ukPropertyDetails2 = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
     accountingPeriod = Some(testPropertyAccountingPeriod),
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),

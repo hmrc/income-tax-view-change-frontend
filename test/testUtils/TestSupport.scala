@@ -22,6 +22,7 @@ import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils
 import implicits.ImplicitDateFormatterImpl
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
@@ -86,6 +87,19 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     nino = testNino,
     userName = Some(testRetrievedUserName),
     incomeSources = businessAndPropertyAligned,
+    btaNavPartial = None,
+    saUtr = Some(testSaUtr),
+    credId = Some(testCredId),
+    userType = Some(testUserTypeIndividual),
+    arn = None
+  )(request)
+
+  def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel)
+  : MtdItUser[_] = MtdItUser(
+    mtditid = testMtditid,
+    nino = testNino,
+    userName = Some(testRetrievedUserName),
+    incomeSources = incomeSources,
     btaNavPartial = None,
     saUtr = Some(testSaUtr),
     credId = Some(testCredId),

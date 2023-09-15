@@ -26,6 +26,7 @@ import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetails
 import play.api.Logger
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
+import services.helpers.ActivePropertyBusinessesHelper
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -36,7 +37,7 @@ import scala.util.Try
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
-                                           val cache: AsyncCacheApi) {
+                                           val cache: AsyncCacheApi) extends ActivePropertyBusinessesHelper {
   implicit val ec = ExecutionContext.global
   val cacheExpiry: Duration = Duration(1, "day")
   val emptyAddress = AddressModel(

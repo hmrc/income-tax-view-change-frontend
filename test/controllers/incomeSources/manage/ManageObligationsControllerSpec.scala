@@ -34,11 +34,11 @@ import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.helpers.ActivePropertyBusinessesHelper
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testUtils.TestSupport
-import utils.GetActivePropertyBusinesses
 import views.html.incomeSources.manage.ManageObligations
 
 import java.time.LocalDate
@@ -65,8 +65,7 @@ class ManageObligationsControllerSpec extends TestSupport
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
     obligationsView = app.injector.instanceOf[ManageObligations],
-    mockNextUpdatesService,
-    getActivePropertyBusinesses = app.injector.instanceOf[GetActivePropertyBusinesses]
+    mockNextUpdatesService
   )(
     ec = ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],

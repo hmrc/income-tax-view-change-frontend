@@ -27,11 +27,11 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
+import services.helpers.ActivePropertyBusinessesHelper
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
-import utils.GetActivePropertyBusinesses
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import java.time.LocalDate
@@ -53,8 +53,7 @@ class UKPropertyCeasedObligationsControllerSpec extends TestSupport with MockAut
     mockIncomeSourceDetailsService,
     view,
     mockDateService,
-    mockNextUpdatesService,
-    app.injector.instanceOf[GetActivePropertyBusinesses]
+    mockNextUpdatesService
   )(appConfig,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],

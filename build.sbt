@@ -25,6 +25,8 @@ val wiremockVersion = "2.26.3"
 val hmrcMongoVersion = "0.73.0"
 val currentScalaVersion = "2.13.8"
 
+scalacOptions += "-feature"
+
 val compile = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,

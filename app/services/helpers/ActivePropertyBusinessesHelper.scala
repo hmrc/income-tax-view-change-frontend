@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package services.helpers
 
 import auth.MtdItUser
 import models.incomeSourceDetails.PropertyDetailsModel
 
-trait GetActivePropertyBusinesses {
+trait ActivePropertyBusinessesHelper {
   def getActiveForeignPropertyFromUserIncomeSources(implicit user: MtdItUser[_]): Either[Throwable, PropertyDetailsModel] = {
     val activeForeignProperty = user.incomeSources.properties.filterNot(_.isCeased).filter(_.isForeignProperty)
     activeForeignProperty match {

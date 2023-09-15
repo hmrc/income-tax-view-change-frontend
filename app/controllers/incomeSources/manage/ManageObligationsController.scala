@@ -26,10 +26,11 @@ import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourceDetails.TaxYear.getTaxYearStartYearEndYear
 import play.api.Logger
 import play.api.mvc._
+import services.helpers.ActivePropertyBusinessesHelper
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{GetActivePropertyBusinesses, IncomeSourcesUtils}
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
@@ -45,8 +46,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
-                                            nextUpdatesService: NextUpdatesService,
-                                            getActivePropertyBusinesses: GetActivePropertyBusinesses)
+                                            nextUpdatesService: NextUpdatesService)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
@@ -212,13 +212,13 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     mode match {
       case SelfEmployment => Right(id)
       case UkProperty =>
-        getActivePropertyBusinesses.getActiveUkPropertyFromUserIncomeSources match {
+        incomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources match {
           case Right(ukProperty: PropertyDetailsModel) => Right(ukProperty.incomeSourceId)
           case Left(error: Error) => Left(error)
           case _ => Left(new Error("Unknown error"))
         }
       case ForeignProperty =>
-        getActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources match {
+        incomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources match {
           case Right(foreignProperty: PropertyDetailsModel) => Right(foreignProperty.incomeSourceId)
           case Left(error: Error) => Left(error)
           case _ => Left(new Error("Unknown error"))

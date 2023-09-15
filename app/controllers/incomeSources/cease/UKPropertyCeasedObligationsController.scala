@@ -26,10 +26,11 @@ import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.helpers.ActivePropertyBusinessesHelper
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{GetActivePropertyBusinesses, IncomeSourcesUtils}
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import javax.inject.Inject
@@ -44,8 +45,7 @@ class UKPropertyCeasedObligationsController @Inject()(val authenticate: Authenti
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val obligationsView: IncomeSourceCeasedObligations,
                                                       val dateService: DateServiceInterface,
-                                                      val nextUpdatesService: NextUpdatesService,
-                                                      getActivePropertyBusinesses: GetActivePropertyBusinesses)
+                                                      val nextUpdatesService: NextUpdatesService)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -55,7 +55,7 @@ class UKPropertyCeasedObligationsController @Inject()(val authenticate: Authenti
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      getActivePropertyBusinesses.getActiveUkPropertyFromUserIncomeSources match {
+      incomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources match {
         case Left(error) => showError(isAgent = isAgent, message = error.getMessage)
         case Right(ukProperty: PropertyDetailsModel) =>
           nextUpdatesService.getObligationsViewModel(ukProperty.incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
