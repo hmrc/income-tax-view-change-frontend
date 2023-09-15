@@ -179,6 +179,21 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
 
+    val sessionKeySequence: Seq[String] = Seq(
+      SessionKeys.businessName,
+      SessionKeys.businessStartDate,
+      SessionKeys.businessTrade,
+      SessionKeys.addBusinessAddressLine1,
+      SessionKeys.addIncomeSourcesAccountingMethod,
+      SessionKeys.addBusinessAccountingPeriodEndDate,
+      SessionKeys.addBusinessAddressLine2,
+      SessionKeys.addBusinessAddressLine3,
+      SessionKeys.addBusinessAddressLine4,
+      SessionKeys.addBusinessPostalCode,
+      SessionKeys.addBusinessCountryCode,
+      SessionKeys.addIncomeSourcesAccountingMethod
+    )
+
     val result = for {
       businessName <- sessionService.get(SessionKeys.businessName)
       businessStartDate <- sessionService.get(SessionKeys.businessStartDate)
@@ -217,7 +232,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           cashOrAccrualsFlag = businessAccountingMethod,
           skippedAccountingMethod = skipAccountingMethod
         )))
-      case ex => Future.failed(MissingSessionKey("[IncomeSourcesUtils][getBusinessDetailsFromSession]" + ex))
+      case ex => Future.successful(Left(MissingSessionKey("[IncomeSourcesUtils][getBusinessDetailsFromSession]" + ex)))
     }
   }
 
