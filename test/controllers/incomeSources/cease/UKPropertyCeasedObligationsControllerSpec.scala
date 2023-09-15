@@ -21,15 +21,16 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates._
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
+import models.incomeSourceDetails.PropertyDetailsModel
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{mock, reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
 import services.helpers.ActivePropertyBusinessesHelper
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testPropertyIncomeId}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
@@ -42,6 +43,11 @@ class UKPropertyCeasedObligationsControllerSpec extends TestSupport with MockAut
 
   val view: IncomeSourceCeasedObligations = app.injector.instanceOf[IncomeSourceCeasedObligations]
   val mockDateService: DateService = mock(classOf[DateService])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockIncomeSourceDetailsService)
+  }
 
   object TestUKPropertyCeasedObligationsController$ extends UKPropertyCeasedObligationsController(
     MockAuthenticationPredicate,
@@ -69,7 +75,6 @@ class UKPropertyCeasedObligationsControllerSpec extends TestSupport with MockAut
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockUKPropertyIncomeSource()
 
-
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 4, 6))
 
         when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
@@ -77,6 +82,22 @@ class UKPropertyCeasedObligationsControllerSpec extends TestSupport with MockAut
 
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
+
+        when(mockIncomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources(any()))
+          .thenReturn(
+            Right(
+              PropertyDetailsModel(
+                incomeSourceId = testPropertyIncomeId,
+                accountingPeriod = None,
+                firstAccountingPeriodEndDate = None,
+                incomeSourceType = Some("02-uk-property"),
+                tradingStartDate = None,
+                cessation = None,
+                cashOrAccruals = None,
+                latencyDetails = None
+              )
+            )
+          )
 
         val result = TestUKPropertyCeasedObligationsController$.show()(fakeRequestWithActiveSession)
         status(result) shouldBe OK
