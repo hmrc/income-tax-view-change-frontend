@@ -179,46 +179,53 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
 
-    val result = for {
-      businessName <- sessionService.get(SessionKeys.businessName)
-      businessStartDate <- sessionService.get(SessionKeys.businessStartDate)
-      businessTrade <- sessionService.get(SessionKeys.businessTrade)
-      businessAddressLine1 <- sessionService.get(SessionKeys.addBusinessAddressLine1)
-      businessAccountingMethod <- sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod)
-      accountingPeriodEndDate <- sessionService.get(SessionKeys.addBusinessAccountingPeriodEndDate)
-      businessAddressLine2 <- sessionService.get(SessionKeys.addBusinessAddressLine2)
-      businessAddressLine3 <- sessionService.get(SessionKeys.addBusinessAddressLine3)
-      businessAddressLine4 <- sessionService.get(SessionKeys.addBusinessAddressLine4)
-      businessPostalCode <- sessionService.get(SessionKeys.addBusinessPostalCode)
-      businessCountryCode <- sessionService.get(SessionKeys.addBusinessCountryCode)
-      incomeSourcesAccountingMethod <- sessionService.get(SessionKeys.addIncomeSourcesAccountingMethod)
-    } yield (businessName, businessStartDate, businessTrade, businessAddressLine1,
-      businessAccountingMethod, accountingPeriodEndDate, businessAddressLine2,
-      businessAddressLine3, businessAddressLine4, businessPostalCode, businessCountryCode,
-      incomeSourcesAccountingMethod)
+    // List of fields we are attempting to extract
+    val fields: Seq[String] = Seq(SessionKeys.businessName, SessionKeys.businessStartDate, SessionKeys.businessTrade,
+      SessionKeys.addBusinessAddressLine1, SessionKeys.addIncomeSourcesAccountingMethod, SessionKeys.addBusinessAccountingPeriodEndDate, SessionKeys.addBusinessAddressLine2,
+      SessionKeys.addBusinessAddressLine3, SessionKeys.addBusinessAddressLine4, SessionKeys.addBusinessPostalCode, SessionKeys.addBusinessCountryCode, SessionKeys.addIncomeSourcesAccountingMethod)
 
-    result.flatMap {
-      case (Right(businessName), Right(businessStartDate), Right(Some(businessTrade)),
-      Right(Some(businessAddressLine1)), Right(Some(businessAccountingMethod)), Right(Some(accountingPeriodEndDate)),
-      Right(businessAddressLine2), Right(businessAddressLine3), Right(businessAddressLine4), Right(businessPostalCode),
-      Right(businessCountryCode), Right(incomeSourcesAccountingMethod)) =>
-        Future.successful(Right(CheckBusinessDetailsViewModel(
-          businessName = businessName,
-          businessStartDate = businessStartDate.map(LocalDate.parse(_)),
-          accountingPeriodEndDate = LocalDate.parse(accountingPeriodEndDate),
-          businessTrade = businessTrade,
-          businessAddressLine1 = businessAddressLine1,
-          businessAddressLine2 = businessAddressLine2,
-          businessAddressLine3 = businessAddressLine3,
-          businessAddressLine4 = businessAddressLine4,
-          businessPostalCode = businessPostalCode,
-          businessCountryCode = businessCountryCode,
-          incomeSourcesAccountingMethod = incomeSourcesAccountingMethod,
-          cashOrAccrualsFlag = businessAccountingMethod,
-          skippedAccountingMethod = skipAccountingMethod
-        )))
-      case ex => Future.successful(Left(MissingSessionKey("[IncomeSourcesUtils][getBusinessDetailsFromSession]" + ex)))
+    val init: Future[Either[Throwable, Map[String, Option[String]]]] = Future {
+      Right(Map.empty)
     }
+    val xs = fields.foldLeft(init) { (acc, fieldName) =>
+      for {
+        futureAcc <- acc
+        if futureAcc.isRight // stop exec if there was any error previously
+        futureRes <- sessionService.get(fieldName)
+      } yield (futureAcc, futureRes) match {
+        case (Right(m), Right(optVal)) =>
+          val finalMap = m + (fieldName -> optVal)
+          Right(finalMap)
+        case (_, _) =>
+          futureAcc
+      }
+    }
+
+    for {
+      res <- xs
+    } yield res match { // => Add extra validation for the date parsing + others where required
+      case Right(m) =>
+        Right(
+          CheckBusinessDetailsViewModel(
+            businessName = m.get(SessionKeys.businessName).flatten,
+            businessStartDate = m.get(SessionKeys.businessStartDate).flatten.map(LocalDate.parse(_)),
+            accountingPeriodEndDate = m.get(SessionKeys.addBusinessAccountingPeriodEndDate).flatten.map(LocalDate.parse(_)).get,
+            businessTrade = m.get(SessionKeys.businessTrade).flatten.get,
+            businessAddressLine1 = m.get(SessionKeys.addBusinessAddressLine1).flatten.get,
+            businessAddressLine2 = m.get(SessionKeys.addBusinessAddressLine2).flatten,
+            businessAddressLine3 = m.get(SessionKeys.addBusinessAddressLine3).flatten,
+            businessAddressLine4 = m.get(SessionKeys.addBusinessAddressLine4).flatten,
+            businessPostalCode = m.get(SessionKeys.addBusinessPostalCode).flatten,
+            businessCountryCode = m.get(SessionKeys.addBusinessCountryCode).flatten,
+            incomeSourcesAccountingMethod = m.get(SessionKeys.addIncomeSourcesAccountingMethod).flatten,
+            cashOrAccrualsFlag = m.get(SessionKeys.addIncomeSourcesAccountingMethod).flatten.get,
+            skippedAccountingMethod = skipAccountingMethod
+          )
+        )
+      case ex@Left(_) =>
+        Left(MissingSessionKey(s"[IncomeSourcesUtils][getBusinessDetailsFromSession]  - $ex"))
+    }
+
   }
 
 }
