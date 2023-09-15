@@ -29,6 +29,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CeaseForeignProperty
 
@@ -50,10 +51,10 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                               )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def handleRequest(isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
@@ -63,14 +64,19 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     if (incomeSourcesEnabled) {
-      Future.successful(Ok(view(
-        ceaseForeignPropertyForm = CeaseForeignPropertyForm.form,
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl,
-        origin = origin)(user, messages)))
+      Future.successful(
+        withIncomeSourcesRemovedFromSession {
+          Ok(view(
+            ceaseForeignPropertyForm = CeaseForeignPropertyForm.form,
+            postAction = postAction,
+            isAgent = isAgent,
+            backUrl = backUrl,
+            origin = origin)
+          )
+        }
+      )
     } else {
-      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+      Future.successful(Ok(customNotFoundErrorView()))
     } recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +

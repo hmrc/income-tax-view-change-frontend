@@ -131,13 +131,18 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         case (Some(taxYears), Some(reportingMethod)) =>
           ConfirmReportingMethodForm.form.bindFromRequest().fold(
             formWithErrors =>
-              handleFormWithErrors(
-                isAgent = isAgent,
-                taxYears = taxYears,
-                backCall = backCall,
-                postAction = postAction,
-                formWithErrors = formWithErrors,
-                reportingMethod = reportingMethod
+              Future.successful(
+                BadRequest(
+                  confirmReportingMethod(
+                    isAgent = isAgent,
+                    form = formWithErrors,
+                    backUrl = backCall.url,
+                    postAction = postAction,
+                    reportingMethod = reportingMethod,
+                    taxYearEndYear = taxYears.endYear.toString,
+                    taxYearStartYear = taxYears.startYear.toString
+                  )
+                )
               ),
             _ =>
               handleValidForm(
@@ -155,28 +160,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
-  private def handleFormWithErrors(backCall: Call,
-                                   postAction: Call,
-                                   isAgent: Boolean,
-                                   taxYears: TaxYear,
-                                   reportingMethod: String,
-                                   formWithErrors: Form[ConfirmReportingMethodForm]
-                                  )(implicit user: MtdItUser[_]): Future[Result] = {
-    Future.successful(
-      BadRequest(
-        confirmReportingMethod(
-          isAgent = isAgent,
-          form = formWithErrors,
-          backUrl = backCall.url,
-          postAction = postAction,
-          reportingMethod = reportingMethod,
-          taxYearEndYear = taxYears.endYear.toString,
-          taxYearStartYear = taxYears.startYear.toString
-        )
-      )
-    )
-  }
-
   private def handleValidForm(errorCall: Call,
                               isAgent: Boolean,
                               successCall: Call,
@@ -188,15 +171,23 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     updateIncomeSourceService.updateTaxYearSpecific(
       nino = user.nino,
       incomeSourceId = incomeSourceId,
-      taxYearSpecific = TaxYearSpecific(taxYears.endYear.toString, reportingMethod match {
-        case "annual" => true
-        case "quarterly" => false
-      })
+      taxYearSpecific = TaxYearSpecific(
+        taxYears.endYear.toString,
+        reportingMethod match {
+          case "annual" => true
+          case "quarterly" => false
+        }
+      )
     ) flatMap {
-      case _: UpdateIncomeSourceResponseError => Future.successful(Redirect(errorCall))
+      case _: UpdateIncomeSourceResponseError =>
+        Future.successful(
+          Redirect(errorCall)
+        )
       case res: UpdateIncomeSourceResponseModel =>
         Logger("application").info(s"Updated tax year specific reporting method: $res")
-        Future.successful(Redirect(successCall))
+        Future.successful(
+          Redirect(successCall)
+        )
     } recover {
       case ex: Exception => logAndShowError(isAgent, s"[handleUpdateSuccess]: Error updating reporting method: ${ex.getMessage}")
     }
@@ -224,19 +215,19 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       case (false, SelfEmployment) =>
         routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId) ->
           routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear, incomeSourceId)
-      case (true, SelfEmployment) =>
+      case (_, SelfEmployment) =>
         routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId) ->
           routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear, incomeSourceId)
       case (false, UkProperty) =>
         routes.ManageIncomeSourceDetailsController.showUkProperty() ->
           routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-      case (true, UkProperty) =>
+      case (_, UkProperty) =>
         routes.ManageIncomeSourceDetailsController.showUkPropertyAgent() ->
           routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-      case (false, ForeignProperty) =>
+      case (false, _) =>
         routes.ManageIncomeSourceDetailsController.showForeignProperty() ->
           routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-      case (true, ForeignProperty) =>
+      case (_, _) =>
         routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent() ->
           routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
     }

@@ -89,18 +89,17 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
 
   private def getManageIncomeSourceDetailsUrl(incomeSourceId: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
-      case (_,     SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
-      case (false, UkProperty)     => routes.ManageIncomeSourceDetailsController.showUkProperty()
-      case (_,     UkProperty)     => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
-      case (false, _)              => routes.ManageIncomeSourceDetailsController.showForeignProperty()
-      case (_, _)                  => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
+      case (false, UkProperty)      => routes.ManageIncomeSourceDetailsController.showUkProperty()
+      case (_,     UkProperty)      => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
+      case (false, ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignProperty()
+      case (_,     ForeignProperty) => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
+      case (false, _)               => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
+      case (_,  _)                  => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
     }).url
   }
 
   private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler)
-      .showInternalServerError()
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 
   private def authenticatedAction(isAgent: Boolean

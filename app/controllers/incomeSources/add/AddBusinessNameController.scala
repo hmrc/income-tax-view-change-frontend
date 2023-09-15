@@ -17,7 +17,7 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -29,8 +29,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessName
+import utils.IncomeSourcesUtils
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -103,8 +103,16 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
             case None => BusinessNameForm.form
           }
           val submitAction = getSubmitAction(isAgent: Boolean, isChange: Boolean)
-          Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
 
+          val result: Result = Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
+
+          if (isChange) {
+            result
+          } else {
+            withIncomeSourcesRemovedFromSession {
+              result
+            }
+          }
         case Left(error) =>
           Logger("application").error(s"[AddBusinessNameController][handleRequest] $error")
           errorHandler.showInternalServerError()
@@ -152,39 +160,30 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val (backUrlLocal, submitActionLocal, redirectLocal) = (isAgent, isChange) match {
       case (false, false) => (backUrl, submitAction, redirect)
       case (true, false) => (backUrlAgent, submitActionAgent, redirectAgent)
       case (false, true) => (checkDetailsBackUrl, submitChangeAction, checkDetailsRedirect)
       case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
     }
-    sessionService.get(SessionKeys.businessTrade).flatMap {
-      case Right(businessTradeName) =>
-        BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeName).fold(
-          formWithErrors =>
-            Future.successful(
-              Ok(addBusinessView(formWithErrors,
-                isAgent,
-                submitActionLocal,
-                backUrlLocal,
-                useFallbackLink = true))),
 
-          formData => {
-            val redirect = Redirect(redirectLocal)
-            sessionService.set(SessionKeys.businessName, formData.name, redirect).flatMap {
-              case Right(result) => Future.successful(result)
-              case Left(exception) => Future.failed(exception)
-            }
-          }
-        )
-
-      case Left(exception) => Future.failed(exception)
-    }
-  }.recover {
-    case exception =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage}")
-      errorHandler.showInternalServerError()
+    BusinessNameForm.form.bindFromRequest().fold(
+      formWithErrors => {
+        Future {
+          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal, useFallbackLink = true))
+        }
+      },
+      formData => {
+        val redirect = Redirect(redirectLocal)
+        sessionService.set(SessionKeys.businessName, formData.name, redirect).map {
+          case Right(result) => result
+          case Left(error) =>
+            Logger("application").error(s"[AddBusinessNameController][handleRequest] $error")
+            errorHandler.showInternalServerError()
+        }
+      }
+    )
   }
 
   def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

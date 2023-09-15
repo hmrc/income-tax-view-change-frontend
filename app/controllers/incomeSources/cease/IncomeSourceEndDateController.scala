@@ -129,13 +129,21 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
           case (SelfEmployment, None) =>
             errorHandler.showInternalServerError()
           case _ =>
-            Ok(incomeSourceEndDate(
-              incomeSourceEndDateForm = incomeSourceEndDateForm(incomeSourceTypeValue, id),
-              postAction = postAction,
-              isAgent = isAgent,
-              backUrl = backAction.url,
-              incomeSourceType = incomeSourceTypeValue
-            )(user, messages))
+            val result: Result = {
+              Ok(incomeSourceEndDate(
+                incomeSourceEndDateForm = incomeSourceEndDateForm(incomeSourceTypeValue, id),
+                postAction = postAction,
+                isAgent = isAgent,
+                backUrl = backAction.url,
+                incomeSourceType = incomeSourceTypeValue
+              )(user, messages))
+            }
+            if(incomeSourceTypeValue == SelfEmployment)
+              withIncomeSourcesRemovedFromSession {
+                result
+              }
+            else
+              result
         }
     }
 
