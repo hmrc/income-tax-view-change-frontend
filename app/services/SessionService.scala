@@ -17,7 +17,7 @@
 package services
 
 import auth.MtdItUser
-import play.api.mvc.{RequestHeader, Result}
+import play.api.mvc.{AnyContent, RequestHeader, Result}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,7 @@ class SessionService @Inject()() {
   }
 
   def remove(keys: Seq[String], result: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Result]] = {
-    Future {
+    Future{
       val newSession = user.session -- keys
       Right(
         result.withSession(newSession)

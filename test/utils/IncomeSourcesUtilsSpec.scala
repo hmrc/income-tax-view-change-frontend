@@ -65,15 +65,15 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     "user has uk property details in session" should {
       "return CheckBusinessDetailsViewModel" in {
         implicit val user = individualUser.copy()(fakeRequest)
-        val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession
-        result shouldBe Right(checkUKPropertyViewModel)
+        val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession(sessionService)
+        result.futureValue shouldBe Right(checkUKPropertyViewModel)
       }
     }
 
     "user is missing uk property details in session" should {
       "returns an exception" in {
-        val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession
-        result.isLeft shouldBe true
+        val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession(sessionService)
+        result.futureValue.isLeft shouldBe true
       }
     }
 

@@ -52,6 +52,9 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val addForeignPropertyStartDateChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
   val addForeignPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
 
+  val testAddForeignPropertyStartDate: Map[String, String] = Map(ForeignProperty.startDateSessionKey -> "2022-10-10")
+  val testAddUKPropertyStartDate: Map[String, String] = Map(UkProperty.startDateSessionKey -> "2022-10-10")
+  val testAddBusinessStartDate: Map[String, String] = Map(SelfEmployment.startDateSessionKey -> "2022-10-10")
 
   val prefixForeignProperty = "incomeSources.add.foreignProperty.startDate"
 
@@ -239,7 +242,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $addUKPropertyStartDateChangeShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-uk-property-start-date")
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-uk-property-start-date", testAddUKPropertyStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -260,7 +263,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $addForeignPropertyStartDateChangeShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-foreign-property-start-date")
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-foreign-property-start-date", testAddForeignPropertyStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -281,7 +284,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $addBusinessStartDateChangeShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-start-date")
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-start-date", testAddBusinessStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(

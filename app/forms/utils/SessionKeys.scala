@@ -34,6 +34,8 @@ object SessionKeys {
 
   val addUkPropertyStartDate: String = "addUkPropertyStartDate"
 
+  val addForeignPropertyStartDate: String = "addForeignPropertyStartDate"
+
   val businessName: String = "addBusinessName"
 
   val businessTrade: String = "addBusinessTrade"
@@ -64,4 +66,26 @@ object SessionKeys {
   val ceaseBusinessIncomeSourceId: String = "ceaseBusinessIncomeSourceId"
 
   val foreignPropertyStartDate: String = "addForeignPropertyStartDate"
+
+  val incomeSourcesSessionKeys: Seq[String] = Seq(
+    addUkPropertyStartDate,
+    addForeignPropertyStartDate,
+    businessName,
+    businessTrade,
+    addIncomeSourcesAccountingMethod,
+    addBusinessStartDate,
+    addBusinessAccountingPeriodStartDate,
+    addBusinessAccountingPeriodEndDate,
+    addBusinessStartDate,
+    addBusinessAddressLine1,
+    addBusinessAddressLine2,
+    addBusinessAddressLine3,
+    addBusinessAddressLine4,
+    addBusinessPostalCode,
+    addBusinessCountryCode,
+    ceaseForeignPropertyDeclare,
+    ceaseForeignPropertyEndDate,
+    ceaseUKPropertyDeclare,
+    ceaseUKPropertyEndDate
+  )
 }

@@ -33,7 +33,7 @@ import org.jsoup.nodes.Document
 import play.api.http.Status
 import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.Helpers._
-import services.DateService
+import services.{DateService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -76,7 +76,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     retrieveBtaNavBar = MockNavBarPredicate,
     customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError],
-    incomeSourceDetailsService = mockIncomeSourceDetailsService
+    incomeSourceDetailsService = mockIncomeSourceDetailsService,
+    sessionService = app.injector.instanceOf[SessionService]
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -623,7 +624,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
+
+        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient().withSession(ForeignProperty.startDateSessionKey -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
@@ -639,7 +641,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient().withSession(UkProperty.startDateSessionKey -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
@@ -655,7 +657,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
+        val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(fakeRequestConfirmedClient().withSession(SelfEmployment.startDateSessionKey -> testStartDate))
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title should include(messages("add-business-start-date.heading"))

@@ -20,10 +20,11 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
-import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
+import models.incomeSourceDetails.BusinessDetailsModel
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import services.SessionService
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
@@ -42,29 +43,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
   }
 
   def newWithIncomeSourcesRemovedFromSession(redirect: Result, sessionService: SessionService, errorRedirect: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val incomeSourcesSessionKeys = Seq(
-      SessionKeys.addUkPropertyStartDate,
-      SessionKeys.foreignPropertyStartDate,
-      SessionKeys.businessName,
-      SessionKeys.businessTrade,
-      SessionKeys.addIncomeSourcesAccountingMethod,
-      SessionKeys.addBusinessStartDate,
-      SessionKeys.addBusinessAccountingPeriodStartDate,
-      SessionKeys.addBusinessAccountingPeriodEndDate,
-      SessionKeys.addBusinessStartDate,
-      SessionKeys.addBusinessAddressLine1,
-      SessionKeys.addBusinessAddressLine2,
-      SessionKeys.addBusinessAddressLine3,
-      SessionKeys.addBusinessAddressLine4,
-      SessionKeys.addBusinessPostalCode,
-      SessionKeys.addBusinessCountryCode,
-      SessionKeys.ceaseForeignPropertyDeclare,
-      SessionKeys.ceaseForeignPropertyEndDate,
-      SessionKeys.ceaseUKPropertyDeclare,
-      SessionKeys.ceaseUKPropertyEndDate
-    ) //TODO: check this is all the keys
-
-    sessionService.remove(incomeSourcesSessionKeys, redirect).map {
+    sessionService.remove(SessionKeys.incomeSourcesSessionKeys, redirect).map {
       case Left(_) => errorRedirect
       case Right(result) => result
     }
@@ -73,6 +52,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
   def withIncomeSourcesRemovedFromSession(redirect: Result)(implicit user: MtdItUser[_]): Result = {
     val incomeSourcesSessionKeys = Seq(
       "addUkPropertyStartDate",
+      "addForeignPropertyStartDate",
       "addBusinessName",
       "addBusinessTrade",
       "addIncomeSourcesAccountingMethod",
@@ -101,28 +81,85 @@ object IncomeSourcesUtils {
 
   case class MissingKey(msg: String)
 
-  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckUKPropertyViewModel] = {
-    val result: Option[Either[Throwable, CheckUKPropertyViewModel]] = for {
-      tradingStartDate <- user.session.data.get(addUkPropertyStartDate)
-      cashOrAccrualsFlag <- user.session.data.get(addIncomeSourcesAccountingMethod)
+  def getBusinessDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
+    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+    val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
+
+    val result: Option[Either[Throwable, CheckBusinessDetailsViewModel]] = for {
+      businessName <- user.session.data.get(businessName)
+      businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
+      businessTrade <- user.session.data.get(businessTrade)
+      businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
+      businessAccountingMethod <- user.session.data.get(addIncomeSourcesAccountingMethod)
+      accountingPeriodEndDate <- user.session.data.get(addBusinessAccountingPeriodEndDate).map(LocalDate.parse)
     } yield {
-      Right(CheckUKPropertyViewModel(
-        tradingStartDate = LocalDate.parse(tradingStartDate),
-        cashOrAccrualsFlag = cashOrAccrualsFlag
+      Right(CheckBusinessDetailsViewModel(
+        businessName = Some(businessName),
+        businessStartDate = Some(businessStartDate),
+        accountingPeriodEndDate = accountingPeriodEndDate,
+        businessTrade = businessTrade,
+        businessAddressLine1 = businessAddressLine1,
+        businessAddressLine2 = user.session.data.get(addBusinessAddressLine2),
+        businessAddressLine3 = user.session.data.get(addBusinessAddressLine3),
+        businessAddressLine4 = user.session.data.get(addBusinessAddressLine4),
+        businessPostalCode = user.session.data.get(addBusinessPostalCode),
+        businessCountryCode = user.session.data.get(addBusinessCountryCode),
+        incomeSourcesAccountingMethod = user.session.data.get(addIncomeSourcesAccountingMethod),
+        cashOrAccrualsFlag = businessAccountingMethod,
+        skippedAccountingMethod = skipAccountingMethod
       ))
     }
 
     result match {
-      case Some(propertyDetails) =>
-        propertyDetails
+      case Some(checkBusinessDetailsViewModel) =>
+        checkBusinessDetailsViewModel
       case None =>
         val errors: Seq[String] = Seq(
-          user.session.data.get(addUkPropertyStartDate).orElse(Some(MissingKey(s"MissingKey: $addUkPropertyStartDate"))),
-          user.session.data.get(businessTrade).orElse(Some(MissingKey(s"MissingKey: $businessTrade")))
+          user.session.data.get(businessName).orElse(Some(MissingKey("MissingKey: addBusinessName"))),
+          user.session.data.get(businessStartDate).orElse(Some(MissingKey("MissingKey: addBusinessStartDate"))),
+          user.session.data.get(businessTrade).orElse(Some(MissingKey("MissingKey: addBusinessTrade"))),
+          user.session.data.get(addBusinessAddressLine1).orElse(Some(MissingKey("MissingKey: addBusinessAddressLine1"))),
+          user.session.data.get(addBusinessPostalCode).orElse(Some(MissingKey("MissingKey: addBusinessPostalCode")))
         ).collect {
           case Some(MissingKey(msg)) => msg
         }
         Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
     }
+  }
+
+  def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
+    for {
+      startDate <- sessionService.get(addUkPropertyStartDate)
+      accMethod <- sessionService.get(addIncomeSourcesAccountingMethod)
+    } yield (startDate, accMethod) match {
+      case (Right(dateMaybe), Right(methodMaybe)) =>
+        val maybeModel = for {
+          foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+          cashOrAccrualsFlag <- methodMaybe
+        } yield {
+          CheckUKPropertyViewModel(
+            tradingStartDate = foreignPropertyStartDate,
+            cashOrAccrualsFlag = cashOrAccrualsFlag)
+        }
+        maybeModel.map(Right(_))
+          .getOrElse(Left(new Error("Unable to construct UK property view model")))
+      case (_, _) =>
+        Left(new Error("Error occurred when retrieving start dat and accounting method from session storage"))
+    }
+  }
+
+  def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
+
+    def checkError(field: Either[Throwable, Option[String]]): String = {
+      field match {
+        case Right(nameOpt) => nameOpt match {
+          case Some(name) => name
+          case None => "MissingKey: addUKPropertyStartDate"
+        }
+        case Left(_) => "MissingKey: addUKPropertyStartDate"
+      }
+    }
+
+    Seq(checkError(startDate), checkError(accMethod))
   }
 }
