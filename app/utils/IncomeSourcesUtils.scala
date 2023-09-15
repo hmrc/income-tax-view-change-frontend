@@ -107,7 +107,7 @@ object IncomeSourcesUtils {
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
 
     val result: Option[Either[Throwable, CheckBusinessDetailsViewModel]] = for {
-      businessName <- user.session.data.get(businessName) //sessionService.get(businessName)
+      businessName <- user.session.data.get(businessName)
       businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
       businessTrade <- user.session.data.get(businessTrade)
       businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
@@ -163,7 +163,7 @@ object IncomeSourcesUtils {
             cashOrAccrualsFlag = cashOrAccrualsFlag)
         }
         maybeModel.map(Right(_))
-          .getOrElse(Left(new Error("Unable to construct model")))
+          .getOrElse(Left(new Error("Unable to construct UK property view model")))
       case (_, _) =>
         Left(new Error("Some error"))
     }
