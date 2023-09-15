@@ -17,7 +17,6 @@
 package utils
 
 import auth.MtdItUser
-import config.ShowInternalServerError
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.BusinessDetailsModel
@@ -168,34 +167,6 @@ object IncomeSourcesUtils {
       case (_, _) =>
         Left(new Error("Some error"))
     }
-
-    /*sessionService.get(addUkPropertyStartDate).flatMap { startDate: Either[Throwable, Option[String]] =>
-      sessionService.get(addIncomeSourcesAccountingMethod).map { accMethod: Either[Throwable, Option[String]] =>
-        val result = startDate match {
-          case Left(_) => None
-          case Right(dateMaybe) =>
-            accMethod match {
-              case Left(_) => None
-              case Right(methodMaybe) =>
-                for {
-                  foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
-                  cashOrAccrualsFlag <- methodMaybe
-                } yield {
-                  CheckUKPropertyViewModel(
-                    tradingStartDate = foreignPropertyStartDate,
-                    cashOrAccrualsFlag = cashOrAccrualsFlag)
-                }
-            }
-        }
-        result match {
-          case Some(propertyDetails) =>
-            Right(propertyDetails)
-          case None =>
-            val errors: Seq[String] = getErrors(startDate, accMethod)
-            Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
-        }
-      }
-    }*/
   }
 
   def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
