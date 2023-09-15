@@ -208,18 +208,29 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   }
 
   private def setSessionData(keyValuePairs: Seq[(String, String)], result: Result)(implicit mtdItUser: MtdItUser[_]): Future[Either[Throwable, Result]] = {
-    keyValuePairs match {
-      case x :: xs =>
-        sessionService.set(x._1, x._2, result) flatMap {
-          case Right(addedResult) => setSessionData(xs, addedResult)
-          case Left(ex) => Future.successful(Left(ex))
-        }
-      case _ => Future.successful(Right(result))
+    keyValuePairs.foldLeft[Future[Either[Throwable, Result]]](Future {
+      Right(result)
+    }) { (acc, keyValue) =>
+      val result = for {
+        a <- acc
+      } yield a match {
+        case Right(res) =>
+          sessionService.set(keyValue._1, keyValue._2, res)
+        case Left(ex) =>
+          Future {
+            Left(ex)
+          }
+      }
+      result.flatten
     }
   }
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, Option[String]]] = {
-    sessionService.get(incomeSourceType.startDateSessionKey)
+    sessionService.get(incomeSourceType.startDateSessionKey) map {
+      case Right(value) if value.isDefined && Try(value.getOrElse("").toLocalDate).toOption.isDefined => Right(value)
+      case Right(other) => Right(other)
+      case _ => Left(new Error("Error retrieving start date"))
+    }
   }
 
   private def getAndValidateStartDate(incomeSourceType: IncomeSourceType)
@@ -228,8 +239,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     getStartDate(incomeSourceType) map {
       case Left(ex) => Left(new Error(s"Could not retrieve start date from session storage: ${ex.getMessage}"))
       case Right(dateMaybe) => dateMaybe match {
-        case Some(date) if Try(date.toLocalDate).toOption.isDefined => Right(date)
-        case Some(invalidDate) => Left(new Error(s"Could not parse $invalidDate as LocalDate"))
+        case Some(date) => Right(date)
         case None => Left(new Error(s"Session value not found for Key: ${incomeSourceType.startDateSessionKey}"))
       }
     }
