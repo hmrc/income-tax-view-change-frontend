@@ -18,6 +18,7 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
@@ -42,29 +43,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
   }
 
   def newWithIncomeSourcesRemovedFromSession(redirect: Result, sessionService: SessionService, errorRedirect: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val incomeSourcesSessionKeys = Seq(
-      "addUkPropertyStartDate",
-      "addForeignPropertyStartDate",
-      "addBusinessName",
-      "addBusinessTrade",
-      "addIncomeSourcesAccountingMethod",
-      "addBusinessStartDate",
-      "addBusinessAccountingPeriodStartDate",
-      "addBusinessAccountingPeriodEndDate",
-      "addBusinessStartDate",
-      "addBusinessAddressLine1",
-      "addBusinessAddressLine2",
-      "addBusinessAddressLine3",
-      "addBusinessAddressLine4",
-      "addBusinessPostalCode",
-      "addBusinessCountryCode",
-      "ceaseForeignPropertyDeclare",
-      "ceaseForeignPropertyEndDate",
-      "ceaseUKPropertyDeclare",
-      "ceaseUKPropertyEndDate"
-    ) //TODO: check this is all the keys
-
-    sessionService.remove(incomeSourcesSessionKeys, redirect).map {
+    sessionService.remove(SessionKeys.incomeSourcesSessionKeys, redirect).map {
       case Left(_) => errorRedirect
       case Right(result) => result
     }
