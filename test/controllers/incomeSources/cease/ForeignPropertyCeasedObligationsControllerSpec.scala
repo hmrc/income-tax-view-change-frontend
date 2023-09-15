@@ -52,11 +52,10 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
   with FeatureSwitching {
 
   val mockDateService: DateService = mock(classOf[DateService])
-  val mockGetActivePropertyBusinesses: ActivePropertyBusinessesHelper = mock(classOf[ActivePropertyBusinessesHelper])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockGetActivePropertyBusinesses)
+    reset(mockIncomeSourceDetailsService)
   }
 
   object TestForeignPropertyObligationsController extends ForeignPropertyCeasedObligationsController(
@@ -131,7 +130,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
-        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+        when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
           .thenReturn(
             Right(
               PropertyDetailsModel(
@@ -182,7 +181,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         enable(IncomeSources)
         mockNoIncomeSources()
 
-        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+        when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
           .thenReturn(
             Left(
               new Error("No active foreign properties found.")
@@ -197,7 +196,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         enable(IncomeSources)
         mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
 
-        when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+        when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
           .thenReturn(
             Left(
               new Error("Too many active foreign properties found. There should only be one.")
@@ -243,7 +242,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
           )))
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(testObligationsModel))
-          when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
             .thenReturn(
               Right(
                 PropertyDetailsModel(
@@ -290,7 +289,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
           enable(IncomeSources)
           mockNoIncomeSources()
 
-          when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
             .thenReturn(
               Left(
                 new Error("No active foreign properties found.")
@@ -306,7 +305,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
           enable(IncomeSources)
           mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
 
-          when(mockGetActivePropertyBusinesses.getActiveForeignPropertyFromUserIncomeSources(any()))
+          when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
             .thenReturn(
               Left(
                 new Error("Too many active foreign properties found. There should only be one.")
