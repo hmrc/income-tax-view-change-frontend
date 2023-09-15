@@ -199,13 +199,13 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
     result.flatMap {
       case (Right(businessName), Right(businessStartDate), Right(Some(businessTrade)),
-      Right(Some(businessAddressLine1)), Right(Some(businessAccountingMethod)), Right(accountingPeriodEndDate),
+      Right(Some(businessAddressLine1)), Right(Some(businessAccountingMethod)), Right(Some(accountingPeriodEndDate)),
       Right(businessAddressLine2), Right(businessAddressLine3), Right(businessAddressLine4), Right(businessPostalCode),
       Right(businessCountryCode), Right(incomeSourcesAccountingMethod)) =>
         Future.successful(Right(CheckBusinessDetailsViewModel(
           businessName = businessName,
           businessStartDate = businessStartDate.map(LocalDate.parse(_)),
-          accountingPeriodEndDate = accountingPeriodEndDate.map(LocalDate.parse(_)).get,
+          accountingPeriodEndDate = LocalDate.parse(accountingPeriodEndDate),
           businessTrade = businessTrade,
           businessAddressLine1 = businessAddressLine1,
           businessAddressLine2 = businessAddressLine2,
