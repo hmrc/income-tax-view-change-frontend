@@ -125,21 +125,17 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   }
 
   def getResult(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Option[CheckForeignPropertyViewModel] = {
-    startDate match {
-      case Left(_) => None
-      case Right(dateMaybe) =>
-        accMethod match {
-          case Left(_) => None
-          case Right(methodMaybe) =>
-            for {
-              foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
-              cashOrAccrualsFlag <- methodMaybe
-            } yield {
-              CheckForeignPropertyViewModel(
-                tradingStartDate = foreignPropertyStartDate,
-                cashOrAccrualsFlag = cashOrAccrualsFlag)
-            }
+    (startDate, accMethod) match {
+      case (Right(dateMaybe), Right(methodMaybe)) =>
+        for {
+          foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+          cashOrAccrualsFlag <- methodMaybe
+        } yield {
+          CheckForeignPropertyViewModel(
+            tradingStartDate = foreignPropertyStartDate,
+            cashOrAccrualsFlag = cashOrAccrualsFlag)
         }
+      case (_, _) => None
     }
   }
 
@@ -161,10 +157,9 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
         }
         case Left(_) => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
       }
-    ).map {
+    ).collect {
       case Some(MissingKey(msg)) => msg
-      case _ => ""
-    }.filterNot(x => x == "")
+    }
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

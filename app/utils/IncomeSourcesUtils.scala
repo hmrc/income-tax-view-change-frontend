@@ -144,7 +144,7 @@ object IncomeSourcesUtils {
         maybeModel.map(Right(_))
           .getOrElse(Left(new Error("Unable to construct UK property view model")))
       case (_, _) =>
-        Left(new Error("Some error"))
+        Left(new Error("Error occurred when retrieving start dat and accounting method from session storage"))
     }
   }
 

@@ -19,25 +19,25 @@ package forms.utils
 object SessionKeys {
 
   val incomeSourcesSessionKeys: Seq[String] = Seq(
-    "addUkPropertyStartDate",
-    "addForeignPropertyStartDate",
-    "addBusinessName",
-    "addBusinessTrade",
-    "addIncomeSourcesAccountingMethod",
-    "addBusinessStartDate",
-    "addBusinessAccountingPeriodStartDate",
-    "addBusinessAccountingPeriodEndDate",
-    "addBusinessStartDate",
-    "addBusinessAddressLine1",
-    "addBusinessAddressLine2",
-    "addBusinessAddressLine3",
-    "addBusinessAddressLine4",
-    "addBusinessPostalCode",
-    "addBusinessCountryCode",
-    "ceaseForeignPropertyDeclare",
-    "ceaseForeignPropertyEndDate",
-    "ceaseUKPropertyDeclare",
-    "ceaseUKPropertyEndDate"
+    addUkPropertyStartDate,
+    addForeignPropertyStartDate,
+    businessName,
+    businessTrade,
+    addIncomeSourcesAccountingMethod,
+    addBusinessStartDate,
+    addBusinessAccountingPeriodStartDate,
+    addBusinessAccountingPeriodEndDate,
+    addBusinessStartDate,
+    addBusinessAddressLine1,
+    addBusinessAddressLine2,
+    addBusinessAddressLine3,
+    addBusinessAddressLine4,
+    addBusinessPostalCode,
+    addBusinessCountryCode,
+    ceaseForeignPropertyDeclare,
+    ceaseForeignPropertyEndDate,
+    ceaseUKPropertyDeclare,
+    ceaseUKPropertyEndDate
   )
 
   val calculationId: String = "calculationId"
@@ -55,6 +55,8 @@ object SessionKeys {
   val ceaseForeignPropertyDeclare: String = "ceaseForeignPropertyDeclare"
 
   val addUkPropertyStartDate: String = "addUkPropertyStartDate"
+
+  val addForeignPropertyStartDate: String = "addForeignPropertyStartDate"
 
   val businessName: String = "addBusinessName"
 
