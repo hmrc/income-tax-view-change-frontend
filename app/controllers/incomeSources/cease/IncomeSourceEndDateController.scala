@@ -24,7 +24,6 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.models.DateFormElement
-import forms.utils.SessionKeys
 import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import play.api.Logger
 import play.api.data.Form
@@ -34,7 +33,6 @@ import services.{IncomeSourceDetailsService, SessionService}
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.IncomeSourceEndDate
-
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
