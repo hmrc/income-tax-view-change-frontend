@@ -18,6 +18,7 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.mvc.Result
@@ -42,25 +43,25 @@ trait IncomeSourcesUtils extends FeatureSwitching {
 
   def newWithIncomeSourcesRemovedFromSession(redirect: Result, sessionService: SessionService, errorRedirect: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val incomeSourcesSessionKeys = Seq(
-      "addUkPropertyStartDate",
-      "addForeignPropertyStartDate",
-      "addBusinessName",
-      "addBusinessTrade",
-      "addIncomeSourcesAccountingMethod",
-      "addBusinessStartDate",
-      "addBusinessAccountingPeriodStartDate",
-      "addBusinessAccountingPeriodEndDate",
-      "addBusinessStartDate",
-      "addBusinessAddressLine1",
-      "addBusinessAddressLine2",
-      "addBusinessAddressLine3",
-      "addBusinessAddressLine4",
-      "addBusinessPostalCode",
-      "addBusinessCountryCode",
-      "ceaseForeignPropertyDeclare",
-      "ceaseForeignPropertyEndDate",
-      "ceaseUKPropertyDeclare",
-      "ceaseUKPropertyEndDate"
+      SessionKeys.addUkPropertyStartDate,
+      SessionKeys.foreignPropertyStartDate,
+      SessionKeys.businessName,
+      SessionKeys.businessTrade,
+      SessionKeys.addIncomeSourcesAccountingMethod,
+      SessionKeys.addBusinessStartDate,
+      SessionKeys.addBusinessAccountingPeriodStartDate,
+      SessionKeys.addBusinessAccountingPeriodEndDate,
+      SessionKeys.addBusinessStartDate,
+      SessionKeys.addBusinessAddressLine1,
+      SessionKeys.addBusinessAddressLine2,
+      SessionKeys.addBusinessAddressLine3,
+      SessionKeys.addBusinessAddressLine4,
+      SessionKeys.addBusinessPostalCode,
+      SessionKeys.addBusinessCountryCode,
+      SessionKeys.ceaseForeignPropertyDeclare,
+      SessionKeys.ceaseForeignPropertyEndDate,
+      SessionKeys.ceaseUKPropertyDeclare,
+      SessionKeys.ceaseUKPropertyEndDate
     ) //TODO: check this is all the keys
 
     sessionService.remove(incomeSourcesSessionKeys, redirect).map {
