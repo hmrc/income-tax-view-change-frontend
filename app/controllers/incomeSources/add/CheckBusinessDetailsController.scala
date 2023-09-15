@@ -109,13 +109,14 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
     withIncomeSourcesFS {
       getBusinessDetailsFromSession(user, ec).flatMap {
-        viewModel =>
+        case Right(viewModel) =>
           Future.successful(Ok(checkBusinessDetails(
             viewModel = viewModel,
             postAction = postAction,
             isAgent = isAgent,
             backUrl = backUrl
           )))
+        case Left(ex) => Future.failed(ex)
       }.recover {
         case ex: Throwable =>
           if (isAgent) {
@@ -142,12 +143,13 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url)
       }
       getBusinessDetailsFromSession(user, ec).flatMap {
-        viewModel =>
+        case Right(viewModel) =>
           businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
               newWithIncomeSourcesRemovedFromSession(Redirect(redirect(id).url), sessionService, Redirect(errorHandler))
             case Left(ex) => Future.failed(ex)
           }
+        case Left(ex) => Future.failed(ex)
       }.recover {
         case ex: Throwable =>
           Logger("application").error(
@@ -173,7 +175,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         }
   }
 
-  private def getBusinessDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[CheckBusinessDetailsViewModel] = {
+  private def getBusinessDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
 
@@ -200,7 +202,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       Right(Some(businessAddressLine1)), Right(Some(businessAccountingMethod)), Right(accountingPeriodEndDate),
       Right(businessAddressLine2), Right(businessAddressLine3), Right(businessAddressLine4), Right(businessPostalCode),
       Right(businessCountryCode), Right(incomeSourcesAccountingMethod)) =>
-        Future.successful(CheckBusinessDetailsViewModel(
+        Future.successful(Right(CheckBusinessDetailsViewModel(
           businessName = businessName,
           businessStartDate = businessStartDate.map(LocalDate.parse(_)),
           accountingPeriodEndDate = accountingPeriodEndDate.map(LocalDate.parse(_)).get,
@@ -214,7 +216,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           incomeSourcesAccountingMethod = incomeSourcesAccountingMethod,
           cashOrAccrualsFlag = businessAccountingMethod,
           skippedAccountingMethod = skipAccountingMethod
-        ))
+        )))
       case ex => Future.failed(MissingSessionKey("[IncomeSourcesUtils][getBusinessDetailsFromSession]" + ex))
     }
   }
