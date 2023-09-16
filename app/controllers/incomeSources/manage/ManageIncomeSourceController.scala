@@ -26,6 +26,7 @@ import play.api.Logger
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.ManageIncomeSources
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +46,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                             (implicit val ec: ExecutionContext,
                                              implicit override val mcc: MessagesControllerComponents,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching {
+  with FeatureSwitching with IncomeSourcesUtils {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -78,11 +79,13 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
       Future {
         incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
           case Right(viewModel) =>
-            Ok(manageIncomeSources(
-              viewModel,
-              isAgent,
-              backUrl
-            ))
+            withIncomeSourcesRemovedFromSession {
+              Ok(manageIncomeSources(
+                viewModel,
+                isAgent,
+                backUrl
+              ))
+            }
           case Left(ex) =>
             if (isAgent) {
               Logger("application").error(

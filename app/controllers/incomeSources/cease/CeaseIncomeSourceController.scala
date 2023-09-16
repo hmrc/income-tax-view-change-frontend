@@ -27,6 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.CeaseIncomeSources
 
 import javax.inject.Inject
@@ -45,7 +46,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -83,11 +84,13 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
     Future {
       incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          Ok(ceaseIncomeSources(
-            viewModel,
-            isAgent = isAgent,
-            backUrl = backUrl
-          ))
+          withIncomeSourcesRemovedFromSession {
+            Ok(ceaseIncomeSources(
+              viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          }
         case Left(ex) =>
           if (isAgent) {
             Logger("application").error(
