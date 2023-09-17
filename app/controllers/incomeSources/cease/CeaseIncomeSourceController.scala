@@ -84,7 +84,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String) (implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
       case Right(viewModel) =>
-        newWithIncomeSourcesRemovedFromSession {
+        withIncomeSourcesRemovedFromSessionLegacy {
           Ok(ceaseIncomeSources(
             viewModel,
             isAgent = isAgent,

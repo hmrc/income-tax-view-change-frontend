@@ -211,7 +211,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
             Future.successful(Redirect(redirectErrorUrl))
 
           case Right(CreateIncomeSourceResponse(id)) =>
-            newWithIncomeSourcesRemovedFromSession(
+            withIncomeSourcesRemovedFromSessionLegacy(
               if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
               else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url),
             ) recover {

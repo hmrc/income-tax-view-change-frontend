@@ -88,7 +88,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>
-          newWithIncomeSourcesRemovedFromSession {
+          withIncomeSourcesRemovedFromSessionLegacy {
             Ok(addIncomeSources(
               sources = viewModel,
               isAgent = isAgent,

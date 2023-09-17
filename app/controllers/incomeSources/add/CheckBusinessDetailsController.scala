@@ -147,14 +147,14 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
               Redirect(errorHandler)
 
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession {
+              withIncomeSourcesRemovedFromSessionLegacy {
                 Redirect(redirect(id).url)
               }
           }.recover {
             case ex: Throwable =>
               Logger("application").error(
                 s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
-              withIncomeSourcesRemovedFromSession {
+              withIncomeSourcesRemovedFromSessionLegacy {
                 Redirect(errorHandler)
               }
           }

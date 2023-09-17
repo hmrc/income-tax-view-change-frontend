@@ -79,7 +79,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
     } else {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          newWithIncomeSourcesRemovedFromSession {
+          withIncomeSourcesRemovedFromSessionLegacy {
             Ok(manageIncomeSources(
               viewModel,
               isAgent,

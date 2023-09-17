@@ -142,11 +142,11 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              newWithIncomeSourcesRemovedFromSession(
+              withIncomeSourcesRemovedFromSession(
                 Redirect(redirectErrorUrl)
               )
             case Right(CreateIncomeSourceResponse(id)) =>
-              newWithIncomeSourcesRemovedFromSession(
+              withIncomeSourcesRemovedFromSessionLegacy(
                 Redirect(getUKPropertyReportingMethodUrl(isAgent, id))
               ) recover {
                 case _: Exception => Redirect(redirectErrorUrl)
@@ -166,7 +166,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         case Left(ex: Throwable) =>
           Logger("application").error(
             s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
-          newWithIncomeSourcesRemovedFromSession(
+          withIncomeSourcesRemovedFromSessionLegacy(
             Redirect(redirectErrorUrl)
           ) recover {
             case _: Exception => Redirect(redirectErrorUrl)

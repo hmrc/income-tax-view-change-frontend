@@ -101,7 +101,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     "user has session data" should {
       "remove session data" in {
         implicit val user = individualUser.copy()(fakeRequest)
-        val redirect = withIncomeSourcesRemovedFromSession {
+        val redirect = withIncomeSourcesRemovedFromSessionLegacy {
           Redirect("nowhere")
         }
         

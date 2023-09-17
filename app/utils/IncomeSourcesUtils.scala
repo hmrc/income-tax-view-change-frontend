@@ -42,14 +42,14 @@ trait IncomeSourcesUtils extends FeatureSwitching {
     }
   }
 
-  def newWithIncomeSourcesRemovedFromSession(redirect: Result)(implicit user: MtdItUser[_], sessionService: SessionService, ec: ExecutionContext): Future[Result] = {
+  def withIncomeSourcesRemovedFromSession(redirect: Result)(implicit user: MtdItUser[_], sessionService: SessionService, ec: ExecutionContext): Future[Result] = {
     sessionService.remove(SessionKeys.incomeSourcesSessionKeys, redirect).map {
       case Left(_) => throw new Exception("Failed to remove income sources from session")
       case Right(result) => result
     }
   }
 
-  def withIncomeSourcesRemovedFromSession(redirect: Result)(implicit user: MtdItUser[_]): Result = {
+  def withIncomeSourcesRemovedFromSessionLegacy(redirect: Result)(implicit user: MtdItUser[_]): Result = {
     val incomeSourcesSessionKeys = Seq(
       "addUkPropertyStartDate",
       "addForeignPropertyStartDate",
