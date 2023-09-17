@@ -32,6 +32,7 @@ import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import services.SessionService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
@@ -63,8 +64,8 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
     ec,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
-    app.injector.instanceOf[MessagesControllerComponents],
-
+    sessionService = app.injector.instanceOf[SessionService],
+    app.injector.instanceOf[MessagesControllerComponents]
   )
 
 
