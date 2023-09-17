@@ -25,8 +25,9 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.CeaseIncomeSources
 
 import javax.inject.Inject
@@ -44,8 +45,9 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                             val retrieveBtaNavBar: NavBarPredicate)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
+                                            implicit val sessionService: SessionService,
                                             val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -79,26 +81,28 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       }
   }
 
-  private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String) (implicit user: MtdItUser[_]) = {
-    Future {
-      incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
-        case Right(viewModel) =>
+  private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String) (implicit user: MtdItUser[_]): Future[Result] = {
+    incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
+      case Right(viewModel) =>
+        newWithIncomeSourcesRemovedFromSession {
           Ok(ceaseIncomeSources(
             viewModel,
             isAgent = isAgent,
             backUrl = backUrl
           ))
-        case Left(ex) =>
-          if (isAgent) {
-            Logger("application").error(
-              s"[Agent][CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-            itvcErrorHandlerAgent.showInternalServerError()
-          } else {
-            Logger("application").error(
-              s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-            itvcErrorHandler.showInternalServerError()
-          }
-      }
+        } recover {
+          case ex: Exception =>
+            Logger("application").error(s"[ManageIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+            showInternalServerError(isAgent)
+        }
+      case Left(ex) =>
+          Logger("application").error(
+            s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+          Future(showInternalServerError(isAgent))
     }
+  }
+
+  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 }

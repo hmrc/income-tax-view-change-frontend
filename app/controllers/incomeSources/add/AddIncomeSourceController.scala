@@ -24,12 +24,14 @@ import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredi
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddIncomeSources
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Failure}
+import scala.util.{Failure, Success}
 
 @Singleton
 class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources,
@@ -44,8 +46,9 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                                           implicit val ec: ExecutionContext,
                                           implicit val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          implicit val sessionService: SessionService,
                                           implicit override val mcc: MessagesControllerComponents) extends ClientConfirmedController
-  with FeatureSwitching {
+  with FeatureSwitching with IncomeSourcesUtils {
 
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
   lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
@@ -85,11 +88,17 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>
-          Future.successful(Ok(addIncomeSources(
-            sources = viewModel,
-            isAgent = isAgent,
-            backUrl = backUrl
-          )))
+          newWithIncomeSourcesRemovedFromSession {
+            Ok(addIncomeSources(
+              sources = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          } recover {
+            case ex: Exception =>
+              Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+              showInternalServerError(isAgent)
+          }
         case Failure(ex) =>
           if (isAgent) {
             Logger("application").error(s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
@@ -100,5 +109,9 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
           }
       }
     }
+  }
+
+  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 }
