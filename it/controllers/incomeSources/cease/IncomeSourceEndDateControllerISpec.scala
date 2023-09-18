@@ -226,7 +226,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $dateUKPropertyShowChangeUrl")
-        val testChangeCeaseUkPropertyEndDate: Map[String, String] = Map(SelfEmployment.endDateSessionKey -> "2022-10-10")
+        val testChangeCeaseUkPropertyEndDate: Map[String, String] = Map(UkProperty.endDateSessionKey -> "2022-10-10")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-uk-property-end-date?id=$testSelfEmploymentId", testChangeCeaseUkPropertyEndDate)
 
 
@@ -336,7 +336,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         When(s"I call GET $dateForeignPropertyShowChangeUrl")
-        val testChangeCeaseForeignPropertyEndDate: Map[String, String] = Map(SelfEmployment.endDateSessionKey -> "2022-10-10")
+        val testChangeCeaseForeignPropertyEndDate: Map[String, String] = Map(ForeignProperty.endDateSessionKey -> "2022-10-10")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-foreign-property-end-date?id=$testSelfEmploymentId", testChangeCeaseForeignPropertyEndDate)
 
 
