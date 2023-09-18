@@ -61,7 +61,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
               sources = mtdItUser.incomeSources,

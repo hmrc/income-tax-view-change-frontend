@@ -100,7 +100,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
   def submitAgent(cessationDate: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleSubmitRequest(
               cessationDate = cessationDate,
@@ -115,7 +115,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                     changeUrl: String,
                     itvcErrorHandler: ShowInternalServerError)
                    (implicit user: MtdItUser[_], request: Request[_]): Future[Result] = withIncomeSourcesFS {
-    sessionService.get(ceaseForeignPropertyEndDate) flatMap {
+    sessionService.get(ceaseForeignPropertyEndDate).flatMap {
       case Right(Some(date)) =>
         Future.successful(Ok(checkCeaseForeignPropertyDetails(
           endDate = date.toLocalDate,

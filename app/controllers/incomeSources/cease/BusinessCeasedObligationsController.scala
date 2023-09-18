@@ -62,7 +62,7 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      sessionService.get(ceaseBusinessIncomeSourceId) flatMap {
+      sessionService.get(ceaseBusinessIncomeSourceId).flatMap {
         case Right(Some(incomeSourceId)) =>
           val businessName = getBusinessName(incomeSourceId)
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
