@@ -172,6 +172,12 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       document.getElementById("back").attr("href") shouldBe backAction.url
       document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
+      if(isChange) {
+        document.getElementById("income-source-end-date.day").`val`() shouldBe("27")
+        document.getElementById("income-source-end-date.month").`val`() shouldBe("8")
+        document.getElementById("income-source-end-date.year").`val`() shouldBe("2022")
+
+      }
     }
 
   }

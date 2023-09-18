@@ -282,8 +282,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
           case (SelfEmployment, None) =>
             Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-              s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID.")
-            Future.failed(new Exception(s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID."))
+              s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id.")
+            Future.failed(new Exception(s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."))
 
           case (SelfEmployment, Some(incomeSourceId)) =>
             sessionService.setList(Redirect(redirectAction), incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString, ceaseBusinessIncomeSourceId -> incomeSourceId).flatMap {
