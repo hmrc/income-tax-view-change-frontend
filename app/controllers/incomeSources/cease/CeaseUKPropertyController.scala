@@ -27,7 +27,7 @@ import forms.utils.SessionKeys.ceaseUKPropertyDeclare
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CeaseUKProperty
@@ -43,7 +43,8 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveNino: NinoPredicate,
                                           val view: CeaseUKProperty,
-                                          val customNotFoundErrorView: CustomNotFoundError)
+                                          val customNotFoundErrorView: CustomNotFoundError,
+                                          val sessionService: SessionService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext,
@@ -105,17 +106,33 @@ class CeaseUKPropertyController @Inject()(val authenticate: AuthenticationPredic
           routes.CeaseIncomeSourceController.show(),
           routes.IncomeSourceEndDateController.show(None, UkProperty.key))
     }
+
     CeaseUKPropertyForm.form.bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(view(
-        ceaseUKPropertyForm = hasErrors,
-        postAction = postAction,
-        backUrl = backAction.url,
-        isAgent = isAgent
-      )).addingToSession(ceaseUKPropertyDeclare -> "false")),
-      _ =>
-        Future.successful(Redirect(redirectAction)
-          .addingToSession(ceaseUKPropertyDeclare -> "true"))
+      hasErrors => {
+        val result = BadRequest(view(
+          ceaseUKPropertyForm = hasErrors,
+          postAction = postAction,
+          backUrl = backAction.url,
+          isAgent = isAgent
+        ))
+        sessionService.set(key = ceaseUKPropertyDeclare, value = "false", result = result).flatMap {
+          case Right(result) => Future.successful(result)
+          case Left(exception) => Future.failed(exception)
+        }
+      },
+      _ => {
+        val result = Redirect(redirectAction)
+        sessionService.set(key = ceaseUKPropertyDeclare, value = "true", result = result).flatMap {
+          case Right(result) => Future.successful(result)
+          case Left(exception) => Future.failed(exception)
+        }
+      }
     )
+  }.recover {
+    case exception: Exception =>
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"${if (isAgent) "[Agent]"}[CeaseUKPropertyController][handleSubmitRequest]: $exception")
+      errorHandler.showInternalServerError()
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

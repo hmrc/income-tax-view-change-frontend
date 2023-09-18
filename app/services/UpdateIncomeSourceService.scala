@@ -31,23 +31,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnector) {
 
-  //TODO: We should use updateCessationDatev2 method
-  def updateCessationDate(implicit request: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Exception, UpdateIncomeSourceResponse]] = {
-    val nino: String = request.nino
-    val incomeSourceId: Option[String] = request.incomeSources.properties.filter(_.isUkProperty).map(_.incomeSourceId).headOption
-    request.session.get(ceaseUKPropertyEndDate) match {
-      case Some(date) =>
-        connector.updateCessationDate(
-          nino = nino,
-          incomeSourceId = incomeSourceId.get,
-          cessationDate = Some(LocalDate.parse(date))).map(Right(_))
-      case _ => Future.successful(Left(MissingSessionKey(ceaseUKPropertyEndDate)))
-    }
-
-  }
-
-  def updateCessationDatev2(nino: String, incomeSourceId: String, cessationDate: String)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
+  def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: String)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
     connector.updateCessationDate(
       nino = nino,
       incomeSourceId = incomeSourceId,

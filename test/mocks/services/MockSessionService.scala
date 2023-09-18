@@ -41,7 +41,11 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
 
   def setupMockSetSession(key: String, value: String, result: Result)(implicit header: RequestHeader): Unit =
     when(
-      mockSessionService.set(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      mockSessionService.set(ArgumentMatchers.eq(key), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Right(result.addingToSession(key -> value))))
 
+  def setupMockSetSession(result: Result, keyValue: (String,String)*)(implicit header: RequestHeader): Unit =
+    when(
+      mockSessionService.set(ArgumentMatchers.eq(result), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(Right(result.addingToSession(keyValue:_*))))
 }

@@ -30,6 +30,7 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.SessionService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -53,7 +54,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[IncomeSourceEndDate],
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[CustomNotFoundError],
+    sessionService = app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
@@ -135,7 +137,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
   }
 
   "Individual - IncomeSourceEndDateController.show" should {
-    def stage() = {
+    def stage(): Unit = {
       setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
       disableAllSwitches()
       enable(IncomeSources)
@@ -295,7 +297,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     }
   }
   "Agent - IncomeSourceEndDateController.showAgent" should {
-    def stage() = {
+    def stage(): Unit = {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
       disableAllSwitches()
       enable(IncomeSources)

@@ -29,8 +29,8 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.UpdateIncomeSourceService
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid}
 import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, successResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -56,7 +56,8 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[CheckCeaseUKPropertyDetails],
     mockUpdateIncomeSourceService,
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[CustomNotFoundError],
+    sessionService = app.injector.instanceOf[SessionService])(appConfig,
     ec,
     app.injector.instanceOf[MessagesControllerComponents],
     app.injector.instanceOf[ItvcErrorHandler],
@@ -87,10 +88,9 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         disable(IncomeSources)
         mockPropertyIncomeSource()
 
-        val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.show()(fakeRequestWithActiveSession)
-        val expectedContent: String = TestCheckCeaseUKPropertyDetailsController.customNotFoundErrorView().toString()
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.show()(fakeRequestWithNinoAndOrigin("BTA"))
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
@@ -107,7 +107,8 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
 
-        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())).thenReturn(Future.successful(Right(successResponse)))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
 
         lazy val result: Future[Result] = {
           TestCheckCeaseUKPropertyDetailsController.submit()(fakeRequestWithCeaseUKPropertyDate(cessationDate))
@@ -141,9 +142,8 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         mockPropertyIncomeSource()
 
         val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.showAgent()(fakeRequestConfirmedClient())
-        val expectedContent: String = TestCheckCeaseUKPropertyDetailsController.customNotFoundErrorView().toString()
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()

@@ -22,11 +22,14 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
+import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
+import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseUKPropertyDetails
 
@@ -41,33 +44,31 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
                                                       val retrieveNino: NinoPredicate,
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val view: CheckCeaseUKPropertyDetails,
-                                                      val service: UpdateIncomeSourceService,
-                                                      val customNotFoundErrorView: CustomNotFoundError)
+                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
+                                                      val customNotFoundErrorView: CustomNotFoundError,
+                                                      val sessionService: SessionService)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       val ec: ExecutionContext,
                                                       implicit override val mcc: MessagesControllerComponents,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def handleRequest(isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    if (incomeSourcesEnabled) {
-      Future.successful(Ok(view(
-        isAgent = isAgent,
-        origin = origin)(user, messages)))
-    } else {
-      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"[ClientConfirmedController][handleRequest]${if (isAgent) "[Agent] "}" +
-          s"Error getting CheckCeaseUKPropertyDetails page: ${ex.getMessage}")
-        errorHandler.showInternalServerError()
-    }
+    Future.successful(Ok(view(
+      isAgent = isAgent,
+      origin = origin)(user, messages)))
+
+  } recover {
+    case ex: Exception =>
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"[ClientConfirmedController][handleRequest]${if (isAgent) "[Agent] "}" +
+        s"Error getting CheckCeaseUKPropertyDetails page: ${ex.getMessage}")
+      errorHandler.showInternalServerError()
   }
+
 
   def show(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -89,35 +90,46 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Future[Result] = {
-    lazy val (redirectAction, errorHandler) = {
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
+    lazy val redirectAction = {
       if (isAgent)
-        (routes.UKPropertyCeasedObligationsController.showAgent(), itvcErrorHandlerAgent)
+        routes.UKPropertyCeasedObligationsController.showAgent()
       else
-        (routes.UKPropertyCeasedObligationsController.show(), itvcErrorHandler)
+        routes.UKPropertyCeasedObligationsController.show()
     }
-    if (isEnabled(IncomeSources)) {
-      service.updateCessationDate.map {
-        case Left(ex) =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${ex.getMessage}")
-          errorHandler.showInternalServerError()
-        case Right(result) => result match {
-          case r: UpdateIncomeSourceResponseModel =>
-            Logger("application").info(s"${if (isAgent) "[Agent]"}[CheckCeaseUKPropertyDetailsController][submit] successfully submitted cease date: processingDate ${r.processingDate}")
-            Redirect(redirectAction.url)
-          case r: UpdateIncomeSourceResponseError =>
-            Logger("application").error(s"${if (isAgent) "[Agent]"}[CheckCeaseUKPropertyDetailsController][submit] Error submitting cease date:${r.status} ${r.reason}")
-            Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, UkProperty.key))
+
+    lazy val incomeSourceNotCeasedShowAction = controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, UkProperty.key)
+
+    sessionService.get(ceaseUKPropertyEndDate).flatMap {
+      case Right(Some(date)) =>
+        val incomeSourceId: Option[String] = user.incomeSources.properties.filter(_.isUkProperty).map(_.incomeSourceId).headOption
+        incomeSourceId match {
+          case Some(id) =>
+            updateIncomeSourceService.updateCessationDate(user.nino, id, date).flatMap {
+              case Right(_) =>
+                Future.successful(Redirect(redirectAction.url))
+              case Left(error) =>
+                Logger("application")
+                  .error(s"${if (isAgent) "[Agent]"}[CheckCeaseUKPropertyDetailsController][submit]:${error.reason}")
+                Future.successful(Redirect(incomeSourceNotCeasedShowAction))
+            }
+          case _ => Future.failed(new Exception("missing income source ID"))
         }
-      }
-    } else {
-      Future.successful(NotFound(customNotFoundErrorView()(user, messages)))
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}[CheckCeaseUKPropertyDetailsController][submit] Error Submitting Cease Date : ${ex.getMessage}")
-        errorHandler.showInternalServerError()
+      case Right(None) =>  Future.failed(MissingSessionKey(ceaseUKPropertyEndDate))
+
+      case Left(exception) => Future.failed(exception)
     }
+  } recover {
+    case ex: Exception =>
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"${
+        if (isAgent) "[Agent]"
+      }[CheckCeaseUKPropertyDetailsController][submit] Error Submitting Cease Date : ${
+        ex.getMessage
+      }")
+      errorHandler.showInternalServerError()
   }
+
 
   def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {

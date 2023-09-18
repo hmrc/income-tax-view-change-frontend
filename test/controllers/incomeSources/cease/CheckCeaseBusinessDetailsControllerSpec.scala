@@ -27,9 +27,10 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants.businessIncomeSourceId
 import testConstants.UpdateIncomeSourceTestConstants.cessationDate
@@ -58,7 +59,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[CheckCeaseBusinessDetails],
     mockUpdateIncomeSourceService,
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[CustomNotFoundError],
+    sessionService = app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
@@ -99,7 +101,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.show()(fakeRequestWithNinoAndOrigin("pta"))
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = false, SelfEmployment.key).url)
       }
     }
 
@@ -109,9 +112,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         mockBusinessIncomeSource()
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.show()(fakeRequestWithCeaseBusinessDetails(cessationDate, businessIncomeSourceId))
-        val expectedContent: String = TestCheckCeaseBusinessDetailsController.customNotFoundErrorView().toString()
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
@@ -128,7 +130,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(businessIncomeSourceId))))
 
         lazy val result: Future[Result] = {
@@ -173,7 +175,8 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient())
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = true, SelfEmployment.key).url)
       }
     }
 
@@ -190,9 +193,9 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
           .withSession(forms.utils.SessionKeys.ceaseBusinessEndDate -> cessationDate)
           .withSession(forms.utils.SessionKeys.ceaseBusinessIncomeSourceId -> businessIncomeSourceId)
         )
-        val expectedContent: String = TestCheckCeaseBusinessDetailsController.customNotFoundErrorView().toString()
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
@@ -212,7 +215,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(businessIncomeSourceId))))
 
         lazy val result: Future[Result] = {

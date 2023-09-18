@@ -27,7 +27,7 @@ import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.IncomeSourceEndDate
@@ -45,7 +45,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                               val retrieveNino: NinoPredicate,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
-                                              val customNotFoundErrorView: CustomNotFoundError)
+                                              val customNotFoundErrorView: CustomNotFoundError,
+                                              val sessionService: SessionService)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
@@ -121,25 +122,24 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def handleRequest(id: Option[String], incomeSourceType: String, isAgent: Boolean)
                    (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    getActions(isAgent, incomeSourceType, id).map {
+    getActions(isAgent, incomeSourceType, id).flatMap {
       actions =>
         val (backAction: Call, postAction: Call, _, incomeSourceTypeValue: IncomeSourceType) = actions
         (incomeSourceTypeValue, id) match {
           case (SelfEmployment, None) =>
-            errorHandler.showInternalServerError()
+            val errorMessage = "missing income source ID"
+            Future.failed(new Exception(errorMessage))
           case _ =>
-            Ok(incomeSourceEndDate(
-              incomeSourceEndDateForm = incomeSourceEndDateForm(incomeSourceTypeValue, id),
-              postAction = postAction,
-              isAgent = isAgent,
-              backUrl = backAction.url,
-              incomeSourceType = incomeSourceTypeValue
-            )(user, messages))
+            Future.successful(
+              Ok(incomeSourceEndDate(
+                incomeSourceEndDateForm = incomeSourceEndDateForm(incomeSourceTypeValue, id),
+                postAction = postAction,
+                isAgent = isAgent,
+                backUrl = backAction.url,
+                incomeSourceType = incomeSourceTypeValue
+              )(user, messages)))
         }
     }
-
-
   } recover {
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -172,36 +172,43 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def handleSubmitRequest(id: Option[String], incomeSourceType: String, isAgent: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    getActions(isAgent, incomeSourceType, id).map { actions =>
+    getActions(isAgent, incomeSourceType, id).flatMap { actions =>
       val (backAction, postAction, redirectAction, incomeSourceTypeValue) = actions
       incomeSourceEndDateForm.apply(incomeSourceTypeValue, id).bindFromRequest().fold(
 
         hasErrors => {
-          BadRequest(incomeSourceEndDate(
-            incomeSourceEndDateForm = hasErrors,
-            postAction = postAction,
-            backUrl = backAction.url,
-            isAgent = isAgent,
-            incomeSourceType = incomeSourceTypeValue
-          )(user, messages))
+          Future.successful(
+            BadRequest(incomeSourceEndDate(
+              incomeSourceEndDateForm = hasErrors,
+              postAction = postAction,
+              backUrl = backAction.url,
+              isAgent = isAgent,
+              incomeSourceType = incomeSourceTypeValue
+            )(user, messages)))
         },
-
         validatedInput => (incomeSourceTypeValue, id) match {
-
           case (SelfEmployment, None) =>
-            Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-              s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID.")
-            errorHandler.showInternalServerError()
+            val errorMessage = "missing income source ID"
+            Future.failed(new Exception(errorMessage))
 
           case (SelfEmployment, Some(incomeSourceId)) =>
-            Redirect(redirectAction)
-              .addingToSession(incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString)
-              .addingToSession(ceaseBusinessIncomeSourceId -> incomeSourceId)
+            val result = Redirect(redirectAction)
+            sessionService.set(result,
+              incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString,
+              ceaseBusinessIncomeSourceId -> incomeSourceId
+            ).flatMap {
+              case Right(result) => Future.successful(result)
+              case Left(exception) => Future.failed(exception)
+            }
 
           case _ =>
-            Redirect(redirectAction)
-              .addingToSession(incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString)
+            val session = incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString
+            val result = Redirect(redirectAction)
+            sessionService.set(result, session).flatMap {
+              case Right(result) => Future.successful(result)
+              case Left(exception) => Future.failed(exception)
+            }
+
         })
     }
 
