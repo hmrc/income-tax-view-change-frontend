@@ -87,7 +87,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
             ))
           } recover {
             case ex: Exception =>
-              Logger("application").error(s"[ManageIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+              Logger("application").error(s"[ManageIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
               showInternalServerError(isAgent)
           }
         case Left(ex) =>
