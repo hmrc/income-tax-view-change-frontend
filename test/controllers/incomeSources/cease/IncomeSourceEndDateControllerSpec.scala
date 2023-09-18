@@ -525,7 +525,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       "navigating to the page with FS Enabled with income source type as Self Employment" in {
         stage()
         val incomeSourceType = SelfEmployment
-        TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent, isChange = true)
+        TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = false, isChange = true)
       }
 
       "navigating to the page with FS Enabled with income source type as Foreign Property" in {
