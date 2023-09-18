@@ -320,7 +320,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                 LocalDate.parse(date)
               )
             ))
-        case _ => Future.failed(new Exception("[IncomeSourceEndDateController][getFilledForm]: Error getting endDateSessionKey:"))
+        case _ => Future.failed(new Exception(s"[IncomeSourceEndDateController][getFilledForm]: Error getting ${incomeSourceType.endDateSessionKey}:"))
       }
     } else {
       Future.successful(form)
