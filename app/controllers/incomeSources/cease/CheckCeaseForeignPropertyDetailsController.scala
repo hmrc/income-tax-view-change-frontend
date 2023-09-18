@@ -99,7 +99,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
   def submitAgent(cessationDate: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleSubmitRequest(
               cessationDate = cessationDate,
