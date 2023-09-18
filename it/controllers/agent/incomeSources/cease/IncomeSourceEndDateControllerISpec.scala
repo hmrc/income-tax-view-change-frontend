@@ -22,7 +22,7 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyAndCeasedBusiness, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   val dateBusinessShowAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
@@ -46,6 +46,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   val hintText: String = messagesAPI("dateForm.hint")
   val continueButtonText: String = messagesAPI("base.continue")
+  val testChangeDay: String = "10"
+  val testChangeMonth: String = "10"
+  val testChangeYear: String = "2022"
 
   s"calling GET $dateBusinessShowAgentUrl" should {
     "render the Date Business Ceased Page" when {
@@ -114,7 +117,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $dateBusinessShowChangeAgentUrl")
         val testChangeCeaseBusinessEndDate: Map[String, String] = Map(SelfEmployment.endDateSessionKey -> "2022-10-10")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date", clientDetailsWithConfirmation ++ testChangeCeaseBusinessEndDate)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date?id=1234", clientDetailsWithConfirmation ++ testChangeCeaseBusinessEndDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -122,6 +125,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleAgent("incomeSources.cease.endDate.selfEmployment.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]","value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]","value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]","value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -238,6 +244,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleAgent("incomeSources.cease.endDate.ukProperty.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -288,7 +297,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         When(s"I call GET $dateForeignPropertyShowAgentUrl")
-        val result = IncomeTaxViewChangeFrontend.getChangeForeignPropertyEndDate(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getForeignPropertyEndDate(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -342,19 +351,20 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with Foreign property")
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
 
         When(s"I call GET $dateForeignPropertyShowChangeAgentUrl")
-
         val testChangeCeaseForeignPropertyEndDate: Map[String, String] = Map(ForeignProperty.endDateSessionKey -> "2022-10-10")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-foreign-property-end-date", clientDetailsWithConfirmation ++ testChangeCeaseForeignPropertyEndDate)
         verifyIncomeSourceDetailsCall(testMtditid)
-
 
         result should have(
           httpStatus(OK),
           pageTitleAgent("incomeSources.cease.endDate.foreignProperty.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }

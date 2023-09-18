@@ -47,8 +47,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   val hintText: String = messagesAPI("dateForm.hint")
   val continueButtonText: String = messagesAPI("base.continue")
-  val testChangeDay: String = "20"
-  val testChangeMonth: String = "12"
+  val testChangeDay: String = "10"
+  val testChangeMonth: String = "10"
   val testChangeYear: String = "2022"
 
 
@@ -122,6 +122,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -233,6 +236,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -342,6 +348,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }

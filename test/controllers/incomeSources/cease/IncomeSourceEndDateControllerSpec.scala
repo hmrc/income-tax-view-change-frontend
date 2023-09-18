@@ -691,6 +691,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       disableAllSwitches()
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
+      setupMockGetSession(Some("2022-08-27"))
+
     }
 
     "return 200 OK" when {
