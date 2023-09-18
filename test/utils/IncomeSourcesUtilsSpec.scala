@@ -26,6 +26,7 @@ import services.SessionService
 import testUtils.TestSupport
 
 import java.time.LocalDate
+import scala.language.postfixOps
 
 class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
 
@@ -62,24 +63,6 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     addUkPropertyStartDate -> checkUKPropertyViewModel.tradingStartDate.toString,
     addIncomeSourcesAccountingMethod -> checkUKPropertyViewModel.cashOrAccrualsFlag
   )
-
-  "getBusinessDetailsFromSession" when {
-    "user has business details in session" should {
-      "return CheckBusinessDetailsViewModel" in {
-        implicit val user: MtdItUser[AnyContentAsEmpty.type] = individualUser.copy()(fakeRequest)
-        val result = IncomeSourcesUtils.getBusinessDetailsFromSession
-        result shouldBe Right(viewModelMax)
-      }
-    }
-
-    "user is missing business details in session" should {
-      "returns an exception" in {
-        val result = IncomeSourcesUtils.getBusinessDetailsFromSession
-        result.isLeft shouldBe true
-      }
-    }
-
-  }
 
   "getUKPropertyDetailsFromSession" when {
     "user has uk property details in session" should {

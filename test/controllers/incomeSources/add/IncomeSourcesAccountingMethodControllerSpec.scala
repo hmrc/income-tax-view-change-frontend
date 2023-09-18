@@ -30,6 +30,7 @@ import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, contentType, defaultAwaitTimeout, redirectLocation, status}
+import services.SessionService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
@@ -57,14 +58,14 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   }
 
   def getTitle(incomeSourceType: String, isAgent: Boolean = false): String = {
-    if(isAgent)
+    if (isAgent)
       s"${messages("htmlTitle.agent", getHeading(incomeSourceType))}"
     else
       s"${messages("htmlTitle", getHeading(incomeSourceType))}"
   }
 
   def showResult(incomeSourceType: String, isAgent: Boolean = false): Future[Result] = {
-    if(isAgent)
+    if (isAgent)
       TestIncomeSourcesAccountingMethodController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
     else
       TestIncomeSourcesAccountingMethodController.show(incomeSourceType)(fakeRequestWithActiveSession)
@@ -85,7 +86,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   }
 
   def submitResult(incomeSourceType: String, accountingMethod: String, isAgent: Boolean = false): Future[Result] = {
-    if(isAgent)
+    if (isAgent)
       TestIncomeSourcesAccountingMethodController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
         .withFormUrlEncodedBody(selfEmploymentAccountingMethod -> accountingMethod))
     else
@@ -94,14 +95,14 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   }
 
   def getRedirectUrl(isAgent: Boolean = false): String = {
-    if(isAgent)
+    if (isAgent)
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
     else
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
   }
 
 
-  object TestIncomeSourcesAccountingMethodController extends IncomeSourcesAccountingMethodController (
+  object TestIncomeSourcesAccountingMethodController extends IncomeSourcesAccountingMethodController(
     MockAuthenticationPredicate,
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -110,7 +111,8 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[IncomeSourcesAccountingMethod],
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[CustomNotFoundError],
+    sessionService = app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler])
@@ -154,7 +156,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         result.futureValue.session.get(addIncomeSourcesAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(getRedirectUrl(isAgent))
       }
-      "navigating to the page with FS Enabled and two SE businesses, one cash, one accruals (should be impossible, but in this case, we use head of list) for "+ incomeSourceType in {
+      "navigating to the page with FS Enabled and two SE businesses, one cash, one accruals (should be impossible, but in this case, we use head of list) for " + incomeSourceType in {
         getSetupMockAuth(isAgent)
         enable(IncomeSources)
         mockBusinessIncomeSourceWithCashAndAccruals()
@@ -167,7 +169,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
       }
     }
     "return 500 INTERNAL_SERVER_ERROR" when {
-      "navigating to the page with FS Enabled and a user with a "+ incomeSourceType +" business missing its cashOrAccruals field" in {
+      "navigating to the page with FS Enabled and a user with a " + incomeSourceType + " business missing its cashOrAccruals field" in {
         getSetupMockAuth(isAgent)
         enable(IncomeSources)
         mockBusinessIncomeSourceMissingCashOrAccrualsField()
@@ -178,7 +180,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         contentType(result) shouldBe Some("text/html")
       }
     }
-    "return 303 SEE_OTHER and redirect to custom not found error page for "+ incomeSourceType when {
+    "return 303 SEE_OTHER and redirect to custom not found error page for " + incomeSourceType when {
       "navigating to the page with FS Disabled" in {
         getSetupMockAuth(isAgent)
         disable(IncomeSources)
@@ -190,8 +192,8 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         status(result) shouldBe Status.OK
         contentAsString(result) shouldBe expectedContent
       }
-      "called with an unauthenticated user for "+ incomeSourceType in {
-        if(isAgent)
+      "called with an unauthenticated user for " + incomeSourceType in {
+        if (isAgent)
           setupMockAgentAuthorisationException()
         else
           setupMockAuthorisationException()
@@ -203,7 +205,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
   def submitIncomeSourcesAccountingMethodTest(incomeSourceType: String, isAgent: Boolean = false): Unit = {
     s"return 303 SEE_OTHER and redirect to ${getRedirectUrl(isAgent)}" when {
-      "form is completed successfully with cash radio button selected for "+ incomeSourceType in {
+      "form is completed successfully with cash radio button selected for " + incomeSourceType in {
         getSetupMockAuth(isAgent)
         enable(IncomeSources)
         mockNoIncomeSources()
@@ -217,7 +219,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         result.futureValue.session.get(addIncomeSourcesAccountingMethod) shouldBe Some("cash")
         redirectLocation(result) shouldBe Some(getRedirectUrl(isAgent))
       }
-      "form is completed successfully with traditional radio button selected for "+ incomeSourceType in {
+      "form is completed successfully with traditional radio button selected for " + incomeSourceType in {
         getSetupMockAuth(isAgent)
         enable(IncomeSources)
         mockNoIncomeSources()
@@ -233,7 +235,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
       }
     }
     "return 400 BAD_REQUEST" when {
-      "the form is not completed successfully for "+ incomeSourceType in {
+      "the form is not completed successfully for " + incomeSourceType in {
         getSetupMockAuth(isAgent)
         enable(IncomeSources)
         mockNoIncomeSources()
@@ -252,7 +254,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   }
 
   def changeIncomeSourcesAccountingMethodTest(incomeSourceType: String, isAgent: Boolean = false, cashOrAccrualsFlag: Option[String] = None): Unit = {
-    "return 200 OK for change accounting method for isAgent = " + isAgent + ""  when {
+    "return 200 OK for change accounting method for isAgent = " + isAgent + "" when {
       "navigating to the page by change link with FS Enabled and no active " + incomeSourceType + " businesses" in {
         getSetupMockAuth(isAgent)
         disableAllSwitches()
@@ -264,7 +266,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         status(result) shouldBe Status.OK
         document.title shouldBe getTitle(incomeSourceType, isAgent)
-        document.select("input").select("[checked]").`val`() shouldBe (if(cashOrAccrualsFlag.getOrElse("") == "cash") "cash" else "traditional")
+        document.select("input").select("[checked]").`val`() shouldBe (if (cashOrAccrualsFlag.getOrElse("") == "cash") "cash" else "traditional")
         document.select("legend").text shouldBe getHeading(incomeSourceType)
       }
     }

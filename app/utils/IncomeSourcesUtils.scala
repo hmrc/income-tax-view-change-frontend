@@ -58,52 +58,6 @@ object IncomeSourcesUtils {
 
   case class MissingKey(msg: String)
 
-  def getBusinessDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckBusinessDetailsViewModel] = {
-    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
-    val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
-
-    val result: Option[Either[Throwable, CheckBusinessDetailsViewModel]] = for {
-      businessName <- user.session.data.get(businessName)
-      businessStartDate <- user.session.data.get(businessStartDate).map(LocalDate.parse)
-      businessTrade <- user.session.data.get(businessTrade)
-      businessAddressLine1 <- user.session.data.get(addBusinessAddressLine1)
-      businessAccountingMethod <- user.session.data.get(addIncomeSourcesAccountingMethod)
-      accountingPeriodEndDate <- user.session.data.get(addBusinessAccountingPeriodEndDate).map(LocalDate.parse)
-    } yield {
-      Right(CheckBusinessDetailsViewModel(
-        businessName = Some(businessName),
-        businessStartDate = Some(businessStartDate),
-        accountingPeriodEndDate = accountingPeriodEndDate,
-        businessTrade = businessTrade,
-        businessAddressLine1 = businessAddressLine1,
-        businessAddressLine2 = user.session.data.get(addBusinessAddressLine2),
-        businessAddressLine3 = user.session.data.get(addBusinessAddressLine3),
-        businessAddressLine4 = user.session.data.get(addBusinessAddressLine4),
-        businessPostalCode = user.session.data.get(addBusinessPostalCode),
-        businessCountryCode = user.session.data.get(addBusinessCountryCode),
-        incomeSourcesAccountingMethod = user.session.data.get(addIncomeSourcesAccountingMethod),
-        cashOrAccrualsFlag = businessAccountingMethod,
-        skippedAccountingMethod = skipAccountingMethod
-      ))
-    }
-
-    result match {
-      case Some(checkBusinessDetailsViewModel) =>
-        checkBusinessDetailsViewModel
-      case None =>
-        val errors: Seq[String] = Seq(
-          user.session.data.get(businessName).orElse(Some(MissingKey("MissingKey: addBusinessName"))),
-          user.session.data.get(businessStartDate).orElse(Some(MissingKey("MissingKey: addBusinessStartDate"))),
-          user.session.data.get(businessTrade).orElse(Some(MissingKey("MissingKey: addBusinessTrade"))),
-          user.session.data.get(addBusinessAddressLine1).orElse(Some(MissingKey("MissingKey: addBusinessAddressLine1"))),
-          user.session.data.get(addBusinessPostalCode).orElse(Some(MissingKey("MissingKey: addBusinessPostalCode")))
-        ).collect {
-          case Some(MissingKey(msg)) => msg
-        }
-        Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
-    }
-  }
-
   def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
     for {
       startDate <- sessionService.get(addUkPropertyStartDate)
