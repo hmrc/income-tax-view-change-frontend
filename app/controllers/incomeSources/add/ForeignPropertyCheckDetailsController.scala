@@ -213,7 +213,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
           case Right(CreateIncomeSourceResponse(id)) =>
             withIncomeSourcesRemovedFromSession(
               if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
-              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url),
+              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
             ) recover {
               case _: Exception => Redirect(redirectErrorUrl)
             }
