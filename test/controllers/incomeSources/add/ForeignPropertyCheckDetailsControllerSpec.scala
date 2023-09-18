@@ -30,7 +30,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.CreateBusinessDetailsService
+import services.{CreateBusinessDetailsService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
@@ -60,7 +60,8 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
-    businessDetailsService = mockBusinessDetailsService)(
+    businessDetailsService = mockBusinessDetailsService,
+    sessionService = app.injector.instanceOf[SessionService])(
     ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
