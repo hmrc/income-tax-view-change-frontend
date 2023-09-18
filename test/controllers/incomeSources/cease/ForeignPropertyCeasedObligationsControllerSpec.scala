@@ -208,7 +208,6 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
       }
     }
 
-
     "Agent - ForeignPropertyAddedObligationsController.showAgent" should {
       "return 200 OK" when {
         "navigating to the page with FS Enabled" in {

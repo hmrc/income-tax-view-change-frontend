@@ -29,7 +29,7 @@ import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -181,6 +181,11 @@ class ManageObligationsControllerSpec extends TestSupport
     )))
     when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
       thenReturn(Future(testObligationsModel))
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockIncomeSourceDetailsService)
   }
 
   "ManageObligationsController" should {
@@ -377,6 +382,38 @@ class ManageObligationsControllerSpec extends TestSupport
 
         val result: Future[Result] = TestManageObligationsController.showAgentUKProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
+      }
+      "return 500 INTERNAL_SERVER_ERROR" when {
+        "user has no active foreign properties" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          mockNoIncomeSources()
+
+          when(mockIncomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources(any()))
+            .thenReturn(
+              Left(
+                new Error("No active foreign properties found.")
+              )
+            )
+
+          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+        "user has more than one active foreign properties" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
+
+          when(mockIncomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources(any()))
+            .thenReturn(
+              Left(
+                new Error("Too many active foreign properties found. There should only be one.")
+              )
+            )
+
+          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
       }
     }
 
