@@ -17,20 +17,21 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import forms.BusinessNameForm
 import enums.IncomeSourceJourney.SelfEmployment
+import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import views.html.incomeSources.add.AddBusinessName
 import utils.IncomeSourcesUtils
+import views.html.incomeSources.add.AddBusinessName
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -61,8 +62,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   lazy val submitChangeAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChange()
   lazy val submitChangeActionAgent: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent()
 
-  lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false )
-  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false )
+  lazy val redirect: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)
+  lazy val redirectAgent: Call = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)
 
   lazy val checkDetailsRedirect: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
   lazy val checkDetailsRedirectAgent: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
@@ -151,30 +152,39 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val (backUrlLocal, submitActionLocal, redirectLocal) = (isAgent, isChange) match {
       case (false, false) => (backUrl, submitAction, redirect)
       case (true, false) => (backUrlAgent, submitActionAgent, redirectAgent)
       case (false, true) => (checkDetailsBackUrl, submitChangeAction, checkDetailsRedirect)
       case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
     }
+    sessionService.get(SessionKeys.businessTrade).flatMap {
+      case Right(businessTradeName) =>
+        BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeName).fold(
+          formWithErrors =>
+            Future.successful(
+              Ok(addBusinessView(formWithErrors,
+                isAgent,
+                submitActionLocal,
+                backUrlLocal,
+                useFallbackLink = true))),
 
-    BusinessNameForm.form.bindFromRequest().fold(
-      formWithErrors => {
-        Future {
-          Ok(addBusinessView(formWithErrors, isAgent, submitActionLocal, backUrlLocal, useFallbackLink = true))
-        }
-      },
-      formData => {
-        val redirect = Redirect(redirectLocal)
-        sessionService.set(SessionKeys.businessName, formData.name, redirect).map {
-          case Right(result) => result
-          case Left(error) =>
-            Logger("application").error(s"[AddBusinessNameController][handleRequest] $error")
-            errorHandler.showInternalServerError()
-        }
-      }
-    )
+          formData => {
+            val redirect = Redirect(redirectLocal)
+            sessionService.set(SessionKeys.businessName, formData.name, redirect).flatMap {
+              case Right(result) => Future.successful(result)
+              case Left(exception) => Future.failed(exception)
+            }
+          }
+        )
+
+      case Left(exception) => Future.failed(exception)
+    }
+  }.recover {
+    case exception =>
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage}")
+      errorHandler.showInternalServerError()
   }
 
   def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

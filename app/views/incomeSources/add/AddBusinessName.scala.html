@@ -19,13 +19,12 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import exceptions.MissingFieldException
-@import forms.BusinessNameForm
+@import forms.incomeSources.add.BusinessNameForm
 @import helper._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.InputHelper
+@import play.twirl.api.HtmlFormat
 @import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-
-
 
 @this(
     mainTemplate: unifiedLayout,
@@ -38,37 +37,35 @@
     govukInsetText : GovukInsetText,
     govukButton : GovukButton,
     inputHelper: InputHelper,
-    errorSummary: ErrorSummary
+    errorSummary: ErrorSummary,
+    govukInput : GovukInput
 )
 
-@(
-    businessNameForm: Form[BusinessNameForm],
+@(businessNameForm: Form[BusinessNameForm],
     isAgent: Boolean,
     postAction: Call,
     backUrl: String,
-    useFallbackLink: Boolean
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+    useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@import forms.utils.SessionKeys
-
-@getMessage(key: String, args: String*) = @{
-    messages(s"add-business-name.$key", args: _*)
+@businessName = @{
+    "business-name"
 }
 
 @field = @{
-    businessNameForm(SessionKeys.businessName)
+    businessNameForm("business-name")
 }
 
-@fieldError = @{
-    field.error
+@hintContent = {
+        <p class="govuk-hint">@messages("add-business-name.p1")</p>
+        <p class="govuk-hint">@messages("add-business-name.p2")</p>
 }
 
 @mainTemplate(
-    pageTitle = messages("add-business-name.heading"),
-    isAgent = isAgent,
-    useFallbackBackLink = useFallbackLink,
-    backUrl = Some(backUrl),
-    btaNavPartial = user.btaNavPartial) {
+pageTitle = messages("add-business-name.heading"),
+isAgent = isAgent,
+useFallbackBackLink = useFallbackLink,
+backUrl = Some(backUrl),
+btaNavPartial = user.btaNavPartial) {
 
     @errorSummary(
         form = businessNameForm
@@ -76,48 +73,26 @@
 
     @form(action = postAction, Symbol("id") -> "business-name-form") {
 
-        <div class="govuk-form-group form-field-group  @if(fieldError.isDefined) {govuk-form-group--error}">
-
-            <h1 class="govuk-label-wrapper">
-                <label class="govuk-label govuk-label--l" for="@field.name">
-                    @getMessage("heading")
-                </label>
-            </h1>
-
-            <div class="govuk-hint govuk-label" id="@field.name-hint">
-                <p class="govuk-hint"> @getMessage("p1") </p>
-                <p class="govuk-hint"> @getMessage("p2") </p>
-            </div>
-
-
-            @fieldError.map { error =>
-                <span id="@field.name-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">@messages("base.error-prefix")</span>
-                    @messages(s"${error.message}", error.args:_*)
-                </span>
-            }
-
-            <input
-                name="@field.name"
-                class="govuk-input govuk-input--width-20"
-                id="@field.name"
-                type="text"
-                @if(fieldError.isDefined) {
-                    aria-describedby="@field.name-hint @field.name-error"
-                } else {
-                    aria-describedby="@field.name-hint"
-                }
-                @if(field.value.isDefined){
-                    value="@field.value.get"
-                }
-            >
-        </div>
+        @govukInput(
+            Input(
+                id = businessName,
+                name = businessName,
+                classes = "govuk-!-width-three-quarters",
+                label = Label(
+                    isPageHeading = true,
+                    classes = "govuk-label--l",
+                    content = Text(messages("add-business-name.heading"))
+                ),
+                hint = Some(Hint(content = HtmlContent(
+                    hintContent
+                )))
+            ).withFormField(field)
+        )
 
         @govukButton(Button(
             content = Text(messages("base.continue")),
             attributes = Map("id" -> "continue-button")
         ))
-
     }
 }
 

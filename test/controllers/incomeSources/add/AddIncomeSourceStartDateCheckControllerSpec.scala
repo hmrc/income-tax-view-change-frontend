@@ -34,6 +34,7 @@ import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
+import services.SessionService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -75,7 +76,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       addIncomeSourceStartDateCheckView = app.injector.instanceOf[AddIncomeSourceStartDateCheck],
       customNotFoundErrorView = app.injector.instanceOf[CustomNotFoundError],
-      languageUtils = languageUtils
+      languageUtils = languageUtils,
+      sessionService = app.injector.instanceOf[SessionService]
     )(
       app.injector.instanceOf[FrontendAppConfig],
       dateService,
