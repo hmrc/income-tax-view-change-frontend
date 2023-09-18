@@ -80,7 +80,6 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
         result.futureValue.isLeft shouldBe true
       }
     }
-
   }
 
   "removeIncomeSourceDetailsFromSession" when {
