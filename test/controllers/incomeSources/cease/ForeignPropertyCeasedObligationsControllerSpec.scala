@@ -175,7 +175,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
-    "return 303 SEE_OTHER" when {
+    "return 500 INTERNAL_SERVER_ERROR" when {
       "user has no active foreign properties" in {
         disableAllSwitches()
         enable(IncomeSources)

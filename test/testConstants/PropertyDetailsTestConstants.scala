@@ -99,6 +99,24 @@ object PropertyDetailsTestConstants {
     tradingStartDate = Some(testStartDate2)
   )
 
+  val uKPropertyDetails = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None
+  )
+
+  val uKPropertyDetails2 = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId2,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    cessation = None
+  )
+
   val ceaseForeignPropertyDetailsViewModel = CeasePropertyDetailsViewModel(
     tradingStartDate = Some(testStartDate2)
   )
