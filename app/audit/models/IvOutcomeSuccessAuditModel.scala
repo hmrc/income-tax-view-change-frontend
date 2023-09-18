@@ -19,6 +19,7 @@ package audit.models
 case class IvOutcomeSuccessAuditModel(nino: String) extends AuditModel {
   override val transactionName: String = enums.TransactionName.LowConfidenceLevelIvOutcomeSuccess
   override val detail: Seq[(String, String)] = Seq(
+    "userType" -> "Individual",
     "nino" -> nino
   )
   override val auditType: String = enums.AuditType.LowConfidenceLevelIvOutcomeSuccess

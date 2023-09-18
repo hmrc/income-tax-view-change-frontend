@@ -21,6 +21,7 @@ case class IvUpliftRequiredAuditModel(reasonForHandoff: String,
                                       minimumConfidenceLevelToProceed: Int) extends AuditModel {
   override val transactionName: String = enums.TransactionName.LowConfidenceLevelIvHandoff
   override val detail: Seq[(String, String)] = Seq(
+    "userType" -> "Individual",
     "reasonForHandoff" -> reasonForHandoff,
     "currentConfidenceLevel" -> s"CL$currentConfidenceLevel",
     "minimumConfidenceLevelToProceed" -> s"CL$minimumConfidenceLevelToProceed"
