@@ -113,7 +113,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call GET $dateBusinessShowChangeAgentUrl")
-        val result = IncomeTaxViewChangeFrontend.getBusinessEndDate(clientDetailsWithConfirmation)
+        val testChangeCeaseBusinessEndDate: Map[String, String] = Map(UkProperty.endDateSessionKey -> "2022-10-10")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date", clientDetailsWithConfirmation ++ testChangeCeaseBusinessEndDate)
+
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -227,7 +229,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $dateUKPropertyShowChangeAgentUrl")
-        val result = IncomeTaxViewChangeFrontend.getChangeUKPropertyEndDate(clientDetailsWithConfirmation)
+        val testChangeCeaseUkPropertyEndDate: Map[String, String] = Map(UkProperty.endDateSessionKey -> "2022-10-10")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-uk-property-end-date", clientDetailsWithConfirmation ++ testChangeCeaseUkPropertyEndDate)
+
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -341,8 +345,10 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         When(s"I call GET $dateForeignPropertyShowChangeAgentUrl")
-        val result = IncomeTaxViewChangeFrontend.getChangeForeignPropertyEndDate(clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
+
+        val testChangeCeaseForeignPropertyEndDate: Map[String, String] = Map(ForeignProperty.endDateSessionKey -> "2022-10-10")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-foreign-property-end-date", clientDetailsWithConfirmation ++ testChangeCeaseForeignPropertyEndDate)
+
 
         result should have(
           httpStatus(OK),
