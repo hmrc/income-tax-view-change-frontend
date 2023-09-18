@@ -17,6 +17,7 @@
 package utils
 
 import auth.MtdItUser
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
 import play.api.mvc.{AnyContentAsEmpty, Result}
@@ -85,29 +86,16 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
   "removeIncomeSourceDetailsFromSession" when {
     "user has session data" should {
       "remove session data" in {
+
         implicit val user: MtdItUser[AnyContentAsEmpty.type] = individualUser.copy()(fakeRequest)
+
         val redirect = withIncomeSourcesRemovedFromSession {
           Redirect("nowhere")
         }(individualUser, sessionService, ec)
 
-        redirect.futureValue.session.get("addUkPropertyStartDate") shouldBe None
-        redirect.futureValue.session.get("addBusinessName") shouldBe None
-        redirect.futureValue.session.get("addBusinessTrade") shouldBe None
-        redirect.futureValue.session.get("addIncomeSourcesAccountingMethod") shouldBe None
-        redirect.futureValue.session.get("addBusinessStartDate") shouldBe None
-        redirect.futureValue.session.get("addBusinessAccountingPeriodStartDate") shouldBe None
-        redirect.futureValue.session.get("addBusinessAccountingPeriodEndDate") shouldBe None
-        redirect.futureValue.session.get("addBusinessStartDate") shouldBe None
-        redirect.futureValue.session.get("addBusinessAddressLine1") shouldBe None
-        redirect.futureValue.session.get("addBusinessAddressLine2") shouldBe None
-        redirect.futureValue.session.get("addBusinessAddressLine3") shouldBe None
-        redirect.futureValue.session.get("addBusinessAddressLine4") shouldBe None
-        redirect.futureValue.session.get("addBusinessPostalCode") shouldBe None
-        redirect.futureValue.session.get("addBusinessCountryCode") shouldBe None
-        redirect.futureValue.session.get("ceaseForeignPropertyDeclare") shouldBe None
-        redirect.futureValue.session.get("ceaseForeignPropertyEndDate") shouldBe None
-        redirect.futureValue.session.get("ceaseUKPropertyDeclare") shouldBe None
-        redirect.futureValue.session.get("ceaseUKPropertyEndDate") shouldBe None
+        SessionKeys.incomeSourcesSessionKeys.forall(
+          redirect.futureValue.session.get(_).isDefined.equals(false)
+        ) shouldBe true
       }
     }
   }
