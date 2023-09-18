@@ -48,6 +48,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
                                           ec: ExecutionContext
                                          ): Future[Result] = {
     sessionService.remove(SessionKeys.incomeSourcesSessionKeys, redirect).map {
+      // TODO: After mongo implementation: give details on which key/value we failed to remove
       case Left(_) => throw new Exception("Failed to remove income sources from session")
       case Right(result) => result
     }
