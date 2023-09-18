@@ -53,7 +53,8 @@
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = request.btaNavPartial) {
+    btaNavPartial = request.btaNavPartial,
+    useFallbackBackLink = true) {
 
     @hmrcPageHeading(PageHeading(
         text = getMessage("heading"),
