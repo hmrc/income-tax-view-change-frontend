@@ -26,7 +26,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -36,7 +36,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.helpers.ActivePropertyBusinessesHelper
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testPropertyIncomeId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.ManageObligations
@@ -131,8 +131,42 @@ class ManageObligationsControllerSpec extends TestSupport
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-    if (isUkProperty) setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
-    else setupMockGetIncomeSourceDetails()(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
+    if (isUkProperty) {
+      setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
+      when(mockIncomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources(any()))
+        .thenReturn(
+          Right(
+            PropertyDetailsModel(
+              incomeSourceId = testPropertyIncomeId,
+              accountingPeriod = None,
+              firstAccountingPeriodEndDate = None,
+              incomeSourceType = Some("02-uk-property"),
+              tradingStartDate = None,
+              cessation = None,
+              cashOrAccruals = None,
+              latencyDetails = None
+            )
+          )
+        )
+    }
+    else {
+      setupMockGetIncomeSourceDetails()(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
+      when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
+        .thenReturn(
+          Right(
+            PropertyDetailsModel(
+              incomeSourceId = testPropertyIncomeId,
+              accountingPeriod = None,
+              firstAccountingPeriodEndDate = None,
+              incomeSourceType = Some("03-foreign-property"),
+              tradingStartDate = None,
+              cessation = None,
+              cashOrAccruals = None,
+              latencyDetails = None
+            )
+          )
+        )
+    }
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
       DatesModel(day, day, day, "EOPS", isFinalDec = false)
