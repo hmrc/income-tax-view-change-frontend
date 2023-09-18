@@ -45,7 +45,6 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val view: CheckCeaseUKPropertyDetails,
                                                       val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                      val customNotFoundErrorView: CustomNotFoundError,
                                                       val sessionService: SessionService)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       val ec: ExecutionContext,
@@ -64,7 +63,7 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
   } recover {
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[ClientConfirmedController][handleRequest]${if (isAgent) "[Agent] "}" +
+      Logger("application").error(s"[CheckCeaseUKPropertyDetailsController][handleRequest]${if (isAgent) "[Agent] "}" +
         s"Error getting CheckCeaseUKPropertyDetails page: ${ex.getMessage}")
       errorHandler.showInternalServerError()
   }

@@ -57,7 +57,6 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[CeaseForeignProperty],
-    app.injector.instanceOf[CustomNotFoundError],
     app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],

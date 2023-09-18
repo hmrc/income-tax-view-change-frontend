@@ -45,7 +45,6 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                     val view: CheckCeaseBusinessDetails,
                                                     val updateIncomeSourceservice: UpdateIncomeSourceService,
-                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                     val sessionService: SessionService)
                                                    (implicit val appConfig: FrontendAppConfig,
                                                     mcc: MessagesControllerComponents,

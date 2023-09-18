@@ -44,7 +44,6 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val retrieveNino: NinoPredicate,
                                                val view: CeaseForeignProperty,
-                                               val customNotFoundErrorView: CustomNotFoundError,
                                                val sessionService: SessionService)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
@@ -73,7 +72,7 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting CeaseForeignProperty page: ${ex.getMessage}")
+        s"[CeaseForeignPropertyController][handleRequest] Error getting CeaseForeignProperty page: ${ex.getMessage}")
       errorHandler.showInternalServerError()
   }
 

@@ -59,7 +59,6 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[CheckCeaseBusinessDetails],
     mockUpdateIncomeSourceService,
-    app.injector.instanceOf[CustomNotFoundError],
     sessionService = app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],

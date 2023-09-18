@@ -45,7 +45,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                               val retrieveNino: NinoPredicate,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
-                                              val customNotFoundErrorView: CustomNotFoundError,
                                               val sessionService: SessionService)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
