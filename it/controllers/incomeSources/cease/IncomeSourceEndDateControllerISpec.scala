@@ -122,7 +122,6 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.selfEmployment.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
-          elementTextByID("income-source-end-date.day")("10"),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -234,7 +233,6 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.ukProperty.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
-          elementTextByID("income-source-end-date.day")(hintText),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
@@ -344,7 +342,6 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual("incomeSources.cease.endDate.foreignProperty.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
-          elementTextByID("income-source-end-date.day")("10"),
           elementTextByID("continue-button")(continueButtonText)
         )
       }

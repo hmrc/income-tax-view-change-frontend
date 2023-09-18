@@ -56,7 +56,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-
   private def getActions(isAgent: Boolean, incomeSourceType: String, id: Option[String], isChange: Boolean): Future[(Call, Call, Call, IncomeSourceType)] = {
     IncomeSourceType(incomeSourceType) match {
       case Right(incomeSourceTypeValue) =>
@@ -263,6 +262,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
   def handleSubmitRequest(id: Option[String], isAgent: Boolean, incomeSourceType: String, isChange: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
+    val errorMessage: String = s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."
 
     getActions(isAgent, incomeSourceType, id, isChange).flatMap { actions =>
       val (backAction, postAction, redirectAction, incomeSourceTypeValue) = actions
@@ -282,8 +282,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
           case (SelfEmployment, None) =>
             Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-              s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id.")
-            Future.failed(new Exception(s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."))
+              s"$errorMessage")
+            Future.failed(new Exception(s"$errorMessage"))
 
           case (SelfEmployment, Some(incomeSourceId)) =>
             sessionService.setList(Redirect(redirectAction), incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString, ceaseBusinessIncomeSourceId -> incomeSourceId).flatMap {

@@ -289,12 +289,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getCeaseForeignProperty: WSResponse = get("/income-sources/cease/foreign-property-declare")
 
-    def getChangeBusinessEndDate: WSResponse = get(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentId")
-
-    def getChangeUKPropertyEndDate: WSResponse = get("/income-sources/cease/change-uk-property-end-date")
-
-    def getChangeCeaseForeignProperty: WSResponse = get("/income-sources/cease/change-foreign-property-declare")
-
     def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/income-sources/cease/foreign-property-declare")(
       answer.fold(Map.empty[String, Seq[String]])(
         declaration => CeaseForeignPropertyForm.form.fill(CeaseForeignPropertyForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }

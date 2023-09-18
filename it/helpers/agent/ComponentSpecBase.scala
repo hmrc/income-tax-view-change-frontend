@@ -271,9 +271,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getUKPropertyEndDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/income-sources/cease/uk-property-end-date", additionalCookies)
 
-    def getChangeUKPropertyEndDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      getWithClientDetailsInSession("/agents/income-sources/cease/change-uk-property-end-date", additionalCookies)
-
     def getCeaseForeignProperty(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/income-sources/cease/foreign-property-declare", additionalCookies)
 

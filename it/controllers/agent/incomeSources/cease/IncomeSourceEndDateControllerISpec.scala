@@ -22,7 +22,7 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   val dateBusinessShowAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
@@ -113,7 +113,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call GET $dateBusinessShowChangeAgentUrl")
-        val testChangeCeaseBusinessEndDate: Map[String, String] = Map(UkProperty.endDateSessionKey -> "2022-10-10")
+        val testChangeCeaseBusinessEndDate: Map[String, String] = Map(SelfEmployment.endDateSessionKey -> "2022-10-10")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date", clientDetailsWithConfirmation ++ testChangeCeaseBusinessEndDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -348,6 +348,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
         val testChangeCeaseForeignPropertyEndDate: Map[String, String] = Map(ForeignProperty.endDateSessionKey -> "2022-10-10")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-foreign-property-end-date", clientDetailsWithConfirmation ++ testChangeCeaseForeignPropertyEndDate)
+        verifyIncomeSourceDetailsCall(testMtditid)
 
 
         result should have(

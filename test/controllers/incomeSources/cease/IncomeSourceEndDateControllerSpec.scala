@@ -699,19 +699,19 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       "navigating to the page with FS Enabled with income source type as Self Employment" in {
         stage()
         val incomeSourceType = SelfEmployment
-        TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent, isChange = false)
+        TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent, isChange = true)
       }
 
       "navigating to the page with FS Enabled with income source type as Foreign Property" in {
         stage()
         val incomeSourceType = ForeignProperty
-        TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent, isChange = false)
+        TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent, isChange = true)
       }
 
       "navigating to the page with FS Enabled with income source type as UK Property" in {
         stage()
         val incomeSourceType = UkProperty
-        TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent, isChange = false)
+        TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent, isChange = true)
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
