@@ -20,6 +20,7 @@ import forms.utils.SessionKeys._
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import services.SessionService
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -41,6 +42,8 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     cashOrAccrualsFlag = "Cash",
     skippedAccountingMethod = false
   )
+
+  val sessionService = app.injector.instanceOf[SessionService]
 
   val checkUKPropertyViewModel = CheckUKPropertyViewModel(
     tradingStartDate = LocalDate.of(2023, 5, 1),
@@ -80,15 +83,15 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     "user has uk property details in session" should {
       "return CheckBusinessDetailsViewModel" in {
         implicit val user = individualUser.copy()(fakeRequest)
-        val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession
-        result shouldBe Right(checkUKPropertyViewModel)
+        val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession(sessionService)
+        result.futureValue shouldBe Right(checkUKPropertyViewModel)
       }
     }
 
     "user is missing uk property details in session" should {
       "returns an exception" in {
-        val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession
-        result.isLeft shouldBe true
+        val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession(sessionService)
+        result.futureValue.isLeft shouldBe true
       }
     }
 

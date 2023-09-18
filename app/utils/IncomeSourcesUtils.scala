@@ -18,15 +18,17 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import services.SessionService
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching {
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
@@ -40,9 +42,17 @@ trait IncomeSourcesUtils extends FeatureSwitching {
     }
   }
 
+  def newWithIncomeSourcesRemovedFromSession(redirect: Result, sessionService: SessionService, errorRedirect: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    sessionService.remove(SessionKeys.incomeSourcesSessionKeys, redirect).map {
+      case Left(_) => errorRedirect
+      case Right(result) => result
+    }
+  }
+
   def withIncomeSourcesRemovedFromSession(redirect: Result)(implicit user: MtdItUser[_]): Result = {
     val incomeSourcesSessionKeys = Seq(
       "addUkPropertyStartDate",
+      "addForeignPropertyStartDate",
       "addBusinessName",
       "addBusinessTrade",
       "addIncomeSourcesAccountingMethod",
@@ -117,28 +127,39 @@ object IncomeSourcesUtils {
     }
   }
 
-  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Either[Throwable, CheckUKPropertyViewModel] = {
-    val result: Option[Either[Throwable, CheckUKPropertyViewModel]] = for {
-      tradingStartDate <- user.session.data.get(addUkPropertyStartDate)
-      cashOrAccrualsFlag <- user.session.data.get(addIncomeSourcesAccountingMethod)
-    } yield {
-      Right(CheckUKPropertyViewModel(
-        tradingStartDate = LocalDate.parse(tradingStartDate),
-        cashOrAccrualsFlag = cashOrAccrualsFlag
-      ))
+  def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
+    for {
+      startDate <- sessionService.get(addUkPropertyStartDate)
+      accMethod <- sessionService.get(addIncomeSourcesAccountingMethod)
+    } yield (startDate, accMethod) match {
+      case (Right(dateMaybe), Right(methodMaybe)) =>
+        val maybeModel = for {
+          foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+          cashOrAccrualsFlag <- methodMaybe
+        } yield {
+          CheckUKPropertyViewModel(
+            tradingStartDate = foreignPropertyStartDate,
+            cashOrAccrualsFlag = cashOrAccrualsFlag)
+        }
+        maybeModel.map(Right(_))
+          .getOrElse(Left(new Error("Unable to construct UK property view model")))
+      case (_, _) =>
+        Left(new Error("Error occurred when retrieving start dat and accounting method from session storage"))
+    }
+  }
+
+  def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
+
+    def checkError(field: Either[Throwable, Option[String]]): String = {
+      field match {
+        case Right(nameOpt) => nameOpt match {
+          case Some(name) => name
+          case None => "MissingKey: addUKPropertyStartDate"
+        }
+        case Left(_) => "MissingKey: addUKPropertyStartDate"
+      }
     }
 
-    result match {
-      case Some(propertyDetails) =>
-        propertyDetails
-      case None =>
-        val errors: Seq[String] = Seq(
-          user.session.data.get(addUkPropertyStartDate).orElse(Some(MissingKey(s"MissingKey: $addUkPropertyStartDate"))),
-          user.session.data.get(businessTrade).orElse(Some(MissingKey(s"MissingKey: $businessTrade")))
-        ).collect {
-          case Some(MissingKey(msg)) => msg
-        }
-        Left(new IllegalArgumentException(s"Missing required session data: ${errors.mkString(" ")}"))
-    }
+    Seq(checkError(startDate), checkError(accMethod))
   }
 }

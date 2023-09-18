@@ -33,7 +33,7 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.CreateBusinessDetailsService
+import services.{CreateBusinessDetailsService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
@@ -72,6 +72,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     createBusinessDetailsService = mockBusinessDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
+    sessionService = app.injector.instanceOf[SessionService]
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
