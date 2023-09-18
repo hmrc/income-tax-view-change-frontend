@@ -27,7 +27,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import play.api.Logger
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
+import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -51,6 +51,7 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                               (implicit val ec: ExecutionContext,
                                                implicit override val mcc: MessagesControllerComponents,
                                                val appConfig: FrontendAppConfig,
+                                               implicit val sessionService: SessionService,
                                                implicit val itvcErrorHandler: ItvcErrorHandler,
                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with IncomeSourcesUtils with FeatureSwitching {
@@ -141,22 +142,24 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       }
       getBusinessDetailsFromSession(user).toOption match {
         case Some(viewModel: CheckBusinessDetailsViewModel) =>
-          businessDetailsService.createBusinessDetails(viewModel).map {
+          businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Left(ex) => Logger("application").error(
               s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Unable to create income source: ${ex.getMessage}")
-              Redirect(errorHandler)
+              Future.successful(Redirect(errorHandler))
 
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSessionLegacy {
+              withIncomeSourcesRemovedFromSession {
                 Redirect(redirect(id).url)
+              } recover {
+                case ex: Exception =>
+                  Logger("application").error(s"[CheckBusinessDetailsController][handleRequest] - Session Error: ${ex.getMessage}")
+                  showInternalServerError(isAgent)
               }
           }.recover {
             case ex: Throwable =>
               Logger("application").error(
                 s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
-              withIncomeSourcesRemovedFromSessionLegacy {
                 Redirect(errorHandler)
-              }
           }
         case _ => Logger("application").error(
           s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Error: Unable to build view model on submit")
@@ -178,6 +181,10 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           implicit mtdItUser =>
             handleSubmitRequest(isAgent = true)
         }
+  }
+
+  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 
 }

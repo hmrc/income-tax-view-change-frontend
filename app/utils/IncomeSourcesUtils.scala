@@ -42,38 +42,15 @@ trait IncomeSourcesUtils extends FeatureSwitching {
     }
   }
 
-  def withIncomeSourcesRemovedFromSession(redirect: Result)(implicit user: MtdItUser[_], sessionService: SessionService, ec: ExecutionContext): Future[Result] = {
+  def withIncomeSourcesRemovedFromSession(redirect: Result)
+                                         (implicit user: MtdItUser[_],
+                                          sessionService: SessionService,
+                                          ec: ExecutionContext
+                                         ): Future[Result] = {
     sessionService.remove(SessionKeys.incomeSourcesSessionKeys, redirect).map {
       case Left(_) => throw new Exception("Failed to remove income sources from session")
       case Right(result) => result
     }
-  }
-
-  def withIncomeSourcesRemovedFromSessionLegacy(redirect: Result)(implicit user: MtdItUser[_]): Result = {
-    val incomeSourcesSessionKeys = Seq(
-      "addUkPropertyStartDate",
-      "addForeignPropertyStartDate",
-      "addBusinessName",
-      "addBusinessTrade",
-      "addIncomeSourcesAccountingMethod",
-      "addBusinessStartDate",
-      "addBusinessAccountingPeriodStartDate",
-      "addBusinessAccountingPeriodEndDate",
-      "addBusinessStartDate",
-      "addBusinessAddressLine1",
-      "addBusinessAddressLine2",
-      "addBusinessAddressLine3",
-      "addBusinessAddressLine4",
-      "addBusinessPostalCode",
-      "addBusinessCountryCode",
-      "ceaseForeignPropertyDeclare",
-      "ceaseForeignPropertyEndDate",
-      "ceaseUKPropertyDeclare",
-      "ceaseUKPropertyEndDate"
-    ) //TODO: check this is all the keys
-    val newSession = user.session -- incomeSourcesSessionKeys
-
-    redirect.withSession(newSession)
   }
 }
 

@@ -146,7 +146,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                 Redirect(redirectErrorUrl)
               )
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSessionLegacy(
+              withIncomeSourcesRemovedFromSession(
                 Redirect(getUKPropertyReportingMethodUrl(isAgent, id))
               ) recover {
                 case _: Exception => Redirect(redirectErrorUrl)
@@ -166,7 +166,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         case Left(ex: Throwable) =>
           Logger("application").error(
             s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
-          withIncomeSourcesRemovedFromSessionLegacy(
+          withIncomeSourcesRemovedFromSession(
             Redirect(redirectErrorUrl)
           ) recover {
             case _: Exception => Redirect(redirectErrorUrl)

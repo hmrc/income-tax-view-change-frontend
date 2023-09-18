@@ -17,6 +17,7 @@
 package mocks.services
 
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{RequestHeader, Result}
@@ -44,4 +45,10 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       mockSessionService.set(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Right(result.addingToSession(key -> value))))
 
+  def mockIncomeSourcesRemovedFromSessionFailure(): Unit = {
+    when(
+      mockSessionService.remove(any(), any())(any(), any()))
+      .thenReturn(Future.successful(Left(new Exception))
+    )
+  }
 }

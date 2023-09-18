@@ -16,14 +16,13 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -49,6 +48,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
   with MockNavBarEnumFsPredicate
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
+  with MockSessionService
   with TestSupport {
 
   val controller = new AddIncomeSourceController(
@@ -101,7 +101,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
-            .thenReturn( Success(AddIncomeSourcesViewModel(
+            .thenReturn(Success(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
               ukProperty = Some(ukPropertyDetailsViewModel),
               foreignProperty = None,

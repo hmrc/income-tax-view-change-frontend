@@ -88,7 +88,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>
-          withIncomeSourcesRemovedFromSessionLegacy {
+          withIncomeSourcesRemovedFromSession {
             Ok(addIncomeSources(
               sources = viewModel,
               isAgent = isAgent,
@@ -96,17 +96,12 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
             ))
           } recover {
             case ex: Exception =>
-              Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+              Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
               showInternalServerError(isAgent)
           }
         case Failure(ex) =>
-          if (isAgent) {
-            Logger("application").error(s"[Agent][AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-            Future(itvcErrorHandlerAgent.showInternalServerError())
-          } else {
-            Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-            Future(itvcErrorHandler.showInternalServerError())
-          }
+          Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+          Future(showInternalServerError(isAgent))
       }
     }
   }
