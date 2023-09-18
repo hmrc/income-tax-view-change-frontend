@@ -94,7 +94,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
         }(individualUser, sessionService, ec)
 
         SessionKeys.incomeSourcesSessionKeys.forall(
-          redirect.futureValue.session.get(_).isDefined.equals(false)
+          redirect.futureValue.session.get(_).isDefined == false
         ) shouldBe true
       }
     }
