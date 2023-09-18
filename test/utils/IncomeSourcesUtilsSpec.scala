@@ -18,12 +18,12 @@ package utils
 
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
-import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.SessionService
 import testUtils.TestSupport
 
 import java.time.LocalDate
+import scala.language.postfixOps
 
 class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
 
@@ -61,24 +61,6 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     addIncomeSourcesAccountingMethod -> checkUKPropertyViewModel.cashOrAccrualsFlag
   )
 
-  "getBusinessDetailsFromSession" when {
-    "user has business details in session" should {
-      "return CheckBusinessDetailsViewModel" in {
-        implicit val user = individualUser.copy()(fakeRequest)
-        val result = IncomeSourcesUtils.getBusinessDetailsFromSession
-        result shouldBe Right(viewModelMax)
-      }
-    }
-
-    "user is missing business details in session" should {
-      "returns an exception" in {
-        val result = IncomeSourcesUtils.getBusinessDetailsFromSession
-        result.isLeft shouldBe true
-      }
-    }
-
-  }
-
   "getUKPropertyDetailsFromSession" when {
     "user has uk property details in session" should {
       "return CheckBusinessDetailsViewModel" in {
@@ -104,7 +86,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
         val redirect = withIncomeSourcesRemovedFromSession {
           Redirect("nowhere")
         }
-        
+
         redirect.session.get("addUkPropertyStartDate") shouldBe None
         redirect.session.get("addBusinessName") shouldBe None
         redirect.session.get("addBusinessTrade") shouldBe None

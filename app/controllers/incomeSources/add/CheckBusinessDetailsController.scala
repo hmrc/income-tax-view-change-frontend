@@ -22,19 +22,21 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
-import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
+import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
+import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import utils.IncomeSourcesUtils.getBusinessDetailsFromSession
 import views.html.incomeSources.add.CheckBusinessDetails
 
 import java.net.URI
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,7 +49,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
-                                               val businessDetailsService: CreateBusinessDetailsService)
+                                               val businessDetailsService: CreateBusinessDetailsService,
+                                               val sessionService: SessionService)
                                               (implicit val ec: ExecutionContext,
                                                implicit override val mcc: MessagesControllerComponents,
                                                val appConfig: FrontendAppConfig,
@@ -105,26 +108,26 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
 
     withIncomeSourcesFS {
-      Future {
-        getBusinessDetailsFromSession(user) match {
-          case Right(viewModel) =>
-            Ok(checkBusinessDetails(
-              viewModel = viewModel,
-              postAction = postAction,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          case Left(ex) =>
-            if (isAgent) {
-              Logger("application").error(
-                s"[Agent][CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandlerAgent.showInternalServerError()
-            } else {
-              Logger("application").error(
-                s"[CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-              itvcErrorHandler.showInternalServerError()
-            }
-        }
+      getBusinessDetailsFromSession(user, ec).flatMap {
+        case Right(viewModel) =>
+          Future.successful(Ok(checkBusinessDetails(
+            viewModel = viewModel,
+            postAction = postAction,
+            isAgent = isAgent,
+            backUrl = backUrl
+          )))
+        case Left(ex) => Future.failed(ex)
+      }.recover {
+        case ex: Throwable =>
+          if (isAgent) {
+            Logger("application").error(
+              s"[Agent][CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+            itvcErrorHandlerAgent.showInternalServerError()
+          } else {
+            Logger("application").error(
+              s"[CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+          }
       }
     }
   }
@@ -139,28 +142,20 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         else
           (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url)
       }
-      getBusinessDetailsFromSession(user).toOption match {
-        case Some(viewModel: CheckBusinessDetailsViewModel) =>
-          businessDetailsService.createBusinessDetails(viewModel).map {
-            case Left(ex) => Logger("application").error(
-              s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Unable to create income source: ${ex.getMessage}")
-              Redirect(errorHandler)
-
+      getBusinessDetailsFromSession(user, ec).flatMap {
+        case Right(viewModel) =>
+          businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession {
-                Redirect(redirect(id).url)
-              }
-          }.recover {
-            case ex: Throwable =>
-              Logger("application").error(
-                s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
-              withIncomeSourcesRemovedFromSession {
-                Redirect(errorHandler)
-              }
+              newWithIncomeSourcesRemovedFromSession(Redirect(redirect(id).url), sessionService, Redirect(errorHandler))
+            case Left(ex) => Future.failed(ex)
           }
-        case _ => Logger("application").error(
-          s"${if (isAgent) "[Agents]"}[CheckBusinessDetailsController][handleSubmitRequest] - Error: Unable to build view model on submit")
-          Future.successful(Redirect(errorHandler))
+        case Left(ex) => Future.failed(ex)
+      }.recover {
+        case ex: Throwable =>
+          Logger("application").error(
+            s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
+          newWithIncomeSourcesRemovedFromSession(Redirect(errorHandler), sessionService, Redirect(errorHandler))
+          Redirect(errorHandler)
       }
     }
   }
@@ -178,6 +173,59 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
           implicit mtdItUser =>
             handleSubmitRequest(isAgent = true)
         }
+  }
+
+  private def getBusinessDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
+    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+    val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
+
+    // List of fields we are attempting to extract
+    val fields: Seq[String] = Seq(SessionKeys.businessName, SessionKeys.businessStartDate, SessionKeys.businessTrade,
+      SessionKeys.addBusinessAddressLine1, SessionKeys.addIncomeSourcesAccountingMethod, SessionKeys.addBusinessAccountingPeriodEndDate, SessionKeys.addBusinessAddressLine2,
+      SessionKeys.addBusinessAddressLine3, SessionKeys.addBusinessAddressLine4, SessionKeys.addBusinessPostalCode, SessionKeys.addBusinessCountryCode, SessionKeys.addIncomeSourcesAccountingMethod)
+
+    val init: Future[Either[Throwable, Map[String, Option[String]]]] = Future {
+      Right(Map.empty)
+    }
+    val xs = fields.foldLeft(init) { (acc, fieldName) =>
+      for {
+        futureAcc <- acc
+        if futureAcc.isRight // stop exec if there was any error previously
+        futureRes <- sessionService.get(fieldName)
+      } yield (futureAcc, futureRes) match {
+        case (Right(m), Right(optVal)) =>
+          val finalMap = m + (fieldName -> optVal)
+          Right(finalMap)
+        case (_, _) =>
+          futureAcc
+      }
+    }
+
+    for {
+      res <- xs
+    } yield res match { // => Add extra validation for the date parsing + others where required
+      case Right(m) =>
+        Right(
+          CheckBusinessDetailsViewModel(
+            businessName = m.get(SessionKeys.businessName).flatten,
+            businessStartDate = m.get(SessionKeys.businessStartDate).flatten.map(LocalDate.parse(_)),
+            accountingPeriodEndDate = m.get(SessionKeys.addBusinessAccountingPeriodEndDate).flatten.map(LocalDate.parse(_)).get,
+            businessTrade = m.get(SessionKeys.businessTrade).flatten.get,
+            businessAddressLine1 = m.get(SessionKeys.addBusinessAddressLine1).flatten.get,
+            businessAddressLine2 = m.get(SessionKeys.addBusinessAddressLine2).flatten,
+            businessAddressLine3 = m.get(SessionKeys.addBusinessAddressLine3).flatten,
+            businessAddressLine4 = m.get(SessionKeys.addBusinessAddressLine4).flatten,
+            businessPostalCode = m.get(SessionKeys.addBusinessPostalCode).flatten,
+            businessCountryCode = m.get(SessionKeys.addBusinessCountryCode).flatten,
+            incomeSourcesAccountingMethod = m.get(SessionKeys.addIncomeSourcesAccountingMethod).flatten,
+            cashOrAccrualsFlag = m.get(SessionKeys.addIncomeSourcesAccountingMethod).flatten.get,
+            skippedAccountingMethod = skipAccountingMethod
+          )
+        )
+      case ex@Left(_) =>
+        Left(MissingSessionKey(s"[IncomeSourcesUtils][getBusinessDetailsFromSession]  - $ex"))
+    }
+
   }
 
 }
