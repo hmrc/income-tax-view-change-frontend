@@ -22,24 +22,33 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyAndCeasedBusiness, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   val dateBusinessShowAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
   val dateBusinessSubmitAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
+  val dateBusinessShowChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
+  val dateBusinessSubmitChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChangeAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
   val checkCeaseBusinessDetailsShowAgentUrl: String = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url
 
   val dateUKPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key).url
   val dateUKPropertySubmitAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitAgent(None, UkProperty.key).url
+  val dateUKPropertyShowChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty.key).url
+  val dateUKPropertySubmitChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChangeAgent(None, UkProperty.key).url
   val checkYourCeaseDetailsUkPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url
 
   val dateForeignPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url
   val dateForeignPropertySubmitAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitAgent(None, ForeignProperty.key).url
+  val dateForeignPropertyShowChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty.key).url
+  val dateForeignPropertySubmitChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChangeAgent(None, ForeignProperty.key).url
   val checkYourCeaseDetailsForeignPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent().url
 
 
   val hintText: String = messagesAPI("dateForm.hint")
   val continueButtonText: String = messagesAPI("base.continue")
+  val testChangeDay: String = "10"
+  val testChangeMonth: String = "10"
+  val testChangeYear: String = "2022"
 
   s"calling GET $dateBusinessShowAgentUrl" should {
     "render the Date Business Ceased Page" when {
@@ -88,6 +97,68 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentId", additionalCookies = clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(BAD_REQUEST),
+          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("incomeSources.cease.endDate.selfEmployment.error.invalid"))
+        )
+      }
+    }
+  }
+
+  s"calling GET $dateBusinessShowChangeAgentUrl" should {
+    "render the Date Business Ceased Page" when {
+      "User is authorised" in {
+        Given("I wiremock stub a successful Income Source Details response with a business")
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        When(s"I call GET $dateBusinessShowChangeAgentUrl")
+        val testChangeCeaseBusinessEndDate: Map[String, String] = Map(SelfEmployment.endDateSessionKey -> "2022-10-10")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date?id=1234", clientDetailsWithConfirmation ++ testChangeCeaseBusinessEndDate)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.cease.endDate.selfEmployment.heading"),
+          elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]","value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]","value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]","value")(testChangeYear),
+          elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+  }
+  s"calling POST $dateBusinessSubmitChangeAgentUrl" should {
+    "redirect to showIncomeSourceEndDateControllerUrl" when {
+      "form is filled correctly" in {
+        val formData: Map[String, Seq[String]] = {
+          Map("income-source-end-date.day" -> Seq("27"), "income-source-end-date.month" -> Seq("8"), "income-source-end-date.year" -> Seq("2022"))
+        }
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentId", additionalCookies = clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkCeaseBusinessDetailsShowAgentUrl)
+        )
+      }
+      "form is filled incorrectly" in {
+        val formData: Map[String, Seq[String]] = {
+          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("5"), "income-source-end-date.year" -> Seq("2022"))
+        }
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentId", additionalCookies = clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),
@@ -155,6 +226,68 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     }
   }
 
+  s"calling GET $dateUKPropertyShowChangeAgentUrl" should {
+    "render the Date UK Property Ceased Page" when {
+      "User is authorised" in {
+        Given("I wiremock stub a successful Income Source Details response with UK property")
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        When(s"I call GET $dateUKPropertyShowChangeAgentUrl")
+        val testChangeCeaseUkPropertyEndDate: Map[String, String] = Map(UkProperty.endDateSessionKey -> "2022-10-10")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-uk-property-end-date", clientDetailsWithConfirmation ++ testChangeCeaseUkPropertyEndDate)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.cease.endDate.ukProperty.heading"),
+          elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
+          elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+  }
+  s"calling POST $dateUKPropertySubmitChangeAgentUrl" should {
+    "redirect to showUKPropertyEndDateControllerUrl" when {
+      "form is filled correctly" in {
+        val formData: Map[String, Seq[String]] = {
+          Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+        }
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-uk-property-end-date", additionalCookies = clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkYourCeaseDetailsUkPropertyShowAgentUrl)
+        )
+      }
+      "form is filled incorrectly" in {
+        val formData: Map[String, Seq[String]] = {
+          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+        }
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-uk-property-end-date", additionalCookies = clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(BAD_REQUEST),
+          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("incomeSources.cease.endDate.ukProperty.error.invalid"))
+        )
+      }
+    }
+  }
+
   s"calling GET $dateForeignPropertyShowAgentUrl" should {
     "render the Date Foreign Property Ceased Page" when {
       "User is authorised" in {
@@ -202,6 +335,67 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/foreign-property-end-date", clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(BAD_REQUEST),
+          elementTextByID("income-source-end-date-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("incomeSources.cease.endDate.foreignProperty.error.invalid"))
+        )
+      }
+    }
+  }
+
+  s"calling GET $dateForeignPropertyShowChangeAgentUrl" should {
+    "render the Date Foreign Property Ceased Page" when {
+      "User is authorised" in {
+        Given("I wiremock stub a successful Income Source Details response with Foreign property")
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+
+        When(s"I call GET $dateForeignPropertyShowChangeAgentUrl")
+        val testChangeCeaseForeignPropertyEndDate: Map[String, String] = Map(ForeignProperty.endDateSessionKey -> "2022-10-10")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-foreign-property-end-date", clientDetailsWithConfirmation ++ testChangeCeaseForeignPropertyEndDate)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.cease.endDate.foreignProperty.heading"),
+          elementTextByID("income-source-end-date-hint")(hintText),
+          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
+          elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+  }
+  s"calling POST $dateForeignPropertySubmitChangeAgentUrl" should {
+    "redirect to showUKPropertyEndDateControllerUrl" when {
+      "form is filled correctly" in {
+        val formData: Map[String, Seq[String]] = {
+          Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+        }
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-foreign-property-end-date", clientDetailsWithConfirmation)(formData)
+
+        result should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(checkYourCeaseDetailsForeignPropertyShowAgentUrl)
+        )
+      }
+      "form is filled incorrectly" in {
+        val formData: Map[String, Seq[String]] = {
+          Map("income-source-end-date.day" -> Seq("aa"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+        }
+        enable(IncomeSources)
+        stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-foreign-property-end-date", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),

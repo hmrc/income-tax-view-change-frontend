@@ -34,6 +34,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAuthA
 import testUtils.TestSupport
 import play.api.http.Status
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
+import services.SessionService
 import testConstants.BusinessDetailsTestConstants.{ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2, viewBusinessDetailsViewModel}
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel, viewUkPropertyDetailsViewModel}
 import views.html.incomeSources.manage.ManageIncomeSources
@@ -63,6 +64,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
+      sessionService = app.injector.instanceOf[SessionService],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       ec = ec
     )

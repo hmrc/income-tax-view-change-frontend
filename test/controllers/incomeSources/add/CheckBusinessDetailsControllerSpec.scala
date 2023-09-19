@@ -50,7 +50,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
   val testBusinessAddressLine1: String = "123 Main Street"
   val testBusinessPostCode: String = "AB123CD"
   val testBusinessAccountingMethod = "Quarterly"
-  val testAccountingPeriodEndDate = LocalDate.of(2023, 11, 11).toString
+  val testAccountingPeriodEndDate: String = LocalDate.of(2023, 11, 11).toString
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockCheckBusinessDetails: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
@@ -65,10 +65,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    businessDetailsService = mockBusinessDetailsService,
-    sessionService = app.injector.instanceOf[SessionService]
+    businessDetailsService = mockBusinessDetailsService
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
+    sessionService = app.injector.instanceOf[SessionService],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   ) {

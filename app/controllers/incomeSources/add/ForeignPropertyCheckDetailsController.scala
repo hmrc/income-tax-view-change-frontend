@@ -47,11 +47,11 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val retrieveBtaNavBar: NavBarPredicate,
-                                                      val businessDetailsService: CreateBusinessDetailsService,
-                                                      val sessionService: SessionService)
+                                                      val businessDetailsService: CreateBusinessDetailsService)
                                                      (implicit val ec: ExecutionContext,
                                                       implicit override val mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
+                                                      implicit val sessionService: SessionService,
                                                       implicit val itvcErrorHandler: ItvcErrorHandler,
                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
@@ -211,13 +211,12 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
             Future.successful(Redirect(redirectErrorUrl))
 
           case Right(CreateIncomeSourceResponse(id)) =>
-            newWithIncomeSourcesRemovedFromSession(
+            withIncomeSourcesRemovedFromSession(
               if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
-              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url),
-              sessionService,
-              Redirect(redirectErrorUrl)
-            )
-
+              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
+            ) recover {
+              case _: Exception => Redirect(redirectErrorUrl)
+            }
         }
       case Left(_) =>
         Logger("application").error(

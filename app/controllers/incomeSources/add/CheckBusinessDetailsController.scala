@@ -49,11 +49,11 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
-                                               val businessDetailsService: CreateBusinessDetailsService,
-                                               val sessionService: SessionService)
+                                               val businessDetailsService: CreateBusinessDetailsService)
                                               (implicit val ec: ExecutionContext,
                                                implicit override val mcc: MessagesControllerComponents,
                                                val appConfig: FrontendAppConfig,
+                                               implicit val sessionService: SessionService,
                                                implicit val itvcErrorHandler: ItvcErrorHandler,
                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with IncomeSourcesUtils with FeatureSwitching {
@@ -146,15 +146,17 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         case Right(viewModel) =>
           businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
-              newWithIncomeSourcesRemovedFromSession(Redirect(redirect(id).url), sessionService, Redirect(errorHandler))
+              withIncomeSourcesRemovedFromSession(Redirect(redirect(id).url)) recover {
+                case ex: Exception =>
+                  Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
+                  Redirect(errorHandler)
+              }
             case Left(ex) => Future.failed(ex)
           }
         case Left(ex) => Future.failed(ex)
       }.recover {
-        case ex: Throwable =>
-          Logger("application").error(
-            s"[CheckBusinessDetailsController][handleRequest] - Error while processing request: ${ex.getMessage}")
-          newWithIncomeSourcesRemovedFromSession(Redirect(errorHandler), sessionService, Redirect(errorHandler))
+        case ex: Exception =>
+          Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
           Redirect(errorHandler)
       }
     }

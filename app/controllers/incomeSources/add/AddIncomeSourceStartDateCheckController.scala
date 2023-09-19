@@ -186,8 +186,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         setSessionData(Seq(
           (addBusinessAccountingPeriodStartDate, incomeSourceStartDate),
           (addBusinessAccountingPeriodEndDate, dateService.getAccountingPeriodEndDate(incomeSourceStartDate))
-        )
-          , Redirect(successUrl)
+        ),
+          Redirect(successUrl)
         ) map {
           case Left(_) => showInternalServerError(isAgent)
           case Right(result) => result
@@ -228,11 +228,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   private def getAndValidateStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, String]] = {
     sessionService.get(incomeSourceType.startDateSessionKey) map {
       case Left(ex) => Left(new Error(s"Could not retrieve start date from session storage: ${ex.getMessage}"))
-      case Right(dateMaybe) => dateMaybe match {
-        case Some(date) if Try(date.toLocalDate).toOption.isDefined => Right(date)
-        case Some(invalidDate) => Left(new Error(s"Could not parse $invalidDate as LocalDate"))
-        case None => Left(new Error(s"Session value not found for Key: ${incomeSourceType.startDateSessionKey}"))
-      }
+      case Right(Some(date)) if Try(date.toLocalDate).toOption.isDefined => Right(date)
+      case Right(Some(date)) => Left(new Error(s"Could not parse $date as LocalDate"))
+      case Right(None) => Left(new Error(s"Session value not found for Key: ${incomeSourceType.startDateSessionKey}"))
     }
   }
 

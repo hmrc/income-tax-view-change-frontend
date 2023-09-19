@@ -49,9 +49,9 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val businessDetailsService: CreateBusinessDetailsService,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val createBusinessDetailsService: CreateBusinessDetailsService,
-                                                 val retrieveBtaNavBar: NavBarPredicate,
-                                                 val sessionService: SessionService)
+                                                 val retrieveBtaNavBar: NavBarPredicate)
                                                 (implicit val appConfig: FrontendAppConfig,
+                                                 implicit val sessionService: SessionService,
                                                  mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext,
                                                  val itvcErrorHandler: ItvcErrorHandler,
@@ -142,17 +142,15 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              newWithIncomeSourcesRemovedFromSession(
-                Redirect(redirectErrorUrl),
-                sessionService,
+              withIncomeSourcesRemovedFromSession(
                 Redirect(redirectErrorUrl)
               )
             case Right(CreateIncomeSourceResponse(id)) =>
-              newWithIncomeSourcesRemovedFromSession(
-                Redirect(getUKPropertyReportingMethodUrl(isAgent, id)),
-                sessionService,
-                Redirect(redirectErrorUrl)
-              )
+              withIncomeSourcesRemovedFromSession(
+                Redirect(getUKPropertyReportingMethodUrl(isAgent, id))
+              ) recover {
+                case _: Exception => Redirect(redirectErrorUrl)
+              }
           }.recover {
             case ex: Exception =>
               if (isAgent) {
@@ -168,11 +166,11 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         case Left(ex: Throwable) =>
           Logger("application").error(
             s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
-          newWithIncomeSourcesRemovedFromSession(
-            Redirect(redirectErrorUrl),
-            sessionService,
+          withIncomeSourcesRemovedFromSession(
             Redirect(redirectErrorUrl)
-          )
+          ) recover {
+            case _: Exception => Redirect(redirectErrorUrl)
+          }
       }
     }
   }
