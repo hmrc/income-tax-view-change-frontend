@@ -31,6 +31,7 @@ import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.SessionService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.BusinessDetailsTestConstants.{ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2}
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
@@ -55,6 +56,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
   )(
     ec,
     app.injector.instanceOf[MessagesControllerComponents],
+    sessionService = app.injector.instanceOf[SessionService],
     app.injector.instanceOf[FrontendAppConfig]
   )
 

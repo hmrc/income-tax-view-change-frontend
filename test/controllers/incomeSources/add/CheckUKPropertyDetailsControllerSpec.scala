@@ -55,7 +55,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
   val date = "2023-05-01"
   val propertyStartDate: LocalDate = LocalDate.parse(date)
   val testUKPropertyStartDate: String = LocalDate.of(2023, 1, 2).toString
-  val cash = messages("incomeSources.add.accountingMethod.cash")
+  val cash: String = messages("incomeSources.add.accountingMethod.cash")
 
 
   lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key).url
@@ -71,10 +71,10 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
     businessDetailsService = mockBusinessDetailsService,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     createBusinessDetailsService = mockBusinessDetailsService,
-    retrieveBtaNavBar = MockNavBarPredicate,
-    sessionService = app.injector.instanceOf[SessionService]
+    retrieveBtaNavBar = MockNavBarPredicate
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
+    sessionService = app.injector.instanceOf[SessionService],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

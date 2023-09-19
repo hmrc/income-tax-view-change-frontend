@@ -37,6 +37,12 @@ class SessionService @Inject()() {
     }
   }
 
+  def setList(result: Result, keyValue: (String, String)*)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
+    Future {
+      Right(result.addingToSession(keyValue: _*))
+    }
+  }
+
   def remove(keys: Seq[String], result: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Result]] = {
     Future{
       val newSession = user.session -- keys
