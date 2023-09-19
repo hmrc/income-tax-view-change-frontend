@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.cease
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.{FeatureSwitching, IncomeSources, NavBarFs}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.ForeignProperty
@@ -33,11 +33,12 @@ import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import services.SessionService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.{IncomeSourceEndDate, CeaseForeignProperty}
+import views.html.incomeSources.cease.{CeaseForeignProperty, IncomeSourceEndDate}
 
 import scala.concurrent.Future
 
@@ -56,7 +57,7 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[CeaseForeignProperty],
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
@@ -72,7 +73,7 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
       "navigating to the page with FS Enabled" in {
         enable(IncomeSources)
         mockPropertyIncomeSource()
-        val result: Future[Result] = TestCeaseForeignPropertyController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestCeaseForeignPropertyController.show()(fakeRequestWithNinoAndOrigin("BTA"))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -85,10 +86,10 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
         disable(IncomeSources)
         mockPropertyIncomeSource()
 
-        val result: Future[Result] = TestCeaseForeignPropertyController.show()(fakeRequestWithActiveSession)
-        val expectedContent: String = TestCeaseForeignPropertyController.customNotFoundErrorView().toString()
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        val result: Future[Result] = TestCeaseForeignPropertyController.show()(fakeRequestWithNinoAndOrigin("BTA"))
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
@@ -122,6 +123,7 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
       "the form is not completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
+        disable(NavBarFs)
         mockPropertyIncomeSource()
 
         when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
@@ -168,11 +170,9 @@ class CeaseForeignPropertyControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         disable(IncomeSources)
         mockPropertyIncomeSource()
-
         val result: Future[Result] = TestCeaseForeignPropertyController.showAgent()(fakeRequestConfirmedClient())
-        val expectedContent: String = TestCeaseForeignPropertyController.customNotFoundErrorView().toString()
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+
+        status(result) shouldBe Status.SEE_OTHER
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()

@@ -22,11 +22,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
+import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
@@ -43,7 +44,8 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                     val obligationsView: IncomeSourceCeasedObligations,
-                                                    val nextUpdatesService: NextUpdatesService)
+                                                    val nextUpdatesService: NextUpdatesService,
+                                                    val sessionService: SessionService)
                                                    (implicit val appConfig: FrontendAppConfig,
                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     implicit override val mcc: MessagesControllerComponents,
@@ -59,11 +61,9 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      user.session.get(ceaseBusinessIncomeSourceId) match {
-        case Some(incomeSourceId) =>
+      sessionService.get(ceaseBusinessIncomeSourceId).flatMap {
+        case Right(Some(incomeSourceId)) =>
           val businessName = getBusinessName(incomeSourceId)
-
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
               businessName = businessName,
@@ -71,12 +71,16 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
               isAgent = isAgent,
               incomeSourceType = SelfEmployment))
           }
-        case None =>
-          Logger("application").error(s"${if(isAgent)"[Agent]"}[BusinessCeasedObligationsController][handleRequest]:Missing Session Key: $ceaseBusinessIncomeSourceId")
-          Future.successful(errorHandler.showInternalServerError())
+        case Right(None) => Future.failed(MissingSessionKey(ceaseBusinessIncomeSourceId))
+        case Left(exception) =>
+          Future.failed(exception)
       }
-
     }
+  }.recover {
+    case exception: Exception =>
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: $exception")
+      errorHandler.showInternalServerError()
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

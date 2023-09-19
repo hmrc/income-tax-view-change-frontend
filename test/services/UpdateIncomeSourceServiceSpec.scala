@@ -19,22 +19,22 @@ package services
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import connectors.IncomeTaxViewChangeConnector
-import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import testConstants.BusinessDetailsTestConstants.testMtdItId
 import testConstants.UpdateIncomeSourceTestConstants
-import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, failureResponse, successResponse, taxYearSpecific}
+import testConstants.UpdateIncomeSourceTestConstants.{failureResponse, successResponse, taxYearSpecific}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import scala.concurrent.Future
 
 class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
-  implicit val userWithSessionKey = MtdItUser(
+  implicit val userWithSessionKey: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
     userName = Some(testRetrievedUserName),
@@ -44,9 +44,9 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
     credId = Some("credId"),
     userType = Some(Individual),
     None
-  )(FakeRequest().withSession(ceaseUKPropertyEndDate -> cessationDate))
+  )(FakeRequest().withSession(ceaseUKPropertyEndDate -> UpdateIncomeSourceTestConstants.cessationDate))
 
-  val userWithOutSessionKey = MtdItUser(
+  val userWithOutSessionKey: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
     userName = Some(testRetrievedUserName),
@@ -58,6 +58,7 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
     None
   )(FakeRequest())
 
+  val cessationDate = "2022-07-01"
 
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
 
@@ -68,19 +69,12 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       "valid response" in {
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
-        TestUpdateIncomeSourceService.updateCessationDate.futureValue shouldBe Right(successResponse)
+        TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtdItId, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess(testMtdItId))
       }
       "invalid response" in {
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDate.futureValue shouldBe Right(failureResponse)
-      }
-    }
-
-    "return exception " when {
-      "session key is missing" in {
-        val exception = Left(MissingSessionKey(ceaseUKPropertyEndDate))
-        TestUpdateIncomeSourceService.updateCessationDate(userWithOutSessionKey, headerCarrier, ec).futureValue shouldBe exception
+        TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtdItId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
       }
     }
   }
@@ -91,12 +85,12 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       "valid response" in {
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
-        TestUpdateIncomeSourceService.updateCessationDatev2(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess(testIncomeSourceId))
+        TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess(testIncomeSourceId))
       }
       "invalid response" in {
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDatev2(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+        TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
       }
     }
   }

@@ -33,11 +33,12 @@ import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import play.twirl.api.HtmlFormat
+import services.SessionService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.{IncomeSourceEndDate, CeaseUKProperty}
+import views.html.incomeSources.cease.{CeaseUKProperty, IncomeSourceEndDate}
 
 import scala.concurrent.Future
 
@@ -56,7 +57,8 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[CeaseUKProperty],
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[CustomNotFoundError],
+    app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
