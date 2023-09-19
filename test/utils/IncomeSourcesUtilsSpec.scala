@@ -16,9 +16,13 @@
 
 package utils
 
+import auth.MtdItUser
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.mvc.Results.Redirect
+import play.api.test.FakeRequest
 import services.SessionService
 import testUtils.TestSupport
 
@@ -43,13 +47,13 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
     skippedAccountingMethod = false
   )
 
-  val sessionService = app.injector.instanceOf[SessionService]
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val checkUKPropertyViewModel = CheckUKPropertyViewModel(
+  val checkUKPropertyViewModel: CheckUKPropertyViewModel = CheckUKPropertyViewModel(
     tradingStartDate = LocalDate.of(2023, 5, 1),
     cashOrAccrualsFlag = "Cash")
 
-  val fakeRequest = fakeRequestWithActiveSession.withSession(
+  val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     businessName -> viewModelMax.businessName.get,
     businessStartDate -> viewModelMax.businessStartDate.get.toString,
     businessTrade -> viewModelMax.businessTrade,
@@ -64,7 +68,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
   "getUKPropertyDetailsFromSession" when {
     "user has uk property details in session" should {
       "return CheckBusinessDetailsViewModel" in {
-        implicit val user = individualUser.copy()(fakeRequest)
+        implicit val user: MtdItUser[AnyContentAsEmpty.type] = individualUser.copy()(fakeRequest)
         val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession(sessionService)
         result.futureValue shouldBe Right(checkUKPropertyViewModel)
       }
@@ -76,38 +80,22 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
         result.futureValue.isLeft shouldBe true
       }
     }
-
   }
 
   "removeIncomeSourceDetailsFromSession" when {
     "user has session data" should {
       "remove session data" in {
-        implicit val user = individualUser.copy()(fakeRequest)
+
+        implicit val user: MtdItUser[AnyContentAsEmpty.type] = individualUser.copy()(fakeRequest)
+
         val redirect = withIncomeSourcesRemovedFromSession {
           Redirect("nowhere")
-        }
+        }(individualUser, sessionService, ec)
 
-        redirect.session.get("addUkPropertyStartDate") shouldBe None
-        redirect.session.get("addBusinessName") shouldBe None
-        redirect.session.get("addBusinessTrade") shouldBe None
-        redirect.session.get("addIncomeSourcesAccountingMethod") shouldBe None
-        redirect.session.get("addBusinessStartDate") shouldBe None
-        redirect.session.get("addBusinessAccountingPeriodStartDate") shouldBe None
-        redirect.session.get("addBusinessAccountingPeriodEndDate") shouldBe None
-        redirect.session.get("addBusinessStartDate") shouldBe None
-        redirect.session.get("addBusinessAddressLine1") shouldBe None
-        redirect.session.get("addBusinessAddressLine2") shouldBe None
-        redirect.session.get("addBusinessAddressLine3") shouldBe None
-        redirect.session.get("addBusinessAddressLine4") shouldBe None
-        redirect.session.get("addBusinessPostalCode") shouldBe None
-        redirect.session.get("addBusinessCountryCode") shouldBe None
-        redirect.session.get("ceaseForeignPropertyDeclare") shouldBe None
-        redirect.session.get("ceaseForeignPropertyEndDate") shouldBe None
-        redirect.session.get("ceaseUKPropertyDeclare") shouldBe None
-        redirect.session.get("ceaseUKPropertyEndDate") shouldBe None
+        SessionKeys.incomeSourcesSessionKeys.forall(
+          redirect.futureValue.session.get(_).isDefined == false
+        ) shouldBe true
       }
     }
   }
-
-
 }

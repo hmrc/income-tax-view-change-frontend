@@ -42,38 +42,15 @@ trait IncomeSourcesUtils extends FeatureSwitching {
     }
   }
 
-  def newWithIncomeSourcesRemovedFromSession(redirect: Result, sessionService: SessionService, errorRedirect: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def withIncomeSourcesRemovedFromSession(redirect: Result)
+                                         (implicit user: MtdItUser[_],
+                                          sessionService: SessionService,
+                                          ec: ExecutionContext
+                                         ): Future[Result] = {
     sessionService.remove(SessionKeys.incomeSourcesSessionKeys, redirect).map {
-      case Left(_) => errorRedirect
+      case Left(failedKey) => throw new Exception(s"Failed to remove key from session: $failedKey")
       case Right(result) => result
     }
-  }
-
-  def withIncomeSourcesRemovedFromSession(redirect: Result)(implicit user: MtdItUser[_]): Result = {
-    val incomeSourcesSessionKeys = Seq(
-      "addUkPropertyStartDate",
-      "addForeignPropertyStartDate",
-      "addBusinessName",
-      "addBusinessTrade",
-      "addIncomeSourcesAccountingMethod",
-      "addBusinessStartDate",
-      "addBusinessAccountingPeriodStartDate",
-      "addBusinessAccountingPeriodEndDate",
-      "addBusinessStartDate",
-      "addBusinessAddressLine1",
-      "addBusinessAddressLine2",
-      "addBusinessAddressLine3",
-      "addBusinessAddressLine4",
-      "addBusinessPostalCode",
-      "addBusinessCountryCode",
-      "ceaseForeignPropertyDeclare",
-      "ceaseForeignPropertyEndDate",
-      "ceaseUKPropertyDeclare",
-      "ceaseUKPropertyEndDate"
-    ) //TODO: check this is all the keys
-    val newSession = user.session -- incomeSourcesSessionKeys
-
-    redirect.withSession(newSession)
   }
 }
 
