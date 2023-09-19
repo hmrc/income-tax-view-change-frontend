@@ -20,21 +20,17 @@ import auth.MtdItUser
 import models.incomeSourceDetails.PropertyDetailsModel
 
 trait ActivePropertyBusinessesHelper {
-  def getActiveForeignPropertyFromUserIncomeSources(implicit user: MtdItUser[_]): Either[Throwable, PropertyDetailsModel] = {
-    val activeForeignProperty = user.incomeSources.properties.filterNot(_.isCeased).filter(_.isForeignProperty)
+  def getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty: Boolean)(implicit user: MtdItUser[_])
+  : Either[Throwable, PropertyDetailsModel] = {
+
+    val activeForeignProperty = if (isUkProperty) user.incomeSources.properties.filterNot(_.isCeased).filter(_.isUkProperty) else
+      user.incomeSources.properties.filterNot(_.isCeased).filter(_.isForeignProperty)
+
     activeForeignProperty match {
       case list: List[PropertyDetailsModel] if list.length == 1 => Right(list.head)
-      case list: List[PropertyDetailsModel] if list.length > 1 => Left(new Error("Too many active foreign properties found. There should only be one."))
-      case _ => Left(new Error("No active foreign properties found."))
-    }
-  }
-
-  def getActiveUkPropertyFromUserIncomeSources(implicit user: MtdItUser[_]): Either[Throwable, PropertyDetailsModel] = {
-    val activeUkProperty = user.incomeSources.properties.filterNot(_.isCeased).filter(_.isUkProperty)
-    activeUkProperty match {
-      case list: List[PropertyDetailsModel] if list.length == 1 => Right(list.head)
-      case list: List[PropertyDetailsModel] if list.length > 1 => Left(new Error("Too many active foreign properties found. There should only be one."))
-      case _ => Left(new Error("No active foreign properties found."))
+      case list: List[PropertyDetailsModel] if list.length > 1 =>
+        Left(new Error(s"More than one active ${if (isUkProperty) "UK property" else "foreign property"} found. There should only be one."))
+      case _ => Left(new Error(s"No active ${if (isUkProperty) "UK properties" else "foreign properties"} found."))
     }
   }
 }

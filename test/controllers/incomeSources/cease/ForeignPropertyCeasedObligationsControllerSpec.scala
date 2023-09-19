@@ -31,7 +31,6 @@ import org.mockito.Mockito.{mock, reset, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.helpers.ActivePropertyBusinessesHelper
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testPropertyIncomeId}
 import testUtils.TestSupport
@@ -130,7 +129,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
-        when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
+        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(
             Right(
               PropertyDetailsModel(
@@ -181,7 +180,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         enable(IncomeSources)
         mockNoIncomeSources()
 
-        when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
+        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(
             Left(
               new Error("No active foreign properties found.")
@@ -196,7 +195,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         enable(IncomeSources)
         mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
 
-        when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
+        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(
             Left(
               new Error("Too many active foreign properties found. There should only be one.")
@@ -241,7 +240,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
           )))
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(testObligationsModel))
-          when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
             .thenReturn(
               Right(
                 PropertyDetailsModel(
@@ -288,7 +287,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
           enable(IncomeSources)
           mockNoIncomeSources()
 
-          when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
             .thenReturn(
               Left(
                 new Error("No active foreign properties found.")
@@ -304,7 +303,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
           enable(IncomeSources)
           mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
 
-          when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
             .thenReturn(
               Left(
                 new Error("Too many active foreign properties found. There should only be one.")

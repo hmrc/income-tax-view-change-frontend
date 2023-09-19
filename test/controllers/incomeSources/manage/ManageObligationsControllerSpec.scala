@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -34,10 +33,9 @@ import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.helpers.ActivePropertyBusinessesHelper
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testPropertyIncomeId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.ManageObligations
 
@@ -133,7 +131,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
     if (isUkProperty) {
       setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
-      when(mockIncomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources(any()))
+      when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
         .thenReturn(
           Right(
             PropertyDetailsModel(
@@ -151,7 +149,7 @@ class ManageObligationsControllerSpec extends TestSupport
     }
     else {
       setupMockGetIncomeSourceDetails()(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
-      when(mockIncomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources(any()))
+      when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
         .thenReturn(
           Right(
             PropertyDetailsModel(
@@ -384,30 +382,30 @@ class ManageObligationsControllerSpec extends TestSupport
         status(result) shouldBe OK
       }
       "return 500 INTERNAL_SERVER_ERROR" when {
-        "user has no active foreign properties" in {
+        "user has no active UK properties" in {
           disableAllSwitches()
           enable(IncomeSources)
           mockNoIncomeSources()
 
-          when(mockIncomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources(any()))
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
             .thenReturn(
               Left(
-                new Error("No active foreign properties found.")
+                new Error("No active UK properties found.")
               )
             )
 
           val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
-        "user has more than one active foreign properties" in {
+        "user has more than one active UK property" in {
           disableAllSwitches()
           enable(IncomeSources)
-          mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
+          mockTwoActiveUkPropertyIncomeSourcesErrorScenario()
 
-          when(mockIncomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources(any()))
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
             .thenReturn(
               Left(
-                new Error("Too many active foreign properties found. There should only be one.")
+                new Error(s"More than one active UK property found. There should only be one.")
               )
             )
 
@@ -435,6 +433,38 @@ class ManageObligationsControllerSpec extends TestSupport
 
         val result: Future[Result] = TestManageObligationsController.showAgentForeignProperty(changeToQ, taxYear)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
+      }
+      "return 500 INTERNAL_SERVER_ERROR" when {
+        "user has no active foreign properties" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          mockNoIncomeSources()
+
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+            .thenReturn(
+              Left(
+                new Error("No active foreign properties found.")
+              )
+            )
+
+          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+        "user has more than one active foreign properties" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+          mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
+
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+            .thenReturn(
+              Left(
+                new Error(s"More than one active foreign property found. There should only be one.")
+              )
+            )
+
+          val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
       }
     }
 
@@ -468,24 +498,6 @@ class ManageObligationsControllerSpec extends TestSupport
           val invalidChangeTo = "2345"
 
           val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = true, taxYear, invalidChangeTo, "")(agentUserConfirmedClient(), headerCarrier)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-        "Uk property url accessed but user has no uk property" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          setUpProperty(isAgent = true, isUkProperty = false)
-
-          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = true, taxYear, changeToA, "")(agentUserConfirmedClient(), headerCarrier)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
-        "Foreign property url accessed but user has no foreign property" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          setUpProperty(isAgent = false, isUkProperty = true)
-
-          val result: Future[Result] = TestManageObligationsController.handleRequest(ForeignProperty, isAgent = false, taxYear, changeToA, "")(agentUserConfirmedClient(), headerCarrier)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }

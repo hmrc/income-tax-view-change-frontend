@@ -19,7 +19,6 @@ package services
 import auth.MtdItUserWithNino
 import connectors.IncomeTaxViewChangeConnector
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import exceptions.MissingFieldException
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}

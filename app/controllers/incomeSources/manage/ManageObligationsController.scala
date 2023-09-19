@@ -26,11 +26,9 @@ import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourceDetails.TaxYear.getTaxYearStartYearEndYear
 import play.api.Logger
 import play.api.mvc._
-import services.helpers.ActivePropertyBusinessesHelper
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
@@ -143,7 +141,6 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       val backUrl: String = getBackurl(isAgent, mode, incomeSourceId, changeTo, taxYear)
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
-
       if (mode == SelfEmployment && !user.incomeSources.businesses.exists(x => x.incomeSourceId.contains(incomeSourceId))) {
         showError(isAgent, s"unable to find incomeSource by id: $incomeSourceId")
       }
@@ -175,7 +172,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   def getBackurl(isAgent: Boolean, incomeSourceType: IncomeSourceType, incomeSourceId: String, changeTo: String, taxYear: String): String = {
     routes.ConfirmReportingMethodSharedController.show(
-      id = if(incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None,
+      id = if (incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None,
       taxYear = taxYear,
       changeTo = changeTo,
       isAgent = isAgent,
@@ -206,21 +203,19 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def getIncomeSourceId(mode: IncomeSourceType, id: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
-
-    mode match {
+  def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+    incomeSourceType match {
       case SelfEmployment => Right(id)
-      case UkProperty =>
-        incomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources match {
-          case Right(ukProperty: PropertyDetailsModel) => Right(ukProperty.incomeSourceId)
+      case _ =>
+        val placeholder = if (incomeSourceType == UkProperty)
+          incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)
+        else
+          incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)
+
+        placeholder match {
+          case Right(property: PropertyDetailsModel) => Right(property.incomeSourceId)
           case Left(error: Error) => Left(error)
-          case _ => Left(new Error("Unknown error"))
-        }
-      case ForeignProperty =>
-        incomeSourceDetailsService.getActiveForeignPropertyFromUserIncomeSources match {
-          case Right(foreignProperty: PropertyDetailsModel) => Right(foreignProperty.incomeSourceId)
-          case Left(error: Error) => Left(error)
-          case _ => Left(new Error("Unknown error"))
+          case _ => Left(new Error(s"Unknown error. IncomeSourceType: $incomeSourceType. isAgent: $isAgent."))
         }
     }
   }

@@ -26,7 +26,6 @@ import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.helpers.ActivePropertyBusinessesHelper
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -55,7 +54,7 @@ class UKPropertyCeasedObligationsController @Inject()(val authenticate: Authenti
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      incomeSourceDetailsService.getActiveUkPropertyFromUserIncomeSources match {
+      incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true) match {
         case Left(error) => showError(isAgent = isAgent, message = error.getMessage)
         case Right(ukProperty: PropertyDetailsModel) =>
           nextUpdatesService.getObligationsViewModel(ukProperty.incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
