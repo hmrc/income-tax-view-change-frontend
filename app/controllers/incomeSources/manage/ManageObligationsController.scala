@@ -215,7 +215,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         placeholder match {
           case Right(property: PropertyDetailsModel) => Right(property.incomeSourceId)
           case Left(error: Error) => Left(error)
-          case _ => Left(new Error(s"Unknown error. IncomeSourceType: $incomeSourceType. isAgent: $isAgent."))
+          case _ => Left(new Error(s"Unknown error. IncomeSourceType: $incomeSourceType"))
         }
     }
   }
