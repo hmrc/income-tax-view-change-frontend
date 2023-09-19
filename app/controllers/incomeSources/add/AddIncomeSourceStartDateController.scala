@@ -19,6 +19,7 @@ package controllers.incomeSources.add
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import controllers.actions.CheckIncomeSourcesData
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -50,7 +51,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
-                                                   incomeSourceDetailsService: IncomeSourceDetailsService)
+                                                   incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                   checkIncomeSourcesData: CheckIncomeSourcesData)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -162,7 +164,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       }
     else
       (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        andThen retrieveIncomeSources andThen retrieveBtaNavBar andThen checkIncomeSourcesData).async { implicit user =>
         authenticatedCodeBlock(user)
       }
   }

@@ -409,6 +409,10 @@ GET          /agents/income-sources/add/foreign-property-reporting-method       
 POST         /income-sources/add/foreign-property-reporting-method                               controllers.incomeSources.add.ForeignPropertyReportingMethodController.submit(id:String)
 POST         /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.ForeignPropertyReportingMethodController.submitAgent(id:String)
 
+
+GET         /income-sources/journey-restart                                                     controllers.JourneyRestartController.show(isAgent: Boolean = false)
+GET         /agents/income-sources/journey-restart                                              controllers.JourneyRestartController.show(isAgent: Boolean = true)
+
 # Income Sources - TO BE IMPLEMENTED
 GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: String = "FP")
 GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: String = "FP")

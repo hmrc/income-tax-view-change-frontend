@@ -31,9 +31,21 @@ class SessionService @Inject()() {
     }
   }
 
+  def get(keys: List[String])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Map[String, Option[String]]]] = {
+    Future {
+      Right(keys.map(key => key -> user.session.get(key)).toMap)
+    }
+  }
+
   def set(key: String, value: String, result: Result)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
     Future {
       Right(result.addingToSession(key -> value))
+    }
+  }
+
+  def remove(key: String, result: Result)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
+    Future {
+      Right(result.removingFromSession(key))
     }
   }
 }

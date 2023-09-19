@@ -19,6 +19,7 @@ package controllers.incomeSources.add
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.actions.CheckIncomeSourcesData
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
@@ -46,7 +47,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,
                                            val sessionService: SessionService,
-                                           incomeSourceDetailsService: IncomeSourceDetailsService)
+                                           incomeSourceDetailsService: IncomeSourceDetailsService,
+                                           checkIncomeSourcesData: CheckIncomeSourcesData)
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -90,7 +92,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       }
     } else {
       (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        andThen retrieveIncomeSources andThen retrieveBtaNavBar andThen checkIncomeSourcesData).async { implicit user =>
         authenticatedCodeBlock(user)
       }
     }

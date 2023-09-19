@@ -19,6 +19,7 @@ package controllers.incomeSources.add
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.actions.CheckIncomeSourcesData
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
@@ -29,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.incomeSources.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +46,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val sessionService: SessionService)
+                                          val sessionService: SessionService,
+                                          checkIncomeSourcesData: CheckIncomeSourcesData)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit override val mcc: MessagesControllerComponents,
@@ -70,7 +72,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar andThen checkIncomeSourcesData).async {
     implicit user =>
       handleRequest(
         isAgent = false,
