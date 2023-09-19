@@ -45,10 +45,19 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       mockSessionService.set(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Right(result.addingToSession(key -> value))))
 
+
   def mockIncomeSourcesRemovedFromSessionFailure(): Unit = {
     when(
       mockSessionService.remove(any(), any())(any(), any()))
       .thenReturn(Future.successful(Left(new Exception))
-    )
+      )
   }
+
+
+  def setupMockSetListSession(result: Result, keyValue: Map[String, String])(implicit header: RequestHeader): Unit =
+    when(
+      mockSessionService.setList(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(Right(result.addingToSession(keyValue.toSeq: _*)))
+      )
+
 }
