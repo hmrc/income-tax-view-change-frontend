@@ -31,8 +31,8 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import utils.IncomeSourcesUtils
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.IncomeSourceEndDate
+
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +47,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                               val retrieveNino: NinoPredicate,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
-                                              val customNotFoundErrorView: CustomNotFoundError,
                                               val sessionService: SessionService)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
@@ -262,7 +261,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
   def handleSubmitRequest(id: Option[String], isAgent: Boolean, incomeSourceType: String, isChange: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
-    val errorMessage: String = s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."
 
     getActions(isAgent, incomeSourceType, id, isChange).flatMap { actions =>
       val (backAction, postAction, redirectAction, incomeSourceTypeValue) = actions
@@ -281,22 +279,29 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         validatedInput => (incomeSourceTypeValue, id) match {
 
           case (SelfEmployment, None) =>
+            val errorMessage: String = s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."
             Logger("application").error(s"${if (isAgent) "[Agent]"}" +
               s"$errorMessage")
             Future.failed(new Exception(s"$errorMessage"))
 
           case (SelfEmployment, Some(incomeSourceId)) =>
-            sessionService.setList(Redirect(redirectAction), incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString, ceaseBusinessIncomeSourceId -> incomeSourceId).flatMap {
-              case Right(value) => Future.successful(value)
+            val result = Redirect(redirectAction)
+            sessionService.set(result,
+              incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString,
+              ceaseBusinessIncomeSourceId -> incomeSourceId
+            ).flatMap {
+              case Right(result) => Future.successful(result)
               case Left(exception) => Future.failed(exception)
             }
 
           case _ =>
-            val redirect = Redirect(redirectAction)
-            sessionService.set(incomeSourceTypeValue.endDateSessionKey, validatedInput.date.toString, redirect).flatMap {
-              case Right(value) => Future.successful(value)
+            val session = incomeSourceTypeValue.endDateSessionKey -> validatedInput.date.toString
+            val result = Redirect(redirectAction)
+            sessionService.set(result, session).flatMap {
+              case Right(result) => Future.successful(result)
               case Left(exception) => Future.failed(exception)
             }
+
         })
     }
   } recover {

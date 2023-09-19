@@ -28,7 +28,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{UpdateIncomeSourceError, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import services.{SessionService, UpdateIncomeSourceError, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.UpdateIncomeSourceTestConstants.cessationDate
 import testUtils.TestSupport
@@ -49,9 +49,9 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
     retrieveBtaNavBar = app.injector.instanceOf[NavBarPredicate],
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     retrieveNino = app.injector.instanceOf[NinoPredicate],
-    updateIncomeSourceservice = mockUpdateIncomeSourceService,
-    checkCeaseForeignPropertyDetails = app.injector.instanceOf[CheckCeaseForeignPropertyDetails]
-  )(
+    updateIncomeSourceService = mockUpdateIncomeSourceService,
+    checkCeaseForeignPropertyDetails = app.injector.instanceOf[CheckCeaseForeignPropertyDetails],
+    sessionService = app.injector.instanceOf[SessionService])(
     appConfig = appConfig,
     languageUtils = languageUtils,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -120,7 +120,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testIncomeSourceId))))
 
         lazy val result: Future[Result] = {
@@ -153,7 +153,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(UpdateIncomeSourceError("Failed to update cessationDate"))))
 
         lazy val result: Future[Result] = {
@@ -170,7 +170,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         enable(IncomeSources)
         mockNoIncomeSources()
 
-        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testIncomeSourceId))))
 
         lazy val result: Future[Result] = {
@@ -232,7 +232,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testIncomeSourceId))))
 
         lazy val result: Future[Result] = {
@@ -250,7 +250,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
         disable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        when(mockUpdateIncomeSourceService.updateCessationDatev2(any(), any(), any())(any(), any()))
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testIncomeSourceId))))
 
         lazy val result: Future[Result] = {

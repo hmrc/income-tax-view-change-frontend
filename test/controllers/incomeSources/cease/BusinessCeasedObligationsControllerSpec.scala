@@ -32,7 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateService
+import services.{DateService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -65,14 +65,13 @@ class BusinessCeasedObligationsControllerSpec extends TestSupport
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceCeasedObligations],
-    mockNextUpdatesService
-  )(
+    mockNextUpdatesService,
+    sessionService = app.injector.instanceOf[SessionService])(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec = ec,
-    mockDateService
-  )
+    mockDateService)
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
     NextUpdatesModel(testSelfEmploymentId, List(NextUpdateModel(

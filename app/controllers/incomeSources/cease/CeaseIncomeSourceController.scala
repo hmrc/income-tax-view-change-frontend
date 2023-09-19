@@ -17,10 +17,10 @@
 package controllers.incomeSources.cease
 
 import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -56,13 +56,13 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
         sources = user.incomeSources,
         isAgent = false,
         backUrl = controllers.routes.HomeController.show().url
-    )
+      )
   }
 
   def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
               sources = mtdItUser.incomeSources,
@@ -73,12 +73,8 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
-      if (isDisabled(IncomeSources)) {
-        Future.successful(Redirect(controllers.routes.HomeController.show()))
-      } else {
-        showCeaseIncomeSourceView(sources, isAgent, backUrl)
-      }
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS{
+    showCeaseIncomeSourceView(sources, isAgent, backUrl)
   }
 
   private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String) (implicit user: MtdItUser[_]): Future[Result] = {
