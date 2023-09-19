@@ -27,12 +27,12 @@ import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
-import play.api.http.Status.{OK, SEE_OTHER}
+import org.mockito.Mockito.{mock, reset, when}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testPropertyIncomeId}
 import testUtils.TestSupport
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
@@ -51,6 +51,11 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
   with FeatureSwitching {
 
   val mockDateService: DateService = mock(classOf[DateService])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockIncomeSourceDetailsService)
+  }
 
   object TestForeignPropertyObligationsController extends ForeignPropertyCeasedObligationsController(
     obligationsView = app.injector.instanceOf[IncomeSourceCeasedObligations],
@@ -124,6 +129,21 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
+        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+          .thenReturn(
+            Right(
+              PropertyDetailsModel(
+                incomeSourceId = testPropertyIncomeId,
+                accountingPeriod = None,
+                firstAccountingPeriodEndDate = None,
+                incomeSourceType = Some("03-foreign-property"),
+                tradingStartDate = None,
+                cessation = None,
+                cashOrAccruals = None,
+                latencyDetails = None
+              )
+            )
+          )
 
         val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -154,67 +174,146 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
     }
-  }
-
-
-  "Agent - ForeignPropertyAddedObligationsController.showAgent" should {
-    "return 200 OK" when {
-      "navigating to the page with FS Enabled" in {
+    "return 500 INTERNAL_SERVER_ERROR" when {
+      "user has no active foreign properties" in {
         disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
+        mockNoIncomeSources()
 
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
-          "123",
-          None,
-          None,
-          Some("03-foreign-property"),
-          Some(LocalDate.of(2022, 4, 21)),
-          None
-        )))
+        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+          .thenReturn(
+            Left(
+              new Error("No active foreign properties found.")
+            )
+          )
 
-        val day = LocalDate.of(2023, 1, 1)
-        val dates: Seq[DatesModel] = Seq(
-          DatesModel(day, day, day, "EOPS", isFinalDec = false)
-        )
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "user has more than one active foreign properties" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
 
-        when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
-        setupMockGetIncomeSourceDetails()(sources)
-        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
-          dates,
-          dates,
-          dates,
-          dates,
-          2023,
-          showPrevTaxYears = true
-        )))
-        when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
-          thenReturn(Future(testObligationsModel))
+        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+          .thenReturn(
+            Left(
+              new Error("Too many active foreign properties found. There should only be one.")
+            )
+          )
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe OK
-
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
 
-    "return 303 SEE_OTHER" when {
-      "navigating to the page with FS Disabled" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        disable(IncomeSources)
-        mockForeignPropertyIncomeSource()
+    "Agent - ForeignPropertyAddedObligationsController.showAgent" should {
+      "return 200 OK" when {
+        "navigating to the page with FS Enabled" in {
+          disableAllSwitches()
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          enable(IncomeSources)
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
+            "123",
+            None,
+            None,
+            Some("03-foreign-property"),
+            Some(LocalDate.of(2022, 4, 21)),
+            None
+          )))
+
+          val day = LocalDate.of(2023, 1, 1)
+          val dates: Seq[DatesModel] = Seq(
+            DatesModel(day, day, day, "EOPS", isFinalDec = false)
+          )
+
+          when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
+          setupMockGetIncomeSourceDetails()(sources)
+          when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+            dates,
+            dates,
+            dates,
+            dates,
+            2023,
+            showPrevTaxYears = true
+          )))
+          when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
+            thenReturn(Future(testObligationsModel))
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+            .thenReturn(
+              Right(
+                PropertyDetailsModel(
+                  incomeSourceId = testPropertyIncomeId,
+                  accountingPeriod = None,
+                  firstAccountingPeriodEndDate = None,
+                  incomeSourceType = Some("03-foreign-property"),
+                  tradingStartDate = None,
+                  cessation = None,
+                  cashOrAccruals = None,
+                  latencyDetails = None
+                )
+              )
+            )
+
+          val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+          status(result) shouldBe OK
+
+        }
       }
-      "called with an unauthenticated user" in {
-        setupMockAgentAuthorisationException()
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
+      "return 303 SEE_OTHER" when {
+        "navigating to the page with FS Disabled" in {
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          disable(IncomeSources)
+          mockForeignPropertyIncomeSource()
+
+          val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        }
+        "called with an unauthenticated user" in {
+          setupMockAgentAuthorisationException()
+
+          val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+          status(result) shouldBe SEE_OTHER
+        }
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR" when {
+        "user has no active foreign properties" in {
+          disableAllSwitches()
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          enable(IncomeSources)
+          mockNoIncomeSources()
+
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+            .thenReturn(
+              Left(
+                new Error("No active foreign properties found.")
+              )
+            )
+
+          val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
+        "user has more than one active foreign properties" in {
+          disableAllSwitches()
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          enable(IncomeSources)
+          mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
+
+          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+            .thenReturn(
+              Left(
+                new Error("Too many active foreign properties found. There should only be one.")
+              )
+            )
+
+          val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
       }
     }
   }
 }
-

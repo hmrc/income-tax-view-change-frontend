@@ -59,7 +59,6 @@ class BusinessCeasedObligationsController @Inject()(authenticate: Authentication
       .flatMap(_.tradingName)
   }
 
-
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
       sessionService.get(ceaseBusinessIncomeSourceId).flatMap {
