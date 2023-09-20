@@ -185,7 +185,7 @@
                     <div id="overdue-warning" class="flex-container govuk-!-padding-0">
                         <div class="column-full">
                             @govukWarningText(WarningText(
-                                iconFallbackText = Some("Warning"),
+                                iconFallbackText = "Warning",
                                 content = Text(messages(s"home.overdue.message.dunningLock.$dunningLockExists"))
                             ))
                         </div>
