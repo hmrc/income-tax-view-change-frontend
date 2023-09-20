@@ -48,7 +48,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-28" % hmrcMongoVersion % scope,
   "org.scalacheck" %% "scalacheck" % "1.17.0" % scope,
-  //"uk.gov.hmrc" %% "bootstrap-test-play-28"  % bootstrapPlayVersion % "test",
+  "uk.gov.hmrc" %% "bootstrap-test-play-28"  % bootstrapPlayVersion % "test",
   caffeine
 )
 
