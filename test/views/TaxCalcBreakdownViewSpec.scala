@@ -664,7 +664,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 17
+      document.select(messageContentSelector).size shouldBe 16
       document.select(messageContentSelector).get(0).text shouldBe messages("taxCal_breakdown.message.C22202")
       document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22203")
       document.select(messageContentSelector).get(2).text shouldBe messages("taxCal_breakdown.message.C22206")
@@ -942,7 +942,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 17
+      document.select(messageContentSelector).size shouldBe 16
       document.select(messageContentSelector).get(0).text shouldBe messages("taxCal_breakdown.message.agent.C22202")
       document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.agent.C22203")
       document.select(messageContentSelector).get(2).text shouldBe messages("taxCal_breakdown.message.agent.C22206")
