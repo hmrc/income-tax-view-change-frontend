@@ -30,11 +30,12 @@ import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
 
-  implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
+@Singleton
+class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector)  {
+
   implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
+  implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
 
   def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
