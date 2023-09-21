@@ -540,6 +540,8 @@ taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Postgradua
 taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Tax due on annuity payments
 taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Tax due on royalty payments
 
+
+taxCal_breakdown.message.static1                                = This calculation is only based on information HMRC have received about your income and expenses to date. This may change as we receive further information about you during the tax year.
 taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
 taxCal_breakdown.message.C22202                                 = Tax due on Gift Aid payments exceeds your Income Tax charged so you are liable for Gift Aid tax.
 taxCal_breakdown.message.C22203                                 = Class 2 National Insurance has not been charged because your self-employed profits are under the Small Profit Threshold.
@@ -558,6 +560,7 @@ taxCal_breakdown.message.C22216                                 = Due to the lev
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
 taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the Final declaration calculation.
 taxCal_breakdown.message.C22220                                 = If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid.
+taxCal_breakdown.message.agent.static1                          = This calculation is only based on information HMRC have received about your client’s income and expenses to date. This may change as we receive further information about your client during the tax year.
 taxCal_breakdown.message.agent.C22220                           = If your client’s taxable profits are between £6,725 and £11,908 your client will not need to pay Class 2 National Insurance. Your client’s entitlements to the State Pension, and certain benefits, will still apply. Your client’s contributions are treated as having been paid.
 taxCal_breakdown.message.agent.C22201                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
 taxCal_breakdown.message.agent.C22202                           = Tax due on gift aid payments exceeds your client’s income tax charged so your client is liable for gift aid tax
