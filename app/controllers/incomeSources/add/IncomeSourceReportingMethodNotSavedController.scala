@@ -22,8 +22,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
+import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -41,6 +45,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
                                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                               val retrieveBtaNavBar: NavBarPredicate,
+                                                              val sessionService: SessionService,
                                                               val view: IncomeSourceReportingMethodNotSaved)
                                                              (implicit val ec: ExecutionContext,
                                                               implicit override val mcc: MessagesControllerComponents,
@@ -49,47 +54,55 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
                                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def handleRequest(id: String, isAgent: Boolean, incomeSourceType: String)
+  def handleRequest(isAgent: Boolean, incomeSourceType: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
     val errorHandler = if (isAgent) itvcAgentErrorHandler else itvcErrorHandler
 
-    IncomeSourceType(incomeSourceType) match {
-      case Right(incomeType) =>
-        val action: Call = (incomeType, isAgent) match {
-          case (UkProperty, true) => controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(id)
-          case (UkProperty, false) => controllers.incomeSources.add.routes.UKPropertyAddedController.show(id)
-          case (ForeignProperty, true) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
-          case (ForeignProperty, false) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
-          case (SelfEmployment, true) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent()
-          case (SelfEmployment, false) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            IncomeSourceType(incomeSourceType) match {
+              case Right(incomeType) =>
+                val action: Call = (incomeType, isAgent) match {
+                  case (UkProperty, true) => controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(incomeSourceId)
+                  case (UkProperty, false) => controllers.incomeSources.add.routes.UKPropertyAddedController.show(incomeSourceId)
+                  case (ForeignProperty, true) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(incomeSourceId)
+                  case (ForeignProperty, false) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(incomeSourceId)
+                  case (SelfEmployment, true) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent()
+                  case (SelfEmployment, false) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
+                }
+                Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))
+
+              case Left(_) => Future.successful(errorHandler.showInternalServerError())
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
         }
-
-        Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))
-
-      case Left(_) => Future.successful(errorHandler.showInternalServerError())
+      case Left(exception) => Future.failed(exception)
+    }.recover {
+      case exception =>
+        Logger("application").error(s"[BusinessAddedObligationsController][handleRequest] ${exception.getMessage}")
+        errorHandler.showInternalServerError()
     }
-
   }
 
 
-  def show(id: String, incomeSourceType: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceType: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        id = id,
         isAgent = false,
         incomeSourceType = incomeSourceType
       )
   }
 
-  def showAgent(id: String, incomeSourceType: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceType: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              id = id,
               isAgent = true,
               incomeSourceType = incomeSourceType
             )

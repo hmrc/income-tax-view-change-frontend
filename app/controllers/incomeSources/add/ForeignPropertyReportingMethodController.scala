@@ -221,8 +221,8 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = ForeignProperty.key) else
-      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = ForeignProperty.key)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType = ForeignProperty.key) else
+      routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType = ForeignProperty.key)
 
     val futures = newReportingMethods.map(taxYearSpecific =>
       updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))

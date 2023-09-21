@@ -427,7 +427,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(ForeignProperty.key).url)
       }
       "some internal failure in the update action (one call)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
@@ -454,7 +454,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(ForeignProperty.key).url)
       }
     }
   }
@@ -707,7 +707,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty.key).url)
       }
       "some internal failure in the update action (one call)" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
@@ -736,7 +736,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty.key).url)
       }
     }
   }

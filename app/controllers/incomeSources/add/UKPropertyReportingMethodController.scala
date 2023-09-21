@@ -194,8 +194,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     val redirectUrl: Call = if (isAgent) routes.UKPropertyAddedController.showAgent(id) else routes.UKPropertyAddedController.show(id)
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = UkProperty.key) else
-      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = UkProperty.key)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType = UkProperty.key) else
+      routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType = UkProperty.key)
 
     val futures = newReportingMethods.map(taxYearSpecific =>
       updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
