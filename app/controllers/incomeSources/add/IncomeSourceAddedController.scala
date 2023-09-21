@@ -92,14 +92,20 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
               startDate <- addedBusiness.tradingStartDate
             } yield (startDate, Some(businessName))
           }
-      case _ =>
+      case UkProperty =>
         for {
-          newlyAddedUKProperty <- user.incomeSources.properties.find(incomeSource =>
+          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
             incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isUkProperty
           )
-          startDate <- newlyAddedUKProperty.tradingStartDate
+          startDate <- newlyAddedProperty.tradingStartDate
         } yield (startDate, None)
-
+      case ForeignProperty =>
+        for {
+          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
+            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isForeignProperty
+          )
+          startDate <- newlyAddedProperty.tradingStartDate
+        } yield (startDate, None)
     }
   }
 
