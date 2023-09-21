@@ -228,8 +228,8 @@ GET          /income-sources/add/change-foreign-property-start-date-check       
 GET          /agents/income-sources/add/change-foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(isAgent:   Boolean = true,  isChange: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /income-sources/add/change-foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(isAgent: Boolean = false, isChange: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /agents/income-sources/add/change-foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(isAgent: Boolean = true,  isChange: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
-GET          /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.show(id: String)
-GET          /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.showAgent(id: String)
+GET          /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.show()
+GET          /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.showAgent()
 POST         /income-sources/add/business-added                           controllers.incomeSources.add.BusinessAddedObligationsController.submit()
 POST         /agents/income-sources/add/business-added                    controllers.incomeSources.add.BusinessAddedObligationsController.agentSubmit()
 

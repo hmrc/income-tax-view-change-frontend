@@ -34,7 +34,7 @@ import java.time.Month.APRIL
 class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
   val businessReportingMethodShowUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(testSelfEmploymentId).url
   val businessReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(testSelfEmploymentId).url
-  val businessAddedShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(testSelfEmploymentId).url
+  val businessAddedShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.show().url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = (currentTaxYear + 1)
@@ -186,7 +186,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/business-added?id=$testSelfEmploymentId")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/business-added")
         )
       }
     }
@@ -324,7 +324,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId")(formData)
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/business-added?id=$testSelfEmploymentId")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/business-added")
         )
       }
     }

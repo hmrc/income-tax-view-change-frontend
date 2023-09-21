@@ -146,14 +146,17 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         case Right(viewModel) =>
           businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession(Redirect(redirect(id).url)) recover {
-                case ex: Exception =>
-                  Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
-                  Redirect(errorHandler)
+              sessionService.set(SessionKeys.incomeSourceId, id, Redirect(redirect(id).url)).flatMap {
+                case Right(result) =>
+                  withIncomeSourcesRemovedFromSession(Redirect(redirect(id).url)) recover {
+                    case exception: Exception => Future.failed(exception)
+                  }
+                  Future.successful(result)
+                case Left(exception) => Future.failed(exception)
               }
-            case Left(ex) => Future.failed(ex)
+            case Left(exception) => Future.failed(exception)
           }
-        case Left(ex) => Future.failed(ex)
+        case Left(exception) => Future.failed(exception)
       }.recover {
         case ex: Exception =>
           Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")

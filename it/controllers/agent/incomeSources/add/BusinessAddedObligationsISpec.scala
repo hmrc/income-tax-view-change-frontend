@@ -5,7 +5,7 @@ import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, singleBusinessResponse}
 
@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 class BusinessAddedObligationsISpec extends ComponentSpecBase {
 
-  val businessAddedObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent("").url
+  val businessAddedObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent().url
   val businessReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("").url
 
   val businessAddedObligationsSubmitAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit().url
@@ -43,8 +43,8 @@ class BusinessAddedObligationsISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        val incomeSourceId = testSelfEmploymentId
-        val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations(incomeSourceId, clientDetailsWithConfirmation)
+        val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testSelfEmploymentId)
+        val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations(sessionIncomeSourceId ++ clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = if (messagesAPI("business-added.sole-trader.head").nonEmpty) {

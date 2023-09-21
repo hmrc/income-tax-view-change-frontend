@@ -61,8 +61,8 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
           case (UkProperty, false) => controllers.incomeSources.add.routes.UKPropertyAddedController.show(id)
           case (ForeignProperty, true) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
           case (ForeignProperty, false) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
-          case (SelfEmployment, true) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent(id)
-          case (SelfEmployment, false) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(id)
+          case (SelfEmployment, true) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent()
+          case (SelfEmployment, false) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
         }
 
         Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))

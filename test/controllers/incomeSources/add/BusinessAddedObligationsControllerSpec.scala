@@ -32,7 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateService
+import services.{DateService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -65,6 +65,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
+    sessionService = app.injector.instanceOf[SessionService],
     mockNextUpdatesService
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -100,7 +101,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
       "the user is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
-          val result = TestObligationsController.show("")(fakeRequestWithActiveSession)
+          val result = TestObligationsController.show()(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -124,7 +125,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestObligationsController.show("123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -134,7 +135,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestObligationsController.showAgent("123")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -173,7 +174,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show(testSelfEmploymentId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
@@ -208,7 +209,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.showAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       //common code edge/error cases:
@@ -229,7 +230,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show(testSelfEmploymentId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "throw an error when no id is supplied" in {
@@ -241,7 +242,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.showAgent("")(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestObligationsController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "throw an error when no start date for supplied business" in {
@@ -259,7 +260,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show(testSelfEmploymentId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }

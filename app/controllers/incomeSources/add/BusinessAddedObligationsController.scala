@@ -22,10 +22,13 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
+import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceAddedObligations
@@ -43,6 +46,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
                                                    val itvcErrorHandler: ItvcErrorHandler,
                                                    incomeSourceDetailsService: IncomeSourceDetailsService,
                                                    val obligationsView: IncomeSourceAddedObligations,
+                                                   val sessionService: SessionService,
                                                    nextUpdatesService: NextUpdatesService)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -68,22 +72,34 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
     baseRoute(incomeSourceId).url
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val businessNameAndStartDate = getBusinessNameAndStartDate(incomeSourceId)
-
-      businessNameAndStartDate match {
-        case Some((businessName, startDate)) =>
-          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            val backUrl = getBackUrl(incomeSourceId, isAgent)
-            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
+      sessionService.get(SessionKeys.incomeSourceId).flatMap {
+        case Right(incomeSourceIdMayBe) =>
+          incomeSourceIdMayBe match {
+            case Some(incomeSourceId) =>
+              val businessNameAndStartDate = getBusinessNameAndStartDate(incomeSourceId)
+              businessNameAndStartDate match {
+                case Some((businessName, startDate)) =>
+                  val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+                  nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+                    val backUrl = getBackUrl(incomeSourceId, isAgent)
+                    Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
+                  }
+                case None =>
+                  val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId"
+                  Logger("application").error(errorMessage)
+                  val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                  Future.successful(errorHandler.showInternalServerError())
+              }
+            case None => Future.failed(MissingSessionKey(incomeSourceId))
           }
-        case None =>
-          val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId"
-          Logger("application").error(errorMessage)
+        case Left(exception) => Future.failed(exception)
+      }.recover {
+        case exception =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Future.successful(errorHandler.showInternalServerError())
+          Logger("application").error(s"[BusinessAddedObligationsController][handleRequest] ${exception.getMessage}")
+          errorHandler.showInternalServerError()
       }
     }
   }
@@ -93,18 +109,18 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
     Future.successful(Redirect(redirectUrl))
   }
 
-  def show(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false, incomeSourceId)
+      handleRequest(isAgent = false)
   }
 
-  def showAgent(incomeSourceId: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            handleRequest(isAgent = true, incomeSourceId)
+            handleRequest(isAgent = true)
         }
   }
 

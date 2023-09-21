@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 class BusinessAddedObligationsISpec extends ComponentSpecBase {
 
-  val businessAddedObligationsShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.show("").url
+  val businessAddedObligationsShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.show().url
   val businessReportingMethodUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show("").url
 
   val businessAddedObligationsSubmitUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.submit().url
@@ -41,8 +41,8 @@ class BusinessAddedObligationsISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        val incomeSourceId = testSelfEmploymentId
-        val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations(incomeSourceId)
+        val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testSelfEmploymentId)
+        val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations(sessionIncomeSourceId)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = if (messagesAPI("business-added.sole-trader.head").nonEmpty) {

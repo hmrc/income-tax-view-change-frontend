@@ -409,10 +409,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     }
 
-    def getAddBusinessObligations(id: String): WSResponse = {
-      get(
-        uri = s"/income-sources/add/business-added/?id=$id"
-      )
+    def getAddBusinessObligations(session: Map[String, String]): WSResponse = {
+      getWithClientDetailsInSession("/income-sources/add/business-added", session)
     }
 
     def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {

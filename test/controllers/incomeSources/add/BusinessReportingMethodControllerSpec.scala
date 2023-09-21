@@ -215,7 +215,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show(TestBusinessReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show().url)
 
       }
 
@@ -225,7 +225,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show(TestBusinessReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show().url)
       }
     }
 
@@ -376,7 +376,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show(TestBusinessReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show().url)
       }
     }
 
@@ -395,7 +395,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show(TestBusinessReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show().url)
       }
     }
 
@@ -496,7 +496,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent(TestBusinessReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent().url)
 
       }
 
@@ -506,7 +506,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent(TestBusinessReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent().url)
       }
     }
 
@@ -656,7 +656,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent(TestBusinessReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent().url)
       }
     }
 
@@ -675,7 +675,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent(TestBusinessReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent().url)
       }
     }
 

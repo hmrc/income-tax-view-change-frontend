@@ -44,7 +44,7 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
         if (isAgent) controller.show(id) else controller.showAgent(id)
       case SelfEmployment =>
         val controller = controllers.incomeSources.add.routes.BusinessAddedObligationsController
-        if (isAgent) controller.show(id) else controller.showAgent(id)
+        if (isAgent) controller.show() else controller.showAgent()
     }
     lazy val view: HtmlFormat.Appendable = incomeSourceReportingMethodNotSaved(isAgent = isAgent, incomeSourceType = incomeSourceType, continueAction = action)
     lazy val document: Document = Jsoup.parse(contentAsString(view))
