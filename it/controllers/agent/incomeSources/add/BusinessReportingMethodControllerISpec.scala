@@ -32,8 +32,8 @@ import java.time.LocalDate
 import java.time.Month.APRIL
 
 class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
-  val businessReportingMethodShowUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(testSelfEmploymentId).url
-  val businessReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(testSelfEmploymentId).url
+  val businessReportingMethodShowUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent().url
+  val businessReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent().url
   val businessAddedShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent().url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
@@ -49,9 +49,11 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
     latencyIndicator2 = quarterlyIndicator
   )
 
+  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testSelfEmploymentId)
+
   s"calling GET $businessReportingMethodShowUrl" should {
     "render the Business Reporting Method page" when {
-      "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 NOT crystallised)" in {
+      "authorised user is within latency period (Tax Year 1 NOT crystallised)" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
@@ -66,7 +68,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
         Then("user is asked to select reporting method for Tax Year 1 and Tax Year 2")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(OK),
@@ -75,7 +77,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#add-business-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year ${taxYear2 - 1}-$taxYear2")
         )
       }
-      "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 is crystallised)" in {
+      "authorised user is within latency period (Tax Year 1 is crystallised)" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
@@ -90,7 +92,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         Then("as Tax Year 1 is crystallised, user is asked to select reporting method for Tax Year 2")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(OK),
@@ -99,7 +101,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
           elementCountBySelector("#add-business-reporting-method-form > legend:nth-of-type(2)")(0)
         )
       }
-      "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 NOT crystallised - before 2023-24 Tax Year)" in {
+      "authorised user is within latency period (Tax Year 1 NOT crystallised - before 2023-24 Tax Year)" in {
         val taxYear2023: Int = 2023
         val taxYear2024: Int = 2024
         val latencyPeriodEndDate: LocalDate = LocalDate.of(2025, APRIL, 5)
@@ -126,7 +128,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear2023.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
         Then("user is asked to select reporting method for Tax Year 1 and Tax Year 2")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(OK),
@@ -135,7 +137,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#add-business-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year ${taxYear2024 - 1}-$taxYear2024")
         )
       }
-      "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 crystallised - before 2023-24 Tax Year)" in {
+      "authorised user is within latency period (Tax Year 1 crystallised - before 2023-24 Tax Year)" in {
         val taxYear2023: Int = 2023
         val taxYear2024: Int = 2024
         val latencyPeriodEndDate: LocalDate = LocalDate.of(2025, APRIL, 5)
@@ -162,7 +164,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear2023.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         Then("as Tax Year 1 is crystallised, user is asked to select reporting method for Tax Year 2")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(OK),
@@ -187,7 +189,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -199,7 +201,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
       "called by an unauthorised user" in {
         stubAuthorisedAgentUser(false)
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method")
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -222,7 +224,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns an error")
         CalculationListStub.stubGetCalculationListError(testNino, testTaxYearRange)
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -254,7 +256,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1404 getListOfCalculationResults returns an error response")
         CalculationListStub.stubGetLegacyCalculationListError(testNino, taxYear2023.toString)
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -274,7 +276,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -295,7 +297,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -332,7 +334,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("")))
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/business-reporting-method", clientDetailsWithConfirmation ++ sessionIncomeSourceId)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -366,7 +368,7 @@ class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.postAddBusinessReportingMethod(formWithErrors.value.get)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.postAddBusinessReportingMethod(formWithErrors.value.get)(clientDetailsWithConfirmation ++ sessionIncomeSourceId)
 
         result should have(
           httpStatus(BAD_REQUEST)

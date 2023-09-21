@@ -409,10 +409,10 @@ POST          /income-sources/manage/foreign-property-will-report               
 POST          /agents/income-sources/manage/foreign-property-will-report        controllers.incomeSources.manage.ManageObligationsController.agentSubmit()
 
 # Income Sources - Reporting Method
-GET          /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.show(id:String)
-GET          /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.showAgent(id:String)
-POST         /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.submit(id:String)
-POST         /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.submitAgent(id:String)
+GET          /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.show()
+GET          /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.showAgent()
+POST         /income-sources/add/business-reporting-method                controllers.incomeSources.add.BusinessReportingMethodController.submit()
+POST         /agents/income-sources/add/business-reporting-method         controllers.incomeSources.add.BusinessReportingMethodController.submitAgent()
 
 GET          /income-sources/add/uk-property-reporting-method                              controllers.incomeSources.add.UKPropertyReportingMethodController.show(id:String)
 GET          /agents/income-sources/add/uk-property-reporting-method                       controllers.incomeSources.add.UKPropertyReportingMethodController.showAgent(id:String)

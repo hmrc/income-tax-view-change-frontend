@@ -66,10 +66,10 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
       }
   }
 
-  private def getBackUrl(incomeSourceId: String, isAgent: Boolean): String = {
+  private def getBackUrl(isAgent: Boolean): String = {
     val baseRoute = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent _ else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.show _
-    baseRoute(incomeSourceId).url
+    baseRoute().url
   }
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -83,7 +83,7 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
                 case Some((businessName, startDate)) =>
                   val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
                   nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-                    val backUrl = getBackUrl(incomeSourceId, isAgent)
+                    val backUrl = getBackUrl(isAgent)
                     Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
                   }
                 case None =>

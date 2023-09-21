@@ -14,7 +14,7 @@ import java.time.LocalDate
 class BusinessAddedObligationsISpec extends ComponentSpecBase {
 
   val businessAddedObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent().url
-  val businessReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("").url
+  val businessReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent().url
 
   val businessAddedObligationsSubmitAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit().url
   val addIncomeSourceAgentUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url

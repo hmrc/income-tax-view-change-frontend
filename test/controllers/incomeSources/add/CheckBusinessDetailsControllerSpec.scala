@@ -181,7 +181,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
               ))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.show("incomeSourceId").url)
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.show().url)
         }
       }
 
@@ -295,7 +295,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             ))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("incomeSourceId").url)
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent().url)
         }
       }
       "redirect to custom error page when unable to create business" in {

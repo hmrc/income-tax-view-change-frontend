@@ -22,7 +22,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import exceptions.MissingSessionKey
 import forms.incomeSources.add.AddBusinessReportingMethodForm
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -51,6 +54,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                   val itsaStatusService: ITSAStatusService,
                                                   val dateService: DateService,
                                                   val calculationListService: CalculationListService,
+                                                  val sessionService: SessionService,
                                                   val customNotFoundErrorView: CustomNotFoundError)
                                                  (implicit val appConfig: FrontendAppConfig,
                                                   mcc: MessagesControllerComponents,
@@ -87,44 +91,64 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
 
   }
 
-  private def handleRequest(isAgent: Boolean, id: String)
+  private def handleRequest(isAgent: Boolean)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
-      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent() else
-      controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent() else
+              controllers.incomeSources.add.routes.BusinessReportingMethodController.submit()
+            val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent() else
+              controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
 
-    withIncomeSourcesFS {
-      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-        case true =>
-          getBusinessReportingMethodDetails(id).map {
-            case Some(viewModel) =>
-              Ok(view(
-                addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
-                businessReportingViewModel = viewModel,
-                postAction = postAction,
-                isAgent = isAgent)(user, messages))
-            case None =>
-              Redirect(redirectUrl)
-          }
-
-        case false => Future.successful(Redirect(redirectUrl))
-      }
+            withIncomeSourcesFS {
+              itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+                case true =>
+                  getBusinessReportingMethodDetails(incomeSourceId).map {
+                    case Some(viewModel) =>
+                      Ok(view(
+                        addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
+                        businessReportingViewModel = viewModel,
+                        postAction = postAction,
+                        isAgent = isAgent)(user, messages))
+                    case None =>
+                      Redirect(redirectUrl)
+                  }
+                case false => Future.successful(Redirect(redirectUrl))
+              }
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
+        }
+      case Left(exception) => Future.failed(exception)
     }.recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting BusinessReportingMethodController page: ${ex.getMessage}")
+      case exception =>
+        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(s"[BusinessReportingMethodController][handleRequest] ${exception.getMessage}")
         errorHandler.showInternalServerError()
     }
   }
 
-  private def handleSubmitRequest(isAgent: Boolean, id: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFS {
-      AddBusinessReportingMethodForm.form.bindFromRequest().fold(
-        formWithErrors => handleFormErrors(formWithErrors, id, isAgent),
-        valid => handleFormData(valid, id, isAgent))
+  private def handleSubmitRequest(isAgent: Boolean)
+                                 (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            withIncomeSourcesFS {
+              AddBusinessReportingMethodForm.form.bindFromRequest().fold(
+                formWithErrors => handleFormErrors(formWithErrors, incomeSourceId, isAgent),
+                valid => handleFormData(valid, incomeSourceId, isAgent))
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
+        }
+      case Left(exception) => Future.failed(exception)
+    }.recover {
+      case exception =>
+        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(s"[BusinessReportingMethodController][handleSubmitRequest] ${exception.getMessage}")
+        errorHandler.showInternalServerError()
     }
   }
 
@@ -133,8 +157,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
 
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = SelfEmployment.key) else
       routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment.key)
-    val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
-      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
+    val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit()
 
     val updatedForm = AddBusinessReportingMethodForm.updateErrorMessagesWithValues(formWithErrors)
     getBusinessReportingMethodDetails(id).map {
@@ -251,31 +275,31 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     }
   }
 
-  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleRequest(isAgent = false, id = id)
+    implicit user => handleRequest(isAgent = false)
   }
 
-  def showAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(isAgent = true, id = id)
+            handleRequest(isAgent = true)
         }
   }
 
-  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleSubmitRequest(isAgent = false, id = id)
+      handleSubmitRequest(isAgent = false)
   }
 
-  def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def submitAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser => handleSubmitRequest(isAgent = true, id = id)
+          implicit mtdItUser => handleSubmitRequest(isAgent = true)
         }
   }
 

@@ -51,8 +51,8 @@ class BusinessReportingMethodViewSpec extends TestSupport {
     val viewModelScenario1 = BusinessReportingMethodViewModel(Some("2022"), Some("A"), Some("2023"), Some("A"))
     val viewModelScenario2 = BusinessReportingMethodViewModel(None, None, Some("2023"))
 
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent("") else
-      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit("")
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit()
 
 
     lazy val viewScenario1: HtmlFormat.Appendable = businessReportingMethodView(form, viewModelScenario1, postAction, isAgent)

@@ -146,9 +146,9 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         case Right(viewModel) =>
           businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
-              sessionService.set(SessionKeys.incomeSourceId, id, Redirect(redirect(id).url)).flatMap {
+              sessionService.set(SessionKeys.incomeSourceId, id, Redirect(redirect().url)).flatMap {
                 case Right(result) =>
-                  withIncomeSourcesRemovedFromSession(Redirect(redirect(id).url)) recover {
+                  withIncomeSourcesRemovedFromSession(Redirect(redirect().url)) recover {
                     case exception: Exception => Future.failed(exception)
                   }
                   Future.successful(result)

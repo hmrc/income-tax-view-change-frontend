@@ -34,7 +34,7 @@ import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
+import services.{CalculationListService, DateService, ITSAStatusService, SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -74,6 +74,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     mockITSAStatusService,
     mockDateService,
     mockCalculationListService,
+    sessionService = app.injector.instanceOf[SessionService],
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
@@ -181,7 +182,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "navigating to the page with FS Enabled and no back button" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
 
-        val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithNino)
+        val result: Future[Result] = TestBusinessReportingMethodController.show()(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -195,14 +196,14 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "navigating to the page with FS Disabled" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         disable(IncomeSources)
-        val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestBusinessReportingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
-        val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestBusinessReportingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -212,7 +213,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "registering business in Tax Year 3 and beyond (latency expired)" in {
         mockAndBasicSetup(LATENCY_PERIOD_EXPIRED)
 
-        val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestBusinessReportingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show().url)
@@ -222,7 +223,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "ITSA Status returned is not MTD Mandated or MTD Voluntary" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITS_STATUS)
 
-        val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestBusinessReportingMethodController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.show().url)
@@ -232,7 +233,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     "Show select reporting method with TY1 & TY2" when {
       "registering business in Latency Years" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestBusinessReportingMethodController.show()(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -255,7 +256,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "registering business within Tax Year 2, Tax Year 1 is crystallised" in {
         mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED)
 
-        val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestBusinessReportingMethodController.show()(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -275,7 +276,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     "display error message" when {
       "Tax Year 2 reporting method is not selected (Tax Year 1 Crystallised)" in {
         mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED)
-        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "",
@@ -293,7 +294,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
 
       "Tax Year 1 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
@@ -312,7 +313,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
 
       "Tax Year 2 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
@@ -331,7 +332,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
 
       "Tax Year 1 & Tax Year 2 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
@@ -365,7 +366,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
-        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
@@ -384,7 +385,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "all mandatory fields are selected and values unchanged" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
 
-        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "A",
             newTaxYear2ReportingMethod -> "Q",
@@ -414,7 +415,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
-        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
@@ -441,7 +442,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
-        val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submit()(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
@@ -462,7 +463,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "navigating to the page with FS Enabled and no back button" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
 
-        val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestBusinessReportingMethodController.showAgent()(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -476,14 +477,14 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "navigating to the page with FS Disabled" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         disable(IncomeSources)
-        val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestBusinessReportingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestBusinessReportingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -493,7 +494,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "registering business in Tax Year 3 and beyond (latency expired)" in {
         mockAndBasicSetup(LATENCY_PERIOD_EXPIRED, true)
 
-        val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestBusinessReportingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent().url)
@@ -503,7 +504,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "ITSA Status returned is not MTD Mandated or MTD Voluntary" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITS_STATUS, true)
 
-        val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestBusinessReportingMethodController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(routes.BusinessAddedObligationsController.showAgent().url)
@@ -513,7 +514,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     "Show select reporting method with TY1 & TY2" when {
       "registering business in Latency Years" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
-        val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestBusinessReportingMethodController.showAgent()(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -536,7 +537,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "registering business within Tax Year 2, Tax Year 1 is crystallised" in {
         mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED, true)
 
-        val result: Future[Result] = TestBusinessReportingMethodController.showAgent(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestBusinessReportingMethodController.showAgent()(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -556,7 +557,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     "display error message" when {
       "Tax Year 2 reporting method is not selected (Tax Year 1 Crystallised)" in {
         mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED, true)
-        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submitAgent()(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "",
@@ -574,7 +575,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
 
       "Tax Year 1 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
-        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submitAgent()(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
@@ -593,7 +594,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
 
       "Tax Year 2 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
-        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submitAgent()(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
@@ -612,7 +613,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
 
       "Tax Year 1 & Tax Year 2 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
-        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submitAgent()(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
@@ -645,7 +646,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
-        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submitAgent()(
           fakeRequestConfirmedClient(TestBusinessReportingMethodController.testNino).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
@@ -664,7 +665,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       "all mandatory fields are selected and values unchanged" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
 
-        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submitAgent()(
           fakeRequestConfirmedClient().withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "A",
             newTaxYear2ReportingMethod -> "Q",
@@ -694,7 +695,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
-        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submitAgent()(
           fakeRequestConfirmedClient(TestBusinessReportingMethodController.testNino).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
@@ -722,7 +723,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
-        val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
+        val result = TestBusinessReportingMethodController.submitAgent()(
           fakeRequestConfirmedClient(TestBusinessReportingMethodController.testNino).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
