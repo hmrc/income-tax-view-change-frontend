@@ -85,7 +85,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
             ).addingToSession(gatewayPage -> WhatYouOwePage.name)
         }
     } recover {
-      case ex: Exception =>
+      case ex: _ =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
           s"Error received while getting WhatYouOwe page details: ${ex.getMessage}")
         itvcErrorHandler.showInternalServerError()
