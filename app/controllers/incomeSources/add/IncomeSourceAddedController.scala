@@ -35,20 +35,20 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicate,
-                                                   val authorisedFunctions: AuthorisedFunctions,
-                                                   checkSessionTimeout: SessionTimeoutPredicate,
-                                                   retrieveNino: NinoPredicate,
-                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                   val retrieveBtaNavBar: NavBarPredicate,
-                                                   val itvcErrorHandler: ItvcErrorHandler,
-                                                   incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                   val obligationsView: IncomeSourceAddedObligations,
-                                                   nextUpdatesService: NextUpdatesService)
-                                                  (implicit val appConfig: FrontendAppConfig,
-                                                   implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                   implicit override val mcc: MessagesControllerComponents,
-                                                   val ec: ExecutionContext,
-                                                   dateService: DateServiceInterface)
+                                            val authorisedFunctions: AuthorisedFunctions,
+                                            checkSessionTimeout: SessionTimeoutPredicate,
+                                            retrieveNino: NinoPredicate,
+                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                            val retrieveBtaNavBar: NavBarPredicate,
+                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            incomeSourceDetailsService: IncomeSourceDetailsService,
+                                            val obligationsView: IncomeSourceAddedObligations,
+                                            nextUpdatesService: NextUpdatesService)
+                                           (implicit val appConfig: FrontendAppConfig,
+                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                            implicit override val mcc: MessagesControllerComponents,
+                                            val ec: ExecutionContext,
+                                            dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
   def show(incomeSourceId: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -125,16 +125,14 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
             case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
               Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
             }
-        }
+          }
         case None => Logger("application").error(
-          s"[ForeignPropertyAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
+          s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
           if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
           else Future(itvcErrorHandler.showInternalServerError())
       }
     }
   }
-
-
 
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
