@@ -1,21 +1,22 @@
 package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.ForeignProperty
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testPropertyIncomeId}
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.foreignPropertyOnlyResponse
 
 import java.time.LocalDate
 
 class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
 
-  val foreignPropertyObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent("").url
+  val foreignPropertyObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", ForeignProperty).url
   val foreignPropertyReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("").url
 
-  val foreignPropertyAddedObligationsSubmitAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.submitAgent().url
+  val foreignPropertyAddedObligationsSubmitAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.agentSubmit().url
   val addIncomeSourceAgentUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
   val testDate: String = "2020-11-10"

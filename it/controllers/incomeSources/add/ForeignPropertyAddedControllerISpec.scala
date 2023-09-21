@@ -1,6 +1,7 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.ForeignProperty
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -12,10 +13,10 @@ import java.time.LocalDate
 
 class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
 
-  val foreignPropertyAddedObligationsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show("").url
+  val foreignPropertyAddedObligationsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", ForeignProperty).url
   val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("").url
 
-  val foreignPropertyAddedObligationsSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.submit().url
+  val foreignPropertyAddedObligationsSubmitUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.submit().url
   val addIncomeSourceShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
 
   val testDate: String = "2020-11-10"

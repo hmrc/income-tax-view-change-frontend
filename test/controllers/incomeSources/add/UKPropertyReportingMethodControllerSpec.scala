@@ -19,6 +19,7 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -216,7 +217,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId, UkProperty).url)
 
       }
 
@@ -226,7 +227,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId, UkProperty).url)
       }
     }
 
@@ -377,7 +378,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId, UkProperty).url)
       }
     }
 
@@ -396,7 +397,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId, UkProperty).url)
       }
     }
 
@@ -497,7 +498,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId, UkProperty).url)
 
       }
 
@@ -507,7 +508,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId, UkProperty).url)
       }
     }
 
@@ -658,7 +659,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId, UkProperty).url)
       }
     }
 
@@ -677,7 +678,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId, UkProperty).url)
       }
     }
 

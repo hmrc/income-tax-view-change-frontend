@@ -1,6 +1,7 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.UkProperty
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -11,7 +12,7 @@ import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 
 class UKPropertyAddedControllerISpec extends ComponentSpecBase {
-  val UKPropertyAddedControllerShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.show(testPropertyIncomeId).url
+  val UKPropertyAddedControllerShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testPropertyIncomeId, UkProperty).url
   val HomeControllerShowUrl: String = controllers.routes.HomeController.show().url
   val pageTitle: String = messagesAPI("htmlTitle", {
     s"${messagesAPI("business-added.uk-property.h1")} " +

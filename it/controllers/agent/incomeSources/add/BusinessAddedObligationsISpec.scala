@@ -1,6 +1,7 @@
 package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -13,10 +14,10 @@ import java.time.LocalDate
 
 class BusinessAddedObligationsISpec extends ComponentSpecBase {
 
-  val businessAddedObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent("").url
+  val businessAddedObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", SelfEmployment).url
   val businessReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("").url
 
-  val businessAddedObligationsSubmitAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.agentSubmit().url
+  val businessAddedObligationsSubmitAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.agentSubmit().url
   val addIncomeSourceAgentUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
   val testDate: String = "2020-11-10"
