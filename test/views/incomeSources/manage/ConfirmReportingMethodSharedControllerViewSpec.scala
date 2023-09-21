@@ -85,7 +85,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         backUrl = backUrl,
         taxYearStartYear = testTaxYearStartYear,
         taxYearEndYear = testTaxYearEndYear,
-        reportingMethod = testChangeToAnnual
+        newReportingMethod = testChangeToAnnual,
+        isCurrentTaxYear = true
       )
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable =
@@ -96,7 +97,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         backUrl = backUrl,
         taxYearStartYear = testTaxYearStartYear,
         taxYearEndYear = testTaxYearEndYear,
-        reportingMethod = testChangeToQuarterly
+        newReportingMethod = testChangeToQuarterly,
+        isCurrentTaxYear = false
       )
 
     lazy val document: Document = {
@@ -107,7 +109,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   "ConfirmReportingMethodView - UKProperty - Individual" should {
     "render the heading" in new Setup(isAgent = false, error = false, incomeSourceType = UKProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = false, error = false, incomeSourceType = UKProperty) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -121,7 +123,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
     }
     "render the continue button" in new Setup(isAgent = false, error = false, incomeSourceType = UKProperty) {
-      document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
+      document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
     }
     "render the error summary message" in new Setup(isAgent = false, error = true, incomeSourceType = UKProperty) {
       document.getElementsByClass("govuk-list govuk-error-summary__list").get(0).text() shouldBe messages(s"$formErrorMessage.quarterly")
@@ -132,11 +134,16 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
+    "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = false, error = false, incomeSourceType = UKProperty) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.individual")}"
+      }
   }
 
   "ConfirmReportingMethodView - ForeignProperty - Individual" should {
     "render the heading" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -150,7 +157,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
     }
     "render the continue button" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
+      document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
     }
     "render the error summary message" in new Setup(isAgent = false, error = true, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-list govuk-error-summary__list").get(0).text() shouldBe messages(s"$formErrorMessage.quarterly")
@@ -161,11 +168,16 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
+    "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.individual")}"
+      }
   }
 
   "ConfirmReportingMethodView - Sole Trader Business - Individual" should {
     "render the heading" in new Setup(isAgent = false, error = false, incomeSourceType = SoleTraderBusiness) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = false, error = false, incomeSourceType = SoleTraderBusiness) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -179,7 +191,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId).url
     }
     "render the continue button" in new Setup(isAgent = false, error = false, incomeSourceType = SoleTraderBusiness) {
-      document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
+      document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
     }
     "render the error summary message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementsByClass("govuk-list govuk-error-summary__list").get(0).text() shouldBe messages(s"$formErrorMessage.quarterly")
@@ -190,11 +202,16 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error message" in new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
+    "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = false, error = false, incomeSourceType = SoleTraderBusiness) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.individual")}"
+      }
   }
 
   "ConfirmReportingMethodView - UKProperty - Agent" should {
     "render the heading" in new Setup(isAgent = true, error = false, incomeSourceType = UKProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = true, error = false, incomeSourceType = UKProperty) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -208,7 +225,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
     }
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = UKProperty) {
-      document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
+      document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
     }
     "render the error summary message" in new Setup(isAgent = true, error = true, incomeSourceType = UKProperty) {
       document.getElementsByClass("govuk-list govuk-error-summary__list").get(0).text() shouldBe messages(s"$formErrorMessage.quarterly")
@@ -219,11 +236,16 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
+    "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = true, error = false, incomeSourceType = UKProperty) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.agent")}"
+      }
   }
 
   "ConfirmReportingMethodView - Foreign Property - Agent" should {
     "render the heading" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -237,7 +259,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
     }
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
+      document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
     }
     "render the error summary message" in new Setup(isAgent = true, error = true, incomeSourceType = ForeignProperty) {
       document.getElementsByClass("govuk-list govuk-error-summary__list").get(0).text() shouldBe messages(s"$formErrorMessage.quarterly")
@@ -248,11 +270,16 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
+    "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = true, error = false, incomeSourceType = SoleTraderBusiness) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.agent")}"
+      }
   }
 
   "ConfirmReportingMethodView - Sole Trader Business - Agent" should {
     "render the heading" in new Setup(isAgent = true, error = false, incomeSourceType = SoleTraderBusiness) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
+      document.getElementsByClass("govuk-fieldset__legend--l").first().text() shouldBe messages(switchToAnnualHeadingMessage, testTaxYearStartYear, testTaxYearEndYear)
     }
     "render the checkbox" in new Setup(isAgent = true, error = false, incomeSourceType = SoleTraderBusiness) {
       document.getElementsByClass("govuk-checkboxes").size() shouldBe 1
@@ -266,7 +293,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId).url
     }
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = SoleTraderBusiness) {
-      document.getElementById("confirm-and-continue-button").text() shouldBe messages("base.confirm-and-continue")
+      document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
     }
     "render the error summary message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementsByClass("govuk-list govuk-error-summary__list").get(0).text() shouldBe messages(s"$formErrorMessage.quarterly")
@@ -277,6 +304,11 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
+    "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = true, error = false, incomeSourceType = SoleTraderBusiness) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.agent")}"
+      }
   }
 
   private sealed trait IncomeSourceType
