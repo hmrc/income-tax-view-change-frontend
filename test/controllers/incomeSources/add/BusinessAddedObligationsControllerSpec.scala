@@ -16,10 +16,10 @@
 
 package controllers.incomeSources.add
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -174,7 +174,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestObligationsController.show()(fakeRequestWithActiveSession.withSession(SessionKeys.incomeSourceId -> testSelfEmploymentId))
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
@@ -209,7 +209,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestObligationsController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestObligationsController.showAgent()(fakeRequestConfirmedClient().withSession(SessionKeys.incomeSourceId -> testSelfEmploymentId))
         status(result) shouldBe OK
       }
       //common code edge/error cases:
