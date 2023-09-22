@@ -193,7 +193,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/foreign-property-added?id=")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/foreign-property-added")
         )
       }
     }
@@ -338,7 +338,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/foreign-property-added?id=$testPropertyIncomeId")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/foreign-property-added")
         )
       }
     }

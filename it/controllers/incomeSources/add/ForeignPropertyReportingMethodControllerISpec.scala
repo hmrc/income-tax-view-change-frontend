@@ -187,7 +187,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-added?id=")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-added")
         )
       }
     }
@@ -325,7 +325,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/foreign-property-reporting-method", sessionIncomeSourceId)(formData)
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-added?id=1234")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-added")
         )
       }
     }
