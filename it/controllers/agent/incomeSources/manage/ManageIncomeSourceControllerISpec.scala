@@ -116,7 +116,7 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
             saUtr = Some(testSaUtr),
             credId = Some(credId),
             userType = Some(Agent),
-            arn = Some(testArn)
+            arn = Some("1")
           )(FakeRequest())
 
         AuditStub.verifyAuditEvent(
