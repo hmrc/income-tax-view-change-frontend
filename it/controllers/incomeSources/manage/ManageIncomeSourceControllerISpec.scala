@@ -16,12 +16,22 @@
 
 package controllers.incomeSources.manage
 
+import audit.models.MangeIncomeSourcesAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
 import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewPropertyDetailsViewModel}
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
+import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testSaUtr}
+import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
+import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
+import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.retrieve.Name
 
 class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
 
@@ -37,7 +47,7 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
   val foreignPropertyStartDate: String = "1 January 2017"
   val ceasedBusinessMessage: String = messagesAPI("view-income-sources.ceased-businesses-h2")
   val ceasedBusinessName: String = "ceasedBusiness"
-
+  val testArn = "XAIT0000123456"
 
   s"calling GET ${showIndividualViewIncomeSourceControllerUrl}" should {
     "render the View Income Source page for an Individual" when {
@@ -77,6 +87,73 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
           elementTextByID("ceased-business-table-row-trading-name-0")(ceasedBusinessName),
           elementTextByID("table-head-date-started-foreign")(startDateMessage),
           elementTextByID("table-row-trading-start-date-foreign")(foreignPropertyStartDate)
+        )
+      }
+    }
+    "return the audit event" when {
+      "User is authorised" in {
+        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
+        When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
+        val res = IncomeTaxViewChangeFrontend.getManageIncomeSource
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        val mtdItUser: MtdItUser[_] =
+          MtdItUser(
+            mtditid = testMtditid,
+            nino = testNino,
+            userName = None,
+            incomeSources = IncomeSourceDetailsModel(
+              mtdbsa = testMtditid,
+              yearOfMigration = None,
+              businesses = List(business1, business2, business3),
+              properties = List(ukProperty, foreignProperty)
+            ),
+            btaNavPartial = None,
+            saUtr = Some(testSaUtr),
+            credId = Some(credId),
+            userType = Some(Individual),
+            arn = None
+          )(FakeRequest())
+
+        AuditStub.verifyAuditEvent(
+          MangeIncomeSourcesAuditModel(
+            soleTraderBusinesses = List(
+              ViewBusinessDetailsViewModel(
+                incomeSourceId = business1.incomeSourceId,
+                tradingName = business1.tradingName,
+                tradingStartDate = business1.tradingStartDate
+              ),
+              ViewBusinessDetailsViewModel(
+                incomeSourceId = business2.incomeSourceId,
+                tradingName = business2.tradingName,
+                tradingStartDate = business2.tradingStartDate
+              )
+            ),
+            ukProperty = Some(
+              ViewPropertyDetailsViewModel(
+                tradingStartDate = ukProperty.tradingStartDate
+              )
+            ),
+            foreignProperty = Some(
+              ViewPropertyDetailsViewModel(
+                tradingStartDate = foreignProperty.tradingStartDate
+              )
+            ),
+            ceasedBusinesses = List(
+              CeasedBusinessDetailsViewModel(
+                tradingName = business3.tradingName,
+                incomeSourceType = SelfEmployment,
+                tradingStartDate = business3.tradingStartDate,
+                cessationDate = business3.cessation.flatMap(_.date).get
+              )
+            )
+          )(mtdItUser)
+        )
+
+        res should have(
+          httpStatus(OK)
         )
       }
     }

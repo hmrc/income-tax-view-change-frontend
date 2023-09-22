@@ -41,7 +41,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val authorisedFunctions: AuthorisedFunctions,
                                              val retrieveNino: NinoPredicate,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                             val itvcErrorHandler: ItvcErrorHandler,
+                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              auditingService: AuditingService,
@@ -96,10 +96,6 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
           Future(showInternalServerError(isAgent))
       }
     }
-  }
-
-  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 
   private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
