@@ -25,7 +25,7 @@ case class MangeIncomeSourcesAuditModel(
                                        soleTraderBusinesses: List[ViewBusinessDetailsViewModel],
                                        ukProperty: Option[ViewPropertyDetailsViewModel],
                                        foreignProperty: Option[ViewPropertyDetailsViewModel],
-                                       ceasedBusinesses: Option[CeasedBusinessDetailsViewModel]
+                                       ceasedBusinesses: List[CeasedBusinessDetailsViewModel]
                                        )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.ManageIncomeSourcesHome
