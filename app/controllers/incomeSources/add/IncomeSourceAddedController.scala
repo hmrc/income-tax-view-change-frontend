@@ -81,43 +81,15 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     baseRoute(incomeSourceId).url
   }
 
-  def getIncomeSourceData(incomeSourceType: IncomeSourceType, incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
-    incomeSourceType match {
-      case SelfEmployment =>
-        user.incomeSources.businesses
-          .find(_.incomeSourceId.equals(incomeSourceId))
-          .flatMap { addedBusiness =>
-            for {
-              businessName <- addedBusiness.tradingName
-              startDate <- addedBusiness.tradingStartDate
-            } yield (startDate, Some(businessName))
-          }
-      case UkProperty =>
-        for {
-          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
-            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isUkProperty
-          )
-          startDate <- newlyAddedProperty.tradingStartDate
-        } yield (startDate, None)
-      case ForeignProperty =>
-        for {
-          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
-            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isForeignProperty
-          )
-          startDate <- newlyAddedProperty.tradingStartDate
-        } yield (startDate, None)
-    }
-  }
-
   private def handleRequest(isAgent: Boolean, incomeSourceId: String, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
       val backUrl = getBackUrl(incomeSourceId, isAgent, incomeSourceType)
-      getIncomeSourceData(incomeSourceType, incomeSourceId) match {
-        case Some(incomeSourceData) =>
-          val showPreviousTaxYears: Boolean = incomeSourceData._1.isBefore(dateService.getCurrentTaxYearStart())
+      incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
+        case Some((startDate, businessName)) =>
+          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           incomeSourceType match {
             case SelfEmployment =>
-              incomeSourceData._2 match {
+              businessName match {
                 case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
                   Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
                 }
@@ -133,10 +105,16 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
             }
           }
         case None => Logger("application").error(
-          s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
+          s"${if (isAgent) "[Agent]"}" +"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
           if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
           else Future(itvcErrorHandler.showInternalServerError())
       }
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting IncomeSourceAdded page: ${ex.getMessage}, IncomeSourceType: $incomeSourceType")
+        if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
+        else itvcErrorHandler.showInternalServerError()
     }
   }
 
