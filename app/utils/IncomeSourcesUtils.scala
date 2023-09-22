@@ -20,11 +20,10 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
-import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
-import services.SessionService
+import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate

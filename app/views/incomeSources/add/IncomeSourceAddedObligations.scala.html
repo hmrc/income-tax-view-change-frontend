@@ -34,7 +34,7 @@
   errorSummary: ErrorSummary
 )
 
-@(sources: ObligationsViewModel, backUrl: String, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, backUrl: String, isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
   messages(s"business-added.$key", args: _*)
@@ -45,7 +45,7 @@
 
     incomeSourceType match {
         case _:SelfEmployment.type =>
-            s"""${getMessage("sole-trader.head")} ${businessName.get} ${getMessage("sole-trader.base")}""".trim()
+            s"""${getMessage("sole-trader.head")} ${sources.businessName.get} ${getMessage("sole-trader.base")}""".trim()
 
         case _:UkProperty.type =>
             s"${getMessage("uk-property.head")} " +
@@ -80,7 +80,7 @@
 @getBannerContent() = @{
     incomeSourceType match {
         case _:SelfEmployment.type =>
-            bannerHtmlContent(getMessage("sole-trader.head"),businessName.get,getMessage("sole-trader.base"))
+            bannerHtmlContent(getMessage("sole-trader.head"),sources.businessName.get,getMessage("sole-trader.base"))
         case _:UkProperty.type =>
             bannerHtmlContent(getMessage("uk-property.head"),getMessage("uk-property.h1"),getMessage("uk-property.base"))
         case _:ForeignProperty.type =>

@@ -54,6 +54,7 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
   with FeatureSwitching {
 
   val mockDateService: DateService = mock(classOf[DateService])
+  val sessionIncomeSourceId = SessionKeys.incomeSourceId -> testSelfEmploymentId
 
   object TestObligationsController extends BusinessAddedObligationsController(
     MockAuthenticationPredicate,
@@ -163,13 +164,14 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         )
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
         setupMockGetIncomeSourceDetails()(sources)
-        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+        when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
           dates,
           dates,
           dates,
           dates,
           2023,
-          showPrevTaxYears = true
+          showPrevTaxYears = true,
+          Some("Test Name")
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
@@ -198,13 +200,14 @@ class BusinessAddedObligationsControllerSpec extends TestSupport
         )
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 12, 1))
         setupMockGetIncomeSourceDetails()(sources)
-        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+        when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
           dates,
           dates,
           dates,
           dates,
           2023,
-          showPrevTaxYears = true
+          showPrevTaxYears = true,
+          Some("Test name")
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))

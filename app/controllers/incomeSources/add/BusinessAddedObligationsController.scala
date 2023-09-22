@@ -18,11 +18,10 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
-import exceptions.MissingSessionKey
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
 import play.api.Logger
@@ -55,15 +54,23 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
                                                    dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
-  private def getBusinessNameAndStartDate(incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(String, LocalDate)] = {
-    user.incomeSources.businesses
-      .find(_.incomeSourceId.equals(incomeSourceId))
-      .flatMap { addedBusiness =>
-        for {
-          businessName <- addedBusiness.tradingName
-          startDate <- addedBusiness.tradingStartDate
-        } yield (businessName, startDate)
-      }
+  def getBusinessNameAndStartDate(incomeSource: Either[Throwable, Option[String]])(implicit user: MtdItUser[_]): Either[Throwable, (String, LocalDate)] = {
+    incomeSource match {
+      case Right(Some(incomeSourceId)) =>
+        val addedBusinessDetails = for {
+          addedBusiness <- user.incomeSources.businesses.find(_.incomeSourceId.equals(incomeSourceId))
+          tradeName <- addedBusiness.tradingName
+          tradeStartDate <- addedBusiness.tradingStartDate
+        } yield (tradeName, tradeStartDate)
+
+        val res = addedBusinessDetails match {
+          case Some(businessDetails) => Right((businessDetails._1, businessDetails._2))
+          case None => Left(throw new Exception(s"Failed to get addedBusinessDetails"))
+        }
+        res
+      case Right(None) => Left(throw new Exception(s"Failed to get IncomeSource from session"))
+      case Left(ex) => Left(ex)
+    }
   }
 
   private def getBackUrl(isAgent: Boolean): String = {
@@ -74,33 +81,43 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      sessionService.get(SessionKeys.incomeSourceId).flatMap {
-        case Right(incomeSourceIdMayBe) =>
-          incomeSourceIdMayBe match {
-            case Some(incomeSourceId) =>
-              val businessNameAndStartDate = getBusinessNameAndStartDate(incomeSourceId)
-              businessNameAndStartDate match {
-                case Some((businessName, startDate)) =>
-                  val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-                  nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-                    val backUrl = getBackUrl(isAgent)
-                    Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
-                  }
-                case None =>
-                  val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId"
-                  Logger("application").error(errorMessage)
-                  val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-                  Future.successful(errorHandler.showInternalServerError())
-              }
-            case None => Future.failed(MissingSessionKey(incomeSourceId))
-          }
-        case Left(exception) => Future.failed(exception)
-      }.recover {
-        case exception =>
-          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"[BusinessAddedObligationsController][handleRequest] ${exception.getMessage}")
-          errorHandler.showInternalServerError()
-      }
+      val obligationViewModelFuture = for {
+        incomeSourceIdMayBe <- sessionService.get(SessionKeys.incomeSourceId)
+        res <- Future {
+          getBusinessNameAndStartDate(incomeSourceIdMayBe)
+        }
+        viewModelRes <- res match {
+          case Right((businessName, startDate)) =>
+            val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+            nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears, Some(businessName)).map(x => Right(x))
+          case Left(ex) =>
+            Future {
+              Left(ex)
+            }
+        }
+      } yield viewModelRes
+
+      obligationViewModelFuture.flatMap(res =>
+        res match {
+          case Right(obligationViewModel) =>
+            val backUrl = getBackUrl(isAgent)
+            Future {
+              Ok(
+                obligationsView(sources = obligationViewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment)
+              )
+            }
+          case Left(ex) =>
+            val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId" + ex
+            Logger("application").error(errorMessage)
+            val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+            Future.successful(errorHandler.showInternalServerError())
+        }
+      )
+    }.recover {
+      case exception =>
+        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(s"[BusinessAddedObligationsController][handleRequest] ${exception.getMessage}")
+        errorHandler.showInternalServerError()
     }
   }
 
