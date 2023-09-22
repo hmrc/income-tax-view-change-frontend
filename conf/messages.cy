@@ -536,7 +536,8 @@ taxCal_breakdown.message.agent.C22215                           = Oherwydd lefel
 taxCal_breakdown.message.agent.C22216                           = Oherwydd lefel incwm eich cleient, nid yw eich cleient yn gymwys ar gyfer Lwfans Priodasol mwyach, ac felly caiff ei hawliad ei ganslo.
 taxCal_breakdown.message.agent.C22217                           = Mae un neu fwy o dandaliadau, dyledion neu addasiadau nad ydynt wedi’u cynnwys yn y cyfrifiad, gan nad ydynt yn gysylltiedig â data sydd gan CThEF.
 taxCal_breakdown.message.agent.C22218                           = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
-
+taxCal_breakdown.message.agent.C22223                           = Nid yw Yswiriant Gwladol Dosbarth 2 yn berthnasol am fod eich cleient o dan 16 oed.
+taxCal_breakdown.message.agent.C22224                           = Nid yw Yswiriant Gwladol Dosbarth 2 yn berthnasol am fod eich cleient dros oedran Pensiwn y Wladwriaeth.
 
 
 taxCal_breakdown.table.head.rate_band                           = Haen cyfradd
