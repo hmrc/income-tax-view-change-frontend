@@ -18,9 +18,9 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import models.liabilitycalculation.viewmodels._
-import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation.ReliefsClaimed
+import models.liabilitycalculation.taxcalculation._
+import models.liabilitycalculation.viewmodels._
 import play.api.libs.json._
 import utils.Utilities._
 
@@ -55,6 +55,8 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
       case "C22217" => "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
       case "C22218" => "The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration viewModel."
       case "C22220" => "If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid."
+      case "C22223" => "Class 2 National Insurance does not apply because your client is under 16."
+      case "C22224" => "Class 2 National Insurance does not apply because your client is over State Pension age."
     }
 
   private val allowedCalcMessages: Seq[String] = {
