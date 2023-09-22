@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -35,7 +34,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.{CalculationListService, DateService, ITSAStatusService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
-import testConstants.BusinessDetailsTestConstants.{address, testBizAddress}
+import testConstants.BusinessDetailsTestConstants.address
 import testUtils.TestSupport
 import views.html.incomeSources.manage.ManageIncomeSourceDetails
 

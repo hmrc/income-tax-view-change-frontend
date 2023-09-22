@@ -17,7 +17,7 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -27,8 +27,9 @@ import forms.utils.SessionKeys.ceaseForeignPropertyDeclare
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CeaseForeignProperty
 
@@ -43,41 +44,38 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val retrieveNino: NinoPredicate,
                                                val view: CeaseForeignProperty,
-                                               val customNotFoundErrorView: CustomNotFoundError)
+                                               val sessionService: SessionService)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                               )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def handleRequest(isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    val incomeSourcesEnabled: Boolean = isEnabled(IncomeSources)
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submitAgent else
       controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    if (incomeSourcesEnabled) {
-      Future.successful(Ok(view(
-        ceaseForeignPropertyForm = CeaseForeignPropertyForm.form,
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl,
-        origin = origin)(user, messages)))
-    } else {
-      Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-    } recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting CeaseForeignProperty page: ${ex.getMessage}")
-        errorHandler.showInternalServerError()
-    }
+    Future.successful(Ok(view(
+      ceaseForeignPropertyForm = CeaseForeignPropertyForm.form,
+      postAction = postAction,
+      isAgent = isAgent,
+      backUrl = backUrl,
+      origin = origin)(user, messages)))
+
+  } recover {
+    case ex: Exception =>
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"[CeaseForeignPropertyController][handleRequest] Error getting CeaseForeignProperty page: ${ex.getMessage}")
+      errorHandler.showInternalServerError()
   }
+
 
   def show(origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -100,7 +98,7 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val (postAction, backAction, redirectAction) = {
       if (isAgent)
         (routes.CeaseForeignPropertyController.submitAgent,
@@ -113,16 +111,31 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
     }
 
     CeaseForeignPropertyForm.form.bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(view(
-        ceaseForeignPropertyForm = hasErrors,
-        postAction = postAction,
-        backUrl = backAction.url,
-        isAgent = isAgent
-      )).addingToSession(ceaseForeignPropertyDeclare -> "false")),
-      _ =>
-        Future.successful(Redirect(redirectAction)
-          .addingToSession(ceaseForeignPropertyDeclare -> "true"))
+      hasErrors => {
+        val result = BadRequest(view(
+          ceaseForeignPropertyForm = hasErrors,
+          postAction = postAction,
+          backUrl = backAction.url,
+          isAgent = isAgent
+        ))
+        sessionService.set(key = ceaseForeignPropertyDeclare, value = "false", result = result).flatMap {
+          case Right(result) => Future.successful(result)
+          case Left(exception) => Future.failed(exception)
+        }
+      },
+      _ => {
+        val result = Redirect(redirectAction)
+        sessionService.set(key = ceaseForeignPropertyDeclare, value = "true", result = result).flatMap {
+          case Right(result) => Future.successful(result)
+          case Left(exception) => Future.failed(exception)
+        }
+      }
     )
+  }.recover {
+    case exception: Exception =>
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"${if (isAgent) "[Agent]"}[CeaseForeignPropertyController][handleSubmitRequest]: $exception")
+      errorHandler.showInternalServerError()
   }
 
 

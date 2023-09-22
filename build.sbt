@@ -25,6 +25,8 @@ val wiremockVersion = "2.26.3"
 val hmrcMongoVersion = "0.73.0"
 val currentScalaVersion = "2.13.8"
 
+scalacOptions += "-feature"
+
 val compile = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapPlayVersion,
@@ -46,6 +48,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-28" % hmrcMongoVersion % scope,
   "org.scalacheck" %% "scalacheck" % "1.17.0" % scope,
+  "uk.gov.hmrc" %% "bootstrap-test-play-28"  % bootstrapPlayVersion % "test",
   caffeine
 )
 

@@ -22,11 +22,13 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
+import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
@@ -52,23 +54,25 @@ class UKPropertyCeasedObligationsController @Inject()(val authenticate: Authenti
 
   private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      val ukPropertyIncomeSources = user.incomeSources.properties.filter(_.isUkProperty)
-      ukPropertyIncomeSources.headOption match {
-        case Some(property) =>
-          nextUpdatesService.getObligationsViewModel(property.incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
+      incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true) match {
+        case Left(error) => showError(isAgent = isAgent, message = error.getMessage)
+        case Right(ukProperty: PropertyDetailsModel) =>
+          nextUpdatesService.getObligationsViewModel(ukProperty.incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
               businessName = None,
               sources = viewModel,
               isAgent = isAgent,
               incomeSourceType = UkProperty))
           }
-        case None =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}[UkPropertyCeasedObligationsController][handleRequest]:Failed to retrieve UK property details")
-          Future.successful(errorHandler.showInternalServerError())
       }
-
     }
+  }
+
+  def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    Logger("application").error(
+      s"${if (isAgent) "[Agent]"}[UKPropertyCeasedObligationsController][handleRequest] - $message")
+    if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+    else Future.successful(itvcErrorHandler.showInternalServerError())
   }
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
