@@ -41,7 +41,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val itvcErrorHandler: ItvcErrorHandler,
-                                            incomeSourceDetailsService: IncomeSourceDetailsService,
+                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: IncomeSourceAddedObligations,
                                             nextUpdatesService: NextUpdatesService)
                                            (implicit val appConfig: FrontendAppConfig,
@@ -81,10 +81,38 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     baseRoute(incomeSourceId).url
   }
 
+  def getIncomeSourceFromUser(incomeSourceType: IncomeSourceType, incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
+    incomeSourceType match {
+      case SelfEmployment =>
+        user.incomeSources.businesses
+          .find(_.incomeSourceId.equals(incomeSourceId))
+          .flatMap { addedBusiness =>
+            for {
+              businessName <- addedBusiness.tradingName
+              startDate <- addedBusiness.tradingStartDate
+            } yield (startDate, Some(businessName))
+          }
+      case UkProperty =>
+        for {
+          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
+            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isUkProperty
+          )
+          startDate <- newlyAddedProperty.tradingStartDate
+        } yield (startDate, None)
+      case ForeignProperty =>
+        for {
+          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
+            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isForeignProperty
+          )
+          startDate <- newlyAddedProperty.tradingStartDate
+        } yield (startDate, None)
+    }
+  }
+
   private def handleRequest(isAgent: Boolean, incomeSourceId: String, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
       val backUrl = getBackUrl(incomeSourceId, isAgent, incomeSourceType)
-      incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
+       getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           incomeSourceType match {
@@ -105,7 +133,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
             }
           }
         case None => Logger("application").error(
-          s"${if (isAgent) "[Agent]"}" +"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
+          s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
           if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
           else Future(itvcErrorHandler.showInternalServerError())
       }
