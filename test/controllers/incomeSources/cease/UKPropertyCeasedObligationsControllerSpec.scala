@@ -76,7 +76,7 @@ class UKPropertyCeasedObligationsControllerSpec extends TestSupport with MockAut
 
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 4, 6))
 
-        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
+        when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(
           Future(IncomeSourcesObligationsTestConstants.viewModel))
 
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
@@ -166,7 +166,7 @@ class UKPropertyCeasedObligationsControllerSpec extends TestSupport with MockAut
 
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 4, 6))
 
-        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
+        when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(
           Future(IncomeSourcesObligationsTestConstants.viewModel))
 
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).

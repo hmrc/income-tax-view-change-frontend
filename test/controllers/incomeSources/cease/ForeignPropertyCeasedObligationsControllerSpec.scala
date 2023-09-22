@@ -119,7 +119,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
 
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
         setupMockGetIncomeSourceDetails()(sources)
-        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+        when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
           dates,
           dates,
           dates,
@@ -230,7 +230,7 @@ class ForeignPropertyCeasedObligationsControllerSpec extends TestSupport
 
           when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
           setupMockGetIncomeSourceDetails()(sources)
-          when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+          when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
             dates,
             dates,
             dates,

@@ -113,7 +113,7 @@ class ManageObligationsControllerSpec extends TestSupport
     val dates: Seq[DatesModel] = Seq(
       DatesModel(day, day, day, "EOPS", isFinalDec = false)
     )
-    when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+    when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       dates,
       dates,
       dates,
@@ -169,7 +169,7 @@ class ManageObligationsControllerSpec extends TestSupport
     val dates: Seq[DatesModel] = Seq(
       DatesModel(day, day, day, "EOPS", isFinalDec = false)
     )
-    when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+    when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       dates,
       dates,
       dates,
@@ -345,7 +345,7 @@ class ManageObligationsControllerSpec extends TestSupport
         )
 
         setupMockGetIncomeSourceDetails()(sources)
-        when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
+        when(mockNextUpdatesService.getObligationsViewModel(any(), any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
           dates,
           dates,
           dates,
