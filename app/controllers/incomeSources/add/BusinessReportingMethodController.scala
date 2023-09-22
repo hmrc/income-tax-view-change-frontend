@@ -93,6 +93,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
             Logger("application").info(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails]: Latency details not available")
             Future.successful(Right(None))
         }
+      case Right(None) => Future.failed(new Error("Income source id not found in session"))
+      case Left(ex) => Future.failed(ex)
     }
   }
 

@@ -75,15 +75,17 @@ class ForeignPropertyAddedController @Inject()(val view: IncomeSourceAddedObliga
     lazy val backUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show().url
     lazy val agentBackUrl = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent().url
 
-    sessionService.get(SessionKeys.incomeSourceId).flatMap {
-      case Right(incomeSourceIdMayBe) =>
-        incomeSourceIdMayBe match {
-          case Some(incomeSourceId) =>
-            withIncomeSourcesFS {
+    withIncomeSourcesFS {
+      sessionService.get(SessionKeys.incomeSourceId).flatMap {
+        case Right(incomeSourceIdMayBe) =>
+          incomeSourceIdMayBe match {
+            case Some(incomeSourceId) =>
+
               val foreignPropertyDetailsParams = for {
                 addedForeignProperty <- user.incomeSources.properties.filter(_.isForeignProperty).find(x => x.incomeSourceId.contains(incomeSourceId))
                 startDate <- addedForeignProperty.tradingStartDate
               } yield (addedForeignProperty, startDate)
+
               foreignPropertyDetailsParams match {
                 case Some((_, startDate)) =>
                   val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
@@ -91,21 +93,17 @@ class ForeignPropertyAddedController @Inject()(val view: IncomeSourceAddedObliga
                     if (isAgent) Ok(view(viewModel, agentBackUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
                     else Ok(view(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
                   }
-                case _ =>
-                  Logger("application").error(
-                    s"[ForeignPropertyAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
-                  if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-                  else Future(itvcErrorHandler.showInternalServerError())
+                case _ => Future.failed(new Error(s"[ForeignPropertyAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId"))
               }
-            }
-          case None => Future.failed(MissingSessionKey(incomeSourceId))
-        }
-      case Left(exception) => Future.failed(exception)
-    }.recover {
-      case exception =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[ForeignPropertyAddedController][handleRequest] ${exception.getMessage}")
-        errorHandler.showInternalServerError()
+            case None => Future.failed(MissingSessionKey(incomeSourceId))
+          }
+        case Left(exception) => Future.failed(exception)
+      }.recover {
+        case exception =>
+          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+          Logger("application").error(s"[ForeignPropertyAddedController][handleRequest] ${exception.getMessage}")
+          errorHandler.showInternalServerError()
+      }
     }
   }
 
