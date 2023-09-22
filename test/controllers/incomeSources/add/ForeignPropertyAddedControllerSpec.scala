@@ -20,6 +20,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -33,7 +34,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface, SessionService}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId}
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
@@ -52,6 +53,8 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
   with FeatureSwitching {
 
   val mockDateService: DateService = mock(classOf[DateService])
+  val sessionIncomeSourceId = SessionKeys.incomeSourceId -> testPropertyIncomeId
+
 
   object TestForeignPropertyObligationsController extends ForeignPropertyAddedController(
     view = app.injector.instanceOf[IncomeSourceAddedObligations],
@@ -74,7 +77,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
   )
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel("123", List(NextUpdateModel(
+    NextUpdatesModel(testPropertyIncomeId, List(NextUpdateModel(
       LocalDate.of(2022, 7, 1),
       LocalDate.of(2022, 7, 2),
       LocalDate.of(2022, 8, 2),
@@ -101,7 +104,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         mockForeignPropertyIncomeSource()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
-          "123456",
+          testPropertyIncomeId,
           None,
           None,
           Some("03-foreign-property"),
@@ -127,7 +130,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
         status(result) shouldBe OK
 
       }
@@ -138,7 +141,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         disable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestForeignPropertyObligationsController.show()(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         status(result) shouldBe SEE_OTHER
       }
@@ -181,7 +184,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         mockForeignPropertyIncomeSource()
 
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
-          "123",
+          testPropertyIncomeId,
           None,
           None,
           Some("03-foreign-property"),
@@ -207,7 +210,7 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
         status(result) shouldBe OK
 
       }
@@ -219,14 +222,14 @@ class ForeignPropertyAddedControllerSpec extends TestSupport
         disable(IncomeSources)
         mockForeignPropertyIncomeSource()
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
 
-        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestForeignPropertyObligationsController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
         status(result) shouldBe SEE_OTHER
       }
     }

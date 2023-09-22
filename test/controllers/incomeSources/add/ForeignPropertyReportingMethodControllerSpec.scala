@@ -61,7 +61,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
   val taxYear2 = s"${newTaxYear2ReportingMethod}_tax_year"
   val taxYear1ReportingMethod = "tax_year_1_reporting_method"
   val taxYear2ReportingMethod = "tax_year_2_reporting_method"
-  val sessionIncomeSourceId = SessionKeys.incomeSourceId -> SessionKeys.incomeSourceId
+  val sessionIncomeSourceId = SessionKeys.incomeSourceId -> TestForeignPropertyReportingMethodController.incomeSourceId
 
   object TestForeignPropertyReportingMethodController extends ForeignPropertyReportingMethodController(
     MockAuthenticationPredicate,
