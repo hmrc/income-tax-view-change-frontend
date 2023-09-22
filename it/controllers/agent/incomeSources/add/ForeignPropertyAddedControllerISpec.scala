@@ -12,8 +12,8 @@ import java.time.LocalDate
 
 class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
 
-  val foreignPropertyObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent("").url
-  val foreignPropertyReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("").url
+  val foreignPropertyObligationsShowAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent().url
+  val foreignPropertyReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent().url
 
   val foreignPropertyAddedObligationsSubmitAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.submitAgent().url
   val addIncomeSourceAgentUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
@@ -24,6 +24,7 @@ class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023,1,1)
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2),"EOPS", None, "EOPS")))))
+  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testPropertyIncomeId)
 
 
   s"calling GET $foreignPropertyObligationsShowAgentUrl" should {
@@ -43,7 +44,7 @@ class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
         val incomeSourceId = testPropertyIncomeId
-        val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(incomeSourceId, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(incomeSourceId, sessionIncomeSourceId ++ clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")

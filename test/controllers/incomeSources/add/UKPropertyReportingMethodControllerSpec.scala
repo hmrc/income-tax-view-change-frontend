@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
+import forms.utils.SessionKeys
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.incomeSourceDetails.viewmodels.UKPropertyReportingMethodViewModel
@@ -33,9 +34,9 @@ import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
+import services.{CalculationListService, DateService, ITSAStatusService, SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.UpdateIncomeSourceTestConstants.incomeSourceId
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -62,6 +63,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
   val taxYear2ReportingMethod = "tax_year_2_reporting_method"
   val redirectURL = s"/report-quarterly/income-and-expenses/view/income-sources/add/error-uk-property-reporting-method-not-saved"
   val redirectAgentURL = s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/error-uk-property-reporting-method-not-saved"
+  val sessionIncomeSourceId = SessionKeys.incomeSourceId -> incomeSourceId
 
   object TestUKPropertyReportingMethodController extends UKPropertyReportingMethodController(
     MockAuthenticationPredicate,
@@ -76,6 +78,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
     mockITSAStatusService,
     mockDateService,
     mockCalculationListService,
+    sessionService = app.injector.instanceOf[SessionService],
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
@@ -182,7 +185,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "navigating to the page with FS Enabled and no back button" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
 
-        val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithNino)
+        val result: Future[Result] = TestUKPropertyReportingMethodController.show()(fakeRequestWithNino.withSession(sessionIncomeSourceId))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -196,14 +199,14 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "navigating to the page with FS Disabled" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         disable(IncomeSources)
-        val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyReportingMethodController.show()(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
-        val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyReportingMethodController.show()(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -213,27 +216,27 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "registering uk property in Tax Year 3 and beyond (latency expired)" in {
         mockAndBasicSetup(LATENCY_PERIOD_EXPIRED)
 
-        val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyReportingMethodController.show()(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show().url)
 
       }
 
       "ITSA Status returned is not MTD Mandated or MTD Voluntary" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITS_STATUS)
 
-        val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyReportingMethodController.show()(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show().url)
       }
     }
 
     "Show select reporting method with TY1 & TY2" when {
       "registering uk property in Latency Years" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyReportingMethodController.show()(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -256,7 +259,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "registering uk property within Tax Year 2, Tax Year 1 is crystallised" in {
         mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED)
 
-        val result: Future[Result] = TestUKPropertyReportingMethodController.show(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestUKPropertyReportingMethodController.show()(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -276,8 +279,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
     "display error message" when {
       "Tax Year 2 reporting method is not selected (Tax Year 1 Crystallised)" in {
         mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED)
-        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submit()(
+          fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "",
             newTaxYear2ReportingMethod -> ""
@@ -294,8 +297,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
 
       "Tax Year 1 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submit()(
+          fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "none",
@@ -313,8 +316,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
 
       "Tax Year 2 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submit()(
+          fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "Q",
@@ -332,8 +335,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
 
       "Tax Year 1 & Tax Year 2 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submit()(
+          fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "none",
@@ -366,8 +369,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
-        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submit()(
+          fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
             taxYear1 -> "2022",
@@ -377,7 +380,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show().url)
       }
     }
 
@@ -385,8 +388,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "all mandatory fields are selected and values unchanged" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
 
-        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submit()(
+          fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "A",
             newTaxYear2ReportingMethod -> "Q",
             taxYear1 -> "2022",
@@ -396,7 +399,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.show().url)
       }
     }
 
@@ -415,8 +418,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
-        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submit()(
+          fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
             taxYear1 -> "2022",
@@ -442,8 +445,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
-        val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submit()(
+          fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
             taxYear1 -> "2022",
@@ -463,7 +466,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "navigating to the page with FS Enabled and no back button" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
 
-        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -477,14 +480,14 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "navigating to the page with FS Disabled" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
         disable(IncomeSources)
-        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -494,27 +497,27 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "registering uk property in Tax Year 3 and beyond (latency expired)" in {
         mockAndBasicSetup(LATENCY_PERIOD_EXPIRED, true)
 
-        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent().url)
 
       }
 
       "ITSA Status returned is not MTD Mandated or MTD Voluntary" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITS_STATUS, true)
 
-        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent().url)
       }
     }
 
     "Show select reporting method with TY1 & TY2" when {
       "registering uk property in Latency Years" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
-        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -537,7 +540,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "registering uk property within Tax Year 2, Tax Year 1 is crystallised" in {
         mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED, true)
 
-        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestUKPropertyReportingMethodController.showAgent()(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -557,8 +560,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
     "display error message" when {
       "Tax Year 2 reporting method is not selected (Tax Year 1 Crystallised)" in {
         mockAndBasicSetup(FIRST_YEAR_CRYSTALLIZED, true)
-        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submitAgent()(
+          fakeRequestConfirmedClient().withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "",
             newTaxYear2ReportingMethod -> ""
@@ -575,8 +578,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
 
       "Tax Year 1 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
-        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submitAgent()(
+          fakeRequestConfirmedClient().withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "none",
@@ -594,8 +597,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
 
       "Tax Year 2 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
-        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submitAgent()(
+          fakeRequestConfirmedClient().withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "Q",
@@ -613,8 +616,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
 
       "Tax Year 1 & Tax Year 2 reporting method is not selected" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
-        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submitAgent()(
+          fakeRequestConfirmedClient().withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             taxYear1 -> "2022",
             taxYear2 -> "2023",
             newTaxYear1ReportingMethod -> "none",
@@ -647,8 +650,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
 
-        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submitAgent()(
+          fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
             taxYear1 -> "2022",
@@ -658,7 +661,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent().url)
       }
     }
 
@@ -666,8 +669,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
       "all mandatory fields are selected and values unchanged" in {
         mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS, true)
 
-        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submitAgent()(
+          fakeRequestConfirmedClient().withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "A",
             newTaxYear2ReportingMethod -> "Q",
             taxYear1 -> "2022",
@@ -677,7 +680,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent(TestUKPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.UKPropertyAddedController.showAgent().url)
       }
     }
 
@@ -696,8 +699,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
 
-        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submitAgent()(
+          fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
             taxYear1 -> "2022",
@@ -724,8 +727,8 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
           ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseModel("")))
 
-        val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
-          fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
+        val result = TestUKPropertyReportingMethodController.submitAgent()(
+          fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
             newTaxYear1ReportingMethod -> "Q",
             newTaxYear2ReportingMethod -> "A",
             taxYear1 -> "2022",

@@ -22,7 +22,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
+import exceptions.MissingSessionKey
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.UKPropertyReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -51,6 +54,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                                                     val itsaStatusService: ITSAStatusService,
                                                     val dateService: DateService,
                                                     val calculationListService: CalculationListService,
+                                                    val sessionService: SessionService,
                                                     val customNotFoundErrorView: CustomNotFoundError)
                                                    (implicit val appConfig: FrontendAppConfig,
                                                     mcc: MessagesControllerComponents,
@@ -91,54 +95,69 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
 
   }
 
-  private def handleRequest(isAgent: Boolean, id: String)
+  private def handleRequest(isAgent: Boolean)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent(id) else
-      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit(id)
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(id) else
-      controllers.incomeSources.add.routes.UKPropertyAddedController.show(id)
-
-    withIncomeSourcesFS {
-      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-        case true =>
-          getUKPropertyReportingMethodDetails(id).map {
-            case Some(viewModel) =>
-              Ok(view(
-                addUKPropertyReportingMethodForm = AddUKPropertyReportingMethodForm.form,
-                ukPropertyReportingViewModel = viewModel,
-                postAction = postAction,
-                isAgent = isAgent)(user, messages))
-            case None =>
-              Redirect(redirectUrl)
-          }
-
-        case false => Future.successful(Redirect(redirectUrl))
-      }
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent() else
+              controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit()
+            val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent() else
+              controllers.incomeSources.add.routes.UKPropertyAddedController.show()
+            withIncomeSourcesFS {
+              itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+                case true =>
+                  getUKPropertyReportingMethodDetails(incomeSourceId).map {
+                    case Some(viewModel) =>
+                      Ok(view(
+                        addUKPropertyReportingMethodForm = AddUKPropertyReportingMethodForm.form,
+                        ukPropertyReportingViewModel = viewModel,
+                        postAction = postAction,
+                        isAgent = isAgent)(user, messages))
+                    case None =>
+                      Redirect(redirectUrl)
+                  }
+                case false => Future.successful(Redirect(redirectUrl))
+              }
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
+        }
+      case Left(exception) => Future.failed(exception)
     }.recover {
       case ex: Exception =>
+        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(
           s"[UKPropertyReportingMethodController][handleRequest]: Error getting UKPropertyReportingMethodController page: ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
   }
 
-  private def handleSubmitRequest(isAgent: Boolean, id: String)
+
+  private def handleSubmitRequest(isAgent: Boolean)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    withIncomeSourcesFS {
-      AddUKPropertyReportingMethodForm.form.bindFromRequest().fold(
-        hasErrors => handleFormErrors(hasErrors, id, isAgent),
-        valid => handleFormData(valid, id, isAgent)
-      ).recover {
-        case ex: Exception =>
-          Logger("application").error(s"[UKPropertyReportingMethodController][handleSubmitRequest]:" +
-            s"Error getting UKPropertyReportingMethodController page: ${ex.getMessage}")
-          errorHandler.showInternalServerError()
-      }
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            withIncomeSourcesFS {
+              AddUKPropertyReportingMethodForm.form.bindFromRequest().fold(
+                hasErrors => handleFormErrors(hasErrors, incomeSourceId, isAgent),
+                valid => handleFormData(valid, incomeSourceId, isAgent)
+              )
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
+        }
+      case Left(exception) => Future.failed(exception)
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"[UKPropertyReportingMethodController][handleSubmitRequest]:" +
+          s"Error getting UKPropertyReportingMethodController page: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
     }
   }
 
@@ -148,8 +167,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
     val updatedForm = AddUKPropertyReportingMethodForm.updateErrorMessagesWithValues(errors)
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty.key) else
       routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key)
-    val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent(id) else
-      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit(id)
+    val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit()
 
     getUKPropertyReportingMethodDetails(id).map {
       case Some(viewModel) =>
@@ -164,7 +183,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
 
   private def handleFormData(form: AddUKPropertyReportingMethodForm, id: String, isAgent: Boolean)
                             (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val redirectUrl: Call = if (isAgent) routes.UKPropertyAddedController.showAgent(id) else routes.UKPropertyAddedController.show(id)
+    val redirectUrl: Call = if (isAgent) routes.UKPropertyAddedController.showAgent() else routes.UKPropertyAddedController.show()
     val reportingMethodNeedsUpdating = form.taxYear1ReportingMethod != form.newTaxYear1ReportingMethod ||
       form.taxYear2ReportingMethod != form.newTaxYear2ReportingMethod
 
@@ -193,7 +212,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
   private def updateReportingMethod(isAgent: Boolean, id: String, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val redirectUrl: Call = if (isAgent) routes.UKPropertyAddedController.showAgent(id) else routes.UKPropertyAddedController.show(id)
+    val redirectUrl: Call = if (isAgent) routes.UKPropertyAddedController.showAgent() else routes.UKPropertyAddedController.show()
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType = UkProperty.key) else
       routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType = UkProperty.key)
 
@@ -265,31 +284,31 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
     }
   }
 
-  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user => handleRequest(isAgent = false, id = id)
+    implicit user => handleRequest(isAgent = false)
   }
 
-  def showAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(isAgent = true, id = id)
+            handleRequest(isAgent = true)
         }
   }
 
-  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleSubmitRequest(isAgent = false, id = id)
+      handleSubmitRequest(isAgent = false)
   }
 
-  def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def submitAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser => handleSubmitRequest(isAgent = true, id = id)
+          implicit mtdItUser => handleSubmitRequest(isAgent = true)
         }
   }
 

@@ -22,11 +22,15 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.ForeignProperty
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
+import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import javax.inject.Inject
@@ -40,6 +44,7 @@ class ForeignPropertyAddedController @Inject()(val view: IncomeSourceAddedObliga
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
+                                               val sessionService: SessionService,
                                                val nextUpdatesService: NextUpdatesService)
                                               (implicit val appConfig: FrontendAppConfig,
                                                val itvcErrorHandler: ItvcErrorHandler,
@@ -47,53 +52,60 @@ class ForeignPropertyAddedController @Inject()(val view: IncomeSourceAddedObliga
                                                implicit override val mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
                                                dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
 
-  def show(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false, incomeSourceId)
+      handleRequest(isAgent = false)
   }
 
-  def showAgent(incomeSourceId: String): Action[AnyContent] =
+  def showAgent(): Action[AnyContent] =
     Authenticated.async {
       implicit request =>
         implicit user =>
           getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
             implicit mtdItUser =>
-              handleRequest(isAgent = true, incomeSourceId)
+              handleRequest(isAgent = true)
           }
     }
 
-  def handleRequest(isAgent: Boolean, incomeSourceId: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    lazy val backUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(incomeSourceId).url
-    lazy val agentBackUrl = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(incomeSourceId).url
+  private def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    lazy val backUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show().url
+    lazy val agentBackUrl = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent().url
 
-    if (isDisabled(IncomeSources)) {
-      if (isAgent) {
-        Future.successful(Redirect(controllers.routes.HomeController.showAgent))
-      } else {
-        Future.successful(Redirect(controllers.routes.HomeController.show()))
-      }
-    } else {
-      val foreignPropertyDetailsParams = for {
-        addedForeignProperty <- user.incomeSources.properties.filter(_.isForeignProperty).find(x => x.incomeSourceId.contains(incomeSourceId))
-        startDate <- addedForeignProperty.tradingStartDate
-      } yield (addedForeignProperty, startDate)
-      foreignPropertyDetailsParams match {
-        case Some((_, startDate)) =>
-          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            if (isAgent) Ok(view(viewModel, agentBackUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
-            else Ok(view(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
-          }
-        case _ =>
-          Logger("application").error(
-            s"[ForeignPropertyAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
-          if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-          else Future(itvcErrorHandler.showInternalServerError())
-      }
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            withIncomeSourcesFS {
+              val foreignPropertyDetailsParams = for {
+                addedForeignProperty <- user.incomeSources.properties.filter(_.isForeignProperty).find(x => x.incomeSourceId.contains(incomeSourceId))
+                startDate <- addedForeignProperty.tradingStartDate
+              } yield (addedForeignProperty, startDate)
+              foreignPropertyDetailsParams match {
+                case Some((_, startDate)) =>
+                  val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+                  nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+                    if (isAgent) Ok(view(viewModel, agentBackUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
+                    else Ok(view(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
+                  }
+                case _ =>
+                  Logger("application").error(
+                    s"[ForeignPropertyAddedObligationsController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
+                  if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+                  else Future(itvcErrorHandler.showInternalServerError())
+              }
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
+        }
+      case Left(exception) => Future.failed(exception)
+    }.recover {
+      case exception =>
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(s"[ForeignPropertyAddedController][handleRequest] ${exception.getMessage}")
+        errorHandler.showInternalServerError()
     }
   }
 

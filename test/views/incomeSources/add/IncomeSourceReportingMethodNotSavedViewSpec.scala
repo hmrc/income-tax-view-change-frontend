@@ -38,10 +38,10 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
     val action: Call = incomeSourceType match {
       case UkProperty =>
         val controller = controllers.incomeSources.add.routes.UKPropertyAddedController
-        if (isAgent) controller.show(id) else controller.showAgent(id)
+        if (isAgent) controller.show() else controller.showAgent()
       case ForeignProperty =>
         val controller = controllers.incomeSources.add.routes.ForeignPropertyAddedController
-        if (isAgent) controller.show(id) else controller.showAgent(id)
+        if (isAgent) controller.show() else controller.showAgent()
       case SelfEmployment =>
         val controller = controllers.incomeSources.add.routes.BusinessAddedObligationsController
         if (isAgent) controller.show() else controller.showAgent()

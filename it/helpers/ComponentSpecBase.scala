@@ -297,9 +297,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getForeignPropertyEndDate: WSResponse = get("/income-sources/cease/foreign-property-end-date")
 
-    def getForeignPropertyAddedObligations(id: String): WSResponse = {
+    def getForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = s"/income-sources/add/foreign-property-added/?id=$id"
+        uri = s"/income-sources/add/foreign-property-added", additionalCookies
       )
     }
 
@@ -478,12 +478,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postAddUKPropertyReportingMethod(form: AddUKPropertyReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
-      post(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
+      post(s"/income-sources/add/uk-property-reporting-method", additionalCookies = additionalCookies)(formData)
     }
 
     def postAddForeignPropertyReportingMethod(form: AddForeignPropertyReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
-      post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
+      post(s"/income-sources/add/foreign-property-reporting-method", additionalCookies = additionalCookies)(formData)
     }
 
     def getCheckCeaseBusinessDetails(session: Map[String, String]): WSResponse =

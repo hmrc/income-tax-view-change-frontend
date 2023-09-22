@@ -18,14 +18,17 @@ package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateService, IncomeSourceDetailsService, NextUpdatesService}
+import services.{DateService, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
@@ -42,6 +45,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveNino: NinoPredicate,
+                                          val sessionService: SessionService,
                                           val view: IncomeSourceAddedObligations)
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
@@ -51,22 +55,22 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def getBackUrl(incomeSourceId: String, isAgent: Boolean): String = {
-    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(incomeSourceId).url else
-      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(incomeSourceId).url
+    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent().url else
+      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show().url
   }
 
-  def show(incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(incomeSourceId, isAgent = false)
+      handleRequest(isAgent = false)
   }
 
-  def showAgent(incomeSourceId: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(incomeSourceId, isAgent = true)
+            handleRequest(isAgent = true)
         }
   }
 
@@ -79,23 +83,36 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
     } yield startDate
   }
 
-  def handleRequest(incomeSourceId: String, isAgent: Boolean)(implicit messages: Messages, user: MtdItUser[_]): Future[Result] = {
-    withIncomeSourcesFS {
-      val backUrl = getBackUrl(incomeSourceId, isAgent)
-      val UKPropertyStartDate = getUKPropertyStartDate(incomeSourceId)
+  def handleRequest(isAgent: Boolean)(implicit messages: Messages, user: MtdItUser[_]): Future[Result] = {
+    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            withIncomeSourcesFS {
+              val backUrl = getBackUrl(incomeSourceId, isAgent)
+              val UKPropertyStartDate = getUKPropertyStartDate(incomeSourceId)
 
-      UKPropertyStartDate match {
-        case Some(startDate) =>
-          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears).map { viewModel =>
-            Ok(view(sources = viewModel, isAgent = isAgent, backUrl = backUrl, incomeSourceType = UkProperty)(messages, user))
-          }
-        case None =>
-          Logger("application").error(
-            s"[UKPropertyAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
-          if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
-          else Future.successful(itvcErrorHandler.showInternalServerError())
-      }
+              UKPropertyStartDate match {
+                case Some(startDate) =>
+                  val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+                  nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears).map { viewModel =>
+                    Ok(view(sources = viewModel, isAgent = isAgent, backUrl = backUrl, incomeSourceType = UkProperty)(messages, user))
+                  }
+                case None =>
+                  Logger("application").error(
+                    s"[UKPropertyAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId")
+                  Future.successful(errorHandler.showInternalServerError())
+              }
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
+        }
+      case Left(exception) => Future.failed(exception)
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(
+          s"[UKPropertyReportingMethodController][handleRequest]: Error getting UKPropertyReportingMethodController page: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
     }
   }
 }

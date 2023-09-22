@@ -22,7 +22,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.ForeignProperty
+import exceptions.MissingSessionKey
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.ForeignPropertyReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -51,6 +54,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                                          val itsaStatusService: ITSAStatusService,
                                                          val dateService: DateService,
                                                          val calculationListService: CalculationListService,
+                                                         val sessionService: SessionService,
                                                          val customNotFoundErrorView: CustomNotFoundError)
                                                         (implicit val appConfig: FrontendAppConfig,
                                                          override implicit val mcc: MessagesControllerComponents,
@@ -59,113 +63,132 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        id = id,
         isAgent = false,
-        postAction = postAction(id),
-        redirectCall = redirectCall(id)
+        postAction = postAction(),
+        redirectCall = redirectCall()
       )
   }
 
-  def showAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
-              id = id,
               isAgent = true,
-              postAction = postActionAgent(id),
-              redirectCall = redirectCallAgent(id)
+              postAction = postActionAgent(),
+              redirectCall = redirectCallAgent()
             )
         }
   }
 
-  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(
-        id = id,
         isAgent = false,
-        postAction = postAction(id),
-        redirectCall = redirectCall(id),
+        postAction = postAction(),
+        redirectCall = redirectCall(),
         errorCall = redirectErrorCall
       )
   }
 
-  def submitAgent(id: String): Action[AnyContent] = Authenticated.async {
+  def submitAgent(): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleSubmitRequest(
-              id = id,
               isAgent = true,
-              postAction = postActionAgent(id),
-              redirectCall = redirectCallAgent(id),
+              postAction = postActionAgent(),
+              redirectCall = redirectCallAgent(),
               errorCall = redirectErrorCallAgent
             )
         }
   }
 
-  private def handleRequest(id: String,
-                            isAgent: Boolean,
+  private def handleRequest(isAgent: Boolean,
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
-    withIncomeSourcesFS {
-      (for {
-        isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-        latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
-          propertyDetails => propertyDetails.incomeSourceId.contains(id) && propertyDetails.isForeignProperty
-        ).flatMap(_.latencyDetails))
-        viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
-      } yield {
-        (isMandatoryOrVoluntary, viewModel) match {
-
-          case (_, Left(ex)) =>
-            Logger("application")
-              .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
-            Future.successful(Redirect(redirectCall))
-          case (true, Right(viewModel)) =>
-            Future.successful(Ok(foreignPropertyReportingMethodView(
-              form = AddForeignPropertyReportingMethodForm.form,
-              viewModel = viewModel,
-              postAction = postAction,
-              isAgent = isAgent
-            )))
-          case _ =>
-            Logger("application")
-              .error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error")
-            Future(Ok(customNotFoundErrorView()))
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            withIncomeSourcesFS {
+              (for {
+                isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+                latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
+                  propertyDetails => propertyDetails.incomeSourceId.contains(incomeSourceId) && propertyDetails.isForeignProperty
+                ).flatMap(_.latencyDetails))
+                viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
+              } yield {
+                (isMandatoryOrVoluntary, viewModel) match {
+                  case (_, Left(ex)) =>
+                    Logger("application")
+                      .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
+                    Future.successful(Redirect(redirectCall))
+                  case (true, Right(viewModel)) =>
+                    Future.successful(Ok(foreignPropertyReportingMethodView(
+                      form = AddForeignPropertyReportingMethodForm.form,
+                      viewModel = viewModel,
+                      postAction = postAction,
+                      isAgent = isAgent
+                    )))
+                  case _ =>
+                    Logger("application")
+                      .error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error")
+                    Future(Ok(customNotFoundErrorView()))
+                }
+              }).flatten
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
         }
-      }).flatten
+      case Left(exception) => Future.failed(exception)
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(
+          s"[ForeignPropertyReportingMethodController][handleRequest]: ${ex.getMessage}")
+        InternalServerError(customNotFoundErrorView())
     }
   }
 
-  private def handleSubmitRequest(id: String,
-                                  isAgent: Boolean,
+  private def handleSubmitRequest(isAgent: Boolean,
                                   postAction: Call,
                                   redirectCall: Call,
                                   errorCall: Call)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
-    withIncomeSourcesFS {
-      AddForeignPropertyReportingMethodForm.form.bindFromRequest().fold(
-        formWithErrors => handleFormErrors(formWithErrors, id, isAgent),
-        valid => handleFormData(valid, id, isAgent))
+    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      case Right(incomeSourceIdMayBe) =>
+        incomeSourceIdMayBe match {
+          case Some(incomeSourceId) =>
+            withIncomeSourcesFS {
+              AddForeignPropertyReportingMethodForm.form.bindFromRequest().fold(
+                formWithErrors => handleFormErrors(formWithErrors, incomeSourceId, isAgent),
+                valid => handleFormData(valid, incomeSourceId, isAgent))
+            }
+          case None => Future.failed(MissingSessionKey(incomeSourceId))
+        }
+      case Left(exception) => Future.failed(exception)
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(
+          s"[ForeignPropertyReportingMethodController][handleSubmitRequest]: ${ex.getMessage}")
+        Ok(customNotFoundErrorView())
     }
   }
 
   private def handleFormErrors(errors: Form[AddForeignPropertyReportingMethodForm], id: String, isAgent: Boolean)
                               (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val postAction = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent(id) else
-      controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit(id)
-    val redirectCall = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id) else
-      controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
+    val postAction = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit()
+    val redirectCall = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent() else
+      controllers.incomeSources.add.routes.ForeignPropertyAddedController.show()
 
     for {
       latencyDetailsMaybe <- Future(user.incomeSources.properties
@@ -193,7 +216,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
   private def handleFormData(form: AddForeignPropertyReportingMethodForm, id: String, isAgent: Boolean)
                             (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
+    val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent() else routes.ForeignPropertyAddedController.show()
 
     if (form.reportingMethodIsChanged) {
       val newReportingMethods: Seq[TaxYearSpecific] = Seq(
@@ -220,7 +243,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
   private def updateReportingMethod(isAgent: Boolean, id: String, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
+    val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent() else routes.ForeignPropertyAddedController.show()
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType = ForeignProperty.key) else
       routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType = ForeignProperty.key)
 
@@ -336,13 +359,13 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
   private def isAnnualReporting(taxYearReportingMethod: String): Boolean = taxYearReportingMethod.toUpperCase().equals("A")
 
-  private def postAction(id: String) = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit(id)
+  private def postAction() = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit()
 
-  private def postActionAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent(id)
+  private def postActionAgent() = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent()
 
-  private def redirectCall(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
+  private def redirectCall() = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show()
 
-  private def redirectCallAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
+  private def redirectCallAgent() = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent()
 
   val redirectErrorCall: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key)
   val redirectErrorCallAgent: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty.key)

@@ -22,12 +22,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import exceptions.MissingSessionKey
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.incomeSourceId
-import play.api.Logger
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import services.{IncomeSourceDetailsService, SessionService}
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -45,7 +41,6 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
                                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                               val retrieveBtaNavBar: NavBarPredicate,
-                                                              val sessionService: SessionService,
                                                               val view: IncomeSourceReportingMethodNotSaved)
                                                              (implicit val ec: ExecutionContext,
                                                               implicit override val mcc: MessagesControllerComponents,
@@ -59,32 +54,22 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
 
     val errorHandler = if (isAgent) itvcAgentErrorHandler else itvcErrorHandler
 
-    sessionService.get(SessionKeys.incomeSourceId).flatMap {
-      case Right(incomeSourceIdMayBe) =>
-        incomeSourceIdMayBe match {
-          case Some(incomeSourceId) =>
-            IncomeSourceType(incomeSourceType) match {
-              case Right(incomeType) =>
-                val action: Call = (incomeType, isAgent) match {
-                  case (UkProperty, true) => controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(incomeSourceId)
-                  case (UkProperty, false) => controllers.incomeSources.add.routes.UKPropertyAddedController.show(incomeSourceId)
-                  case (ForeignProperty, true) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(incomeSourceId)
-                  case (ForeignProperty, false) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(incomeSourceId)
-                  case (SelfEmployment, true) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent()
-                  case (SelfEmployment, false) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
-                }
-                Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))
-
-              case Left(_) => Future.successful(errorHandler.showInternalServerError())
-            }
-          case None => Future.failed(MissingSessionKey(incomeSourceId))
+    IncomeSourceType(incomeSourceType) match {
+      case Right(incomeType) =>
+        val action: Call = (incomeType, isAgent) match {
+          case (UkProperty, true) => controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent()
+          case (UkProperty, false) => controllers.incomeSources.add.routes.UKPropertyAddedController.show()
+          case (ForeignProperty, true) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent()
+          case (ForeignProperty, false) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.show()
+          case (SelfEmployment, true) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent()
+          case (SelfEmployment, false) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
         }
-      case Left(exception) => Future.failed(exception)
-    }.recover {
-      case exception =>
-        Logger("application").error(s"[BusinessAddedObligationsController][handleRequest] ${exception.getMessage}")
-        errorHandler.showInternalServerError()
+
+        Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))
+
+      case Left(_) => Future.successful(errorHandler.showInternalServerError())
     }
+
   }
 
 

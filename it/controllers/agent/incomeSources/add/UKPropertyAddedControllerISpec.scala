@@ -11,8 +11,9 @@ import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 
 class UKPropertyAddedControllerISpec extends ComponentSpecBase {
-  val UKPropertyAddedControllerShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(testPropertyIncomeId).url
+  val UKPropertyAddedControllerShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent().url
   val HomeControllerShowUrl: String = controllers.routes.HomeController.showAgent.url
+  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testPropertyIncomeId)
   val pageTitle: String = messagesAPI("htmlTitle.agent", {
     s"${messagesAPI("business-added.uk-property.h1")} " +
       s"${messagesAPI("business-added.uk-property.base")}".trim()
@@ -35,7 +36,7 @@ class UKPropertyAddedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
         Then("user is shown UK property added page")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
         result should have(
           httpStatus(OK),
           pageTitleCustom(pageTitle),
@@ -54,7 +55,7 @@ class UKPropertyAddedControllerISpec extends ComponentSpecBase {
 
 
         Then("user is shown a error page")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
@@ -73,7 +74,7 @@ class UKPropertyAddedControllerISpec extends ComponentSpecBase {
 
 
         Then(s"user is redirected to $HomeControllerShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(SEE_OTHER),

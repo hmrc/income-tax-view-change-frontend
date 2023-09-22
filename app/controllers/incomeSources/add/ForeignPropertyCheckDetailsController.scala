@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.ForeignProperty
+import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -201,27 +202,31 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[AnyContent], request: Request[AnyContent]): Future[Result] = {
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty.key)
     else routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key)
-
-    getDetails(user) flatMap {
+    val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent().url
+    else controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show().url
+    getDetails(user).flatMap {
       case Right(viewModel: CheckForeignPropertyViewModel) =>
         businessDetailsService.createForeignProperty(viewModel).flatMap {
-          case Left(ex) =>
-            Logger("application").error(
-              s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-            Future.successful(Redirect(redirectErrorUrl))
-
           case Right(CreateIncomeSourceResponse(id)) =>
-            withIncomeSourcesRemovedFromSession(
-              if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
-              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
-            ) recover {
-              case _: Exception => Redirect(redirectErrorUrl)
+            sessionService.set(SessionKeys.incomeSourceId, id, Redirect(redirectUrl)).flatMap {
+              case Right(result) =>
+                withIncomeSourcesRemovedFromSession(Redirect(redirectUrl)) recover {
+                  case exception: Exception => Future.failed(exception)
+                }
+                Future.successful(result)
+              case Left(exception) => Future.failed(exception)
             }
+          case Left(_) =>
+            Logger("application").error(
+              s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
+            Future.successful(Redirect(redirectErrorUrl))
         }
-      case Left(_) =>
+      case Left(exception) => Future.failed(exception)
+    }.recover {
+      case ex: Exception =>
         Logger("application").error(
-          s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
-        Future.successful(Redirect(redirectErrorUrl))
+          s"[CheckBusinessDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+        Redirect(redirectErrorUrl)
     }
   }
 }

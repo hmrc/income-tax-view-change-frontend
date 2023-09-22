@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
+import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
@@ -70,8 +71,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def getUKPropertyReportingMethodUrl(isAgent: Boolean, id: String): Call = {
-    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(id) else
-      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(id)
+    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent() else
+      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show()
   }
 
   def getErrorHandler(isAgent: Boolean): FrontendErrorHandler with ShowInternalServerError = {
@@ -140,16 +141,18 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
       getUKPropertyDetailsFromSession(sessionService)(user, ec) flatMap {
         case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
-            case Left(ex) => Logger("application").error(
-              s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+            case Left(exception) => Future.failed(exception)
               withIncomeSourcesRemovedFromSession(
                 Redirect(redirectErrorUrl)
               )
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession(
-                Redirect(getUKPropertyReportingMethodUrl(isAgent, id))
-              ) recover {
-                case _: Exception => Redirect(redirectErrorUrl)
+              sessionService.set(SessionKeys.incomeSourceId, id, Redirect(getUKPropertyReportingMethodUrl(isAgent, id))).flatMap {
+                case Right(result) =>
+                  withIncomeSourcesRemovedFromSession(Redirect(getUKPropertyReportingMethodUrl(isAgent, id))) recover {
+                    case exception: Exception => Future.failed(exception)
+                  }
+                  Future.successful(result)
+                case Left(exception) => Future.failed(exception)
               }
           }.recover {
             case ex: Exception =>

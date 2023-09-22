@@ -12,8 +12,8 @@ import java.time.LocalDate
 
 class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
 
-  val foreignPropertyAddedObligationsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show("").url
-  val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("").url
+  val foreignPropertyAddedObligationsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show().url
+  val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show().url
 
   val foreignPropertyAddedObligationsSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.submit().url
   val addIncomeSourceShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
@@ -24,6 +24,7 @@ class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023,1,1)
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2),"EOPS", None, "EOPS")))))
+  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testPropertyIncomeId)
 
 
   s"calling GET $foreignPropertyAddedObligationsShowUrl" should {
@@ -40,8 +41,7 @@ class ForeignPropertyAddedControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        val incomeSourceId = testPropertyIncomeId
-        val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(incomeSourceId)
+        val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(sessionIncomeSourceId)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")

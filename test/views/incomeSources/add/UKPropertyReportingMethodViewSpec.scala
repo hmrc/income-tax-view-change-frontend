@@ -50,8 +50,8 @@ class UKPropertyReportingMethodViewSpec extends TestSupport {
     val viewModelScenario1 = UKPropertyReportingMethodViewModel(Some("2022"), Some("A"), Some("2023"), Some("A"))
     val viewModelScenario2 = UKPropertyReportingMethodViewModel(None, None, Some("2023"))
 
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent("") else
-      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit("")
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit()
 
 
     lazy val viewScenario1: HtmlFormat.Appendable = ukPropertyReportingMethodView(form, viewModelScenario1, postAction, isAgent)

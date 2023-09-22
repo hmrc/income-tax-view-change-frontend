@@ -32,9 +32,9 @@ import java.time.LocalDate
 import java.time.Month.APRIL
 
 class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
-  val ukPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(testPropertyIncomeId).url
-  val ukPropertyReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent(testPropertyIncomeId).url
-  val ukPropertyAddedShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(testPropertyIncomeId).url
+  val ukPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent().url
+  val ukPropertyReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent().url
+  val ukPropertyAddedShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent().url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = (currentTaxYear + 1)
@@ -48,10 +48,11 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
     taxYear2 = taxYear2.toString,
     latencyIndicator2 = quarterlyIndicator
   )
+  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testPropertyIncomeId)
 
   s"calling GET $ukPropertyReportingMethodShowUrl" should {
     "render the UK Property Reporting Method page" when {
-      "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 NOT crystallised)" in {
+      "authorised user is within latency period (Tax Year 1 NOT crystallised)" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
@@ -66,7 +67,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
         Then("user is asked to select reporting method for Tax Year 1 and Tax Year 2")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
@@ -75,7 +76,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year ${taxYear2 - 1}-$taxYear2")
         )
       }
-      "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 is crystallised)" in {
+      "authorised user is within latency period (Tax Year 1 is crystallised)" in {
         Given("Income Sources FS is enabled")
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
@@ -90,7 +91,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         Then("as Tax Year 1 is crystallised, user is asked to select reporting method for Tax Year 2")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
@@ -99,7 +100,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
           elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0)
         )
       }
-      "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 NOT crystallised - before 2023-24 Tax Year)" in {
+      "authorised user is within latency period (Tax Year 1 NOT crystallised - before 2023-24 Tax Year)" in {
         val taxYear2023: Int = 2023
         val taxYear2024: Int = 2024
         val latencyPeriodEndDate: LocalDate = LocalDate.of(2025, APRIL, 5)
@@ -126,7 +127,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear2023.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
         Then("user is asked to select reporting method for Tax Year 1 and Tax Year 2")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
@@ -135,7 +136,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year ${taxYear2024 - 1}-$taxYear2024")
         )
       }
-      "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 crystallised - before 2023-24 Tax Year)" in {
+      "authorised user is within latency period (Tax Year 1 crystallised - before 2023-24 Tax Year)" in {
         val taxYear2023: Int = 2023
         val taxYear2024: Int = 2024
         val latencyPeriodEndDate: LocalDate = LocalDate.of(2025, APRIL, 5)
@@ -162,7 +163,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear2023.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         Then("as Tax Year 1 is crystallised, user is asked to select reporting method for Tax Year 2")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
@@ -187,11 +188,11 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/uk-property-added?id=$testPropertyIncomeId")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/uk-property-added")
         )
       }
     }
@@ -199,7 +200,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
       "called by an unauthorised user" in {
         stubAuthorisedAgentUser(false)
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method")
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -222,7 +223,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns an error")
         CalculationListStub.stubGetCalculationListError(testNino, testTaxYearRange)
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -254,7 +255,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1404 getListOfCalculationResults returns an error response")
         CalculationListStub.stubGetLegacyCalculationListError(testNino, taxYear2023.toString)
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -274,7 +275,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -295,7 +296,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -332,11 +333,11 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("")))
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/uk-property-reporting-method", sessionIncomeSourceId ++ clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/uk-property-added?id=$testPropertyIncomeId")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/uk-property-added")
         )
       }
     }
@@ -366,7 +367,7 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontend.postAddUKPropertyReportingMethod(formWithErrors.value.get)(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.postAddUKPropertyReportingMethod(formWithErrors.value.get)(sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(BAD_REQUEST)

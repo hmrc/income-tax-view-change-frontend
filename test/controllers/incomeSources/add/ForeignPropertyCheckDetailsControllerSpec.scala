@@ -275,7 +275,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         )
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("123").url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show().url)
       }
       "foreign property model successfully created and user clicks continue button (agent)" in {
         disableAllSwitches()
@@ -293,7 +293,7 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
           ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("123").url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent().url)
       }
     }
     "redirect to custom error page" when {

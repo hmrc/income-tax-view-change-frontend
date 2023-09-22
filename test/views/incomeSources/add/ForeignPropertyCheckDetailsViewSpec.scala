@@ -43,7 +43,7 @@ class ForeignPropertyCheckDetailsViewSpec extends ViewSpec{
   val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url
   val agentBackUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
 
-  val foreignReportingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("123").url
+  val foreignReportingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show().url
 
   val changeDateLinkIndiv: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
   val changeAccMethodIndiv: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(ForeignProperty.key).url

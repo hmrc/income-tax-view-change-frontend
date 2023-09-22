@@ -50,8 +50,8 @@ class ForeignPropertyReportingMethodViewSpec extends TestSupport {
     val viewModelScenario1 = ForeignPropertyReportingMethodViewModel(Some("2022"), Some("A"), Some("2023"), Some("A"))
     val viewModelScenario2 = ForeignPropertyReportingMethodViewModel(None, None, Some("2023"))
 
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent("") else
-      controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit("")
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit()
 
 
     lazy val viewScenario1: HtmlFormat.Appendable = foreignPropertyReportingMethodView(form, viewModelScenario1, postAction, isAgent)

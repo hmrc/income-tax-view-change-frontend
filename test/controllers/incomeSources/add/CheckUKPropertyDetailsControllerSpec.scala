@@ -136,7 +136,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
             ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.show(incomeSourceId).url
+        redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.show().url
 
       }
     }
@@ -251,7 +251,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
             ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.showAgent(incomeSourceId).url
+        redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.showAgent().url
 
       }
     }
