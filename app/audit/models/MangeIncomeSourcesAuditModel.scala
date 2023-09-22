@@ -32,31 +32,36 @@ case class MangeIncomeSourcesAuditModel(
 
   override val auditType: String = enums.AuditType.MangeIncomeSourcesHome
 
-  override val detail: JsValue =
+  override val detail: JsValue = {
     Utilities.userAuditDetails(user) ++
       Json.obj(
         "soleTraderBusinesses" ->
           soleTraderBusinesses.map(business =>
-            (
+            Json.obj(
               "businessName" -> business.tradingName,
               "dateStarted" -> business.tradingStartDate
             )
           ),
         "ukProperty" ->
           ukProperty.map(property =>
-            "dateStarted" -> property.tradingStartDate
+            Json.obj(
+              "dateStarted" -> property.tradingStartDate
+            )
           ),
         "foreignProperty" ->
           foreignProperty.map(property =>
-            "dateStarted" -> property.tradingStartDate
+            Json.obj(
+              "dateStarted" -> property.tradingStartDate
+            )
           ),
         "ceasedBusinesses" ->
           ceasedBusinesses.map(business =>
-            (
+            Json.obj(
               "businessName" -> business.tradingName,
               "dateStarted" -> business.tradingStartDate,
               "dateEnded" -> business.cessationDate
             )
           )
       )
+  }
 }
