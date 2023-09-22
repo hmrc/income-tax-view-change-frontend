@@ -18,7 +18,7 @@ package testConstants.incomeSources
 
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
-import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants._
@@ -101,7 +101,7 @@ object IncomeSourceDetailsTestConstants {
     foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
     ceasedBusinesses = Nil)
 
-  val checkCeaseBusinessDetailsModel = CheckCeaseBusinessDetailsViewModel(
+  val checkCeaseBusinessDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
     address = Some(address),

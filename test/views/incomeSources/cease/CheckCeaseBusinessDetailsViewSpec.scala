@@ -18,7 +18,7 @@ package views.incomeSources.cease
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.SelfEmployment
-import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -61,7 +61,7 @@ class CheckCeaseBusinessDetailsViewSpec extends TestSupport with ViewSpec{
   )(FakeRequest().withSession(forms.utils.SessionKeys.ceaseBusinessEndDate -> businessEndDate)
    .withSession(forms.utils.SessionKeys.ceaseBusinessIncomeSourceId -> businessIncomeSourceId))
 
-  val ceaseBusinessDetailsViewModel = CheckCeaseBusinessDetailsViewModel(
+  val ceaseBusinessDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
     address = Some(address),

@@ -77,7 +77,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+        when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
           .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.show()(fakeRequestWithCeaseBusinessDetails(cessationDate, businessIncomeSourceId))
@@ -95,7 +95,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+        when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
           .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.show()(fakeRequestWithNinoAndOrigin("pta"))
@@ -148,7 +148,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+        when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
           .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient()
@@ -169,7 +169,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+        when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
           .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient())
@@ -185,7 +185,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         disable(IncomeSources)
         mockBusinessIncomeSource()
 
-        when(mockIncomeSourceDetailsService.getCheckCeaseBusinessDetailsViewModel(any(), any(), any()))
+        when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
           .thenReturn(Right(Some(checkCeaseBusinessDetailsModel)))
 
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient()
