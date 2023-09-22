@@ -46,7 +46,6 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
   val foreignPropertyStartDate: String = "1 January 2017"
   val ceasedBusinessMessage: String = messagesAPI("view-income-sources.ceased-businesses-h2")
   val ceasedBusinessName: String = "ceasedBusiness"
-  val testArn = "XAIT0000123456"
 
   s"calling GET ${showIndividualViewIncomeSourceControllerUrl}" should {
     "render the View Income Source page for an Individual" when {
@@ -114,7 +113,7 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
             ),
             btaNavPartial = None,
             saUtr = Some(testSaUtr),
-            credId = Some(credId),
+            credId = None,
             userType = Some(Agent),
             arn = Some("1")
           )(FakeRequest())
