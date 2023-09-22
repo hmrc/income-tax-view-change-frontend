@@ -32,7 +32,7 @@ case class MangeIncomeSourcesAuditModel(
 
   override val auditType: String = enums.AuditType.MangeIncomeSourcesHome
 
-  override val detail: JsValue = {
+  override val detail: JsValue =
     Utilities.userAuditDetails(user) ++
       Json.obj(
         "soleTraderBusinesses" ->
@@ -63,5 +63,4 @@ case class MangeIncomeSourcesAuditModel(
             )
           )
       )
-  }
 }
