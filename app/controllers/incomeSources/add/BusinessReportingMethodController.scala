@@ -69,59 +69,64 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     case _ => false
   }
 
-  private def getBusinessReportingMethodDetails(incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[BusinessReportingMethodViewModel]] = {
-    val latencyDetails: Option[LatencyDetails] = user.incomeSources.businesses.find(_.incomeSourceId.equals(incomeSourceId)).flatMap(_.latencyDetails)
-    latencyDetails match {
-      case Some(x) =>
-        val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-        x match {
-          case LatencyDetails(_, _, _, taxYear2, _) if taxYear2.toInt < currentTaxYearEnd => Future.successful(None)
-          case LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator) =>
-            calculationListService.isTaxYearCrystallised(taxYear1.toInt).flatMap {
-              case Some(true) =>
-                Future.successful(Some(BusinessReportingMethodViewModel(None, None, Some(taxYear2), Some(taxYear2LatencyIndicator))))
-              case _ =>
-                Future.successful(Some(BusinessReportingMethodViewModel(Some(taxYear1), Some(taxYear1LatencyIndicator), Some(taxYear2), Some(taxYear2LatencyIndicator))))
-            }
-        }
-      case None =>
-        Logger("application").info(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails]: Latency details not available")
-        Future.successful(None)
-    }
+  private def getBusinessReportingMethodDetails(incomeSource: Either[Throwable, Option[String]])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[BusinessReportingMethodViewModel]]] = {
+    incomeSource match {
+      case Right(Some(incomeSourceId)) =>
+        val latencyDetails = for {
+          latencyDetails <- user.incomeSources.businesses.find(_.incomeSourceId.equals(incomeSourceId)).flatMap(_.latencyDetails)
+        } yield latencyDetails
 
+        latencyDetails match {
+          case Some(x) =>
+            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
+            x match {
+              case LatencyDetails(_, _, _, taxYear2, _) if taxYear2.toInt < currentTaxYearEnd => Future.successful(Right(None))
+              case LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator) =>
+                calculationListService.isTaxYearCrystallised(taxYear1.toInt).flatMap {
+                  case Some(true) =>
+                    Future.successful(Right(Some(BusinessReportingMethodViewModel(None, None, Some(taxYear2), Some(taxYear2LatencyIndicator)))))
+                  case _ =>
+                    Future.successful(Right(Some(BusinessReportingMethodViewModel(Some(taxYear1), Some(taxYear1LatencyIndicator), Some(taxYear2), Some(taxYear2LatencyIndicator)))))
+                }
+            }
+          case None =>
+            Logger("application").info(s"[BusinessReportingMethodService][getBusinessReportingMethodDetails]: Latency details not available")
+            Future.successful(Right(None))
+        }
+    }
   }
 
   private def handleRequest(isAgent: Boolean)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    sessionService.get(SessionKeys.incomeSourceId).flatMap {
-      case Right(incomeSourceIdMayBe) =>
-        incomeSourceIdMayBe match {
-          case Some(incomeSourceId) =>
-            val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent() else
-              controllers.incomeSources.add.routes.BusinessReportingMethodController.submit()
-            val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent() else
-              controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent() else
+      controllers.incomeSources.add.routes.BusinessReportingMethodController.submit()
+    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent() else
+      controllers.incomeSources.add.routes.BusinessAddedObligationsController.show()
 
-            withIncomeSourcesFS {
-              itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-                case true =>
-                  getBusinessReportingMethodDetails(incomeSourceId).map {
-                    case Some(viewModel) =>
-                      Ok(view(
-                        addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
-                        businessReportingViewModel = viewModel,
-                        postAction = postAction,
-                        isAgent = isAgent)(user, messages))
-                    case None =>
-                      Redirect(redirectUrl)
-                  }
-                case false => Future.successful(Redirect(redirectUrl))
-              }
-            }
-          case None => Future.failed(MissingSessionKey(incomeSourceId))
+    withIncomeSourcesFS {
+      val viewModelFuture = for {
+        incomeSourceIdMayBe <- sessionService.get(SessionKeys.incomeSourceId)
+        viewModelRes <- getBusinessReportingMethodDetails(incomeSourceIdMayBe)
+      } yield viewModelRes
+
+      viewModelFuture.flatMap(res =>
+        res match {
+          case Right(Some(viewModel)) =>
+            Future.successful(Ok(view(
+              addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
+              businessReportingViewModel = viewModel,
+              postAction = postAction,
+              isAgent = isAgent)(user, messages)))
+          case Right(None) =>
+            Future.successful(Redirect(redirectUrl))
+          case Left(ex) =>
+            val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId" + ex
+            Logger("application").error(errorMessage)
+            val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+            Future.successful(errorHandler.showInternalServerError())
         }
-      case Left(exception) => Future.failed(exception)
+      )
     }.recover {
       case exception =>
         val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -132,13 +137,14 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
 
   private def handleSubmitRequest(isAgent: Boolean)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    sessionService.get(SessionKeys.incomeSourceId).flatMap {
+    val incomeSourceSession = sessionService.get(SessionKeys.incomeSourceId)
+    incomeSourceSession.flatMap {
       case Right(incomeSourceIdMayBe) =>
         incomeSourceIdMayBe match {
           case Some(incomeSourceId) =>
             withIncomeSourcesFS {
               AddBusinessReportingMethodForm.form.bindFromRequest().fold(
-                formWithErrors => handleFormErrors(formWithErrors, incomeSourceId, isAgent),
+                formWithErrors => handleFormErrors(formWithErrors, incomeSourceSession, isAgent),
                 valid => handleFormData(valid, incomeSourceId, isAgent))
             }
           case None => Future.failed(MissingSessionKey(incomeSourceId))
@@ -152,7 +158,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     }
   }
 
-  private def handleFormErrors(formWithErrors: Form[AddBusinessReportingMethodForm], id: String, isAgent: Boolean)
+  private def handleFormErrors(formWithErrors: Form[AddBusinessReportingMethodForm], incomeSource: Future[Either[Throwable, Option[String]]], isAgent: Boolean)
                               (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType = SelfEmployment.key) else
@@ -161,15 +167,34 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit()
 
     val updatedForm = AddBusinessReportingMethodForm.updateErrorMessagesWithValues(formWithErrors)
-    getBusinessReportingMethodDetails(id).map {
-      case Some(viewModel) =>
-        BadRequest(view(
-          addBusinessReportingMethodForm = updatedForm,
-          businessReportingViewModel = viewModel,
-          postAction = submitUrl,
-          isAgent = isAgent))
-      case None => Redirect(redirectErrorUrl)
-    }
+
+    val viewModelFuture = for {
+      incomeSourceMayBe <- incomeSource
+      viewModelRes <- getBusinessReportingMethodDetails(incomeSourceMayBe)
+    } yield viewModelRes
+
+    viewModelFuture.flatMap(res =>
+      res match {
+        case Right(Some(viewModel)) =>
+          Future.successful(BadRequest(view(
+            addBusinessReportingMethodForm = updatedForm,
+            businessReportingViewModel = viewModel,
+            postAction = submitUrl,
+            isAgent = isAgent)))
+        case Right(None) =>
+          Future.successful(Redirect(redirectErrorUrl))
+        case Left(ex) =>
+          val errorMessage = s"Unable to find incomeSource by id: $incomeSourceId" + ex
+          Logger("application").error(errorMessage)
+          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+          Future.successful(errorHandler.showInternalServerError())
+      }
+    )
+  }.recover {
+    case exception =>
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"[BusinessReportingMethodController][handleFormErrors] ${exception.getMessage}")
+      errorHandler.showInternalServerError()
   }
 
   private def handleFormData(form: AddBusinessReportingMethodForm, id: String, isAgent: Boolean)

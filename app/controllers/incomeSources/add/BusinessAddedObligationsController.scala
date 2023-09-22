@@ -56,20 +56,17 @@ class BusinessAddedObligationsController @Inject()(authenticate: AuthenticationP
 
   def getBusinessNameAndStartDate(incomeSource: Either[Throwable, Option[String]])(implicit user: MtdItUser[_]): Either[Throwable, (String, LocalDate)] = {
     incomeSource match {
-      case Right(Some(incomeSourceId)) =>
-        val addedBusinessDetails = for {
+      case Right(Some(incomeSourceId)) => {
+        for {
           addedBusiness <- user.incomeSources.businesses.find(_.incomeSourceId.equals(incomeSourceId))
           tradeName <- addedBusiness.tradingName
           tradeStartDate <- addedBusiness.tradingStartDate
-        } yield (tradeName, tradeStartDate)
-
-        val res = addedBusinessDetails match {
-          case Some(businessDetails) => Right((businessDetails._1, businessDetails._2))
-          case None => Left(throw new Exception(s"Failed to get addedBusinessDetails"))
-        }
-        res
-      case Right(None) => Left(throw new Exception(s"Failed to get IncomeSource from session"))
-      case Left(ex) => Left(ex)
+        } yield Right((tradeName, tradeStartDate))
+      }.getOrElse(Left(throw new Exception(s"Failed to get addedBusinessDetails: ${incomeSourceId}")))
+      case Right(None) =>
+        Left(new Error(s"Failed to extract incomeSource from session"))
+      case Left(ex) =>
+        Left(ex)
     }
   }
 
