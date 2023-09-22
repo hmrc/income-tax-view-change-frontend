@@ -37,7 +37,10 @@ case class MangeIncomeSourcesAuditModel(
       Json.obj(
         "soleTraderBusinesses" ->
           soleTraderBusinesses.map(business =>
-            ("businessName" -> business.tradingName, "dateStarted" -> business.tradingStartDate)
+            (
+              "businessName" -> business.tradingName,
+              "dateStarted" -> business.tradingStartDate
+            )
           ),
         "ukProperty" ->
           ukProperty.map(property =>
@@ -49,7 +52,11 @@ case class MangeIncomeSourcesAuditModel(
           ),
         "ceasedBusinesses" ->
           ceasedBusinesses.map(business =>
-            ("businessName" -> business.tradingName, "dateStarted" -> business.tradingStartDate, "dateEnded" -> business.cessationDate)
+            (
+              "businessName" -> business.tradingName,
+              "dateStarted" -> business.tradingStartDate,
+              "dateEnded" -> business.cessationDate
+            )
           )
       )
 }

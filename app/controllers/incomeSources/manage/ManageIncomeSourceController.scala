@@ -69,6 +69,16 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
+          println( "AAAAAAAAAA" +
+            auditingService.extendedAudit(
+              MangeIncomeSourcesAuditModel(
+                soleTraderBusinesses = viewModel.viewSoleTraderBusinesses,
+                ukProperty = viewModel.viewUkProperty,
+                foreignProperty = viewModel.viewForeignProperty,
+                ceasedBusinesses = viewModel.viewCeasedBusinesses
+              )
+            )
+          )
           auditingService.extendedAudit(
             MangeIncomeSourcesAuditModel(
               soleTraderBusinesses = viewModel.viewSoleTraderBusinesses,

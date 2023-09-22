@@ -353,9 +353,9 @@
 
 @manageIncomeSourceControllerURL = @{
     if(isAgent) {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
     } else {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url
     }
 }
 
