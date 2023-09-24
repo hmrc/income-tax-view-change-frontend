@@ -90,11 +90,10 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
     }
     "return the audit event" when {
       "User is authorised" in {
-
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeFrontend.getManageIncomeSource
+        verifyIncomeSourceDetailsCall(testMtditid)
 
         AuditStub.verifyAuditEvent(
           MangeIncomeSourcesAuditModel(
