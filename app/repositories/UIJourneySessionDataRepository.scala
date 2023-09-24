@@ -17,12 +17,13 @@
 package repositories
 
 import config.FrontendAppConfig
-import models.incomeSourceDetails.AddIncomeSourceSessionData
+import enums.IncomeSourceJourney.JourneyType
+import models.incomeSourceDetails.UIJourneySessionData
 import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
-import play.api.libs.json.{Format}
+import play.api.libs.json.Format
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -33,15 +34,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceSessionDataRepository @Inject()(
+class UIJourneySessionDataRepository @Inject()(
                                        mongoComponent: MongoComponent,
                                        appConfig: FrontendAppConfig,
                                        clock: Clock
                                      )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[AddIncomeSourceSessionData](
-    collectionName = "add-income-source-session-data",
+  extends PlayMongoRepository[UIJourneySessionData](
+    collectionName = "ui-journey-session-data",
     mongoComponent = mongoComponent,
-    domainFormat = AddIncomeSourceSessionData.format,
+    domainFormat = UIJourneySessionData.format,
     indexes = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),
@@ -54,12 +55,12 @@ class AddIncomeSourceSessionDataRepository @Inject()(
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
-  private def dataFilter(data: AddIncomeSourceSessionData): Bson = {
+  private def dataFilter(data: UIJourneySessionData): Bson = {
     import Filters._
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
   }
 
-  def keepAlive(data: AddIncomeSourceSessionData): Future[Boolean] =
+  def keepAlive(data: UIJourneySessionData): Future[Boolean] =
     collection
       .updateOne(
         filter = dataFilter(data),
@@ -68,17 +69,17 @@ class AddIncomeSourceSessionDataRepository @Inject()(
       .toFuture()
       .map(_ => true)
 
-  def get(sessionId: String, journeyType: String): Future[Option[AddIncomeSourceSessionData]] = {
-    val data = AddIncomeSourceSessionData(sessionId, journeyType)
+  def get(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
+    val data = UIJourneySessionData(sessionId, journeyType, None)
     keepAlive(data).flatMap {
       _ =>
         collection
           .find(dataFilter(data))
-          .headOption
+          .headOption()
     }
   }
 
-  def set(data: AddIncomeSourceSessionData): Future[Boolean] = {
+  def set(data: UIJourneySessionData): Future[Boolean] = {
 
     val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
 
@@ -92,14 +93,14 @@ class AddIncomeSourceSessionDataRepository @Inject()(
       .map(_ => true)
   }
 
-  def updateData(data: AddIncomeSourceSessionData, key: String, value: String): Future[UpdateResult] = {
+  def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
     collection.updateOne(
       filter = dataFilter(data),
       update = Document("$set" -> Document(key -> value))
     ).toFuture()
   }
 
-  def clear(data: AddIncomeSourceSessionData): Future[Boolean] =
+  def clear(data: UIJourneySessionData): Future[Boolean] =
     collection
       .deleteOne(dataFilter(data))
       .toFuture()
