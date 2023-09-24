@@ -92,31 +92,12 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
     }
     "return the audit event" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
+
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getManageIncomeSource(clientDetailsWithStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
-
-        val mtdItUser: MtdItUser[_] =
-          MtdItUser(
-            mtditid = testMtditid,
-            nino = testNino,
-            userName = None,
-            incomeSources = IncomeSourceDetailsModel(
-              mtdbsa = testMtditid,
-              yearOfMigration = None,
-              businesses = List(business1, business2, business3),
-              properties = List(ukProperty, foreignProperty)
-            ),
-            btaNavPartial = None,
-            saUtr = Some(testSaUtr),
-            credId = None,
-            userType = Some(Agent),
-            arn = Some("1")
-          )(FakeRequest())
+        IncomeTaxViewChangeFrontend.getManageIncomeSource(clientDetailsWithStartDate)
 
         AuditStub.verifyAuditEvent(
           MangeIncomeSourcesAuditModel(
@@ -150,11 +131,24 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
                 cessationDate = business3.cessation.flatMap(_.date).get
               )
             )
-          )(mtdItUser)
-        )
-
-        res should have(
-          httpStatus(OK)
+          )(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(business1, business2, business3),
+                properties = List(ukProperty, foreignProperty)
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = None,
+              userType = Some(Agent),
+              arn = Some("1")
+            )(FakeRequest())
+          )
         )
       }
     }

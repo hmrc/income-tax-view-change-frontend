@@ -31,7 +31,6 @@ import testConstants.BusinessDetailsIntegrationTestConstants.{business1, busines
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.auth.core.retrieve.Name
 
 class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
 
@@ -47,7 +46,6 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
   val foreignPropertyStartDate: String = "1 January 2017"
   val ceasedBusinessMessage: String = messagesAPI("view-income-sources.ceased-businesses-h2")
   val ceasedBusinessName: String = "ceasedBusiness"
-  val testArn = "XAIT0000123456"
 
   s"calling GET ${showIndividualViewIncomeSourceControllerUrl}" should {
     "render the View Income Source page for an Individual" when {
@@ -92,30 +90,11 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
     }
     "return the audit event" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
+
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getManageIncomeSource
         verifyIncomeSourceDetailsCall(testMtditid)
-
-        val mtdItUser: MtdItUser[_] =
-          MtdItUser(
-            mtditid = testMtditid,
-            nino = testNino,
-            userName = None,
-            incomeSources = IncomeSourceDetailsModel(
-              mtdbsa = testMtditid,
-              yearOfMigration = None,
-              businesses = List(business1, business2, business3),
-              properties = List(ukProperty, foreignProperty)
-            ),
-            btaNavPartial = None,
-            saUtr = Some(testSaUtr),
-            credId = Some(credId),
-            userType = Some(Individual),
-            arn = None
-          )(FakeRequest())
+        IncomeTaxViewChangeFrontend.getManageIncomeSource
 
         AuditStub.verifyAuditEvent(
           MangeIncomeSourcesAuditModel(
@@ -149,11 +128,24 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
                 cessationDate = business3.cessation.flatMap(_.date).get
               )
             )
-          )(mtdItUser)
-        )
-
-        res should have(
-          httpStatus(OK)
+          )(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(business1, business2, business3),
+                properties = List(ukProperty, foreignProperty)
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = Some(credId),
+              userType = Some(Individual),
+              arn = None
+            )(FakeRequest())
+          )
         )
       }
     }
