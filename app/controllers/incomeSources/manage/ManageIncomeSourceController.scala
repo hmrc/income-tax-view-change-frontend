@@ -16,8 +16,10 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
+import audit.models.MangeIncomeSourcesAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -39,9 +41,10 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val authorisedFunctions: AuthorisedFunctions,
                                              val retrieveNino: NinoPredicate,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                             val itvcErrorHandler: ItvcErrorHandler,
+                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                             auditingService: AuditingService,
                                              val retrieveBtaNavBar: NavBarPredicate)
                                             (implicit val ec: ExecutionContext,
                                              implicit val sessionService: SessionService,
@@ -49,45 +52,42 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.routes.HomeController.show().url
-      )
-  }
-
-  def showAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.routes.HomeController.showAgent.url
-            )
-        }
+  def show(isAgent: Boolean): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+    handleRequest(
+      sources = user.incomeSources,
+      isAgent = isAgent,
+      backUrl = {
+        if(isAgent) controllers.routes.HomeController.show()
+        else controllers.routes.HomeController.showAgent
+      }.url
+    )
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-    if (isDisabled(IncomeSources)) {
-      Future.successful(Redirect(controllers.routes.HomeController.show()))
-    } else {
+
+    withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
+          auditingService
+            .extendedAudit(
+              MangeIncomeSourcesAuditModel(
+                soleTraderBusinesses = viewModel.viewSoleTraderBusinesses,
+                ukProperty = viewModel.viewUkProperty,
+                foreignProperty = viewModel.viewForeignProperty,
+                ceasedBusinesses = viewModel.viewCeasedBusinesses
+              )
+          )
           withIncomeSourcesRemovedFromSession {
             Ok(manageIncomeSources(
-              viewModel,
-              isAgent,
-              backUrl
+              sources = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
             ))
           } recover {
             case ex: Exception =>
-              Logger("application").error(s"[ManageIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
+              Logger("application").error(
+                s"[ManageIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
               showInternalServerError(isAgent)
           }
         case Left(ex) =>
@@ -98,7 +98,19 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
     }
   }
 
-  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
+  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+    if (isAgent)
+      Authenticated.async {
+        implicit request =>
+          implicit user =>
+            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
+              authenticatedCodeBlock(mtdItUser)
+            }
+      }
+    else
+      (checkSessionTimeout andThen authenticate andThen retrieveNino
+        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        authenticatedCodeBlock(user)
+      }
   }
 }
