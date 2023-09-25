@@ -679,9 +679,9 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.C22216")
       document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.C22217")
       document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.C22218")
-      document.select(messageContentSelector).get(14).text shouldBe messages("taxCal_breakdown.message.C22220")
-      document.select(messageContentSelector).get(15).text shouldBe messages("taxCal_breakdown.message.C22223")
-      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.C22224")
+      document.select(messageContentSelector).get(14).text shouldBe messages("taxCal_breakdown.message.C22223")
+      document.select(messageContentSelector).get(15).text shouldBe messages("taxCal_breakdown.message.C22224")
+      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.C22220")
     }
 
     "provided with message C22201" in {
@@ -958,9 +958,9 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.agent.C22216")
       document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.agent.C22217")
       document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.agent.C22218")
-      document.select(messageContentSelector).get(14).text shouldBe messages("taxCal_breakdown.message.agent.C22220")
-      document.select(messageContentSelector).get(15).text shouldBe messages("taxCal_breakdown.message.agent.C22223")
-      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.agent.C22224")
+      document.select(messageContentSelector).get(14).text shouldBe messages("taxCal_breakdown.message.agent.C22223")
+      document.select(messageContentSelector).get(15).text shouldBe messages("taxCal_breakdown.message.agent.C22224")
+      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.agent.C22220")
     }
 
     "provided with message C22201" in {
