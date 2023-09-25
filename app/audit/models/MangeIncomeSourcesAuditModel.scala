@@ -21,11 +21,10 @@ import auth.MtdItUser
 import models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewPropertyDetailsViewModel}
 import play.api.libs.json.{JsValue, Json}
 
-case class MangeIncomeSourcesAuditModel(
-                                       soleTraderBusinesses: List[ViewBusinessDetailsViewModel],
-                                       ukProperty: Option[ViewPropertyDetailsViewModel],
-                                       foreignProperty: Option[ViewPropertyDetailsViewModel],
-                                       ceasedBusinesses: List[CeasedBusinessDetailsViewModel]
+case class MangeIncomeSourcesAuditModel(soleTraderBusinesses: List[ViewBusinessDetailsViewModel],
+                                        ukProperty: Option[ViewPropertyDetailsViewModel],
+                                        foreignProperty: Option[ViewPropertyDetailsViewModel],
+                                        ceasedBusinesses: List[CeasedBusinessDetailsViewModel]
                                        )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.ManageIncomeSourcesHome
