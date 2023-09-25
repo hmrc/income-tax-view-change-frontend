@@ -665,22 +665,23 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 17
-      document.select(messageContentSelector).get(0).text shouldBe messages("taxCal_breakdown.message.C22202")
-      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22203")
-      document.select(messageContentSelector).get(2).text shouldBe messages("taxCal_breakdown.message.C22206")
-      document.select(messageContentSelector).get(3).text shouldBe messages("taxCal_breakdown.message.C22207")
-      document.select(messageContentSelector).get(4).text shouldBe messages("taxCal_breakdown.message.C22210")
-      document.select(messageContentSelector).get(5).text shouldBe messages("taxCal_breakdown.message.C22211")
-      document.select(messageContentSelector).get(6).text shouldBe messages("taxCal_breakdown.message.C22212")
-      document.select(messageContentSelector).get(7).text shouldBe messages("taxCal_breakdown.message.C22213")
-      document.select(messageContentSelector).get(8).text shouldBe messages("taxCal_breakdown.message.C22214")
-      document.select(messageContentSelector).get(9).text shouldBe messages("taxCal_breakdown.message.C22215")
-      document.select(messageContentSelector).get(10).text shouldBe messages("taxCal_breakdown.message.C22216")
-      document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.C22217")
-      document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.C22218")
-      document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.C22220")
+      document.select(messageContentSelector).get(0).text shouldBe  messages("taxCal_breakdown.message.static1")
+      document.select(messageContentSelector).get(1).text shouldBe  messages("taxCal_breakdown.message.C22202")
+      document.select(messageContentSelector).get(2).text shouldBe  messages("taxCal_breakdown.message.C22203")
+      document.select(messageContentSelector).get(3).text shouldBe  messages("taxCal_breakdown.message.C22206")
+      document.select(messageContentSelector).get(4).text shouldBe  messages("taxCal_breakdown.message.C22207")
+      document.select(messageContentSelector).get(5).text shouldBe  messages("taxCal_breakdown.message.C22210")
+      document.select(messageContentSelector).get(6).text shouldBe  messages("taxCal_breakdown.message.C22211")
+      document.select(messageContentSelector).get(7).text shouldBe  messages("taxCal_breakdown.message.C22212")
+      document.select(messageContentSelector).get(8).text shouldBe  messages("taxCal_breakdown.message.C22213")
+      document.select(messageContentSelector).get(9).text shouldBe  messages("taxCal_breakdown.message.C22214")
+      document.select(messageContentSelector).get(10).text shouldBe messages("taxCal_breakdown.message.C22215")
+      document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.C22216")
+      document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.C22217")
+      document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.C22218")
       document.select(messageContentSelector).get(14).text shouldBe messages("taxCal_breakdown.message.C22223")
       document.select(messageContentSelector).get(15).text shouldBe messages("taxCal_breakdown.message.C22224")
+      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.C22220")
     }
 
     "provided with message C22201" in {
@@ -702,8 +703,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.C22201", "£5,000.98", "£15,000.00")
+      document.select(messageContentSelector).size shouldBe 2
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22201", "£5,000.98", "£15,000.00")
     }
 
     "A C22201 message" when {
@@ -760,8 +761,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.C22205", "£1,000.00")
+      document.select(messageContentSelector).size shouldBe 2
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22205", "£1,000.00")
     }
 
     "A C22205 message" when {
@@ -801,8 +802,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.C22208", "£5,000.99", "£15,000.00")
+      document.select(messageContentSelector).size shouldBe 2
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22208", "£5,000.99", "£15,000.00")
     }
 
     "A C22208 message" when {
@@ -867,8 +868,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.C22209", "£5,000.99", "£15,000.00")
+      document.select(messageContentSelector).size shouldBe 2
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22209", "£5,000.99", "£15,000.00")
     }
 
     "A C22209 message" when {
@@ -938,27 +939,28 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           Message("C22223", "message23"),
           Message("C22224", "message24"),
         ))))
-      ), taxYear2017, backUrl, true)
+      ), taxYear2017, backUrl, isAgent = true)
 
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 17
-      document.select(messageContentSelector).get(0).text shouldBe messages("taxCal_breakdown.message.agent.C22202")
-      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.agent.C22203")
-      document.select(messageContentSelector).get(2).text shouldBe messages("taxCal_breakdown.message.agent.C22206")
-      document.select(messageContentSelector).get(3).text shouldBe messages("taxCal_breakdown.message.agent.C22207")
-      document.select(messageContentSelector).get(4).text shouldBe messages("taxCal_breakdown.message.agent.C22210")
-      document.select(messageContentSelector).get(5).text shouldBe messages("taxCal_breakdown.message.agent.C22211")
-      document.select(messageContentSelector).get(6).text shouldBe messages("taxCal_breakdown.message.agent.C22212")
-      document.select(messageContentSelector).get(7).text shouldBe messages("taxCal_breakdown.message.agent.C22213")
-      document.select(messageContentSelector).get(8).text shouldBe messages("taxCal_breakdown.message.agent.C22214")
-      document.select(messageContentSelector).get(9).text shouldBe messages("taxCal_breakdown.message.agent.C22215")
-      document.select(messageContentSelector).get(10).text shouldBe messages("taxCal_breakdown.message.agent.C22216")
-      document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.agent.C22217")
-      document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.agent.C22218")
-      document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.agent.C22220")
+      document.select(messageContentSelector).get(0).text shouldBe  messages("taxCal_breakdown.message.agent.static1")
+      document.select(messageContentSelector).get(1).text shouldBe  messages("taxCal_breakdown.message.agent.C22202")
+      document.select(messageContentSelector).get(2).text shouldBe  messages("taxCal_breakdown.message.agent.C22203")
+      document.select(messageContentSelector).get(3).text shouldBe  messages("taxCal_breakdown.message.agent.C22206")
+      document.select(messageContentSelector).get(4).text shouldBe  messages("taxCal_breakdown.message.agent.C22207")
+      document.select(messageContentSelector).get(5).text shouldBe  messages("taxCal_breakdown.message.agent.C22210")
+      document.select(messageContentSelector).get(6).text shouldBe  messages("taxCal_breakdown.message.agent.C22211")
+      document.select(messageContentSelector).get(7).text shouldBe  messages("taxCal_breakdown.message.agent.C22212")
+      document.select(messageContentSelector).get(8).text shouldBe  messages("taxCal_breakdown.message.agent.C22213")
+      document.select(messageContentSelector).get(9).text shouldBe  messages("taxCal_breakdown.message.agent.C22214")
+      document.select(messageContentSelector).get(10).text shouldBe messages("taxCal_breakdown.message.agent.C22215")
+      document.select(messageContentSelector).get(11).text shouldBe messages("taxCal_breakdown.message.agent.C22216")
+      document.select(messageContentSelector).get(12).text shouldBe messages("taxCal_breakdown.message.agent.C22217")
+      document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.agent.C22218")
       document.select(messageContentSelector).get(14).text shouldBe messages("taxCal_breakdown.message.agent.C22223")
       document.select(messageContentSelector).get(15).text shouldBe messages("taxCal_breakdown.message.agent.C22224")
+      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.agent.C22220")
     }
 
     "provided with message C22201" in {
@@ -976,12 +978,12 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         messages = Some(Messages(info = Some(Seq(
           Message("C22201", "message")
         ))))
-      ), taxYear2017, backUrl, true)
+      ), taxYear2017, backUrl, isAgent = true)
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.agent.C22201", "£5,000.98", "£15,000.00")
+      document.select(messageContentSelector).size shouldBe 2
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.agent.C22201", "£5,000.98", "£15,000.00")
     }
 
     "A C22201 message" when {
@@ -1002,7 +1004,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
               messages = Some(Messages(info = Some(Seq(
                 Message("C22201", "message")
               ))))
-            ), taxYear2017, backUrl, true)
+            ), taxYear2017, backUrl, isAgent = true)
           }
 
           expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gross Gift Aid Payments"
@@ -1019,7 +1021,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
               messages = Some(Messages(info = Some(Seq(
                 Message("C22201", "message")
               ))))
-            ), taxYear2017, backUrl, true)
+            ), taxYear2017, backUrl, isAgent = true)
           }
 
           expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
@@ -1034,12 +1036,12 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         messages = Some(Messages(info = Some(Seq(
           Message("C22205", "message")
         ))))
-      ), taxYear2017, backUrl, true)
+      ), taxYear2017, backUrl, isAgent = true)
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.agent.C22205", "£1,000.00")
+      document.select(messageContentSelector).size shouldBe 2
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.agent.C22205", "£1,000.00")
     }
 
     "A C22205 message" when {
@@ -1052,7 +1054,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
               messages = Some(Messages(info = Some(Seq(
                 Message("C22205", "message")
               ))))
-            ), taxYear2017, backUrl, true)
+            ), taxYear2017, backUrl, isAgent = true)
           }
 
           expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Losses Applied To General Income"
@@ -1075,12 +1077,12 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         messages = Some(Messages(info = Some(Seq(
           Message("C22208", "message")
         ))))
-      ), taxYear2017, backUrl, true)
+      ), taxYear2017, backUrl, isAgent = true)
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.agent.C22208", "£5,000.99", "£15,000.00")
+      document.select(messageContentSelector).size shouldBe 2
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.agent.C22208", "£5,000.99", "£15,000.00")
     }
 
     "A C22208 message" when {
@@ -1101,7 +1103,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
               messages = Some(Messages(info = Some(Seq(
                 Message("C22208", "message")
               ))))
-            ), taxYear2017, backUrl, true)
+            ), taxYear2017, backUrl, isAgent = true)
           }
 
           expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gift Aid Tax"
@@ -1118,7 +1120,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
               messages = Some(Messages(info = Some(Seq(
                 Message("C22208", "message")
               ))))
-            ), taxYear2017, backUrl, true)
+            ), taxYear2017, backUrl, isAgent = true)
           }
 
           expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
@@ -1141,12 +1143,12 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         messages = Some(Messages(info = Some(Seq(
           Message("C22209", "message")
         ))))
-      ), taxYear2017, backUrl, true)
+      ), taxYear2017, backUrl, isAgent = true)
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 1
-      document.select(messageContentSelector).text shouldBe messages("taxCal_breakdown.message.agent.C22209", "£5,000.99", "£15,000.00")
+      document.select(messageContentSelector).size shouldBe 2
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.agent.C22209", "£5,000.99", "£15,000.00")
     }
 
     "A C22209 message" when {
@@ -1167,7 +1169,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
               messages = Some(Messages(info = Some(Seq(
                 Message("C22209", "message")
               ))))
-            ), taxYear2017, backUrl, true)
+            ), taxYear2017, backUrl, isAgent = true)
           }
 
           expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Gift Aid Tax"
@@ -1184,7 +1186,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
               messages = Some(Messages(info = Some(Seq(
                 Message("C22209", "message")
               ))))
-            ), taxYear2017, backUrl, true)
+            ), taxYear2017, backUrl, isAgent = true)
           }
 
           expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Modified Base Tax Band"
