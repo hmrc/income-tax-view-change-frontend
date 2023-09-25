@@ -20,6 +20,9 @@
 @import java.time.LocalDate
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import enums.IncomeSourceJourney._
+@import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
+
 
 
 @this(
@@ -33,10 +36,9 @@
 
 @(
     isAgent: Boolean,
-    incomeSourceType: IncomeSourceType,
     backUrl: String,
     changeUrl: String,
-    endDate: LocalDate
+    viewModel: CheckCeaseIncomeSourceDetailsViewModel
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @prefix = @{ "check-cease-foreign-property-details" }
@@ -46,17 +48,10 @@ messages(s"$prefix.$key", args: _*)
 }
 
 @postCall = @{
-    if(isAgent) controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submitAgent(endDate.toString)
-    else controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submit(endDate.toString)
+    if(isAgent) controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent()
+    else controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit()
 }
 
-@incomeSourceTypeText = @{
-    incomeSourceType match {
-    case _: SelfEmployment.type => messages("incomeSources.add.error.incomeSourceNotSaved.se")
-    case _: UkProperty.type => messages("incomeSources.add.error.incomeSourceNotSaved.uk")
-    case _: ForeignProperty.type => messages("incomeSources.add.error.incomeSourceNotSaved.fp")
-    }
-}
 
 @mainTemplate(
     pageTitle = getMessage("heading"),
@@ -76,7 +71,7 @@ messages(s"$prefix.$key", args: _*)
         classes = "govuk-!-margin-bottom-9",
         rows = Seq(SummaryListRow(
             key = Key(Text(getMessage("summary-list.key"))),
-            value = Value(Text(implicitDateFormatter.longDate(endDate).toLongDate)),
+            value = Value(Text("2022-10-10")),
             actions = Some(Actions(
                 items = Seq(ActionItem(
                     href = changeUrl,

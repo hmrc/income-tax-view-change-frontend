@@ -31,7 +31,7 @@ import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceS
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.CheckCeaseBusinessDetails
+import views.html.incomeSources.cease.{CeaseCheckIncomeSourceDetails}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
                                                         val retrieveBtaNavBar: NavBarPredicate,
                                                         val retrieveNino: NinoPredicate,
                                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                        val view: CheckCeaseBusinessDetails,
+                                                        val view: CeaseCheckIncomeSourceDetails,
                                                         val updateIncomeSourceservice: UpdateIncomeSourceService,
                                                         val sessionService: SessionService)
                                                        (implicit val appConfig: FrontendAppConfig,
@@ -54,7 +54,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, messages: Messages, request: Request[_]): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, request: Request[_]): Future[Result] = withIncomeSourcesFS {
 
     val sessionDataFuture = for {
       incomeSourceId <- sessionService.get(ceaseBusinessIncomeSourceId)
@@ -70,9 +70,10 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
         viewModel match {
           case Right(viewModel) =>
             Future.successful(Ok(view(
-              viewModel,
+              viewModel = viewModel,
               isAgent = isAgent,
-              origin = origin)(user, messages)))
+              changeUrl = ???,
+              backUrl = ???)))
           case Left(ex) =>
             Future.failed(ex)
         }
@@ -142,9 +143,22 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
               Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
             }
         }
-      case _ =>
-        val errorMessage = s" Could not get incomeSourceId or ceaseBusinessEndDate from session"
+      case (Left(ex), Right(_)) =>
+        val errorMessage = s" Could not get incomeSourceId from session. ${ex.getMessage}"
         Future.failed(new Exception(errorMessage))
+      case (Right(_), Left(ex)) =>
+        val errorMessage = s" Could not get ceaseBusinessEndDate from session. ${ex.getMessage}"
+        Future.failed(new Exception(errorMessage))
+      case (Right(None), Right(None)) =>
+        val errorMessage = s" Could not get incomeSourceId from session"
+        Future.failed(new Exception(errorMessage))
+      case (Right(None), Right(ex)) =>
+        val errorMessage = s" Could not get ceaseBusinessEndDate from session. ${ex}"
+        Future.failed(new Exception(errorMessage))
+      case (Right(ex), Right(None)) =>
+        val errorMessage = s" Could not get ceaseBusinessEndDate from session. ${ex}"
+        Future.failed(new Exception(errorMessage))
+
     }
   } recover {
     case ex: Exception =>
