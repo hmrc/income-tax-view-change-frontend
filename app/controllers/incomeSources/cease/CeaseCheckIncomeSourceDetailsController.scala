@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId}
+import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId, ceaseForeignPropertyEndDate, ceaseUKPropertyEndDate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -31,7 +31,7 @@ import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceS
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.{CeaseCheckIncomeSourceDetails}
+import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -58,7 +58,12 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
     val sessionDataFuture = for {
       incomeSourceId <- sessionService.get(ceaseBusinessIncomeSourceId)
-      cessationEndDate <- sessionService.get(ceaseBusinessEndDate)
+      cessationEndDate <- incomeSourceType match {
+        case SelfEmployment => sessionService.get(ceaseBusinessEndDate)
+        case UkProperty => sessionService.get(ceaseUKPropertyEndDate)
+        case ForeignProperty => sessionService.get(ceaseForeignPropertyEndDate)
+      }
+
     } yield (incomeSourceId, cessationEndDate)
 
     sessionDataFuture.flatMap {
@@ -72,15 +77,24 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
             Future.successful(Ok(view(
               viewModel = viewModel,
               isAgent = isAgent,
-              changeUrl = ???,
-              backUrl = ???)))
+              changeUrl = routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key).url,
+              backUrl = routes.CeaseIncomeSourceController.show().url)))
           case Left(ex) =>
             Future.failed(ex)
         }
-      case (Left(ex: Throwable), _) =>
+      case (Right(None), Right(None)) =>
+        val errorMessage = "Both incomeSourceId and cessationEndDate are missing from the session."
+        Future.failed(new Exception(errorMessage))
+      case (Right(None), Right(Some(_))) =>
+        val errorMessage = "incomeSourceId is missing from the session."
+        Future.failed(new Exception(errorMessage))
+      case (Right(Some(_)), Right(None)) =>
+        val errorMessage = s"CessationEndDate is missing from the session."
+        Future.failed(new Exception(errorMessage))
+      case (Left(ex), _) =>
         val errorMessage = s"Could not get incomeSourceId from session incomeSourceType = $incomeSourceType, ${ex.getMessage}"
         Future.failed(new Exception(errorMessage))
-      case (_, Left(ex: Throwable)) =>
+      case (_, Left(ex)) =>
         val errorMessage = s"Could not get cessation date from session incomeSourceType = $incomeSourceType, ${ex.getMessage}"
         Future.failed(new Exception(errorMessage))
     }
@@ -158,7 +172,9 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
       case (Right(ex), Right(None)) =>
         val errorMessage = s" Could not get ceaseBusinessEndDate from session. ${ex}"
         Future.failed(new Exception(errorMessage))
-
+      case (Left(_), Left(ex)) =>
+        val errorMessage = s"Both incomeSourceId and cessationEndDate are missing from the session. ${ex.getMessage}"
+        Future.failed(new Exception(errorMessage))
     }
   } recover {
     case ex: Exception =>
