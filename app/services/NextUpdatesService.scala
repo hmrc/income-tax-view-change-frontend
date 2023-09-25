@@ -100,7 +100,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
           ObligationsModel(obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty))
         case (error: NextUpdatesErrorModel, _) => error
         case (_, error: NextUpdatesErrorModel) => error
-        case (_,_) => NextUpdatesErrorModel(500, "[NextUpdatesService][getNextUpdates] Invalid response from connector")
+        case (_, _) => NextUpdatesErrorModel(500, "[NextUpdatesService][getNextUpdates] Invalid response from connector")
       }
     }
   }
@@ -111,7 +111,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
     getNextUpdates() map {
       case NextUpdatesErrorModel(code, message) =>
         Logger("application").error(
-          s"[BusinessAddedObligationsController][handleRequest] - Error: $message, code $code")
+          s"[IncomeSourceAddedController][handleRequest] - Error: $message, code $code")
         Seq.empty
       case NextUpdateModel(start, end, due, _, _, periodKey) =>
         Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))

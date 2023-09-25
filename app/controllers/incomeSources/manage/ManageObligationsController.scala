@@ -182,7 +182,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
-      s"${if (isAgent) "[Agent]"}[BusinessAddedObligationsController][handleRequest] - $message")
+      s"${if (isAgent) "[Agent]"}[ManageObligationsController][handleRequest] - $message")
     if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
     else Future.successful(itvcErrorHandler.showInternalServerError())
   }
