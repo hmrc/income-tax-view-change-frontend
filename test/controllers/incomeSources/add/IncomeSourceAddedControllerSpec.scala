@@ -100,13 +100,19 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
   def mockSelfEmployment(): Unit = {
     when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(),any())(any())).thenReturn(
-      Some(LocalDate.parse("2022-01-01"), Some("Business Name"))
+      Some((LocalDate.parse("2022-01-01"), Some("Business Name")))
     )
   }
 
   def mockProperty(): Unit = {
     when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), any())(any())).thenReturn(
-      Some(LocalDate.parse("2022-01-01"), None)
+      Some((LocalDate.parse("2022-01-01"), None))
+    )
+  }
+
+  def mockFailure(): Unit = {
+    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), any())(any())).thenReturn(
+      None
     )
   }
 
@@ -171,6 +177,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           Some(LocalDate.of(2022, 1, 1)),
           None
         )), List.empty)
+        mockSelfEmployment()
 
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
@@ -206,7 +213,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           Some(LocalDate.of(2022, 1, 1)),
           None
         )), List.empty)
-
+        mockSelfEmployment()
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
           DatesModel(day, day, day, "EOPS", isFinalDec = false)
@@ -244,7 +251,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
-
+        mockProperty()
         val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -256,6 +263,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
+        mockFailure()
 
         val result: Future[Result] = TestIncomeSourceAddedController.showAgent("", SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -272,6 +280,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           None, None, None
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
+        mockFailure()
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
@@ -287,7 +296,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           enable(IncomeSources)
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockUKPropertyIncomeSource()
-
+          mockProperty()
 
           when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 4, 6))
 
@@ -317,7 +326,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           enable(IncomeSources)
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockUKPropertyIncomeSource()
-
+          mockFailure()
           val result = TestIncomeSourceAddedController.show("", UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
@@ -329,7 +338,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           mockUKPropertyIncomeSource()
 
           when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 4, 6))
-
+          mockProperty()
           when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(
             Future(IncomeSourcesObligationsTestConstants.viewModel))
 
@@ -356,6 +365,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           enable(IncomeSources)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockUKPropertyIncomeSource()
+          mockFailure()
 
           val result = TestIncomeSourceAddedController.showAgent("", UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -369,7 +379,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           disableAllSwitches()
           enable(IncomeSources)
           mockForeignPropertyIncomeSource()
-
+          mockProperty()
           val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
             "123456",
             None,
@@ -408,7 +418,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           enable(IncomeSources)
           mockForeignPropertyIncomeSource()
-
+          mockProperty()
           val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
             "123",
             None,
