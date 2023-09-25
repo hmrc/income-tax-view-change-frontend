@@ -17,18 +17,14 @@
 package services
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{AddJourney, JourneyType}
-import models.incomeSourceDetails.UIJourneySessionData
-import play.api.Logger
-import play.api.libs.json.JsResult.Exception
+import enums.JourneyType.{Add, Cease, JourneyType, Manage}
+import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.Right
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.Exception
 
 @Singleton
 class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
@@ -47,60 +43,58 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
-  def createSession(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext) = {
+  def createSession(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     setMongoData(UIJourneySessionData(hc.sessionId.get.value, journeyType, None))
   }
 
-  def getMongoKey(key: String, journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
-    println(Console.RED + hc.sessionId.get.value + " journey type: " + journeyType + Console.WHITE)
+  private def getKeyFromObject(objectOpt: Option[Any], key: String): Option[String] = {
+    objectOpt.fold(Option(""))(
+      obj => {
+        val field = obj.getClass.getDeclaredField(key)
+        field.setAccessible(true)
+        val value: Option[String] = field.get(obj).asInstanceOf[Option[String]]
+        value
+      }
+    )
+  }
+
+  def getMongoKey(key: String, journeyType: JourneyType)
+                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
-        println(Console.RED + data + Console.WHITE)
-//        journeyType.journeyOperation match {
-//          case AddJourney => {
-//            data.addIncomeSourceData.fold(Right(Some("")))(
-//              addIncomeSourceData => {
-//                val field = addIncomeSourceData.getClass.getDeclaredField(key)
-//                field.setAccessible(true)
-//                val value = field.get(addIncomeSourceData).asInstanceOf[Option[String]]
-//                println(Console.RED + "got value: " + value + Console.WHITE)
-//                Right(value)
-//
-//              })
-//          }
-//          case _ => Right(Some("asdf"))
-//        }
-        if (journeyType.journeyOperation == AddJourney && data.addIncomeSourceData.isDefined) {
-          val field = data.addIncomeSourceData.get.getClass.getDeclaredField(key)
-          field.setAccessible(true)
-          val value = field.get(data.addIncomeSourceData.get).asInstanceOf[Option[String]]
-          println(Console.RED + "got value: " + value + Console.WHITE)
-          Right(value)
-        } else {
-          Right(Some(""))
+        journeyType.operation match {
+          case Add => Right(getKeyFromObject(data.addIncomeSourceData, key))
+          case Manage => Right(getKeyFromObject(data.manageIncomeSourceData, key))
+          case Cease => Right(getKeyFromObject(data.ceaseIncomeSourceData, key))
         }
-
       case None => Right(None)
     }
   }
 
-
-  def set(key: String, value: String, result: Result)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
+  def set(key: String, value: String, result: Result)
+         (implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
     Future {
       Right(result.addingToSession(key -> value))
     }
   }
 
-  def setMongoData(uiJourneySessionData: UIJourneySessionData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def setMongoData(uiJourneySessionData: UIJourneySessionData)
+                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
-  def setMongoKey(key: String, value: String, journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+  def setMongoKey(key: String, value: String, journeyType: JourneyType)
+                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None)
-    uiJourneySessionDataRepository.updateData(uiJourneySessionData, "addIncomeSourceData." + key, value).map(
-      result => {
-        println(Console.RED + result.wasAcknowledged() + Console.WHITE)
-        Right(result.wasAcknowledged())
+    val jsonAccessorPath = journeyType.operation match {
+      case Add => AddIncomeSourceData.getJSONKeyPath(key)
+      case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
+      case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
+    }
+    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
+      result => result.wasAcknowledged() match {
+        case true => Right(true)
+        case false => Left(new Error("Mongo Save data operation was not acknowledged"))
       }
     )
   }

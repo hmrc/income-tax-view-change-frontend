@@ -16,6 +16,8 @@
 
 package mocks.services
 
+import enums.JourneyType.JourneyType
+import models.incomeSourceDetails.UIJourneySessionData
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -64,4 +66,27 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       mockSessionService.set(ArgumentMatchers.eq(result), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Right(result.addingToSession(keyValue: _*))))
 
+  def setupMockCreateSession(result: Boolean): Unit =
+    when(
+      mockSessionService.createSession(ArgumentMatchers.anyString())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(result))
+
+//  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit = {
+//    when(
+//      mockSessionService.getMongo(ArgumentMatchers.anyString())(ArgumentMatchers.any(), ArgumentMatchers.any())
+//    ).thenReturn(Future.successful(result))
+//  }
+
+  def setupMockGetSessionKeyMongo(result: Either[Throwable, Option[String]]): Unit = {
+    when(
+      mockSessionService.getMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockSetSessionKeyMongo(result: Either[Throwable, Boolean]): Unit = {
+    when(
+      mockSessionService.setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
 }

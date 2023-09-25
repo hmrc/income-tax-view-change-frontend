@@ -16,7 +16,6 @@
 
 package models.incomeSourceDetails
 
-import enums.IncomeSourceJourney.JourneyType
 import play.api.libs.json._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -28,7 +27,7 @@ import java.time.Instant
 case class UIJourneySessionData(
                                  sessionId: String,
                                  journeyType: String,
-                                 addIncomeSourceData: Option[AddIncomeSourceData],
+                                 addIncomeSourceData: Option[AddIncomeSourceData] = None,
                                  manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                  ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                  lastUpdated: Instant = Instant.now
@@ -79,6 +78,8 @@ case class AddIncomeSourceData(
 
 object AddIncomeSourceData {
   val businessNameField = "businessName"
+  val businessTradeField = "businessTrade"
+  def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
   implicit val format: OFormat[AddIncomeSourceData] = Json.format[AddIncomeSourceData]
 }
 
@@ -87,6 +88,7 @@ case class ManageIncomeSourceData(
                                  )
 
 object ManageIncomeSourceData {
+  def getJSONKeyPath(name: String): String = s"manageIncomeSourceData.$name"
   implicit val format: OFormat[ManageIncomeSourceData] = Json.format[ManageIncomeSourceData]
 }
 
@@ -96,5 +98,6 @@ case class CeaseIncomeSourceData(
                                 )
 
 object CeaseIncomeSourceData {
+  def getJSONKeyPath(name: String): String = s"ceaseIncomeSourceData.$name"
   implicit val format: OFormat[CeaseIncomeSourceData] = Json.format[CeaseIncomeSourceData]
 }

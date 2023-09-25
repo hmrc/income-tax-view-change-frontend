@@ -17,7 +17,6 @@
 package repositories
 
 import config.FrontendAppConfig
-import enums.IncomeSourceJourney.JourneyType
 import models.incomeSourceDetails.UIJourneySessionData
 import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.bson.collection.mutable.Document
