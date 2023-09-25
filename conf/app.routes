@@ -364,8 +364,8 @@ GET         /income-sources/cease/error-business-not-ceased                     
 GET         /agents/income-sources/cease/error-business-not-ceased                          controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType = "SE")
 
 # Income Sources - Manage
-GET          /income-sources/manage/view-and-manage-income-sources                         controllers.incomeSources.manage.ManageIncomeSourceController.show()
-GET          /agents/income-sources/manage/view-and-manage-income-sources                  controllers.incomeSources.manage.ManageIncomeSourceController.showAgent()
+GET          /income-sources/manage/view-and-manage-income-sources                         controllers.incomeSources.manage.ManageIncomeSourceController.show(isAgent: Boolean = false)
+GET          /agents/income-sources/manage/view-and-manage-income-sources                  controllers.incomeSources.manage.ManageIncomeSourceController.show(isAgent: Boolean = true)
 
 GET          /income-sources/manage/confirm-you-want-to-report                             controllers.incomeSources.manage.ConfirmReportingMethodSharedController.show(id: Option[String], taxYear: String, changeTo: String, isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/income-sources/manage/confirm-you-want-to-report                      controllers.incomeSources.manage.ConfirmReportingMethodSharedController.show(id: Option[String], taxYear: String, changeTo: String, isAgent: Boolean = true,  incomeSourceType: IncomeSourceType = SelfEmployment)

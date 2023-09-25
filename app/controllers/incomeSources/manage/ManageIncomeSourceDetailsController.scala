@@ -63,7 +63,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         sources = user.incomeSources,
         isAgent = false,
         id = None,
-        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
         incomeSourceType = UkProperty
       )
   }
@@ -76,7 +76,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             handleRequest(
               sources = mtdItUser.incomeSources,
               isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
               None,
               incomeSourceType = UkProperty
             )
@@ -90,7 +90,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         sources = user.incomeSources,
         isAgent = false,
         id = None,
-        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
         incomeSourceType = ForeignProperty
       )
   }
@@ -103,7 +103,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             handleRequest(
               sources = mtdItUser.incomeSources,
               isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
               None,
               incomeSourceType = ForeignProperty
             )
@@ -116,7 +116,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
-        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
         id = Some(id),
         incomeSourceType = SelfEmployment
       )
@@ -130,7 +130,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             handleRequest(
               sources = mtdItUser.incomeSources,
               isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
               id = Some(id),
               incomeSourceType = SelfEmployment
             )
