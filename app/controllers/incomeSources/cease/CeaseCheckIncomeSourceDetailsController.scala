@@ -76,7 +76,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
             Future.successful(Ok(view(
               viewModel = viewModel,
               isAgent = isAgent,
-              changeUrl = routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key).url,
+              changeUrl = controllers.routes.HomeController.show().url,
               backUrl = routes.CeaseIncomeSourceController.show().url,
               messagesPrefix = messagesPrefix)))
           case Left(ex) =>
