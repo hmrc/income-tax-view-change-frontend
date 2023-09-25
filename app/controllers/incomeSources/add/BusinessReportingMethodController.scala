@@ -93,8 +93,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent(id) else
-      controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(id)
+    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, SelfEmployment) else
+      controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, SelfEmployment)
 
     withIncomeSourcesFS {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -150,7 +150,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
 
   private def handleFormData(form: AddBusinessReportingMethodForm, id: String, isAgent: Boolean)
                             (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val redirectUrl: Call = if (isAgent) routes.BusinessAddedObligationsController.showAgent(id) else routes.BusinessAddedObligationsController.show(id)
+    val redirectUrl: Call = if (isAgent) routes.IncomeSourceAddedController.showAgent(id, SelfEmployment) else routes.IncomeSourceAddedController.show(id, SelfEmployment)
     val reportingMethodNeedsUpdating = form.taxYear1ReportingMethod != form.newTaxYear1ReportingMethod ||
       form.taxYear2ReportingMethod != form.newTaxYear2ReportingMethod
 
@@ -178,9 +178,9 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
 
   private def updateReportingMethod(isAgent: Boolean, id: String, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
-    val redirectUrl: Call = if (isAgent) routes.BusinessAddedObligationsController.showAgent(id) else
-      routes.BusinessAddedObligationsController.show(id)
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = SelfEmployment.key) else
+    val redirectUrl: Call = if (isAgent) routes.IncomeSourceAddedController.showAgent(id, SelfEmployment) else
+      routes.IncomeSourceAddedController.show(id = id, incomeSourceType = SelfEmployment)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, SelfEmployment.key) else
       routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment.key)
 
     val futures = newReportingMethods.map(taxYearSpecific =>

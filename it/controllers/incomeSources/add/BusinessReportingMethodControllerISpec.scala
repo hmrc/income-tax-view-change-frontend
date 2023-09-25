@@ -17,6 +17,7 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -34,7 +35,7 @@ import java.time.Month.APRIL
 class BusinessReportingMethodControllerISpec extends ComponentSpecBase {
   val businessReportingMethodShowUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show(testSelfEmploymentId).url
   val businessReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(testSelfEmploymentId).url
-  val businessAddedShowUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(testSelfEmploymentId).url
+  val businessAddedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment).url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = (currentTaxYear + 1)

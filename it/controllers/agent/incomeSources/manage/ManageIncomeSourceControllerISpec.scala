@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources.manage
+package controllers.agent.incomeSources.manage
 
 import audit.models.MangeIncomeSourcesAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
-import helpers.ComponentSpecBase
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewPropertyDetailsViewModel}
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testSaUtr}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithStartDate, credId, testMtditid, testNino, testSaUtr}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
 
-  val showIndividualViewIncomeSourceControllerUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url
+  val showIndividualViewIncomeSourceControllerUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
   val pageTitleMsgKey = "view-income-sources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"
@@ -50,16 +50,17 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
   s"calling GET ${showIndividualViewIncomeSourceControllerUrl}" should {
     "render the View Income Source page for an Individual" when {
       "User is authorised" in {
+        stubAuthorisedAgentUser(authorised = true)
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
         When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getManageIncomeSource
+        val res = IncomeTaxViewChangeFrontend.getManageIncomeSource(clientDetailsWithStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKey),
+          pageTitleAgent(pageTitleMsgKey),
           elementTextByID("table-head-business-name")(businessNameMessage),
           elementTextByID("table-row-trading-name-0")(soleTraderBusinessName1),
           elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
@@ -71,15 +72,16 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
 
       "User is authorised with different data" in {
         Given("I wiremock stub a successful Income Source Details response with a foreign property and a ceased business")
+        stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
         When(s"I call GET ${showIndividualViewIncomeSourceControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getManageIncomeSource
+        val res = IncomeTaxViewChangeFrontend.getManageIncomeSource(clientDetailsWithStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
           httpStatus(OK),
-          pageTitleIndividual(pageTitleMsgKey),
+          pageTitleAgent(pageTitleMsgKey),
           elementTextByID("ceased-businesses-heading")(ceasedBusinessMessage),
           elementTextByID("ceased-businesses-table-head-date-ended")(ceasedDateMessage),
           elementTextByID("ceased-business-table-row-trading-name-0")(ceasedBusinessName),
@@ -90,9 +92,10 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
     }
     "return the audit event" when {
       "User is authorised" in {
+        stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        IncomeTaxViewChangeFrontend.getManageIncomeSource
+        IncomeTaxViewChangeFrontend.getManageIncomeSource(clientDetailsWithStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         AuditStub
@@ -141,9 +144,9 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
                 ),
                 btaNavPartial = None,
                 saUtr = Some(testSaUtr),
-                credId = Some(credId),
-                userType = Some(Individual),
-                arn = None
+                credId = None,
+                userType = Some(Agent),
+                arn = Some("1")
               )(
                 FakeRequest()
               )
