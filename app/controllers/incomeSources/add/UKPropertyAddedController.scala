@@ -54,7 +54,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def getBackUrl(incomeSourceId: String, isAgent: Boolean): String = {
+  def getBackUrl(isAgent: Boolean): String = {
     if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent().url else
       controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show().url
   }
@@ -90,7 +90,7 @@ class UKPropertyAddedController @Inject()(val authenticate: AuthenticationPredic
         incomeSourceIdMayBe match {
           case Some(incomeSourceId) =>
             withIncomeSourcesFS {
-              val backUrl = getBackUrl(incomeSourceId, isAgent)
+              val backUrl = getBackUrl(isAgent)
               val UKPropertyStartDate = getUKPropertyStartDate(incomeSourceId)
 
               UKPropertyStartDate match {

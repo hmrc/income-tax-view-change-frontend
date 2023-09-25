@@ -168,7 +168,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any)).thenReturn(Future.successful(Some(false)))
 
       case NON_ELIGIBLE_ITS_STATUS =>
-        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
+        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
         mockBusinessIncomeSourceWithLatency2023()
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))

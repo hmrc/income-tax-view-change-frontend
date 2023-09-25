@@ -68,13 +68,13 @@ class UKPropertyAddedControllerSpec extends TestSupport with MockAuthenticationP
   "UKPropertyAddedController.getBackUrl()" should {
     "return the correct back URL for individual user" in {
       val expectedBackUrl = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show().url
-      val backUrl = TestUKPropertyAddedController.getBackUrl(testSelfEmploymentId, isAgent = false)
+      val backUrl = TestUKPropertyAddedController.getBackUrl(isAgent = false)
 
       backUrl shouldBe expectedBackUrl
     }
     "return the correct back URL for agent user" in {
       val expectedBackUrl = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent().url
-      val backUrl = TestUKPropertyAddedController.getBackUrl(testSelfEmploymentId, isAgent = true)
+      val backUrl = TestUKPropertyAddedController.getBackUrl(isAgent = true)
 
       backUrl shouldBe expectedBackUrl
     }

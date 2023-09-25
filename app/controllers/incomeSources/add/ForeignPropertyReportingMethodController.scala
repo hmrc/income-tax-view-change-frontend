@@ -115,11 +115,11 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
-    sessionService.get(SessionKeys.incomeSourceId).flatMap {
-      case Right(incomeSourceIdMayBe) =>
-        incomeSourceIdMayBe match {
-          case Some(incomeSourceId) =>
-            withIncomeSourcesFS {
+    withIncomeSourcesFS {
+      sessionService.get(SessionKeys.incomeSourceId).flatMap {
+        case Right(incomeSourceIdMayBe) =>
+          incomeSourceIdMayBe match {
+            case Some(incomeSourceId) =>
               (for {
                 isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
                 latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
@@ -128,10 +128,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                 viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
               } yield {
                 (isMandatoryOrVoluntary, viewModel) match {
-                  case (_, Left(ex)) =>
-                    Logger("application")
-                      .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
-                    Future.successful(Redirect(redirectCall))
+                  case (_, Left(ex)) => Future.failed(ex)
                   case (true, Right(viewModel)) =>
                     Future.successful(Ok(foreignPropertyReportingMethodView(
                       form = AddForeignPropertyReportingMethodForm.form,
@@ -139,21 +136,18 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                       postAction = postAction,
                       isAgent = isAgent
                     )))
-                  case _ =>
-                    Logger("application")
-                      .error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error")
-                    Future(Ok(customNotFoundErrorView()))
+                  case _ => Future.failed(new Error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error"))
                 }
               }).flatten
-            }
-          case None => Future.failed(MissingSessionKey(incomeSourceId))
-        }
-      case Left(exception) => Future.failed(exception)
-    }.recover {
-      case ex: Exception =>
-        Logger("application").error(
-          s"[ForeignPropertyReportingMethodController][handleRequest]: ${ex.getMessage}")
-        InternalServerError(customNotFoundErrorView())
+            case None => Future.failed(MissingSessionKey(incomeSourceId))
+          }
+        case Left(exception) => Future.failed(exception)
+      }.recover {
+        case ex: Exception =>
+          Logger("application").error(
+            s"[ForeignPropertyReportingMethodController][handleRequest]: ${ex.getMessage}")
+          InternalServerError(customNotFoundErrorView())
+      }
     }
   }
 
