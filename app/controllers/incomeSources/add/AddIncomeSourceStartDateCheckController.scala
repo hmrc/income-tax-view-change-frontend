@@ -18,13 +18,12 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.{addBusinessAccountingPeriodEndDate, addBusinessAccountingPeriodStartDate, addUkPropertyStartDate, businessStartDate, foreignPropertyStartDate}
+import forms.utils.SessionKeys.{addBusinessAccountingPeriodEndDate, addBusinessAccountingPeriodStartDate}
 import implicits.ImplicitDateFormatter
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -163,10 +162,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
-  }
-
-  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 
   private def handleValidForm(backUrl: String,

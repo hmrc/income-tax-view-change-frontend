@@ -16,6 +16,7 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
 import config.featureswitch.FeatureSwitch.switches
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
@@ -62,6 +63,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
+      auditingService = app.injector.instanceOf[AuditingService]
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       sessionService = app.injector.instanceOf[SessionService],
@@ -77,7 +79,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestManageIncomeSourceController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestManageIncomeSourceController.show(false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -90,7 +92,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestManageIncomeSourceController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceController.show(true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
 
       }
@@ -110,7 +112,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
             viewForeignProperty = None,
             viewCeasedBusinesses = Nil)))
 
-        val result = TestManageIncomeSourceController.show()(fakeRequestWithActiveSession)
+        val result = TestManageIncomeSourceController.show(false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.OK
       }
     }
@@ -129,7 +131,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
             viewForeignProperty = None,
             viewCeasedBusinesses = Nil)))
 
-        val result = TestManageIncomeSourceController.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+        val result = TestManageIncomeSourceController.show(true)(fakeRequestConfirmedClient("AB123456C"))
         status(result) shouldBe Status.OK
       }
     }
@@ -144,7 +146,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
         when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
           .thenReturn(Left(MissingFieldException("Trading Name")))
 
-        val result: Future[Result] = TestManageIncomeSourceController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestManageIncomeSourceController.show(false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
@@ -157,7 +159,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
         when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
           .thenReturn(Left(MissingFieldException("Trading Name")))
 
-        val result: Future[Result] = TestManageIncomeSourceController.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+        val result: Future[Result] = TestManageIncomeSourceController.show(true)(fakeRequestConfirmedClient("AB123456C"))
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
