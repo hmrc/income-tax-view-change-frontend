@@ -95,56 +95,59 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeFrontend.getManageIncomeSource
         verifyIncomeSourceDetailsCall(testMtditid)
 
-        AuditStub.verifyAuditEvent(
-          MangeIncomeSourcesAuditModel(
-            soleTraderBusinesses = List(
-              ViewBusinessDetailsViewModel(
-                incomeSourceId = business1.incomeSourceId,
-                tradingName = business1.tradingName,
-                tradingStartDate = business1.tradingStartDate
+        AuditStub
+          .verifyAuditEvent(
+            MangeIncomeSourcesAuditModel(
+              soleTraderBusinesses = List(
+                ViewBusinessDetailsViewModel(
+                  incomeSourceId = business1.incomeSourceId,
+                  tradingName = business1.tradingName,
+                  tradingStartDate = business1.tradingStartDate
+                ),
+                ViewBusinessDetailsViewModel(
+                  incomeSourceId = business2.incomeSourceId,
+                  tradingName = business2.tradingName,
+                  tradingStartDate = business2.tradingStartDate
+                )
               ),
-              ViewBusinessDetailsViewModel(
-                incomeSourceId = business2.incomeSourceId,
-                tradingName = business2.tradingName,
-                tradingStartDate = business2.tradingStartDate
+              ukProperty = Some(
+                ViewPropertyDetailsViewModel(
+                  tradingStartDate = ukProperty.tradingStartDate
+                )
+              ),
+              foreignProperty = Some(
+                ViewPropertyDetailsViewModel(
+                  tradingStartDate = foreignProperty.tradingStartDate
+                )
+              ),
+              ceasedBusinesses = List(
+                CeasedBusinessDetailsViewModel(
+                  tradingName = business3.tradingName,
+                  incomeSourceType = SelfEmployment,
+                  tradingStartDate = business3.tradingStartDate,
+                  cessationDate = business3.cessation.flatMap(_.date).get
+                )
               )
-            ),
-            ukProperty = Some(
-              ViewPropertyDetailsViewModel(
-                tradingStartDate = ukProperty.tradingStartDate
-              )
-            ),
-            foreignProperty = Some(
-              ViewPropertyDetailsViewModel(
-                tradingStartDate = foreignProperty.tradingStartDate
-              )
-            ),
-            ceasedBusinesses = List(
-              CeasedBusinessDetailsViewModel(
-                tradingName = business3.tradingName,
-                incomeSourceType = SelfEmployment,
-                tradingStartDate = business3.tradingStartDate,
-                cessationDate = business3.cessation.flatMap(_.date).get
+            )(
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                userName = None,
+                incomeSources = IncomeSourceDetailsModel(
+                  mtdbsa = testMtditid,
+                  yearOfMigration = None,
+                  businesses = List(business1, business2, business3),
+                  properties = List(ukProperty, foreignProperty)
+                ),
+                btaNavPartial = None,
+                saUtr = Some(testSaUtr),
+                credId = Some(credId),
+                userType = Some(Individual),
+                arn = None
+              )(
+                FakeRequest()
               )
             )
-          )(
-            MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              userName = None,
-              incomeSources = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(business1, business2, business3),
-                properties = List(ukProperty, foreignProperty)
-              ),
-              btaNavPartial = None,
-              saUtr = Some(testSaUtr),
-              credId = Some(credId),
-              userType = Some(Individual),
-              arn = None
-            )(FakeRequest())
-          )
         )
       }
     }
