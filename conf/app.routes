@@ -349,12 +349,12 @@ GET          /agents/income-sources/cease/foreign-property-check-details  contro
 POST         /income-sources/cease/foreign-property-check-details/:cessationDate          controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.submit(cessationDate: String)
 POST         /agents/income-sources/cease/foreign-property-check-details/:cessationDate   controllers.incomeSources.cease.CheckCeaseForeignPropertyDetailsController.submitAgent(cessationDate: String)
 
-GET          /income-sources/cease/cease-business-success                                  controllers.incomeSources.cease.BusinessCeasedObligationsController.show()
-GET          /agents/income-sources/cease/cease-business-success                           controllers.incomeSources.cease.BusinessCeasedObligationsController.showAgent()
-GET          /income-sources/cease/cease-uk-property-success                               controllers.incomeSources.cease.UKPropertyCeasedObligationsController.show()
-GET          /agents/income-sources/cease/cease-uk-property-success                        controllers.incomeSources.cease.UKPropertyCeasedObligationsController.showAgent()
-GET          /income-sources/cease/cease-foreign-property-success                          controllers.incomeSources.cease.ForeignPropertyCeasedObligationsController.show()
-GET          /agents/income-sources/cease/cease-foreign-property-success                   controllers.incomeSources.cease.ForeignPropertyCeasedObligationsController.showAgent()
+GET          /income-sources/cease/cease-business-success                                  controllers.incomeSources.cease.IncomeSourceCeasedObligationsController.show(incomeSourceTypeKey: String = "SE")
+GET          /agents/income-sources/cease/cease-business-success                           controllers.incomeSources.cease.IncomeSourceCeasedObligationsController.showAgent(incomeSourceTypeKey: String = "SE")
+GET          /income-sources/cease/cease-uk-property-success                               controllers.incomeSources.cease.IncomeSourceCeasedObligationsController.show(incomeSourceTypeKey: String = "UK")
+GET          /agents/income-sources/cease/cease-uk-property-success                        controllers.incomeSources.cease.IncomeSourceCeasedObligationsController.showAgent(incomeSourceTypeKey: String = "UK")
+GET          /income-sources/cease/cease-foreign-property-success                          controllers.incomeSources.cease.IncomeSourceCeasedObligationsController.show(incomeSourceTypeKey: String = "FP")
+GET          /agents/income-sources/cease/cease-foreign-property-success                   controllers.incomeSources.cease.IncomeSourceCeasedObligationsController.showAgent(incomeSourceTypeKey: String = "FP")
 
 GET         /income-sources/cease/error-uk-property-not-ceased                              controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = false, incomeSourceType = "UK")
 GET         /agents/income-sources/cease/error-uk-property-not-ceased                       controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType = "UK")
