@@ -56,6 +56,9 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, request: Request[_]): Future[Result] = withIncomeSourcesFS {
 
+    val messagesPrefix = incomeSourceType.endDateMessagePrefix
+
+
     val sessionDataFuture = for {
       incomeSourceId <- sessionService.get(ceaseBusinessIncomeSourceId)
       cessationEndDate <- incomeSourceType match {
@@ -74,7 +77,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
               viewModel = viewModel,
               isAgent = isAgent,
               changeUrl = routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key).url,
-              backUrl = routes.CeaseIncomeSourceController.show().url)))
+              backUrl = routes.CeaseIncomeSourceController.show().url,
+              messagesPrefix = messagesPrefix)))
           case Left(ex) =>
             Future.failed(ex)
         }
@@ -85,7 +89,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
               viewModel = viewModel,
               isAgent = isAgent,
               changeUrl = routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key).url,
-              backUrl = routes.CeaseIncomeSourceController.show().url)))
+              backUrl = routes.CeaseIncomeSourceController.show().url,
+              messagesPrefix = messagesPrefix)))
           case Left(ex) =>
             Future.failed(ex)
         }

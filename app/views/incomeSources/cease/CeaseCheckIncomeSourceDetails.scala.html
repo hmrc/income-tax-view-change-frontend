@@ -38,13 +38,12 @@
     isAgent: Boolean,
     backUrl: String,
     changeUrl: String,
-    viewModel: CheckCeaseIncomeSourceDetailsViewModel
+    viewModel: CheckCeaseIncomeSourceDetailsViewModel,
+    messagesPrefix: String
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
-@prefix = @{ "check-cease-foreign-property-details" }
-
 @getMessage(key: String, args: String*) = @{
-messages(s"$prefix.$key", args: _*)
+messages(s"$messagesPrefix.$key", args: _*)
 }
 
 @postCall = @{
@@ -63,7 +62,7 @@ messages(s"$prefix.$key", args: _*)
     @hmrcPageHeading(PageHeading(
     text = getMessage("heading"),
     headingClasses = Some("govuk-heading-l"),
-    section = Some(getMessage("caption")),
+    section = Some(getMessage("heading")),
     captionClasses = Some("govuk-caption-l")
     ))
 
