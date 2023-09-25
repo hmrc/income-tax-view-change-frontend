@@ -62,20 +62,20 @@ messages(s"$messagesPrefix.$key", args: _*)
     @hmrcPageHeading(PageHeading(
     text = getMessage("heading"),
     headingClasses = Some("govuk-heading-l"),
-    section = Some(getMessage("heading")),
+    section = Some(getMessage("caption")),
     captionClasses = Some("govuk-caption-l")
     ))
 
     @govukSummaryList(SummaryList(
         classes = "govuk-!-margin-bottom-9",
         rows = Seq(SummaryListRow(
-            key = Key(Text(getMessage("summary-list.key"))),
+            key = Key(Text(getMessage("dateStopped"))),
             value = Value(Text("2022-10-10")),
             actions = Some(Actions(
                 items = Seq(ActionItem(
                     href = changeUrl,
                     classes = "govuk-link govuk-body",
-                    content = HtmlContent(getMessage("summary-list.link")),
+                    content = HtmlContent(getMessage("change")),
                     attributes = Map("id" -> "change-link")
                 ))
             ))
@@ -84,7 +84,7 @@ messages(s"$messagesPrefix.$key", args: _*)
 
     @formWithCSRF(postCall) {
         @govukButton(Button(
-            content = Text(getMessage("button")),
+            content = Text(getMessage("confirm")),
             attributes = Map("id" -> "continue-button")
         ))
     }

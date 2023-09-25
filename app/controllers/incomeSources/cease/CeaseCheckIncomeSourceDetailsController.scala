@@ -56,7 +56,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, request: Request[_]): Future[Result] = withIncomeSourcesFS {
 
-    val messagesPrefix = incomeSourceType.endDateMessagePrefix
+    val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
 
 
     val sessionDataFuture = for {
