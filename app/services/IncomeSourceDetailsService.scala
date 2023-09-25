@@ -197,7 +197,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     }.toEither
   }
 
-  def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String, businessEndDate: String, incomeSourceType: IncomeSourceType)
+  def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, businessEndDate: String, incomeSourceType: IncomeSourceType)
   : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
 
     val propertyBusiness = incomeSourceType match {

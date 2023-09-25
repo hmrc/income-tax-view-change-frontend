@@ -68,11 +68,18 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
     sessionDataFuture.flatMap {
       case (Right(Some(incomeSourceId)), Right(Some(cessationEndDate))) =>
-        val viewModel = incomeSourceType match {
-          case SelfEmployment => incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(sources, incomeSourceId, cessationEndDate)
-          case _ => incomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(sources, incomeSourceId, cessationEndDate, incomeSourceType)
+        incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(sources, incomeSourceId, cessationEndDate) match {
+          case Right(viewModel) =>
+            Future.successful(Ok(view(
+              viewModel = viewModel,
+              isAgent = isAgent,
+              changeUrl = routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key).url,
+              backUrl = routes.CeaseIncomeSourceController.show().url)))
+          case Left(ex) =>
+            Future.failed(ex)
         }
-        viewModel match {
+      case (Right(None), Right(Some(cessationEndDate))) =>
+        incomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(sources, cessationEndDate, incomeSourceType) match {
           case Right(viewModel) =>
             Future.successful(Ok(view(
               viewModel = viewModel,
@@ -84,9 +91,6 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
         }
       case (Right(None), Right(None)) =>
         val errorMessage = "Both incomeSourceId and cessationEndDate are missing from the session."
-        Future.failed(new Exception(errorMessage))
-      case (Right(None), Right(Some(_))) =>
-        val errorMessage = "incomeSourceId is missing from the session."
         Future.failed(new Exception(errorMessage))
       case (Right(Some(_)), Right(None)) =>
         val errorMessage = s"CessationEndDate is missing from the session."
