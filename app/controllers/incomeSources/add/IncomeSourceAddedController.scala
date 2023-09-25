@@ -22,6 +22,7 @@ import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import org.bouncycastle.crypto.engines.ISAACEngine
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -87,23 +88,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
        incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          incomeSourceType match {
-            case SelfEmployment =>
-              businessName match {
-                case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-                  Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
-                }
-                case None => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-                  Ok(obligationsView(sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
-                }
-              }
-            case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = UkProperty))
-            }
-            case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
-            }
-          }
+          handleSuccess(incomeSourceId, incomeSourceType, startDate, businessName, showPreviousTaxYears, backUrl, isAgent)
         case None => Logger("application").error(
           s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
           if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
@@ -115,6 +100,26 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
           s"Error getting IncomeSourceAdded page: ${ex.getMessage}, IncomeSourceType: $incomeSourceType")
         if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
         else itvcErrorHandler.showInternalServerError()
+    }
+  }
+
+  def handleSuccess(incomeSourceId: String, incomeSourceType: IncomeSourceType, startDate: LocalDate, businessName: Option[String], showPreviousTaxYears: Boolean, backUrl: String, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    incomeSourceType match {
+      case SelfEmployment =>
+        businessName match {
+          case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
+          }
+          case None => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+            Ok(obligationsView(sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
+          }
+        }
+      case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+        Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = UkProperty))
+      }
+      case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+        Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
+      }
     }
   }
 
