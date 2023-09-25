@@ -13,7 +13,7 @@ base.backToHome                                                 = Yn ôl i hafan
 base.continue                                                   = Yn eich blaen
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
-base.confirm-this-change                                         = Confirm this change
+base.confirm-this-change                                         = Cadarnhau’r newid hwn
 
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
