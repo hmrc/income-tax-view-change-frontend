@@ -98,6 +98,18 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     ))
   ))
 
+  def mockSelfEmployment(): Unit = {
+    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(),any())(any())).thenReturn(
+      Some(LocalDate.parse("2022-01-01"), Some("Business Name"))
+    )
+  }
+
+  def mockProperty(): Unit = {
+    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), any())(any())).thenReturn(
+      Some(LocalDate.parse("2022-01-01"), None)
+    )
+  }
+
 
   "IncomeSourceAddedController" should {
     "redirect a user back to the custom error page" when {
