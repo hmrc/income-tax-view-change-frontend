@@ -46,9 +46,53 @@
 messages(s"$messagesPrefix.$key", args: _*)
 }
 
-@postCall = @{
-    if(isAgent) controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent()
-    else controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit()
+@getBusinessChangeHref = @{
+    if(isAgent){
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(viewModel.incomeSourceId), SelfEmployment.key).url
+    } else {
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(viewModel.incomeSourceId), SelfEmployment.key).url
+    }
+}
+
+@getBusinessSubmitHref = @{
+    if(isAgent){
+    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent()
+    } else {
+    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit()
+    }
+}
+
+
+@getPropertyChangeHref = @{
+    if(viewModel.incomeSourceType.toString == "UkProperty") {
+        if(isAgent){
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty.key).url
+        } else {
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty.key).url
+        }
+    } else {
+        if(isAgent){
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty.key).url
+        } else {
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty.key).url
+        }
+    }
+}
+
+@getPropertySubmitHref = @{
+    if(viewModel.incomeSourceType.toString == "UkProperty") {
+        if(isAgent){
+            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent()
+        } else {
+            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit()
+        }
+    } else {
+        if(isAgent){
+            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent()
+        } else {
+            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit()
+        }
+    }
 }
 
 
@@ -66,16 +110,16 @@ messages(s"$messagesPrefix.$key", args: _*)
     captionClasses = Some("govuk-caption-l")
     ))
 
-    @if(viewModel.tradingName.isDefined) {
+    @if(viewModel.incomeSourceType.toString == "SelfEmployment") {
         @govukSummaryList(SummaryList(
             classes = "govuk-!-margin-bottom-9",
             rows = Seq(
                 SummaryListRow(
                     key = Key(Text(getMessage("dateStopped"))),
-                    value = Value(Text(viewModel.businessEndDate.toString)),
+                    value = Value(Text(viewModel.incomeSourceType.toString)),
                     actions = Some(Actions(
                         items = Seq(ActionItem(
-                            href = changeUrl,
+                            href = getBusinessChangeHref,
                             classes = "govuk-link govuk-body",
                             content = HtmlContent(getMessage("change")),
                             attributes = Map("id" -> "change-link")
@@ -84,30 +128,21 @@ messages(s"$messagesPrefix.$key", args: _*)
                 ),
                 SummaryListRow(
                     key = Key(Text(getMessage("businessName"))),
-                    value = Value(Text(viewModel.tradingName.getOrElse(""))),
-                    actions = Some(Actions(
-                        items = Seq(ActionItem(
-                            href = changeUrl,
-                            classes = "govuk-link govuk-body",
-                            content = HtmlContent(getMessage("change")),
-                            attributes = Map("id" -> "change-link")
-                        ))
-                    ))
+                    value = Value(Text(viewModel.tradingName.getOrElse("")))
                 ),
                 SummaryListRow(
                     key = Key(Text(getMessage("businessAddress"))),
                     value = Value(Text(viewModel.address.toString)),
-                    actions = Some(Actions(
-                        items = Seq(ActionItem(
-                            href = changeUrl,
-                            classes = "govuk-link govuk-body",
-                            content = HtmlContent(getMessage("change")),
-                            attributes = Map("id" -> "change-link")
-                            ))
-                        ))
-                    ))
                 ))
-        } else {
+            )
+        )
+        @formWithCSRF(getBusinessSubmitHref) {
+            @govukButton(Button(
+                content = Text(getMessage("confirm")),
+                attributes = Map("id" -> "continue-button")
+            ))
+        }
+    } else {
         @govukSummaryList(SummaryList(
             classes = "govuk-!-margin-bottom-9",
             rows = Seq(SummaryListRow(
@@ -115,7 +150,7 @@ messages(s"$messagesPrefix.$key", args: _*)
                 value = Value(Text("WHAT THE FRICK")),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
-                        href = changeUrl,
+                        href = getPropertyChangeHref,
                         classes = "govuk-link govuk-body",
                         content = HtmlContent(getMessage("change")),
                         attributes = Map("id" -> "change-link")
@@ -123,13 +158,12 @@ messages(s"$messagesPrefix.$key", args: _*)
                 ))
             ))
         ))
+        @formWithCSRF(getPropertySubmitHref) {
+            @govukButton(Button(
+                content = Text(getMessage("confirm")),
+                attributes = Map("id" -> "continue-button")
+            ))
+        }
     }
-    @formWithCSRF(postCall) {
-        @govukButton(Button(
-            content = Text(getMessage("confirm")),
-            attributes = Map("id" -> "continue-button")
-        ))
-    }
-
 
 }
