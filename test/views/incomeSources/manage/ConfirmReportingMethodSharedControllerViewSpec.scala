@@ -98,7 +98,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         taxYearStartYear = testTaxYearStartYear,
         taxYearEndYear = testTaxYearEndYear,
         newReportingMethod = testChangeToQuarterly,
-        isCurrentTaxYear = false
+        isCurrentTaxYear = true
       )
 
     lazy val document: Document = {
@@ -135,9 +135,14 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
     "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = false, error = true, incomeSourceType = UKProperty) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual")}"
+      }
+    "render the warning message when changing from quarterly -> annual in current tax year" in
       new Setup(isAgent = false, error = false, incomeSourceType = UKProperty) {
         document.getElementsByClass("govuk-warning-text").first().text() shouldBe
-          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.individual")}"
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual")}"
       }
   }
 
@@ -169,9 +174,14 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
     "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = false, error = true, incomeSourceType = ForeignProperty) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual")}"
+      }
+    "render the warning message when changing from quarterly -> annual in current tax year" in
       new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
         document.getElementsByClass("govuk-warning-text").first().text() shouldBe
-          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.individual")}"
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual")}"
       }
   }
 
@@ -203,9 +213,14 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
     "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = false, error = true, incomeSourceType = SoleTraderBusiness) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual")}"
+      }
+    "render the warning message when changing from quarterly -> annual in current tax year" in
       new Setup(isAgent = false, error = false, incomeSourceType = SoleTraderBusiness) {
         document.getElementsByClass("govuk-warning-text").first().text() shouldBe
-          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.individual")}"
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual")}"
       }
   }
 
@@ -237,9 +252,14 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
     "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = true, error = true, incomeSourceType = UKProperty) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent")}"
+      }
+    "render the warning message when changing from quarterly -> annual in current tax year" in
       new Setup(isAgent = true, error = false, incomeSourceType = UKProperty) {
         document.getElementsByClass("govuk-warning-text").first().text() shouldBe
-          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.agent")}"
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent")}"
       }
   }
 
@@ -270,10 +290,15 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
-    "render the warning message when changing from annual -> quarterly in current tax year" in
+    "render the warning message when changing from quarterly -> annual in current tax year" in
       new Setup(isAgent = true, error = false, incomeSourceType = SoleTraderBusiness) {
         document.getElementsByClass("govuk-warning-text").first().text() shouldBe
-          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.agent")}"
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent")}"
+      }
+    "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent")}"
       }
   }
 
@@ -304,10 +329,15 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     "render the error message" in new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
       document.getElementById("incomeSources.manage.propertyReportingMethod-error").text() shouldBe s"Error: ${messages(s"$formErrorMessage.quarterly")}"
     }
-    "render the warning message when changing from annual -> quarterly in current tax year" in
+    "render the warning message when changing from quarterly -> annual in current tax year" in
       new Setup(isAgent = true, error = false, incomeSourceType = SoleTraderBusiness) {
         document.getElementsByClass("govuk-warning-text").first().text() shouldBe
-          s"! ${messages("incomeSources.manage.propertyReportingMethod.warning.agent")}"
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent")}"
+      }
+    "render the warning message when changing from annual -> quarterly in current tax year" in
+      new Setup(isAgent = true, error = true, incomeSourceType = SoleTraderBusiness) {
+        document.getElementsByClass("govuk-warning-text").first().text() shouldBe
+          s"! ${messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent")}"
       }
   }
 

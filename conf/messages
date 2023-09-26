@@ -1532,8 +1532,10 @@ incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I wan
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.annual           = Select that you want to switch to annual reporting
-incomeSources.manage.propertyReportingMethod.warning.individual     = HMRC will remove any income updates you''ve already submitted for this tax year. You''ll need to include any previously submitted income in your annual tax return.
-incomeSources.manage.propertyReportingMethod.warning.agent          = HMRC will remove any income updates your client has already submitted for this tax year. You''ll need to include any previously submitted income in your client''s annual tax return.
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual         = HMRC will remove any income updates you''ve already submitted for this tax year. You''ll need to include any previously submitted income in your annual tax return.
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent              = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client''s annual tax return.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual      = HMRC will remove any income updates you''ve already submitted for this tax year. You''ll need to include any previously submitted income in your quarterly tax return.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent           = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client''s quarterly tax return.
 
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =

@@ -44,16 +44,28 @@
     messages(s"$prefix.$key", args: _*)
 }
 
-@warningMessage(isAgent: Boolean) = @{
+@changingToAnnualWarningMessage(isAgent: Boolean) = @{
     if(isAgent) {
-        messages("incomeSources.manage.propertyReportingMethod.warning.agent")
+        messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent")
     } else {
-        messages("incomeSources.manage.propertyReportingMethod.warning.individual")
+        messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual")
     }
 }
 
-@showWarningText = @{
+@changingToQuarterlyWarningMessage(isAgent: Boolean) = @{
+    if(isAgent) {
+        messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent")
+    } else {
+        messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual")
+    }
+}
+
+@showChangingToAnnualWarningText = @{
     newReportingMethod == "annual" && isCurrentTaxYear
+}
+
+@showChangingToQuarterlyWarningText = @{
+    newReportingMethod == "quarterly" && isCurrentTaxYear
 }
 
 @mainTemplate(pageTitle = getMessage(s"heading.$newReportingMethod"),
@@ -75,11 +87,16 @@
         @h1(getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
             "govuk-fieldset__legend--l govuk-!-margin-bottom-6")
 
-        @if(showWarningText) {
+        @if(showChangingToAnnualWarningText) {
             @govukWarningText(WarningText(
-                content = Text(warningMessage(isAgent))
+                content = Text(changingToAnnualWarningMessage(isAgent))
+            ))
+        } else if(showChangingToQuarterlyWarningText) {
+            @govukWarningText(WarningText(
+                content = Text(changingToQuarterlyWarningMessage(isAgent))
             ))
         }
+
 
         @govukCheckboxes(Checkboxes(
             name = prefix,
