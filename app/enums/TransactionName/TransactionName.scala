@@ -117,3 +117,7 @@ case object RefundToTaxPayer extends TransactionName {
 case object CreditsSummary extends TransactionName {
   val name = "credits-summary"
 }
+
+case object ManageIncomeSourceDetails extends TransactionName {
+  val name = "manage-your-details"
+}

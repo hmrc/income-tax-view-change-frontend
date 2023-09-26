@@ -41,6 +41,13 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  val singleBusinessResponseManageYourDetailsAudit: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testMtdItId,
+    businesses = List(businessForManageYourDetailsAudit),
+    properties = Nil,
+    yearOfMigration = Some("2018")
+  )
+
   val singleBusinessResponseWoMigration: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testMtdItId,
     businesses = List(business1),

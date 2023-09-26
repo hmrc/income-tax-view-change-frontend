@@ -24,8 +24,8 @@ import play.api.libs.json.{JsValue, Json}
 case class ManageYourDetailsResponseAuditModel(
                                                 viewModel: ManageIncomeSourceDetailsViewModel
                                               )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
-  override val transactionName: String = "hello123"
-  override val auditType: String = "hello456"
+  override val transactionName: String = enums.TransactionName.ManageIncomeSourceDetails
+  override val auditType: String = enums.AuditType.ManageIncomeSourceDetails
 
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++
