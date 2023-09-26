@@ -213,7 +213,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         val result: Future[Result] = TestForeignPropertyReportingMethodController.show(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyAddedController.show(TestForeignPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.show(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty).url)
 
       }
 
@@ -378,7 +378,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyAddedController.show(TestForeignPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.show(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty).url)
       }
     }
 
@@ -397,7 +397,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyAddedController.show(TestForeignPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.show(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty).url)
       }
     }
 
@@ -498,7 +498,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         val result: Future[Result] = TestForeignPropertyReportingMethodController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyAddedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty).url)
 
       }
 
@@ -656,7 +656,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyAddedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty).url)
       }
     }
 
@@ -675,7 +675,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyAddedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId).url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceAddedController.showAgent(TestForeignPropertyReportingMethodController.incomeSourceId, ForeignProperty).url)
       }
     }
 

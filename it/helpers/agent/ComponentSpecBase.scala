@@ -425,6 +425,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
       post("/income-sources/cease/uk-property-check-details", additionalCookies)(Map.empty)
 
+    def getManageIncomeSource(additionalCookies: Map[String, String]): WSResponse = get("/income-sources/manage/view-and-manage-income-sources", additionalCookies)
+
     def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => k -> Seq(v.getOrElse("")) }
       post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", additionalCookies = additionalCookies)(formData)

@@ -352,11 +352,7 @@
 }
 
 @manageIncomeSourceControllerURL = @{
-    if(isAgent) {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
-    } else {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
-    }
+    controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
 }
 
 @layout(

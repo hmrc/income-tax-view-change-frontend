@@ -17,6 +17,7 @@
 package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.ForeignProperty
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -26,7 +27,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.{singleForeignPropertyResponseInLatencyPeriod, foreignPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse, singleForeignPropertyResponseInLatencyPeriod}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -34,7 +35,7 @@ import java.time.Month.APRIL
 class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
   val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(testPropertyIncomeId).url
   val foreignPropertyReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent(testPropertyIncomeId).url
-  val foreignPropertyAddedShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(testPropertyIncomeId).url
+  val foreignPropertyAddedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testPropertyIncomeId, ForeignProperty).url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = (currentTaxYear + 1)

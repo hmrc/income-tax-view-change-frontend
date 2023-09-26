@@ -131,23 +131,21 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     incomeSourceType = ForeignProperty
   )
 
+  def backUrl(isAgent: Boolean): String =
+    controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
 
   class Setup(isAgent: Boolean, error: Boolean = false) {
-    val backUrl: String = if (isAgent) {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
-    } else {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
-    }
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
-      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(Some(id), taxYear, changeTo, incomeSourceType = SelfEmployment, isAgent = isAgent).url
+      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController
+        .show(Some(id), taxYear, changeTo, incomeSourceType = SelfEmployment, isAgent = isAgent).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
         viewModel,
         isAgent,
-        backUrl
+        backUrl(isAgent)
       )(messages, implicitly)
     }
 
@@ -156,21 +154,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   }
 
   class Setup2(isAgent: Boolean, error: Boolean = false) {
-    val backUrl: String = if (isAgent) {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
-    } else {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
-    }
-
-    def changeReportingMethodUrl2(id: String, taxYear: String, changeTo: String): String = {
-      controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(Some(id), taxYear, changeTo, isAgent, SelfEmployment).url
-    }
 
     lazy val view: HtmlFormat.Appendable = {
       manageIncomeSourceDetailsView(
         viewModel2,
         isAgent,
-        backUrl
+        backUrl(isAgent)
       )(messages, implicitly)
     }
 
@@ -179,11 +168,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   }
 
   class ukSetup(isAgent: Boolean, error: Boolean = false) {
-    val backUrl: String = if (isAgent) {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
-    } else {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
-    }
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, UkProperty).url
@@ -193,7 +177,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       manageIncomeSourceDetailsView(
         ukViewModel,
         isAgent,
-        backUrl
+        backUrl(isAgent)
       )(messages, implicitly)
     }
 
@@ -201,11 +185,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   }
 
   class ukSetupUnknowns(isAgent: Boolean, error: Boolean = false) {
-    val backUrl: String = if (isAgent) {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
-    } else {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
-    }
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, UkProperty).url
@@ -215,7 +194,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       manageIncomeSourceDetailsView(
         ukViewModelUnknowns,
         isAgent,
-        backUrl
+        backUrl(isAgent)
       )(messages, implicitly)
     }
 
@@ -223,11 +202,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   }
 
   class foreignSetup(isAgent: Boolean, error: Boolean = false) {
-    val backUrl: String = if (isAgent) {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
-    } else {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
-    }
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, ForeignProperty).url
@@ -237,7 +211,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       manageIncomeSourceDetailsView(
         foreignViewModel,
         isAgent,
-        backUrl
+        backUrl(isAgent)
       )(messages, implicitly)
     }
 
@@ -245,11 +219,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   }
 
   class foreignSetupUnknowns(isAgent: Boolean, error: Boolean = false) {
-    val backUrl: String = if (isAgent) {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url
-    } else {
-      controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url
-    }
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, changeTo, isAgent, ForeignProperty).url
@@ -259,7 +228,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       manageIncomeSourceDetailsView(
         foreignViewModelUnknowns,
         isAgent,
-        backUrl
+        backUrl(isAgent)
       )(messages, implicitly)
     }
 
@@ -272,7 +241,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the back correct back Url" in new Setup(false) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("back").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new Setup(false) {
 
@@ -315,7 +284,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the back correct back Url" in new Setup(true) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("back").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new Setup(true) {
 
@@ -346,7 +315,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the back correct back Url" in new ukSetup(false) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("back").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new ukSetup(false) {
 
@@ -380,7 +349,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the back correct back Url" in new ukSetup(true) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("back").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new ukSetup(true) {
 
@@ -415,7 +384,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the back correct back Url" in new foreignSetup(false) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("back").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new foreignSetup(false) {
 
@@ -449,7 +418,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the back correct back Url" in new foreignSetup(true) {
       document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl
+      document.getElementById("back").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new foreignSetup(true) {
 

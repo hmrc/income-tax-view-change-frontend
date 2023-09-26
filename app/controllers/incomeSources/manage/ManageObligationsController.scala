@@ -182,7 +182,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
-      s"${if (isAgent) "[Agent]"}[BusinessAddedObligationsController][handleRequest] - $message")
+      s"${if (isAgent) "[Agent]"}[ManageObligationsController][handleRequest] - $message")
     if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
     else Future.successful(itvcErrorHandler.showInternalServerError())
   }
@@ -223,7 +223,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show()))
+      Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false)))
   }
 
   def agentSubmit: Action[AnyContent] = Authenticated.async {
@@ -231,7 +231,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent()))
+            Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true)))
         }
   }
 }

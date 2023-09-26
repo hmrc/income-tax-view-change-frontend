@@ -82,10 +82,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     }
   }
 
-  private def getManageIncomeSourcesUrl(isAgent: Boolean): String = {
-    if (isAgent) routes.ManageIncomeSourceController.showAgent()
-    else routes.ManageIncomeSourceController.show()
-  }.url
+  private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
 
   private def getManageIncomeSourceDetailsUrl(incomeSourceId: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {

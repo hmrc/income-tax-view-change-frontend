@@ -63,13 +63,13 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
     val paragraphTextUkProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukProperty)
     val paragraphTextForeignProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignProperty)
 
-    val selfEmploymentAddedUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.show("").url
-    val ukPropertyAddedUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.show("").url
-    val foreignPropertyAddedUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show("").url
+    val selfEmploymentAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", SelfEmployment).url
+    val ukPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", UkProperty).url
+    val foreignPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", ForeignProperty).url
 
-    val selfEmploymentAddedAgentUrl: String = controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent("").url
-    val ukPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent("").url
-    val foreignPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent("").url
+    val selfEmploymentAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", SelfEmployment).url
+    val ukPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", UkProperty).url
+    val foreignPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", ForeignProperty).url
   }
 
   object TestIncomeSourceReportingMethodNotSavedController
