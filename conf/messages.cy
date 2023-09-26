@@ -497,7 +497,7 @@ taxCal_breakdown.table.taxDeductedAtSource.total					= Cyfanswm y dreth a ddidyn
 taxCal_breakdown.table.nic2.false                                   = Yswiriant Gwladol Dosbarth 2
 taxCal_breakdown.table.nic2.true                                    = Yswiriant Gwladol Dosbarth 2 Gwirfoddol
 taxCal_breakdown.national_insurance_contributions                   = Cyfraniadau Yswiriant Gwladol
-
+taxCal_breakdown.message.static1                                = Mae’r cyfrifiad hwn ond yn seiliedig ar yr wybodaeth y mae CThEF wedi’i chael am eich incwm a’ch treuliau hyd yma. Gallai hyn newid wrth i ni gael rhagor o wybodaeth amdanoch yn ystod y flwyddyn dreth.
 taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
 taxCal_breakdown.message.C22202                                 = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd arnoch, felly rydych yn agored i dalu treth Rhodd Cymorth.
 taxCal_breakdown.message.C22203                                 = Ni chodwyd Yswiriant Gwladol Dosbarth 2 oherwydd bod eich elw o hunangyflogaeth o dan y Trothwy Elw Bychan.
@@ -518,6 +518,7 @@ taxCal_breakdown.message.C22218                                 = Dim ond yn y c
 taxCal_breakdown.message.C22220                                 = Os yw’ch elw trethadwy rhwng £6,725 ac £11,908 ni fydd angen i chi dalu Yswiriant Gwladol Dosbarth 2. Bydd eich hawl i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff eich cyfraniadau eu trin fel rhai sydd wedi’u talu.
 taxCal_breakdown.message.C22223                                 = Nid yw Yswiriant Gwladol Dosbarth 2 yn berthnasol am eich bod o dan 16 oed.
 taxCal_breakdown.message.C22224                                 = Nid yw Yswiriant Gwladol Dosbarth 2 yn berthnasol am eich bod dros oedran Pensiwn y Wladwriaeth.
+taxCal_breakdown.message.agent.static1                          = Mae’r cyfrifiad hwn ond yn seiliedig ar yr wybodaeth y mae CThEF wedi’i chael am incwm a threuliau eich cleient hyd yma. Gallai hyn newid wrth i ni gael rhagor o wybodaeth am eich cleient yn ystod y flwyddyn dreth.
 taxCal_breakdown.message.agent.C22220                           = Os yw elw trethadwy eich cleient rhwng £6,725 ac £11,908, ni fydd angen i’ch cleient dalu Yswiriant Gwladol Dosbarth 2. Bydd hawl eich cleient i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff cyfraniadau eich cleient eu trin fel rhai sydd wedi’u talu.
 taxCal_breakdown.message.agent.C22201                           = Mae terfyn Cyfradd Sylfaenol eich cleient wedi’i gynyddu gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
 taxCal_breakdown.message.agent.C22202                           = Mae’r dreth sy’n ddyledus ar daliadau Rhodd Cymorth yn fwy na’r Dreth Incwm a godwyd ar eich cleient, felly mae’ch cleient yn agored i dalu treth ar y Rhodd Cymorth

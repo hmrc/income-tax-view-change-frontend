@@ -17,6 +17,7 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -34,7 +35,7 @@ import java.time.Month.APRIL
 class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
   val ukPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(testPropertyIncomeId).url
   val ukPropertyReportingMethodSubmitUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit(testPropertyIncomeId).url
-  val ukPropertyAddedShowUrl: String = controllers.incomeSources.add.routes.UKPropertyAddedController.show(testPropertyIncomeId).url
+  val ukPropertyAddedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testPropertyIncomeId, UkProperty).url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = (currentTaxYear + 1)

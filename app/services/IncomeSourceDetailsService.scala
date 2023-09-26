@@ -16,7 +16,7 @@
 
 package services
 
-import auth.MtdItUserWithNino
+import auth.{MtdItUser, MtdItUserWithNino}
 import connectors.IncomeTaxViewChangeConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.AddressModel
@@ -248,6 +248,34 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
       }
     }
     viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
+  }
+
+  def getIncomeSourceFromUser(incomeSourceType: IncomeSourceType, incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
+    incomeSourceType match {
+      case SelfEmployment =>
+        user.incomeSources.businesses
+          .find(_.incomeSourceId.equals(incomeSourceId))
+          .flatMap { addedBusiness =>
+            for {
+              businessName <- addedBusiness.tradingName
+              startDate <- addedBusiness.tradingStartDate
+            } yield (startDate, Some(businessName))
+          }
+      case UkProperty =>
+        for {
+          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
+            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isUkProperty
+          )
+          startDate <- newlyAddedProperty.tradingStartDate
+        } yield (startDate, None)
+      case ForeignProperty =>
+        for {
+          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
+            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isForeignProperty
+          )
+          startDate <- newlyAddedProperty.tradingStartDate
+        } yield (startDate, None)
+    }
   }
 }
 
