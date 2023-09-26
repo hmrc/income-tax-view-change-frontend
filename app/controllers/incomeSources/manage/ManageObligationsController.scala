@@ -162,7 +162,9 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                     auditingService.extendedAudit(ObligationsAuditModel(
                       incomeSourceType = mode,
                       obligations = viewModel,
-                      businessName = addedBusinessName
+                      businessName = addedBusinessName,
+                      changeTo,
+                      years
                     ))
                     if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
                     else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))

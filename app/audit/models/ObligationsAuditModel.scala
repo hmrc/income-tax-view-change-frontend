@@ -19,12 +19,15 @@ package audit.models
 import audit.Utilities
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, DatesModel, ObligationsViewModel, ViewBusinessDetailsViewModel, ViewPropertyDetailsViewModel}
 import play.api.libs.json.{JsValue, Json}
 
 case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
                                  obligations: ObligationsViewModel,
-                                 businessName: String
+                                 businessName: String,
+                                 reportingMethod: String,
+                                 taxYear: TaxYear
                                 )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.Obligations
@@ -38,6 +41,9 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
   }
 
   val name: String = if (businessName == "Not Found") "Sole trader business" else businessName
+
+
+  val repMethod: String = if (reportingMethod == "quarterly") "Quarterly" else "Annual"
 
   val quarterly: Seq[(Int, Seq[DatesModel])] = {
     ((if (obligations.quarterlyObligationsDatesYearOne.nonEmpty)
@@ -54,45 +60,49 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
   }
 
   override val detail: JsValue = {
-    Utilities.userAuditDetails(user) ++
-      Json.obj(
-        "journeyType" -> journey,
-        "incomeSourceInfo" ->
-          Json.obj(
-            "businessName" -> name,
-            "reportingMethod" -> "",
-            "taxYear" -> s"${obligations.currentTaxYear}-${obligations.currentTaxYear+1}"
-          ),
-        "quarterlyUpdates" ->
-          quarterly.map { value =>
+    val x = {
+      Utilities.userAuditDetails(user) ++
+        Json.obj(
+          "journeyType" -> journey,
+          "incomeSourceInfo" ->
             Json.obj(
-              "taxYear" -> s"${value._1}-${value._1+1}",
-              "quarter" -> value._2.map { entry =>
-                Json.obj(
-                  "startDate" -> entry.inboundCorrespondenceFrom,
-                  "endDate" -> entry.inboundCorrespondenceTo,
-                  "deadline" -> entry.inboundCorrespondenceDue
-                )
-              }
-            )
-          },
-        "EOPstatement" ->
-          obligations.eopsObligationsDates.map { eops =>
-            Json.obj(
-              "taxYearStartDate" -> eops.inboundCorrespondenceFrom,
-              "taxYearEndDate" ->  eops.inboundCorrespondenceDue,
-              "deadline" -> eops.inboundCorrespondenceDue
-            )
-          },
-        "finalDeclaration" ->
-          obligations.finalDeclarationDates.map { finalDec =>
-            Json.obj(
-              "taxYearStartDate" -> finalDec.inboundCorrespondenceFrom,
-              "taxYearEndDate" -> finalDec.inboundCorrespondenceDue,
-              "deadline" -> finalDec.inboundCorrespondenceDue
-            )
-          }
-      )
-    //reportingMethod
+              "businessName" -> name,
+              "reportingMethod" -> repMethod,
+              "taxYear" -> s"${taxYear.startYear}-${taxYear.endYear}"
+            ),
+          "quarterlyUpdates" ->
+            quarterly.map { value =>
+              Json.obj(
+                "taxYear" -> s"${value._1}-${value._1 + 1}",
+                "quarter" -> value._2.map { entry =>
+                  Json.obj(
+                    "startDate" -> entry.inboundCorrespondenceFrom,
+                    "endDate" -> entry.inboundCorrespondenceTo,
+                    "deadline" -> entry.inboundCorrespondenceDue
+                  )
+                }
+              )
+            },
+          "EOPstatement" ->
+            obligations.eopsObligationsDates.map { eops =>
+              Json.obj(
+                "taxYearStartDate" -> eops.inboundCorrespondenceFrom,
+                "taxYearEndDate" -> eops.inboundCorrespondenceDue,
+                "deadline" -> eops.inboundCorrespondenceDue
+              )
+            },
+          "finalDeclaration" ->
+            obligations.finalDeclarationDates.map { finalDec =>
+              Json.obj(
+                "taxYearStartDate" -> finalDec.inboundCorrespondenceFrom,
+                "taxYearEndDate" -> finalDec.inboundCorrespondenceDue,
+                "deadline" -> finalDec.inboundCorrespondenceDue
+              )
+            }
+        )
+      //reportingMethod
+    }
+    println("AAAAAAAAAA" + x)
+    x
   }
 }
