@@ -64,7 +64,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
-  val continueButtonText: String = messagesAPI("base.confirm-and-continue")
+  val continueButtonText: String = messagesAPI("base.confirm-this-change")
 
   val pageTitle = messagesAPI(s"$prefix.heading.annual")
 
@@ -90,7 +90,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitle),
-          elementTextByID("confirm-and-continue-button")(continueButtonText)
+          elementTextByID("confirm-button")(continueButtonText)
         )
       }
     }
@@ -117,7 +117,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitle),
-          elementTextByID("confirm-and-continue-button")(continueButtonText)
+          elementTextByID("confirm-button")(continueButtonText)
         )
       }
     }
@@ -142,7 +142,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitle),
-          elementTextByID("confirm-and-continue-button")(continueButtonText)
+          elementTextByID("confirm-button")(continueButtonText)
         )
       }
     }
