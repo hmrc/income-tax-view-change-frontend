@@ -15,6 +15,7 @@
  */
 
 package audit.models
+
 import audit.Utilities
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -36,29 +37,35 @@ case class ManageYourDetailsResponseAuditModel(
             case UkProperty => "UKPROPERTY"
             case ForeignProperty => "FOREIGNPROPERTY"
           }),
-        "businessName" -> viewModel.tradingName.get,
-        "businessAddressLine1" -> viewModel.address.get.addressLine1,
-        "businessAddressLine2" -> viewModel.address.get.addressLine2.get,
-        "businessAddressLine3" -> viewModel.address.get.addressLine3.get,
-        "businessAddressTownOrCity" -> viewModel.address.get.addressLine4.get,
-        "businessAddressPostcode" -> viewModel.address.get.postCode.get,
-        "businessAddressCountry" -> viewModel.address.get.countryCode,
-        "dateStarted" -> viewModel.tradingStartDate.get.toString,
+        "businessName" -> (viewModel.tradingName match {
+          case Some(name) => s"$name"
+          case None => None
+        }),
+        "businessAddressLine1" -> viewModel.address.map(address => address.addressLine1),
+        "businessAddressLine2" -> viewModel.address.flatMap(address => address.addressLine2),
+        "businessAddressLine3" -> viewModel.address.flatMap(address => address.addressLine3),
+        "businessAddressTownOrCity" -> viewModel.address.flatMap(address => address.addressLine4),
+        "businessAddressPostcode" -> viewModel.address.flatMap(address => address.postCode),
+        "businessAddressCountry" -> viewModel.address.map(address => address.countryCode),
+        "dateStarted" -> viewModel.tradingStartDate,
         "accountingMethod" ->
-          (if (viewModel.businessAccountingMethod.get) {
-            "Traditional accounting"
-          } else {
-            "Cash basis accounting"
+          (viewModel.businessAccountingMethod match {
+            case Some(value) => if (value) {
+              "Traditional accounting"
+            } else {
+              "Cash basis accounting"
+            }
+            case None => None
           }),
         "incomeReportingMethodYear1" -> viewModel.latencyDetails.map(reportingMethod =>
-        Json.obj(
-          "reportingMethod" ->
-            (reportingMethod.latencyIndicator1 match {
-              case "A" => "Annually"
-              case "Q" => "Quarterly"
-            }),
-          "taxYear" -> s"${reportingMethod.taxYear1}-${(reportingMethod.taxYear1.toInt + 1).toString}"
-        )),
+          Json.obj(
+            "reportingMethod" ->
+              (reportingMethod.latencyIndicator1 match {
+                case "A" => "Annually"
+                case "Q" => "Quarterly"
+              }),
+            "taxYear" -> s"${reportingMethod.taxYear1}-${(reportingMethod.taxYear1.toInt + 1).toString}"
+          )),
         "incomeReportingMethodYear2" -> viewModel.latencyDetails.map(reportingMethod =>
           Json.obj(
             "reportingMethod" ->
