@@ -29,7 +29,7 @@ import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.data.Form
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
+import services.{DateService, IncomeSourceDetailsService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -47,7 +47,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                        val confirmReportingMethod: ConfirmReportingMethod,
                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                       val retrieveBtaNavBar: NavBarPredicate)
+                                                       val retrieveBtaNavBar: NavBarPredicate,
+                                                       val dateService: DateService)
                                                       (implicit val ec: ExecutionContext,
                                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -85,21 +86,23 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
     val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearStartYearEndYear(taxYear)
     val maybeIncomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId)
-
     withIncomeSourcesFS {
       Future.successful(
         (maybeTaxYearModel, newReportingMethod, maybeIncomeSourceId) match {
           case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
             val (backCall, postAction, _, _) = getRedirectCalls(taxYear, isAgent, changeTo, id, incomeSourceType)
+            val isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+
             Ok(
               confirmReportingMethod(
-                isAgent = isAgent,
+                form = ConfirmReportingMethodForm.form,
                 backUrl = backCall.url,
                 postAction = postAction,
-                reportingMethod = reportingMethod,
-                form = ConfirmReportingMethodForm.form,
+                isAgent = isAgent,
+                taxYearStartYear = taxYearModel.startYear.toString,
                 taxYearEndYear = taxYearModel.endYear.toString,
-                taxYearStartYear = taxYearModel.startYear.toString
+                newReportingMethod = reportingMethod,
+                isCurrentTaxYear = isCurrentTaxYear
               )
             )
           case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
@@ -162,6 +165,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                    reportingMethod: String,
                                    formWithErrors: Form[ConfirmReportingMethodForm]
                                   )(implicit user: MtdItUser[_]): Future[Result] = {
+
+    val isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYears.endYear)
     Future.successful(
       BadRequest(
         confirmReportingMethod(
@@ -169,9 +174,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           form = formWithErrors,
           backUrl = backCall.url,
           postAction = postAction,
-          reportingMethod = reportingMethod,
+          newReportingMethod = reportingMethod,
           taxYearEndYear = taxYears.endYear.toString,
-          taxYearStartYear = taxYears.startYear.toString
+          taxYearStartYear = taxYears.startYear.toString,
+          isCurrentTaxYear = isCurrentTaxYear
         )
       )
     )
@@ -218,7 +224,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       .submit(incomeSourceId, taxYear, changeTo, isAgent, incomeSourceType)
 
     val errorCall: Call = routes.ReportingMethodChangeErrorController
-      .show(id = if(incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None, isAgent, incomeSourceType)
+      .show(id = if (incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None, isAgent, incomeSourceType)
 
     val (backCall, successCall) = (isAgent, incomeSourceType) match {
       case (false, SelfEmployment) =>
