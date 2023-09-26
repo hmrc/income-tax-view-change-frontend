@@ -110,8 +110,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
   } recover {
     case ex: Exception =>
-      Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleRequest]${if (isAgent) "[Agent] "}" +
-        s"Error getting CheckCeaseBusinessDetails page: ${ex.getMessage}")
+      Logger("application").error(s"[CeaseCheckIncomeSourceDetailsController][handleRequest]${if (isAgent) "[Agent] "}" +
+        s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage}")
       Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
   }
 

@@ -66,23 +66,64 @@ messages(s"$messagesPrefix.$key", args: _*)
     captionClasses = Some("govuk-caption-l")
     ))
 
-    @govukSummaryList(SummaryList(
-        classes = "govuk-!-margin-bottom-9",
-        rows = Seq(
-            SummaryListRow(
-            key = Key(Text(getMessage("dateStopped"))),
-            value = Value(Text("2022-10-10")),
-            actions = Some(Actions(
-                items = Seq(ActionItem(
-                    href = changeUrl,
-                    classes = "govuk-link govuk-body",
-                    content = HtmlContent(getMessage("change")),
-                    attributes = Map("id" -> "change-link")
+    @if(viewModel.tradingName.isDefined) {
+        @govukSummaryList(SummaryList(
+            classes = "govuk-!-margin-bottom-9",
+            rows = Seq(
+                SummaryListRow(
+                    key = Key(Text(getMessage("dateStopped"))),
+                    value = Value(Text(viewModel.businessEndDate.toString)),
+                    actions = Some(Actions(
+                        items = Seq(ActionItem(
+                            href = changeUrl,
+                            classes = "govuk-link govuk-body",
+                            content = HtmlContent(getMessage("change")),
+                            attributes = Map("id" -> "change-link")
+                        ))
+                    ))
+                ),
+                SummaryListRow(
+                    key = Key(Text(getMessage("businessName"))),
+                    value = Value(Text(viewModel.tradingName.getOrElse(""))),
+                    actions = Some(Actions(
+                        items = Seq(ActionItem(
+                            href = changeUrl,
+                            classes = "govuk-link govuk-body",
+                            content = HtmlContent(getMessage("change")),
+                            attributes = Map("id" -> "change-link")
+                        ))
+                    ))
+                ),
+                SummaryListRow(
+                    key = Key(Text(getMessage("businessAddress"))),
+                    value = Value(Text(viewModel.address.toString)),
+                    actions = Some(Actions(
+                        items = Seq(ActionItem(
+                            href = changeUrl,
+                            classes = "govuk-link govuk-body",
+                            content = HtmlContent(getMessage("change")),
+                            attributes = Map("id" -> "change-link")
+                            ))
+                        ))
+                    ))
+                ))
+        } else {
+        @govukSummaryList(SummaryList(
+            classes = "govuk-!-margin-bottom-9",
+            rows = Seq(SummaryListRow(
+                key = Key(Text(getMessage("dateStopped"))),
+                value = Value(Text("WHAT THE FRICK")),
+                actions = Some(Actions(
+                    items = Seq(ActionItem(
+                        href = changeUrl,
+                        classes = "govuk-link govuk-body",
+                        content = HtmlContent(getMessage("change")),
+                        attributes = Map("id" -> "change-link")
+                    ))
                 ))
             ))
         ))
-    ))
-
+    }
     @formWithCSRF(postCall) {
         @govukButton(Button(
             content = Text(getMessage("confirm")),
