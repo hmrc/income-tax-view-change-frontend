@@ -18,7 +18,10 @@ package models.incomeSourceDetails
 
 import scala.util.Try
 
-case class TaxYear(startYear: Int, endYear: Int)
+case class TaxYear(startYear: Int, endYear: Int) {
+
+  override def toString: String = s"$startYear-$endYear"
+}
 
 object TaxYear {
 
