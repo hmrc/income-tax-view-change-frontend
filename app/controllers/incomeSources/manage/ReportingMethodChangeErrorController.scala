@@ -68,7 +68,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
       Future.successful(
         user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
           case Some(id) =>
-            auditingService.extendedAudit(ChangeReportingMethodNotSavedErrorAuditModel())
+            auditingService.extendedAudit(ChangeReportingMethodNotSavedErrorAuditModel(incomeSourceType))
             Ok(
               reportingMethodChangeError(
                 isAgent = isAgent,

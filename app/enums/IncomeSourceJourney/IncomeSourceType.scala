@@ -61,10 +61,6 @@ case object ForeignProperty extends IncomeSourceType {
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
 }
 
-case object JourneyTypes {
-  val name: String = "SE | UKPROPERTY | FOREIGNPROPERTY"
-}
-
 object IncomeSourceType {
   def apply(key: String): Either[Exception, IncomeSourceType] = {
     key match {

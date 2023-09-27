@@ -111,7 +111,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleAgent(pageTitle)
         )
 
-        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel()(
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(UkProperty)(
           MtdItUser(
             mtditid = testMtditid,
             nino = testNino,
@@ -199,7 +199,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleAgent(pageTitle)
         )
 
-        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel()(
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(ForeignProperty)(
           MtdItUser(
             mtditid = testMtditid,
             nino = testNino,
@@ -287,7 +287,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleAgent(pageTitle)
         )
 
-        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel()(
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(SelfEmployment)(
           MtdItUser(
             mtditid = testMtditid,
             nino = testNino,

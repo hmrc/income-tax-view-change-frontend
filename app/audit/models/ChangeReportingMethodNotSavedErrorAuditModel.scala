@@ -18,14 +18,21 @@ package audit.models
 
 import audit.Utilities
 import auth.MtdItUser
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import play.api.libs.json.{JsValue, Json}
 
-case class ChangeReportingMethodNotSavedErrorAuditModel()(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+case class ChangeReportingMethodNotSavedErrorAuditModel(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.ErrorChangeReportingMethodNotSaved
 
   override val auditType: String = enums.AuditType.ErrorChangeReportingMethodNotSaved
 
+  val journey: String = incomeSourceType match {
+    case SelfEmployment => "SE"
+    case UkProperty => "UKPROPERTY"
+    case ForeignProperty => "FOREIGNPROPERTY"
+  }
+
   override val detail: JsValue =
-    Utilities.userAuditDetails(user) ++ Json.obj("journeyType" -> enums.IncomeSourceJourney.JourneyTypes.name)
+    Utilities.userAuditDetails(user) ++ Json.obj("journeyType" -> journey)
 }
