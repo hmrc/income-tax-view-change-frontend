@@ -16,12 +16,14 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
+import audit.models.ChangeReportingMethodNotSavedErrorAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
@@ -41,6 +43,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                     val auditingService: AuditingService,
                                                      val retrieveBtaNavBar: NavBarPredicate)
                                                     (implicit val ec: ExecutionContext,
                                                      implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -65,6 +68,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
       Future.successful(
         user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
           case Some(id) =>
+            auditingService.extendedAudit(ChangeReportingMethodNotSavedErrorAuditModel())
             Ok(
               reportingMethodChangeError(
                 isAgent = isAgent,

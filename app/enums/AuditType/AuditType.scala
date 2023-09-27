@@ -121,3 +121,7 @@ case object CreditsSummaryResponse extends AuditType {
 case object MangeIncomeSourcesHome extends AuditType {
   override val name: String = "ViewAndManageIncomeSourcesHome"
 }
+
+case object ErrorChangeReportingMethodNotSaved extends AuditType {
+  override val name: String = "ErrorChangeReportingMethodNotSaved"
+}

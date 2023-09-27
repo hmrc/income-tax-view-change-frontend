@@ -121,3 +121,7 @@ case object CreditsSummary extends TransactionName {
 case object ManageIncomeSourcesHome extends TransactionName {
   val name = "view-and-manage-income-sources-home"
 }
+
+case object ErrorChangeReportingMethodNotSaved extends TransactionName {
+  val name = "error-change-reporting-method-not-saved"
+}

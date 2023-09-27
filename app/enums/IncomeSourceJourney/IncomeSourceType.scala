@@ -16,6 +16,7 @@
 
 package enums.IncomeSourceJourney
 
+import enums.AuditType.AuditType
 import forms.utils.SessionKeys
 import play.api.libs.json.{JsString, Writes}
 import play.api.mvc.JavascriptLiteral
@@ -58,6 +59,10 @@ case object ForeignProperty extends IncomeSourceType {
   override val startDateSessionKey: String = SessionKeys.foreignPropertyStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseForeignPropertyEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
+}
+
+case object JourneyTypes {
+  val name: String = "SE | UKPROPERTY | FOREIGNPROPERTY"
 }
 
 object IncomeSourceType {
