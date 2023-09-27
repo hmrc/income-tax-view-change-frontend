@@ -49,7 +49,6 @@ object BaseIntegrationTestConstants {
   val testTaxYear = 2018
   val taxYear: String = "2020-04-05"
   val testTaxYearRange = "23-24"
-  val testFourDigitTaxYearRange = "2023-2024"
   val testYear = "2018"
   val testYearPlusOne = "2019"
   val testYearInt = 2018

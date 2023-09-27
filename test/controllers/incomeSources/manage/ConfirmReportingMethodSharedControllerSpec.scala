@@ -16,6 +16,7 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -35,7 +36,6 @@ import services.UpdateIncomeSourceService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId, testSelfEmploymentId}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
-
 
 import scala.concurrent.Future
 
@@ -60,7 +60,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
-      dateService = dateService
+      dateService = dateService,
+      auditingService = app.injector.instanceOf[AuditingService]
     )(itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       mcc = app.injector.instanceOf[MessagesControllerComponents],

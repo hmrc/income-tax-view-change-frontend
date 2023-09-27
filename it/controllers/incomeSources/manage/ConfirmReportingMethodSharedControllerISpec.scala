@@ -30,7 +30,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.mvc.Http.Status
-import testConstants.BaseIntegrationTestConstants.{credId, testFourDigitTaxYearRange, testMtditid, testNino, testPropertyIncomeId, testSaUtr, testSelfEmploymentId, testTaxYear}
+import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testPropertyIncomeId, testSaUtr, testSelfEmploymentId, testTaxYear}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesWithBothPropertiesAndCeasedBusiness, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
