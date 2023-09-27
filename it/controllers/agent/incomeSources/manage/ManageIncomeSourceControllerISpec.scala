@@ -16,7 +16,7 @@
 
 package controllers.agent.incomeSources.manage
 
-import audit.models.ChangeReportingMethodAuditModel
+import audit.models.ManageIncomeSourcesAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
@@ -26,7 +26,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewPropertyDetailsViewModel}
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithStartDate, credId, testMtditid, testNino, testSaUtr}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithStartDate, testMtditid, testNino, testSaUtr}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}

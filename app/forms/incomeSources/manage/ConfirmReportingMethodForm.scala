@@ -23,9 +23,11 @@ object ConfirmReportingMethodForm {
 
   val confirmReportingMethod: String = "incomeSources.manage.propertyReportingMethod"
 
+  val noSelectionError: String = s"$confirmReportingMethod.error"
+
   val form: Form[ConfirmReportingMethodForm] = Form(
     mapping(
-      confirmReportingMethod -> boolean.verifying("incomeSources.manage.propertyReportingMethod.error", _ == true)
+      confirmReportingMethod -> boolean.verifying(noSelectionError, _ == true)
     )(ConfirmReportingMethodForm.apply)(ConfirmReportingMethodForm.unapply)
   )
 }
