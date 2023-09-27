@@ -233,10 +233,3 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     }
   }
 }
-
-/*
-
-
-
-
- */
