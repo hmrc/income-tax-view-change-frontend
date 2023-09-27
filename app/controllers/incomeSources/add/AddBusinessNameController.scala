@@ -22,10 +22,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys
-import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -95,37 +93,23 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
           }
     }
 
-  private def getBusinessName(journeyType: JourneyType, isChange: Boolean)
-                             (implicit user: MtdItUser[_]): Future[Option[String]] = {
-    if (isChange)
-      sessionService.getMongoKey(AddIncomeSourceData.businessNameField, journeyType).flatMap {
-        case Right(nameOpt) => Future.successful(nameOpt)
-        case Left(err) => Future.failed(err)
-      }
-    else
-      sessionService.createSession(journeyType.toString).flatMap {
-        case true => Future.successful(None)
-        case false => Future.failed(new Error("create session failed"))
-      }
-  }
-
-  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     withIncomeSourcesFS {
-      val journeyType = JourneyType(Add, SelfEmployment)
-      getBusinessName(journeyType, isChange).flatMap {
-        nameOpt =>
-          val filledForm = nameOpt.fold(BusinessNameForm.form)(name =>
-            BusinessNameForm.form.fill(BusinessNameForm(name)))
+      sessionService.get(SessionKeys.businessName).map {
+        case Right(nameOpt) =>
+          val filledForm = nameOpt match {
+            case Some(name) => BusinessNameForm.form.fill(BusinessNameForm(name))
+            case None => BusinessNameForm.form
+          }
           val submitAction = getSubmitAction(isAgent: Boolean, isChange: Boolean)
-          Future.successful(Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true)))
+          Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
+
+        case Left(error) =>
+          Logger("application").error(s"[AddBusinessNameController][handleRequest] $error")
+          errorHandler.showInternalServerError()
       }
     }
-  }.recover {
-    case error =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleRequest] ${error.getMessage}")
-      errorHandler.showInternalServerError()
   }
 
   private def getSubmitAction(isAgent: Boolean, isChange: Boolean) = {
@@ -174,9 +158,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       case (false, true) => (checkDetailsBackUrl, submitChangeAction, checkDetailsRedirect)
       case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
     }
-    val journeyType = JourneyType(Add, SelfEmployment)
-
-    sessionService.getMongoKey(AddIncomeSourceData.businessTradeField, journeyType).flatMap {
+    sessionService.get(SessionKeys.businessTrade).flatMap {
       case Right(businessTradeName) =>
         BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeName).fold(
           formWithErrors =>
@@ -186,8 +168,16 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                 submitActionLocal,
                 backUrlLocal,
                 useFallbackLink = true))),
-          formData => handleFormDataOk(formData, redirectLocal, journeyType)
+
+          formData => {
+            val redirect = Redirect(redirectLocal)
+            sessionService.set(SessionKeys.businessName, formData.name, redirect).flatMap {
+              case Right(result) => Future.successful(result)
+              case Left(exception) => Future.failed(exception)
+            }
+          }
         )
+
       case Left(exception) => Future.failed(exception)
     }
   }.recover {
@@ -195,16 +185,6 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage}")
       errorHandler.showInternalServerError()
-  }
-
-  def handleFormDataOk(formData: BusinessNameForm, redirectLocal: Call, journeyType: JourneyType)
-                      (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    val redirect = Redirect(redirectLocal)
-    sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
-      case Right(result) if result => Future.successful(redirect)
-      case Right(_) => Future.failed(new Exception("mongo update call was not acknowledged"))
-      case Left(exception) => Future.failed(exception)
-    }
   }
 
   def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
