@@ -16,7 +16,7 @@
 
 package controllers.agent.incomeSources.manage
 
-import audit.models.MangeIncomeSourcesAuditModel
+import audit.models.ChangeReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
@@ -100,7 +100,7 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
 
         AuditStub
           .verifyAuditEvent(
-            MangeIncomeSourcesAuditModel(
+            ManageIncomeSourcesAuditModel(
               soleTraderBusinesses = List(
                 ViewBusinessDetailsViewModel(
                   incomeSourceId = business1.incomeSourceId,

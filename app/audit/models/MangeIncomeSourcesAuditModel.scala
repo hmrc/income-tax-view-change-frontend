@@ -29,7 +29,7 @@ case class MangeIncomeSourcesAuditModel(soleTraderBusinesses: List[ViewBusinessD
 
   override val transactionName: String = enums.TransactionName.ManageIncomeSourcesHome
 
-  override val auditType: String = enums.AuditType.MangeIncomeSourcesHome
+  override val auditType: String = enums.AuditType.ManageIncomeSourcesHome
 
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++
