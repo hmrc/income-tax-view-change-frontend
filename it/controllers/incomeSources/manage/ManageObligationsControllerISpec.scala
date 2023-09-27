@@ -21,16 +21,20 @@ import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import helpers.ComponentSpecBase
+import helpers.servicemocks.IncomeTaxViewChangeStub.verifyGetNextUpdates
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testSaUtr, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesWithBothPropertiesAndCeasedBusiness, ukPropertyOnlyResponse}
-import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testObligationsViewModel}
+import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{taxYear, testObligationsModel, testObligationsViewModel}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+
+import java.time.LocalDate
 
 class ManageObligationsControllerISpec extends ComponentSpecBase {
 
@@ -52,6 +56,18 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val continueButtonText: String = messagesAPI(s"$reusedPrefix.income-sources-button")
 
+  val year = 2022
+  val obligationsViewModel: ObligationsViewModel = ObligationsViewModel(
+    quarterlyObligationsDatesYearOne = Seq(DatesModel(
+      LocalDate.of(year, 1, 6),
+      LocalDate.of(year, 4, 5),
+      LocalDate.of(year, 5, 5),
+      "Quarterly",
+      false,
+    )),
+      Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
+  )
+
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
       "given valid url params" in {
@@ -64,10 +80,11 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, testSelfEmploymentId)
+        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, "123")
         verifyIncomeSourceDetailsCall(testMtditid)
+        verifyGetNextUpdates(testNino)
 
         val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
           messagesAPI(s"$prefix.h1") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
@@ -87,14 +104,14 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
-        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, testSelfEmploymentId)
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, "123")
         verifyIncomeSourceDetailsCall(testMtditid)
 
         AuditStub.verifyAuditEvent(
           ObligationsAuditModel(
             incomeSourceType = SelfEmployment,
-            obligations = testObligationsViewModel,
+            obligations = obligationsViewModel,
             businessName = "business",
             reportingMethod = "quarterly",
             taxYear = TaxYear(2023,2024)
