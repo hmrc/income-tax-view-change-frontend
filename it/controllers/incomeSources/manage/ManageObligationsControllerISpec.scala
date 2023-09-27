@@ -65,7 +65,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "Quarterly",
       false,
     )),
-      Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
+    Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )
 
   s"calling GET $manageSEObligationsShowUrl" should {
@@ -114,7 +114,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
             obligations = obligationsViewModel,
             businessName = "business",
             reportingMethod = "quarterly",
-            taxYear = TaxYear(2023,2024)
+            taxYear = TaxYear(2023, 2024)
           )(
             MtdItUser(
               mtditid = testMtditid,
