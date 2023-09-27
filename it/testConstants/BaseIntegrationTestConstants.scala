@@ -17,13 +17,15 @@
 package testConstants
 
 import controllers.agent.utils.SessionKeys
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import play.api.http.Status
+
 import java.time.LocalDate
 import models.btaNavBar.{NavContent, NavLinks}
 import models.core.AddressModel
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 object BaseIntegrationTestConstants {
@@ -124,7 +126,7 @@ object BaseIntegrationTestConstants {
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
 
-  val manageIncomeSourceDetailsViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+  val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testDate),
@@ -135,5 +137,31 @@ object BaseIntegrationTestConstants {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment
+  )
+
+  val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = testPropertyIncomeId,
+    tradingName = None,
+    tradingStartDate = propertyTradingStartDate,
+    address = None,
+    businessAccountingMethod = Some(false),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = Some(false),
+    taxYearTwoCrystallised = Some(false),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = UkProperty
+  )
+
+  val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = testPropertyIncomeId,
+    tradingName = None,
+    tradingStartDate = propertyTradingStartDate,
+    address = None,
+    businessAccountingMethod = Some(false),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = Some(false),
+    taxYearTwoCrystallised = Some(false),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = ForeignProperty
   )
 }

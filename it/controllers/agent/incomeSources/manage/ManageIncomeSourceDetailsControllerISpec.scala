@@ -17,18 +17,19 @@
 package controllers.agent.incomeSources.manage
 
 import audit.models.ManageYourDetailsResponseAuditModel
-import helpers.agent.ComponentSpecBase
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, LatencyDetails}
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, credId, manageIncomeSourceDetailsViewModel, testMtditid, testNino, testSaUtr, testSelfEmploymentId, testTaxYearRange}
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse, singleBusinessResponse, singleBusinessResponse2, singleBusinessResponseInLatencyPeriod, singleBusinessResponseInLatencyPeriod2, singleBusinessResponseManageYourDetailsAudit, singleBusinessResponseWithUnknownsInLatencyPeriod, singleForeignPropertyResponseInLatencyPeriod, singleForeignPropertyResponseWithUnknownsInLatencyPeriod, singleUKPropertyResponseInLatencyPeriod, singleUKPropertyResponseWithUnknownsInLatencyPeriod, ukPropertyOnlyResponse}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.PropertyDetailsIntegrationTestConstants.{foreignPropertyAudit, ukPropertyAudit}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -69,116 +70,116 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val messagesUnknown: String = messagesAPI("incomeSources.generic.unknown")
 
   s"calling GET $manageSelfEmploymentShowAgentUrl" should {
-//    "render the Manage Self Employment business page for your client" when {
-//      "URL contains a valid income source ID and agent's authorised user has no latency information" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-name")(businessTradingName),
-//          elementTextByID("business-address")(addressAsString),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod)
-//        )
-//      }
-//      "URL contains a valid income source ID and agent's authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        And("API 1404 getCalculationList returns a success response")
-//        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-//
-//        And("API 1896 getCalculationList returns a success response")
-//        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-name")(businessTradingName),
-//          elementTextByID("business-address")(addressAsString),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod),
-//          elementTextByID("reporting-method-1")(messagesQuarterly),
-//          elementTextByID("reporting-method-2")(messagesAnnually)
-//        )
-//      }
-//      "URL contains a valid income source ID and agent's authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        And("API 1404 getCalculationList returns a success response")
-//        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-//
-//        And("API 1896 getCalculationList returns a success response")
-//        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-name")(businessTradingName),
-//          elementTextByID("business-address")(addressAsString),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod),
-//          elementTextByID("reporting-method-1")(messagesAnnually),
-//          elementTextByID("reporting-method-2")(messagesQuarterly),
-//          elementTextByID("change-link-1")(messagesChangeLinkText),
-//          elementTextByID("change-link-2")(messagesChangeLinkText)
-//        )
-//      }
-//      "URL contains a valid income source ID and agent's authorised user has latency information, but itsa status is not mandatory or voluntary" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-name")(messagesUnknown),
-//          elementTextByID("business-address")(messagesUnknown),
-//          elementTextByID("business-date-started")(messagesUnknown),
-//          elementTextByID("business-accounting-method")(messagesUnknown),
-//          elementTextByID("reporting-method-1")(""),
-//          elementTextByID("reporting-method-2")("")
-//        )
-//      }
-//    }
+    "render the Manage Self Employment business page for your client" when {
+      "URL contains a valid income source ID and agent's authorised user has no latency information" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-name")(businessTradingName),
+          elementTextByID("business-address")(addressAsString),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod)
+        )
+      }
+      "URL contains a valid income source ID and agent's authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-name")(businessTradingName),
+          elementTextByID("business-address")(addressAsString),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod),
+          elementTextByID("reporting-method-1")(messagesQuarterly),
+          elementTextByID("reporting-method-2")(messagesAnnually)
+        )
+      }
+      "URL contains a valid income source ID and agent's authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-name")(businessTradingName),
+          elementTextByID("business-address")(addressAsString),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod),
+          elementTextByID("reporting-method-1")(messagesAnnually),
+          elementTextByID("reporting-method-2")(messagesQuarterly),
+          elementTextByID("change-link-1")(messagesChangeLinkText),
+          elementTextByID("change-link-2")(messagesChangeLinkText)
+        )
+      }
+      "URL contains a valid income source ID and agent's authorised user has latency information, but itsa status is not mandatory or voluntary" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-name")(messagesUnknown),
+          elementTextByID("business-address")(messagesUnknown),
+          elementTextByID("business-date-started")(messagesUnknown),
+          elementTextByID("business-accounting-method")(messagesUnknown),
+          elementTextByID("reporting-method-1")(""),
+          elementTextByID("reporting-method-2")("")
+        )
+      }
+    }
     "return the audit event" when {
       "User is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
@@ -199,7 +200,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
 
         AuditStub.verifyAuditEvent(
-          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModel)(
+          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelSelfEmploymentBusiness)(
             MtdItUser(
               mtditid = testMtditid,
               nino = testNino,
@@ -222,210 +223,295 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         )
       }
     }
-
   }
 
-//  s"callingGET $manageUKPropertyShowAgentUrl" should {
-//    "render the Manage UK Property page" when {
-//      "URL contains a valid income source ID and authorised user has no latency information" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod)
-//        )
-//      }
-//      "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        And("API 1404 getCalculationList returns a success response")
-//        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-//
-//        And("API 1896 getCalculationList returns a success response")
-//        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod),
-//          elementTextByID("change-link-1")(""),
-//          elementTextByID("change-link-2")("")
-//        )
-//      }
-//      "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        And("API 1404 getCalculationList returns a success response")
-//        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-//
-//        And("API 1896 getCalculationList returns a success response")
-//        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod),
-//          elementTextByID("change-link-1")(messagesChangeLinkText),
-//          elementTextByID("change-link-2")(messagesChangeLinkText)
-//        )
-//      }
-//      "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-date-started")(messagesUnknown),
-//          elementTextByID("business-accounting-method")(messagesUnknown)
-//        )
-//      }
-//    }
-//  }
-//
-//  s"callingGET $manageForeignPropertyShowAgentUrl" should {
-//    "render the Manage UK Property page" when {
-//      "URL contains a valid income source ID and authorised user has no latency information" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod)
-//        )
-//      }
-//      "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        And("API 1404 getCalculationList returns a success response")
-//        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-//
-//        And("API 1896 getCalculationList returns a success response")
-//        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod),
-//          elementTextByID("change-link-1")(""),
-//          elementTextByID("change-link-2")("")
-//        )
-//      }
-//      "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-//
-//        And("API 1404 getCalculationList returns a success response")
-//        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-//
-//        And("API 1896 getCalculationList returns a success response")
-//        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-date-started")(businessStartDate),
-//          elementTextByID("business-accounting-method")(businessAccountingMethod),
-//          elementTextByID("change-link-1")(messagesChangeLinkText),
-//          elementTextByID("change-link-2")(messagesChangeLinkText)
-//        )
-//      }
-//      "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
-//        Given("Income Sources FS is enabled")
-//        stubAuthorisedAgentUser(authorised = true)
-//        enable(IncomeSources)
-//
-//        And("API 1525 getIncomeSourceDetails returns a success response")
-//        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
-//
-//        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-//        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
-//
-//        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
-//
-//        result should have(
-//          httpStatus(OK),
-//          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
-//          elementTextByID("business-date-started")(messagesUnknown),
-//          elementTextByID("business-accounting-method")(messagesUnknown)
-//        )
-//      }
-//    }
-//  }
+  s"callingGET $manageUKPropertyShowAgentUrl" should {
+    "render the Manage UK Property page" when {
+      "URL contains a valid income source ID and authorised user has no latency information" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod)
+        )
+      }
+      "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod),
+          elementTextByID("change-link-1")(""),
+          elementTextByID("change-link-2")("")
+        )
+      }
+      "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod),
+          elementTextByID("change-link-1")(messagesChangeLinkText),
+          elementTextByID("change-link-2")(messagesChangeLinkText)
+        )
+      }
+      "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-date-started")(messagesUnknown),
+          elementTextByID("business-accounting-method")(messagesUnknown)
+        )
+      }
+    }
+    "return the audit event" when {
+      "User is authorised" in {
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUkPropertyResponseManageYourDetailsAudit)
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
+
+        AuditStub.verifyAuditEvent(
+          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelUkPropertyBusiness)(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(),
+                properties = List(ukPropertyAudit)
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = None,
+              userType = Some(Agent),
+              arn = Some("1")
+            )(
+              FakeRequest()
+            )
+          )
+        )
+      }
+    }
+  }
+
+  s"callingGET $manageForeignPropertyShowAgentUrl" should {
+    "render the Manage UK Property page" when {
+      "URL contains a valid income source ID and authorised user has no latency information" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod)
+        )
+      }
+      "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod),
+          elementTextByID("change-link-1")(""),
+          elementTextByID("change-link-2")("")
+        )
+      }
+      "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-date-started")(businessStartDate),
+          elementTextByID("business-accounting-method")(businessAccountingMethod),
+          elementTextByID("change-link-1")(messagesChangeLinkText),
+          elementTextByID("change-link-2")(messagesChangeLinkText)
+        )
+      }
+      "URL contains a valid income source ID and authorised user has latency information, but itsa status is not mandatory or voluntary" in {
+        Given("Income Sources FS is enabled")
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
+          elementTextByID("business-date-started")(messagesUnknown),
+          elementTextByID("business-accounting-method")(messagesUnknown)
+        )
+      }
+    }
+    "return the audit event" when {
+      "User is authorised" in {
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseManageYourDetailsAudit)
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
+
+        AuditStub.verifyAuditEvent(
+          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelForeignPropertyBusiness)(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(),
+                properties = List(foreignPropertyAudit)
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = None,
+              userType = Some(Agent),
+              arn = Some("1")
+            )(
+              FakeRequest()
+            )
+          )
+        )
+      }
+    }
+  }
 }

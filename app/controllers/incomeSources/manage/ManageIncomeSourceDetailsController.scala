@@ -19,7 +19,6 @@ package controllers.incomeSources.manage
 import audit.AuditingService
 import audit.models.ManageYourDetailsResponseAuditModel
 import auth.MtdItUser
-import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
