@@ -17,7 +17,7 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
-import audit.models.ChangeReportingMethodAuditModel
+import audit.models.ManageIncomeSourcesAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}

@@ -54,6 +54,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val dateService: DateService)
                                                       (implicit val ec: ExecutionContext,
                                                        implicit val itvcErrorHandler: ItvcErrorHandler,
+                                                       override implicit val mcc: MessagesControllerComponents,
                                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                        implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
