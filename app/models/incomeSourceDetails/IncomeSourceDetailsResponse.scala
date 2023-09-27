@@ -67,6 +67,10 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
     businesses.find(_.isOngoingSoleTraderBusiness(id))
   }
 
+  def getSoleTraderBusinesses: Seq[BusinessDetailsModel] = {
+    businesses.filterNot(_.isCeased)
+  }
+
   def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
     (incomeSourceType, soleTraderBusinessId) match {
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.incomeSourceId)

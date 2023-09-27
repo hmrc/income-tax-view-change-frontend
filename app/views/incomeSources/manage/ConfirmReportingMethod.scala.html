@@ -18,24 +18,25 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import forms.incomeSources.manage.ConfirmReportingMethodForm
 @import views.html.helpers.injected.ErrorSummary
+@import views.html.components.h1
 
-@this(
-        mainTemplate: unifiedLayout,
-        govukCheckboxes: GovukCheckboxes,
-        govukButton: GovukButton,
-        formWithCSRF: FormWithCSRF,
-        errorSummary: ErrorSummary
+@this(mainTemplate: unifiedLayout,
+    govukCheckboxes: GovukCheckboxes,
+    govukButton: GovukButton,
+    formWithCSRF: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    govukWarningText : GovukWarningText,
+    h1: h1
 )
 
-@(
-        form: Form[ConfirmReportingMethodForm],
-        backUrl: String,
-        postAction: Call,
-        isAgent: Boolean,
-        taxYearStartYear: String,
-        taxYearEndYear: String,
-        reportingMethod: String
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(form: Form[ConfirmReportingMethodForm],
+    backUrl: String,
+    postAction: Call,
+    isAgent: Boolean,
+    taxYearStartYear: String,
+    taxYearEndYear: String,
+    newReportingMethod: String,
+    isCurrentTaxYear: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @prefix = @{ "incomeSources.manage.propertyReportingMethod" }
 
@@ -43,7 +44,31 @@
     messages(s"$prefix.$key", args: _*)
 }
 
-@mainTemplate(pageTitle = getMessage(s"heading.$reportingMethod"),
+@changingToAnnualWarningMessage(isAgent: Boolean) = @{
+    if(isAgent) {
+        messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent")
+    } else {
+        messages("incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual")
+    }
+}
+
+@changingToQuarterlyWarningMessage(isAgent: Boolean) = @{
+    if(isAgent) {
+        messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent")
+    } else {
+        messages("incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual")
+    }
+}
+
+@showChangingToAnnualWarningText = @{
+    newReportingMethod == "annual" && isCurrentTaxYear
+}
+
+@showChangingToQuarterlyWarningText = @{
+    newReportingMethod == "quarterly" && isCurrentTaxYear
+}
+
+@mainTemplate(pageTitle = getMessage(s"heading.$newReportingMethod"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
@@ -52,38 +77,44 @@
         errors = form.errors.map(formError =>
             FormError(
                 key = formError.key,
-                messages = formError.messages.map(_ + s".$reportingMethod")
+                messages = formError.messages.map(_ + s".$newReportingMethod")
             )
         )
     ))
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
+
+        @h1(getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
+            "govuk-fieldset__legend--l govuk-!-margin-bottom-6")
+
+        @if(showChangingToAnnualWarningText) {
+            @govukWarningText(WarningText(
+                content = Text(changingToAnnualWarningMessage(isAgent))
+            ))
+        } else if(showChangingToQuarterlyWarningText) {
+            @govukWarningText(WarningText(
+                content = Text(changingToQuarterlyWarningMessage(isAgent))
+            ))
+        }
+
+
         @govukCheckboxes(Checkboxes(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(
-                        value = getMessage(s"heading.$reportingMethod", taxYearStartYear, taxYearEndYear)
-                    ),
-                    classes = "govuk-fieldset__legend--l govuk-!-margin-bottom-6",
-                    isPageHeading = true
-                ))
-            )),
             name = prefix,
             items = Seq(CheckboxItem(
                 id = Some(prefix),
                 name = Some(prefix),
                 content = Text(
-                    value = getMessage(s"checkbox.$reportingMethod")
+                    value = getMessage(s"checkbox.$newReportingMethod")
                 ),
                 value = "true",
                 checked = form.value.contains(true),
 
             )),
-            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(s"${err.message}.$reportingMethod", err.args:_*))))
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(s"${err.message}.$newReportingMethod", err.args:_*))))
         ))
         @govukButton(Button(
-            content = Text(messages("base.confirm-and-continue")),
-            attributes = Map("id" -> "confirm-and-continue-button")
+            content = Text(messages("base.confirm-this-change")),
+            attributes = Map("id" -> "confirm-button")
         ))
     }
 }

@@ -17,13 +17,14 @@
 package controllers.agent.predicates
 
 import auth.{MtdItUser, MtdItUserWithNino}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -85,5 +86,14 @@ trait ClientConfirmedController extends BaseAgentController {
         Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - Failed to retrieve income sources for agent")
         throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
     }
+  }
+
+  def showInternalServerError(isAgent: Boolean)
+                                     (implicit user: MtdItUser[_],
+                                      itvcErrorHandler: ItvcErrorHandler,
+                                      itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                     ): Result = {
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler)
+      .showInternalServerError()
   }
 }

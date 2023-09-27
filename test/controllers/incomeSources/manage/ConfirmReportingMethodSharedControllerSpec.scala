@@ -59,7 +59,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
-      confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod]
+      confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
+      dateService = dateService
     )(itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       mcc = app.injector.instanceOf[MessagesControllerComponents],

@@ -57,12 +57,12 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
     IncomeSourceType(incomeSourceType) match {
       case Right(incomeType) =>
         val action: Call = (incomeType, isAgent) match {
-          case (UkProperty, true) => controllers.incomeSources.add.routes.UKPropertyAddedController.showAgent(id)
-          case (UkProperty, false) => controllers.incomeSources.add.routes.UKPropertyAddedController.show(id)
-          case (ForeignProperty, true) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
-          case (ForeignProperty, false) => controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
-          case (SelfEmployment, true) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.showAgent(id)
-          case (SelfEmployment, false) => controllers.incomeSources.add.routes.BusinessAddedObligationsController.show(id)
+          case (UkProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, UkProperty)
+          case (UkProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, UkProperty)
+          case (ForeignProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, ForeignProperty)
+          case (ForeignProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, ForeignProperty)
+          case (SelfEmployment, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, SelfEmployment)
+          case (SelfEmployment, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, SelfEmployment)
         }
 
         Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))

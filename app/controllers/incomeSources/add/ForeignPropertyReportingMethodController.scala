@@ -164,8 +164,8 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                               (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val postAction = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submit(id)
-    val redirectCall = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id) else
-      controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
+    val redirectCall = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, ForeignProperty) else
+      controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, ForeignProperty)
 
     for {
       latencyDetailsMaybe <- Future(user.incomeSources.properties
@@ -193,7 +193,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
   private def handleFormData(form: AddForeignPropertyReportingMethodForm, id: String, isAgent: Boolean)
                             (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
+    val redirectUrl: Call = if (isAgent) routes.IncomeSourceAddedController.showAgent(id, ForeignProperty) else routes.IncomeSourceAddedController.show(id, ForeignProperty)
 
     if (form.reportingMethodIsChanged) {
       val newReportingMethods: Seq[TaxYearSpecific] = Seq(
@@ -220,7 +220,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
   private def updateReportingMethod(isAgent: Boolean, id: String, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val redirectUrl: Call = if (isAgent) routes.ForeignPropertyAddedController.showAgent(id) else routes.ForeignPropertyAddedController.show(id)
+    val redirectUrl: Call = if (isAgent) routes.IncomeSourceAddedController.showAgent(id, incomeSourceType = ForeignProperty) else routes.IncomeSourceAddedController.show(id, incomeSourceType = ForeignProperty)
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = ForeignProperty.key) else
       routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = ForeignProperty.key)
 
@@ -340,9 +340,9 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
 
   private def postActionAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.submitAgent(id)
 
-  private def redirectCall(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.show(id)
+  private def redirectCall(id: String) = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, incomeSourceType = ForeignProperty)
 
-  private def redirectCallAgent(id: String) = controllers.incomeSources.add.routes.ForeignPropertyAddedController.showAgent(id)
+  private def redirectCallAgent(id: String) = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, incomeSourceType = ForeignProperty)
 
   val redirectErrorCall: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key)
   val redirectErrorCallAgent: Call = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty.key)

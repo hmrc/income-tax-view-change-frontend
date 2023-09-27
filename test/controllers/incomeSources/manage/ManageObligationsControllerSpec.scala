@@ -513,7 +513,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
         val result: Future[Result] = TestManageObligationsController.submit(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url)
       }
       "take the agent back to add income sources" in {
         disableAllSwitches()
@@ -524,7 +524,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
         val result: Future[Result] = TestManageObligationsController.agentSubmit(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url)
       }
     }
   }

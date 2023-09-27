@@ -95,7 +95,7 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
   }
 
   def getManageIncomeSourcesUrl(isAgent: Boolean): String = {
-    (if(isAgent)manageIncomeSourceController.showAgent() else manageIncomeSourceController.show()).url
+    manageIncomeSourceController.show(isAgent).url
   }
 
   for {
