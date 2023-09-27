@@ -70,9 +70,6 @@ object IncomeSourceType {
     }
   }
 
-//  def toString(): String = {
-//
-//  }
   implicit val incomeSourceTypeJSLBinder: JavascriptLiteral[IncomeSourceType] = (value: IncomeSourceType) => s"""'${value.toString}'"""
 
   implicit def writes[T <: IncomeSourceType]: Writes[T] = Writes {

@@ -176,7 +176,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
     val journeyType = JourneyType(Add, SelfEmployment)
 
-    sessionService.getMongoKey(AddIncomeSourceData.businessNameField, journeyType).flatMap {
+    sessionService.getMongoKey(AddIncomeSourceData.businessTradeField, journeyType).flatMap {
       case Right(businessTradeName) =>
         BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeName).fold(
           formWithErrors =>

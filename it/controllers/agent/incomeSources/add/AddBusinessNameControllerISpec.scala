@@ -176,7 +176,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
         val formData: Map[String, Seq[String]] = {
           Map(
-            BusinessNameForm.businessName -> Seq("Test Business")
+            BusinessNameForm.businessName -> Seq("Test Business2")
           )
         }
 
