@@ -22,16 +22,16 @@ import play.api.data.FormError
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 
-case class ChangeReportingMethodAuditModel(journeyType: String,
+case class SwitchReportingMethodAuditModel(journeyType: String,
                                            reportingMethodChangeTo: String,
                                            taxYear: String,
                                            errorMessage: Seq[FormError],
                                            messagesApi: MessagesApi
                                           )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.ManageIncomeSourcesHome
+  override val transactionName: String = enums.TransactionName.SwitchReportingMethod
 
-  override val auditType: String = enums.AuditType.ManageIncomeSourcesHome
+  override val auditType: String = enums.AuditType.SwitchReportingMethod
 
   implicit val lang: Lang = Lang("GB")
 

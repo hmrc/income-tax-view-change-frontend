@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.manage
 
-import audit.models.ChangeReportingMethodAuditModel
+import audit.models.SwitchReportingMethodAuditModel
 import audit.AuditingService
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
@@ -102,7 +102,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
             auditingService
               .extendedAudit(
-                ChangeReportingMethodAuditModel(
+                SwitchReportingMethodAuditModel(
                   errorMessage = Nil,
                   messagesApi = messagesApi,
                   taxYear = taxYearModel.toString,
@@ -157,7 +157,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
               auditingService
                 .extendedAudit(
-                  ChangeReportingMethodAuditModel(
+                  SwitchReportingMethodAuditModel(
                     messagesApi = messagesApi,
                     taxYear = taxYearModel.toString,
                     reportingMethodChangeTo = changeTo,

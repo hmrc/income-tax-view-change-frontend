@@ -27,9 +27,9 @@ case class ManageIncomeSourcesAuditModel(soleTraderBusinesses: List[ViewBusiness
                                          ceasedBusinesses: List[CeasedBusinessDetailsViewModel]
                                         )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.ManageIncomeSourcesHome
+  override val transactionName: String = enums.TransactionName.ViewAndManageIncomeSourcesHome
 
-  override val auditType: String = enums.AuditType.ManageIncomeSourcesHome
+  override val auditType: String = enums.AuditType.ViewAndManageIncomeSourcesHome
 
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++

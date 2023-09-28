@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.manage
 
-import audit.models.ChangeReportingMethodAuditModel
+import audit.models.SwitchReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -196,7 +196,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         AuditStub
           .verifyAuditEvent(
-            ChangeReportingMethodAuditModel(
+            SwitchReportingMethodAuditModel(
               journeyType = SelfEmployment.journeyType,
               reportingMethodChangeTo = annual,
               taxYear = taxYear,
@@ -342,7 +342,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         AuditStub
           .verifyAuditEvent(
-            ChangeReportingMethodAuditModel(
+            SwitchReportingMethodAuditModel(
               journeyType = SelfEmployment.journeyType,
               reportingMethodChangeTo = annual,
               taxYear = taxYear,
