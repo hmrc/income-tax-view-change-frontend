@@ -39,7 +39,7 @@ case class SwitchReportingMethodAuditModel(journeyType: String,
     Utilities.userAuditDetails(user) ++
       Json.obj(
         "journeyType" -> journeyType,
-        "reportingMethodChangeTo" -> reportingMethodChangeTo,
+        "reportingMethodChangeTo" -> reportingMethodChangeTo.toLowerCase.capitalize,
         "taxYear" -> taxYear,
         "errorMessage" -> errorMessage.flatMap(_.messages.map(messagesApi(_))).headOption
       )

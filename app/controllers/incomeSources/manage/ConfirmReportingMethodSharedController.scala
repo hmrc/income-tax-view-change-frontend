@@ -120,7 +120,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 isCurrentTaxYear = isCurrentTaxYear,
                 taxYearStartYear = taxYearStartYear,
                 newReportingMethod = reportingMethod,
-                form = ConfirmReportingMethodForm.form
+                form = ConfirmReportingMethodForm(changeTo)
               )
             )
           case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
@@ -146,14 +146,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     withIncomeSourcesFS {
       (maybeTaxYearModel, newReportingMethod) match {
         case (Some(taxYearModel), Some(reportingMethod)) =>
-          ConfirmReportingMethodForm.form.bindFromRequest().fold(
+          ConfirmReportingMethodForm(changeTo).bindFromRequest().fold(
             formWithErrors => {
-
-              val formWithReportingMethodSpecificErrors = formWithErrors.copy(errors =
-                formWithErrors.errors.flatMap(formError =>
-                  formError.messages.map(messagesKey =>
-                    FormError(formError.key, messagesKey + s".$changeTo")
-                )))
 
               auditingService
                 .extendedAudit(
@@ -162,7 +156,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     taxYear = taxYearModel.toString,
                     reportingMethodChangeTo = changeTo,
                     journeyType = incomeSourceType.journeyType,
-                    errorMessage = formWithReportingMethodSpecificErrors.errors
+                    errorMessage = formWithErrors.errors
                   )
               )
 
@@ -173,7 +167,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     backUrl = backCall.url,
                     postAction = postAction,
                     newReportingMethod = reportingMethod,
-                    form = formWithReportingMethodSpecificErrors,
+                    form = formWithErrors,
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
                     isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)

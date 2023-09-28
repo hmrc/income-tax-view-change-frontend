@@ -346,7 +346,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
               journeyType = SelfEmployment.journeyType,
               reportingMethodChangeTo = annual,
               taxYear = taxYear,
-              errorMessage = Seq(FormError("key", s"${ConfirmReportingMethodForm.noSelectionError}.annual")),
+              errorMessage = Seq(FormError("key", ConfirmReportingMethodForm.noSelectionError(annual))),
               messagesApi = messagesAPI
             )(
               MtdItUser(

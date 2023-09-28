@@ -75,11 +75,11 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       case (true, SoleTraderBusiness) => manageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id = testSelfEmploymentId)
     }).url
 
-    val form: Form[ConfirmReportingMethodForm] = ConfirmReportingMethodForm.form
+    def form(changeTo: String): Form[ConfirmReportingMethodForm] = ConfirmReportingMethodForm(changeTo)
 
     lazy val viewNoErrors: HtmlFormat.Appendable =
       confirmReportingMethodView(
-        form = form,
+        form = form(testChangeToAnnual),
         postAction = Call("POST", "/"),
         isAgent = isAgent,
         backUrl = backUrl,
@@ -91,7 +91,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable =
       confirmReportingMethodView(
-        form = form.withError(FormError(formFieldName, formErrorMessage)),
+        form = form(testChangeToQuarterly).withError(FormError(formFieldName, formErrorMessage)),
         postAction = Call("POST", "/"),
         isAgent = isAgent,
         backUrl = backUrl,
