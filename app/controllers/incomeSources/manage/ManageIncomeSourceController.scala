@@ -73,10 +73,10 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
             auditingService
               .extendedAudit(
                 ManageIncomeSourcesAuditModel(
-                  soleTraderBusinesses = viewModel.viewSoleTraderBusinesses,
                   ukProperty = viewModel.viewUkProperty,
                   foreignProperty = viewModel.viewForeignProperty,
-                  ceasedBusinesses = viewModel.viewCeasedBusinesses
+                  ceasedBusinesses = viewModel.viewCeasedBusinesses,
+                  soleTraderBusinesses = viewModel.viewSoleTraderBusinesses
                 )
               )
             Ok(manageIncomeSources(

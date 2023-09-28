@@ -96,16 +96,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
 
             val (backCall, postAction, _, _) = getRedirectCalls(taxYear, isAgent, changeTo, id, incomeSourceType)
-            val isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
-            val taxYearStartYear = taxYearModel.startYear.toString
-            val taxYearEndYear = taxYearModel.endYear.toString
 
             auditingService
               .extendedAudit(
                 SwitchReportingMethodAuditModel(
+                  taxYear = taxYear,
                   errorMessage = Nil,
                   messagesApi = messagesApi,
-                  taxYear = taxYear,
                   reportingMethodChangeTo = changeTo,
                   journeyType = incomeSourceType.journeyType
                 )
@@ -116,11 +113,11 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 isAgent = isAgent,
                 backUrl = backCall.url,
                 postAction = postAction,
-                taxYearEndYear = taxYearEndYear,
-                isCurrentTaxYear = isCurrentTaxYear,
-                taxYearStartYear = taxYearStartYear,
                 newReportingMethod = reportingMethod,
-                form = ConfirmReportingMethodForm(changeTo)
+                form = ConfirmReportingMethodForm(changeTo),
+                taxYearEndYear = taxYearModel.endYear.toString,
+                taxYearStartYear = taxYearModel.startYear.toString,
+                isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
               )
             )
           case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
@@ -152,8 +149,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               auditingService
                 .extendedAudit(
                   SwitchReportingMethodAuditModel(
-                    messagesApi = messagesApi,
                     taxYear = taxYear,
+                    messagesApi = messagesApi,
                     reportingMethodChangeTo = changeTo,
                     errorMessage = formWithErrors.errors,
                     journeyType = incomeSourceType.journeyType
