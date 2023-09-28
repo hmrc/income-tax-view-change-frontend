@@ -99,7 +99,7 @@ class UIJourneySessionDataRepository @Inject()(
     ).toFuture()
   }
 
-  def clear(data: UIJourneySessionData): Future[Boolean] =
+  def deleteOne(data: UIJourneySessionData): Future[Boolean] =
     collection
       .deleteOne(dataFilter(data))
       .toFuture()
