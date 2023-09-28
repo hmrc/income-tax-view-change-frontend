@@ -87,7 +87,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
-    val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearStartYearEndYear(taxYear)
+    val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearModel(taxYear)
     val maybeIncomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId)
 
     withIncomeSourcesFS {
@@ -105,7 +105,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 SwitchReportingMethodAuditModel(
                   errorMessage = Nil,
                   messagesApi = messagesApi,
-                  taxYear = taxYearModel.toString,
+                  taxYear = taxYear,
                   reportingMethodChangeTo = changeTo,
                   journeyType = incomeSourceType.journeyType
                 )
@@ -140,7 +140,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
-    val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearStartYearEndYear(taxYear)
+    val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearModel(taxYear)
     val (backCall, postAction, successCall, errorCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
 
     withIncomeSourcesFS {
@@ -153,7 +153,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 .extendedAudit(
                   SwitchReportingMethodAuditModel(
                     messagesApi = messagesApi,
-                    taxYear = taxYearModel.toString,
+                    taxYear = taxYear,
                     reportingMethodChangeTo = changeTo,
                     errorMessage = formWithErrors.errors,
                     journeyType = incomeSourceType.journeyType
