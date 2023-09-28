@@ -27,7 +27,7 @@ object TaxYear {
     def isValidYear(year: String): Boolean =
       year.length == 4 &&
         year.forall(_.isDigit) &&
-        Try(year.toInt).toOption.isDefined
+          Try(year.toInt).toOption.isDefined
 
     def differenceIsOne(yearOne: String, yearTwo: String): Boolean =
       yearOne.toInt + 1 == yearTwo.toInt
