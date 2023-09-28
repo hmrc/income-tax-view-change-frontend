@@ -63,7 +63,7 @@ class UIJourneySessionDataRepository @Inject()(
     collection
       .updateOne(
         filter = dataFilter(data),
-        update = Updates.set("lastUpdated", Instant.now(clock)),
+        update = Updates.set("lastUpdated", Instant.now(clock))
       )
       .toFuture()
       .map(_ => true)
