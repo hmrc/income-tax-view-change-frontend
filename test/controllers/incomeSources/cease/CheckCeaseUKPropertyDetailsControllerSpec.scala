@@ -34,7 +34,6 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, successResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseUKPropertyDetails
 
 import scala.concurrent.Future
@@ -100,7 +99,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
   }
 
   "Individual - CheckCeaseUKPropertyDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty.key).url}" when {
       "submitted" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -113,7 +112,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
           TestCheckCeaseUKPropertyDetailsController.submit()(fakeRequestWithCeaseUKPropertyDate(cessationDate))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty.key).url)
       }
     }
   }
@@ -168,7 +167,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty.key).url)
       }
     }
   }

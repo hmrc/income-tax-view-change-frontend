@@ -17,20 +17,18 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
-import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import utils.IncomeSourcesUtils
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseUKPropertyDetails
 
 import javax.inject.Inject
@@ -92,9 +90,9 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
     lazy val redirectAction = {
       if (isAgent)
-        routes.UKPropertyCeasedObligationsController.showAgent()
+        routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty.key)
       else
-        routes.UKPropertyCeasedObligationsController.show()
+        routes.IncomeSourceCeasedObligationsController.show(UkProperty.key)
     }
 
     lazy val incomeSourceNotCeasedShowAction = controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, UkProperty.key)
@@ -114,7 +112,7 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
             }
           case _ => Future.failed(new Exception("missing income source ID"))
         }
-      case Right(None) =>  Future.failed(MissingSessionKey(ceaseUKPropertyEndDate))
+      case Right(None) => Future.failed(MissingSessionKey(ceaseUKPropertyEndDate))
 
       case Left(exception) => Future.failed(exception)
     }

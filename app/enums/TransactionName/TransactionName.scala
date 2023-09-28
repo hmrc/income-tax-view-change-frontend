@@ -122,6 +122,14 @@ case object ViewAndManageIncomeSourcesHome extends TransactionName {
   val name = "view-and-manage-income-sources-home"
 }
 
+case object ManageIncomeSourceDetails extends TransactionName {
+  val name = "manage-your-details"
+}
+
+case object Obligations extends TransactionName {
+  val name = "obligations"
+}
+
 case object SwitchReportingMethod extends TransactionName {
   val name = "switch-reporting-method"
 }

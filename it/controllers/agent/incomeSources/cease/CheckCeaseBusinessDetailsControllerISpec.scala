@@ -17,6 +17,7 @@
 package controllers.agent.incomeSources.cease
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseModel}
@@ -40,7 +41,7 @@ class CheckCeaseBusinessDetailsControllerISpec extends ComponentSpecBase {
   val businessAddressLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessAddress")
   val pageTitleMsgKey = messagesAPI("incomeSources.ceaseBusiness.checkDetails.heading")
   val timestamp = "2023-01-31T09:26:17Z"
-  val redirectUri = controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.showAgent().url
+  val redirectUri = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment.key).url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = business1.incomeSourceId,
@@ -78,7 +79,7 @@ class CheckCeaseBusinessDetailsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         enable(IncomeSources)
-        stubAuthorisedAgentUser(authorised = true )
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
         When(s"I call POST ${submitCheckCeaseBusinessDetailsControllerUrl}")

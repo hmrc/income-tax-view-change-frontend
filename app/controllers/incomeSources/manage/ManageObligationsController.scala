@@ -16,6 +16,8 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
+import audit.models.ObligationsAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -44,6 +46,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
+                                            val auditingService: AuditingService,
                                             nextUpdatesService: NextUpdatesService)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
@@ -156,6 +159,13 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                 })
                 case Right(value) =>
                   nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+                    auditingService.extendedAudit(ObligationsAuditModel(
+                      incomeSourceType = mode,
+                      obligations = viewModel,
+                      businessName = addedBusinessName,
+                      changeTo,
+                      years
+                    ))
                     if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
                     else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
                   }

@@ -17,10 +17,15 @@
 package testConstants
 
 import controllers.agent.utils.SessionKeys
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import play.api.http.Status
 
 import java.time.LocalDate
 import models.btaNavBar.{NavContent, NavLinks}
+import models.core.AddressModel
+import models.incomeSourceDetails.LatencyDetails
+import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 object BaseIntegrationTestConstants {
@@ -54,7 +59,10 @@ object BaseIntegrationTestConstants {
   val testYearInt = 2018
   val testYearPlusOneInt = 2019
 
+  val testYear2023 = 2023
   val testCalcType = "it"
+
+  val testYear2024 = 2024
 
   val testSelfEmploymentId = "ABC123456789"
   val otherTestSelfEmploymentId = "ABC123456780"
@@ -67,6 +75,15 @@ object BaseIntegrationTestConstants {
 
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
+
+  val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
+
+  val testLatencyDetails3 = LatencyDetails(
+    latencyEndDate = LocalDate.of(testYear2023, 1, 1),
+    taxYear1 = testYear2023.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = testYear2024.toString,
+    latencyIndicator2 = "Q")
 
   val testNavLinks: NavContent = NavContent(
     NavLinks("testEnHome", "testCyHome", "testUrl"),
@@ -108,4 +125,43 @@ object BaseIntegrationTestConstants {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
+
+  val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = testSelfEmploymentId,
+    tradingName = Some(testTradeName),
+    tradingStartDate = Some(testDate),
+    address = expectedAddress,
+    businessAccountingMethod = Some(false),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = Some(false),
+    taxYearTwoCrystallised = Some(false),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = SelfEmployment
+  )
+
+  val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = testPropertyIncomeId,
+    tradingName = None,
+    tradingStartDate = propertyTradingStartDate,
+    address = None,
+    businessAccountingMethod = Some(false),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = Some(false),
+    taxYearTwoCrystallised = Some(false),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = UkProperty
+  )
+
+  val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
+    incomeSourceId = testPropertyIncomeId,
+    tradingName = None,
+    tradingStartDate = propertyTradingStartDate,
+    address = None,
+    businessAccountingMethod = Some(false),
+    itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
+    taxYearOneCrystallised = Some(false),
+    taxYearTwoCrystallised = Some(false),
+    latencyDetails = Some(testLatencyDetails3),
+    incomeSourceType = ForeignProperty
+  )
 }

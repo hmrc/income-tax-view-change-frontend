@@ -17,8 +17,8 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
@@ -30,7 +30,6 @@ import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseBusinessDetails
 
 import javax.inject.Inject
@@ -110,9 +109,9 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], request: Request[_]): Future[Result] = withIncomeSourcesFS {
     val redirectAction = {
       if (isAgent)
-        routes.BusinessCeasedObligationsController.showAgent()
+        routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment.key)
       else
-        routes.BusinessCeasedObligationsController.show()
+        routes.IncomeSourceCeasedObligationsController.show(SelfEmployment.key)
     }
 
     val sessionDataFuture = for {
