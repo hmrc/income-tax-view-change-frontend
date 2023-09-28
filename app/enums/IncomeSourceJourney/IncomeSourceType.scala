@@ -17,7 +17,7 @@
 package enums.IncomeSourceJourney
 
 import forms.utils.SessionKeys
-import play.api.libs.json.{JsString, Writes}
+import play.api.libs.json.{JsObject, JsString, Json, Writes}
 import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {
@@ -78,5 +78,14 @@ object IncomeSourceType {
 
   implicit def writes[T <: IncomeSourceType]: Writes[T] = Writes {
     incomeSourceType => JsString(incomeSourceType.toString)
+  }
+
+  def getJourneyTypeJsonObj(incomeSourceType: IncomeSourceType): JsObject = {
+    val journey = incomeSourceType match {
+      case SelfEmployment => "SE"
+      case UkProperty => "UKPROPERTY"
+      case ForeignProperty => "FOREIGNPROPERTY"
+    }
+    Json.obj("journeyType" -> journey)
   }
 }
