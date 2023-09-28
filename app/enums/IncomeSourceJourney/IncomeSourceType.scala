@@ -80,7 +80,7 @@ object IncomeSourceType {
     incomeSourceType => JsString(incomeSourceType.toString)
   }
 
-  def getJourneyTypeJsonForIncomeSourceType(incomeSourceType: IncomeSourceType): JsObject = {
+  def getJourneyTypeJsonObj(incomeSourceType: IncomeSourceType): JsObject = {
     val journey = incomeSourceType match {
       case SelfEmployment => "SE"
       case UkProperty => "UKPROPERTY"

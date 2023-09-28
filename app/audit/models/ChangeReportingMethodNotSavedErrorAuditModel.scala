@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities
 import auth.MtdItUser
-import enums.IncomeSourceJourney.IncomeSourceType.getJourneyTypeJsonForIncomeSourceType
+import enums.IncomeSourceJourney.IncomeSourceType.getJourneyTypeJsonObj
 import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.libs.json.{JsValue, Json}
 
@@ -29,5 +29,5 @@ case class ChangeReportingMethodNotSavedErrorAuditModel(incomeSourceType: Income
   override val auditType: String = enums.AuditType.ErrorChangeReportingMethodNotSaved
 
   override val detail: JsValue =
-    Utilities.userAuditDetails(user) ++ getJourneyTypeJsonForIncomeSourceType(incomeSourceType)
+    Utilities.userAuditDetails(user) ++ getJourneyTypeJsonObj(incomeSourceType)
 }
