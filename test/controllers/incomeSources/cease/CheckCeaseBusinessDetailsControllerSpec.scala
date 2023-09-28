@@ -27,7 +27,6 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
@@ -37,7 +36,6 @@ import testConstants.UpdateIncomeSourceTestConstants.cessationDate
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.checkCeaseBusinessDetailsModel
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CheckCeaseBusinessDetails
 
 import scala.concurrent.Future
@@ -123,7 +121,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
   }
 
   "Individual - CheckCeaseBusinessDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment.key).url}" when {
       "submitted" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -136,7 +134,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
           TestCheckCeaseBusinessDetailsController.submit()(fakeRequestWithCeaseBusinessDetails(cessationDate, businessIncomeSourceId))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment.key).url)
       }
     }
   }
@@ -225,7 +223,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment.key).url)
       }
     }
   }

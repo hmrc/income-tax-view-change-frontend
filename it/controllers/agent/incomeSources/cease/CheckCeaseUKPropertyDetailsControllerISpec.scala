@@ -17,6 +17,7 @@
 package controllers.agent.incomeSources.cease
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.UkProperty
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseModel}
@@ -38,7 +39,7 @@ class CheckCeaseUKPropertyDetailsControllerISpec extends ComponentSpecBase {
   val businessStopDateLabel = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.content")
   val pageTitleMsgKey = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.heading")
   val timestamp = "2023-01-31T09:26:17Z"
-  val redirectUri = controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.showAgent().url
+  val redirectUri = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty.key).url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = ukProperty.incomeSourceId,
@@ -74,7 +75,7 @@ class CheckCeaseUKPropertyDetailsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         enable(IncomeSources)
-        stubAuthorisedAgentUser(authorised = true )
+        stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
         When(s"I call POST ${submitCheckCeaseUKPropertyDetailsControllerUrl}")

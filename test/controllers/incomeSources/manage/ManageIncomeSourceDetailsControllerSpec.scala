@@ -16,6 +16,7 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -67,7 +68,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     mockITSAStatusService,
     mockDateService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    mockCalculationListService
+    mockCalculationListService,
+    auditingService = app.injector.instanceOf[AuditingService]
   )(
     ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],

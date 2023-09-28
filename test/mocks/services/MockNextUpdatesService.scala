@@ -16,13 +16,13 @@
 
 package mocks.services
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
+import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.Mockito.mock
 import play.api.http.Status
 import services.NextUpdatesService
 import testConstants.IncomeSourcesWithDeadlinesTestConstants._
@@ -32,7 +32,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 
-trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter with FeatureSwitching{
+trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter with FeatureSwitching {
 
   val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
 
@@ -67,7 +67,7 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
   def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(NextUpdatesErrorModel(500, "error"))
 
   def mockGetObligationDueDates(response: Future[Either[(LocalDate, Boolean), Int]]): Unit = {
-    when(mockNextUpdatesService.getObligationDueDates(any(), any(), any(),any()))
+    when(mockNextUpdatesService.getObligationDueDates(any(), any(), any(), any()))
       .thenReturn(response)
   }
 
@@ -77,6 +77,11 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
   }
 
   def mockNextDeadlineDueDateAndOverDueObligations()(response: (LocalDate, Seq[LocalDate])): Unit = {
-    when(mockNextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(),any())) thenReturn Future.successful(response)
+    when(mockNextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(response)
   }
+
+  def mockGetObligationsViewModel(response: ObligationsViewModel): Unit = {
+    when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())) thenReturn Future.successful(response)
+  }
+
 }

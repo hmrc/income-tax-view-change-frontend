@@ -16,14 +16,20 @@
 
 package controllers.incomeSources.manage
 
+import audit.models.ManageYourDetailsResponseAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.LatencyDetails
+import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, LatencyDetails}
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSelfEmploymentId, testTaxYearRange}
+import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.businessForManageYourDetailsAudit
 import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse, singleBusinessResponse, singleBusinessResponse2, singleBusinessResponseInLatencyPeriod, singleBusinessResponseInLatencyPeriod2, singleBusinessResponseWithUnknownsInLatencyPeriod, singleForeignPropertyResponseInLatencyPeriod, singleForeignPropertyResponseWithUnknownsInLatencyPeriod, singleUKPropertyResponseInLatencyPeriod, singleUKPropertyResponseWithUnknownsInLatencyPeriod, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.PropertyDetailsIntegrationTestConstants.{foreignPropertyAudit, ukPropertyAudit}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -170,9 +176,51 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         )
       }
     }
+    "return the audit event" when {
+      "User is authorised" in {
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseManageYourDetailsAudit)
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        AuditStub.verifyAuditEvent(
+          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelSelfEmploymentBusiness)(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(businessForManageYourDetailsAudit),
+                properties = List()
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = Some(credId),
+              userType = Some(Individual),
+              arn = None
+            )(
+              FakeRequest()
+            )
+          )
+        )
+      }
+    }
   }
 
-  s"callingGET $manageUKPropertyShowUrl" should {
+  s"calling GET $manageUKPropertyShowUrl" should {
     "render the Manage UK Property page" when {
       "URL contains a valid income source ID and authorised user has no latency information" in {
         Given("Income Sources FS is enabled")
@@ -265,6 +313,48 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextByID("business-date-started")(messagesUnknown),
           elementTextByID("business-accounting-method")(messagesUnknown)
+        )
+      }
+    }
+    "return the audit event" when {
+      "User is authorised" in {
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUkPropertyResponseManageYourDetailsAudit)
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property")
+
+        AuditStub.verifyAuditEvent(
+          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelUkPropertyBusiness)(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(),
+                properties = List(ukPropertyAudit)
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = Some(credId),
+              userType = Some(Individual),
+              arn = None
+            )(
+              FakeRequest()
+            )
+          )
         )
       }
     }
@@ -363,6 +453,48 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
           elementTextByID("business-date-started")(messagesUnknown),
           elementTextByID("business-accounting-method")(messagesUnknown)
+        )
+      }
+    }
+    "return the audit event" when {
+      "User is authorised" in {
+        enable(IncomeSources)
+
+        And("API 1525 getIncomeSourceDetails returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseManageYourDetailsAudit)
+
+        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        And("API 1404 getCalculationList returns a success response")
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        And("API 1896 getCalculationList returns a success response")
+        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+
+        IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property")
+
+        AuditStub.verifyAuditEvent(
+          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelForeignPropertyBusiness)(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(),
+                properties = List(foreignPropertyAudit)
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = Some(credId),
+              userType = Some(Individual),
+              arn = None
+            )(
+              FakeRequest()
+            )
+          )
         )
       }
     }
