@@ -155,8 +155,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     messagesApi = messagesApi,
                     taxYear = taxYearModel.toString,
                     reportingMethodChangeTo = changeTo,
-                    journeyType = incomeSourceType.journeyType,
-                    errorMessage = formWithErrors.errors
+                    errorMessage = formWithErrors.errors,
+                    journeyType = incomeSourceType.journeyType
                   )
               )
 
@@ -164,10 +164,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 BadRequest(
                   confirmReportingMethod(
                     isAgent = isAgent,
+                    form = formWithErrors,
                     backUrl = backCall.url,
                     postAction = postAction,
                     newReportingMethod = reportingMethod,
-                    form = formWithErrors,
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
                     isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
