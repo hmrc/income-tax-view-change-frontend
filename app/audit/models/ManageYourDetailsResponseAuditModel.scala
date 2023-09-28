@@ -37,10 +37,7 @@ case class ManageYourDetailsResponseAuditModel(
             case UkProperty => "UKPROPERTY"
             case ForeignProperty => "FOREIGNPROPERTY"
           }),
-        "businessName" -> (viewModel.tradingName match {
-          case Some(name) => s"$name"
-          case None => None
-        }),
+        "businessName" -> viewModel.tradingName,
         "businessAddressLine1" -> viewModel.address.map(address => address.addressLine1),
         "businessAddressLine2" -> viewModel.address.flatMap(address => address.addressLine2),
         "businessAddressLine3" -> viewModel.address.flatMap(address => address.addressLine3),
