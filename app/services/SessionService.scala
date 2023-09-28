@@ -94,7 +94,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
       result => result.wasAcknowledged() match {
         case true => Right(true)
-        case false => Left(new Error("Mongo Save data operation was not acknowledged"))
+        case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
       }
     )
   }

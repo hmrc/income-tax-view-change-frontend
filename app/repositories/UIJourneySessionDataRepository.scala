@@ -69,7 +69,7 @@ class UIJourneySessionDataRepository @Inject()(
       .map(_ => true)
 
   def get(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
-    val data = UIJourneySessionData(sessionId, journeyType, None)
+    val data = UIJourneySessionData(sessionId, journeyType)
     keepAlive(data).flatMap {
       _ =>
         collection
