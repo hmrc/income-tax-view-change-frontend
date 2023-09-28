@@ -22,7 +22,7 @@ case class TaxYear(startYear: Int, endYear: Int)
 
 object TaxYear {
 
-  def getTaxYearStartYearEndYear(years: String): Option[TaxYear] = {
+  private def areValidYears(yearOne: String, yearTwo: String): Boolean = {
 
     def isValidYear(year: String): Boolean =
       year.length == 4 &&
@@ -30,12 +30,17 @@ object TaxYear {
           Try(year.toInt).toOption.isDefined
 
     def differenceIsOne(yearOne: String, yearTwo: String): Boolean =
-      if(isValidYear(yearOne) && isValidYear(yearTwo)) {
-        yearOne.toInt + 1 == yearTwo.toInt
-      } else false
+      yearOne.toInt + 1 == yearTwo.toInt
+
+    isValidYear(yearOne) &&
+      isValidYear(yearTwo) &&
+        differenceIsOne(yearOne, yearTwo)
+  }
+
+  def getTaxYearModel(years: String): Option[TaxYear] = {
 
     years.split('-') match {
-      case Array(yearOne, yearTwo) if differenceIsOne(yearOne, yearTwo) =>
+      case Array(yearOne, yearTwo) if areValidYears(yearOne, yearTwo) =>
         Some(
           TaxYear(yearOne.toInt, yearTwo.toInt)
         )

@@ -17,7 +17,7 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
-import audit.models.MangeIncomeSourcesAuditModel
+import audit.models.ManageIncomeSourcesAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -69,16 +69,16 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          auditingService
-            .extendedAudit(
-              MangeIncomeSourcesAuditModel(
-                soleTraderBusinesses = viewModel.viewSoleTraderBusinesses,
-                ukProperty = viewModel.viewUkProperty,
-                foreignProperty = viewModel.viewForeignProperty,
-                ceasedBusinesses = viewModel.viewCeasedBusinesses
-              )
-          )
           withIncomeSourcesRemovedFromSession {
+            auditingService
+              .extendedAudit(
+                ManageIncomeSourcesAuditModel(
+                  ukProperty = viewModel.viewUkProperty,
+                  foreignProperty = viewModel.viewForeignProperty,
+                  ceasedBusinesses = viewModel.viewCeasedBusinesses,
+                  soleTraderBusinesses = viewModel.viewSoleTraderBusinesses
+                )
+              )
             Ok(manageIncomeSources(
               sources = viewModel,
               isAgent = isAgent,

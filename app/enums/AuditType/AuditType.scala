@@ -118,7 +118,7 @@ case object CreditsSummaryResponse extends AuditType {
   override val name: String = "CreditsSummaryResponse"
 }
 
-case object MangeIncomeSourcesHome extends AuditType {
+case object ViewAndManageIncomeSourcesHome extends AuditType {
   override val name: String = "ViewAndManageIncomeSourcesHome"
 }
 
@@ -129,6 +129,11 @@ case object ManageIncomeSourceDetails extends AuditType {
 case object Obligations extends AuditType {
   override val name: String = "Obligations"
 }
+
+case object SwitchReportingMethod extends AuditType {
+  override val name: String = "SwitchReportingMethod"
+}
+
 
 case object ErrorChangeReportingMethodNotSaved extends AuditType {
   override val name: String = "ErrorChangeReportingMethodNotSaved"

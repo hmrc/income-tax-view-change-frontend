@@ -73,14 +73,7 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @errorSummary(form.copy(
-        errors = form.errors.map(formError =>
-            FormError(
-                key = formError.key,
-                messages = formError.messages.map(_ + s".$newReportingMethod")
-            )
-        )
-    ))
+    @errorSummary(form)
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$prefix-form") {
 
@@ -110,7 +103,7 @@
                 checked = form.value.contains(true),
 
             )),
-            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(s"${err.message}.$newReportingMethod", err.args:_*))))
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
         ))
         @govukButton(Button(
             content = Text(messages("base.confirm-this-change")),
