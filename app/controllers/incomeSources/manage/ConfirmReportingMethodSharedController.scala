@@ -95,7 +95,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         (maybeTaxYearModel, newReportingMethod, maybeIncomeSourceId) match {
           case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
 
-            val (backCall, postAction, _, _) = getRedirectCalls(taxYear, isAgent, changeTo, id, incomeSourceType)
+            val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, id, incomeSourceType)
 
             auditingService
               .extendedAudit(
@@ -112,11 +112,11 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               confirmReportingMethod(
                 isAgent = isAgent,
                 backUrl = backCall.url,
-                postAction = postAction,
                 newReportingMethod = reportingMethod,
                 form = ConfirmReportingMethodForm(changeTo),
                 taxYearEndYear = taxYearModel.endYear.toString,
                 taxYearStartYear = taxYearModel.startYear.toString,
+                postAction = getPostAction(id, taxYear, changeTo, isAgent, incomeSourceType),
                 isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
               )
             )
@@ -138,7 +138,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
     val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearModel(taxYear)
-    val (backCall, postAction, successCall, errorCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
+    val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
+    val errorCall = getErrorCall(incomeSourceType, incomeSourceId, isAgent)
 
     withIncomeSourcesFS {
       (maybeTaxYearModel, newReportingMethod) match {
@@ -163,11 +164,11 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     isAgent = isAgent,
                     form = formWithErrors,
                     backUrl = backCall.url,
-                    postAction = postAction,
                     newReportingMethod = reportingMethod,
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
-                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear),
+                    postAction = getPostAction(incomeSourceId, taxYear, changeTo, isAgent, incomeSourceType)
                   )
                 )
               )
@@ -218,7 +219,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                changeTo: String,
                                incomeSourceId: String,
                                incomeSourceType: IncomeSourceType
-                              ): (Call, Call, Call, Call) = {
+                              ): (Call, Call) = {
 
     val (backCall, successCall) = (isAgent, incomeSourceType) match {
       case (false, SelfEmployment) =>
@@ -241,12 +242,16 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
     }
 
-    val postAction: Call = routes.ConfirmReportingMethodSharedController
-      .submit(incomeSourceId, taxYear, changeTo, isAgent, incomeSourceType)
-    val errorCall: Call = routes.ReportingMethodChangeErrorController
-      .show(id = if (incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None, isAgent, incomeSourceType)
+    (backCall, successCall)
+  }
 
-    (backCall, postAction, successCall, errorCall)
+  private def getPostAction(incomeSourceId: String, taxYear: String, changeTo: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
+    routes.ConfirmReportingMethodSharedController.submit(incomeSourceId, taxYear, changeTo, isAgent, incomeSourceType)
+  }
+
+  private def getErrorCall(incomeSourceType: IncomeSourceType, incomeSourceId: String, isAgent: Boolean): Call = {
+    routes.ReportingMethodChangeErrorController
+      .show(id = if (incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None, isAgent, incomeSourceType)
   }
 
   private def authenticatedAction(isAgent: Boolean
