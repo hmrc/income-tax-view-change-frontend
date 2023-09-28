@@ -313,8 +313,8 @@ POST         /agents/income-sources/cease/change-business-end-date              
 
 GET          /income-sources/cease/business-check-details                 controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/income-sources/cease/business-check-details          controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
-POST         /income-sources/cease/business-check-details                 controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submit()
-POST         /agents/income-sources/cease/business-check-details          controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submitAgent()
+POST         /income-sources/cease/business-check-details                 controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /agents/income-sources/cease/business-check-details          controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
 GET          /income-sources/cease/uk-property-declare                    controllers.incomeSources.cease.CeaseUKPropertyController.show()
 GET          /agents/income-sources/cease/uk-property-declare             controllers.incomeSources.cease.CeaseUKPropertyController.showAgent()
@@ -331,8 +331,8 @@ POST         /agents/income-sources/cease/change-uk-property-end-date           
 
 GET          /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = UkProperty)
 GET          /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
-POST         /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submit()
-POST         /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submitAgent()
+POST         /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = UkProperty)
+POST         /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = UkProperty)
 
 GET          /income-sources/cease/foreign-property-declare               controllers.incomeSources.cease.CeaseForeignPropertyController.show(origin: Option[String] ?= None)
 GET          /agents/income-sources/cease/foreign-property-declare        controllers.incomeSources.cease.CeaseForeignPropertyController.showAgent()
@@ -349,8 +349,8 @@ POST         /agents/income-sources/cease/change-foreign-property-end-date     c
 
 GET          /income-sources/cease/foreign-property-check-details         controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/income-sources/cease/foreign-property-check-details  controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
-POST         /income-sources/cease/foreign-property-check-details          controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submit()
-POST         /agents/income-sources/cease/foreign-property-check-details   controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submitAgent()
+POST         /income-sources/cease/foreign-property-check-details          controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submit(incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /agents/income-sources/cease/foreign-property-check-details   controllers.incomeSources.cease.CeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
 GET          /income-sources/cease/cease-business-success                                  controllers.incomeSources.cease.BusinessCeasedObligationsController.show()
 GET          /agents/income-sources/cease/cease-business-success                           controllers.incomeSources.cease.BusinessCeasedObligationsController.showAgent()

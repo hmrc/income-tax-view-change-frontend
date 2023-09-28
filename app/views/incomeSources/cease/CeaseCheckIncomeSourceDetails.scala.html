@@ -22,6 +22,9 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import enums.IncomeSourceJourney._
 @import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
+@import models.core.AddressModel
+@import play.twirl.api.HtmlFormat
+
 
 
 
@@ -37,7 +40,6 @@
 @(
     isAgent: Boolean,
     backUrl: String,
-    changeUrl: String,
     viewModel: CheckCeaseIncomeSourceDetailsViewModel,
     messagesPrefix: String
 )(implicit request: auth.MtdItUser[_], messages: Messages)
@@ -45,6 +47,8 @@
 @getMessage(key: String, args: String*) = @{
 messages(s"$messagesPrefix.$key", args: _*)
 }
+@import implicitDateFormatter.longDate
+
 
 @getBusinessChangeHref = @{
     if(isAgent){
@@ -56,9 +60,9 @@ messages(s"$messagesPrefix.$key", args: _*)
 
 @getBusinessSubmitHref = @{
     if(isAgent){
-    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent()
+        controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment)
     } else {
-    controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit()
+        controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(SelfEmployment)
     }
 }
 
@@ -82,17 +86,31 @@ messages(s"$messagesPrefix.$key", args: _*)
 @getPropertySubmitHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {
         if(isAgent){
-            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent()
+            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty)
         } else {
-            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit()
+            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty)
         }
     } else {
         if(isAgent){
-            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent()
+            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty)
         } else {
-            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit()
+            controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty)
         }
     }
+}
+
+@getLongAddressFromBusinessAddressDetails(address: AddressModel) = @{
+    val nonEmptyFields = List(
+        Some(address.addressLine1),
+        address.addressLine2,
+        address.addressLine3,
+        address.addressLine4,
+        address.postCode,
+        Some(address.countryName)
+    ).flatten
+
+    val addressHtml = nonEmptyFields.map(line => HtmlFormat.escape(line).toString).mkString("<br>")
+    HtmlFormat.raw(addressHtml)
 }
 
 
@@ -116,7 +134,7 @@ messages(s"$messagesPrefix.$key", args: _*)
             rows = Seq(
                 SummaryListRow(
                     key = Key(Text(getMessage("dateStopped"))),
-                    value = Value(Text(viewModel.incomeSourceType.toString)),
+                    value = Value(Text(viewModel.businessEndDate.toLongDate)),
                     actions = Some(Actions(
                         items = Seq(ActionItem(
                             href = getBusinessChangeHref,
@@ -132,7 +150,13 @@ messages(s"$messagesPrefix.$key", args: _*)
                 ),
                 SummaryListRow(
                     key = Key(Text(getMessage("businessAddress"))),
-                    value = Value(Text(viewModel.address.toString)),
+                    value = Value(HtmlContent(
+                        if(viewModel.address) {
+                            getLongAddressFromBusinessAddressDetails(viewModel.address.get).toString
+                        } else {
+                        messages("incomeSources.generic.unknown")
+                        }
+                    )),
                 ))
             )
         )
@@ -147,7 +171,7 @@ messages(s"$messagesPrefix.$key", args: _*)
             classes = "govuk-!-margin-bottom-9",
             rows = Seq(SummaryListRow(
                 key = Key(Text(getMessage("dateStopped"))),
-                value = Value(Text("WHAT THE FRICK")),
+                value = Value(Text(viewModel.businessEndDate.toLongDate)),
                 actions = Some(Actions(
                     items = Seq(ActionItem(
                         href = getPropertyChangeHref,
