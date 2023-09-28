@@ -16,15 +16,24 @@
 
 package controllers.agent.incomeSources.manage
 
+import audit.models.ObligationsAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.UkProperty
+import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.http.Status.{OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId}
-import testConstants.BusinessDetailsIntegrationTestConstants.business1
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, credId, testMtditid, testNino, testSaUtr, testSelfEmploymentId}
+import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesWithBothPropertiesAndCeasedBusiness, ukPropertyOnlyResponse}
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
+import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+
+import java.time.LocalDate
 
 class ManageObligationsControllerISpec extends ComponentSpecBase {
 
@@ -46,6 +55,25 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val continueButtonText: String = messagesAPI(s"$reusedPrefix.income-sources-button")
 
+  val year = 2022
+  val obligationsViewModel: ObligationsViewModel = ObligationsViewModel(
+    quarterlyObligationsDatesYearOne = Seq(DatesModel(
+      LocalDate.of(year, 1, 6),
+      LocalDate.of(year, 4, 5),
+      LocalDate.of(year, 5, 5),
+      "Quarterly",
+      false,
+    ),
+      DatesModel(
+        LocalDate.of(year, 1, 6),
+        LocalDate.of(year, 4, 5),
+        LocalDate.of(year, 5, 5),
+        "Quarterly",
+        false,
+      )),
+    Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
+  )
+
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
       "given valid url params" in {
@@ -61,7 +89,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, testSelfEmploymentId, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, "123", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
@@ -75,6 +103,45 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleAgent(expectedText),
           elementTextByID("continue-button")(continueButtonText)
+        )
+      }
+    }
+    "return the audit event" when {
+      "User is authorised" in {
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, "123", clientDetailsWithConfirmation)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        AuditStub.verifyAuditEvent(
+          ObligationsAuditModel(
+            incomeSourceType = SelfEmployment,
+            obligations = obligationsViewModel,
+            businessName = "business",
+            reportingMethod = "quarterly",
+            taxYear = TaxYear(2023, 2024)
+          )(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(business1, business2, business3),
+                properties = List(ukProperty, foreignProperty)
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = None,
+              userType = Some(Agent),
+              arn = Some("1")
+            )(
+              FakeRequest()
+            )
+          )
         )
       }
     }
