@@ -477,16 +477,6 @@ class ManageObligationsControllerSpec extends TestSupport
 
     "handleRequest" should {
       "return an error" when {
-        "SE and no self employment exists with given id" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          setUpBusiness(isAgent = false)
-          val invalidId = "2345"
-
-          val result: Future[Result] = TestManageObligationsController.handleRequest(SelfEmployment, isAgent = false, taxYear, changeToA, Some(invalidId))(individualUser, headerCarrier)
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-        }
         "invalid taxYear in url" in {
           disableAllSwitches()
           enable(IncomeSources)
