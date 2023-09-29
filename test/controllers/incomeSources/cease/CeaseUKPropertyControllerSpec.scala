@@ -101,7 +101,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
   }
 
   "Individual - CeaseUKPropertyController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url}" when {
       "form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -117,7 +117,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
         }
         result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -185,7 +185,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
   }
 
   "Agent - CeaseUKPropertyController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty).url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -201,7 +201,7 @@ class CeaseUKPropertyControllerSpec extends TestSupport with MockAuthenticationP
         }
         result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty).url)
       }
     }
     "return 400 BAD_REQUEST" when {

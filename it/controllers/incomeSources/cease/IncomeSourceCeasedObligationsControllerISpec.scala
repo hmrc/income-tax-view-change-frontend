@@ -15,9 +15,9 @@ import java.time.LocalDate
 
 class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
 
-  val businessCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment.key).url
-  val foreignPropertyCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty.key).url
-  val ukPropertyCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty.key).url
+  val businessCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url
+  val foreignPropertyCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
+  val ukPropertyCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url
   val testDate: String = "2020-11-10"
   val prefix: String = "business-ceased.obligation"
   val continueButtonText: String = messagesAPI(s"$prefix.income-sources-button")

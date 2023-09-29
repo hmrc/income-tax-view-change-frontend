@@ -25,7 +25,7 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 class CeaseUKPropertyControllerISpec extends ComponentSpecBase {
-  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty.key).url
+  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
   val showCeaseUKPropertyControllerUrl: String = controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
   val radioErrorMessage: String = messagesAPI("incomeSources.ceaseUKProperty.radioError")
   val radioLabelMessage: String = messagesAPI("incomeSources.ceaseUKProperty.radioLabel")

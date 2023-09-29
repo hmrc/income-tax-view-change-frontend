@@ -77,8 +77,8 @@ class CheckCeaseBusinessDetailsViewSpec extends TestSupport with ViewSpec{
   val businessNameLabel = messages("incomeSources.ceaseBusiness.checkDetails.businessName")
   val businessAddressLabel = messages("incomeSources.ceaseBusiness.checkDetails.businessAddress")
   val buttonLabel = messages("incomeSources.ceaseBusiness.checkDetails.confirm")
-  val changeUrl = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(testSelfEmploymentId), SelfEmployment.key).url
-  val changeUrlAgent = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(testSelfEmploymentId), SelfEmployment.key).url
+  val changeUrl = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(testSelfEmploymentId), SelfEmployment).url
+  val changeUrlAgent = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(testSelfEmploymentId), SelfEmployment).url
   val formAction = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submit().url
   val formActionAgent = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.submitAgent().url
 

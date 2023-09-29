@@ -99,7 +99,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
   }
 
   "Individual - CheckCeaseUKPropertyDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url}" when {
       "submitted" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -112,7 +112,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
           TestCheckCeaseUKPropertyDetailsController.submit()(fakeRequestWithCeaseUKPropertyDate(cessationDate))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url)
       }
     }
   }
@@ -152,7 +152,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
   }
 
   "Agent - CheckCeaseUKPropertyDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty).url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -167,7 +167,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url)
       }
     }
   }

@@ -26,7 +26,7 @@ import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation
 import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 
 class CeaseForeignPropertyControllerISpec extends ComponentSpecBase with FeatureSwitching {
-  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url
+  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty).url
   val showCeaseForeignPropertyControllerUrl: String = controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url
   val checkboxErrorMessage: String = messagesAPI("incomeSources.ceaseForeignProperty.checkboxError")
   val checkboxLabelMessage: String = messagesAPI("incomeSources.ceaseForeignProperty.checkboxLabel")
