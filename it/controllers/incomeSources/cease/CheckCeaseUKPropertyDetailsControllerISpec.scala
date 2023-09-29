@@ -1,13 +1,13 @@
 package controllers.incomeSources.cease
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.UkProperty
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseModel}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.BaseIntegrationTestConstants.testNino
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse
 import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
@@ -22,7 +22,7 @@ class CheckCeaseUKPropertyDetailsControllerISpec extends ComponentSpecBase {
   val businessStopDateLabel = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.content")
   val pageTitleMsgKey = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.heading")
   val timestamp = "2023-01-31T09:26:17Z"
-  val redirectUri = controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.show().url
+  val redirectUri = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty.key).url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = ukProperty.incomeSourceId,

@@ -16,17 +16,25 @@
 
 package controllers.agent.incomeSources.manage
 
+import audit.models.SwitchReportingMethodAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import play.api.data.FormError
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.mvc.Http.Status
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testPropertyIncomeId, testSaUtr, testSelfEmploymentId}
+import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
@@ -182,6 +190,54 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     }
   }
 
+  s"calling GET $confirmReportingMethodShowSoleTraderBusinessUrl" should {
+    "trigger the audit event" when {
+      "Income Sources FS is Enabled" in {
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        And("API 1776 updateTaxYearSpecific returns a success response")
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+        IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        AuditStub
+          .verifyAuditEvent(
+            SwitchReportingMethodAuditModel(
+              journeyType = SelfEmployment.journeyType,
+              reportingMethodChangeTo = annual,
+              taxYear = taxYear,
+              errorMessage = Nil,
+              messagesApi = messagesAPI
+            )(
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                userName = None,
+                incomeSources = IncomeSourceDetailsModel(
+                  mtdbsa = testMtditid,
+                  yearOfMigration = None,
+                  businesses = List(business1, business2, business3),
+                  properties = List(ukProperty, foreignProperty)
+                ),
+                btaNavPartial = None,
+                saUtr = Some(testSaUtr),
+                credId = None,
+                userType = Some(Agent),
+                arn = Some("1")
+              )(
+                FakeRequest()
+              )
+            )
+          )
+      }
+    }
+  }
+
   s"calling POST $confirmReportingMethodSubmitUKPropertyUrl" should {
     s"redirect to $manageObligationsShowUKPropertyUrl" when {
       "called with a valid form" in {
@@ -285,6 +341,55 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(BAD_REQUEST)
         )
+      }
+    }
+  }
+
+  s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
+    "trigger the audit event" when {
+      "called with an empty form" in {
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        And("API 1776 updateTaxYearSpecific returns a success response")
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+        IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq())
+        )
+
+        AuditStub
+          .verifyAuditEvent(
+            SwitchReportingMethodAuditModel(
+              journeyType = SelfEmployment.journeyType,
+              reportingMethodChangeTo = annual,
+              taxYear = taxYear,
+              errorMessage = Seq(FormError("key", ConfirmReportingMethodForm.noSelectionError(annual))),
+              messagesApi = messagesAPI
+            )(
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                userName = None,
+                incomeSources = IncomeSourceDetailsModel(
+                  mtdbsa = testMtditid,
+                  yearOfMigration = None,
+                  businesses = List(business1, business2, business3),
+                  properties = List(ukProperty, foreignProperty)
+                ),
+                btaNavPartial = None,
+                saUtr = Some(testSaUtr),
+                credId = None,
+                userType = Some(Agent),
+                arn = Some("1")
+              )(
+                FakeRequest()
+              )
+            )
+          )
       }
     }
   }

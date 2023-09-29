@@ -16,8 +16,9 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
+import audit.models.ManageYourDetailsResponseAuditModel
 import auth.MtdItUser
-import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -49,7 +50,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val itsaStatusService: ITSAStatusService,
                                                     val dateService: DateService,
                                                     val retrieveBtaNavBar: NavBarPredicate,
-                                                    val calculationListService: CalculationListService)
+                                                    val calculationListService: CalculationListService,
+                                                    auditingService: AuditingService)
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)
@@ -276,7 +278,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: Option[String], incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
@@ -290,6 +291,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       } yield {
         value match {
           case Right(viewModel) =>
+            auditingService.extendedAudit(ManageYourDetailsResponseAuditModel(viewModel = viewModel))
             Ok(view(viewModel = viewModel,
               isAgent = isAgent,
               backUrl = backUrl

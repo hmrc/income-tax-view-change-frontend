@@ -16,6 +16,8 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
+import audit.models.ObligationsAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -23,7 +25,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
 import models.incomeSourceDetails.PropertyDetailsModel
-import models.incomeSourceDetails.TaxYear.getTaxYearStartYearEndYear
+import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService}
@@ -44,6 +46,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
+                                            val auditingService: AuditingService,
                                             nextUpdatesService: NextUpdatesService)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
@@ -147,7 +150,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       else {
         val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
 
-        getTaxYearStartYearEndYear(taxYear) match {
+        getTaxYearModel(taxYear) match {
           case Some(years) =>
             if (changeTo == "annual" || changeTo == "quarterly") {
               getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
@@ -156,6 +159,13 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                 })
                 case Right(value) =>
                   nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+                    auditingService.extendedAudit(ObligationsAuditModel(
+                      incomeSourceType = mode,
+                      obligations = viewModel,
+                      businessName = addedBusinessName,
+                      changeTo,
+                      years
+                    ))
                     if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
                     else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
                   }

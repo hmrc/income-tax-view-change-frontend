@@ -16,15 +16,21 @@
 
 package controllers.agent.incomeSources.manage
 
+import audit.models.ChangeReportingMethodNotSavedErrorAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import forms.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithStartDate, testMtditid, testSelfEmploymentId}
+import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 
 class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
@@ -84,6 +90,48 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleAgent(pageTitle)
         )
       }
+
+      "Income Sources FS is enabled and return the audit event" in {
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent(pageTitle)
+        )
+
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(UkProperty)(
+          MtdItUser(
+            mtditid = testMtditid,
+            nino = testNino,
+            userName = None,
+            incomeSources = IncomeSourceDetailsModel(
+              mtdbsa = testMtditid,
+              yearOfMigration = None,
+              businesses = List(business1, business2, business3),
+              properties = List(ukProperty, foreignProperty)
+            ),
+            btaNavPartial = None,
+            saUtr = Some(testSaUtr),
+            credId = None,
+            userType = Some(Agent),
+            arn = None
+          )(
+            FakeRequest()
+          )
+        ))
+      }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "the user does not have a UK property Income Source" in {
@@ -130,6 +178,48 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleAgent(pageTitle)
         )
       }
+
+      "Income Sources FS is enabled and return the audit event" in {
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", clientDetailsWithStartDate)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent(pageTitle)
+        )
+
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(ForeignProperty)(
+          MtdItUser(
+            mtditid = testMtditid,
+            nino = testNino,
+            userName = None,
+            incomeSources = IncomeSourceDetailsModel(
+              mtdbsa = testMtditid,
+              yearOfMigration = None,
+              businesses = List(business1, business2, business3),
+              properties = List(ukProperty, foreignProperty)
+            ),
+            btaNavPartial = None,
+            saUtr = Some(testSaUtr),
+            credId = None,
+            userType = Some(Agent),
+            arn = None
+          )(
+            FakeRequest()
+          )
+        ))
+      }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "the user does not have a Foreign property Income Source" in {
@@ -175,6 +265,48 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleAgent(pageTitle)
         )
+      }
+
+      "Income Sources FS is enabled and return the audit event" in {
+
+        stubAuthorisedAgentUser(authorised = true)
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved?id=$testSelfEmploymentId", clientDetailsWithStartDate)
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleAgent(pageTitle)
+        )
+
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(SelfEmployment)(
+          MtdItUser(
+            mtditid = testMtditid,
+            nino = testNino,
+            userName = None,
+            incomeSources = IncomeSourceDetailsModel(
+              mtdbsa = testMtditid,
+              yearOfMigration = None,
+              businesses = List(business1, business2, business3),
+              properties = List(ukProperty, foreignProperty)
+            ),
+            btaNavPartial = None,
+            saUtr = Some(testSaUtr),
+            credId = None,
+            userType = Some(Agent),
+            arn = None
+          )(
+            FakeRequest()
+          )
+        ))
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {

@@ -16,17 +16,21 @@
 
 package controllers.incomeSources.manage
 
+import audit.models.ChangeReportingMethodNotSavedErrorAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.updateIncomeSource.UpdateIncomeSourceResponseModel
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.libs.json.Json
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.test.FakeRequest
 import play.mvc.Http.Status
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
@@ -82,6 +86,46 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitle)
         )
       }
+
+      "Income Sources FS is enabled and return the audit event" in {
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property")
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleIndividual(pageTitle)
+        )
+
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(UkProperty)(
+          MtdItUser(
+            mtditid = testMtditid,
+            nino = testNino,
+            userName = None,
+            incomeSources = IncomeSourceDetailsModel(
+              mtdbsa = testMtditid,
+              yearOfMigration = None,
+              businesses = List(business1, business2, business3),
+              properties = List(ukProperty, foreignProperty)
+            ),
+            btaNavPartial = None,
+            saUtr = Some(testSaUtr),
+            credId = Some(credId),
+            userType = Some(Individual),
+            arn = None
+          )(
+            FakeRequest()
+          )
+        ))
+      }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "the user does not have a UK property Income Source" in {
@@ -124,6 +168,47 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitle)
         )
       }
+
+      "Income Sources FS is enabled and return the audit event" in {
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved?id=$testSelfEmploymentId")
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleIndividual(pageTitle)
+        )
+
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(SelfEmployment)(
+          MtdItUser(
+            mtditid = testMtditid,
+            nino = testNino,
+            userName = None,
+            incomeSources = IncomeSourceDetailsModel(
+              mtdbsa = testMtditid,
+              yearOfMigration = None,
+              businesses = List(business1, business2, business3),
+              properties = List(ukProperty, foreignProperty)
+            ),
+            btaNavPartial = None,
+            saUtr = Some(testSaUtr),
+            credId = Some(credId),
+            userType = Some(Individual),
+            arn = None
+          )(
+            FakeRequest()
+          )
+        ))
+      }
+
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "Sole Trader Income Source Id does not exist" in {
@@ -167,6 +252,46 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual(pageTitle)
         )
+      }
+
+      "Income Sources FS is enabled and return the audit event" in {
+
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        val result = IncomeTaxViewChangeFrontend
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property")
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(OK),
+          pageTitleIndividual(pageTitle)
+        )
+
+        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(ForeignProperty)(
+          MtdItUser(
+            mtditid = testMtditid,
+            nino = testNino,
+            userName = None,
+            incomeSources = IncomeSourceDetailsModel(
+              mtdbsa = testMtditid,
+              yearOfMigration = None,
+              businesses = List(business1, business2, business3),
+              properties = List(ukProperty, foreignProperty)
+            ),
+            btaNavPartial = None,
+            saUtr = Some(testSaUtr),
+            credId = Some(credId),
+            userType = Some(Individual),
+            arn = None
+          )(
+            FakeRequest()
+          )
+        ))
       }
     }
   }

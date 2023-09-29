@@ -16,16 +16,18 @@
 
 package services
 
-import auth.MtdItUser
 import controllers.agent.utils
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
+import mocks.repositories.MockUIJourneySessionDataRepository
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import testUtils.TestSupport
 
-class SessionServiceSpec extends TestSupport {
+class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
-  object TestSessionService extends SessionService()
+  object TestSessionService extends SessionService(mockUIJourneySessionDataRepository)
 
   "sessionService " when {
     "get method " should {
@@ -40,6 +42,38 @@ class SessionServiceSpec extends TestSupport {
         val result: Result = TestSessionService.set("key", "somevalue", Redirect("someurl"))(ec, requestHeader)
           .futureValue.toOption.get
         result.session.get("key") shouldBe Some("somevalue")
+      }
+    }
+    "mongo" when {
+      "getMongo method " should {
+        "return the correct session value for given key" in {
+          val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
+          mockRepositoryGet(Some(sessionData))
+          TestSessionService.getMongo("ADD-SE")(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
+        }
+      }
+      "getMongoKey method " should {
+        "return the correct session value for given key" in {
+          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
+          mockRepositoryGet(Some(sessionData))
+          TestSessionService.getMongoKey("businessName", JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some("my business"))
+        }
+      }
+      "setMongoData method" should {
+        "return a future boolean value" in {
+          mockRepositorySet(true)
+          val result: Boolean = TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))(headerCarrier, ec)
+            .futureValue
+          result shouldBe true
+        }
+      }
+      "setMongoKey method" should {
+        "return a future boolean value" in {
+          mockRepositoryUpdateData()
+          val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
+            JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe Right(true)
+        }
       }
     }
   }

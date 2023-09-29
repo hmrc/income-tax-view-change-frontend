@@ -17,11 +17,12 @@
 package enums.IncomeSourceJourney
 
 import forms.utils.SessionKeys
-import play.api.libs.json.{JsString, Writes}
+import play.api.libs.json.{JsObject, JsString, Json, Writes}
 import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {
   val key: String
+  val journeyType: String
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
   val endDateMessagePrefix: String
@@ -33,6 +34,7 @@ sealed trait IncomeSourceType {
 
 case object SelfEmployment extends IncomeSourceType {
   override val key = "SE"
+  override val journeyType: String = "SE"
   override val startDateMessagesPrefix: String = "add-business-start-date"
   override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
@@ -44,6 +46,7 @@ case object SelfEmployment extends IncomeSourceType {
 
 case object UkProperty extends IncomeSourceType {
   override val key = "UK"
+  override val journeyType: String = "UKPROPERTY"
   override val startDateMessagesPrefix: String = "incomeSources.add.UKPropertyStartDate"
   override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
@@ -55,6 +58,7 @@ case object UkProperty extends IncomeSourceType {
 
 case object ForeignProperty extends IncomeSourceType {
   override val key = "FP"
+  override val journeyType: String = "FOREIGNPROPERTY"
   override val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
   override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
@@ -78,5 +82,14 @@ object IncomeSourceType {
 
   implicit def writes[T <: IncomeSourceType]: Writes[T] = Writes {
     incomeSourceType => JsString(incomeSourceType.toString)
+  }
+
+  def getJourneyTypeJsonObj(incomeSourceType: IncomeSourceType): JsObject = {
+    val journey = incomeSourceType match {
+      case SelfEmployment => "SE"
+      case UkProperty => "UKPROPERTY"
+      case ForeignProperty => "FOREIGNPROPERTY"
+    }
+    Json.obj("journeyType" -> journey)
   }
 }
