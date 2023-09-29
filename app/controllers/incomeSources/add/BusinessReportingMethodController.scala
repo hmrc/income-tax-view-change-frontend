@@ -131,8 +131,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   private def handleFormErrors(formWithErrors: Form[AddBusinessReportingMethodForm], id: String, isAgent: Boolean)
                               (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = SelfEmployment.key) else
-      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment.key)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = SelfEmployment) else
+      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment)
     val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
 
@@ -180,8 +180,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                    (implicit user: MtdItUser[_]): Future[Result] = {
     val redirectUrl: Call = if (isAgent) routes.IncomeSourceAddedController.showAgent(id, SelfEmployment) else
       routes.IncomeSourceAddedController.show(id = id, incomeSourceType = SelfEmployment)
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, SelfEmployment.key) else
-      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment.key)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, SelfEmployment) else
+      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment)
 
     val futures = newReportingMethods.map(taxYearSpecific =>
       updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))

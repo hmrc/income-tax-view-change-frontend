@@ -50,9 +50,9 @@
 
 @getChangeUKPropertyAccountingMethodUrl = @{
     if (isAgent) {
-        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(UkProperty.key).url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(UkProperty).url
     } else {
-        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(UkProperty.key).url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(UkProperty).url
     }
 }
 

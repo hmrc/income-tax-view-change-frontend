@@ -228,6 +228,7 @@ GET          /income-sources/add/change-foreign-property-start-date-check       
 GET          /agents/income-sources/add/change-foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.show(isAgent:   Boolean = true,  isChange: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /income-sources/add/change-foreign-property-start-date-check              controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(isAgent: Boolean = false, isChange: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /agents/income-sources/add/change-foreign-property-start-date-check       controllers.incomeSources.add.AddIncomeSourceStartDateCheckController.submit(isAgent: Boolean = true,  isChange: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
+
 GET          /income-sources/add/business-added                           controllers.incomeSources.add.IncomeSourceAddedController.show(id: String, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/income-sources/add/business-added                    controllers.incomeSources.add.IncomeSourceAddedController.showAgent(id: String, incomeSourceType: IncomeSourceType = SelfEmployment)
 POST         /income-sources/add/business-added                           controllers.incomeSources.add.IncomeSourceAddedController.submit()
@@ -292,8 +293,8 @@ GET          /agents/income-sources/add/error-uk-property-not-added             
 
 GET          /income-sources/add/error-business-reporting-method-not-saved                     controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.show(id: String, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/income-sources/add/error-business-reporting-method-not-saved              controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showAgent(id: String, incomeSourceType: IncomeSourceType = SelfEmployment)
-GET          /income-sources/add/error-uk-property-reporting-method-not-saved                 controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.show(id: String, incomeSourceType: IncomeSourceType = UkProperty)
-GET          /agents/income-sources/add/error-uk-property-reporting-method-not-saved          controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showAgent(id: String, incomeSourceType: IncomeSourceType = UkProperty)
+GET          /income-sources/add/error-uk-property-reporting-method-not-saved                  controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.show(id: String, incomeSourceType: IncomeSourceType = UkProperty)
+GET          /agents/income-sources/add/error-uk-property-reporting-method-not-saved           controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showAgent(id: String, incomeSourceType: IncomeSourceType = UkProperty)
 GET          /income-sources/add/error-foreign-property-reporting-method-not-saved             controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.show(id: String, incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/income-sources/add/error-foreign-property-reporting-method-not-saved      controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showAgent(id: String, incomeSourceType: IncomeSourceType = ForeignProperty)
 
@@ -308,8 +309,8 @@ POST         /income-sources/cease/business-end-date                      contro
 POST         /agents/income-sources/cease/business-end-date               controllers.incomeSources.cease.IncomeSourceEndDateController.submitAgent(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /income-sources/cease/change-business-end-date               controllers.incomeSources.cease.IncomeSourceEndDateController.showChange(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/income-sources/cease/change-business-end-date        controllers.incomeSources.cease.IncomeSourceEndDateController.showChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
-POST         /income-sources/cease/change-business-end-date                      controllers.incomeSources.cease.IncomeSourceEndDateController.submitChange(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
-POST         /agents/income-sources/cease/change-business-end-date               controllers.incomeSources.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /income-sources/cease/change-business-end-date               controllers.incomeSources.cease.IncomeSourceEndDateController.submitChange(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /agents/income-sources/cease/change-business-end-date        controllers.incomeSources.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment)
 
 GET          /income-sources/cease/business-check-details                 controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.show()
 GET          /agents/income-sources/cease/business-check-details          controllers.incomeSources.cease.CheckCeaseBusinessDetailsController.showAgent()
@@ -326,8 +327,8 @@ POST         /income-sources/cease/uk-property-end-date                   contro
 POST         /agents/income-sources/cease/uk-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.submitAgent(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
 GET          /income-sources/cease/change-uk-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.showChange(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
 GET          /agents/income-sources/cease/change-uk-property-end-date     controllers.incomeSources.cease.IncomeSourceEndDateController.showChangeAgent(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
-POST         /income-sources/cease/change-uk-property-end-date                   controllers.incomeSources.cease.IncomeSourceEndDateController.submitChange(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
-POST         /agents/income-sources/cease/change-uk-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
+POST         /income-sources/cease/change-uk-property-end-date            controllers.incomeSources.cease.IncomeSourceEndDateController.submitChange(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
+POST         /agents/income-sources/cease/change-uk-property-end-date     controllers.incomeSources.cease.IncomeSourceEndDateController.submitChangeAgent(id: Option[String] = None, incomeSourceType: IncomeSourceType = UkProperty)
 
 GET          /income-sources/cease/uk-property-check-details              controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.show()
 GET          /agents/income-sources/cease/uk-property-check-details       controllers.incomeSources.cease.CheckCeaseUKPropertyDetailsController.showAgent()

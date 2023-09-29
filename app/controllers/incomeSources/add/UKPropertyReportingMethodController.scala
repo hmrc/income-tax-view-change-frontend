@@ -146,8 +146,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                               (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     val updatedForm = AddUKPropertyReportingMethodForm.updateErrorMessagesWithValues(errors)
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty.key) else
-      routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty) else
+      routes.IncomeSourceNotAddedController.show(UkProperty)
     val submitUrl: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit(id)
 
@@ -194,8 +194,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     val redirectUrl: Call = if (isAgent) routes.IncomeSourceAddedController.showAgent(id, UkProperty) else routes.IncomeSourceAddedController.show(id, UkProperty)
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = UkProperty.key) else
-      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = UkProperty.key)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = UkProperty) else
+      routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = UkProperty)
 
     val futures = newReportingMethods.map(taxYearSpecific =>
       updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
