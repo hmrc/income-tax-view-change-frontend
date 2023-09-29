@@ -64,4 +64,21 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       mockSessionService.set(ArgumentMatchers.eq(result), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Right(result.addingToSession(keyValue: _*))))
 
+  def setupMockCreateSession(result: Boolean): Unit =
+    when(
+      mockSessionService.createSession(ArgumentMatchers.anyString())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(result))
+
+  def setupMockGetSessionKeyMongo(result: Either[Throwable, Option[String]]): Unit = {
+    when(
+      mockSessionService.getMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockSetSessionKeyMongo(result: Either[Throwable, Boolean]): Unit = {
+    when(
+      mockSessionService.setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
 }
