@@ -70,9 +70,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
       }
     }.recover {
       case exception =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(s"[ReportingMethodChangeErrorController][show] ${exception.getMessage}")
-        errorHandler.showInternalServerError()
+        showInternalServerError(isAgent)
     }
   }
 

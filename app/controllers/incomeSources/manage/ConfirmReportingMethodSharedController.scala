@@ -27,7 +27,7 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import forms.utils.SessionKeys
-import forms.utils.SessionKeys.incomeSourceId
+import forms.utils.SessionKeys.{ceaseUKPropertyEndDate, incomeSourceId}
 import models.incomeSourceDetails.TaxYear
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
@@ -70,18 +70,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     withIncomeSourcesFS {
       sessionService.get(SessionKeys.incomeSourceId).flatMap {
-        case Right(incomeSourceIdMayBe) =>
-          incomeSourceIdMayBe match {
-            case Some(incomeSourceId) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, Some(incomeSourceId))
-            case None => Future.failed(MissingSessionKey(incomeSourceId))
-          }
+        case Right(incomeSourceIdMayBe) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdMayBe)
         case Left(exception) => Future.failed(exception)
       }
     }.recover {
       case exception =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(s"[ConfirmReportingMethodSharedController][show] ${exception.getMessage}")
-        errorHandler.showInternalServerError()
+        showInternalServerError(isAgent)
     }
   }
 
@@ -93,18 +88,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     withIncomeSourcesFS {
       sessionService.get(SessionKeys.incomeSourceId).flatMap {
-        case Right(incomeSourceIdMayBe) =>
-          incomeSourceIdMayBe match {
-            case Some(incomeSourceId) => handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceId, incomeSourceType)
-            case None => Future.failed(MissingSessionKey(incomeSourceId))
-          }
+        case Right(incomeSourceIdMayBe) => handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdMayBe, incomeSourceType)
         case Left(exception) => Future.failed(exception)
       }
     }.recover {
       case exception =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(s"[ConfirmReportingMethodSharedController][submit] ${exception.getMessage}")
-        errorHandler.showInternalServerError()
+        showInternalServerError(isAgent)
     }
   }
 
@@ -124,7 +114,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         (maybeTaxYearModel, newReportingMethod, maybeIncomeSourceId) match {
           case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
 
-            val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, id, incomeSourceType)
+            val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
 
             auditingService
               .extendedAudit(
@@ -162,7 +152,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     (if (isAgent) itvcErrorHandler else itvcErrorHandlerAgent).showInternalServerError()
   }
 
-  private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, incomeSourceId: String, incomeSourceType: IncomeSourceType)
+  private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, incomeSourceId: Option[String], incomeSourceType: IncomeSourceType)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
@@ -214,18 +204,26 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                               isAgent: Boolean,
                               successCall: Call,
                               taxYears: TaxYear,
-                              incomeSourceId: String,
+                              incomeSourceIdMaybe: Option[String],
                               reportingMethod: String
                              )(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    updateIncomeSourceService.updateTaxYearSpecific(
-      nino = user.nino,
-      incomeSourceId = incomeSourceId,
-      taxYearSpecific = TaxYearSpecific(taxYears.endYear.toString, reportingMethod match {
-        case "annual" => true
-        case "quarterly" => false
-      })
-    ) flatMap {
+
+    val updateIncomeSourceResFuture = for {
+      updateIncomeSourceRes <- incomeSourceIdMaybe match {
+        case Some(incomeSourceId) => updateIncomeSourceService.updateTaxYearSpecific(
+          nino = user.nino,
+          incomeSourceId = incomeSourceId,
+          taxYearSpecific = TaxYearSpecific(taxYears.endYear.toString, reportingMethod match {
+            case "annual" => true
+            case "quarterly" => false
+          })
+        )
+        case _ => Future.failed(MissingSessionKey(incomeSourceId))
+      }
+    } yield updateIncomeSourceRes
+
+    updateIncomeSourceResFuture flatMap {
       case _: UpdateIncomeSourceResponseError =>
         logAndShowError(isAgent, s"[handleValidForm]: Failed to update reporting method")
         Future.successful(Redirect(errorCall))
@@ -246,27 +244,27 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def getRedirectCalls(taxYear: String,
                                isAgent: Boolean,
                                changeTo: String,
-                               incomeSourceId: String,
+                               incomeSourceId: Option[String],
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {
 
-    val (backCall, successCall) = (isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) =>
+    val (backCall, successCall) = (isAgent, incomeSourceType, incomeSourceId) match {
+      case (false, SelfEmployment, Some(incomeSourceId)) =>
         routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId) ->
           routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
-      case (_, SelfEmployment) =>
+      case (_, SelfEmployment, Some(incomeSourceId)) =>
         routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId) ->
           routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
-      case (false, UkProperty) =>
+      case (false, UkProperty, _) =>
         routes.ManageIncomeSourceDetailsController.showUkProperty() ->
           routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-      case (_, UkProperty) =>
+      case (_, UkProperty, _) =>
         routes.ManageIncomeSourceDetailsController.showUkPropertyAgent() ->
           routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-      case (false, _) =>
+      case (false, _, _) =>
         routes.ManageIncomeSourceDetailsController.showForeignProperty() ->
           routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-      case (_, _) =>
+      case (_, _, _) =>
         routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent() ->
           routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
     }

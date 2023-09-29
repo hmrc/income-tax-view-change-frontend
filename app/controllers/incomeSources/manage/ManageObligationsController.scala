@@ -65,23 +65,19 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       withIncomeSourcesFS {
         sessionService.get(SessionKeys.incomeSourceId).flatMap {
           case Right(incomeSourceIdMayBe) =>
-            incomeSourceIdMayBe match {
-              case Some(incomeSourceId) =>
-                handleRequest(
-                  mode = SelfEmployment,
-                  isAgent = false,
-                  taxYear,
-                  changeTo,
-                  incomeSourceId
-                )
-              case None => Future.failed(MissingSessionKey(incomeSourceId))
-            }
+            handleRequest(
+              mode = SelfEmployment,
+              isAgent = false,
+              taxYear,
+              changeTo,
+              incomeSourceIdMayBe
+            )
           case Left(exception) => Future.failed(exception)
         }
       }.recover {
         case exception =>
           Logger("application").error(s"[ManageObligationsController][showSelfEmployment] ${exception.getMessage}")
-          itvcErrorHandler.showInternalServerError()
+          showInternalServerError(false)
       }
   }
 
@@ -90,23 +86,19 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       withIncomeSourcesFS {
         sessionService.get(SessionKeys.incomeSourceId).flatMap {
           case Right(incomeSourceIdMayBe) =>
-            incomeSourceIdMayBe match {
-              case Some(incomeSourceId) =>
-                handleRequest(
-                  mode = SelfEmployment,
-                  isAgent = true,
-                  taxYear,
-                  changeTo,
-                  incomeSourceId
-                )
-              case None => Future.failed(MissingSessionKey(incomeSourceId))
-            }
+            handleRequest(
+              mode = SelfEmployment,
+              isAgent = true,
+              taxYear,
+              changeTo,
+              incomeSourceIdMayBe
+            )
           case Left(exception) => Future.failed(exception)
         }
       }.recover {
         case exception =>
           Logger("application").error(s"[ManageObligationsController][showAgentSelfEmployment] ${exception.getMessage}")
-          itvcErrorHandlerAgent.showInternalServerError()
+          showInternalServerError(true)
       }
   }
 
@@ -118,7 +110,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         isAgent = false,
         taxYear,
         changeTo,
-        ""
+        Some("")
       )
   }
 
@@ -132,7 +124,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = true,
               taxYear,
               changeTo,
-              ""
+              Some("")
             )
         }
   }
@@ -145,7 +137,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         isAgent = false,
         taxYear,
         changeTo,
-        ""
+        Some("")
       )
   }
 
@@ -159,12 +151,12 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = true,
               taxYear,
               changeTo,
-              ""
+              Some("")
             )
         }
   }
 
-  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
@@ -173,38 +165,33 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       val backUrl: String = getBackurl(isAgent, mode, changeTo, taxYear)
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
-      if (mode == SelfEmployment && !user.incomeSources.businesses.exists(x => x.incomeSourceId.contains(incomeSourceId))) {
-        showError(isAgent, s"unable to find incomeSource by id: $incomeSourceId")
-      }
-      else {
-        val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
+      val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
 
-        getTaxYearModel(taxYear) match {
-          case Some(years) =>
-            if (changeTo == "annual" || changeTo == "quarterly") {
-              getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
-                case Left(error) => showError(isAgent, {
-                  error.getMessage
-                })
-                case Right(value) =>
-                  nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
-                    auditingService.extendedAudit(ObligationsAuditModel(
-                      incomeSourceType = mode,
-                      obligations = viewModel,
-                      businessName = addedBusinessName,
-                      changeTo,
-                      years
-                    ))
-                    if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
-                    else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
-                  }
-              }
+      getTaxYearModel(taxYear) match {
+        case Some(years) =>
+          if (changeTo == "annual" || changeTo == "quarterly") {
+            getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
+              case Left(error) => showError(isAgent, {
+                error.getMessage
+              })
+              case Right(value) =>
+                nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+                  auditingService.extendedAudit(ObligationsAuditModel(
+                    incomeSourceType = mode,
+                    obligations = viewModel,
+                    businessName = addedBusinessName,
+                    changeTo,
+                    years
+                  ))
+                  if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
+                  else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
+                }
             }
-            else {
-              showError(isAgent, "invalid changeTo mode provided")
-            }
-          case None => showError(isAgent, "invalid tax year provided")
-        }
+          }
+          else {
+            showError(isAgent, "invalid changeTo mode provided")
+          }
+        case None => showError(isAgent, "invalid tax year provided")
       }
     }
   }
@@ -225,9 +212,9 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     else Future.successful(itvcErrorHandler.showInternalServerError())
   }
 
-  def getBusinessName(mode: IncomeSourceType, incomeSourceId: String)(implicit user: MtdItUser[_]): String = {
-    mode match {
-      case SelfEmployment =>
+  def getBusinessName(mode: IncomeSourceType, incomeSourceId: Option[String])(implicit user: MtdItUser[_]): String = {
+    (mode, incomeSourceId) match {
+      case (SelfEmployment, Some(incomeSourceId)) =>
         val businessDetailsParams = for {
           addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
           businessName <- addedBusiness.tradingName
@@ -236,14 +223,15 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           case Some((_, name)) => name
           case None => "Not Found"
         }
-      case UkProperty => "UK property"
-      case ForeignProperty => "Foreign property"
+      case (UkProperty, _) => "UK property"
+      case (ForeignProperty, _) => "Foreign property"
+      case _ => "Not Found"
     }
   }
 
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
-    incomeSourceType match {
-      case SelfEmployment => Right(id)
+  def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: Option[String], isAgent: Boolean)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+    (incomeSourceType, id) match {
+      case (SelfEmployment, Some(id)) => Right(id)
       case _ =>
         val placeholder = if (incomeSourceType == UkProperty)
           incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)

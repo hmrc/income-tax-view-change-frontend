@@ -484,7 +484,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setUpBusiness(isAgent = false)
           val invalidId = "2345"
 
-          val result: Future[Result] = TestManageObligationsController.handleRequest(SelfEmployment, isAgent = false, taxYear, changeToA, invalidId)(individualUser, headerCarrier)
+          val result: Future[Result] = TestManageObligationsController.handleRequest(SelfEmployment, isAgent = false, taxYear, changeToA, Some(invalidId))(individualUser, headerCarrier)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
         "invalid taxYear in url" in {
@@ -494,7 +494,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setUpProperty(isAgent = false, isUkProperty = true)
           val invalidTaxYear = "2345"
 
-          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = false, invalidTaxYear, changeToQ, "")(individualUser, headerCarrier)
+          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = false, invalidTaxYear, changeToQ, Some(""))(individualUser, headerCarrier)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
         "invalid changeTo in url" in {
@@ -504,7 +504,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setUpProperty(isAgent = true, isUkProperty = true)
           val invalidChangeTo = "2345"
 
-          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = true, taxYear, invalidChangeTo, "")(agentUserConfirmedClient(), headerCarrier)
+          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = true, taxYear, invalidChangeTo, Some(""))(agentUserConfirmedClient(), headerCarrier)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
