@@ -38,7 +38,7 @@ import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 
@@ -72,7 +72,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock(classOf[ItvcHeaderCarrierForPartialsConverter])
 
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("session-123456"))).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
   implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier)
 
   implicit val conf: Configuration = app.configuration

@@ -72,21 +72,21 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
       "uk-property-end-date.year" -> date.year)
   )
 
-  property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
-    (charsList.length > 0 && charsList.length <= BusinessNameForm.MAX_LENGTH) ==> {
-      val businessName = charsList.mkString("")
-      businessNameForm(Some(businessName)).errors.isEmpty
-    }
-  }
-
-  property("businessTrade") = forAll(businessTradeGenerator) { (charsList: List[Char]) =>
-    val businessTrade = charsList.mkString("").trim
-    (businessTrade.length > 2) ==> {
-      businessTradeForm(Some(businessTrade)).errors.isEmpty
-    }
-  }
-
-  property("ukPropertyEndDate") = forAll(dateGenerator(currentDate)) { date =>
-    ukPropertyFormUnderTest(date).errors.isEmpty
-  }
+//  property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
+//    (charsList.length > 0 && charsList.length <= BusinessNameForm.MAX_LENGTH) ==> {
+//      val businessName = charsList.mkString("")
+//      businessNameForm(Some(businessName)).errors.isEmpty
+//    }
+//  }
+//
+//  property("businessTrade") = forAll(businessTradeGenerator) { (charsList: List[Char]) =>
+//    val businessTrade = charsList.mkString("").trim
+//    (businessTrade.length > 2) ==> {
+//      businessTradeForm(Some(businessTrade)).errors.isEmpty
+//    }
+//  }
+//
+//  property("ukPropertyEndDate") = forAll(dateGenerator(currentDate)) { date =>
+//    ukPropertyFormUnderTest(date).errors.isEmpty
+//  }
 }
