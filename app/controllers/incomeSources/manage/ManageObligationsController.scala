@@ -24,13 +24,17 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, NextUpdatesService}
+import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
@@ -47,38 +51,63 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
                                             val auditingService: AuditingService,
+                                            val sessionService: SessionService,
                                             nextUpdatesService: NextUpdatesService)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching {
+  with FeatureSwitching with IncomeSourcesUtils {
 
 
-  def showSelfEmployment(changeTo: String, taxYear: String, incomeSourceId: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(
-        mode = SelfEmployment,
-        isAgent = false,
-        taxYear,
-        changeTo,
-        incomeSourceId
-      )
+      withIncomeSourcesFS {
+        sessionService.get(SessionKeys.incomeSourceId).flatMap {
+          case Right(incomeSourceIdMayBe) =>
+            incomeSourceIdMayBe match {
+              case Some(incomeSourceId) =>
+                handleRequest(
+                  mode = SelfEmployment,
+                  isAgent = false,
+                  taxYear,
+                  changeTo,
+                  incomeSourceId
+                )
+              case None => Future.failed(MissingSessionKey(incomeSourceId))
+            }
+          case Left(exception) => Future.failed(exception)
+        }
+      }.recover {
+        case exception =>
+          Logger("application").error(s"[ManageObligationsController][showSelfEmployment] ${exception.getMessage}")
+          itvcErrorHandler.showInternalServerError()
+      }
   }
 
-  def showAgentSelfEmployment(changeTo: String, taxYear: String, incomeSourceId: String): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              mode = SelfEmployment,
-              isAgent = true,
-              taxYear,
-              changeTo,
-              incomeSourceId
-            )
+  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = authenticatedAction(true) {
+    implicit user =>
+      withIncomeSourcesFS {
+        sessionService.get(SessionKeys.incomeSourceId).flatMap {
+          case Right(incomeSourceIdMayBe) =>
+            incomeSourceIdMayBe match {
+              case Some(incomeSourceId) =>
+                handleRequest(
+                  mode = SelfEmployment,
+                  isAgent = true,
+                  taxYear,
+                  changeTo,
+                  incomeSourceId
+                )
+              case None => Future.failed(MissingSessionKey(incomeSourceId))
+            }
+          case Left(exception) => Future.failed(exception)
         }
+      }.recover {
+        case exception =>
+          Logger("application").error(s"[ManageObligationsController][showAgentSelfEmployment] ${exception.getMessage}")
+          itvcErrorHandlerAgent.showInternalServerError()
+      }
   }
 
   def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
@@ -141,7 +170,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
     }
     else {
-      val backUrl: String = getBackurl(isAgent, mode, incomeSourceId, changeTo, taxYear)
+      val backUrl: String = getBackurl(isAgent, mode, changeTo, taxYear)
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
       if (mode == SelfEmployment && !user.incomeSources.businesses.exists(x => x.incomeSourceId.contains(incomeSourceId))) {
@@ -180,9 +209,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def getBackurl(isAgent: Boolean, incomeSourceType: IncomeSourceType, incomeSourceId: String, changeTo: String, taxYear: String): String = {
+  def getBackurl(isAgent: Boolean, incomeSourceType: IncomeSourceType, changeTo: String, taxYear: String): String = {
     routes.ConfirmReportingMethodSharedController.show(
-      id = if (incomeSourceType.equals(SelfEmployment)) Some(incomeSourceId) else None,
       taxYear = taxYear,
       changeTo = changeTo,
       isAgent = isAgent,
@@ -243,5 +271,22 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           implicit mtdItUser =>
             Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true)))
         }
+  }
+
+  private def authenticatedAction(isAgent: Boolean
+                                 )(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+    if (isAgent)
+      Authenticated.async {
+        implicit request =>
+          implicit user =>
+            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
+              authenticatedCodeBlock(mtdItUser)
+            }
+      }
+    else
+      (checkSessionTimeout andThen authenticate andThen retrieveNino
+        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        authenticatedCodeBlock(user)
+      }
   }
 }

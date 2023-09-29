@@ -24,9 +24,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import exceptions.MissingSessionKey
+import forms.utils.SessionKeys
+import forms.utils.SessionKeys.incomeSourceId
 import play.api.Logger
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
+import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.{ManageIncomeSources, ReportingMethodChangeError}
@@ -44,6 +47,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                      val auditingService: AuditingService,
+                                                     val sessionService: SessionService,
                                                      val retrieveBtaNavBar: NavBarPredicate)
                                                     (implicit val ec: ExecutionContext,
                                                      implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -52,38 +56,48 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(id: Option[String],
-           isAgent: Boolean,
+  def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-
-    handleShowRequest(id, incomeSourceType, isAgent)
+    withIncomeSourcesFS {
+      sessionService.get(SessionKeys.incomeSourceId).flatMap {
+        case Right(incomeSourceIdMayBe) =>
+          incomeSourceIdMayBe match {
+            case Some(incomeSourceId) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
+            case None => Future.failed(MissingSessionKey(incomeSourceId))
+          }
+        case Left(exception) => Future.failed(exception)
+      }
+    }.recover {
+      case exception =>
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(s"[ReportingMethodChangeErrorController][show] ${exception.getMessage}")
+        errorHandler.showInternalServerError()
+    }
   }
 
   private def handleShowRequest(soleTraderBusinessId: Option[String],
                                 incomeSourceType: IncomeSourceType,
                                 isAgent: Boolean
                                )(implicit user: MtdItUser[_]): Future[Result] = {
-    withIncomeSourcesFS {
-      Future.successful(
-        user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
-          case Some(id) =>
-            auditingService.extendedAudit(ChangeReportingMethodNotSavedErrorAuditModel(incomeSourceType))
-            Ok(
-              reportingMethodChangeError(
-                isAgent = isAgent,
-                manageIncomeSourcesUrl = getManageIncomeSourcesUrl(isAgent),
-                manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(id, isAgent, incomeSourceType),
-                messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
-              )
+    Future.successful(
+      user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
+        case Some(id) =>
+          auditingService.extendedAudit(ChangeReportingMethodNotSavedErrorAuditModel(incomeSourceType))
+          Ok(
+            reportingMethodChangeError(
+              isAgent = isAgent,
+              manageIncomeSourcesUrl = getManageIncomeSourcesUrl(isAgent),
+              manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(id, isAgent, incomeSourceType),
+              messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
             )
-          case None =>
-            Logger("error").info(s"[ReportingMethodChangeErrorController][handleShowRequest]: " +
-              s"could not find incomeSourceId for $incomeSourceType")
-            showInternalServerError(isAgent)
-        }
-      )
-    }
+          )
+        case None =>
+          Logger("error").info(s"[ReportingMethodChangeErrorController][handleShowRequest]: " +
+            s"could not find incomeSourceId for $incomeSourceType")
+          showInternalServerError(isAgent)
+      }
+    )
   }
 
   private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
@@ -91,11 +105,11 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
   private def getManageIncomeSourceDetailsUrl(incomeSourceId: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
       case (false, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
-      case (_,     SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
-      case (false, UkProperty)     => routes.ManageIncomeSourceDetailsController.showUkProperty()
-      case (_,     UkProperty)     => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
-      case (false, _)              => routes.ManageIncomeSourceDetailsController.showForeignProperty()
-      case (_, _)                  => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
+      case (_, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
+      case (false, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkProperty()
+      case (_, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
+      case (false, _) => routes.ManageIncomeSourceDetailsController.showForeignProperty()
+      case (_, _) => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
     }).url
   }
 

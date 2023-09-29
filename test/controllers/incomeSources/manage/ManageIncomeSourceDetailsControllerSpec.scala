@@ -32,7 +32,7 @@ import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{CalculationListService, DateService, ITSAStatusService}
+import services.{CalculationListService, DateService, ITSAStatusService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants.address
@@ -69,6 +69,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     mockDateService,
     retrieveBtaNavBar = MockNavBarPredicate,
     mockCalculationListService,
+    sessionService = app.injector.instanceOf[SessionService],
     auditingService = app.injector.instanceOf[AuditingService]
   )(
     ec,
