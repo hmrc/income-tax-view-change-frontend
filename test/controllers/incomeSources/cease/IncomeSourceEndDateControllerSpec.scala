@@ -81,42 +81,42 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         case Right(incomeSourceTypeValue) =>
           (incomeSourceTypeValue, isAgent, isChange) match {
             case (UkProperty, true, false) =>
-              (routes.CeaseUKPropertyController.showAgent(),
+              (routes.DeclarePropertyCeasedController.showAgent(incomeSourceTypeValue),
                 routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = UkProperty.key),
                 routes.CheckCeaseUKPropertyDetailsController.showAgent(),
                 UkProperty)
             case (UkProperty, false, false) =>
-              (routes.CeaseUKPropertyController.show(),
+              (routes.DeclarePropertyCeasedController.show(incomeSourceTypeValue),
                 routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = UkProperty.key),
                 routes.CheckCeaseUKPropertyDetailsController.show(),
                 UkProperty)
             case (UkProperty, true, true) =>
-              (routes.CeaseUKPropertyController.showAgent(),
+              (routes.DeclarePropertyCeasedController.showAgent(incomeSourceTypeValue),
                 routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = UkProperty.key),
                 routes.CheckCeaseUKPropertyDetailsController.showAgent(),
                 UkProperty)
             case (UkProperty, false, true) =>
-              (routes.CeaseUKPropertyController.show(),
+              (routes.DeclarePropertyCeasedController.show(incomeSourceTypeValue),
                 routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = UkProperty.key),
                 routes.CheckCeaseUKPropertyDetailsController.show(),
                 UkProperty)
             case (ForeignProperty, true, false) =>
-              (routes.CeaseForeignPropertyController.showAgent(),
+              (routes.DeclarePropertyCeasedController.showAgent(incomeSourceTypeValue),
                 routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = ForeignProperty.key),
                 routes.CheckCeaseForeignPropertyDetailsController.showAgent(),
                 ForeignProperty)
             case (ForeignProperty, false, false) =>
-              (routes.CeaseForeignPropertyController.show(),
+              (routes.DeclarePropertyCeasedController.show(incomeSourceTypeValue),
                 routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = ForeignProperty.key),
                 routes.CheckCeaseForeignPropertyDetailsController.show(),
                 ForeignProperty)
             case (ForeignProperty, true, true) =>
-              (routes.CeaseForeignPropertyController.showAgent(),
+              (routes.DeclarePropertyCeasedController.showAgent(incomeSourceTypeValue),
                 routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = ForeignProperty.key),
                 routes.CheckCeaseForeignPropertyDetailsController.showAgent(),
                 ForeignProperty)
             case (ForeignProperty, false, true) =>
-              (routes.CeaseForeignPropertyController.show(),
+              (routes.DeclarePropertyCeasedController.show(incomeSourceTypeValue),
                 routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = ForeignProperty.key),
                 routes.CheckCeaseForeignPropertyDetailsController.show(),
                 ForeignProperty)

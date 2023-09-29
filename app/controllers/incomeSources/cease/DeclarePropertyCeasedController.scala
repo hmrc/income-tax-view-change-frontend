@@ -21,52 +21,50 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.ForeignProperty
-import forms.CeaseForeignPropertyForm
-import forms.utils.SessionKeys.ceaseForeignPropertyDeclare
+import enums.IncomeSourceJourney.IncomeSourceType
+import forms.incomeSources.cease.DeclarePropertyCeasedForm
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.CeaseForeignProperty
+import views.html.incomeSources.cease.DeclarePropertyCeased
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationPredicate,
-                                               val authorisedFunctions: FrontendAuthorisedFunctions,
-                                               val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val retrieveBtaNavBar: NavBarPredicate,
-                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                               val retrieveNino: NinoPredicate,
-                                               val view: CeaseForeignProperty,
-                                               val sessionService: SessionService)
-                                              (implicit val appConfig: FrontendAppConfig,
-                                               mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                              )
+class DeclarePropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
+                                                val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                val checkSessionTimeout: SessionTimeoutPredicate,
+                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                val retrieveBtaNavBar: NavBarPredicate,
+                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                val retrieveNino: NinoPredicate,
+                                                val view: DeclarePropertyCeased,
+                                                val sessionService: SessionService)
+                                               (implicit val appConfig: FrontendAppConfig,
+                                                mcc: MessagesControllerComponents,
+                                                val ec: ExecutionContext,
+                                                val itvcErrorHandler: ItvcErrorHandler,
+                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                               )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def handleRequest(isAgent: Boolean, origin: Option[String] = None)
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
 
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submitAgent else
-      controllers.incomeSources.cease.routes.CeaseForeignPropertyController.submit
+    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType) else
+      controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
 
     Future.successful(Ok(view(
-      ceaseForeignPropertyForm = CeaseForeignPropertyForm.form,
+      declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),
+      incomeSourceType = incomeSourceType,
       postAction = postAction,
       isAgent = isAgent,
-      backUrl = backUrl,
-      origin = origin)(user, messages)))
+      backUrl = backUrl)(user, messages)))
 
   } recover {
     case ex: Exception =>
@@ -77,55 +75,57 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
   }
 
 
-  def show(origin: Option[String] = None): Action[AnyContent] =
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
-          origin
+          incomeSourceType = incomeSourceType
         )
     }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleRequest(
-              isAgent = true
+              isAgent = true,
+              incomeSourceType = incomeSourceType
             )
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val (postAction, backAction, redirectAction) = {
       if (isAgent)
-        (routes.CeaseForeignPropertyController.submitAgent,
+        (routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType),
           routes.CeaseIncomeSourceController.showAgent(),
-          routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key))
+          routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType.key))
       else
-        (routes.CeaseForeignPropertyController.submit,
+        (routes.DeclarePropertyCeasedController.submit(incomeSourceType),
           routes.CeaseIncomeSourceController.show(),
-          routes.IncomeSourceEndDateController.show(None, ForeignProperty.key))
+          routes.IncomeSourceEndDateController.show(None, incomeSourceType.key))
     }
 
-    CeaseForeignPropertyForm.form.bindFromRequest().fold(
+    DeclarePropertyCeasedForm.form(incomeSourceType).bindFromRequest().fold(
       hasErrors => {
         val result = BadRequest(view(
-          ceaseForeignPropertyForm = hasErrors,
+          declarePropertyCeasedForm = hasErrors,
+          incomeSourceType = incomeSourceType,
           postAction = postAction,
           backUrl = backAction.url,
           isAgent = isAgent
         ))
-        sessionService.set(key = ceaseForeignPropertyDeclare, value = "false", result = result).flatMap {
+        sessionService.set(key = incomeSourceType.ceasePropertyDeclarationSessionKey, value = "false", result = result).flatMap {
           case Right(result) => Future.successful(result)
           case Left(exception) => Future.failed(exception)
         }
       },
       _ => {
         val result = Redirect(redirectAction)
-        sessionService.set(key = ceaseForeignPropertyDeclare, value = "true", result = result).flatMap {
+        sessionService.set(key = incomeSourceType.ceasePropertyDeclarationSessionKey, value = "true", result = result).flatMap {
           case Right(result) => Future.successful(result)
           case Left(exception) => Future.failed(exception)
         }
@@ -139,18 +139,18 @@ class CeaseForeignPropertyController @Inject()(val authenticate: AuthenticationP
   }
 
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
-      handleSubmitRequest(isAgent = false)
+      handleSubmitRequest(isAgent = false, incomeSourceType = incomeSourceType)
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.async {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true)
+            handleSubmitRequest(isAgent = true, incomeSourceType = incomeSourceType)
         }
   }
 }

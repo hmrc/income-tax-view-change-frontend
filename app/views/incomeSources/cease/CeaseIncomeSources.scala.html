@@ -55,13 +55,13 @@
 }
 
 @ceaseUkPropertyURL = @{
-    if(isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url
-    else controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
+    if(isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.showAgent(UkProperty).url
+    else controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
 }
 
 @ceaseForeignPropertyURL = @{
-    if(isAgent) controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url
-    else controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
+    if(isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.showAgent(ForeignProperty).url
+    else controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
 }
 
 @noneToUnknown(value:Option[String]) = @{value.getOrElse(getMessage("unknown"))}
