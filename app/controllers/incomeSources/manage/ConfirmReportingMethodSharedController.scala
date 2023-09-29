@@ -27,7 +27,7 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import forms.utils.SessionKeys
-import forms.utils.SessionKeys.{ceaseUKPropertyEndDate, incomeSourceId}
+import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.TaxYear
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger

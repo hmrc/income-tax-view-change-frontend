@@ -24,9 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
-import exceptions.MissingSessionKey
 import forms.utils.SessionKeys
-import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
