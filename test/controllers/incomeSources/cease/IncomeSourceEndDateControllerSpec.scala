@@ -83,62 +83,62 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
             case (UkProperty, true, false) =>
               (routes.CeaseUKPropertyController.showAgent(),
                 routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = UkProperty.key),
-                routes.CheckCeaseUKPropertyDetailsController.showAgent(),
+                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceTypeValue),
                 UkProperty)
             case (UkProperty, false, false) =>
               (routes.CeaseUKPropertyController.show(),
                 routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = UkProperty.key),
-                routes.CheckCeaseUKPropertyDetailsController.show(),
+                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceTypeValue),
                 UkProperty)
             case (UkProperty, true, true) =>
               (routes.CeaseUKPropertyController.showAgent(),
                 routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = UkProperty.key),
-                routes.CheckCeaseUKPropertyDetailsController.showAgent(),
+                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceTypeValue),
                 UkProperty)
             case (UkProperty, false, true) =>
               (routes.CeaseUKPropertyController.show(),
                 routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = UkProperty.key),
-                routes.CheckCeaseUKPropertyDetailsController.show(),
+                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceTypeValue),
                 UkProperty)
             case (ForeignProperty, true, false) =>
               (routes.CeaseForeignPropertyController.showAgent(),
                 routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = ForeignProperty.key),
-                routes.CheckCeaseForeignPropertyDetailsController.showAgent(),
+                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceTypeValue),
                 ForeignProperty)
             case (ForeignProperty, false, false) =>
               (routes.CeaseForeignPropertyController.show(),
                 routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = ForeignProperty.key),
-                routes.CheckCeaseForeignPropertyDetailsController.show(),
+                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceTypeValue),
                 ForeignProperty)
             case (ForeignProperty, true, true) =>
               (routes.CeaseForeignPropertyController.showAgent(),
                 routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = ForeignProperty.key),
-                routes.CheckCeaseForeignPropertyDetailsController.showAgent(),
+                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceTypeValue),
                 ForeignProperty)
             case (ForeignProperty, false, true) =>
               (routes.CeaseForeignPropertyController.show(),
                 routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = ForeignProperty.key),
-                routes.CheckCeaseForeignPropertyDetailsController.show(),
+                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceTypeValue),
                 ForeignProperty)
             case (SelfEmployment, true, false) =>
               (routes.CeaseIncomeSourceController.showAgent(),
                 routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = SelfEmployment.key),
-                routes.CheckCeaseBusinessDetailsController.showAgent(),
+                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceTypeValue),
                 SelfEmployment)
             case (SelfEmployment, false, false) =>
               (routes.CeaseIncomeSourceController.show(),
                 routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = SelfEmployment.key),
-                routes.CheckCeaseBusinessDetailsController.show(),
+                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceTypeValue),
                 SelfEmployment)
             case (SelfEmployment, true, true) =>
               (routes.CeaseIncomeSourceController.showAgent(),
                 routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = SelfEmployment.key),
-                routes.CheckCeaseBusinessDetailsController.showAgent(),
+                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceTypeValue),
                 SelfEmployment)
             case (SelfEmployment, false, true) =>
               (routes.CeaseIncomeSourceController.show(),
                 routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = SelfEmployment.key),
-                routes.CheckCeaseBusinessDetailsController.show(),
+                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceTypeValue),
                 SelfEmployment)
           }
         case Left(exception) => throw exception
@@ -249,7 +249,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBusinessIncomeSource()
         setupMockGetSession(Some(testSelfEmploymentId))
 
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url)
         setupMockSetSession(redirect, SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
 
         lazy val result: Future[Result] = {
@@ -261,7 +261,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
         result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe Some(testSelfEmploymentId)
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url)
       }
       "UK Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -269,7 +269,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
         setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url)
         setupMockSetSession(redirect, SessionKeys.ceaseUKPropertyEndDate -> validCeaseDate)
 
         lazy val result: Future[Result] = {
@@ -280,14 +280,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(UkProperty.endDateSessionKey) shouldBe Some("2022-08-27")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.show().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url)
         setupMockSetSession(redirect, SessionKeys.ceaseForeignPropertyEndDate -> validCeaseDate)
 
 
@@ -299,7 +299,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(ForeignProperty.endDateSessionKey) shouldBe Some("2022-08-27")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -416,7 +416,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBusinessIncomeSource()
         setupMockGetSession(Some(testSelfEmploymentId))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url)
         setupMockSetSession(redirect, SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
 
         lazy val result: Future[Result] = {
@@ -428,14 +428,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
         result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe Some(testSelfEmploymentId)
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url)
       }
       "UK Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
         setupMockSetSession(redirect, SessionKeys.ceaseUKPropertyEndDate -> validCeaseDate)
 
         lazy val result: Future[Result] = {
@@ -446,14 +446,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(UkProperty.endDateSessionKey) shouldBe Some("2022-08-27")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
         setupMockSetSession(redirect, SessionKeys.ceaseForeignPropertyEndDate -> validCeaseDate)
 
         lazy val result: Future[Result] = {
@@ -464,7 +464,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(ForeignProperty.endDateSessionKey) shouldBe Some("2022-08-27")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -585,7 +585,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBusinessIncomeSource()
         setupMockGetSession(Some(testSelfEmploymentId))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url)
         setupMockSetSession(redirect, SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
 
         lazy val result: Future[Result] = {
@@ -597,7 +597,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
         result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe Some(testSelfEmploymentId)
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url)
       }
       "UK Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -605,7 +605,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
         setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url)
         setupMockSetSession(redirect, SessionKeys.ceaseUKPropertyEndDate -> validCeaseDate)
 
         lazy val result: Future[Result] = {
@@ -616,14 +616,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(UkProperty.endDateSessionKey) shouldBe Some("2022-08-27")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.show().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url)
         setupMockSetSession(redirect, SessionKeys.ceaseForeignPropertyEndDate -> validCeaseDate)
 
 
@@ -635,7 +635,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(ForeignProperty.endDateSessionKey) shouldBe Some("2022-08-27")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -738,7 +738,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBusinessIncomeSource()
         setupMockGetSession(Some(testSelfEmploymentId))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url)
         setupMockSetSession(redirect, SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
 
         lazy val result: Future[Result] = {
@@ -750,14 +750,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
         result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe Some(testSelfEmploymentId)
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url)
       }
       "UK Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
         setupMockSetSession(redirect, SessionKeys.ceaseUKPropertyEndDate -> validCeaseDate)
 
         lazy val result: Future[Result] = {
@@ -768,14 +768,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(UkProperty.endDateSessionKey) shouldBe Some("2022-08-27")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent().url)
+        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
         setupMockSetSession(redirect, SessionKeys.ceaseForeignPropertyEndDate -> validCeaseDate)
 
         lazy val result: Future[Result] = {
@@ -786,7 +786,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         result.futureValue.session.get(ForeignProperty.endDateSessionKey) shouldBe Some("2022-08-27")
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
       }
     }
     "return 400 BAD_REQUEST" when {

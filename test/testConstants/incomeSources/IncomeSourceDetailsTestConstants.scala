@@ -16,6 +16,7 @@
 
 package testConstants.incomeSources
 
+import enums.IncomeSourceJourney.SelfEmployment
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
@@ -105,7 +106,8 @@ object IncomeSourceDetailsTestConstants {
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
     address = Some(address),
-    businessEndDate = LocalDate.parse("2022-04-23")
+    businessEndDate = LocalDate.parse("2022-04-23"),
+    SelfEmployment
   )
 
   def getCurrentTaxEndYear(currentDate: LocalDate): Int = {

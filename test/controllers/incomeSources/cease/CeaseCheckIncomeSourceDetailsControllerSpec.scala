@@ -20,33 +20,35 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.IncomeTaxViewChangeConnector
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.UkProperty
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid, testSelfEmploymentId}
 import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, successResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.cease.CheckCeaseUKPropertyDetails
+import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
 import scala.concurrent.Future
 
 class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate
-  with FeatureSwitching {
+  with FeatureSwitching with MockSessionService{
 
   val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
 
-  object TestCheckCeaseUKPropertyDetailsController extends CheckCeaseUKPropertyDetailsController(
+  val testEndDate: String = "01-01-2022"
+
+  object TestCeaseCheckIncomeSourceDetailsController extends CeaseCheckIncomeSourceDetailsController(
     MockAuthenticationPredicate,
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -54,11 +56,11 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
     app.injector.instanceOf[NavBarPredicate],
     app.injector.instanceOf[NinoPredicate],
     mockIncomeSourceDetailsService,
-    app.injector.instanceOf[CheckCeaseUKPropertyDetails],
+    app.injector.instanceOf[CeaseCheckIncomeSourceDetails],
     mockUpdateIncomeSourceService,
     sessionService = app.injector.instanceOf[SessionService])(appConfig,
-    ec,
     app.injector.instanceOf[MessagesControllerComponents],
+    ec,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
@@ -70,16 +72,18 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
 
   "Individual - CheckCeaseUKPropertyDetailsController.show" should {
     "return 200 OK" when {
-      "navigating to the page with FS Enabled" in {
+      "navigating to the page with FS Enabled - Self Employment" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.show()(fakeRequestWithCeaseUKPropertyDate(cessationDate))
+        mockSingleBusinessIncomeSource()
+        setupMockGetSession(Some("value"))
+
+        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithCeaseBusinessDetails(testEndDate, testSelfEmploymentId))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestCheckCeaseUKPropertyDetailsController.title
-        document.select("h1").text shouldBe TestCheckCeaseUKPropertyDetailsController.heading
+        document.title shouldBe TestCeaseCheckIncomeSourceDetailsController.title
+        document.select("h1").text shouldBe TestCeaseCheckIncomeSourceDetailsController.heading
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -87,13 +91,13 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         disable(IncomeSources)
         mockPropertyIncomeSource()
 
-        val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.show()(fakeRequestWithNinoAndOrigin("BTA"))
+        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("BTA"))
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "called with an unauthenticated user" in {
         setupMockAuthorisationException()
-        val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -110,7 +114,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
           .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
 
         lazy val result: Future[Result] = {
-          TestCheckCeaseUKPropertyDetailsController.submit()(fakeRequestWithCeaseUKPropertyDate(cessationDate))
+          TestCeaseCheckIncomeSourceDetailsController.submit(SelfEmployment)(fakeRequestWithCeaseUKPropertyDate(cessationDate))
         }
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.show().url)
@@ -125,13 +129,13 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
 
-        val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.showAgent()(fakeRequestConfirmedClient()
+        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient()
           .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> cessationDate))
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
-        document.title shouldBe TestCheckCeaseUKPropertyDetailsController.titleAgent
-        document.select("h1").text shouldBe TestCheckCeaseUKPropertyDetailsController.heading
+        document.title shouldBe TestCeaseCheckIncomeSourceDetailsController.titleAgent
+        document.select("h1").text shouldBe TestCeaseCheckIncomeSourceDetailsController.heading
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -140,13 +144,13 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         disable(IncomeSources)
         mockPropertyIncomeSource()
 
-        val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
       "called with an unauthenticated user" in {
         setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestCheckCeaseUKPropertyDetailsController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -162,7 +166,7 @@ class CheckCeaseUKPropertyDetailsControllerSpec extends TestSupport with MockAut
         when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any())).thenReturn(Future.successful(successResponse))
 
         lazy val result: Future[Result] = {
-          TestCheckCeaseUKPropertyDetailsController.submitAgent()(fakeRequestConfirmedClient()
+          TestCeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment)(fakeRequestConfirmedClient()
             .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> cessationDate)
             .withMethod("POST"))
         }
