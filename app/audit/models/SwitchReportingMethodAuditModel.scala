@@ -18,31 +18,23 @@ package audit.models
 
 import audit.Utilities
 import auth.MtdItUser
-import play.api.data.FormError
-import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 import utils.Utilities._
 
 case class SwitchReportingMethodAuditModel(journeyType: String,
                                            reportingMethodChangeTo: String,
                                            taxYear: String,
-                                           errorMessage: Seq[FormError],
-                                           messagesApi: MessagesApi
+                                           errorMessage: Option[String]
                                           )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.SwitchReportingMethod
 
   override val auditType: String = enums.AuditType.SwitchReportingMethod
 
-  implicit val lang: Lang = Lang("GB")
-
-  override val detail: JsValue = {
-    Utilities.userAuditDetails(user) ++
-      Json.obj(
-        ("journeyType", journeyType),
-        ("reportingMethodChangeTo", reportingMethodChangeTo.toLowerCase.capitalize),
-        ("taxYear", taxYear)
-      ) ++
-      ("errorMessage", errorMessage.flatMap(_.messages.map(messagesApi(_))).headOption)
-  }
+  override val detail: JsValue = Utilities.userAuditDetails(user) ++
+    Json.obj(
+      ("journeyType", journeyType),
+      ("reportingMethodChangeTo", reportingMethodChangeTo.toLowerCase.capitalize),
+      ("taxYear", taxYear)
+    ) ++ ("errorMessage", errorMessage)
 }
