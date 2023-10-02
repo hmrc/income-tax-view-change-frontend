@@ -17,11 +17,10 @@
 package audit.models
 
 import audit.Utilities
-import auth.{MtdItUser, MtdItUserBase}
-import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
+import auth.MtdItUser
 import play.api.data.FormError
 import play.api.i18n.{Lang, MessagesApi}
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import utils.Utilities._
 
 
