@@ -87,7 +87,7 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
           obligations.eopsObligationsDates.map { eops =>
             Json.obj(
               "taxYearStartDate" -> eops.inboundCorrespondenceFrom,
-              "taxYearEndDate" -> eops.inboundCorrespondenceDue,
+              "taxYearEndDate" -> eops.inboundCorrespondenceTo,
               "deadline" -> eops.inboundCorrespondenceDue
             )
           },
@@ -95,7 +95,7 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
           obligations.finalDeclarationDates.map { finalDec =>
             Json.obj(
               "taxYearStartDate" -> finalDec.inboundCorrespondenceFrom,
-              "taxYearEndDate" -> finalDec.inboundCorrespondenceDue,
+              "taxYearEndDate" -> finalDec.inboundCorrespondenceTo,
               "deadline" -> finalDec.inboundCorrespondenceDue
             )
           }
