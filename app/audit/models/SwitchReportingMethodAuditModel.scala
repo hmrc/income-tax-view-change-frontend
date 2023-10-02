@@ -31,10 +31,11 @@ case class SwitchReportingMethodAuditModel(journeyType: String,
 
   override val auditType: String = enums.AuditType.SwitchReportingMethod
 
-  override val detail: JsValue = Utilities.userAuditDetails(user) ++
-    Json.obj(
-      ("journeyType", journeyType),
-      ("reportingMethodChangeTo", reportingMethodChangeTo.toLowerCase.capitalize),
-      ("taxYear", taxYear)
-    ) ++ ("errorMessage", errorMessage)
+  override val detail: JsValue =
+    Utilities.userAuditDetails(user) ++
+      Json.obj(
+        ("journeyType", journeyType),
+        ("reportingMethodChangeTo", reportingMethodChangeTo),
+        ("taxYear", taxYear)
+      ) ++ ("errorMessage", errorMessage)
 }

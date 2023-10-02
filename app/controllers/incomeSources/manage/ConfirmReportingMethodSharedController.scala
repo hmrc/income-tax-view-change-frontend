@@ -151,7 +151,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 .extendedAudit(
                   SwitchReportingMethodAuditModel(
                     taxYear = taxYear,
-                    reportingMethodChangeTo = changeTo,
+                    reportingMethodChangeTo = changeTo.toLowerCase.capitalize,
                     errorMessage = formWithErrors.errors.flatMap(_.messages.map(messagesApi(_)(Lang("GB")))).headOption,
                     journeyType = incomeSourceType.journeyType
                   )
