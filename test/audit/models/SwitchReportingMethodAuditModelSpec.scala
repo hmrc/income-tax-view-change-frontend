@@ -20,7 +20,6 @@ import auth.MtdItUser
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -132,6 +131,15 @@ class SwitchReportingMethodAuditModelSpec extends AnyWordSpecLike with TestSuppo
             ("taxYear", taxYear)
         )
       }
+    }
+    s"have the correct transaction name of '$transactionName'" in {
+      switchToQuarterlyReportingMethodAudit(Some(Individual), agentReferenceNumber = None)
+        .transactionName shouldBe transactionName
+    }
+
+    s"have the correct audit event type of '$auditType'" in {
+      switchToQuarterlyReportingMethodAudit(Some(Individual), agentReferenceNumber = None)
+        .auditType shouldBe auditType
     }
   }
 }
