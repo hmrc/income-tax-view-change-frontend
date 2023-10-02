@@ -29,19 +29,19 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   val dateBusinessSubmitAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
   val dateBusinessShowChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
   val dateBusinessSubmitChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChangeAgent(Some(testPropertyIncomeId), SelfEmployment.key).url
-  val checkCeaseBusinessDetailsShowAgentUrl: String = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.showAgent().url
+  val checkCeaseBusinessDetailsShowAgentUrl: String = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url
 
   val dateUKPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty.key).url
   val dateUKPropertySubmitAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitAgent(None, UkProperty.key).url
   val dateUKPropertyShowChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty.key).url
   val dateUKPropertySubmitChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChangeAgent(None, UkProperty.key).url
-  val checkYourCeaseDetailsUkPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.showAgent().url
+  val checkYourCeaseDetailsUkPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url
 
   val dateForeignPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url
   val dateForeignPropertySubmitAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitAgent(None, ForeignProperty.key).url
   val dateForeignPropertyShowChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty.key).url
   val dateForeignPropertySubmitChangeAgentUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChangeAgent(None, ForeignProperty.key).url
-  val checkYourCeaseDetailsForeignPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.showAgent().url
+  val checkYourCeaseDetailsForeignPropertyShowAgentUrl: String = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
 
 
   val hintText: String = messagesAPI("dateForm.hint")

@@ -59,6 +59,8 @@ object BaseIntegrationTestConstants {
   val testSelfEmploymentId = "ABC123456789"
   val otherTestSelfEmploymentId = "ABC123456780"
   val testPropertyIncomeId = "1234"
+  val otherTestPropertyIncomeId = "ABC123456789"
+
 
   val testTradeName = "business"
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR

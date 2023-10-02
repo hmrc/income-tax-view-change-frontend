@@ -19,7 +19,7 @@ package testConstants
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testPropertyIncomeId}
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestPropertyIncomeId, testPropertyIncomeId}
 
 import java.time.LocalDate
 

@@ -307,7 +307,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   )
 
   def fakeRequestWithCeaseUKPropertyDate(endDate: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta")
-    .withSession(forms.utils.SessionKeys.ceaseUKPropertyDeclare-> "true")
     .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> endDate).withMethod("POST")
 
   def fakeRequestWithCeaseForeignPropertyDate(endDate: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithNinoAndOrigin("pta")

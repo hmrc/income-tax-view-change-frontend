@@ -143,7 +143,13 @@ messages(s"$messagesPrefix.$key", args: _*)
                 ),
                 SummaryListRow(
                     key = Key(Text(getMessage("businessName"))),
-                    value = Value(Text(viewModel.tradingName.getOrElse("")))
+                    value = Value(Text(
+                        if(viewModel.tradingName){
+                            viewModel.tradingName.get
+                        } else {
+                        messages("incomeSources.generic.unknown")
+                        }
+                    ))
                 ),
                 SummaryListRow(
                     key = Key(Text(getMessage("businessAddress"))),

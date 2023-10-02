@@ -45,7 +45,6 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport{
   val testBackUrl: String = routes.CeaseIncomeSourceController.show().url
   val testCeaseDateLong: String = "1 January 2023"
   val businessAddressAsString = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
-  val ariaText: String = "This section is"
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
 
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
