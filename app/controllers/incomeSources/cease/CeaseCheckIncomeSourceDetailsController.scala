@@ -177,22 +177,22 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
           case (ForeignProperty) => user.incomeSources.properties.find(x => x.isForeignProperty && !x.isCeased)
           case (SelfEmployment) => None
         }
-        if(propertyIncomeSources.isEmpty){
+        if (propertyIncomeSources.isEmpty) {
           val errorMessage = s"Failed to retrieve $propertyIncomeSources"
           Future.failed(new Exception(errorMessage))
         } else {
           val incomeSourceId = propertyIncomeSources.head.incomeSourceId
-            updateIncomeSourceservice
-              .updateCessationDate(user.nino, incomeSourceId, cessationEndDate).flatMap{
-              case Right(_) =>
-                Future.successful(Redirect(redirectAction))
-              case _ =>
-                Logger("application").error(s"[CheckCeaseIncomeSourceDetailsController][handleSubmitRequest]:" +
-                  s" Unsuccessful update response received")
-                Future.successful {
-                  Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
-                }
-            }
+          updateIncomeSourceservice
+            .updateCessationDate(user.nino, incomeSourceId, cessationEndDate).flatMap {
+            case Right(_) =>
+              Future.successful(Redirect(redirectAction))
+            case _ =>
+              Logger("application").error(s"[CheckCeaseIncomeSourceDetailsController][handleSubmitRequest]:" +
+                s" Unsuccessful update response received")
+              Future.successful {
+                Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
+              }
+          }
         }
       case (Left(ex), Right(_)) =>
         val errorMessage = s" Could not get incomeSourceId from session. ${ex.getMessage}"
