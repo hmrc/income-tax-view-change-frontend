@@ -23,7 +23,6 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsValue, Json}
 import utils.Utilities._
 
-
 case class SwitchReportingMethodAuditModel(journeyType: String,
                                            reportingMethodChangeTo: String,
                                            taxYear: String,
