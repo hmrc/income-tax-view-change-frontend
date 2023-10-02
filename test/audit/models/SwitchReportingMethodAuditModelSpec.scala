@@ -52,40 +52,27 @@ class SwitchReportingMethodAuditModelSpec extends AnyWordSpecLike with TestSuppo
   def switchToQuarterlyReportingMethodAudit(userType: Option[AffinityGroup],
                                             agentReferenceNumber: Option[String]
                                            ): SwitchReportingMethodAuditModel = {
-
-    val changeTo = "quarterly"
-
     SwitchReportingMethodAuditModel(
       journeyType = UkProperty.journeyType,
-      reportingMethodChangeTo = changeTo,
+      reportingMethodChangeTo = "quarterly",
       taxYear = taxYear,
       errorMessage = None
-    )(
-      mtdItUser(userType, agentReferenceNumber)
-    )
+    )(mtdItUser(userType, agentReferenceNumber))
   }
 
   def switchToAnnualReportingMethodErrorAudit(userType: Option[AffinityGroup],
                                               agentReferenceNumber: Option[String]
                                              ): SwitchReportingMethodAuditModel = {
-
-    val changeTo = "annual"
-
     SwitchReportingMethodAuditModel(
       journeyType = SelfEmployment.journeyType,
-      reportingMethodChangeTo = changeTo,
+      reportingMethodChangeTo = "annual",
       taxYear = taxYear,
-      errorMessage = Some(messages(ConfirmReportingMethodForm.noSelectionError(changeTo)))
-    )(
-      mtdItUser(userType, agentReferenceNumber)
-    )
+      errorMessage = Some(messages(ConfirmReportingMethodForm.noSelectionError(changeTo = "annual")))
+    )(mtdItUser(userType, agentReferenceNumber))
   }
 
   "SwitchReportingMethodAuditModel" should {
     "present a full audit model with an error message" when {
-
-      val changeTo = "annual"
-
       "the user is an agent" in {
         switchToAnnualReportingMethodErrorAudit(Some(Agent), agentReferenceNumber = Some("agentReferenceNumber"))
           .detail shouldBe Json.obj(
@@ -96,9 +83,9 @@ class SwitchReportingMethodAuditModelSpec extends AnyWordSpecLike with TestSuppo
             ("mtditid", "mtditid"),
             ("agentReferenceNumber", "agentReferenceNumber"),
             ("journeyType", SelfEmployment.journeyType),
-            ("reportingMethodChangeTo", changeTo.capitalize),
+            ("reportingMethodChangeTo", "Annual"),
             ("taxYear", taxYear),
-            ("errorMessage", messages(s"incomeSources.manage.propertyReportingMethod.error.$changeTo"))
+            ("errorMessage", messages("incomeSources.manage.propertyReportingMethod.error.annual"))
           )
       }
       "the user is an individual" in {
@@ -110,17 +97,14 @@ class SwitchReportingMethodAuditModelSpec extends AnyWordSpecLike with TestSuppo
             ("credId", "credId"),
             ("mtditid", "mtditid"),
             ("journeyType", SelfEmployment.journeyType),
-            ("reportingMethodChangeTo", changeTo.capitalize),
+            ("reportingMethodChangeTo", "Annual"),
             ("taxYear", taxYear),
-            ("errorMessage", messages(s"incomeSources.manage.propertyReportingMethod.error.$changeTo"))
+            ("errorMessage", messages("incomeSources.manage.propertyReportingMethod.error.annual"))
           )
       }
     }
 
     "present a full audit model with no error message field present" when {
-
-      val changeTo = "quarterly"
-
       "the user is an agent and there is no form error" in {
         switchToQuarterlyReportingMethodAudit(Some(Agent), agentReferenceNumber = Some("agentReferenceNumber"))
           .detail shouldBe Json.obj(
@@ -131,7 +115,7 @@ class SwitchReportingMethodAuditModelSpec extends AnyWordSpecLike with TestSuppo
             ("mtditid", "mtditid"),
             ("agentReferenceNumber", "agentReferenceNumber"),
             ("journeyType", UkProperty.journeyType),
-            ("reportingMethodChangeTo", changeTo.toLowerCase.capitalize),
+            ("reportingMethodChangeTo", "Quarterly"),
             ("taxYear", taxYear)
         )
       }
@@ -144,7 +128,7 @@ class SwitchReportingMethodAuditModelSpec extends AnyWordSpecLike with TestSuppo
             ("credId", "credId"),
             ("mtditid", "mtditid"),
             ("journeyType", UkProperty.journeyType),
-            ("reportingMethodChangeTo", changeTo.toLowerCase.capitalize),
+            ("reportingMethodChangeTo", "Quarterly"),
             ("taxYear", taxYear)
         )
       }
