@@ -39,11 +39,10 @@ case class SwitchReportingMethodAuditModel(journeyType: String,
   override val detail: JsValue = {
     Utilities.userAuditDetails(user) ++
       Json.obj(
-        "journeyType" -> journeyType,
-        "reportingMethodChangeTo" -> reportingMethodChangeTo.toLowerCase.capitalize,
-        "taxYear" -> taxYear
-      ) ++ (
-      "errorMessage" -> errorMessage.flatMap(_.messages.map(messagesApi(_))).headOption
-      )
+        ("journeyType", journeyType),
+        ("reportingMethodChangeTo", reportingMethodChangeTo.toLowerCase.capitalize),
+        ("taxYear", taxYear)
+      ) ++
+      ("errorMessage", errorMessage.flatMap(_.messages.map(messagesApi(_))).headOption)
   }
 }
