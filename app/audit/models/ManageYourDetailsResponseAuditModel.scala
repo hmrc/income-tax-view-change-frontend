@@ -43,7 +43,7 @@ case class ManageYourDetailsResponseAuditModel(
         "businessAddressLine3" -> viewModel.address.flatMap(address => address.addressLine3),
         "businessAddressTownOrCity" -> viewModel.address.flatMap(address => address.addressLine4),
         "businessAddressPostcode" -> viewModel.address.flatMap(address => address.postCode),
-        "businessAddressCountry" -> viewModel.address.map(address => address.countryCode),
+        "businessAddressCountry" -> "United Kingdom",
         "dateStarted" -> viewModel.tradingStartDate,
         "accountingMethod" ->
           (viewModel.businessAccountingMethod match {
