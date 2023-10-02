@@ -152,11 +152,12 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     (if (isAgent) itvcErrorHandler else itvcErrorHandlerAgent).showInternalServerError()
   }
 
-  private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, incomeSourceId: Option[String], incomeSourceType: IncomeSourceType)
+  private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[String], incomeSourceType: IncomeSourceType)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
     val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearModel(taxYear)
+    val incomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId)
     val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
 
