@@ -13,6 +13,7 @@ base.backToHome                                                 = Yn ôl i hafan
 base.continue                                                   = Yn eich blaen
 base.govUk                                                      = GOV.UK
 base.confirm-and-continue                                       = Cadarnhau ac yn eich blaen
+base.confirm-this-change                                         = Cadarnhau’r newid hwn
 
 # Fallback Back Links
 back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
@@ -1510,6 +1511,11 @@ incomeSources.manage.propertyReportingMethod.checkbox.annual        = Hoffwn new
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Hoffwn newid i adrodd yn chwarterol
 incomeSources.manage.propertyReportingMethod.error.quarterly        = Dewiswch eich bod am newid i gyflwyno adroddiadau’n chwarterol
 incomeSources.manage.propertyReportingMethod.error.annual           = Dewiswch eich bod am newid i gyflwyno adroddiadau’n flynyddol
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual         = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm rydych eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar eich Ffurflen Dreth flynyddol.
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent              = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm mae’ch cleient eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar Ffurflen Dreth flynyddol eich cleient.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual      = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm rydych eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol yn eich Ffurflen Dreth chwarterol.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent           = Bydd CThEF yn tynnu unrhyw ddiweddariadau incwm mae’ch cleient eisoes wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Bydd angen i chi gynnwys unrhyw incwm a gyflwynwyd yn flaenorol ar Ffurflen Dreth chwarterol eich cleient.
+
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =   Bydd
 incomeSources.add.manageObligations.h2                                =   yn cyflwyno adroddiadau’n

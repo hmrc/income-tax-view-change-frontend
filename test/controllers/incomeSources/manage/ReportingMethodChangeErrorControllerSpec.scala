@@ -16,6 +16,7 @@
 
 package controllers.incomeSources.manage
 
+import audit.AuditingService
 import config.featureswitch.IncomeSources
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -48,6 +49,7 @@ class ReportingMethodChangeErrorControllerSpec
       retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
+      auditingService = app.injector.instanceOf[AuditingService],
       reportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
     )(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

@@ -23,11 +23,16 @@ object ConfirmReportingMethodForm {
 
   val confirmReportingMethod: String = "incomeSources.manage.propertyReportingMethod"
 
-  val form: Form[ConfirmReportingMethodForm] = Form(
-    mapping(
-      confirmReportingMethod -> boolean.verifying("incomeSources.manage.propertyReportingMethod.error", _ == true)
-    )(ConfirmReportingMethodForm.apply)(ConfirmReportingMethodForm.unapply)
-  )
+  def noSelectionError(changeTo: String): String = s"$confirmReportingMethod.error.$changeTo"
+
+  def apply(changeTo: String): Form[ConfirmReportingMethodForm] = {
+
+    Form(
+      mapping(
+        confirmReportingMethod -> boolean.verifying(noSelectionError(changeTo), _ == true)
+      )(ConfirmReportingMethodForm.apply)(ConfirmReportingMethodForm.unapply)
+    )
+  }
 }
 
 case class ConfirmReportingMethodForm(confirmReportingMethod: Boolean)

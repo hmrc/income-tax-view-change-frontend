@@ -17,10 +17,9 @@
 package testConstants
 
 import java.time.LocalDate
-import BaseIntegrationTestConstants.{otherTestSelfEmploymentId, testSelfEmploymentId}
+import BaseIntegrationTestConstants.{expectedAddress, getCurrentTaxYearEnd, otherTestSelfEmploymentId, testDate, testLatencyDetails3, testSelfEmploymentId, testTradeName}
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
-import testConstants.BaseIntegrationTestConstants.getCurrentTaxYearEnd
 
 object BusinessDetailsIntegrationTestConstants {
   val startYear = getCurrentTaxYearEnd.getYear - 5
@@ -170,5 +169,20 @@ object BusinessDetailsIntegrationTestConstants {
     tradingStartDate = Some(b1TradingStart),
     cessation = None,
     address = None
+  )
+
+  val businessForManageYourDetailsAudit = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = b1AccountingStart,
+      end = b1AccountingEnd
+    )),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(b1AccountingEnd),
+    tradingStartDate = Some(testDate),
+    cessation = None,
+    address = expectedAddress,
+    cashOrAccruals = Some(false),
+    latencyDetails = Some(testLatencyDetails3)
   )
 }

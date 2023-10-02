@@ -173,7 +173,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
     }
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url}" when {
       "submitted and Income Source Type = Self Employment" in {
         stage()
 
@@ -184,11 +184,11 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
           TestCeaseCheckIncomeSourceDetailsController.submit(SelfEmployment)(fakeRequestWithCeaseBusinessDetails(cessationDate, testSelfEmploymentId))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url)
       }
     }
 
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url}" when {
       "submitted and Income Source Type = UK Property" in {
         stage()
 
@@ -199,10 +199,10 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
           TestCeaseCheckIncomeSourceDetailsController.submit(UkProperty)(fakeRequestWithCeaseUKPropertyDate(cessationDate))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url)
       }
     }
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.show().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url}" when {
       "submitted Income Source Type = Foreign Property" in {
         stage()
 
@@ -213,7 +213,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
           TestCeaseCheckIncomeSourceDetailsController.submit(ForeignProperty)(fakeRequestWithCeaseForeignPropertyDate(cessationDate))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.show().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url)
       }
     }
 
@@ -350,7 +350,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
       mockBothPropertyBothBusiness()
     }
 
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.showAgent().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url}" when {
       "form is completed successfully with income source type = Self Employment" in {
         stage()
 
@@ -365,11 +365,11 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url)
       }
     }
 
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.showAgent().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url}" when {
       "form is completed successfully with income source type = Foreign Property" in {
         stage()
 
@@ -383,12 +383,12 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url)
 
       }
     }
 
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.showAgent().url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url}" when {
       "form is completed successfully" in {
         stage()
 
@@ -401,7 +401,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url)
       }
     }
 

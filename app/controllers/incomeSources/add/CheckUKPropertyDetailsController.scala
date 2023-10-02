@@ -60,9 +60,9 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
 
   def getBackUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url else
-      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url
-  }
+    if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty)
+    else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty)
+  }.url
 
   def getSubmitUrl(isAgent: Boolean): Call = {
     if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submitAgent() else
@@ -133,8 +133,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty.key)
-    else routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
+    else routes.IncomeSourceNotAddedController.show(UkProperty)
 
     withIncomeSourcesFS {
       getUKPropertyDetailsFromSession(sessionService)(user, ec) flatMap {

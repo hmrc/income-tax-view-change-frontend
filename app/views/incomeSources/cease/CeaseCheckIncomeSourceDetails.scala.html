@@ -49,9 +49,9 @@ messages(s"$messagesPrefix.$key", args: _*)
 
 @getBusinessChangeHref = @{
     if(isAgent){
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(viewModel.incomeSourceId), SelfEmployment.key).url
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(viewModel.incomeSourceId), SelfEmployment).url
     } else {
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(viewModel.incomeSourceId), SelfEmployment.key).url
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(viewModel.incomeSourceId), SelfEmployment).url
     }
 }
 
@@ -67,15 +67,15 @@ messages(s"$messagesPrefix.$key", args: _*)
 @getPropertyChangeHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {
         if(isAgent){
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty.key).url
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty).url
         } else {
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty.key).url
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty).url
         }
     } else {
         if(isAgent){
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty.key).url
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty).url
         } else {
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty.key).url
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty).url
         }
     }
 }

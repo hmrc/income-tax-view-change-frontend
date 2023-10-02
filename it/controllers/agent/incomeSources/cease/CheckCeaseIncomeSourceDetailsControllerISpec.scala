@@ -32,7 +32,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase{
   val businessAddressLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessAddress")
   val pageTitleMsgKey = messagesAPI("incomeSources.ceaseBusiness.checkDetails.heading")
   val unknown: String = messagesAPI("incomeSources.ceaseBusiness.checkDetails.unknown")
-  val redirectUriSE = controllers.incomeSources.cease.routes.BusinessCeasedObligationsController.showAgent().url
+  val redirectUriSE = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url
   val requestSE: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = business1.incomeSourceId,
@@ -45,7 +45,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase{
   val formActionUK = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
   val businessStopDateLabelUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.content")
   val pageTitleMsgKeyUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.heading")
-  val redirectUriUK = controllers.incomeSources.cease.routes.UKPropertyCeasedObligationsController.showAgent().url
+  val redirectUriUK = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url
   val requestUK: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = ukProperty.incomeSourceId,
@@ -58,7 +58,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase{
 
   val formActionFP = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty).url
   val pageTitleMsgKeyFP = messagesAPI("incomeSources.ceaseForeignProperty.checkDetails.heading")
-  val redirectUriFP = controllers.incomeSources.cease.routes.ForeignPropertyCeasedObligationsController.showAgent().url
+  val redirectUriFP = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url
   val requestFP: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = foreignProperty.incomeSourceId,

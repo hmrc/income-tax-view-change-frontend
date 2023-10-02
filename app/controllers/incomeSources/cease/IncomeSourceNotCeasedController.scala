@@ -45,7 +45,7 @@ class IncomeSourceNotCeasedController @Inject()(val authenticate: Authentication
                                                 implicit val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(isAgent: Boolean, incomeSourceType: String): Action[AnyContent] = authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(isAgent, incomeSourceType)
   }
@@ -66,25 +66,7 @@ class IncomeSourceNotCeasedController @Inject()(val authenticate: Authentication
     }
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: String)(implicit user: MtdItUser[_]): Future[Result] = {
-    IncomeSourceType(incomeSourceType) match {
-      case Left(_) => handleError(isAgent)
-      case Right(incomeSourceType) => handleSuccess(isAgent, incomeSourceType.key)
-    }
-  }
-
-  private def handleError(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    if (isAgent)
-      Future.successful {
-        agentItvcErrorHandler.showInternalServerError()
-      }
-    else
-      Future.successful {
-        itvcErrorHandler.showInternalServerError()
-      }
-  }
-
-  private def handleSuccess(isAgent: Boolean, incomeSourceType: String)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     val pageTitle = messagesApi.preferred(user)("standardError.heading")
     val heading = messagesApi.preferred(user)("standardError.heading")
     val message = messagesApi.preferred(user)(s"incomeSources.cease.error.$incomeSourceType.notCeased.text")

@@ -50,13 +50,13 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport{
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
 
     val redirectAction: Call = (isAgent, incomeSourceType) match {
-      case (true, SelfEmployment) => routes.BusinessCeasedObligationsController.showAgent()
-      case (false, SelfEmployment) => routes.BusinessCeasedObligationsController.show()
-      case (true, UkProperty) => routes.UKPropertyCeasedObligationsController.showAgent()
-      case (false, UkProperty) => routes.UKPropertyCeasedObligationsController.show()
-      case (true, ForeignProperty) => routes.ForeignPropertyCeasedObligationsController.showAgent()
-      case (false, ForeignProperty) => routes.ForeignPropertyCeasedObligationsController.show()
-      case _ => routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType.key)
+      case (true, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment)
+      case (false, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.show(SelfEmployment)
+      case (true, UkProperty) => routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty)
+      case (false, UkProperty) => routes.IncomeSourceCeasedObligationsController.show(UkProperty)
+      case (true, ForeignProperty) => routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty)
+      case (false, ForeignProperty) => routes.IncomeSourceCeasedObligationsController.show(ForeignProperty)
+      case _ => routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType)
     }
 
     val viewModel: CheckCeaseIncomeSourceDetailsViewModel = (incomeSourceType) match {

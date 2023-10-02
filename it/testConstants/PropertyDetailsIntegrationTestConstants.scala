@@ -19,7 +19,7 @@ package testConstants
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestPropertyIncomeId, testPropertyIncomeId}
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testLatencyDetails3, testPropertyIncomeId}
 
 import java.time.LocalDate
 
@@ -132,6 +132,34 @@ object PropertyDetailsIntegrationTestConstants {
       "start" -> propertyAccountingStart,
       "end" -> propertyAccountingEnd
     )
+  )
+
+  val ukPropertyAudit: PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
+    )),
+    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
+    incomeSourceType = ukPropertyIncomeType,
+    tradingStartDate = propertyTradingStartDate,
+    cessation = None,
+    cashOrAccruals = Some(false),
+    latencyDetails = Some(testLatencyDetails3)
+  )
+
+  val foreignPropertyAudit: PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
+    )),
+    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
+    incomeSourceType = foreignPropertyIncomeType,
+    tradingStartDate = propertyTradingStartDate,
+    cessation = None,
+    cashOrAccruals = Some(false),
+    latencyDetails = Some(testLatencyDetails3)
   )
 
 }

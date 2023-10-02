@@ -17,20 +17,19 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, IncomeSources}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId, ceaseForeignPropertyEndDate, ceaseUKPropertyEndDate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
 import javax.inject.Inject
@@ -116,7 +115,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
     case ex: Exception =>
       Logger("application").error(s"[CeaseCheckIncomeSourceDetailsController][handleRequest]${if (isAgent) "[Agent] "}" +
         s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage}")
-      Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
+      Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment))
   }
 
 
@@ -147,13 +146,13 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], request: Request[_]): Future[Result] = withIncomeSourcesFS {
 
     val redirectAction: Call = (isAgent, incomeSourceType) match {
-      case (true, SelfEmployment) => routes.BusinessCeasedObligationsController.showAgent()
-      case (false, SelfEmployment) => routes.BusinessCeasedObligationsController.show()
-      case (true, UkProperty) => routes.UKPropertyCeasedObligationsController.showAgent()
-      case (false, UkProperty) => routes.UKPropertyCeasedObligationsController.show()
-      case (true, ForeignProperty) => routes.ForeignPropertyCeasedObligationsController.showAgent()
-      case (false, ForeignProperty) => routes.ForeignPropertyCeasedObligationsController.show()
-      case _ => routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType.key)
+      case (true, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment)
+      case (false, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.show(SelfEmployment)
+      case (true, UkProperty) => routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty)
+      case (false, UkProperty) => routes.IncomeSourceCeasedObligationsController.show(UkProperty)
+      case (true, ForeignProperty) => routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty)
+      case (false, ForeignProperty) => routes.IncomeSourceCeasedObligationsController.show(ForeignProperty)
+      case _ => routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType)
     }
 
     val sessionDataFuture = getSessionData(incomeSourceType)
@@ -168,7 +167,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
             Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
               s" Unsuccessful update response received")
             Future.successful {
-              Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
+              Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment))
             }
         }
 
@@ -191,7 +190,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
                 Logger("application").error(s"[CheckCeaseIncomeSourceDetailsController][handleSubmitRequest]:" +
                   s" Unsuccessful update response received")
                 Future.successful {
-                  Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType.key))
+                  Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
                 }
             }
         }
