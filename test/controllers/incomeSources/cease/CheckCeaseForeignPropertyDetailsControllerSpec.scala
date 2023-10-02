@@ -114,7 +114,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
   }
 
   "Individual - CheckCeaseForeignPropertyDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url}" when {
       "submitted" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -127,7 +127,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
           TestCheckCeaseForeignPropertyDetailsController.submit(cessationDate)(fakeRequestWithCeaseForeignPropertyDate(cessationDate))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url)
       }
     }
     s"return 203 SEE_OTHER and redirect to the home page" when {
@@ -146,7 +146,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
     s"return 303 SEE_OTHER" when {
       "UpdateIncomeSourceError model returned from UpdateIncomeSourceService" in {
         val incomeSourceNotCeasedErrorPageUrl: Some[String] = {
-          Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = false, ForeignProperty.key).url)
+          Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = false, ForeignProperty).url)
         }
 
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -226,7 +226,7 @@ class CheckCeaseForeignPropertyDetailsControllerSpec extends TestSupport with Mo
   }
 
   "Agent - CheckCeaseForeignPropertyDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty).url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)

@@ -40,13 +40,13 @@ class ForeignPropertyCheckDetailsViewSpec extends ViewSpec{
 
   val foreignPropertyCheckDetailsView: ForeignPropertyCheckDetails = app.injector.instanceOf[ForeignPropertyCheckDetails]
 
-  val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url
-  val agentBackUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
+  val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty).url
+  val agentBackUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty).url
 
   val foreignReportingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("123").url
 
   val changeDateLinkIndiv: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
-  val changeAccMethodIndiv: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(ForeignProperty.key).url
+  val changeAccMethodIndiv: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(ForeignProperty).url
 
   val viewModel: CheckForeignPropertyViewModel = CheckForeignPropertyViewModel(LocalDate.of(2023,1,1), "cash")
   val validCallWithSessionDataCash: Html = foreignPropertyCheckDetailsView(viewModel, testCall, isAgent = false, backUrl)

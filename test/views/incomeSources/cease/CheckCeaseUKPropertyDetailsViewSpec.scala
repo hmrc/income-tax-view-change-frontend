@@ -61,8 +61,8 @@ class CheckCeaseUKPropertyDetailsViewSpec extends TestSupport with ViewSpec{
   val heading = messages("incomeSources.ceaseUKProperty.checkDetails.heading")
   val businessStopDateLabel = messages("incomeSources.ceaseUKProperty.checkDetails.content")
   val buttonLabel = messages("incomeSources.ceaseUKProperty.checkDetails.confirm")
-  val changeUrl = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty.key).url
-  val changeUrlAgent = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty.key).url
+  val changeUrl = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty).url
+  val changeUrlAgent = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty).url
   val formAction = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.submit().url
   val formActionAgent = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.submitAgent().url
 

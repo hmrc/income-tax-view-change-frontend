@@ -53,14 +53,14 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
                                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter with IncomeSourcesUtils {
 
-  lazy val backUrl: String = routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url
-  lazy val backUrlAgent: String = routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty.key).url
+  lazy val backUrl: String = routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
+  lazy val backUrlAgent: String = routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty).url
 
-  lazy val changeUrl: String = routes.IncomeSourceEndDateController.showChange(None, ForeignProperty.key).url
-  lazy val changeUrlAgent: String = routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty.key).url
+  lazy val changeUrl: String = routes.IncomeSourceEndDateController.showChange(None, ForeignProperty).url
+  lazy val changeUrlAgent: String = routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty).url
 
-  lazy val successCall: Call = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty.key)
-  lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty.key)
+  lazy val successCall: Call = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty)
+  lazy val successCallAgent: Call = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty)
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
@@ -154,7 +154,7 @@ class CheckCeaseForeignPropertyDetailsController @Inject()(val authenticate: Aut
           Logger("application").error(s"[CheckCeaseForeignPropertyDetailsController][handleSubmitRequest]:" +
             s" Unsuccessful update response received")
           Future.successful {
-            Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, ForeignProperty.key))
+            Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, ForeignProperty))
           }
       }
     }

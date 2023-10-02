@@ -26,22 +26,22 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testPropertyInco
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
-  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(testPropertyIncomeId), SelfEmployment.key).url
-  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(Some(testPropertyIncomeId), SelfEmployment.key).url
-  val dateBusinessShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(testPropertyIncomeId), SelfEmployment.key).url
-  val dateBusinessSubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(Some(testPropertyIncomeId), SelfEmployment.key).url
+  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(testPropertyIncomeId), SelfEmployment).url
+  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(Some(testPropertyIncomeId), SelfEmployment).url
+  val dateBusinessShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(testPropertyIncomeId), SelfEmployment).url
+  val dateBusinessSubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(Some(testPropertyIncomeId), SelfEmployment).url
   val checkCeaseBusinessDetailsShowUrl: String = controllers.incomeSources.cease.routes.CheckCeaseBusinessDetailsController.show().url
 
-  val dateUKPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty.key).url
-  val dateUKPropertySubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(None, UkProperty.key).url
-  val dateUKPropertyShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty.key).url
-  val dateUKPropertySubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(None, UkProperty.key).url
+  val dateUKPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
+  val dateUKPropertySubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(None, UkProperty).url
+  val dateUKPropertyShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty).url
+  val dateUKPropertySubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(None, UkProperty).url
   val checkYourCeaseDetailsUkPropertyShowUrl: String = controllers.incomeSources.cease.routes.CheckCeaseUKPropertyDetailsController.show().url
 
-  val dateForeignPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url
-  val dateForeignPropertySubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(None, ForeignProperty.key).url
-  val dateForeignPropertyShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty.key).url
-  val dateForeignPropertySubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(None, ForeignProperty.key).url
+  val dateForeignPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
+  val dateForeignPropertySubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(None, ForeignProperty).url
+  val dateForeignPropertyShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty).url
+  val dateForeignPropertySubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(None, ForeignProperty).url
   val checkYourCeaseDetailsForeignPropertyShowUrl: String = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.show().url
 
 

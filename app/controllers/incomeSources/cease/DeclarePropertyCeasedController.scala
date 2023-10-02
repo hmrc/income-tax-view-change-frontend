@@ -102,11 +102,11 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
       if (isAgent)
         (routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType),
           routes.CeaseIncomeSourceController.showAgent(),
-          routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType.key))
+          routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType))
       else
         (routes.DeclarePropertyCeasedController.submit(incomeSourceType),
           routes.CeaseIncomeSourceController.show(),
-          routes.IncomeSourceEndDateController.show(None, incomeSourceType.key))
+          routes.IncomeSourceEndDateController.show(None, incomeSourceType))
     }
 
     DeclarePropertyCeasedForm.form(incomeSourceType).bindFromRequest().fold(

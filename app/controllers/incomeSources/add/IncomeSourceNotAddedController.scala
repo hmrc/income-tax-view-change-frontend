@@ -46,25 +46,20 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
 
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: String)
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     val incomeSourceRedirect: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent() else
       controllers.incomeSources.add.routes.AddIncomeSourceController.show()
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    IncomeSourceType.apply(incomeSourceType) match {
-      case Right(incomeType) =>
-        Future.successful(Ok(incomeSourceNotAddedError(
-          isAgent,
-          incomeSourceType = incomeType,
-          continueAction = incomeSourceRedirect
-        )))
-      case Left(_) => Future.successful(errorHandler.showInternalServerError())
-    }
+      Future.successful(Ok(incomeSourceNotAddedError(
+        isAgent,
+        incomeSourceType = incomeSourceType,
+        continueAction = incomeSourceRedirect
+      )))
   }
 
-  def show(incomeSourceType: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -73,7 +68,7 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
       )
   }
 
-  def showAgent(incomeSourceType: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
