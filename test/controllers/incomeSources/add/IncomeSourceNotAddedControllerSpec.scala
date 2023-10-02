@@ -65,12 +65,12 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
     val textForeignProperty: String = messages("incomeSources.add.error.incomeSourceNotSaved.p1", "foreign property")
   }
 
-  lazy val errorUrlSE: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url
-  lazy val agentErrorUrlSE: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment.key).url
-  lazy val errorUrlUK: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key).url
-  lazy val agentErrorUrlUK: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty.key).url
-  lazy val errorUrlFP: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key).url
-  lazy val agentErrorUrlFP: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty.key).url
+  lazy val errorUrlSE: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment).url
+  lazy val agentErrorUrlSE: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment).url
+  lazy val errorUrlUK: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty).url
+  lazy val agentErrorUrlUK: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty).url
+  lazy val errorUrlFP: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty).url
+  lazy val agentErrorUrlFP: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty).url
   lazy val addIncomeSource: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   lazy val addIncomeSourceAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
@@ -83,7 +83,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -97,7 +97,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = UkProperty)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -111,7 +111,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty)(fakeRequestWithActiveSession)
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -121,15 +121,6 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
       }
     }
 
-    "show Internal Server Error when income source type is invalid" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-      val result: Future[Result] = TestIncomeSourceNotAddedController.show("")(fakeRequestWithActiveSession)
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-    }
-
     "return 303 and show home page" when {
       "when feature switch is disabled" in {
         disableAllSwitches()
@@ -137,7 +128,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.show(ForeignProperty.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceNotAddedController.show(ForeignProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -146,7 +137,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
     "return 303 and redirect to the sign in" when {
       "the user is not authenticated" in {
         setupMockAuthorisationException()
-        val result = TestIncomeSourceNotAddedController.show(SelfEmployment.key)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceNotAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
@@ -154,7 +145,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
     "redirect to the session timeout page" when {
       "the user has timed out" in {
         setupMockAuthorisationException()
-        val result = TestIncomeSourceNotAddedController.show(SelfEmployment.key)(fakeRequestWithTimeoutSession)
+        val result = TestIncomeSourceNotAddedController.show(SelfEmployment)(fakeRequestWithTimeoutSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
@@ -169,7 +160,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(SelfEmployment.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
@@ -184,7 +175,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(UkProperty.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
@@ -199,21 +190,13 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(ForeignProperty.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
         status(result) shouldBe OK
         document.title shouldBe TestIncomeSourceNotAddedController.titleAgent
         document.getElementById("paragraph-1").text() shouldBe TestIncomeSourceNotAddedController.textForeignProperty
         document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe addIncomeSourceAgent
       }
-    }
-    "business type is invalid" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-      val result: Future[Result] = TestIncomeSourceNotAddedController.show("")(fakeRequestConfirmedClient())
-      status(result) shouldBe INTERNAL_SERVER_ERROR
     }
 
     "return 303 and show home page" when {
@@ -222,7 +205,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(ForeignProperty.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceNotAddedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -230,7 +213,7 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
     "return 303 and redirect to the sign in" when {
       "the user is not authenticated" in {
         setupMockAgentAuthorisationException()
-        val result = TestIncomeSourceNotAddedController.showAgent(ForeignProperty.key)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceNotAddedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }

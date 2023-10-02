@@ -83,9 +83,9 @@
 
 @changeIncomeSourcesAccountingMethodURL = @{
     if(isAgent) {
-        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(SelfEmployment.key).url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(SelfEmployment).url
     } else {
-        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(SelfEmployment.key).url
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(SelfEmployment).url
     }
 }
 

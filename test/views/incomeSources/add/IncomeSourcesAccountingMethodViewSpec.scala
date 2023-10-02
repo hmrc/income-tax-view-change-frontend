@@ -17,7 +17,7 @@
 package views.incomeSources.add
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -50,17 +50,17 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
   )(fakeRequestCeaseUKPropertyDeclarationComplete)
 
 
-  class Setup(isAgent: Boolean, incomeSourcePrefix: String, incomeSourceType: String, error: Boolean = false) extends TestSupport {
+  class Setup(isAgent: Boolean, incomeSourcePrefix: String, incomeSourceType: IncomeSourceType, error: Boolean = false) extends TestSupport {
 
-    val form: Form[_] = IncomeSourcesAccountingMethodForm(incomeSourcePrefix)
+    val form: Form[_] = IncomeSourcesAccountingMethodForm(incomeSourceType)
 
     val (backUrl, postAction) = incomeSourceType match {
-      case SelfEmployment.key =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent (SelfEmployment.key))
-      case UkProperty.key =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty.key))
+      case SelfEmployment =>
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent (SelfEmployment))
+      case UkProperty =>
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty))
       case _ =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty.key))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty))
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
@@ -84,8 +84,8 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
   }
 
-  def incomeSourcesAccountingMethodTest(prefix: String, isAgent: Boolean, incomeSourceType: String): Unit = {
-    "render the heading for" + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
+  def incomeSourcesAccountingMethodTest(prefix: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+    "render the heading for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
       document.getElementsByClass("govuk-fieldset__legend").text() shouldBe messages(s"$prefix.heading")
     }
     "render the dropdown for" + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
@@ -93,18 +93,18 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
       document.getElementsByClass("govuk-body").eq(0).text() shouldBe messages(s"$prefix.drop-down-text")
     }
 
-    "render the radio form for" + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
+    "render the radio form for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
       document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages(s"$prefix.radio-1-title")
       document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages(s"$prefix.radio-2-title")
       document.getElementsByClass("govuk-hint govuk-radios__hint govuk-hint govuk-radios__hint").eq(0).text() shouldBe messages(s"$prefix.radio-1-hint")
       document.getElementsByClass("govuk-hint govuk-radios__hint govuk-hint govuk-radios__hint").eq(1).text() shouldBe messages(s"$prefix.radio-2-hint")
       document.getElementsByClass("govuk-radios").size() shouldBe 1
     }
-    "render the back link with the correct URL for" + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
+    "render the back link with the correct URL for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
       document.getElementById("back-fallback").text() shouldBe messages("base.back")
       document.getElementById("back-fallback").attr("href") shouldBe backUrl
     }
-    "render the input error for" + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType, true) {
+    "render the input error for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType, true) {
       document.getElementById(s"$prefix-error").text() shouldBe messages("base.error-prefix") + " " +
         messages(s"$prefix.no-selection")
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
@@ -113,15 +113,15 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
   }
 
   "IncomeSourcesAccountingMethod - Individual" should {
-    incomeSourcesAccountingMethodTest(prefixSoleTrader, isAgent = false, SelfEmployment.key)
-    incomeSourcesAccountingMethodTest(prefixUKProperty, isAgent = false, UkProperty.key)
-    incomeSourcesAccountingMethodTest(prefixForeignProperty, isAgent = false, ForeignProperty.key)
+    incomeSourcesAccountingMethodTest(prefixSoleTrader, isAgent = false, SelfEmployment)
+    incomeSourcesAccountingMethodTest(prefixUKProperty, isAgent = false, UkProperty)
+    incomeSourcesAccountingMethodTest(prefixForeignProperty, isAgent = false, ForeignProperty)
   }
 
   "IncomeSourcesAccountingMethod - Agent" should {
-    incomeSourcesAccountingMethodTest(prefixSoleTrader, isAgent = true, SelfEmployment.key)
-    incomeSourcesAccountingMethodTest(prefixUKProperty, isAgent = true, UkProperty.key)
-    incomeSourcesAccountingMethodTest(prefixForeignProperty, isAgent = true, ForeignProperty.key)
+    incomeSourcesAccountingMethodTest(prefixSoleTrader, isAgent = true, SelfEmployment)
+    incomeSourcesAccountingMethodTest(prefixUKProperty, isAgent = true, UkProperty)
+    incomeSourcesAccountingMethodTest(prefixForeignProperty, isAgent = true, ForeignProperty)
   }
 
 }

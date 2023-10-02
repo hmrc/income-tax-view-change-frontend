@@ -61,8 +61,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
   lazy val businessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url
   lazy val agentBusinessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
 
-  lazy val incomeSourcesAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment.key).url
-  lazy val agentIncomeSourcesAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment.key).url
+  lazy val incomeSourcesAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment).url
+  lazy val agentIncomeSourcesAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment).url
 
 
   private def getBackURL(referer: Option[String]): String = {
@@ -138,9 +138,9 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
       val (redirect, errorHandler) = {
         if (isAgent)
-          (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment.key).url)
+          (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url)
         else
-          (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url)
+          (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(SelfEmployment).url)
       }
       getBusinessDetailsFromSession(user, ec).flatMap {
         case Right(viewModel) =>

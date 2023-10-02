@@ -16,15 +16,16 @@
 
 package forms.incomeSources.add
 
+import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 
 object IncomeSourcesAccountingMethodForm {
 
-  def apply(incomeSourceType: String): Form[Option[String]] = {
+  def apply(incomeSourceType: IncomeSourceType): Form[Option[String]] = {
 
-    val response: String = "incomeSources.add." + incomeSourceType + ".AccountingMethod"
-    val radioEmptyError: String = "incomeSources.add." + incomeSourceType + ".AccountingMethod.no-selection"
+    val response: String = "incomeSources.add." + incomeSourceType.key + ".AccountingMethod"
+    val radioEmptyError: String = "incomeSources.add." + incomeSourceType.key + ".AccountingMethod.no-selection"
     val validRadioOptions = Set("cash", "traditional")
 
     Form(

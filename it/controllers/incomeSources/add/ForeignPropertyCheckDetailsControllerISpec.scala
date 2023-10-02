@@ -13,12 +13,12 @@ import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessRe
 class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
   val foreignPropertyCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show().url
-  val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url
+  val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty).url
 
   val foreignPropertyCheckDetailsSubmitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit().url
   val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("ABC123456789").url
 
-  val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(ForeignProperty.key).url
+  val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(ForeignProperty).url
 
   val sessionData: Map[String, String] = Map(
     foreignPropertyStartDate -> "2023-01-01",

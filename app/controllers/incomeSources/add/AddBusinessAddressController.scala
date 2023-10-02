@@ -90,12 +90,12 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
   }
 
   def getRedirectUrl(isAgent: Boolean, isChange: Boolean): String = {
-    if (isChange) {
-      if (isAgent) routes.CheckBusinessDetailsController.showAgent().url else routes.CheckBusinessDetailsController.show().url
-    } else {
-      if (isAgent) routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType = SelfEmployment.key).url
-      else routes.IncomeSourcesAccountingMethodController.show(incomeSourceType = SelfEmployment.key).url
-    }
+    ((isAgent, isChange) match {
+      case (false, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment)
+      case (false, true) => routes.CheckBusinessDetailsController.show()
+      case (true, false) => routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment)
+      case (true, true) => routes.CheckBusinessDetailsController.showAgent()
+    }).url
   }
 
   private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], redirect: Result)
