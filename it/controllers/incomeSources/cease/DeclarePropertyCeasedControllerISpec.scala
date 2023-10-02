@@ -25,9 +25,9 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
-  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty.key).url
+  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
   val showDeclareUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
-  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty.key).url
+  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
   val showDeclareForeignPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
   val checkboxErrorMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxError")
   val checkboxLabelMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxLabel")

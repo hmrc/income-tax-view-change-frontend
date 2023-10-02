@@ -70,7 +70,7 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[CeaseForeignPropertyController][handleRequest] Error getting CeaseForeignProperty page: ${ex.getMessage}")
+        s"[DeclarePropertyCeasedController][handleRequest] Error getting declare property ceased page: ${ex.getMessage}")
       errorHandler.showInternalServerError()
   }
 
@@ -134,7 +134,7 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
   }.recover {
     case exception: Exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "[Agent]"}[CeaseForeignPropertyController][handleSubmitRequest]: $exception")
+      Logger("application").error(s"${if (isAgent) "[Agent]"}[DeclarePropertyCeasedController][handleSubmitRequest]: $exception")
       errorHandler.showInternalServerError()
   }
 

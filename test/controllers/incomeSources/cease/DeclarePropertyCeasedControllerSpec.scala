@@ -125,7 +125,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         }
         result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -141,7 +141,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         }
         result.futureValue.session(fakeRequestCeaseForeignPropertyDeclarationComplete).get(ceaseForeignPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -260,7 +260,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         }
         result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationCompleteAgent).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -276,7 +276,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         }
         result.futureValue.session(fakeRequestCeaseForeignPropertyDeclarationCompleteAgent).get(ceaseForeignPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url)
       }
     }
     "return 400 BAD_REQUEST" when {
