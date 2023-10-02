@@ -54,7 +54,7 @@ class SwitchReportingMethodAuditModelSpec extends AnyWordSpecLike with TestSuppo
                                            ): SwitchReportingMethodAuditModel = {
     SwitchReportingMethodAuditModel(
       journeyType = UkProperty.journeyType,
-      reportingMethodChangeTo = "quarterly",
+      reportingMethodChangeTo = "Quarterly",
       taxYear = taxYear,
       errorMessage = None
     )(mtdItUser(userType, agentReferenceNumber))
@@ -65,7 +65,7 @@ class SwitchReportingMethodAuditModelSpec extends AnyWordSpecLike with TestSuppo
                                              ): SwitchReportingMethodAuditModel = {
     SwitchReportingMethodAuditModel(
       journeyType = SelfEmployment.journeyType,
-      reportingMethodChangeTo = "annual",
+      reportingMethodChangeTo = "Annual",
       taxYear = taxYear,
       errorMessage = Some(messages(ConfirmReportingMethodForm.noSelectionError(changeTo = "annual")))
     )(mtdItUser(userType, agentReferenceNumber))
