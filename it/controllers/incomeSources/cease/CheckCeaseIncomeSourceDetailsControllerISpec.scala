@@ -14,7 +14,7 @@ import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, u
 
 import java.time.LocalDate
 
-class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase{
+class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val cessationDate = "2022-04-23"
   val businessEndShortLongDate = "23 April 2022"
   val changeLink = "Change"

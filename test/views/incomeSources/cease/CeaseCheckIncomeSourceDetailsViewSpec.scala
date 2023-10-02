@@ -18,18 +18,18 @@ package views.incomeSources.cease
 
 import controllers.incomeSources.cease.routes
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CheckCeaseIncomeSourceDetailsViewModel, PropertyDetailsViewModel}
+import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.BusinessDetailsTestConstants.{address, testBizAddress, testCessation, testCessation2, testCessation3, testCessationDate2, testEndDate, testStartDate, testStartDate3, testTradeName}
+import testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testTradeName}
 import testUtils.TestSupport
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
-class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport{
+class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
 
   val ceaseCheckIncomeSourceDetailsView: CeaseCheckIncomeSourceDetails = app.injector.instanceOf[CeaseCheckIncomeSourceDetails]
 
@@ -45,6 +45,7 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport{
   val testBackUrl: String = routes.CeaseIncomeSourceController.show().url
   val testCeaseDateLong: String = "1 January 2023"
   val businessAddressAsString = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
+
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
 
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix

@@ -9,12 +9,12 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, propertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 
 import java.time.LocalDate
 
-class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase{
+class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
   val cessationDate = "2022-04-23"
   val businessEndShortLongDate = "23 April 2022"
