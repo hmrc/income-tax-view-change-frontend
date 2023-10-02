@@ -17,10 +17,13 @@
 package audit.models
 
 import audit.Utilities
-import auth.MtdItUser
+import auth.{MtdItUser, MtdItUserBase}
+import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.data.FormError
 import play.api.i18n.{Lang, MessagesApi}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
+import utils.Utilities._
+
 
 case class SwitchReportingMethodAuditModel(journeyType: String,
                                            reportingMethodChangeTo: String,
@@ -40,8 +43,8 @@ case class SwitchReportingMethodAuditModel(journeyType: String,
       Json.obj(
         "journeyType" -> journeyType,
         "reportingMethodChangeTo" -> reportingMethodChangeTo.toLowerCase.capitalize,
-        "taxYear" -> taxYear,
-        "errorMessage" -> errorMessage.flatMap(_.messages.map(messagesApi(_))).headOption
-      )
+        "taxYear" -> taxYear
+      ) ++
+      ("errorMessage" -> errorMessage.flatMap(_.messages.map(messagesApi(_))).headOption)
   }
 }
