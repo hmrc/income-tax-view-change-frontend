@@ -44,7 +44,8 @@ case class SwitchReportingMethodAuditModel(journeyType: String,
         "journeyType" -> journeyType,
         "reportingMethodChangeTo" -> reportingMethodChangeTo.toLowerCase.capitalize,
         "taxYear" -> taxYear
-      ) ++
-      ("errorMessage" -> errorMessage.flatMap(_.messages.map(messagesApi(_))).headOption)
+      ) ++ (
+      "errorMessage" -> errorMessage.flatMap(_.messages.map(messagesApi(_))).headOption
+      )
   }
 }
