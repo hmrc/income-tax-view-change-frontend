@@ -108,7 +108,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         isAgent = false,
         taxYear,
         changeTo,
-        Some("")
+        None
       )
   }
 
