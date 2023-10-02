@@ -75,7 +75,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   private lazy val manageObligationsController = controllers.incomeSources.manage.routes
     .ManageObligationsController
 
-  val testIncomeSourceId = "XAIS00000099004"
+  val testIncomeSourceId = "XA00001234"
 
   val testTaxYear = "2022-2023"
 
@@ -84,6 +84,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   val testChangeToQuarterly = "quarterly"
 
   val sessionIncomeSourceId = SessionKeys.incomeSourceId -> testIncomeSourceId
+
+  val sessionIncomeSourceIdNone = SessionKeys.incomeSourceId -> "None"
 
   "Individual: ConfirmReportingMethodSharedController.show" should {
     "redirect to home page" when {
@@ -118,7 +120,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, "randomText", incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
+          testTaxYear, "randomText", incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceIdNone))
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -130,7 +132,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
+          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceIdNone))
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -371,7 +373,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
+          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceIdNone))
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
