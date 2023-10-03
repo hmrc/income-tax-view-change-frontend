@@ -18,11 +18,11 @@ package audit.models
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.{obligationsViewModelSimple, viewModel}
+import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.obligationsViewModelSimple
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
