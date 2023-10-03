@@ -99,7 +99,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.show()(fakeRequestWithNinoAndOrigin("pta"))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = false, SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = false, SelfEmployment).url)
       }
     }
 
@@ -121,7 +121,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
   }
 
   "Individual - CheckCeaseBusinessDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url}" when {
       "submitted" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
@@ -134,7 +134,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
           TestCheckCeaseBusinessDetailsController.submit()(fakeRequestWithCeaseBusinessDetails(cessationDate, businessIncomeSourceId))
         }
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url)
       }
     }
   }
@@ -173,7 +173,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         val result: Future[Result] = TestCheckCeaseBusinessDetailsController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = true, SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent = true, SelfEmployment).url)
       }
     }
 
@@ -206,7 +206,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
   }
 
   "Agent - CheckCeaseBusinessDetailsController.submit" should {
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(testSelfEmploymentId), SelfEmployment.key).url}" when {
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(testSelfEmploymentId), SelfEmployment).url}" when {
       "form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
@@ -223,7 +223,7 @@ class CheckCeaseBusinessDetailsControllerSpec extends TestSupport with MockAuthe
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url)
       }
     }
   }

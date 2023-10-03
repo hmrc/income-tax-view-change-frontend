@@ -78,7 +78,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
       "the user is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
-          val result = TestIncomeSourceObligationController.show(SelfEmployment.key)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceObligationController.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -88,7 +88,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
       "the user has timed out" in {
         setupMockAuthorisationException()
 
-        val result = TestIncomeSourceObligationController.show(SelfEmployment.key)(fakeRequestWithTimeoutSession)
+        val result = TestIncomeSourceObligationController.show(SelfEmployment)(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -101,7 +101,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceObligationController.show(SelfEmployment.key)(fakeRequestWithNinoAndOrigin("pta"))
+        val result: Future[Result] = TestIncomeSourceObligationController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("pta"))
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -111,7 +111,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -127,7 +127,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "Property start date was not retrieved" in {
@@ -135,7 +135,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockBusinessIncomeSource()
 
-        val result = TestIncomeSourceObligationController.show(UkProperty.key)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceObligationController.show(UkProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "user has no active foreign properties" in {
@@ -150,7 +150,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
             )
           )
 
-        val result: Future[Result] = TestIncomeSourceObligationController.show(ForeignProperty.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceObligationController.show(ForeignProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "user has more than one active foreign properties" in {
@@ -165,7 +165,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
             )
           )
 
-        val result: Future[Result] = TestIncomeSourceObligationController.show(ForeignProperty.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceObligationController.show(ForeignProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
@@ -182,7 +182,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-        val result: Future[Result] = TestIncomeSourceObligationController.show(SelfEmployment.key)(fakeRequestWithActiveSession.withSession(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
+        val result: Future[Result] = TestIncomeSourceObligationController.show(SelfEmployment)(fakeRequestWithActiveSession.withSession(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
         status(result) shouldBe OK
       }
       "IncomeSourceType is Foreign property" in {
@@ -197,7 +197,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(Right(foreignPropertyDetails))
 
-        val result: Future[Result] = TestIncomeSourceObligationController.show(ForeignProperty.key)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceObligationController.show(ForeignProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
 
       }
@@ -214,7 +214,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(Right(ukPropertyDetails))
 
-        val result = TestIncomeSourceObligationController.show(UkProperty.key)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceObligationController.show(UkProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
     }
@@ -231,7 +231,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment.key)(fakeRequestConfirmedClient().withSession(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
+        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment)(fakeRequestConfirmedClient().withSession(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
         status(result) shouldBe OK
       }
       "IncomeSourceType is Foreign property" in {
@@ -247,7 +247,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(Right(foreignPropertyDetails))
 
-        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(ForeignProperty.key)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       "IncomeSourceType is UK property" in {
@@ -262,7 +262,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(Right(ukPropertyDetails))
 
-        val result = TestIncomeSourceObligationController.showAgent(ForeignProperty.key)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceObligationController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
     }

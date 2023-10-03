@@ -49,31 +49,23 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
                                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def handleRequest(id: String, isAgent: Boolean, incomeSourceType: String)
+  def handleRequest(id: String, isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
-    val errorHandler = if (isAgent) itvcAgentErrorHandler else itvcErrorHandler
-
-    IncomeSourceType(incomeSourceType) match {
-      case Right(incomeType) =>
-        val action: Call = (incomeType, isAgent) match {
-          case (UkProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, UkProperty)
-          case (UkProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, UkProperty)
-          case (ForeignProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, ForeignProperty)
-          case (ForeignProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, ForeignProperty)
-          case (SelfEmployment, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, SelfEmployment)
-          case (SelfEmployment, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, SelfEmployment)
-        }
-
-        Future.successful(Ok(view(incomeSourceType = incomeType, continueAction = action, isAgent = isAgent)))
-
-      case Left(_) => Future.successful(errorHandler.showInternalServerError())
+    val action: Call = (incomeSourceType, isAgent) match {
+      case (UkProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, UkProperty)
+      case (UkProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, UkProperty)
+      case (ForeignProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, ForeignProperty)
+      case (ForeignProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, ForeignProperty)
+      case (SelfEmployment, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, SelfEmployment)
+      case (SelfEmployment, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, SelfEmployment)
     }
 
+    Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
   }
 
 
-  def show(id: String, incomeSourceType: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(id: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -83,7 +75,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
       )
   }
 
-  def showAgent(id: String, incomeSourceType: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(id: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {

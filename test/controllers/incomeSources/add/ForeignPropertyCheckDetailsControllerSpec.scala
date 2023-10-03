@@ -77,8 +77,8 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     val link: String = s"${messages("incomeSources.add.foreign-property-check-details.change")}"
   }
 
-  lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key).url
-  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty.key).url
+  lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty).url
+  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty).url
 
   "ForeignPropertyCheckDetailsController" should {
 

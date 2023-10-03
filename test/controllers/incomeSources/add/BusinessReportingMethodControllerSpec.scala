@@ -425,7 +425,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment).url)
       }
       "some internal failure in the update action (one call)" in {
         val tySpecific1 = TaxYearSpecific("2022", false)
@@ -452,7 +452,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment).url)
       }
     }
   }
@@ -705,7 +705,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment).url)
       }
 
       "some internal failure in the update action (one call)" in {
@@ -733,7 +733,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(TestBusinessReportingMethodController.incomeSourceId, SelfEmployment).url)
       }
     }
   }

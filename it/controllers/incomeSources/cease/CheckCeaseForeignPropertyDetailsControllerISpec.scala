@@ -20,7 +20,7 @@ class CheckCeaseForeignPropertyDetailsControllerISpec extends ComponentSpecBase 
   val formAction = controllers.incomeSources.cease.routes.CheckCeaseForeignPropertyDetailsController.submit(cessationDate).url
   val pageTitleMsgKey = messagesAPI("check-cease-foreign-property-details.heading")
   val timestamp = "2023-01-31T09:26:17Z"
-  val redirectUri = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty.key).url
+  val redirectUri = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = foreignProperty.incomeSourceId,

@@ -56,8 +56,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  lazy val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url
-  lazy val agentForeignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
+  lazy val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty).url
+  lazy val agentForeignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty).url
   lazy val backUrlIndividual: String = foreignPropertyAccountingMethodUrl
   lazy val backUrlAgent: String = agentForeignPropertyAccountingMethodUrl
 
@@ -199,8 +199,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[AnyContent], request: Request[AnyContent]): Future[Result] = {
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = ForeignProperty.key)
-    else routes.IncomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key)
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(ForeignProperty)
+    else routes.IncomeSourceNotAddedController.show(ForeignProperty)
 
     getDetails(user) flatMap {
       case Right(viewModel: CheckForeignPropertyViewModel) =>

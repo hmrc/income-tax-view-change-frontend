@@ -49,7 +49,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
         disableAllSwitches()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, UkProperty.key)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
@@ -59,7 +59,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, UkProperty.key)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
@@ -69,7 +69,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
         disableAllSwitches()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, ForeignProperty.key)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, ForeignProperty)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
@@ -79,7 +79,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, ForeignProperty.key)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, ForeignProperty)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
@@ -89,7 +89,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
         disableAllSwitches()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, SelfEmployment.key)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, SelfEmployment)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
@@ -99,32 +99,10 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
         disableAllSwitches()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, SelfEmployment.key)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, SelfEmployment)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
-      }
-    }
-    "500 ISE" when {
-      "authenticated user navigates to page with an invalid income source type in the request" in {
-        disableAllSwitches()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, "zzz")(fakeRequestWithActiveSession)
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-        document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
-      }
-      "authenticated agent navigates to page with an invalid income source type in the request" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, "zzz")(fakeRequestConfirmedClient())
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
         document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
       }
     }
@@ -133,7 +111,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
         disableAllSwitches()
         setupMockAuthorisationException()
         mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, UkProperty.key)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceNotCeasedController.show(isAgent = false, UkProperty)(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
       }
@@ -141,7 +119,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
         disableAllSwitches()
         setupMockAgentAuthorisationException()
         mockUKPropertyIncomeSource()
-        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, UkProperty.key)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceNotCeasedController.show(isAgent = true, UkProperty)(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
       }

@@ -90,12 +90,12 @@ class CheckCeaseUKPropertyDetailsController @Inject()(val authenticate: Authenti
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
     lazy val redirectAction = {
       if (isAgent)
-        routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty.key)
+        routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty)
       else
-        routes.IncomeSourceCeasedObligationsController.show(UkProperty.key)
+        routes.IncomeSourceCeasedObligationsController.show(UkProperty)
     }
 
-    lazy val incomeSourceNotCeasedShowAction = controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, UkProperty.key)
+    lazy val incomeSourceNotCeasedShowAction = controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, UkProperty)
 
     sessionService.get(ceaseUKPropertyEndDate).flatMap {
       case Right(Some(date)) =>

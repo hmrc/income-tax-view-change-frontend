@@ -17,7 +17,6 @@
 package views.incomeSources.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.IncomeSourceJourney.SelfEmployment
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.viewmodels.{CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel}
 import org.jsoup.Jsoup
@@ -76,18 +75,18 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     }
 
     def getCeaseSoleTraderBusinessURL(incomeSourceId: String): String = {
-      if (isAgent) controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(incomeSourceId), SelfEmployment.key).url
-      else controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceId), SelfEmployment.key).url
+      if (isAgent) controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(incomeSourceId), SelfEmployment).url
+      else controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceId), SelfEmployment).url
     }
 
     def getCeaseUkPropertyURL: String = {
-      if (isAgent) controllers.incomeSources.cease.routes.CeaseUKPropertyController.showAgent().url
-      else controllers.incomeSources.cease.routes.CeaseUKPropertyController.show().url
+      if (isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.showAgent(UkProperty).url
+      else controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
     }
 
     def getCeaseForeignPropertyURL: String = {
-      if (isAgent) controllers.incomeSources.cease.routes.CeaseForeignPropertyController.showAgent().url
-      else controllers.incomeSources.cease.routes.CeaseForeignPropertyController.show().url
+      if (isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.showAgent(ForeignProperty).url
+      else controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(ForeignProperty).url
     }
 
 
@@ -204,7 +203,8 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
         table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.ceased-income-sources.unknown-sole-trader")
         table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe messages("incomeSources.generic.unknown")
-        table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate}
+        table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate
+      }
     }
   }
 
@@ -319,7 +319,8 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
         table.getElementById("ceased-business-table-row-trading-name-2").text() shouldBe messages("incomeSources.ceased-income-sources.unknown-sole-trader")
         table.getElementById("ceased-business-table-row-date-started-2").text() shouldBe messages("incomeSources.generic.unknown")
-        table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate}
+        table.getElementById("ceased-business-table-row-date-ended-2").text() shouldBe testCessation.date.get.toLongDate
+      }
     }
   }
 }

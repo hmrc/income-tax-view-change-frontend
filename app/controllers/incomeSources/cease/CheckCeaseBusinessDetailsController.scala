@@ -80,7 +80,7 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
     case ex: Exception =>
       Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleRequest]${if (isAgent) "[Agent] "}" +
         s"Error getting CheckCeaseBusinessDetails page: ${ex.getMessage}")
-      Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
+      Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment))
   }
 
 
@@ -109,9 +109,9 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_], request: Request[_]): Future[Result] = withIncomeSourcesFS {
     val redirectAction = {
       if (isAgent)
-        routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment.key)
+        routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment)
       else
-        routes.IncomeSourceCeasedObligationsController.show(SelfEmployment.key)
+        routes.IncomeSourceCeasedObligationsController.show(SelfEmployment)
     }
 
     val sessionDataFuture = for {
@@ -129,7 +129,7 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
             Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
               s" Unsuccessful update response received")
             Future.successful {
-              Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment.key))
+              Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment))
             }
         }
       case _ =>

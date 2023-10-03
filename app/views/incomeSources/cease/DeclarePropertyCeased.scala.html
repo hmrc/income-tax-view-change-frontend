@@ -14,54 +14,53 @@
  * limitations under the License.
  *@
 
-@import forms.CeaseForeignPropertyForm
+@import forms.incomeSources.cease.DeclarePropertyCeasedForm
 @import views.html.layouts.unifiedLayout
 @import views.html.helpers.injected.ContinueButton
 @import views.html.helpers.injected.ErrorSummary
-@import views.html.helpers.injected.RadioHelper
 @import views.helpers.RadioOption
-@import views.html.helpers.injected.InputHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Radios, GovukRadios, Fieldset, Legend, Text, RadioItem}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Text}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Checkboxes
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 
 @this(
     mainTemplate: unifiedLayout,
-    inputHelper: InputHelper,
     continueButton: ContinueButton,
     formWithCSRF: FormWithCSRF,
     errorSummary: ErrorSummary,
-    radioHelper: RadioHelper,
-    govukRadios: GovukRadios,
-    inputRadios: input_radios,
     govukCheckboxes: GovukCheckboxes,
 )
 
-@(ceaseForeignPropertyForm: Form[CeaseForeignPropertyForm], postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(declarePropertyCeasedForm: Form[DeclarePropertyCeasedForm], incomeSourceType: IncomeSourceType, postAction: Call, isAgent: Boolean = false, backUrl: String, origin: Option[String] = None)(implicit user: auth.MtdItUser[_], messages: Messages)
 
-@mainTemplate(pageTitle = messages("incomeSources.ceaseForeignProperty.heading"), form = Some(ceaseForeignPropertyForm), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
+@title = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.property.heading") }
+
+@checkBoxLabel = @{ messages(s"incomeSources.cease.${incomeSourceType.key}.property.checkboxLabel") }
+
+@mainTemplate(pageTitle = title, form = Some(declarePropertyCeasedForm), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
 
     @errorSummary(
-        form = ceaseForeignPropertyForm
+        form = declarePropertyCeasedForm
     )
 
-    @formWithCSRF(action = postAction, Symbol("id") -> "cease-foreign-property-form") {
+    @formWithCSRF(action = postAction, Symbol("id") -> "declare-property-ceased-form") {
 
         @checkboxes(
-            govukCheckboxes,
-            ceaseForeignPropertyForm,
-            "cease-foreign-property-declaration",
-            messages("incomeSources.ceaseForeignProperty.heading"),
-            "govuk-fieldset__legend--l",
+            govukCheckboxes = govukCheckboxes,
+            form = declarePropertyCeasedForm,
+            name = DeclarePropertyCeasedForm.declaration,
+            legendContent = title,
+            classes = "govuk-fieldset__legend--l",
             items = Seq(
                 CheckboxItem(
-                    content = Text(messages("incomeSources.ceaseForeignProperty.checkboxLabel")),
+                    content = Text(checkBoxLabel),
                     value = "true"
                 )
             )
