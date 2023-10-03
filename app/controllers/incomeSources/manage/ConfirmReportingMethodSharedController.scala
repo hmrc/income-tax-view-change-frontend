@@ -30,6 +30,7 @@ import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseErr
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.data.FormError
+import play.api.i18n.Lang
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -101,8 +102,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               .extendedAudit(
                 SwitchReportingMethodAuditModel(
                   taxYear = taxYear,
-                  errorMessage = Nil,
-                  messagesApi = messagesApi,
+                  errorMessage = None,
                   reportingMethodChangeTo = changeTo,
                   journeyType = incomeSourceType.journeyType
                 )
@@ -151,9 +151,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 .extendedAudit(
                   SwitchReportingMethodAuditModel(
                     taxYear = taxYear,
-                    messagesApi = messagesApi,
-                    reportingMethodChangeTo = changeTo,
-                    errorMessage = formWithErrors.errors,
+                    reportingMethodChangeTo = changeTo.toLowerCase.capitalize,
+                    errorMessage = formWithErrors.errors.flatMap(_.messages.map(messagesApi(_)(Lang("GB")))).headOption,
                     journeyType = incomeSourceType.journeyType
                   )
               )

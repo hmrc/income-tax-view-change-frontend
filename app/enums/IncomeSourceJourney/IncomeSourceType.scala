@@ -29,6 +29,7 @@ sealed trait IncomeSourceType {
   val startDateSessionKey: String
   val endDateSessionKey: String
   val reportingMethodChangeErrorPrefix: String
+  val ceasePropertyDeclarationSessionKey: String
   val ceaseCheckDetailsPrefix: String
 }
 
@@ -41,6 +42,7 @@ case object SelfEmployment extends IncomeSourceType {
   override val startDateSessionKey: String = SessionKeys.addBusinessStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseBusinessEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
+  override val ceasePropertyDeclarationSessionKey: String = ""
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
 }
 
@@ -53,6 +55,7 @@ case object UkProperty extends IncomeSourceType {
   override val startDateSessionKey: String = SessionKeys.addUkPropertyStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseUKPropertyEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
+  override val ceasePropertyDeclarationSessionKey: String = SessionKeys.ceaseUKPropertyDeclare
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseUKProperty.checkDetails"
 
 }
@@ -66,6 +69,7 @@ case object ForeignProperty extends IncomeSourceType {
   override val startDateSessionKey: String = SessionKeys.foreignPropertyStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseForeignPropertyEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
+  override val ceasePropertyDeclarationSessionKey: String = SessionKeys.ceaseForeignPropertyDeclare
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
 }
 

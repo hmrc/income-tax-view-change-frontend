@@ -56,59 +56,60 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   private def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], isChange: Boolean): Future[(Call, Call, Call)] = {
+
     Future.successful(
       (incomeSourceType, isAgent, isChange) match {
         case (UkProperty, true, false) =>
-          (routes.CeaseUKPropertyController.showAgent(),
-            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = UkProperty),
+          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty))
         case (UkProperty, false, false) =>
-          (routes.CeaseUKPropertyController.show(),
-            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = UkProperty),
+          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
+            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty))
         case (UkProperty, true, true) =>
-          (routes.CeaseUKPropertyController.showAgent(),
-            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = UkProperty),
+          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty))
         case (UkProperty, false, true) =>
-          (routes.CeaseUKPropertyController.show(),
-            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = UkProperty),
+          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty))
         case (ForeignProperty, true, false) =>
-          (routes.CeaseForeignPropertyController.showAgent(),
-            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = ForeignProperty),
+          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty))
         case (ForeignProperty, false, false) =>
-          (routes.CeaseForeignPropertyController.show(),
-            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = ForeignProperty),
+          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
+            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty))
         case (ForeignProperty, true, true) =>
-          (routes.CeaseForeignPropertyController.showAgent(),
-            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = ForeignProperty),
+          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty))
         case (ForeignProperty, false, true) =>
-          (routes.CeaseForeignPropertyController.show(),
-            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = ForeignProperty),
+          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty))
         case (SelfEmployment, true, false) =>
           (routes.CeaseIncomeSourceController.showAgent(),
-            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = SelfEmployment),
+            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment))
         case (SelfEmployment, false, false) =>
           (routes.CeaseIncomeSourceController.show(),
-            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = SelfEmployment),
+            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment))
         case (SelfEmployment, true, true) =>
           (routes.CeaseIncomeSourceController.showAgent(),
-            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = SelfEmployment),
+            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment))
         case (SelfEmployment, false, true) =>
           (routes.CeaseIncomeSourceController.show(),
-            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = SelfEmployment),
+            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
             routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment))
-      }
-    )
+      })
   }
+
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate andThen retrieveNino

@@ -1288,16 +1288,16 @@ incomeSources.cease.endDate.selfEmployment.heading                              
 incomeSources.cease.endDate.selfEmployment.error.invalid                         = The date your self-employed business stopped trading must be a real date
 incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
-incomeSources.ceaseUKProperty.heading                            = Cease UK property
-incomeSources.ceaseUKProperty.radioLabel                         = I declare that I no longer get an income from any property in the UK.
-incomeSources.ceaseUKProperty.radioError                         = You must declare that you no longer get an income from any property in the UK
+incomeSources.cease.UK.property.heading                            = Cease UK property
+incomeSources.cease.UK.property.checkboxLabel                      = I declare that I no longer get an income from any property in the UK.
+incomeSources.cease.UK.property.checkboxError                      = You must declare that you no longer get an income from any property in the UK
 
 incomeSources.cease.endDate.ukProperty.heading                    = Date your UK property business stopped
 incomeSources.cease.endDate.ukProperty.error.invalid              = The date your UK property business stopped must be a real date
 
-incomeSources.ceaseForeignProperty.heading                              = Cease foreign property
-incomeSources.ceaseForeignProperty.checkboxLabel                        = I declare that I no longer get an income from any foreign property.
-incomeSources.ceaseForeignProperty.checkboxError                        = You must declare that you no longer get an income from any foreign property
+incomeSources.cease.FP.property.heading                            = Cease foreign property
+incomeSources.cease.FP.property.checkboxLabel                      = I declare that I no longer get an income from any foreign property.
+incomeSources.cease.FP.property.checkboxError                      = You must declare that you no longer get an income from any foreign property
 
 incomeSources.cease.endDate.foreignProperty.heading                      = Date your foreign property business stopped
 incomeSources.cease.endDate.foreignProperty.error.invalid                = The date your foreign property business stopped must be a real date
