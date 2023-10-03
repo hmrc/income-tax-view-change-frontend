@@ -60,7 +60,7 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
         ))
   }
 
-  private val qOption: Option[Seq[JsObject]] = {
+  private val quarterlyUpdatesOption: Option[Seq[JsObject]] = {
     if (quarterly.nonEmpty) {
       Some(quarterly.collect {
         case (taxYear, dataModel) =>
@@ -78,7 +78,7 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
     } else None
   }
 
-  private val fOption: Option[Seq[JsObject]] = {
+  private val eopsObligationsOption: Option[Seq[JsObject]] = {
     if (obligations.eopsObligationsDates.nonEmpty){
     Some(obligations.eopsObligationsDates.map { eops =>
       Json.obj(
@@ -87,6 +87,18 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
         "deadline" -> eops.inboundCorrespondenceDue
       )
     })} else None
+  }
+
+  private val finalDeclarationDatesOption: Option[Seq[JsObject]] = {
+    if (obligations.finalDeclarationDates.nonEmpty) {
+      Some(obligations.finalDeclarationDates.map { finalDec =>
+        Json.obj(
+          "taxYearStartDate" -> finalDec.inboundCorrespondenceFrom,
+          "taxYearEndDate" -> finalDec.inboundCorrespondenceTo,
+          "deadline" -> finalDec.inboundCorrespondenceDue
+        )
+      })
+    } else None
   }
 
   override val detail: JsValue = {
@@ -99,16 +111,8 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
             "reportingMethod" -> repMethod,
             "taxYear" -> s"${taxYear.startYear}-${taxYear.endYear}"
           )) ++
-      ("quarterlyUpdates", qOption) ++
-      ("EOPstatement", fOption) ++
-      ("finalDeclaration",
-      obligations.finalDeclarationDates.map { finalDec =>
-        Json.obj(
-          "taxYearStartDate" -> finalDec.inboundCorrespondenceFrom,
-          "taxYearEndDate" -> finalDec.inboundCorrespondenceTo,
-          "deadline" -> finalDec.inboundCorrespondenceDue
-        )
-      }
-    )
+      ("quarterlyUpdates", quarterlyUpdatesOption) ++
+      ("EOPstatement", eopsObligationsOption) ++
+      ("finalDeclaration", finalDeclarationDatesOption)
   }
 }
