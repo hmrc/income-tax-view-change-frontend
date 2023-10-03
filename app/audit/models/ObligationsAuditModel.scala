@@ -17,11 +17,12 @@
 package audit.models
 
 import audit.Utilities
+import utils.Utilities._
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
                                  obligations: ObligationsViewModel,
@@ -59,17 +60,9 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
         ))
   }
 
-  override val detail: JsValue = {
-    Utilities.userAuditDetails(user) ++
-      Json.obj(
-        "journeyType" -> journey,
-        "incomeSourceInfo" ->
-          Json.obj(
-            "businessName" -> name,
-            "reportingMethod" -> repMethod,
-            "taxYear" -> s"${taxYear.startYear}-${taxYear.endYear}"
-          )) ++
-      ("quarterlyUpdates", quarterly.collect {
+  private val qOption: Option[Seq[JsObject]] = {
+    if (quarterly.nonEmpty) {
+      Some(quarterly.collect {
         case (taxYear, dataModel) =>
           Json.obj(
             "taxYear" -> s"${taxYear}-${taxYear + 1}",
@@ -81,16 +74,34 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
               )
             }
           )
-      }) ++
-    ("EOPstatement",
-      obligations.eopsObligationsDates.map { eops =>
-        Json.obj(
-          "taxYearStartDate" -> eops.inboundCorrespondenceFrom,
-          "taxYearEndDate" -> eops.inboundCorrespondenceTo,
-          "deadline" -> eops.inboundCorrespondenceDue
-        )
-      }) ++
-      "finalDeclaration" ->
+      })
+    } else None
+  }
+
+  private val fOption: Option[Seq[JsObject]] = {
+    if (obligations.eopsObligationsDates.nonEmpty){
+    Some(obligations.eopsObligationsDates.map { eops =>
+      Json.obj(
+        "taxYearStartDate" -> eops.inboundCorrespondenceFrom,
+        "taxYearEndDate" -> eops.inboundCorrespondenceTo,
+        "deadline" -> eops.inboundCorrespondenceDue
+      )
+    })} else None
+  }
+
+  override val detail: JsValue = {
+    Utilities.userAuditDetails(user) ++
+      Json.obj(
+        "journeyType" -> journey,
+        "incomeSourceInfo" ->
+          Json.obj(
+            "businessName" -> name,
+            "reportingMethod" -> repMethod,
+            "taxYear" -> s"${taxYear.startYear}-${taxYear.endYear}"
+          )) ++
+      ("quarterlyUpdates", qOption) ++
+      ("EOPstatement", fOption) ++
+      ("finalDeclaration",
       obligations.finalDeclarationDates.map { finalDec =>
         Json.obj(
           "taxYearStartDate" -> finalDec.inboundCorrespondenceFrom,
