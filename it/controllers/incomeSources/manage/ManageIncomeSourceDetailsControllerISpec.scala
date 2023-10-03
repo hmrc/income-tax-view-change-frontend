@@ -70,44 +70,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val messagesChangeLinkText: String = messagesAPI("incomeSources.manage.business-manage-details.change")
   val messagesUnknown: String = messagesAPI("incomeSources.generic.unknown")
 
-  val transactionName = "manage-your-details"
-  val auditType = "ManageYourDetails"
-
-  val jsonResponse: JsValue = Json.parse(
-    """
-{
-    "auditSource": "income-tax-view-change-frontend",
-    "auditType": "ManageYourDetails",
-    "tags": {
-      "transactionName": "manage-your-details"
-    },
-    "detail": {
-      "nationalInsuranceNumber": "ZZZZZZZZZZ",
-      "mtditid": "XAITSA123456",
-      "saUtr": "1234567890",
-      "credId": "12345-credId",
-      "userType": "Individual",
-      "journeyType": "SE",
-      "businessName": "business",
-      "businessAddressLine1": "Line 1",
-      "businessAddressLine2": "Line 2",
-      "businessAddressLine3": "Line 3",
-      "businessAddressLine4": "Line 4",
-      "businessAddressPostcode": "LN12 2NL",
-      "businessAddressCountry": "United Kingdom",
-      "accountingMethod": "Cash based accounting",
-      "incomeReportingMethodYear1": {
-        "reportingMethod": "Annually",
-        "taxYear": "2023-2024"
-      },
-      "incomeReportingMethodYear2": {
-        "reportingMethod": "Quarterly",
-        "taxYear": "2024-2025"
-      }
-    }
-  }
-""".stripMargin.trim)
-
   s"calling GET $manageSelfEmploymentShowUrl" should {
     "render the Manage Self Employment business page" when {
       "URL contains a valid income source ID and authorised user has no latency information" in {
@@ -233,6 +195,28 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
 
+        AuditStub.verifyAuditEvent(
+          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelSelfEmploymentBusiness)(
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              userName = None,
+              incomeSources = IncomeSourceDetailsModel(
+                mtdbsa = testMtditid,
+                yearOfMigration = None,
+                businesses = List(businessForManageYourDetailsAudit),
+                properties = List()
+              ),
+              btaNavPartial = None,
+              saUtr = Some(testSaUtr),
+              credId = Some(credId),
+              userType = Some(Individual),
+              arn = None
+            )(
+              FakeRequest()
+            )
+          )
+        )
       }
     }
   }
@@ -491,26 +475,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property")
 
-        val auditModel = ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelForeignPropertyBusiness)(
-          MtdItUser(
-            mtditid = testMtditid,
-            nino = testNino,
-            userName = None,
-            incomeSources = IncomeSourceDetailsModel(
-              mtdbsa = testMtditid,
-              yearOfMigration = None,
-              businesses = List(),
-              properties = List(foreignPropertyAudit)
-            ),
-            btaNavPartial = None,
-            saUtr = Some(testSaUtr),
-            credId = Some(credId),
-            userType = Some(Individual),
-            arn = None
-          )(
-            FakeRequest()
-          ))
-
         AuditStub.verifyAuditEvent(
           ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelForeignPropertyBusiness)(
             MtdItUser(
@@ -533,10 +497,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
             )
           )
         )
-
-        AuditStub.verifyAuditContainsDetail(jsonResponse)
       }
     }
   }
-
 }

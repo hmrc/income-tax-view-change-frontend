@@ -30,13 +30,7 @@ case class ManageYourDetailsResponseAuditModel(
   override val transactionName: String = enums.TransactionName.ManageIncomeSourceDetails
   override val auditType: String = enums.AuditType.ManageIncomeSourceDetails
 
-  val incomeSourceTypeJson = (viewModel.incomeSourceType match {
-    case SelfEmployment => "SE"
-    case UkProperty => "UKPROPERTY"
-    case ForeignProperty => "FOREIGNPROPERTY"
-  })
-
-  val accountingMethodJson = (viewModel.incomeSourceType match {
+  private val incomeSourceTypeJson = (viewModel.incomeSourceType match {
     case SelfEmployment => "SE"
     case UkProperty => "UKPROPERTY"
     case ForeignProperty => "FOREIGNPROPERTY"
@@ -51,7 +45,7 @@ case class ManageYourDetailsResponseAuditModel(
       ("businessAddressLine3", viewModel.address.flatMap(address => address.addressLine3)) ++
       ("businessAddressLine4", viewModel.address.flatMap(address => address.addressLine4)) ++
       ("businessAddressPostcode", viewModel.address.flatMap(address => address.postCode)) ++
-      Json.obj("businessAddressCountry" -> (if (viewModel.incomeSourceType == SelfEmployment) "United Kingdom" else None)) ++
+      ("businessAddressCountry", viewModel.address.map { _ => "United Kingdom"}) ++
       ("accountingMethod", viewModel.businessAccountingMethod.map {
         case true => "Traditional accounting"
         case false => "Cash based accounting"
