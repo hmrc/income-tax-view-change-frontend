@@ -38,8 +38,8 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
-  val annual = "annual"
-  val quarterly = "quarterly"
+  val annual = "Annual"
+  val quarterly = "Quarterly"
   val taxYear = "2023-2024"
 
   val timestamp = "2023-01-31T09:26:17Z"
