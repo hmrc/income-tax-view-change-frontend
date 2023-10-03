@@ -185,7 +185,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
         Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
           s" Unsuccessful update response received")
         Future.successful {
-          Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment))
+          Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
         }
     }
   }
