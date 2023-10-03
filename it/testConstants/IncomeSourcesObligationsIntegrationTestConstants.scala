@@ -49,8 +49,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
       LocalDate.of(taxYear, 5, 5),
       "Quarterly",
       None,
-      "#001"
-    ),
+      "#001"),
       NextUpdateModel(
         LocalDate.of(taxYear, 1, 6),
         LocalDate.of(taxYear, 4, 5),
@@ -60,5 +59,9 @@ object IncomeSourcesObligationsIntegrationTestConstants {
         "#002"
       )
     ))
+  ))
+
+  val testObligationsModelEmpty: ObligationsModel = ObligationsModel(Seq(
+    NextUpdatesModel("123", List.empty)
   ))
 }
