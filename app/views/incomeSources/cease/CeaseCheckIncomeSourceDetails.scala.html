@@ -67,15 +67,15 @@ messages(s"$messagesPrefix.$key", args: _*)
 @getPropertyChangeHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {
         if(isAgent){
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty).url
+            controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, UkProperty).url
         } else {
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty).url
+            controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, UkProperty).url
         }
     } else {
         if(isAgent){
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty).url
+            controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(None, ForeignProperty).url
         } else {
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty).url
+            controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(None, ForeignProperty).url
         }
     }
 }
@@ -147,7 +147,7 @@ messages(s"$messagesPrefix.$key", args: _*)
                         if(viewModel.tradingName){
                             viewModel.tradingName.get
                         } else {
-                        messages("incomeSources.generic.unknown")
+                            messages("incomeSources.generic.unknown")
                         }
                     ))
                 ),
@@ -157,7 +157,7 @@ messages(s"$messagesPrefix.$key", args: _*)
                         if(viewModel.address) {
                             getLongAddressFromBusinessAddressDetails(viewModel.address.get).toString
                         } else {
-                        messages("incomeSources.generic.unknown")
+                            messages("incomeSources.generic.unknown")
                         }
                     )),
                 ))

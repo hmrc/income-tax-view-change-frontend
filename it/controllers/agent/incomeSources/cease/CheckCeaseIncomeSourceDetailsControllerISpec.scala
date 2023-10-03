@@ -96,7 +96,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling POST ${showCheckCeaseBusinessDetailsControllerUrl}" should {
     s"redirect to $redirectUriSE" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        Given("I wiremock stub a successful Income Source Details response with a SE business")
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -191,7 +191,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling POST ${showCheckCeaseForeignPropertyDetailsControllerUrl}" should {
     s"redirect to $redirectUriFP" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with UK property")
+        Given("I wiremock stub a successful Income Source Details response with Foreign Property")
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)

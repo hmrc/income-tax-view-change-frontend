@@ -65,7 +65,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling GET ${showCheckCeaseBusinessDetailsControllerUrl}" should {
     "render the Cease Business Details Page" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        Given("I wiremock stub a successful Income Source Details response with a SE buisness")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         When(s"I call GET ${showCheckCeaseBusinessDetailsControllerUrl}")
@@ -88,7 +88,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
     "render the Cease Business Page with unknown address and title" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        Given("I wiremock stub a successful Income Source Details response with a SE business with no address")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
         When(s"I call GET ${showCheckCeaseBusinessDetailsControllerUrl}")
@@ -137,7 +137,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling GET ${showCheckCeaseUKPropertyDetailsControllerUrl}" should {
     "render the Cease UK Property Details Page" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        Given("I wiremock stub a successful Income Source Details response with a UK property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -161,7 +161,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling POST ${showCheckCeaseUKPropertyDetailsControllerUrl}" should {
     s"redirect to $redirectUriUK" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        Given("I wiremock stub a successful Income Source Details response with a UK property")
         enable(IncomeSources)
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -182,7 +182,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling GET ${showCheckCeaseForeignPropertyDetailsControllerUrl}" should {
     "render the Cease Foreign Property Details Page" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        Given("I wiremock stub a successful Income Source Details response with a Foreign Property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
         When(s"I call GET ${showCheckCeaseForeignPropertyDetailsControllerUrl}")
@@ -204,7 +204,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   s"calling POST ${showCheckCeaseForeignPropertyDetailsControllerUrl}" should {
     s"redirect to $redirectUriFP" when {
       "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        Given("I wiremock stub a successful Income Source Details response with a Foriegn Property")
         enable(IncomeSources)
 
 
