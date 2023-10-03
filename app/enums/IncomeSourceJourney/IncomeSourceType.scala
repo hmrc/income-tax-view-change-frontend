@@ -29,6 +29,7 @@ sealed trait IncomeSourceType {
   val startDateSessionKey: String
   val endDateSessionKey: String
   val reportingMethodChangeErrorPrefix: String
+  val ceasePropertyDeclarationSessionKey: String
 }
 
 case object SelfEmployment extends IncomeSourceType {
@@ -40,6 +41,7 @@ case object SelfEmployment extends IncomeSourceType {
   override val startDateSessionKey: String = SessionKeys.addBusinessStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseBusinessEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
+  override val ceasePropertyDeclarationSessionKey: String = ""
 }
 
 case object UkProperty extends IncomeSourceType {
@@ -51,6 +53,7 @@ case object UkProperty extends IncomeSourceType {
   override val startDateSessionKey: String = SessionKeys.addUkPropertyStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseUKPropertyEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
+  override val ceasePropertyDeclarationSessionKey: String = SessionKeys.ceaseUKPropertyDeclare
 }
 
 case object ForeignProperty extends IncomeSourceType {
@@ -62,17 +65,10 @@ case object ForeignProperty extends IncomeSourceType {
   override val startDateSessionKey: String = SessionKeys.foreignPropertyStartDate
   override val endDateSessionKey: String = SessionKeys.ceaseForeignPropertyEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
+  override val ceasePropertyDeclarationSessionKey: String = SessionKeys.ceaseForeignPropertyDeclare
 }
 
 object IncomeSourceType {
-  def apply(key: String): Either[Exception, IncomeSourceType] = {
-    key match {
-      case "FP" => Right(ForeignProperty)
-      case "UK" => Right(UkProperty)
-      case "SE" => Right(SelfEmployment)
-      case _ => Left(new Exception("Invalid incomeSourceType"))
-    }
-  }
 
   implicit val incomeSourceTypeJSLBinder: JavascriptLiteral[IncomeSourceType] = (value: IncomeSourceType) => s"""'${value.toString}'"""
 

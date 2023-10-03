@@ -39,7 +39,7 @@ class CheckCeaseUKPropertyDetailsControllerISpec extends ComponentSpecBase {
   val businessStopDateLabel = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.content")
   val pageTitleMsgKey = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.heading")
   val timestamp = "2023-01-31T09:26:17Z"
-  val redirectUri = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty.key).url
+  val redirectUri = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceId = ukProperty.incomeSourceId,

@@ -26,9 +26,9 @@ import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessRe
 
 class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
-  val addIncomeSourcesAccountingMethodShowUrlSoleTrader: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment.key).url
-  val addIncomeSourcesAccountingMethodShowUrlUK: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url
-  val addIncomeSourcesAccountingMethodShowUrlForeign: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url
+  val addIncomeSourcesAccountingMethodShowUrlSoleTrader: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment).url
+  val addIncomeSourcesAccountingMethodShowUrlUK: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty).url
+  val addIncomeSourcesAccountingMethodShowUrlForeign: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty).url
 
   val checkBusinessDetailsShowAgentUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
   val checkUKPropertyDetailsShowAgentUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url

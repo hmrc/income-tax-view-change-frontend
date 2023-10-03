@@ -63,9 +63,9 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
     }
 
     val changeAccountingMethodUrl = if (isAgent) {
-      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(UkProperty.key).url
+      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(UkProperty).url
     } else {
-      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(UkProperty.key).url
+      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(UkProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {

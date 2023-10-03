@@ -55,52 +55,52 @@ class IncomeSourcesAccountingMethodFormSpec extends TestSupport with ImplicitDat
   "IncomeSourcesAccountingMethodForm form" should {
     "bind with a valid response Self Employment - cash" in {
       val formData = Map(selfEmploymentAccountingMethod -> "cash")
-      val completedForm = IncomeSourcesAccountingMethodForm(SelfEmployment.key).bind(formData)
+      val completedForm = IncomeSourcesAccountingMethodForm(SelfEmployment).bind(formData)
       completedForm.data.get(selfEmploymentAccountingMethod) shouldBe Some(cashAccountingMethod)
       completedForm.errors shouldBe List.empty
     }
     "bind with a valid response UK Property - cash" in {
       val formData = Map(UKPropertyAccountingMethod -> "cash")
-      val completedForm = IncomeSourcesAccountingMethodForm(UkProperty.key).bind(formData)
+      val completedForm = IncomeSourcesAccountingMethodForm(UkProperty).bind(formData)
       completedForm.data.get(UKPropertyAccountingMethod) shouldBe Some(cashAccountingMethod)
       completedForm.errors shouldBe List.empty
     }
     "bind with a valid response Foreign Property - cash" in {
       val formData = Map(foreignPropertyAccountingMethod -> "cash")
-      val completedForm = IncomeSourcesAccountingMethodForm(ForeignProperty.key).bind(formData)
+      val completedForm = IncomeSourcesAccountingMethodForm(ForeignProperty).bind(formData)
       completedForm.data.get(foreignPropertyAccountingMethod) shouldBe Some(cashAccountingMethod)
       completedForm.errors shouldBe List.empty
     }
     "bind with a valid response Self Employment - traditional" in {
       val formData = Map(selfEmploymentAccountingMethod -> "traditional")
-      val completedForm = IncomeSourcesAccountingMethodForm(SelfEmployment.key).bind(formData)
+      val completedForm = IncomeSourcesAccountingMethodForm(SelfEmployment).bind(formData)
       completedForm.data.get(selfEmploymentAccountingMethod) shouldBe Some(traditionalAccountingMethod)
       completedForm.errors shouldBe List.empty
     }
     "bind with a valid response UK Property - traditional" in {
       val formData = Map(UKPropertyAccountingMethod -> "traditional")
-      val completedForm = IncomeSourcesAccountingMethodForm(UkProperty.key).bind(formData)
+      val completedForm = IncomeSourcesAccountingMethodForm(UkProperty).bind(formData)
       completedForm.data.get(UKPropertyAccountingMethod) shouldBe Some(traditionalAccountingMethod)
       completedForm.errors shouldBe List.empty
     }
     "bind with a valid response Foreign Property - traditional" in {
       val formData = Map(foreignPropertyAccountingMethod -> "traditional")
-      val completedForm = IncomeSourcesAccountingMethodForm(ForeignProperty.key).bind(formData)
+      val completedForm = IncomeSourcesAccountingMethodForm(ForeignProperty).bind(formData)
       completedForm.data.get(foreignPropertyAccountingMethod) shouldBe Some(traditionalAccountingMethod)
       completedForm.errors shouldBe List.empty
     }
     "bind with an invalid response Self Employment" in {
-      val completedForm = IncomeSourcesAccountingMethodForm(SelfEmployment.key).bind(Map(selfEmploymentAccountingMethod -> ""))
+      val completedForm = IncomeSourcesAccountingMethodForm(SelfEmployment).bind(Map(selfEmploymentAccountingMethod -> ""))
       completedForm.data.get(selfEmploymentAccountingMethod) shouldBe Some("")
       completedForm.errors shouldBe List(FormError(selfEmploymentAccountingMethod, List(selfEmploymentRadioEmptyError), List()))
     }
     "bind with an invalid response UK Property" in {
-      val completedForm = IncomeSourcesAccountingMethodForm(UkProperty.key).bind(Map(UKPropertyAccountingMethod -> ""))
+      val completedForm = IncomeSourcesAccountingMethodForm(UkProperty).bind(Map(UKPropertyAccountingMethod -> ""))
       completedForm.data.get(UKPropertyAccountingMethod) shouldBe Some("")
       completedForm.errors shouldBe List(FormError(UKPropertyAccountingMethod, List(UKPropertyRadioEmptyError), List()))
     }
     "bind with an invalid response Foreign Property" in {
-      val completedForm = IncomeSourcesAccountingMethodForm(ForeignProperty.key).bind(Map(foreignPropertyAccountingMethod -> ""))
+      val completedForm = IncomeSourcesAccountingMethodForm(ForeignProperty).bind(Map(foreignPropertyAccountingMethod -> ""))
       completedForm.data.get(foreignPropertyAccountingMethod) shouldBe Some("")
       completedForm.errors shouldBe List(FormError(foreignPropertyAccountingMethod, List(foreignPropertyRadioEmptyError), List()))
     }

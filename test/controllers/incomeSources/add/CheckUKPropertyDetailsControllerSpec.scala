@@ -58,8 +58,8 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
   val cash: String = messages("incomeSources.add.accountingMethod.cash")
 
 
-  lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty.key).url
-  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty.key).url
+  lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty).url
+  lazy val agentErrorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty).url
 
   object TestCheckUKPropertyDetailsController extends CheckUKPropertyDetailsController(
     checkUKPropertyDetails = app.injector.instanceOf[CheckUKPropertyDetails],

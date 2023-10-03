@@ -208,7 +208,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment).url)
       }
     }
   }
@@ -320,7 +320,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
           ))
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment).url)
 
       }
     }

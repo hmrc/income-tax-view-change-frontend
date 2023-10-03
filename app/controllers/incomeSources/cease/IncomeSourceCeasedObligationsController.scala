@@ -59,23 +59,21 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
       .flatMap(_.tradingName)
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceTypeKey: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val incomeSourceDetails = IncomeSourceType(incomeSourceTypeKey) match {
-        case Right(SelfEmployment) =>
+      val incomeSourceDetails = incomeSourceType match {
+        case SelfEmployment =>
           sessionService.get(ceaseBusinessIncomeSourceId).map((_, SelfEmployment))
 
-        case Right(UkProperty) =>
+        case UkProperty =>
           Future.successful((incomeSourceDetailsService
             .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)
             .map(v => Some(v.incomeSourceId)), UkProperty))
 
-        case Right(ForeignProperty) =>
+        case ForeignProperty =>
           Future.successful((incomeSourceDetailsService
             .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)
             .map(v => Some(v.incomeSourceId)), ForeignProperty))
-
-        case Left(exception) => Future.failed(exception)
       }
 
       incomeSourceDetails.flatMap {
@@ -99,18 +97,18 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
       errorHandler.showInternalServerError()
   }
 
-  def show(incomeSourceTypeKey: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(isAgent = false, incomeSourceTypeKey = incomeSourceTypeKey)
+      handleRequest(isAgent = false, incomeSourceType = incomeSourceType)
   }
 
-  def showAgent(incomeSourceTypeKey: String): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleRequest(isAgent = true, incomeSourceTypeKey = incomeSourceTypeKey)
+            handleRequest(isAgent = true, incomeSourceType = incomeSourceType)
         }
   }
 }

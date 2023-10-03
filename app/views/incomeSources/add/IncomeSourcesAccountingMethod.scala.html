@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
 @import enums.IncomeSourceJourney.SelfEmployment
+@import enums.IncomeSourceJourney.IncomeSourceType
 
 @this(mainTemplate: unifiedLayout,
     implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -34,9 +35,9 @@
     inputRadios: input_radios,
     detailsDropdown: detailsDropdown)
 
-@(cashOrAccrualsFlag: Option[String] = None, incomeSourcesType: String, form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(cashOrAccrualsFlag: Option[String] = None, incomeSourcesType: IncomeSourceType, form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
-@prefix = @{"incomeSources.add." + incomeSourcesType + ".AccountingMethod"}
+@prefix = @{"incomeSources.add." + incomeSourcesType.key + ".AccountingMethod"}
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$prefix.$key", args: _*)
@@ -53,7 +54,7 @@
 }
 
 @hintContent = {
-    @if(incomeSourcesType == SelfEmployment.key) {
+    @if(incomeSourcesType == SelfEmployment) {
         <br><div>@getMessage("hint")</div></br><div>@detailsDropdown(getMessage("example"), detailsContent)</div>
     } else {
         <br><div>@detailsDropdown(getMessage("example"), detailsContent)</div>

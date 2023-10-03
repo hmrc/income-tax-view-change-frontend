@@ -506,7 +506,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to check uk property details page" when {
@@ -618,7 +618,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to check foreign property details page" when {
@@ -1057,7 +1057,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to check uk property details page" when {
@@ -1169,7 +1169,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty.key).url)
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty).url)
       }
     }
     s"return ${Status.SEE_OTHER}: redirect to check foreign property details page" when {

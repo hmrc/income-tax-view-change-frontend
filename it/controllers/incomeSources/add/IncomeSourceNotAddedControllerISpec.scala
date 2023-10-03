@@ -12,9 +12,9 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
 
   private lazy val incomeSourceNotAddedController = controllers.incomeSources.add.routes.IncomeSourceNotAddedController
 
-  val selfEmploymentNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = SelfEmployment.key).url
-  val ukPropertyNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = UkProperty.key).url
-  val foreignPropertyNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = ForeignProperty.key).url
+  val selfEmploymentNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = SelfEmployment).url
+  val ukPropertyNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = UkProperty).url
+  val foreignPropertyNotSavedErrorUrl: String = incomeSourceNotAddedController.show(incomeSourceType = ForeignProperty).url
 
   val continueButtonText: String = messagesAPI("")
   val pageTitle: String = messagesAPI("standardError.heading")

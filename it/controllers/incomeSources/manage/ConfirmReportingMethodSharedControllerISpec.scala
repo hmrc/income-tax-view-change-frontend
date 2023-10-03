@@ -38,8 +38,8 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
-  val annual = "annual"
-  val quarterly = "quarterly"
+  val annual = "Annual"
+  val quarterly = "Quarterly"
   val taxYear = "2023-2024"
 
   val timestamp = "2023-01-31T09:26:17Z"
@@ -202,8 +202,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
               journeyType = SelfEmployment.journeyType,
               reportingMethodChangeTo = annual,
               taxYear = taxYear,
-              errorMessage = Nil,
-              messagesApi = messagesAPI
+              errorMessage = None
             )(
               MtdItUser(
                 mtditid = testMtditid,
@@ -348,8 +347,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
               journeyType = SelfEmployment.journeyType,
               reportingMethodChangeTo = annual,
               taxYear = taxYear,
-              errorMessage = Seq(FormError("key", ConfirmReportingMethodForm.noSelectionError(annual))),
-              messagesApi = messagesAPI
+              errorMessage = Some(messagesAPI(ConfirmReportingMethodForm.noSelectionError(annual)))
             )(
               MtdItUser(
                 mtditid = testMtditid,

@@ -10,9 +10,9 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBase {
 
-  val selfEmploymentReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", SelfEmployment.key).url
-  val ukPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", UkProperty.key).url
-  val foreignPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", ForeignProperty.key).url
+  val selfEmploymentReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", SelfEmployment).url
+  val ukPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", UkProperty).url
+  val foreignPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", ForeignProperty).url
 
   object TestConstants {
     val selfEmployment: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.se")
