@@ -167,11 +167,10 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
     }
   } recover {
     case ex: Exception =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest] Error Submitting Cease Date: ${
         ex.getMessage
       }")
-      errorHandler.showInternalServerError()
+      showInternalServerError(isAgent)
   }
 
   def updateCessationDate(cessationDate: String, incomeSourceType: IncomeSourceType, incomeSourceId: String, isAgent: Boolean)
