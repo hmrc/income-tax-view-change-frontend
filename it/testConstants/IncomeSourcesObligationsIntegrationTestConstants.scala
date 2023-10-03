@@ -60,8 +60,4 @@ object IncomeSourcesObligationsIntegrationTestConstants {
       )
     ))
   ))
-
-  val testObligationsModelEmpty: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel("123", List.empty)
-  ))
 }
