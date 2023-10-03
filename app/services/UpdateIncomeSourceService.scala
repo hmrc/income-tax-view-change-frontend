@@ -16,10 +16,7 @@
 
 package services
 
-import auth.MtdItUser
 import connectors.IncomeTaxViewChangeConnector
-import exceptions.MissingSessionKey
-import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier

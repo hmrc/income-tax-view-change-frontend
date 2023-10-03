@@ -24,11 +24,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import forms.utils.SessionKeys
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
-import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService}
+import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -51,6 +52,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val dateService: DateService,
                                                     val retrieveBtaNavBar: NavBarPredicate,
                                                     val calculationListService: CalculationListService,
+                                                    val sessionService: SessionService,
                                                     auditingService: AuditingService)
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
@@ -115,13 +117,26 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-        id = Some(id),
-        incomeSourceType = SelfEmployment
-      )
+      withIncomeSourcesFS {
+        val result = handleRequest(
+          sources = user.incomeSources,
+          isAgent = false,
+          backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+          id = Some(id),
+          incomeSourceType = SelfEmployment
+        )
+
+        result.flatMap(
+          sessionService.set(SessionKeys.incomeSourceId, id, _)
+        ).flatMap {
+          case Right(result) => Future.successful(result)
+          case Left(exception) => Future.failed(exception)
+        }
+      }.recover {
+        case exception =>
+          Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] ${exception.getMessage}")
+          itvcErrorHandler.showInternalServerError()
+      }
   }
 
   def showSoleTraderBusinessAgent(id: String): Action[AnyContent] = Authenticated.async {
@@ -129,13 +144,26 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-              id = Some(id),
-              incomeSourceType = SelfEmployment
-            )
+            withIncomeSourcesFS {
+              val result = handleRequest(
+                sources = mtdItUser.incomeSources,
+                isAgent = true,
+                backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
+                id = Some(id),
+                incomeSourceType = SelfEmployment
+              )
+
+              result.flatMap(
+                sessionService.set(SessionKeys.incomeSourceId, id, _)
+              ).flatMap {
+                case Right(result) => Future.successful(result)
+                case Left(exception) => Future.failed(exception)
+              }
+            }.recover {
+              case exception =>
+                Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusinessAgent] ${exception.getMessage}")
+                itvcErrorHandlerAgent.showInternalServerError()
+            }
         }
   }
 

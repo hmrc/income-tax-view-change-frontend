@@ -42,11 +42,11 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
   val quarterly = "quarterly"
   val taxYear = "2023-2024"
 
-  val manageSEObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showSelfEmployment(annual, taxYear, testMtditid).url
+  val manageSEObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showSelfEmployment(annual, taxYear).url
   val manageUKObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showUKProperty(annual, taxYear).url
   val manageFPObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showForeignProperty(annual, taxYear).url
 
-  val manageConfirmShowUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(None, taxYear, quarterly, incomeSourceType = UkProperty, isAgent = false).url
+  val manageConfirmShowUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, quarterly, incomeSourceType = UkProperty, isAgent = false).url
 
   val manageObligationsSubmitUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.submit().url
   val manageIncomeSourcesShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url
@@ -68,6 +68,8 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )
 
+  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testSelfEmploymentId)
+
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
       "given valid url params" in {
@@ -82,7 +84,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, "123")
+        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, sessionIncomeSourceId)
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyGetNextUpdates(testNino)
 
@@ -105,7 +107,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, "123")
+        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, Map(forms.utils.SessionKeys.incomeSourceId -> "123"))
         verifyIncomeSourceDetailsCall(testMtditid)
 
         AuditStub.verifyAuditEvent(
