@@ -45,7 +45,7 @@ case class ManageYourDetailsResponseAuditModel(
       ("businessAddressLine3", viewModel.address.flatMap(address => address.addressLine3)) ++
       ("businessAddressLine4", viewModel.address.flatMap(address => address.addressLine4)) ++
       ("businessAddressPostcode", viewModel.address.flatMap(address => address.postCode)) ++
-      ("businessAddressCountry", viewModel.address.map { _ => "United Kingdom"}) ++
+      ("businessAddressCountry", viewModel.address.map { _ => "United Kingdom" }) ++
       ("accountingMethod", viewModel.businessAccountingMethod.map {
         case true => "Traditional accounting"
         case false => "Cash based accounting"
@@ -68,5 +68,4 @@ case class ManageYourDetailsResponseAuditModel(
             }),
           "taxYear" -> s"${reportingMethod.taxYear2}-${(reportingMethod.taxYear2.toInt + 1).toString}"
         )))
-
 }
