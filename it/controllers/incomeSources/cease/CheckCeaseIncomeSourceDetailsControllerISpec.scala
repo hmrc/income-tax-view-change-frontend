@@ -77,7 +77,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitleMsgKey),
           elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
           elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(businessEndShortLongDate),
-          elementTextByID("change-link")(changeLink),
+          elementTextByID("change")(changeLink),
 
           elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
           elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessName),
@@ -100,7 +100,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitleMsgKey),
           elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
           elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(businessEndShortLongDate),
-          elementTextByID("change-link")(changeLink),
+          elementTextByID("change")(changeLink),
 
           elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
           elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(unknown),
@@ -151,7 +151,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitleMsgKeyUK),
           elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseUKProperty.checkDetails.dateStopped")),
           elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(businessEndShortLongDate),
-          elementTextByID("change-link")(changeLink),
+          elementTextByID("change")(changeLink),
           elementAttributeBySelector("form", "action")(formActionUK)
         )
       }
@@ -194,7 +194,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitleMsgKeyUK),
           elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseForeignProperty.checkDetails.dateStopped")),
           elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(businessEndShortLongDate),
-          elementTextByID("change-link")(changeLink),
+          elementTextByID("change")(changeLink),
           elementAttributeBySelector("form", "action")(formActionFP)
         )
       }
