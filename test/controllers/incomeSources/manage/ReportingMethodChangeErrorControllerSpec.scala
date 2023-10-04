@@ -21,13 +21,14 @@ import config.featureswitch.IncomeSources
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import org.jsoup.Jsoup
 import org.mockito.Mockito.mock
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.UpdateIncomeSourceService
+import services.{SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
 import views.html.incomeSources.manage.{ManageIncomeSources, ReportingMethodChangeError}
 
@@ -50,6 +51,7 @@ class ReportingMethodChangeErrorControllerSpec
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       auditingService = app.injector.instanceOf[AuditingService],
+      sessionService = app.injector.instanceOf[SessionService],
       reportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
     )(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -61,6 +63,8 @@ class ReportingMethodChangeErrorControllerSpec
 
   val testSoleTraderBusinessIncomeSourceId = "XAIS00000099004"
 
+  val sessionIncomeSourceId = SessionKeys.incomeSourceId -> testSelfEmploymentId
+
   "Individual: ReportingMethodChangeErrorController.show" should {
     s"return ${Status.SEE_OTHER}: redirect to home page" when {
       "the IncomeSources FS is disabled" in {
@@ -69,7 +73,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
+          incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
@@ -83,7 +87,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, incomeSourceType = UkProperty, isAgent = false)(fakeRequestWithActiveSession)
+          incomeSourceType = UkProperty, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -97,7 +101,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession)
+          incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -111,7 +115,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSelfEmploymentId), incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
+          incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -131,7 +135,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSoleTraderBusinessIncomeSourceId), incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+          incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
@@ -145,7 +149,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, incomeSourceType = UkProperty, isAgent = true)(fakeRequestConfirmedClient())
+          incomeSourceType = UkProperty, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -161,7 +165,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          None, incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient())
+          incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
 
         val document = Jsoup.parse(contentAsString(result))
 
@@ -177,7 +181,7 @@ class ReportingMethodChangeErrorControllerSpec
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          Some(testSelfEmploymentId), incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+          incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
 
         val document = Jsoup.parse(contentAsString(result))
 

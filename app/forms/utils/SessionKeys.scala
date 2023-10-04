@@ -67,6 +67,8 @@ object SessionKeys {
 
   val foreignPropertyStartDate: String = "addForeignPropertyStartDate"
 
+  val incomeSourceId: String = "incomeSourceId"
+
   val incomeSourcesSessionKeys: Seq[String] = Seq(
     addUkPropertyStartDate,
     addForeignPropertyStartDate,

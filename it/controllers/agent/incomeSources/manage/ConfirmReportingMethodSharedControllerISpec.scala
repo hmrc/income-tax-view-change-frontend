@@ -38,8 +38,8 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
-  val annual = "annual"
-  val quarterly = "quarterly"
+  val annual = "Annual"
+  val quarterly = "Quarterly"
   val taxYear = "2023-2024"
 
   val timestamp = "2023-01-31T09:26:17Z"
@@ -50,31 +50,33 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     .ConfirmReportingMethodSharedController
 
   val confirmReportingMethodShowUKPropertyUrl: String = confirmReportingMethodSharedController
-    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
+    .show(taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
   val confirmReportingMethodShowForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .show(None, taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
+    .show(taxYear = testPropertyIncomeId, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
   val confirmReportingMethodShowSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .show(id = Some(testSelfEmploymentId), taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
+    .show(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
 
   val confirmReportingMethodSubmitUKPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
+    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = UkProperty, isAgent = true).url
   val confirmReportingMethodSubmitForeignPropertyUrl: String = confirmReportingMethodSharedController
-    .submit(id = testPropertyIncomeId, taxYear = taxYear, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
+    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = ForeignProperty, isAgent = true).url
   val confirmReportingMethodSubmitSoleTraderBusinessUrl: String = confirmReportingMethodSharedController
-    .submit(id = testSelfEmploymentId, taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
+    .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = true).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
     .showAgentUKProperty(changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowForeignPropertyUrl: String = manageObligationsController
     .showAgentForeignProperty(changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowSelfEmploymentUrl: String = manageObligationsController
-    .showAgentSelfEmployment(id = testSelfEmploymentId,changeTo = annual, taxYear = taxYear).url
+    .showAgentSelfEmployment(changeTo = annual, taxYear = taxYear).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
   val continueButtonText: String = messagesAPI("base.confirm-this-change")
 
   val pageTitle = messagesAPI(s"$prefix.heading.annual")
+
+  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testSelfEmploymentId)
 
   s"calling GET $confirmReportingMethodShowUKPropertyUrl" should {
     "render the Confirm Reporting Method page" when {
@@ -93,7 +95,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmUKPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getConfirmUKPropertyReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -123,7 +125,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmForeignPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getConfirmForeignPropertyReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -150,7 +152,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -179,7 +181,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -202,7 +204,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
+        IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         AuditStub
@@ -211,8 +213,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
               journeyType = SelfEmployment.journeyType,
               reportingMethodChangeTo = annual,
               taxYear = taxYear,
-              errorMessage = Nil,
-              messagesApi = messagesAPI
+              errorMessage = None
             )(
               MtdItUser(
                 mtditid = testMtditid,
@@ -253,7 +254,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
@@ -280,7 +281,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
@@ -307,7 +308,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
@@ -334,7 +335,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("RANDOM"))
         )
 
@@ -357,7 +358,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq())
         )
 
@@ -367,8 +368,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
               journeyType = SelfEmployment.journeyType,
               reportingMethodChangeTo = annual,
               taxYear = taxYear,
-              errorMessage = Seq(FormError("key", ConfirmReportingMethodForm.noSelectionError(annual))),
-              messagesApi = messagesAPI
+              errorMessage = Some(messagesAPI(ConfirmReportingMethodForm.noSelectionError(annual)))
             )(
               MtdItUser(
                 mtditid = testMtditid,
@@ -408,7 +408,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
@@ -435,13 +435,13 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(Some(testSelfEmploymentId), incomeSourceType = SelfEmployment, isAgent = true).url)
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = SelfEmployment, isAgent = true).url)
         )
       }
     }
@@ -462,13 +462,13 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(None, incomeSourceType = ForeignProperty, isAgent = true).url)
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = ForeignProperty, isAgent = true).url)
         )
       }
     }
@@ -489,13 +489,13 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
 
-        val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
+        val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual, sessionIncomeSourceId ++ clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(None, incomeSourceType = UkProperty, isAgent = true).url)
+          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = UkProperty, isAgent = true).url)
         )
       }
     }
