@@ -1333,8 +1333,8 @@ incomeSources.add.FP.AccountingMethod.no-selection            = Enter the accoun
 
 
 incomeSources.ceaseUKProperty.checkDetails.heading               = Check your details
-incomeSources.ceaseUKProperty.checkDetails.paragraph             = UK property business you entered
-incomeSources.ceaseUKProperty.checkDetails.content               = Date business stopped
+incomeSources.ceaseUKProperty.checkDetails.caption               = UK property business you entered
+incomeSources.ceaseUKProperty.checkDetails.dateStopped           = Date business stopped
 incomeSources.ceaseUKProperty.checkDetails.confirm               = Confirm and continue
 incomeSources.ceaseUKProperty.checkDetails.change                = Change
 
@@ -1395,7 +1395,7 @@ incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = March 2017, you 
 incomeSources.add.SE.AccountingMethod.no-selection            = Enter the accounting method you use for your sole trader business
 
 incomeSources.ceaseBusiness.checkDetails.heading                    = Check your details
-incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Sole trader business
+incomeSources.ceaseBusiness.checkDetails.caption                    = Sole trader business
 incomeSources.ceaseBusiness.checkDetails.dateStopped                = Date business stopped
 incomeSources.ceaseBusiness.checkDetails.businessName               = Business that’s stopped
 incomeSources.ceaseBusiness.checkDetails.businessAddress            = Business address
@@ -1403,11 +1403,12 @@ incomeSources.ceaseBusiness.checkDetails.confirm                    = Confirm an
 incomeSources.ceaseBusiness.checkDetails.change                     = Change
 incomeSources.ceaseBusiness.checkDetails.unknown                    = Unknown
 
-check-cease-foreign-property-details.heading            = Check your details
-check-cease-foreign-property-details.caption            = Foreign property business you entered
-check-cease-foreign-property-details.summary-list.key   = Date business stopped
-check-cease-foreign-property-details.summary-list.link  = Change
-check-cease-foreign-property-details.button             = Confirm and continue
+incomeSources.ceaseForeignProperty.checkDetails.heading               = Check your details
+incomeSources.ceaseForeignProperty.checkDetails.caption               = Foreign property business you entered
+incomeSources.ceaseForeignProperty.checkDetails.dateStopped           = Date business stopped
+incomeSources.ceaseForeignProperty.checkDetails.confirm               = Confirm and continue
+incomeSources.ceaseForeignProperty.checkDetails.change                = Change
+
 
 # check business details
 check-business-details.sole-trader-caption              = Sole trader business you entered

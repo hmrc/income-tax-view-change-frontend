@@ -179,20 +179,41 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
     }.toEither
   }
 
-  def getCheckCeaseBusinessDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String, businessEndDate: String)
-  : Either[Throwable, Option[CheckCeaseBusinessDetailsViewModel]] = {
-
-    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).find(x => x.incomeSourceId.equals(incomeSourceId))
+  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String, businessEndDate: String)
+  : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
 
     Try {
+      val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).find(_.incomeSourceId.equals(incomeSourceId))
+
       soleTraderBusinesses.map { business =>
-        CheckCeaseBusinessDetailsViewModel(
+        CheckCeaseIncomeSourceDetailsViewModel(
           business.incomeSourceId,
           business.tradingName,
           business.address,
-          LocalDate.parse(businessEndDate)
+          LocalDate.parse(businessEndDate),
+          incomeSourceType = SelfEmployment
         )
-      }
+      }.get
+    }.toEither
+  }
+
+  def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, businessEndDate: String, incomeSourceType: IncomeSourceType)
+  : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
+
+    val propertyBusiness = incomeSourceType match {
+      case UkProperty => sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
+      case _ => sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
+    }
+    Try {
+      propertyBusiness.map { business =>
+        CheckCeaseIncomeSourceDetailsViewModel(
+          business.incomeSourceId,
+          tradingName = None,
+          address = None,
+          LocalDate.parse(businessEndDate),
+          incomeSourceType = incomeSourceType
+        )
+      }.get
     }.toEither
   }
 

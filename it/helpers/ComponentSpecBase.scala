@@ -472,8 +472,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
       getWithClientDetailsInSession("/income-sources/cease/foreign-property-check-details", session)
 
-    def postCheckCeaseForeignPropertyDetails(cessationDate: String, session: Map[String, String]): WSResponse =
-      post(s"/income-sources/cease/foreign-property-check-details/$cessationDate", session)(Map.empty)
+    def postCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
+      post(s"/income-sources/cease/foreign-property-check-details/", session)(Map.empty)
+
 
     def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }

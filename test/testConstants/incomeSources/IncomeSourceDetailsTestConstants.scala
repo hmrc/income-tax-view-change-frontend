@@ -16,11 +16,12 @@
 
 package testConstants.incomeSources
 
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
-import models.incomeSourceDetails.viewmodels.CheckCeaseBusinessDetailsViewModel
+import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 
@@ -101,11 +102,28 @@ object IncomeSourceDetailsTestConstants {
     foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
     ceasedBusinesses = Nil)
 
-  val checkCeaseBusinessDetailsModel = CheckCeaseBusinessDetailsViewModel(
+  val checkCeaseBusinessDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
     incomeSourceId = testSelfEmploymentId,
     tradingName = Some(testTradeName),
     address = Some(address),
-    businessEndDate = LocalDate.parse("2022-04-23")
+    businessEndDate = LocalDate.parse("2022-04-23"),
+    SelfEmployment
+  )
+
+  val checkCeaseUkPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
+    incomeSourceId = testPropertyIncomeId,
+    tradingName = None,
+    address = None,
+    businessEndDate = LocalDate.parse("2022-04-23"),
+    UkProperty
+  )
+
+  val checkCeaseForeignPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
+    incomeSourceId = testPropertyIncomeId2,
+    tradingName = None,
+    address = None,
+    businessEndDate = LocalDate.parse("2022-04-23"),
+    ForeignProperty
   )
 
   def getCurrentTaxEndYear(currentDate: LocalDate): Int = {

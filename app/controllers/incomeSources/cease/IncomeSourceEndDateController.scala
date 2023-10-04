@@ -62,51 +62,51 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         case (UkProperty, true, false) =>
           (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
             routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseUKPropertyDetailsController.showAgent())
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty))
         case (UkProperty, false, false) =>
           (routes.DeclarePropertyCeasedController.show(incomeSourceType),
             routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseUKPropertyDetailsController.show())
+            routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty))
         case (UkProperty, true, true) =>
           (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
             routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseUKPropertyDetailsController.showAgent())
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty))
         case (UkProperty, false, true) =>
           (routes.DeclarePropertyCeasedController.show(incomeSourceType),
             routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseUKPropertyDetailsController.show())
+            routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty))
         case (ForeignProperty, true, false) =>
           (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
             routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseForeignPropertyDetailsController.showAgent())
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty))
         case (ForeignProperty, false, false) =>
           (routes.DeclarePropertyCeasedController.show(incomeSourceType),
             routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseForeignPropertyDetailsController.show())
+            routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty))
         case (ForeignProperty, true, true) =>
           (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
             routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseForeignPropertyDetailsController.showAgent())
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty))
         case (ForeignProperty, false, true) =>
           (routes.DeclarePropertyCeasedController.show(incomeSourceType),
             routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseForeignPropertyDetailsController.show())
+            routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty))
         case (SelfEmployment, true, false) =>
           (routes.CeaseIncomeSourceController.showAgent(),
             routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseBusinessDetailsController.showAgent())
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment))
         case (SelfEmployment, false, false) =>
           (routes.CeaseIncomeSourceController.show(),
             routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseBusinessDetailsController.show())
+            routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment))
         case (SelfEmployment, true, true) =>
           (routes.CeaseIncomeSourceController.showAgent(),
             routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseBusinessDetailsController.showAgent())
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment))
         case (SelfEmployment, false, true) =>
           (routes.CeaseIncomeSourceController.show(),
             routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
-            routes.CheckCeaseBusinessDetailsController.show())
+            routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment))
       })
   }
 
