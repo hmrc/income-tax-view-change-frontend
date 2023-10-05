@@ -156,7 +156,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 incomeSourceType = SelfEmployment
               )
 
-              sessionService.setMongoKey(SessionKeys.incomeSourceId, id, JourneyType(Manage, SelfEmployment)).flatMap {
+              sessionService.setMongoKey("manageIncomeSourceId", id, JourneyType(Manage, SelfEmployment)).flatMap {
                 case Right(_) => result
                 case Left(exception) => Future.failed(exception)
               }

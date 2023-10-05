@@ -55,8 +55,6 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
   with FeatureSwitching with IncomeSourcesUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-    //sessionService.createSession(JourneyType(Manage, )) flatMap  {
-      //case true =>
     handleRequest(
         sources = user.incomeSources,
         isAgent = isAgent,
@@ -65,8 +63,6 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
           else controllers.routes.HomeController.showAgent
         }.url
       )
-      //case false => Future.successful(showInternalServerError(isAgent))
-    //}
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)

@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
+import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
 import models.incomeSourceDetails.PropertyDetailsModel
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
@@ -61,7 +62,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.get(SessionKeys.incomeSourceId).flatMap {
+        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMayBe) =>
             handleRequest(
               mode = SelfEmployment,
@@ -75,14 +76,14 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }.recover {
         case exception =>
           Logger("application").error(s"[ManageObligationsController][showSelfEmployment] ${exception.getMessage}")
-          showInternalServerError(false)
+          showInternalServerError(isAgent = false)
       }
   }
 
-  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = authenticatedAction(true) {
+  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = authenticatedAction(isAgent = true) {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.get(SessionKeys.incomeSourceId).flatMap {
+        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMayBe) =>
             handleRequest(
               mode = SelfEmployment,
@@ -96,7 +97,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }.recover {
         case exception =>
           Logger("application").error(s"[ManageObligationsController][showAgentSelfEmployment] ${exception.getMessage}")
-          showInternalServerError(true)
+          showInternalServerError(isAgent = true)
       }
   }
 

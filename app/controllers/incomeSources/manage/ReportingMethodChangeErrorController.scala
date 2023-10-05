@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
@@ -60,7 +61,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
     withIncomeSourcesFS {
-      sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
         case Right(incomeSourceIdMayBe) =>
           incomeSourceIdMayBe match {
             case Some(incomeSourceId) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
