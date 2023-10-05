@@ -72,7 +72,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     withIncomeSourcesFS {
-      sessionService.getMongoKey(SessionKeys.incomeSourceId, JourneyType(Manage, incomeSourceType)).flatMap {
+      sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
         case Right(incomeSourceIdMayBe) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdMayBe)
         case Left(exception) => Future.failed(exception)
       }
