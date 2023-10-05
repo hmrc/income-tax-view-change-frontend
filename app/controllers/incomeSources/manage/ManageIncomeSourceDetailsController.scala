@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel}
@@ -126,11 +127,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           incomeSourceType = SelfEmployment
         )
 
-        result.flatMap(
-          sessionService.set(SessionKeys.incomeSourceId, id, _)
-        ).flatMap {
-          case Right(result) => Future.successful(result)
-          case Left(exception) => Future.failed(exception)
+        sessionService.createSession(JourneyType(Manage, SelfEmployment)).flatMap {
+          case true =>
+            sessionService.setMongoKey(SessionKeys.incomeSourceId, id, JourneyType(Manage, SelfEmployment)).flatMap {
+              case Right(_) => result
+              case Left(exception) => Future.failed(exception)
+            }
+          case false => Future.failed(new Error("Failed to create mongo session"))
         }
       }.recover {
         case exception =>
@@ -153,10 +156,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 incomeSourceType = SelfEmployment
               )
 
-              result.flatMap(
-                sessionService.set(SessionKeys.incomeSourceId, id, _)
-              ).flatMap {
-                case Right(result) => Future.successful(result)
+              sessionService.setMongoKey(SessionKeys.incomeSourceId, id, JourneyType(Manage, SelfEmployment)).flatMap {
+                case Right(_) => result
                 case Left(exception) => Future.failed(exception)
               }
             }.recover {

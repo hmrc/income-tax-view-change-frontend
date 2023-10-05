@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import forms.utils.SessionKeys
@@ -71,7 +72,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     withIncomeSourcesFS {
-      sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      sessionService.getMongoKey(SessionKeys.incomeSourceId, JourneyType(Manage, incomeSourceType)).flatMap {
         case Right(incomeSourceIdMayBe) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdMayBe)
         case Left(exception) => Future.failed(exception)
       }
@@ -89,7 +90,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     withIncomeSourcesFS {
-      sessionService.get(SessionKeys.incomeSourceId).flatMap {
+      sessionService.getMongoKey(SessionKeys.incomeSourceId, JourneyType(Manage, incomeSourceType)).flatMap {
         case Right(incomeSourceIdMayBe) => handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdMayBe, incomeSourceType)
         case Left(exception) => Future.failed(exception)
       }
