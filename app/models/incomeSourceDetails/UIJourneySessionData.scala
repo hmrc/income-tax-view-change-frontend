@@ -82,10 +82,11 @@ object AddIncomeSourceData {
 }
 
 case class ManageIncomeSourceData(
-                                   selectedIncomeSourceId: String
+                                   selectedIncomeSourceId: Option[String] = None
                                  )
 
 object ManageIncomeSourceData {
+
   val incomeSourceIdField = SessionKeys.incomeSourceId
   def getJSONKeyPath(name: String): String = s"manageIncomeSourceData.$name"
 

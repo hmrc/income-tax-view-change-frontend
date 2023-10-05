@@ -23,6 +23,8 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.JourneyType.{JourneyType, Manage}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -53,14 +55,18 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
   with FeatureSwitching with IncomeSourcesUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+    //sessionService.createSession(JourneyType(Manage, )) flatMap  {
+      //case true =>
     handleRequest(
-      sources = user.incomeSources,
-      isAgent = isAgent,
-      backUrl = {
-        if(isAgent) controllers.routes.HomeController.show()
-        else controllers.routes.HomeController.showAgent
-      }.url
-    )
+        sources = user.incomeSources,
+        isAgent = isAgent,
+        backUrl = {
+          if(isAgent) controllers.routes.HomeController.show()
+          else controllers.routes.HomeController.showAgent
+        }.url
+      )
+      //case false => Future.successful(showInternalServerError(isAgent))
+    //}
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
