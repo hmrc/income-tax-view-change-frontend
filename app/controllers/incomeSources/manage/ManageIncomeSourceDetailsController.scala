@@ -156,9 +156,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 incomeSourceType = SelfEmployment
               )
 
-              sessionService.setMongoKey("manageIncomeSourceId", id, JourneyType(Manage, SelfEmployment)).flatMap {
-                case Right(_) => result
-                case Left(exception) => Future.failed(exception)
+              sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
+                case true =>
+                  sessionService.setMongoKey("manageIncomeSourceId", id, JourneyType(Manage, SelfEmployment)).flatMap {
+                    case Right(_) => result
+                    case Left(exception) => Future.failed(exception)
+                  }
+                case false => Future.failed(new Error("Failed to create mongo session"))
               }
             }.recover {
               case exception =>

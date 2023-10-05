@@ -22,9 +22,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{JourneyType, Manage}
+import controllers.predicates._
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -56,13 +54,13 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
 
   def show(isAgent: Boolean): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
     handleRequest(
-        sources = user.incomeSources,
-        isAgent = isAgent,
-        backUrl = {
-          if(isAgent) controllers.routes.HomeController.show()
-          else controllers.routes.HomeController.showAgent
-        }.url
-      )
+      sources = user.incomeSources,
+      isAgent = isAgent,
+      backUrl = {
+        if (isAgent) controllers.routes.HomeController.show()
+        else controllers.routes.HomeController.showAgent
+      }.url
+    )
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
