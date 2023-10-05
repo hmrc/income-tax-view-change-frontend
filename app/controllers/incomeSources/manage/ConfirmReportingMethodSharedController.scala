@@ -72,10 +72,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     withIncomeSourcesFS {
-      sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
-        case Right(incomeSourceIdMayBe) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdMayBe)
-        case Left(exception) => Future.failed(exception)
+      if (incomeSourceType == SelfEmployment) {
+        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
+          case Right(incomeSourceIdMayBe) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdMayBe)
+          case Left(exception) => Future.failed(exception)
+        }
       }
+      else handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, None)
     }.recover {
       case exception =>
         Logger("application").error(s"[ConfirmReportingMethodSharedController][show] ${exception.getMessage}")
@@ -90,10 +93,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     withIncomeSourcesFS {
-      sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
-        case Right(incomeSourceIdMayBe) => handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdMayBe, incomeSourceType)
-        case Left(exception) => Future.failed(exception)
+      if (incomeSourceType == SelfEmployment) {
+        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
+          case Right(incomeSourceIdMayBe) => handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdMayBe, incomeSourceType)
+          case Left(exception) => Future.failed(exception)
+        }
       }
+      else handleSubmitRequest(taxYear, changeTo, isAgent, None, incomeSourceType)
     }.recover {
       case exception =>
         Logger("application").error(s"[ConfirmReportingMethodSharedController][submit] ${exception.getMessage}")

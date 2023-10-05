@@ -49,6 +49,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   with FeatureSwitching
   with TestSupport {
 
+  val mockSessionService: SessionService = mock(classOf[SessionService])
+
   object TestConfirmReportingMethodSharedController
     extends ConfirmReportingMethodSharedController(
       manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
@@ -63,7 +65,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
       dateService = dateService,
       auditingService = app.injector.instanceOf[AuditingService],
-      sessionService = app.injector.instanceOf[SessionService]
+      sessionService = mockSessionService
     )(itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -106,6 +108,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
           "$$$$-££££", testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
@@ -130,6 +133,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(None)))
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
           testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceIdNone))
@@ -156,6 +160,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         disableAllSwitches()
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
           testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
@@ -169,6 +174,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
           "$$$$-££££", testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
@@ -280,6 +286,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
           testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
@@ -295,6 +302,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
 
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
@@ -313,6 +321,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
 
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")))
@@ -347,6 +356,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
           "$$$$-££££", testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
@@ -371,6 +381,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(None)))
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
           testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceIdNone))
@@ -395,6 +406,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
           testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(SessionKeys.incomeSourceId -> testSelfEmploymentId))
@@ -548,6 +560,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
           .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
+
 
         val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
           testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId).withFormUrlEncodedBody(
