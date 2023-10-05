@@ -61,14 +61,17 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
     withIncomeSourcesFS {
-      sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
-        case Right(incomeSourceIdMayBe) =>
-          incomeSourceIdMayBe match {
-            case Some(incomeSourceId) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
-            case None => Future.failed(MissingSessionKey(incomeSourceId))
-          }
-        case Left(exception) => Future.failed(exception)
+      if (incomeSourceType == SelfEmployment) {
+        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
+          case Right(incomeSourceIdMayBe) =>
+            incomeSourceIdMayBe match {
+              case Some(incomeSourceId) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
+              case None => Future.failed(MissingSessionKey(incomeSourceId))
+            }
+          case Left(exception) => Future.failed(exception)
+        }
       }
+      else handleShowRequest(None, incomeSourceType, isAgent)
     }.recover {
       case exception =>
         Logger("application").error(s"[ReportingMethodChangeErrorController][show] ${exception.getMessage}")

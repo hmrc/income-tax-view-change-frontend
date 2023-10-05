@@ -24,7 +24,8 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import org.jsoup.Jsoup
-import org.mockito.Mockito.mock
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -39,6 +40,8 @@ class ReportingMethodChangeErrorControllerSpec
   with MockIncomeSourceDetailsPredicate
   with MockNavBarEnumFsPredicate {
 
+  val mockSessionService: SessionService = mock(classOf[SessionService])
+
   object TestReportingMethodChangeErrorController
     extends ReportingMethodChangeErrorController(
       manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
@@ -51,7 +54,7 @@ class ReportingMethodChangeErrorControllerSpec
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       auditingService = app.injector.instanceOf[AuditingService],
-      sessionService = app.injector.instanceOf[SessionService],
+      sessionService =mockSessionService,
       reportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
     )(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -113,6 +116,7 @@ class ReportingMethodChangeErrorControllerSpec
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testSelfEmploymentId))))
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
           incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withSession(sessionIncomeSourceId))
@@ -179,6 +183,7 @@ class ReportingMethodChangeErrorControllerSpec
         enable(IncomeSources)
         mockSingleBusinessIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testSelfEmploymentId))))
 
         val result: Future[Result] = TestReportingMethodChangeErrorController.show(
           incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(sessionIncomeSourceId))
