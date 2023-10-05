@@ -123,7 +123,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = true,
               taxYear,
               changeTo,
-              Some("")
+              None
             )
         }
   }
@@ -136,7 +136,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         isAgent = false,
         taxYear,
         changeTo,
-        Some("")
+        None
       )
   }
 
@@ -150,7 +150,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = true,
               taxYear,
               changeTo,
-              Some("")
+              None
             )
         }
   }
