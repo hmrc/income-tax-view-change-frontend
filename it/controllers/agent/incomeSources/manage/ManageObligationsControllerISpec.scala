@@ -74,8 +74,6 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )
 
-  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testSelfEmploymentId)
-
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
       "given valid url params" in {
@@ -91,7 +89,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, sessionIncomeSourceId ++ clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
