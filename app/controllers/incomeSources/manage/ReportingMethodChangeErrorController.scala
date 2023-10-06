@@ -28,6 +28,7 @@ import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
+import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
@@ -62,7 +63,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
           case Right(incomeSourceIdMayBe) =>
             incomeSourceIdMayBe match {
               case Some(incomeSourceId) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)

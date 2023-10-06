@@ -26,7 +26,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
-import models.incomeSourceDetails.PropertyDetailsModel
+import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
 import play.api.mvc._
@@ -62,7 +62,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, SelfEmployment)).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMayBe) =>
             handleRequest(
               mode = SelfEmployment,
@@ -83,7 +83,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = authenticatedAction(isAgent = true) {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, SelfEmployment)).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMayBe) =>
             handleRequest(
               mode = SelfEmployment,

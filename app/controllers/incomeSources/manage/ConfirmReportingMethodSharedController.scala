@@ -29,7 +29,7 @@ import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
@@ -73,7 +73,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
           case Right(incomeSourceIdMayBe) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdMayBe)
           case Left(exception) => Future.failed(exception)
         }
@@ -94,7 +94,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey("manageIncomeSourceId", JourneyType(Manage, incomeSourceType)).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
           case Right(incomeSourceIdMayBe) => handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdMayBe, incomeSourceType)
           case Left(exception) => Future.failed(exception)
         }

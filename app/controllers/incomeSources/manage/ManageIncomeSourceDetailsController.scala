@@ -27,7 +27,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, ManageIncomeSourceData, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService, SessionService}
@@ -129,7 +129,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
           case true =>
-            sessionService.setMongoKey("manageIncomeSourceId", id, JourneyType(Manage, SelfEmployment)).flatMap {
+            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, id, JourneyType(Manage, SelfEmployment)).flatMap {
               case Right(_) => result
               case Left(exception) => Future.failed(exception)
             }
@@ -158,7 +158,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
               sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
                 case true =>
-                  sessionService.setMongoKey("manageIncomeSourceId", id, JourneyType(Manage, SelfEmployment)).flatMap {
+                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, id, JourneyType(Manage, SelfEmployment)).flatMap {
                     case Right(_) => result
                     case Left(exception) => Future.failed(exception)
                   }
