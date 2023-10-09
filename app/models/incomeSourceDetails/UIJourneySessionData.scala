@@ -75,6 +75,7 @@ case class AddIncomeSourceData(
 object AddIncomeSourceData {
   val businessNameField = "businessName"
   val businessTradeField = "businessTrade"
+  val dateStartedField = "dateStarted"
 
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 

@@ -47,15 +47,18 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     setMongoData(UIJourneySessionData(hc.sessionId.get.value, journeyType, None))
   }
 
-  private def getKeyFromObject(objectOpt: Option[Any], key: String): Option[String] = {
-    objectOpt.fold(Option(""))(
-      obj => {
+  private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {
+    objectOpt match {
+      case Some(obj) =>
         val field = obj.getClass.getDeclaredField(key)
         field.setAccessible(true)
-        val value: Option[String] = field.get(obj).asInstanceOf[Option[String]]
-        value
-      }
-    )
+        try {
+          Right(field.get(obj).asInstanceOf[Option[A]])
+        } catch {
+          case err: ClassCastException => Left(err)
+        }
+      case None => Right(None)
+    }
   }
 
   def getMongoKey(key: String, journeyType: JourneyType)
@@ -63,9 +66,22 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
-          case Add => Right(getKeyFromObject(data.addIncomeSourceData, key))
-          case Manage => Right(getKeyFromObject(data.manageIncomeSourceData, key))
-          case Cease => Right(getKeyFromObject(data.ceaseIncomeSourceData, key))
+          case Add => getKeyFromObject[String](data.addIncomeSourceData, key)
+          case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
+          case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
+        }
+      case None => Right(None)
+    }
+  }
+
+  def getMongoKeyTyped[A](key: String, journeyType: JourneyType)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[A]]] = {
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
+      case Some(data: UIJourneySessionData) =>
+        journeyType.operation match {
+          case Add => getKeyFromObject[A](data.addIncomeSourceData, key)
+          case Manage => getKeyFromObject[A](data.manageIncomeSourceData, key)
+          case Cease => getKeyFromObject[A](data.ceaseIncomeSourceData, key)
         }
       case None => Right(None)
     }
