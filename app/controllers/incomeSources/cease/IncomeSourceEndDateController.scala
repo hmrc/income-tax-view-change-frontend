@@ -26,6 +26,7 @@ import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.models.DateFormElement
 import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
+import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
@@ -266,7 +267,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         validatedInput =>
           sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap {
             case true =>
-              println("Session Created")
               (incomeSourceType, id) match {
 
                 case (SelfEmployment, None) =>
@@ -278,14 +278,13 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                 case (SelfEmployment, Some(incomeSourceId)) =>
                   val result = Redirect(redirectAction)
                   sessionService.setMongoKey(
-                    incomeSourceType.endDateSessionKey, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
+                    CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
                   ).flatMap {
                     case Right(true) => {
                       sessionService.setMongoKey(
-                        ceaseBusinessIncomeSourceId, incomeSourceId, JourneyType(Cease, incomeSourceType)
+                        CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId, JourneyType(Cease, incomeSourceType)
                       ).flatMap {
                         case Right(true) =>
-                          println("Both keys set")
                           Future.successful(result)
                         case _ => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
                       }
@@ -294,10 +293,10 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                   }
 
                 case _ =>
-                  val session = incomeSourceType.endDateSessionKey -> validatedInput.date.toString
+                  val propertyEndDate = validatedInput.date.toString
                   val result = Redirect(redirectAction)
-                  sessionService.set(result, session).flatMap {
-                    case Right(result) => Future.successful(result)
+                  sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate, journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
+                    case Right(_) => Future.successful(result)
                     case Left(exception) => Future.failed(exception)
                   }
               }
@@ -318,7 +317,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                             isChange: Boolean)(implicit user: MtdItUser[_]): Future[Form[DateFormElement]] = {
 
     if (isChange) {
-      sessionService.get(incomeSourceType.endDateSessionKey).flatMap {
+      sessionService.getMongoKey(CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType)).flatMap {
         case Right(Some(date)) =>
           Future.successful(
             form.fill(

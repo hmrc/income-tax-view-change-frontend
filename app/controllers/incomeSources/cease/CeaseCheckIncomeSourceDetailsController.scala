@@ -22,8 +22,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId, ceaseForeignPropertyEndDate, ceaseUKPropertyEndDate}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -53,13 +54,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
   private def getSessionData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]):
   Future[(Either[Throwable, Option[String]], Either[Throwable, Option[String]])] = {
-    val incomeSourceIdFuture = sessionService.get(ceaseBusinessIncomeSourceId)
-    val cessationEndDateFuture = incomeSourceType match {
-      case SelfEmployment => sessionService.get(ceaseBusinessEndDate)
-      case UkProperty => sessionService.get(ceaseUKPropertyEndDate)
-      case ForeignProperty => sessionService.get(ceaseForeignPropertyEndDate)
-    }
-
+    val incomeSourceIdFuture = sessionService.getMongoKey(CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
+    val cessationEndDateFuture = sessionService.getMongoKey(CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType))
     for {
       incomeSourceId <- incomeSourceIdFuture
       cessationEndDate <- cessationEndDateFuture
@@ -93,8 +89,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
               isAgent = isAgent,
               backUrl = routes.CeaseIncomeSourceController.show().url,
               messagesPrefix = messagesPrefix)))
-          case Left(ex) =>
-            Future.failed(ex)
+          case Left(ex) => Future.failed(ex)
         }
       case (Right(None), Right(Some(cessationEndDate))) =>
         incomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(sources, cessationEndDate, incomeSourceType) match {

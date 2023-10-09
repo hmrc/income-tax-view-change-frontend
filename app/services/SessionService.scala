@@ -53,12 +53,9 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
         val field = obj.getClass.getDeclaredField(key)
         field.setAccessible(true)
         try {
-          println("Trying to cast as String")
           Right(field.get(obj).asInstanceOf[Option[A]])
         } catch {
-          case err: ClassCastException =>
-            println("Could not cast properly")
-            Left(err)
+          case err: ClassCastException => Left(err)
         }
       case None => Right(None)
     }

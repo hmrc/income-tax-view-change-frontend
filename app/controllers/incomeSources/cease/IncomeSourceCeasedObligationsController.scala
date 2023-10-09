@@ -22,8 +22,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
+import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -63,7 +65,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
     withIncomeSourcesFS {
       val incomeSourceDetails = incomeSourceType match {
         case SelfEmployment =>
-          sessionService.get(ceaseBusinessIncomeSourceId).map((_, SelfEmployment))
+          sessionService.getMongoKey(CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
 
         case UkProperty =>
           Future.successful((incomeSourceDetailsService
