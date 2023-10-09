@@ -184,7 +184,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
-          "Csrf-Token" -> "nocheck", "X-Session-ID" -> "xsession-1234567")
+          "Csrf-Token" -> "nocheck", "X-Session-ID" -> "xssession-1234567")
         .post(body).futureValue
     }
 

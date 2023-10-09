@@ -127,7 +127,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getCheckCeaseUKPropertyDetails(sessionCeaseUKPropertyEndDate ++ clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
-        
+
         res should have(
           httpStatus(OK),
           pageTitleAgent(pageTitleMsgKeyUK),
