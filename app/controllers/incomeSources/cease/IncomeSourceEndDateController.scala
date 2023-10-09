@@ -266,6 +266,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         validatedInput =>
           sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap {
             case true =>
+              println("Session Created")
               (incomeSourceType, id) match {
 
                 case (SelfEmployment, None) =>
@@ -283,7 +284,9 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                       sessionService.setMongoKey(
                         ceaseBusinessIncomeSourceId, incomeSourceId, JourneyType(Cease, incomeSourceType)
                       ).flatMap {
-                        case Right(true) => Future.successful(result)
+                        case Right(true) =>
+                          println("Both keys set")
+                          Future.successful(result)
                         case _ => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
                       }
                     }
