@@ -22,7 +22,7 @@ import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys.businessName
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
@@ -119,8 +119,9 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
       }
 
       val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-name", clientDetailsWithConfirmation)(formData)
+
       result should have(
-        httpStatus(OK),
+        httpStatus(BAD_REQUEST),
         elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
           messagesAPI("add-business-name.form.error.invalidNameFormat"))
       )
@@ -201,7 +202,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
       val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name", clientDetailsWithConfirmation)(formData)
       result should have(
-        httpStatus(OK),
+        httpStatus(BAD_REQUEST),
         elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
           messagesAPI("add-business-name.form.error.invalidNameFormat"))
       )

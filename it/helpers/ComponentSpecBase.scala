@@ -218,7 +218,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       buildClient(uri)
         .withFollowRedirects(false)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck",
-          "X-Session-ID" -> "xssession-12345")
+          "X-Session-ID" -> "xsession-12345")
         .post(body).futureValue
     }
 
