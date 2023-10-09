@@ -67,13 +67,25 @@ object UIJourneySessionData {
 
 case class AddIncomeSourceData(
                                 businessName: Option[String] = None,
+                                businessTrade: Option[String] = None,
                                 dateStarted: Option[LocalDate] = None,
-                                createdIncomeSourceId: Option[String] = None
+                                createdIncomeSourceId: Option[String] = None,
+                                address: Option[Address] = None,
+                                countryCode: Option[String] = None,
+                                accountingPeriodEndDate:Option[LocalDate] = None,
+                                incomeSourcesAccountingMethod:Option[String] = None,
+
                               )
 
 object AddIncomeSourceData {
-  val businessNameField = "businessName"
-  val businessTradeField = "businessTrade"
+  val businessNameField: String = "businessName"
+  val businessTradeField: String = "businessTrade"
+  val dateStartedField: String = "dateStarted"
+  val createdIncomeSourceIdField:String = "createdIncomeSourceId"
+  val addressField: String = "address"
+  val countryCodeField: String = "countryCode"
+  val accountingPeriodEndDateField: String = "accountingPeriodEndDate"
+  val incomeSourcesAccountingMethodField:String = "incomeSourcesAccountingMethod"
 
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 

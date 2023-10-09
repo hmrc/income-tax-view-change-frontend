@@ -23,8 +23,8 @@ import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.MockClientDetailsService
-import models.incomeSourceDetails.{Address, BusinessAddressModel}
+import mocks.services.{MockClientDetailsService, MockSessionService}
+import models.incomeSourceDetails.{Address, BusinessAddressModel, UIJourneySessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -47,14 +47,17 @@ class AddBusinessAddressControllerSpec extends TestSupport
   with MockItvcErrorHandler
   with MockNavBarEnumFsPredicate
   with MockClientDetailsService
-  with FeatureSwitching {
+  with FeatureSwitching
+  with MockSessionService {
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = false)
   val postActionChange: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = true)
-
+  val redirectAction: Call  = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
+  val redirectActionAgent: Call  = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
   val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
+
 
   object TestAddBusinessAddressController
     extends AddBusinessAddressController(
@@ -72,7 +75,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       ec = ec,
-      sessionService = app.injector.instanceOf[SessionService]
+      sessionService = mockSessionService
     )
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
@@ -82,7 +85,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
   "AddBusinessAddressController" should {
     "redirect a user back to the custom error page" when {
-      "the indivdual is not authenticated" should {
+      "the individual is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
           val result = TestAddBusinessAddressController.show(isChange = false)(fakeRequestWithActiveSession)
@@ -117,7 +120,6 @@ class AddBusinessAddressControllerSpec extends TestSupport
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) mustBe Some("Sample location")
         }
-
         "location redirect is returned by the lookup service to agent" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -161,7 +163,6 @@ class AddBusinessAddressControllerSpec extends TestSupport
           redirectLocation(result) mustBe Some("Sample location")
         }
       }
-
       "redirect back to the home page" when {
         "incomeSources switch disabled for individual" in {
           disableAllSwitches()
@@ -184,7 +185,6 @@ class AddBusinessAddressControllerSpec extends TestSupport
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
       }
-
       "redirect back to the home page after pressing change link" when {
         "incomeSources switch disabled for individual" in {
           disableAllSwitches()
@@ -207,7 +207,6 @@ class AddBusinessAddressControllerSpec extends TestSupport
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
       }
-
       "return the correct error" when {
         "no location returned to the individual" in {
           disableAllSwitches()
@@ -321,14 +320,14 @@ class AddBusinessAddressControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
+          setupMockGetMongo(Right(Some(UIJourneySessionData("",""))))
+          setupMockSetMongoData(result = true)
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Right(testBusinessAddressModel)))
 
           val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"), isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          session(result).get(SessionKeys.addBusinessAddressLine1) mustBe Some("Line 1")
-          session(result).get(SessionKeys.addBusinessPostalCode) mustBe Some("AA1 1AA")
-          session(result).get(SessionKeys.addBusinessCountryCode) mustBe Some("GB")
+
         }
         "valid data received by agent" in {
           disableAllSwitches()
@@ -336,15 +335,13 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
+          setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
+          setupMockSetMongoData(result = true)
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Right(testBusinessAddressModel)))
 
           val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = false)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
-          session(result).get(SessionKeys.addBusinessAddressLine1) mustBe Some("Line 1")
-          session(result).get(SessionKeys.addBusinessPostalCode) mustBe Some("AA1 1AA")
-          session(result).get(SessionKeys.addBusinessCountryCode) mustBe Some("GB")
         }
       }
       "redirect to the check your details page" when {
@@ -354,15 +351,13 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
+          setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
+          setupMockSetMongoData(result = true)
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Right(testBusinessAddressModel)))
 
           val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"), isChange = true)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          session(result).get(SessionKeys.addBusinessAddressLine1) mustBe Some("Line 1")
-          session(result).get(SessionKeys.addBusinessPostalCode) mustBe Some("AA1 1AA")
-          session(result).get(SessionKeys.addBusinessCountryCode) mustBe Some("GB")
         }
         "valid data received by agent and isChange = true" in {
           disableAllSwitches()
@@ -370,15 +365,13 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
+          setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
+          setupMockSetMongoData(result = true)
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Right(testBusinessAddressModel)))
 
           val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = true)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
-          session(result).get(SessionKeys.addBusinessAddressLine1) mustBe Some("Line 1")
-          session(result).get(SessionKeys.addBusinessPostalCode) mustBe Some("AA1 1AA")
-          session(result).get(SessionKeys.addBusinessCountryCode) mustBe Some("GB")
         }
       }
       "show correct error" when {
