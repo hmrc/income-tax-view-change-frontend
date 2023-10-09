@@ -91,11 +91,14 @@ object ManageIncomeSourceData {
 }
 
 case class CeaseIncomeSourceData(
-                                  selectedIncomeSourceId: String,
-                                  dataCeased: Option[LocalDate]
+                                  incomeSourceId: String,
+                                  endDate: Option[LocalDate]
                                 )
 
 object CeaseIncomeSourceData {
+
+  val incomeSourceIdField: String = "incomeSourceId"
+  val dateCeasedField: String = "endDate"
   def getJSONKeyPath(name: String): String = s"ceaseIncomeSourceData.$name"
 
   implicit val format: OFormat[CeaseIncomeSourceData] = Json.format[CeaseIncomeSourceData]

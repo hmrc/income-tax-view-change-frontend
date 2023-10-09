@@ -22,8 +22,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
-import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import enums.JourneyType.{Cease, JourneyType}
+import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId, incomeSourceId}
+import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -55,10 +56,15 @@ class CheckCeaseBusinessDetailsController @Inject()(val authenticate: Authentica
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, messages: Messages, request: Request[_]): Future[Result] = withIncomeSourcesFS {
 
+    println("PPPPPPPP")
     val sessionDataFuture = for {
-      incomeSourceId <- sessionService.get(ceaseBusinessIncomeSourceId)
-      cessationEndDate <- sessionService.get(ceaseBusinessEndDate)
+      incomeSourceId <- sessionService.getMongoKey(CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
+      cessationEndDate <- sessionService.getMongoKey(CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, SelfEmployment))
     } yield (incomeSourceId, cessationEndDate)
+
+    Thread.sleep(1000)
+    println("TTTTTTTTTTT")
+    println(sessionDataFuture)
 
     sessionDataFuture.flatMap {
       case (Right(Some(incomeSourceId)), Right(Some(cessationEndDate))) =>
