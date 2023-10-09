@@ -1327,8 +1327,8 @@ incomeSources.add.FP.AccountingMethod.drop-down-text-bp-2     = os daeth yr incw
 incomeSources.add.FP.AccountingMethod.no-selection            = Nodwch y dull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo tramor
 
 incomeSources.ceaseUKProperty.checkDetails.heading               = Gwirio’ch manylion
-incomeSources.ceaseUKProperty.checkDetails.paragraph             = Y busnes eiddo yn y DU a nodwyd gennych
-incomeSources.ceaseUKProperty.checkDetails.content               = Dyddiad y gwnaeth y busnes stopio
+incomeSources.ceaseUKProperty.checkDetails.caption               = Y busnes eiddo yn y DU a nodwyd gennych
+incomeSources.ceaseUKProperty.checkDetails.dateStopped           = Dyddiad y gwnaeth y busnes stopio
 incomeSources.ceaseUKProperty.checkDetails.confirm               = Cadarnhau ac yn eich blaen
 incomeSources.ceaseUKProperty.checkDetails.change                = Newid
 
@@ -1363,7 +1363,7 @@ add-business-start-date-check.radio.no               = Na
 add-business-start-date-check.error                  = Dewiswch ’Iawn’ os yw dyddiad dechrau’ch busnes yn gywir
 
 incomeSources.ceaseBusiness.checkDetails.heading                    = Gwirio’ch manylion
-incomeSources.ceaseBusiness.checkDetails.soloTrader                 = Busnesau unig fasnachwr
+incomeSources.ceaseBusiness.checkDetails.caption                 = Busnesau unig fasnachwr
 incomeSources.ceaseBusiness.checkDetails.dateStopped                = Dyddiad y gwnaeth y busnes stopio
 incomeSources.ceaseBusiness.checkDetails.businessName               = Busnes sydd wedi stopio
 incomeSources.ceaseBusiness.checkDetails.businessAddress            = Cyfeiriad y busnes
@@ -1371,11 +1371,12 @@ incomeSources.ceaseBusiness.checkDetails.confirm                    = Cadarnhau 
 incomeSources.ceaseBusiness.checkDetails.change                     = Newid
 incomeSources.ceaseBusiness.checkDetails.unknown                    = Anhysbys
 
-check-cease-foreign-property-details.heading            = Gwirio’ch manylion
-check-cease-foreign-property-details.caption            = Y busnes eiddo tramor a nodwyd gennych
-check-cease-foreign-property-details.summary-list.key   = Dyddiad y gwnaeth y busnes stopio
-check-cease-foreign-property-details.summary-list.link  = Newid
-check-cease-foreign-property-details.button             = Cadarnhau ac yn eich blaen
+incomeSources.ceaseForeignProperty.checkDetails.heading               = Gwirio’ch manylion
+incomeSources.ceaseForeignProperty.checkDetails.caption               = Y busnes eiddo tramor a nodwyd gennych
+incomeSources.ceaseForeignProperty.checkDetails.dateStopped           = Dyddiad y gwnaeth y busnes stopio
+incomeSources.ceaseForeignProperty.checkDetails.confirm               = Cadarnhau ac yn eich blaen
+incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
+
 
 # check business details
 check-business-details.sole-trader-caption              = Y busnes unig fasnachwr a nodwyd gennych

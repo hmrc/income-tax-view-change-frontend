@@ -88,6 +88,8 @@ object SessionKeys {
     ceaseForeignPropertyDeclare,
     ceaseForeignPropertyEndDate,
     ceaseUKPropertyDeclare,
-    ceaseUKPropertyEndDate
+    ceaseUKPropertyEndDate,
+    ceaseBusinessIncomeSourceId,
+    ceaseBusinessEndDate
   )
 }

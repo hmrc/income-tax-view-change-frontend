@@ -425,6 +425,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postCheckCeaseUKPropertyDetails(additionalCookies: Map[String, String]): WSResponse =
       post("/income-sources/cease/uk-property-check-details", additionalCookies)(Map.empty)
 
+
+    def getCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
+      getWithClientDetailsInSession("/agents/income-sources/cease/foreign-property-check-details", session)
+
+    def postCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
+      post(s"/income-sources/cease/foreign-property-check-details", session)(Map.empty)
+
     def getManageIncomeSource(additionalCookies: Map[String, String]): WSResponse = get("/income-sources/manage/view-and-manage-income-sources", additionalCookies)
 
     def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {

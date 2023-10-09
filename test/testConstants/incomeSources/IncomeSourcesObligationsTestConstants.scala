@@ -115,6 +115,23 @@ object IncomeSourcesObligationsTestConstants {
     showPrevTaxYears = true
   )
 
+  val obligationsViewModelSimple: ObligationsViewModel = ObligationsViewModel(
+    quarterlyObligationsDatesYearOne = Seq(
+      DatesModel(startDateQ1, endDateQ1, endDateQ1.plusMonths(1), "#001", isFinalDec = false)
+    ),
+    quarterlyObligationsDatesYearTwo = Seq(
+      DatesModel(startDateQ1_2024, endDateQ1_2024, endDateQ1_2024.plusMonths(1), "#001", isFinalDec = false)
+    ),
+    eopsObligationsDates = Seq(
+      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "EOPS", isFinalDec = false)
+    ),
+    finalDeclarationDates = Seq(
+      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true)
+    ),
+    currentTaxYear = taxYear2023,
+    showPrevTaxYears = true
+  )
+
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
     NextUpdatesModel("1234", List(NextUpdateModel(
       LocalDate.of(taxYear2023, 1, 6),

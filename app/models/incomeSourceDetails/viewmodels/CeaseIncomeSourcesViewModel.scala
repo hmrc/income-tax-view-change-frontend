@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.AddressModel
 
 import java.time.LocalDate
@@ -27,10 +28,11 @@ case class CeaseIncomeSourcesViewModel(soleTraderBusinesses: List[CeaseBusinessD
 
 case class CeaseBusinessDetailsViewModel(incomeSourceId: String, tradingName: Option[String], tradingStartDate: Option[LocalDate])
 
-case class CheckCeaseBusinessDetailsViewModel(incomeSourceId: String,
-                                              tradingName: Option[String],
-                                              address: Option[AddressModel],
-                                              businessEndDate: LocalDate
+case class CheckCeaseIncomeSourceDetailsViewModel(incomeSourceId: String,
+                                                  tradingName: Option[String],
+                                                  address: Option[AddressModel],
+                                                  businessEndDate: LocalDate,
+                                                  incomeSourceType: IncomeSourceType
                                              )
 
 case class CeasePropertyDetailsViewModel(tradingStartDate: Option[LocalDate])
