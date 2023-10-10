@@ -34,10 +34,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UIJourneySessionDataRepository @Inject()(
-                                       mongoComponent: MongoComponent,
-                                       appConfig: FrontendAppConfig,
-                                       clock: Clock
-                                     )(implicit ec: ExecutionContext)
+                                                mongoComponent: MongoComponent,
+                                                appConfig: FrontendAppConfig,
+                                                clock: Clock
+                                              )(implicit ec: ExecutionContext)
   extends PlayMongoRepository[UIJourneySessionData](
     collectionName = "ui-journey-session-data",
     mongoComponent = mongoComponent,
@@ -49,7 +49,8 @@ class UIJourneySessionDataRepository @Inject()(
           .name("lastUpdatedIdx")
           .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
       )
-    )
+    ),
+    replaceIndexes = true
   ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat

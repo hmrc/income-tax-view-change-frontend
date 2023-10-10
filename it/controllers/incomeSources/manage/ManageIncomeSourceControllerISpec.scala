@@ -65,7 +65,8 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
           elementTextByID("table-row-trading-name-1")(soleTraderBusinessName2),
           elementTextByID("view-link-business-1")(chooseMessage),
           elementTextByID("table-head-date-started-uk")(startDateMessage),
-          elementTextByID("table-row-trading-start-date-uk")(ukPropertyStartDate)
+          elementTextByID("table-row-trading-start-date-uk")(ukPropertyStartDate),
+          elementAttributeBySelector("#back", "href")(s"/report-quarterly/income-and-expenses/view"),
         )
       }
 
