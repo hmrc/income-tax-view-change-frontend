@@ -80,7 +80,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
   val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), countryCode = Some("GB")))
-  val testUIJourneySessionData:UIJourneySessionData = UIJourneySessionData("", "", testAddIncomeSourceSessionData)
+  val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData("", "", testAddIncomeSourceSessionData)
 
   def verifySetMongoData(): Unit = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
