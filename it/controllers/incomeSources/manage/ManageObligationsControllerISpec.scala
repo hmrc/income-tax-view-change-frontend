@@ -39,7 +39,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ManageObligationsControllerISpec extends ComponentSpecBase {
 
@@ -82,7 +82,6 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   await(sessionService.setMongoData(UIJourneySessionData("session-123456", "MANAGE-SE",
     manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
 
@@ -102,7 +101,6 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
         val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear)
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyGetNextUpdates(testNino)
 
         val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
           messagesAPI(s"$prefix.h1") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"

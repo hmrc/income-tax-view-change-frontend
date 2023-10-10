@@ -170,7 +170,9 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         case Some(years) =>
           if (changeTo == "annual" || changeTo == "quarterly") {
             getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
-              case Left(error) => showError(isAgent, {
+              case Left(error) =>
+                Logger("application").info(s"BEEP BEEP 1 ${error.getMessage}, mode: $mode, id: $incomeSourceId")
+                showError(isAgent, {
                 error.getMessage
               })
               case Right(value) =>
@@ -232,10 +234,10 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     (incomeSourceType, id) match {
       case (SelfEmployment, Some(id)) => Right(id)
       case _ =>
-        val placeholder = if (incomeSourceType == UkProperty)
-          incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)
+        val placeholder = if (incomeSourceType == UkProperty || incomeSourceType == ForeignProperty)
+          incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(incomeSourceType == UkProperty)
         else
-          incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)
+          Left(new Error ("No id supplied for Self Employment business"))
 
         placeholder match {
           case Right(property: PropertyDetailsModel) => Right(property.incomeSourceId)
