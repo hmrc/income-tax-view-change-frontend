@@ -25,6 +25,8 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import testUtils.TestSupport
 
+import java.time.LocalDate
+
 class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
   object TestSessionService extends SessionService(mockUIJourneySessionDataRepository)
@@ -59,6 +61,23 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           TestSessionService.getMongoKey("businessName", JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some("my business"))
         }
       }
+
+      "getMongoKeyTyped method with type" should {
+        "get string value" in {
+          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
+          mockRepositoryGet(Some(sessionData))
+          TestSessionService.getMongoKeyTyped[String]("businessName", JourneyType(Add, SelfEmployment))(headerCarrier, ec)
+            .futureValue shouldBe Right(Some("my business"))
+        }
+        "get LocalDate value" in {
+          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(
+            Some("my business"), Some(LocalDate.of(2023, 5, 23)))))
+          mockRepositoryGet(Some(sessionData))
+          TestSessionService.getMongoKeyTyped[LocalDate]("dateStarted", JourneyType(Add, SelfEmployment))(headerCarrier, ec)
+            .futureValue shouldBe Right(Some(LocalDate.parse("2023-05-23")))
+        }
+      }
+
       "setMongoData method" should {
         "return a future boolean value" in {
           mockRepositorySet(true)
