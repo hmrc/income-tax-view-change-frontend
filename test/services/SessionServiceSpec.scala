@@ -75,6 +75,22 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           result shouldBe Right(true)
         }
       }
+
+      "deleteMongoData method" should {
+        "return a future boolean value" in {
+          mockDeleteOne()
+          val result: Boolean = TestSessionService.deleteMongoData(JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe result
+        }
+      }
+
+      "deleteSession method" should {
+        "return a future boolean value" in {
+          mockDeleteSession()
+          val result: Boolean = TestSessionService.deleteSession(headerCarrier, ec).futureValue
+          result shouldBe result
+        }
+      }
     }
   }
 }

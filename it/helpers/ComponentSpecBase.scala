@@ -514,6 +514,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getUkPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved?id=$id", session)
 
     def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
+
+    def getAddIncomeSource(): WSResponse = get(uri = s"/income-sources/add/new-income-sources")
   }
 
   def unauthorisedTest(uri: String): Unit = {

@@ -18,10 +18,10 @@ package repositories
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.UIJourneySessionData
-import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
+import org.mongodb.scala.result.UpdateResult
 import play.api.libs.json.Format
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -34,10 +34,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UIJourneySessionDataRepository @Inject()(
-                                       mongoComponent: MongoComponent,
-                                       appConfig: FrontendAppConfig,
-                                       clock: Clock
-                                     )(implicit ec: ExecutionContext)
+                                                mongoComponent: MongoComponent,
+                                                appConfig: FrontendAppConfig,
+                                                clock: Clock
+                                              )(implicit ec: ExecutionContext)
   extends PlayMongoRepository[UIJourneySessionData](
     collectionName = "ui-journey-session-data",
     mongoComponent = mongoComponent,
@@ -57,6 +57,11 @@ class UIJourneySessionDataRepository @Inject()(
   private def dataFilter(data: UIJourneySessionData): Bson = {
     import Filters._
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
+  }
+
+  private def sessionFilter(sessionID: String): Bson = {
+    import Filters._
+    and(equal("sessionId", sessionID))
   }
 
   def keepAlive(data: UIJourneySessionData): Future[Boolean] =
@@ -102,6 +107,12 @@ class UIJourneySessionDataRepository @Inject()(
   def deleteOne(data: UIJourneySessionData): Future[Boolean] =
     collection
       .deleteOne(dataFilter(data))
+      .toFuture()
+      .map(_ => true)
+
+  def deleteOne(sessionId: String): Future[Boolean] =
+    collection
+      .deleteOne(sessionFilter(sessionId))
       .toFuture()
       .map(_ => true)
 }

@@ -119,5 +119,14 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
       )
     }
   }
+
+  def deleteMongoData(journeyType: JourneyType)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    uiJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None))
+  }
+
+  def deleteSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    uiJourneySessionDataRepository.deleteOne(hc.sessionId.get.value)
+  }
 }
 

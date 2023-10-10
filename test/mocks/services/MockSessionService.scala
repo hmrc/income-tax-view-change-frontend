@@ -81,4 +81,10 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       (ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
+
+  def setupMockDeleteSession(result: Boolean): Unit = {
+    when(
+      mockSessionService.deleteSession(ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
 }
