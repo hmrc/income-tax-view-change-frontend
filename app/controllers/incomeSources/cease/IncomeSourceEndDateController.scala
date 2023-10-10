@@ -317,7 +317,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                             isChange: Boolean)(implicit user: MtdItUser[_]): Future[Form[DateFormElement]] = {
 
     if (isChange) {
-      sessionService.getMongoKey(CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType)).flatMap {
+      sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType)).flatMap {
         case Right(Some(date)) =>
           Future.successful(
             form.fill(

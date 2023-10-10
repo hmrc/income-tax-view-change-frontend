@@ -32,6 +32,7 @@ import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceS
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,8 +55,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
   private def getSessionData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]):
   Future[(Either[Throwable, Option[String]], Either[Throwable, Option[String]])] = {
-    val incomeSourceIdFuture = sessionService.getMongoKey(CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
-    val cessationEndDateFuture = sessionService.getMongoKey(CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType))
+    val incomeSourceIdFuture = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
+    val cessationEndDateFuture = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType))
     for {
       incomeSourceId <- incomeSourceIdFuture
       cessationEndDate <- cessationEndDateFuture

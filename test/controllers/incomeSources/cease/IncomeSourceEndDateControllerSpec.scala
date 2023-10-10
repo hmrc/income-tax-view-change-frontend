@@ -397,7 +397,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBusinessIncomeSource()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("true")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("true")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestConfirmedClient().withMethod("POST")
@@ -415,7 +415,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("true")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("true")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitAgent(None, UkProperty)(fakeRequestConfirmedClient()
@@ -432,7 +432,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockForeignPropertyIncomeSource()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("true")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("true")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitAgent(None, ForeignProperty)(fakeRequestConfirmedClient()
@@ -494,7 +494,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       disableAllSwitches()
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
-      setupMockGetSessionKeyMongo(Right(Some("2022-08-27")))
+      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
     }
 
@@ -560,7 +560,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBusinessIncomeSource()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("true")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("true")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChange(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestNoSession.withMethod("POST")
@@ -578,7 +578,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("true")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("true")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChange(None, UkProperty)(fakeRequestNoSession.withMethod("POST")
@@ -595,7 +595,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockForeignPropertyIncomeSource()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("true")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("true")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChange(None, ForeignProperty)(fakeRequestNoSession.withMethod("POST")
@@ -656,7 +656,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       disableAllSwitches()
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
-      setupMockGetSessionKeyMongo(Right(Some("2022-08-27")))
+      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
     }
 
     "return 200 OK" when {
@@ -703,7 +703,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBusinessIncomeSource()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("2022-08-27")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChangeAgent(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestConfirmedClient().withMethod("POST")
@@ -720,7 +720,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockUKPropertyIncomeSource()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("2022-08-27")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChangeAgent(None, UkProperty)(fakeRequestConfirmedClient()
@@ -737,7 +737,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockForeignPropertyIncomeSource()
         setupMockCreateSession(true)
         setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongo(Right(Some("2022-08-27")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChangeAgent(None, ForeignProperty)(fakeRequestConfirmedClient()
