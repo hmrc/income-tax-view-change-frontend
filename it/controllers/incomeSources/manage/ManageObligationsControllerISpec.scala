@@ -20,21 +20,26 @@ import audit.models.ObligationsAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub.verifyGetNextUpdates
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testSaUtr, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesWithBothPropertiesAndCeasedBusiness, ukPropertyOnlyResponse}
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{taxYear, testObligationsModel, testObligationsViewModel}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
+import scala.concurrent.ExecutionContext
 
 class ManageObligationsControllerISpec extends ComponentSpecBase {
 
@@ -64,9 +69,22 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       LocalDate.of(year, 5, 5),
       "Quarterly",
       false,
-    )),
+    ),
+      DatesModel(
+        LocalDate.of(year, 1, 6),
+        LocalDate.of(year, 4, 5),
+        LocalDate.of(year, 5, 5),
+        "Quarterly",
+        false
+      )),
     Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )
+
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  await(sessionService.setMongoData(UIJourneySessionData("session-123456", "MANAGE-SE",
+    manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
 
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
