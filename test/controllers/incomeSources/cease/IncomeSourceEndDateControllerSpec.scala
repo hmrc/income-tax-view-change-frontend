@@ -21,8 +21,6 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
@@ -30,7 +28,6 @@ import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
@@ -231,8 +228,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockSetSessionKeyMongo(Right(true))
         setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestNoSession.withMethod("POST")
@@ -248,8 +245,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         disableAllSwitches()
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
-        setupMockSetSessionKeyMongo(Right(true))
         setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(None, UkProperty)(fakeRequestNoSession.withMethod("POST")
@@ -264,8 +261,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
-        setupMockSetSessionKeyMongo(Right(true))
         setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(None, ForeignProperty)(fakeRequestNoSession.withMethod("POST")
@@ -282,8 +279,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockSetSessionKeyMongo(Right(true))
         setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestNoSession.withMethod("POST")
@@ -299,8 +296,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockSetSessionKeyMongo(Right(true))
         setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         val incomeSourceType = SelfEmployment
         lazy val result: Future[Result] = {
@@ -315,8 +312,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockSetSessionKeyMongo(Right(true))
         setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(None, incomeSourceType = SelfEmployment)(fakeRequestNoSession
