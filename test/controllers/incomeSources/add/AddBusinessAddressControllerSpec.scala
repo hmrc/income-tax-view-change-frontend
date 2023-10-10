@@ -19,19 +19,19 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.{Address, BusinessAddressModel, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, UIJourneySessionData}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{mock, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
+import services.{AddressLookupService, IncomeSourceDetailsService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -54,8 +54,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = false)
   val postActionChange: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = true)
-  val redirectAction: Call  = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
-  val redirectActionAgent: Call  = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
+  val redirectAction: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
+  val redirectActionAgent: Call = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
   val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
 
 
@@ -79,6 +79,14 @@ class AddBusinessAddressControllerSpec extends TestSupport
     )
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
+  val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), countryCode = Some("GB")))
+  val testUIJourneySessionData:UIJourneySessionData = UIJourneySessionData("", "", testAddIncomeSourceSessionData)
+
+  def verifySetMongoData(): Unit = {
+    val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
+    verify(mockSessionService).setMongoData(argument.capture())(any(), any())
+    argument.getValue.addIncomeSourceData shouldBe testAddIncomeSourceSessionData
+  }
 
   case class AddressError(status: String) extends RuntimeException
 
@@ -320,13 +328,14 @@ class AddBusinessAddressControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          setupMockGetMongo(Right(Some(UIJourneySessionData("",""))))
+          setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
           setupMockSetMongoData(result = true)
           when(mockAddressLookupService.fetchAddress(any())(any()))
             .thenReturn(Future(Right(testBusinessAddressModel)))
 
           val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"), isChange = false)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
+          verifySetMongoData()
 
         }
         "valid data received by agent" in {
@@ -342,6 +351,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = false)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
+          verifySetMongoData()
         }
       }
       "redirect to the check your details page" when {
@@ -358,6 +368,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           val result: Future[Result] = TestAddBusinessAddressController.submit(Some("123"), isChange = true)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
+          verifySetMongoData()
         }
         "valid data received by agent and isChange = true" in {
           disableAllSwitches()
@@ -372,6 +383,7 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
           val result: Future[Result] = TestAddBusinessAddressController.agentSubmit(Some("123"), isChange = true)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
+          verifySetMongoData()
         }
       }
       "show correct error" when {
