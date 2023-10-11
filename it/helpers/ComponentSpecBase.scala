@@ -100,7 +100,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("xssession-12345")))
+  val sessionId: String = "xssession-12345"
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
 
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val dateService: DateService = new DateService() {
@@ -204,7 +205,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> "xssession-12345")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> sessionId)
         .get().futureValue
     }
 
@@ -219,7 +220,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       buildClient(uri)
         .withFollowRedirects(false)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck",
-          "X-Session-ID" -> "xssession-12345")
+          "X-Session-ID" -> sessionId)
         .post(body).futureValue
     }
 
@@ -328,7 +329,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getAddBusinessName: WSResponse = getWithHeaders("/income-sources/add/business-name",
-      "X-Session-ID" -> "xsession-1234567")
+      "X-Session-ID" -> sessionId)
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)

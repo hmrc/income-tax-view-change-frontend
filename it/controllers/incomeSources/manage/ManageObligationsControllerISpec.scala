@@ -26,7 +26,7 @@ import helpers.servicemocks.IncomeTaxViewChangeStub.verifyGetNextUpdates
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -82,8 +82,6 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  await(sessionService.setMongoData(UIJourneySessionData("xssession-12345", "MANAGE-SE",
-    manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
 
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
@@ -92,6 +90,9 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
 
         When(s"I call GET $manageSEObligationsShowUrl")
+
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -119,6 +120,8 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "return the audit event" when {
       "User is authorised" in {
         enable(IncomeSources)
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
         IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, Map(forms.utils.SessionKeys.incomeSourceId -> "123"))
@@ -151,6 +154,30 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
               FakeRequest()
             )
           )
+        )
+      }
+    }
+    "return an error" when {
+      "there is no incomeSourceId in the session storage" in {
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        When(s"I call GET $manageSEObligationsShowUrl")
+
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = None)))
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+
+        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }

@@ -23,9 +23,11 @@ import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import play.api.http.Status.{OK, SEE_OTHER}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, credId, testMtditid, testNino, testSaUtr, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesWithBothPropertiesAndCeasedBusiness, ukPropertyOnlyResponse}
@@ -34,6 +36,7 @@ import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, u
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ManageObligationsControllerISpec extends ComponentSpecBase {
 
@@ -74,12 +77,16 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )
 
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
       "given valid url params" in {
         stubAuthorisedAgentUser(authorised = true)
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
@@ -110,6 +117,8 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
         IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, clientDetailsWithConfirmation ++ Map(forms.utils.SessionKeys.incomeSourceId -> "123"))
@@ -142,6 +151,30 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
               FakeRequest()
             )
           )
+        )
+      }
+    }
+    "return an error" when {
+      "there is no incomeSourceId in session storage" in {
+        stubAuthorisedAgentUser(authorised = true)
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = None)))
+
+        When(s"I call GET $manageSEObligationsShowUrl")
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
+
+        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, clientDetailsWithConfirmation)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }
