@@ -20,17 +20,20 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import controllers.routes
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.JourneyType.{Add, JourneyType, Operation}
 import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData
-import org.mockito.Mockito.mock
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, verify}
 import org.scalatest.matchers.must.Matchers._
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
@@ -74,6 +77,9 @@ class AddBusinessNameControllerSpec extends TestSupport
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       ec = ec
     )
+
+  val validBusinessName: String = "Test Business Name"
+  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
   "Individual - ADD - AddBusinessNameController.show" should {
     "return 200 OK" when {
@@ -132,17 +138,19 @@ class AddBusinessNameControllerSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
 
-        val validBusinessName: String = "Test Business"
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
-        setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+        setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
+        setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
+        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
 
         val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
           BusinessNameForm.businessName -> validBusinessName
         ))
+
+        mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
+
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url)
       }
@@ -246,12 +254,13 @@ class AddBusinessNameControllerSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
 
-        val validBusinessName: String = "Test Business"
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
-        setupMockSetSessionKeyMongo(Right(true))
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
+        setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
+        setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
+        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+
         val redirectUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(
           incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
 
@@ -260,6 +269,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         ))
 
         status(result) mustBe SEE_OTHER
+        mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
         redirectLocation(result) mustBe Some(redirectUrl)
       }
     }
@@ -322,13 +332,13 @@ class AddBusinessNameControllerSpec extends TestSupport
           disableAllSwitches()
           enable(IncomeSources)
 
-          val validBusinessName: String = "Test Business"
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+          setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
+          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
+          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+
           val redirectUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
-          setupMockSetSessionKeyMongo(Right(true))
 
           val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
             BusinessNameForm.businessName -> validBusinessName,
@@ -339,8 +349,9 @@ class AddBusinessNameControllerSpec extends TestSupport
             SessionKeys.addIncomeSourcesAccountingMethod -> "Quarterly"
           )
           )
-
+          status(result) shouldBe SEE_OTHER
           redirectLocation(result) mustBe Some(redirectUrl)
+          mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
         }
       }
     }
@@ -455,18 +466,20 @@ class AddBusinessNameControllerSpec extends TestSupport
       "the agent is authenticated and the business name entered is valid" in {
         disableAllSwitches()
         enable(IncomeSources)
-        setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-        val validBusinessName: String = "Test Business"
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
+        setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
+        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+
         val redirectUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
-        setupMockSetSessionKeyMongo(Right(true))
+
         val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           BusinessNameForm.businessName -> validBusinessName
         ))
 
         status(result) mustBe SEE_OTHER
+        mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
         redirectLocation(result) mustBe Some(redirectUrl)
       }
     }
