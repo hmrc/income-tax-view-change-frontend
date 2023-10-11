@@ -71,7 +71,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         }
         "get LocalDate value" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(
-            Some("my business"), Some(LocalDate.of(2023, 5, 23)))))
+            businessName = Some("my business"),dateStarted =  Some(LocalDate.of(2023, 5, 23)))))
           mockRepositoryGet(Some(sessionData))
           TestSessionService.getMongoKeyTyped[LocalDate]("dateStarted", JourneyType(Add, SelfEmployment))(headerCarrier, ec)
             .futureValue shouldBe Right(Some(LocalDate.parse("2023-05-23")))
