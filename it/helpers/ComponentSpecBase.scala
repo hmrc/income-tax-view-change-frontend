@@ -100,7 +100,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("session-123456")))
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("xssession-12345")))
 
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val dateService: DateService = new DateService() {

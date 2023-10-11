@@ -82,7 +82,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  await(sessionService.setMongoData(UIJourneySessionData("session-123456", "MANAGE-SE",
+  await(sessionService.setMongoData(UIJourneySessionData("xssession-12345", "MANAGE-SE",
     manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
 
   s"calling GET $manageSEObligationsShowUrl" should {
