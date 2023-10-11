@@ -18,7 +18,7 @@ package mocks.services
 
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito.{mock, reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{RequestHeader, Result}
 import services.SessionService
@@ -87,4 +87,14 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       (ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
+
+  def verifyMockGetMongoKeyResponse(noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).getMongoKey(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+
+  def verifyMockGetMongoKeyTypedResponse[A](noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).getMongoKeyTyped[A](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+
+  def verifyMockSetMongoKeyResponse(noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+
 }

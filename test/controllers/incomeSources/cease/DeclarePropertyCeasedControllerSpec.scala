@@ -124,6 +124,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         }
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -139,6 +140,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         }
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -167,6 +169,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - the form is not completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
@@ -193,6 +196,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
+        verifyMockSetMongoKeyResponse(1)
       }
     }
   }
@@ -255,6 +259,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         }
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -270,6 +275,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         }
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -297,6 +303,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - the form is not completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -322,6 +329,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
+        verifyMockSetMongoKeyResponse(1)
       }
     }
   }
