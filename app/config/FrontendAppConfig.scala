@@ -167,5 +167,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   def incomeSourceOverrides(): Option[Seq[String]] = config.getOptional[Seq[String]]("afterIncomeSourceCreated")
 
+  //Mongo config
+  lazy val encryptionKey: String = servicesConfig.getString("mongodb.encryption-key")
   val cacheTtl: Int = config.get[Int]("mongodb.timeToLiveInSeconds")
+
+  lazy val useEncryption: Boolean = servicesConfig.getBoolean("useEncryption")
 }

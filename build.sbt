@@ -34,6 +34,7 @@ val compile = Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "com.typesafe.play" %% "play-json-joda" % "2.9.3",
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % hmrcMongoVersion,
+  "uk.gov.hmrc" %% "crypto" % "7.3.0",
   "uk.gov.hmrc" %% "play-frontend-hmrc" % playFrontendHMRCVersion
 )
 
@@ -122,5 +123,6 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions += "-Wconf:cat=unused-imports:s,cat=unused-params:s"
   )
   .settings(resolvers ++= Seq(
+    MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2"),
     Resolver.jcenterRepo
   ))
