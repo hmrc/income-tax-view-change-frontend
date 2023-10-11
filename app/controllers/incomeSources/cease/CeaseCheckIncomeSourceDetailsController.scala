@@ -55,7 +55,11 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
   private def getSessionData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]):
   Future[(Either[Throwable, Option[String]], Either[Throwable, Option[String]])] = {
-    val incomeSourceIdFuture = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
+    val incomeSourceIdFuture: Future[Either[Throwable, Option[String]]] = if (incomeSourceType == SelfEmployment) {
+      sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
+    } else {
+      Future(Right(None))
+    }
     val cessationEndDateFuture = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType))
     for {
       incomeSourceId <- incomeSourceIdFuture
