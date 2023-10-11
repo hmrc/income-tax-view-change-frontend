@@ -171,7 +171,6 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           if (changeTo == "annual" || changeTo == "quarterly") {
             getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
               case Left(error) =>
-                Logger("application").info(s"BEEP BEEP 1 ${error.getMessage}, mode: $mode, id: $incomeSourceId")
                 showError(isAgent, {
                 error.getMessage
               })
@@ -234,12 +233,10 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     (incomeSourceType, id) match {
       case (SelfEmployment, Some(id)) => Right(id)
       case _ =>
-        val placeholder = if (incomeSourceType == UkProperty || incomeSourceType == ForeignProperty)
-          incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(incomeSourceType == UkProperty)
-        else
-          Left(new Error ("No id supplied for Self Employment business"))
-
-        placeholder match {
+        Seq(UkProperty, ForeignProperty).find(_ == incomeSourceType)
+          .map(_ => incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(incomeSourceType == UkProperty))
+          .getOrElse(Left(new Error("No id supplied for Self Employment business")))
+        match {
           case Right(property: PropertyDetailsModel) => Right(property.incomeSourceId)
           case Left(error: Error) => Left(error)
           case _ => Left(new Error(s"Unknown error. IncomeSourceType: $incomeSourceType"))

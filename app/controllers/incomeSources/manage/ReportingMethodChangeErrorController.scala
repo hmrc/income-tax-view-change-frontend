@@ -64,12 +64,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
-          case Right(incomeSourceIdMayBe) =>
-            incomeSourceIdMayBe match {
-              case Some(incomeSourceId) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
-              case None => Future.failed(MissingSessionKey(incomeSourceId))
-            }
-          case Left(exception) => Future.failed(exception)
+          case Right(Some(incomeSourceId)) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
+          case _ => Future.failed(MissingSessionKey(incomeSourceId))
         }
       }
       else handleShowRequest(None, incomeSourceType, isAgent)
