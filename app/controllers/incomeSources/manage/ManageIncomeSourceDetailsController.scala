@@ -119,17 +119,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        val result = handleRequest(
-          sources = user.incomeSources,
-          isAgent = false,
-          backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-          id = Some(id),
-          incomeSourceType = SelfEmployment
-        )
-
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
           sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, id, JourneyType(Manage, SelfEmployment)).flatMap {
-            case Right(_) => result
+            case Right(_) => handleRequest(
+              sources = user.incomeSources,
+              isAgent = false,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+              id = Some(id),
+              incomeSourceType = SelfEmployment
+            )
             case Left(exception) => Future.failed(exception)
           }
         }
