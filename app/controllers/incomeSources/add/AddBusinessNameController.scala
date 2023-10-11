@@ -77,7 +77,6 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
         case Right(nameOpt) => Future.successful(nameOpt)
         case Left(ex) => Future.failed(ex)
-          
       }
     else
       sessionService.createSession(journeyType.toString).flatMap {
