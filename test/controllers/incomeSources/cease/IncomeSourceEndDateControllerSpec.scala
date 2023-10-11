@@ -729,7 +729,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
-        verifyMockSetMongoKeyResponse(2)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -746,7 +746,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
-        verifyMockSetMongoKeyResponse(2)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
