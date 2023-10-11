@@ -19,7 +19,6 @@ package services
 import auth.MtdItUser
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
-import play.api.libs.json.{JsObject, Json, Reads}
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -102,7 +101,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None)
+    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
     val jsonAccessorPath = journeyType.operation match {
       case Add => AddIncomeSourceData.getJSONKeyPath(key)
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
