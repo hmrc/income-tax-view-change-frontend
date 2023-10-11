@@ -121,7 +121,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, clientDetailsWithConfirmation ++ Map(forms.utils.SessionKeys.incomeSourceId -> "123"))
+        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         AuditStub.verifyAuditEvent(
