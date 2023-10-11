@@ -24,8 +24,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
+import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
-import models.incomeSourceDetails.PropertyDetailsModel
+import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
 import play.api.mvc._
@@ -61,7 +62,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.get(SessionKeys.incomeSourceId).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMayBe) =>
             handleRequest(
               mode = SelfEmployment,
@@ -75,14 +76,14 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }.recover {
         case exception =>
           Logger("application").error(s"[ManageObligationsController][showSelfEmployment] ${exception.getMessage}")
-          showInternalServerError(false)
+          showInternalServerError(isAgent = false)
       }
   }
 
-  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = authenticatedAction(true) {
+  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = authenticatedAction(isAgent = true) {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.get(SessionKeys.incomeSourceId).flatMap {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMayBe) =>
             handleRequest(
               mode = SelfEmployment,
@@ -96,7 +97,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }.recover {
         case exception =>
           Logger("application").error(s"[ManageObligationsController][showAgentSelfEmployment] ${exception.getMessage}")
-          showInternalServerError(true)
+          showInternalServerError(isAgent = true)
       }
   }
 
@@ -122,7 +123,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = true,
               taxYear,
               changeTo,
-              Some("")
+              None
             )
         }
   }
@@ -135,7 +136,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         isAgent = false,
         taxYear,
         changeTo,
-        Some("")
+        None
       )
   }
 
@@ -149,7 +150,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = true,
               taxYear,
               changeTo,
-              Some("")
+              None
             )
         }
   }
@@ -169,7 +170,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         case Some(years) =>
           if (changeTo == "annual" || changeTo == "quarterly") {
             getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
-              case Left(error) => showError(isAgent, {
+              case Left(error) =>
+                showError(isAgent, {
                 error.getMessage
               })
               case Right(value) =>
@@ -231,12 +233,10 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     (incomeSourceType, id) match {
       case (SelfEmployment, Some(id)) => Right(id)
       case _ =>
-        val placeholder = if (incomeSourceType == UkProperty)
-          incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)
-        else
-          incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)
-
-        placeholder match {
+        Seq(UkProperty, ForeignProperty).find(_ == incomeSourceType)
+          .map(_ => incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(incomeSourceType == UkProperty))
+          .getOrElse(Left(new Error("No id supplied for Self Employment business")))
+        match {
           case Right(property: PropertyDetailsModel) => Right(property.incomeSourceId)
           case Left(error: Error) => Left(error)
           case _ => Left(new Error(s"Unknown error. IncomeSourceType: $incomeSourceType"))
