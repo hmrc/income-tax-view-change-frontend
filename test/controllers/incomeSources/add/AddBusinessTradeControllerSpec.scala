@@ -20,13 +20,17 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import controllers.routes
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.MockClientDetailsService
-import org.mockito.Mockito.mock
+import mocks.services.{MockClientDetailsService, MockSessionService}
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
@@ -47,12 +51,17 @@ class AddBusinessTradeControllerSpec extends TestSupport
   with MockItvcErrorHandler
   with MockNavBarEnumFsPredicate
   with MockClientDetailsService
-  with FeatureSwitching {
+  with FeatureSwitching
+  with MockSessionService {
 
 
   val mockAddBusinessTradeView: AddBusinessTrade = mock(classOf[AddBusinessTrade])
   val mockBusinessTradeForm: BusinessTradeForm = mock(classOf[BusinessTradeForm])
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
+
+
+  val validBusinessTrade: String = "Test Business Trade"
+  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
   object TestAddBusinessTradeController
     extends AddBusinessTradeController(
@@ -102,6 +111,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("testBusinessTrade")))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -112,6 +123,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("testBusinessTrade")))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = true, isChange = false)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -126,10 +139,13 @@ class AddBusinessTradeControllerSpec extends TestSupport
           disableAllSwitches()
           enable(IncomeSources)
 
-          val validBusinessTrade: String = "Test Trade"
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockCreateSession(true)
+          setupMockSetSessionKeyMongo(businessTradeField, validBusinessTrade, journeyType, Right(true))
+          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
 
+          mockSessionService.getMongoKeyTyped(businessTradeField, journeyType).futureValue shouldBe Right(Some(validBusinessTrade))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
@@ -137,7 +153,6 @@ class AddBusinessTradeControllerSpec extends TestSupport
             ))
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url)
-          session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)
         }
 
         "the agent is authenticated and the business trade entered is valid" in {
@@ -148,15 +163,19 @@ class AddBusinessTradeControllerSpec extends TestSupport
           val validBusinessTrade: String = "Test Trade"
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockCreateSession(true)
+          setupMockSetSessionKeyMongo(businessTradeField, validBusinessTrade, journeyType, Right(true))
+          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClientwithBusinessName().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> validBusinessTrade
             ))
 
+          mockSessionService.getMongoKeyTyped(businessTradeField, journeyType).futureValue shouldBe Right(Some(validBusinessTrade))
+
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url)
-          session(result).get(SessionKeys.businessTrade) mustBe Some(validBusinessTrade)
         }
       }
 
@@ -165,13 +184,17 @@ class AddBusinessTradeControllerSpec extends TestSupport
           disableAllSwitches()
           enable(IncomeSources)
 
-          val sameNameAsTrade = "Test Name"
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockCreateSession(true)
+          val businessTrade: String = "Test Name"
+          setupMockGetSessionKeyMongoTyped[String](Right(Some(businessTrade)))
+          setupMockGetSessionKeyMongoTyped[String](Right(Some(businessTrade)))
+
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSessionWithBusinessName.withFormUrlEncodedBody(
-              BusinessTradeForm.businessTrade -> sameNameAsTrade
+            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+              BusinessTradeForm.businessTrade -> businessTrade
             ))
 
           status(result) mustBe OK
@@ -317,6 +340,9 @@ class AddBusinessTradeControllerSpec extends TestSupport
           val invalidBusinessTradeEmpty: String = "This trade name is far too long to be accepted"
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          setupMockCreateSession(true)
+          setupMockGetSessionKeyMongo(Right(Some("testBusinessTrade")))
+          setupMockSetSessionKeyMongo(Right(true))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(

@@ -96,17 +96,9 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]):Unit = {
+  def setupMockGetSessionKeyMongoTyped[A](key: String, result: Either[Throwable, Option[A]]): Unit = {
     when(
-      mockSessionService.getMongo(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
-    ).thenReturn(Future.successful(result))
-  }
-
-  def setupMockSetMongoData(result: Boolean):Unit = {
-    when(
-      mockSessionService.setMongoData(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.eq(key), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
@@ -119,6 +111,20 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       ArgumentMatchers.eq(expectedValue),
       ArgumentMatchers.eq(expectedJourneyType)
     )(any(), any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]):Unit = {
+    when(
+      mockSessionService.getMongo(ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockSetMongoData(result: Boolean):Unit = {
+    when(
+      mockSessionService.setMongoData(ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 }
