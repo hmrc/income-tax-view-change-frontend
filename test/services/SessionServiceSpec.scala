@@ -71,7 +71,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         }
         "get LocalDate value" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(
-            Some("my business"), Some(LocalDate.of(2023, 5, 23)))))
+            businessName = Some("my business"),dateStarted =  Some(LocalDate.of(2023, 5, 23)))))
           mockRepositoryGet(Some(sessionData))
           TestSessionService.getMongoKeyTyped[LocalDate]("dateStarted", JourneyType(Add, SelfEmployment))(headerCarrier, ec)
             .futureValue shouldBe Right(Some(LocalDate.parse("2023-05-23")))
@@ -92,6 +92,22 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           val result: Either[Throwable, Boolean] = TestSessionService.setMongoKey("key", "value",
             JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
           result shouldBe Right(true)
+        }
+      }
+
+      "deleteMongoData method" should {
+        "return a future boolean value" in {
+          mockDeleteOne()
+          val result: Boolean = TestSessionService.deleteMongoData(JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue
+          result shouldBe result
+        }
+      }
+
+      "deleteSession method" should {
+        "return a future boolean value" in {
+          mockDeleteSession()
+          val result: Boolean = TestSessionService.deleteSession(headerCarrier, ec).futureValue
+          result shouldBe result
         }
       }
     }
