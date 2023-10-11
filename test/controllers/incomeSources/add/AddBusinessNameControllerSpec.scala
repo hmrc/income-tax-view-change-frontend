@@ -20,8 +20,8 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import controllers.routes
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import enums.JourneyType.{Add, JourneyType, Operation}
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
@@ -29,8 +29,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
 import org.scalatest.matchers.must.Matchers._
@@ -149,9 +148,9 @@ class AddBusinessNameControllerSpec extends TestSupport
           BusinessNameForm.businessName -> validBusinessName
         ))
 
-        mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
-
         status(result) mustBe SEE_OTHER
+        verify(mockSessionService)
+          .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
         redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url)
       }
 
@@ -269,7 +268,8 @@ class AddBusinessNameControllerSpec extends TestSupport
         ))
 
         status(result) mustBe SEE_OTHER
-        mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
+        verify(mockSessionService)
+          .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
         redirectLocation(result) mustBe Some(redirectUrl)
       }
     }
@@ -351,7 +351,8 @@ class AddBusinessNameControllerSpec extends TestSupport
           )
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) mustBe Some(redirectUrl)
-          mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
+          verify(mockSessionService)
+            .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
         }
       }
     }
@@ -479,7 +480,8 @@ class AddBusinessNameControllerSpec extends TestSupport
         ))
 
         status(result) mustBe SEE_OTHER
-        mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
+        verify(mockSessionService)
+          .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
         redirectLocation(result) mustBe Some(redirectUrl)
       }
     }

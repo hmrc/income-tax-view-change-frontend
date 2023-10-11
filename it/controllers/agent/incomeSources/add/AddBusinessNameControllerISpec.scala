@@ -18,13 +18,18 @@ package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys.businessName
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import repositories.UIJourneySessionDataRepository
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionIdAgent}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
@@ -43,6 +48,11 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
     messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionIdAgent)))
 
 
   s"calling GET $addBusinessNameShowUrl" should {
