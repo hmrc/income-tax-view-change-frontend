@@ -108,17 +108,17 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
       case SelfEmployment =>
         businessName match {
           case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
+            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
           }
           case None => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            Ok(obligationsView(sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
+            Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
           }
         }
       case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-        Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = UkProperty))
+        Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
       }
       case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-        Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
+        Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
       }
     }
   }
