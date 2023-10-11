@@ -34,7 +34,7 @@
   errorSummary: ErrorSummary
 )
 
-@(sources: ObligationsViewModel, backUrl: Option[String] = Some(""), isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
   messages(s"business-ceased.obligation.$key", args: _*)
@@ -92,7 +92,6 @@ incomeSourceType match {
 
 @import implicitDateFormatter.longDate
 @mainTemplate(pageTitle = getPageTitle,
-  backUrl = backUrl,
   isAgent = isAgent,
   btaNavPartial = user.btaNavPartial,
   useFallbackBackLink = true) {

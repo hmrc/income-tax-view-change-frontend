@@ -48,8 +48,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   }
 
   val testId: String = "XAIS00000000005"
-  val backUrl: String = "/individual/back/test/url"
-  val agentBackUrl: String = "/agent/back/test/url"
 
   val view: IncomeSourceAddedObligations = app.injector.instanceOf[IncomeSourceAddedObligations]
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)

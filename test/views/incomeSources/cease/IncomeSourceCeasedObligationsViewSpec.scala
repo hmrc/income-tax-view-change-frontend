@@ -49,8 +49,6 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   }
 
   val testId: String = "XAIS00000000005"
-  val backUrl: Option[String] = Some("/individual/back/test/url")
-  val agentBackUrl: Option[String] = Some("/agent/back/test/url")
 
   val view: IncomeSourceCeasedObligations = app.injector.instanceOf[IncomeSourceCeasedObligations]
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
@@ -71,20 +69,20 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val validUKPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, UkProperty, None)
-  val validUKPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, UkProperty, None)
+  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None)
+  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None)
 
-  val validForeignPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, ForeignProperty, None)
-  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, ForeignProperty, None)
+  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None)
+  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None)
 
-  val validSoleTreaderBusinessCall: Html = view(viewModel, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
-  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
+  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"))
+  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"))
 
-  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(viewModel, backUrl, isAgent = false, SelfEmployment, None)
-  val validSoleTreaderBusinessWithNoBusinessNameAgentCall: Html = view(viewModel, backUrl, isAgent = true, SelfEmployment, None)
+  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(viewModel, isAgent = false, SelfEmployment, None)
+  val validSoleTreaderBusinessWithNoBusinessNameAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, None)
 
-  val validCallWithData: Html = view(viewModelWithAllData, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
-  val validAgentCallWithData: Html = view(viewModelWithAllData, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
+  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"))
+  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"))
 
   val ceaseIncomeSourceShowURL = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
   val ceaseIncomeSourceShowAgentURL = controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url

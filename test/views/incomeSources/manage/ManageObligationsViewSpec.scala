@@ -64,8 +64,6 @@ class ManageObligationsViewSpec extends ViewSpec {
   val quarterly = "quarterly"
   val annually = "annual"
 
-  val backUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(annually, taxYearString, incomeSourceType = UkProperty, isAgent = false).url
-
   val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
 
