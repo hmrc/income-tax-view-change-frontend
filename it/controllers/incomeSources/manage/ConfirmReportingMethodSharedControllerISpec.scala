@@ -23,18 +23,22 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.data.FormError
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testPropertyIncomeId, testSaUtr, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesWithBothPropertiesAndCeasedBusiness, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
@@ -75,6 +79,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   val continueButtonText: String = messagesAPI("base.confirm-this-change")
 
   val pageTitle = messagesAPI(s"$prefix.heading.annual")
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
   s"calling GET $confirmReportingMethodShowUKPropertyUrl" should {
     "render the Confirm Reporting Method page" when {
@@ -138,6 +144,9 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -154,14 +163,15 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
       }
     }
-  }
 
-  s"calling GET $confirmReportingMethodShowSoleTraderBusinessUrl" should {
     "redirect to home page" when {
       "Income Sources FS is Disabled" in {
 
         Given("Income Sources FS is disabled")
         disable(IncomeSources)
+
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         When(s"I call GET $confirmReportingMethodShowSoleTraderBusinessUrl")
 
@@ -179,13 +189,14 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
       }
     }
-  }
 
-  s"calling GET $confirmReportingMethodShowSoleTraderBusinessUrl" should {
     "trigger the audit event" when {
       "Income Sources FS is Enabled" in {
-
         enable(IncomeSources)
+
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("API 1776 updateTaxYearSpecific returns a success response")
@@ -283,6 +294,9 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -299,14 +313,14 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
       }
     }
-  }
-
-  s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
     s"return ${Status.BAD_REQUEST}" when {
       "called with a invalid form" in {
 
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -323,13 +337,14 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
       }
     }
-  }
-
-  s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
     "trigger the audit event" when {
       "called with an empty form" in {
 
         enable(IncomeSources)
+
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("API 1776 updateTaxYearSpecific returns a success response")
@@ -369,10 +384,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
           )
       }
     }
-  }
-
-
-  s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
     "redirect to home page" when {
       "Income Sources FS is disabled" in {
 
