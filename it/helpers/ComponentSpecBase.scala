@@ -267,6 +267,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getPaymentHistory: WSResponse = get(s"/payment-refund-history")
 
+    def getMessagesCheck: WSResponse = get(s"/test-only/message-check")
+
     def getPaymentAllocationCharges(docNumber: String): WSResponse = get(s"/payment-made-to-hmrc?documentNumber=$docNumber")
 
     def getCreditsSummary(calendarYear: String): WSResponse = get(s"/credits-from-hmrc/$calendarYear")
