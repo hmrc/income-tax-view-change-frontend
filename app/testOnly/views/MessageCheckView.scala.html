@@ -22,10 +22,13 @@
 @(messageKey: List[String])(implicit request: Request[_], messages: Messages)
 
 @unifiedLayout(pageTitle = Messages("Message Check")) {
-<p>
+<span id="messagesCheck">
     @for(key <- messageKey) {
-      @key = @messages(key) <br><br>
+      <span class="messageRow">
+       <span class="messageKey">@key</span> =
+       <span class="messageValue">@messages(key)</span>
+      </span><br><br>
     }
-</p>
+</span>
 }
 
