@@ -16,6 +16,8 @@
 
 package mocks.services
 
+import enums.JourneyType.JourneyType
+import models.incomeSourceDetails.UIJourneySessionData
 import models.incomeSourceDetails.UIJourneySessionData
 import enums.JourneyType.JourneyType
 import org.mockito.ArgumentMatchers
@@ -96,14 +98,20 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]):Unit = {
+  def setupMockDeleteSession(result: Boolean): Unit = {
+    when(
+      mockSessionService.deleteSession(ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit = {
     when(
       mockSessionService.getMongo(ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockSetMongoData(result: Boolean):Unit = {
+  def setupMockSetMongoData(result: Boolean): Unit = {
     when(
       mockSessionService.setMongoData(ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any())
