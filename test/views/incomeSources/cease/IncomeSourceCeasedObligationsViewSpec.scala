@@ -150,6 +150,9 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
         subHeading.text shouldBe IncomeSourceCeasedMessages.h2Content
       }
     }
+    "Not display a back button" in new Setup(validCallWithData) {
+      Option(document.getElementById("back")).isDefined shouldBe false
+    }
 
     "Display quarterly obligations if the user has them" in new Setup(validCallWithData) {
       val quarterlySection: Element = layoutContent.getElementById("quarterly")

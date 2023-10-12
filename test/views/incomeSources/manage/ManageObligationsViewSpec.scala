@@ -106,6 +106,9 @@ class ManageObligationsViewSpec extends ViewSpec {
         heading.text shouldBe ManageObligationsMessages.h2
       }
     }
+    "Not display a back button" in new Setup(validSECallWithName) {
+      Option(document.getElementById("back")).isDefined shouldBe false
+    }
     "Display quarterly obligations if the user has them" in new Setup(validSECallWithName) {
       val quarterlySection: Element = layoutContent.getElementById("quarterly")
       quarterlySection.text() should include(ManageObligationsMessages.quarterlyHeading)
