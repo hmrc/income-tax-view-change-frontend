@@ -40,7 +40,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -218,7 +218,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       buildClient(uri)
         .withFollowRedirects(false)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck",
-          "X-Session-ID" -> "xsession-12345")
+          "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }
 
@@ -326,8 +326,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/add/foreign-property-added", additionalCookies)(Map.empty)
     }
 
-    def getAddBusinessName: WSResponse = getWithHeaders("/income-sources/add/business-name",
-      "X-Session-ID" -> "xsession-1234567")
+    def getAddBusinessName: WSResponse = get("/income-sources/add/business-name")
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)
@@ -514,6 +513,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getUkPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved?id=$id", session)
 
     def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
+
+    def getAddIncomeSource(): WSResponse = get(uri = s"/income-sources/add/new-income-sources")
   }
 
   def unauthorisedTest(uri: String): Unit = {
