@@ -28,8 +28,12 @@ class MessageCheckViewSpec extends TestSupport {
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("cy")
   class Setup(language: String) {
-    val messageKeys = messagesApi.messages.filter(_._1 == language).flatMap(_._2).keys.toList
-    val messagesMap = messagesApi.messages.filter(_._1 == language).flatMap(_._2)
+    val messageKeys: List[String] = messagesApi.messages.collect {
+      case (key, values) if key == language => values.keys
+    }.flatten(_.toList).toList
+    val messagesMap = messagesApi.messages.collect {
+      case (key, values) if key == language => values
+    }.flatten(_.toMap).toMap
     val view: Html = messageCheckView(messageKeys)
     val document: Document = Jsoup.parse(view.body)
   }
