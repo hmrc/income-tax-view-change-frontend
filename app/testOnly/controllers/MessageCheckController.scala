@@ -21,8 +21,7 @@ import controllers.ItvcLanguageController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.MessageCheckView
 import uk.gov.hmrc.play.language.LanguageUtils
-import java.io.{FileInputStream, IOException}
-import java.util.Properties
+
 import javax.inject.Inject
 
 
@@ -33,27 +32,17 @@ class MessageCheckController @Inject()(messageCheckView: MessageCheckView,
 
 
   def show(): Action[AnyContent] = Action { implicit req =>
-    val filePath = "conf/messages"
-    val keys = readMessageFileKeys(filePath)
+    val keys = readMessageFileKeys("default")
     Ok(messageCheckView(keys))
   }
 
   def showWelsh(): Action[AnyContent] = Action { implicit req =>
-    val filePath = "conf/messages.cy"
-    val keys = readMessageFileKeys(filePath)
+    val keys = readMessageFileKeys("cy")
     Ok(messageCheckView(keys))
   }
 
-  private def readMessageFileKeys(filePath: String): List[String] = {
-    val properties = new Properties()
-    try {
-      val fileInput = new FileInputStream(filePath)
-      properties.load(fileInput)
-      fileInput.close()
-    } catch {
-      case e: IOException => e.printStackTrace()
-    }
-    properties.stringPropertyNames().toArray.map(_.toString).toList
+  private def readMessageFileKeys(language: String): List[String] = {
+    mcc.messagesApi.messages.filter(_._1 == language).flatMap(_._2).keys.toList
   }
 
 }
