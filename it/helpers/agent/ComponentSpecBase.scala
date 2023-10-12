@@ -39,12 +39,13 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionIdAgent}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestDateService extends DateServiceInterface {
@@ -86,7 +87,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val testAppConfig: FrontendAppConfig = appConfig
-
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val dateService: DateService = new DateService() {
     override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
 
@@ -119,6 +121,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val userDetailsUrl = "/user-details/id/5397272a3d00003d002f3ca9"
   val btaPartialUrl = "/business-account/partial/service-info"
   val testUserDetailsWiremockUrl: String = mockUrl + userDetailsUrl
+  val testSessionId: String = "xsession-12345"
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
@@ -170,7 +173,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> testSessionIdAgent)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> testSessionId)
         .get().futureValue
     }
 
@@ -184,7 +187,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
-          "Csrf-Token" -> "nocheck", "X-Session-ID" -> "xssession-1234567")
+          "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }
 

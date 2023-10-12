@@ -28,8 +28,6 @@ import scala.concurrent.ExecutionContext
 
 class CalculationPollingControllerISpec extends ComponentSpecBase {
 
-  implicit val ec = app.injector.instanceOf[ExecutionContext]
-
   unauthorisedTest(s"/calculation/$testYear/submitted")
 
   s"GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}" when {
@@ -54,7 +52,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
           redirectURI(routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url)
         )
       }
-      "calculation service returns non-retryable response back" in {
+      "calculation service returns non-retrievable response back" in {
         Given("Calculation service returns a 500 error response back")
 
         IncomeTaxCalculationStub.stubGetCalculationErrorResponseByCalcId(testNino, "idTwo", testTaxYear)(INTERNAL_SERVER_ERROR,

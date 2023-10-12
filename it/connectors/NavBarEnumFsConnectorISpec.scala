@@ -15,9 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NavBarEnumFsConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
   val timeout: PatienceConfig = PatienceConfig(5.seconds)
-  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   lazy val connector: BtaNavBarPartialConnector = inject[BtaNavBarPartialConnector]
 
   "ServiceInfoPartialConnector" when {
