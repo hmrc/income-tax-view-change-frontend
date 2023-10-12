@@ -22,42 +22,42 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testOnly.views.html.MessageCheckView
 
-class MessageCheckViewSpec extends TestSupport {
+import scala.language.reflectiveCalls
 
+class MessageCheckViewSpec extends TestSupport {
   val messageCheckView: MessageCheckView = app.injector.instanceOf[MessageCheckView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("cy")
 
-  class Setup(language: String) {
+  def languageSetupTest(language: String) = new {
     val messageKeys: List[String] = messagesApi.messages.collect {
       case (key, values) if key == language => values.keys
     }.flatten(_.toList).toList
+
     val messagesMap = messagesApi.messages.collect {
       case (key, values) if key == language => values
     }.flatten(_.toMap).toMap
+
     val view: Html = messageCheckView(messageKeys)
     val document: Document = Jsoup.parse(view.body)
   }
 
   "Render Message in correct format" when {
     "message key is given" should {
-      "return correct English format" in new Setup("default") {
-        document.select(".messageRow").forEach { ele =>
-          val messageKey = ele.select(".messageKey").text()
-          val messageValue = ele.select(".messageValue").text()
-          Some(messageValue) shouldBe messagesMap.get(messageKey)
+      "return correct English format" in {
+        val languageTest = languageSetupTest("default")
+        languageTest.document.select(".messageRow").forEach { element =>
+          val messageKey = element.select(".messageKey").text()
+          val messageValue = element.select(".messageValue").text()
+          Some(messageValue) shouldBe languageTest.messagesMap.get(messageKey)
         }
       }
 
-      "return correct Welsh format" in new Setup("cy") {
-        messageKeys.foreach { keys =>
-          Some(msgs(keys)) shouldBe messagesMap.get(keys)
+      "return correct Welsh format" in {
+        val f = languageSetupTest("cy")
+        f.messageKeys.foreach { keys =>
+          Some(msgs(keys)) shouldBe f.messagesMap.get(keys)
         }
-        //        document.select(".messageRow").forEach { ele =>
-        //          val messageKey = ele.select(".messageKey").text()
-        //          val messageValue = ele.select(".messageValue").text()
-        //          Some(messageValue) shouldBe messagesMap.get(messageKey)
-        //        }
       }
     }
   }
