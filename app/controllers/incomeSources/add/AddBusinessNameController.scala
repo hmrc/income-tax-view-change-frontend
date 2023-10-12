@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys
 import play.api.Logger
@@ -29,8 +30,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, KeyValue}
 import views.html.incomeSources.add.AddBusinessName
+import utils.CypherSyntax.{DecryptableOps, EncryptableOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -170,9 +172,18 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                 useFallbackLink = true))),
 
           formData => {
-            val redirect = Redirect(redirectLocal)
-            sessionService.set(SessionKeys.businessName, formData.name, redirect).flatMap {
-              case Right(result) => Future.successful(result)
+            sessionService.setMongoKey(
+              KeyValue(
+                SessionKeys.businessName,
+                formData.name
+              ),
+              JourneyType(Add, SelfEmployment)
+            ).flatMap {
+              case Right(true) =>
+                println(s"\nADDED NAME TO MONGO\n")
+                Future.successful(Redirect(redirectLocal))
+              case Right(false) =>
+                Future.successful(BadRequest("FAILED TO UPDATE"))
               case Left(exception) => Future.failed(exception)
             }
           }

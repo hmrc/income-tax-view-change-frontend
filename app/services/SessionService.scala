@@ -22,6 +22,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, M
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.KeyValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -99,15 +100,15 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
-  def setMongoKey(key: String, value: String, journeyType: JourneyType)
+  def setMongoKey(keyValue: KeyValue, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None)
     val jsonAccessorPath = journeyType.operation match {
-      case Add => AddIncomeSourceData.getJSONKeyPath(key)
-      case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
-      case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
+      case Add => AddIncomeSourceData.getJSONKeyPath(keyValue.key)
+      case Manage => ManageIncomeSourceData.getJSONKeyPath(keyValue.key)
+      case Cease => CeaseIncomeSourceData.getJSONKeyPath(keyValue.key)
     }
-    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
+    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, keyValue.value).map(
       result => result.wasAcknowledged() match {
         case true => Right(true)
         case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
