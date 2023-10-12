@@ -65,13 +65,11 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
     withIncomeSourcesFS {
       val incomeSourceDetails = incomeSourceType match {
         case SelfEmployment =>
-          sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
-
+          sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
         case UkProperty =>
           Future.successful((incomeSourceDetailsService
             .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)
             .map(v => Some(v.incomeSourceId)), UkProperty))
-
         case ForeignProperty =>
           Future.successful((incomeSourceDetailsService
             .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)

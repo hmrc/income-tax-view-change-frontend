@@ -35,11 +35,10 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
-import testConstants.BaseTestConstants
+import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants.businessIncomeSourceId
-import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, incomeSourceId, successResponse}
+import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, successResponse}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{checkCeaseBusinessDetailsModel, checkCeaseForeignPropertyDetailsModel, checkCeaseUkPropertyDetailsModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
