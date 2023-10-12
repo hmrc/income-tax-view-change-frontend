@@ -17,7 +17,6 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import cats.conversions.all.autoWidenBifunctor
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
@@ -25,7 +24,6 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
-import forms.utils.SessionKeys
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
@@ -108,9 +106,9 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                               (implicit user: MtdItUser[_]): Future[Option[String]] = {
 
     sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-        case Right(tradeOpt) => Future.successful(tradeOpt)
-        case Left(err) => Future.failed(err)
-      }
+      case Right(tradeOpt) => Future.successful(tradeOpt)
+      case Left(err) => Future.failed(err)
+    }
   }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -146,7 +144,6 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
       sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
         case Right(businessName) =>
-          println(Console.GREEN+"Business Name: "+businessName+ Console.WHITE)
           BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessName).fold(
             formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
             formData => handleSuccess(formData.trade, isAgent, isChange, journeyType)
@@ -166,14 +163,12 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     val backURL = getBackURL(isAgent, isChange)
 
     Future {
-      Ok(addBusinessTradeView(form, postAction, isAgent = isAgent, backURL))
+      BadRequest(addBusinessTradeView(form, postAction, isAgent = isAgent, backURL))
     }
   }
 
   def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean, journeyType: JourneyType)(implicit user: MtdItUser[_]): Future[Result] = {
     val successURL = Redirect(getSuccessURL(isAgent, isChange))
-
-    println(Console.GREEN+"Business Trade: "+businessTrade+Console.WHITE)
 
     sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, businessTrade, journeyType).flatMap {
       case Right(result) if result => Future.successful(successURL)
