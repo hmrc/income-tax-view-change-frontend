@@ -27,6 +27,7 @@ class MessageCheckViewSpec extends TestSupport {
   val messageCheckView: MessageCheckView = app.injector.instanceOf[MessageCheckView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("cy")
+
   class Setup(language: String) {
     val messageKeys: List[String] = messagesApi.messages.collect {
       case (key, values) if key == language => values.keys
@@ -52,11 +53,11 @@ class MessageCheckViewSpec extends TestSupport {
         messageKeys.foreach { keys =>
           Some(msgs(keys)) shouldBe messagesMap.get(keys)
         }
-//        document.select(".messageRow").forEach { ele =>
-//          val messageKey = ele.select(".messageKey").text()
-//          val messageValue = ele.select(".messageValue").text()
-//          Some(messageValue) shouldBe messagesMap.get(messageKey)
-//        }
+        //        document.select(".messageRow").forEach { ele =>
+        //          val messageKey = ele.select(".messageKey").text()
+        //          val messageValue = ele.select(".messageValue").text()
+        //          Some(messageValue) shouldBe messagesMap.get(messageKey)
+        //        }
       }
     }
   }
