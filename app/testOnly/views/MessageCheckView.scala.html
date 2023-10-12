@@ -24,7 +24,7 @@
 @unifiedLayout(pageTitle = Messages("Message Check")) {
 <p>
     @for(key <- messageKey) {
-    @messages(key) <br>
+      @key = @messages(key) <br><br>
     }
 </p>
 }
