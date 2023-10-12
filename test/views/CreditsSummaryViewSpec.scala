@@ -56,7 +56,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val creditsTableStatusNotYetAllocatedValue: String = messages("credits.table.status-not-yet-allocated")
   val creditsTableStatusPartiallyAllocatedValue: String = messages("credits.table.status-partially-allocated")
   val creditAndRefundClaimRefundBtn: String = messages("credit-and-refund.claim-refund-btn")
-  val getPageHelpLinkTextBtn: String = s"${messages("getpagehelp.linkText")}${messages("pagehelp.opensInNewTabText")}"
+  val getPageHelpLinkTextBtn: String = s"${messages("getpagehelp.linkText")} ${messages("pagehelp.opensInNewTabText")}"
   val creditsDropDownListCreditFomHmrcAdjustment: String = messages("credits.drop-down-list.credit-from-hmrc-adjustment")
   val creditsDropDownListCreditFomHmrcAdjustmentValue: String = messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")
   val creditsDropDownListCreditFromAnEarlierTaxYear: String = messages("credits.drop-down-list.credit-from-an-earlier-tax-year")
