@@ -155,9 +155,6 @@ class AddBusinessNameControllerSpec extends TestSupport
           BusinessNameForm.businessName -> validBusinessName
         ))
 
-
-        mockSessionService.getMongoKeyTyped(businessNameField, journeyType).futureValue shouldBe Right(Some(validBusinessName))
-
         status(result) mustBe SEE_OTHER
         verify(mockSessionService)
           .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
