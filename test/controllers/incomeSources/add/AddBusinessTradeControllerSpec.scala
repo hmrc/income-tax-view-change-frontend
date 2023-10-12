@@ -175,7 +175,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
             ))
 
           status(result) mustBe OK
-          contentAsString(result) must include("You cannot enter the same trade and same business name")
+          contentAsString(result) must include("Trade and business name cannot be the same")
         }
         "trade name is same as business name for agent" in {
           disableAllSwitches()
@@ -192,7 +192,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
               ))
 
           status(result) mustBe OK
-          contentAsString(result) must include("You cannot enter the same trade and same business name")
+          contentAsString(result) must include("Trade and business name cannot be the same")
         }
 
         "trade name contains invalid characters" in {
