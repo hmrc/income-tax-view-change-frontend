@@ -161,7 +161,6 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
     }
     else {
-      val backUrl: String = getBackurl(isAgent, mode, changeTo, taxYear)
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
       val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
@@ -183,8 +182,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                     changeTo,
                     years
                   ))
-                  if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
-                  else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
+                  if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
+                  else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
                 }
             }
           }
@@ -194,15 +193,6 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         case None => showError(isAgent, "invalid tax year provided")
       }
     }
-  }
-
-  def getBackurl(isAgent: Boolean, incomeSourceType: IncomeSourceType, changeTo: String, taxYear: String): String = {
-    routes.ConfirmReportingMethodSharedController.show(
-      taxYear = taxYear,
-      changeTo = changeTo,
-      isAgent = isAgent,
-      incomeSourceType = incomeSourceType
-    ).url
   }
 
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
