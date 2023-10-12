@@ -20,21 +20,26 @@ import audit.models.ObligationsAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub.verifyGetNextUpdates
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import play.api.http.Status.{OK, SEE_OTHER}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testSaUtr, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesWithBothPropertiesAndCeasedBusiness, ukPropertyOnlyResponse}
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{taxYear, testObligationsModel, testObligationsViewModel}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ManageObligationsControllerISpec extends ComponentSpecBase {
 
@@ -64,11 +69,19 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       LocalDate.of(year, 5, 5),
       "Quarterly",
       false,
-    )),
+    ),
+      DatesModel(
+        LocalDate.of(year, 1, 6),
+        LocalDate.of(year, 4, 5),
+        LocalDate.of(year, 5, 5),
+        "Quarterly",
+        false
+      )),
     Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )
 
-  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testSelfEmploymentId)
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
   s"calling GET $manageSEObligationsShowUrl" should {
     "render the self employment obligations page" when {
@@ -78,15 +91,17 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
+
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear, sessionIncomeSourceId)
+        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear)
         verifyIncomeSourceDetailsCall(testMtditid)
-        verifyGetNextUpdates(testNino)
 
         val expectedText: String = if (messagesAPI(s"$prefix.h1").nonEmpty) {
           messagesAPI(s"$prefix.h1") + " " + business1.tradingName.getOrElse("") + " " + messagesAPI(s"$prefix.h2") + " " + messagesAPI(s"$prefix.annually") + " " + messagesAPI(s"$prefix.tax-year") + " " + "2023 to 2024"
@@ -105,6 +120,8 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "return the audit event" when {
       "User is authorised" in {
         enable(IncomeSources)
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
         IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, Map(forms.utils.SessionKeys.incomeSourceId -> "123"))
@@ -137,6 +154,30 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
               FakeRequest()
             )
           )
+        )
+      }
+    }
+    "return an error" when {
+      "there is no incomeSourceId in the session storage" in {
+        Given("Income Sources FS is enabled")
+        enable(IncomeSources)
+
+        When(s"I call GET $manageSEObligationsShowUrl")
+
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = None)))
+
+        And("API 1771  returns a success response")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
+
+        val result = IncomeTaxViewChangeFrontend.getManageSEObligations(annual, taxYear)
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        result should have(
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }

@@ -64,16 +64,14 @@ class ManageObligationsViewSpec extends ViewSpec {
   val quarterly = "quarterly"
   val annually = "annual"
 
-  val backUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(annually, taxYearString, incomeSourceType = UkProperty, isAgent = false).url
-
   val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
 
-  val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, backUrl, testCall)
-  val validSECallNoName: Html = view(viewModelWithAllData, "Not Found", taxYear, annually, isAgent = false, backUrl, testCall)
-  val validUKCall: Html = view(viewModelWithAllData, "UK property", taxYear, quarterly, isAgent = false, backUrl, testCall)
-  val validFPCall: Html = view(viewModelWithAllData, "Foreign property", taxYear, annually, isAgent = false, backUrl, testCall)
-  val validCallNoData: Html = view(emptyViewModel, "test name", taxYear, quarterly, isAgent = false, backUrl, testCall)
+  val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall)
+  val validSECallNoName: Html = view(viewModelWithAllData, "Not Found", taxYear, annually, isAgent = false, testCall)
+  val validUKCall: Html = view(viewModelWithAllData, "UK property", taxYear, quarterly, isAgent = false, testCall)
+  val validFPCall: Html = view(viewModelWithAllData, "Foreign property", taxYear, annually, isAgent = false, testCall)
+  val validCallNoData: Html = view(emptyViewModel, "test name", taxYear, quarterly, isAgent = false, testCall)
 
   //Testing banner for each mode/scenario, obligations are displayed the same for each so will only be tested once
 
@@ -107,6 +105,9 @@ class ManageObligationsViewSpec extends ViewSpec {
         val heading: Element = layoutContent.getElementsByTag("h2").first()
         heading.text shouldBe ManageObligationsMessages.h2
       }
+    }
+    "Not display a back button" in new Setup(validSECallWithName) {
+      Option(document.getElementById("back")).isDefined shouldBe false
     }
     "Display quarterly obligations if the user has them" in new Setup(validSECallWithName) {
       val quarterlySection: Element = layoutContent.getElementById("quarterly")
