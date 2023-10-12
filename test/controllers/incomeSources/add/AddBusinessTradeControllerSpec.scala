@@ -186,11 +186,11 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
           setupMockCreateSession(true)
           val businessTrade: String = "Test Name"
           setupMockGetSessionKeyMongoTyped[String](Right(Some(businessTrade)))
           setupMockGetSessionKeyMongoTyped[String](Right(Some(businessTrade)))
-
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(

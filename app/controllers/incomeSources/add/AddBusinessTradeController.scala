@@ -144,8 +144,9 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     withIncomeSourcesFS {
       val journeyType = JourneyType(Add, SelfEmployment)
 
-      sessionService.getMongoKey(AddIncomeSourceData.businessTradeField, journeyType).flatMap {
+      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
         case Right(businessName) =>
+          println(Console.GREEN+"Business Name: "+businessName+ Console.WHITE)
           BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessName).fold(
             formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
             formData => handleSuccess(formData.trade, isAgent, isChange, journeyType)
@@ -171,6 +172,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
   def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean, journeyType: JourneyType)(implicit user: MtdItUser[_]): Future[Result] = {
     val successURL = Redirect(getSuccessURL(isAgent, isChange))
+
+    println(Console.GREEN+"Business Trade: "+businessTrade+Console.WHITE)
 
     sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, businessTrade, journeyType).flatMap {
       case Right(result) if result => Future.successful(successURL)
