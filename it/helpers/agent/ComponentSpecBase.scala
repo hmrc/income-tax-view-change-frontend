@@ -40,6 +40,7 @@ import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -86,6 +87,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val testAppConfig: FrontendAppConfig = appConfig
+
+  val sessionId: String = "xsession-1234567"
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
 
   implicit val dateService: DateService = new DateService() {
     override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
@@ -170,7 +174,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> "xsession-1234567")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> sessionId)
         .get().futureValue
     }
 
@@ -184,7 +188,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
-          "Csrf-Token" -> "nocheck", "X-Session-ID" -> "xsession-1234567")
+          "Csrf-Token" -> "nocheck", "X-Session-ID" -> sessionId)
         .post(body).futureValue
     }
 

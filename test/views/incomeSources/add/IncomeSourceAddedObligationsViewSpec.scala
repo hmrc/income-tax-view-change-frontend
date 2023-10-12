@@ -48,8 +48,6 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   }
 
   val testId: String = "XAIS00000000005"
-  val backUrl: String = "/individual/back/test/url"
-  val agentBackUrl: String = "/agent/back/test/url"
 
   val view: IncomeSourceAddedObligations = app.injector.instanceOf[IncomeSourceAddedObligations]
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
@@ -70,38 +68,38 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val validUKPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, UkProperty, None)
-  val validUKPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, UkProperty, None)
+  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None)
+  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None)
 
-  val validForeignPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, ForeignProperty, None)
-  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, ForeignProperty, None)
+  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None)
+  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None)
 
-  val validSoleTreaderBusinessCall: Html = view(viewModel, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
-  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
+  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"))
+  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"))
 
-  val validCallWithData: Html = view(viewModelWithAllData, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
-  val validAgentCallWithData: Html = view(viewModelWithAllData, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
+  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"))
+  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"))
 
   val addIncomeSourceShowURL = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
 
   "Income Source Added Obligations - Individual" should {
-    "Display the correct banner message and heading" when  {
-      "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall){
-      val banner: Element = layoutContent.getElementsByTag("h1").first()
-      banner.text() shouldBe IncomeSourceAddedMessages.h1UKProperty
+    "Display the correct banner message and heading" when {
+      "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall) {
+        val banner: Element = layoutContent.getElementsByTag("h1").first()
+        banner.text() shouldBe IncomeSourceAddedMessages.h1UKProperty
 
 
-      val subText: Option[Element] = layoutContent.select("div").eq(3)
+        val subText: Option[Element] = layoutContent.select("div").eq(3)
 
-      subText match {
-        case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1UKProperty + " " + IncomeSourceAddedMessages.headingBase
-        case _ => fail("No 2nd h2 element found.")
+        subText match {
+          case Some(heading) => heading.text shouldBe IncomeSourceAddedMessages.h1UKProperty + " " + IncomeSourceAddedMessages.headingBase
+          case _ => fail("No 2nd h2 element found.")
+        }
+
+        val subHeading: Element = layoutContent.getElementsByTag("h2").last()
+        subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
       }
-
-      val subHeading: Element = layoutContent.getElementsByTag("h2").last()
-      subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
-    }
       "Business type is Foreign Property Business" in new Setup(validForeignPropertyBusinessCall) {
         val banner: Element = layoutContent.getElementsByTag("h1").first()
         banner.text() shouldBe IncomeSourceAddedMessages.h1ForeignProperty
@@ -132,6 +130,9 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
         val subHeading: Element = layoutContent.getElementsByTag("h2").last()
         subHeading.text shouldBe IncomeSourceAddedMessages.h2Content
       }
+    }
+    "Not display a back button" in new Setup(validCallWithData) {
+      Option(document.getElementById("back")).isDefined shouldBe false
     }
 
     "Display quarterly obligations if the user has them" in new Setup(validCallWithData) {
