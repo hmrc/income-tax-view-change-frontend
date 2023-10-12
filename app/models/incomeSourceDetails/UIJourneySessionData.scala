@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import forms.utils.SessionKeys
 import play.api.libs.json._
 
 import java.time.LocalDate
@@ -82,10 +83,12 @@ object AddIncomeSourceData {
 }
 
 case class ManageIncomeSourceData(
-                                   selectedIncomeSourceId: String
+                                   incomeSourceId: Option[String] = None
                                  )
 
 object ManageIncomeSourceData {
+
+  val incomeSourceIdField = "incomeSourceId"
   def getJSONKeyPath(name: String): String = s"manageIncomeSourceData.$name"
 
   implicit val format: OFormat[ManageIncomeSourceData] = Json.format[ManageIncomeSourceData]

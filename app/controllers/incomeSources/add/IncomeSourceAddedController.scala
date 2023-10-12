@@ -67,28 +67,12 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
         }
   }
 
-  private def getBackUrl(incomeSourceId: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
-    val baseRoute = incomeSourceType match {
-      case SelfEmployment =>
-        if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent _ else
-          controllers.incomeSources.add.routes.BusinessReportingMethodController.show _
-      case UkProperty =>
-        if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent _ else
-          controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show _
-      case ForeignProperty =>
-        if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent _ else
-          controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show _
-    }
-    baseRoute(incomeSourceId).url
-  }
-
   private def handleRequest(isAgent: Boolean, incomeSourceId: String, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val backUrl = getBackUrl(incomeSourceId, isAgent, incomeSourceType)
-       incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
+      incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          handleSuccess(incomeSourceId, incomeSourceType, startDate, businessName, showPreviousTaxYears, backUrl, isAgent)
+          handleSuccess(incomeSourceId, incomeSourceType, startDate, businessName, showPreviousTaxYears, isAgent)
         case None => Logger("application").error(
           s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
           if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
@@ -103,22 +87,22 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     }
   }
 
-  def handleSuccess(incomeSourceId: String, incomeSourceType: IncomeSourceType, startDate: LocalDate, businessName: Option[String], showPreviousTaxYears: Boolean, backUrl: String, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleSuccess(incomeSourceId: String, incomeSourceType: IncomeSourceType, startDate: LocalDate, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     incomeSourceType match {
       case SelfEmployment =>
         businessName match {
           case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
+            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
           }
           case None => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            Ok(obligationsView(sources = viewModel, backUrl = backUrl, isAgent = isAgent, incomeSourceType = SelfEmployment))
+            Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
           }
         }
       case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-        Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = UkProperty))
+        Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
       }
       case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-        Ok(obligationsView(viewModel, backUrl, isAgent = isAgent, incomeSourceType = ForeignProperty))
+        Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
       }
     }
   }

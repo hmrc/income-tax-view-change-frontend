@@ -22,15 +22,20 @@ import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
@@ -48,9 +53,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
   val pageTitle: String = messagesAPI("standardError.heading")
 
-  val sessionIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> testSelfEmploymentId)
-
-  val sessionInvalidIncomeSourceId = Map(forms.utils.SessionKeys.incomeSourceId -> "INVALID")
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
   s"calling GET $reportingMethodChangeErrorUKPropertyUrl" should {
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
@@ -64,7 +67,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get("/income-sources/manage/error-change-reporting-method-not-saved-uk-property", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get("/income-sources/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -85,7 +88,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -106,7 +109,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -149,7 +152,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -173,7 +176,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -194,7 +197,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -237,7 +240,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -257,11 +260,14 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -278,11 +284,14 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
+
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved", sessionIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -321,11 +330,14 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
+        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+          manageIncomeSourceData = None)))
+
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved", sessionInvalidIncomeSourceId ++ clientDetailsWithStartDate)
+          .get(s"/income-sources/manage/error-change-reporting-method-not-saved", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
