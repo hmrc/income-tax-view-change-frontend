@@ -182,8 +182,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                     changeTo,
                     years
                   ))
-                  if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
-                  else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
+                  Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
                 }
             }
           }
