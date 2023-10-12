@@ -31,7 +31,6 @@ import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.SessionService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
@@ -64,7 +63,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
     ec,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
-    sessionService = app.injector.instanceOf[SessionService],
+    sessionService = mockSessionService,
     app.injector.instanceOf[MessagesControllerComponents]
   )
 
@@ -99,7 +98,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           enable(IncomeSources)
           mockUkPropertyWithSoleTraderBusiness()
           setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
+          setupMockDeleteSession(true)
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
             .thenReturn(Success(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel, businessDetailsViewModel2),
@@ -117,7 +116,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           enable(IncomeSources)
           ukPlusForeignPropertyWithSoleTraderIncomeSource()
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
+          setupMockDeleteSession(true)
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
             .thenReturn(Success(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel),
@@ -136,7 +135,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           mockNoIncomeSources()
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
+          setupMockDeleteSession(true)
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
             .thenReturn(Success(AddIncomeSourcesViewModel(Nil, None, None, Nil)))
 
@@ -169,7 +168,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           mockBothPropertyBothBusiness()
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
+          setupMockDeleteSession(true)
           when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
             .thenReturn(Success(AddIncomeSourcesViewModel(
               soleTraderBusinesses = List(businessDetailsViewModel),

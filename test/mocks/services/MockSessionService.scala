@@ -16,8 +16,8 @@
 
 package mocks.services
 
-import models.incomeSourceDetails.UIJourneySessionData
 import enums.JourneyType.JourneyType
+import models.incomeSourceDetails.UIJourneySessionData
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -96,9 +96,23 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockGetSessionKeyMongoTyped[A](key: String, result: Either[Throwable, Option[A]]): Unit = {
+  def setupMockDeleteSession(result: Boolean): Unit = {
     when(
-      mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.eq(key), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+      mockSessionService.deleteSession(ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit = {
+    when(
+      mockSessionService.getMongo(ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockSetMongoData(result: Boolean): Unit = {
+    when(
+      mockSessionService.setMongoData(ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
@@ -111,20 +125,6 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       ArgumentMatchers.eq(expectedValue),
       ArgumentMatchers.eq(expectedJourneyType)
     )(any(), any())
-    ).thenReturn(Future.successful(result))
-  }
-
-  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]):Unit = {
-    when(
-      mockSessionService.getMongo(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
-    ).thenReturn(Future.successful(result))
-  }
-
-  def setupMockSetMongoData(result: Boolean):Unit = {
-    when(
-      mockSessionService.setMongoData(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 }
