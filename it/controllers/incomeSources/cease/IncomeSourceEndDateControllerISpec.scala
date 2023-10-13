@@ -25,7 +25,7 @@ import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{endDate2022, stringTrue, taxYear, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.{testEndDate2022, stringTrue, taxYear, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -121,8 +121,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(endDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
 
         When(s"I call GET $dateBusinessShowChangeUrl")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentId")
@@ -236,8 +236,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(endDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
 
         When(s"I call GET $dateUKPropertyShowChangeUrl")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-uk-property-end-date")
@@ -349,8 +349,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(endDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
 
         When(s"I call GET $dateForeignPropertyShowChangeUrl")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-foreign-property-end-date")

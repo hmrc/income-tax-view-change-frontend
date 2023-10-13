@@ -88,8 +88,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val testAppConfig: FrontendAppConfig = appConfig
 
-  val sessionId: String = "xsession-1234567"
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
+  val testSessionId: String = "xsession-1234567"
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
   implicit val dateService: DateService = new DateService() {
     override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
@@ -153,7 +153,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     buildClient(uri)
-      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
       .get().futureValue
   }
 
@@ -174,7 +174,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> sessionId)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> testSessionId)
         .get().futureValue
     }
 
@@ -188,7 +188,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
-          "Csrf-Token" -> "nocheck", "X-Session-ID" -> sessionId)
+          "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }
 

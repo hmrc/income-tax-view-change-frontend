@@ -4,25 +4,31 @@ import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseModel}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSelfEmploymentId}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{stringTrue, testEndDate2022, testMtditid, testNino, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, businessOnlyResponseWithUnknownAddressName, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
 
 class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
-  val cessationDate = "2022-04-23"
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  val cessationDate = "2022-10-10"
   val businessEndShortLongDate = "23 April 2022"
+  val testLongEndDate2022: String = "10 October 2022"
   val changeLink = "Change"
   val testBusinessName = "business"
   val timestamp = "2023-01-31T09:26:17Z"
 
-
-  val sessionCeaseBusinessDetails = Map(forms.utils.SessionKeys.ceaseBusinessEndDate -> cessationDate, forms.utils.SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
   val showCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url
   val formActionSE = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(SelfEmployment).url
 
@@ -68,15 +74,19 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with a SE buisness")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None)))))
+
         When(s"I call GET ${showCheckCeaseBusinessDetailsControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getCheckCeaseBusinessDetails(sessionCeaseBusinessDetails)
+        val res = IncomeTaxViewChangeFrontend.getCheckCeaseBusinessDetails
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
           elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
-          elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(businessEndShortLongDate),
+          elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
           elementTextByID("change")(changeLink),
 
           elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
@@ -91,15 +101,19 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with a SE business with no address")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None)))))
+
         When(s"I call GET ${showCheckCeaseBusinessDetailsControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getCheckCeaseBusinessDetails(sessionCeaseBusinessDetails)
+        val res = IncomeTaxViewChangeFrontend.getCheckCeaseBusinessDetails
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
           elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")),
-          elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(businessEndShortLongDate),
+          elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
           elementTextByID("change")(changeLink),
 
           elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")),
@@ -122,7 +136,10 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val res = IncomeTaxViewChangeFrontend.postCheckCeaseBusinessDetails(sessionCeaseBusinessDetails)
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None)))))
+
+        val res = IncomeTaxViewChangeFrontend.postCheckCeaseBusinessDetails
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestSE).toString()))
 
@@ -141,8 +158,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+
         When(s"I call GET ${showCheckCeaseUKPropertyDetailsControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getCheckCeaseUKPropertyDetails(sessionCeaseUKPropertyEndDate)
+        val res = IncomeTaxViewChangeFrontend.getCheckCeaseUKPropertyDetails
         verifyIncomeSourceDetailsCall(testMtditid)
 
 
@@ -150,7 +170,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKeyUK),
           elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseUKProperty.checkDetails.dateStopped")),
-          elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(businessEndShortLongDate),
+          elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
           elementTextByID("change")(changeLink),
           elementAttributeBySelector("form", "action")(formActionUK)
         )
@@ -167,7 +187,10 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val res = IncomeTaxViewChangeFrontend.postCheckCeaseUKPropertyDetails(sessionCeaseUKPropertyEndDate)
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+
+        val res = IncomeTaxViewChangeFrontend.postCheckCeaseUKPropertyDetails
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestUK).toString()))
 
@@ -185,15 +208,19 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with a Foreign Property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+
         When(s"I call GET ${showCheckCeaseForeignPropertyDetailsControllerUrl}")
-        val res = IncomeTaxViewChangeFrontend.getCheckCeaseForeignPropertyDetails(sessionCeaseForeignPropertyEndDate)
+        val res = IncomeTaxViewChangeFrontend.getCheckCeaseForeignPropertyDetails
         verifyIncomeSourceDetailsCall(testMtditid)
 
         res should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKeyUK),
           elementTextBySelectorList(".govuk-summary-list__key", "dt:nth-of-type(1)")(messagesAPI("incomeSources.ceaseForeignProperty.checkDetails.dateStopped")),
-          elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(businessEndShortLongDate),
+          elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testLongEndDate2022),
           elementTextByID("change")(changeLink),
           elementAttributeBySelector("form", "action")(formActionFP)
         )
@@ -207,11 +234,13 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with a Foriegn Property")
         enable(IncomeSources)
 
-
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-        val res = IncomeTaxViewChangeFrontend.postCheckCeaseForeignPropertyDetails(sessionCeaseForeignPropertyEndDate)
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+
+        val res = IncomeTaxViewChangeFrontend.postCheckCeaseForeignPropertyDetails
         verifyIncomeSourceDetailsCall(testMtditid)
         IncomeTaxViewChangeStub.verifyUpdateIncomeSource(Some(Json.toJson(requestFP).toString()))
 
@@ -222,5 +251,4 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       }
     }
   }
-
 }

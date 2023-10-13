@@ -68,7 +68,7 @@ object BaseIntegrationTestConstants {
   val otherTestSelfEmploymentId = "ABC123456780"
   val testPropertyIncomeId = "1234"
   val otherTestPropertyIncomeId = "ABC123456789"
-  val endDate2022: String = "2022-10-10"
+  val testEndDate2022: String = "2022-10-10"
 
   val testTradeName = "business"
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
