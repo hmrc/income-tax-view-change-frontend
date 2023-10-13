@@ -1199,7 +1199,7 @@ add-business-trade.form.error.empty         = Enter the trade of your business
 add-business-trade.form.error.short         = Business trade must have at least two letters
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
-add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
+add-business-trade.form.error.same-name     = Trade and business name cannot be the same
 
 ## Add business address page
 add-business-address.select.heading         = Select business address
@@ -1345,7 +1345,7 @@ add-business-name.p2                                              = The business
 add-business-name.form.error.required                             = Enter your name or the name of your business
 add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
 add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
-add-business-name.form.error.invalidName                          = You cannot enter the same trade and same business name
+add-business-name.form.error.invalidName                          = Trade and business name cannot be the same
 
 ## Add business trade page
 add-business-trade.heading                  = What is the trade of your business?
@@ -1354,7 +1354,7 @@ add-business-trade.form.error.empty         = Enter the trade of your business
 add-business-trade.form.error.short         = Business trade must have at least two letters
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
-add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
+add-business-trade.form.error.same-name     = Trade and business name cannot be the same
 
 ## Add business address page
 add-business-address.select.heading         = Select business address

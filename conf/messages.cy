@@ -1213,7 +1213,7 @@ add-business-name.p2                                              = Gall enw’r
 add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
 add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
-add-business-name.form.error.invalidName                          = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
+add-business-name.form.error.invalidName                          = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Add business trade page
 add-business-trade.heading                  = Beth yw masnach eich busnes?
@@ -1222,7 +1222,7 @@ add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
 add-business-trade.form.error.short         = Mae’n rhaid i fasnach y busnes gynnwys o leiaf dwy lythyren
 add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes fod yn 35 o gymeriadau neu lai
 add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
-add-business-trade.form.error.same-name     = Ni allwch nodi’r un peth ar gyfer masnach busnes ac enw’r busnes
+add-business-trade.form.error.same-name     = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Add business address page
 add-business-address.select.heading         = Dewiswch gyfeiriad y busnes
