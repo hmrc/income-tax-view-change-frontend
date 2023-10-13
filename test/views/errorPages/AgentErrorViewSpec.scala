@@ -25,7 +25,7 @@ class AgentErrorViewSpec extends ViewSpec {
   object AgentErrorMessages {
     val heading: String = messages("agent-error.heading")
     val title: String = messages("htmlTitle.errorPage", messages("agent-error.heading"))
-    val setupAccountLink: String = s"${messages("agent-error.link")}${messages("pagehelp.opensInNewTabText")}"
+    val setupAccountLink: String = s"${messages("agent-error.link")} ${messages("pagehelp.opensInNewTabText")}"
     val notAnAgentNote: String = s"${messages("agent-error.note")} $setupAccountLink."
   }
 

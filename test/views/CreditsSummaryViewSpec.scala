@@ -60,12 +60,12 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   val creditsDropDownListCreditFomHmrcAdjustment: String = messages("credits.drop-down-list.credit-from-hmrc-adjustment")
   val creditsDropDownListCreditFomHmrcAdjustmentValue: String = messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")
   val creditsDropDownListCreditFromAnEarlierTaxYear: String = messages("credits.drop-down-list.credit-from-an-earlier-tax-year")
-  val saNoteMigratedIndividual: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")} ${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}."
-  val saNoteMigratedAgent: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")} ${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}."
+  val saNoteMigratedIndividual: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note")} ${messages("credits.drop-down-list.sa-link")} ${messages("pagehelp.opensInNewTabText")}."
+  val saNoteMigratedAgent: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")} ${messages("credits.drop-down-list.sa-link-agent")} ${messages("pagehelp.opensInNewTabText")}."
   val saNoteMigratedOnlineAccountLink: String = s"/self-assessment/ind/$testMtditid/account"
-  val saNoteMigratedOnlineAccountLinkText: String = s"${messages("credits.drop-down-list.sa-link")}${messages("pagehelp.opensInNewTabText")}"
+  val saNoteMigratedOnlineAccountLinkText: String = s"${messages("credits.drop-down-list.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
   val saNoteMigratedOnlineAccountAgentLink: String = s"https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
-  val saNoteMigratedOnlineAccountAgentLinkText: String = s"${messages("credits.drop-down-list.sa-link-agent")}${messages("pagehelp.opensInNewTabText")}"
+  val saNoteMigratedOnlineAccountAgentLinkText: String = s"${messages("credits.drop-down-list.sa-link-agent")} ${messages("pagehelp.opensInNewTabText")}"
   val moneyInYourAccountHeading: String = messages("credits.money-in-your-account-section.name")
   val moneyInYourAccountAgentHeading: String = messages("credits.money-in-your-account-section.agent.name")
   val moneyInYourAccountMoneyClaimARefundLinkText: String = messages("credits.money-in-your-account-section.claim-a-refund-link")
