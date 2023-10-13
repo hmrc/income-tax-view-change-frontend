@@ -503,7 +503,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-uk-property-success", session)
 
-    def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-business-success", session)
+    def getBusinessCeasedObligations: WSResponse = get(uri = "/income-sources/cease/cease-business-success")
 
     def getAddChangeBusinessAddress: WSResponse =
       get("/income-sources/add/change-business-address-lookup")

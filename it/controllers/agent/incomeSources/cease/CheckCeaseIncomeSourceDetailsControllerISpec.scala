@@ -31,7 +31,6 @@ import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import java.time.LocalDate
 
 class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
