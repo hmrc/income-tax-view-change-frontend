@@ -25,7 +25,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.models.DateFormElement
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
@@ -268,13 +267,11 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
           sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap {
             case true =>
               (incomeSourceType, id) match {
-
                 case (SelfEmployment, None) =>
                   val errorMessage: String = s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."
                   Logger("application").error(s"${if (isAgent) "[Agent]"}" +
                     s"$errorMessage")
                   Future.failed(new Exception(s"$errorMessage"))
-
                 case (SelfEmployment, Some(incomeSourceId)) =>
                   val result = Redirect(redirectAction)
                   sessionService.setMongoKey(

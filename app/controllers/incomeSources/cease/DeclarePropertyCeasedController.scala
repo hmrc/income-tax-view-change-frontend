@@ -122,17 +122,17 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
         ))
         sessionService.setMongoKey(key = CeaseIncomeSourceData.ceasePropertyDeclare, value = "false", journeyType = JourneyType(Cease, incomeSourceType))
           .flatMap {
-          case Right(_) => Future.successful(result)
-          case Left(exception) => Future.failed(exception)
-        }
+            case Right(_) => Future.successful(result)
+            case Left(exception) => Future.failed(exception)
+          }
       },
       _ => {
         val result = Redirect(redirectAction)
         sessionService.setMongoKey(key = CeaseIncomeSourceData.ceasePropertyDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
           .flatMap {
-          case Right(_) => Future.successful(result)
-          case Left(exception) => Future.failed(exception)
-        }
+            case Right(_) => Future.successful(result)
+            case Left(exception) => Future.failed(exception)
+          }
       }
     )
   }.recover {
