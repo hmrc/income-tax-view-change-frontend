@@ -1,12 +1,20 @@
 package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId, testSessionIdAgent}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 class AddBusinessTradeControllerISpec extends ComponentSpecBase {
 
@@ -19,10 +27,15 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
   val checkDetailsUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
 
-
   val pageTitleMsgKey: String = messagesAPI("add-business-trade.heading")
   val pageHint: String = messagesAPI("add-business-trade.p1")
   val button: String = messagesAPI("base.continue")
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionIdAgent)))
 
 
   s"calling GET $addBusinessTradeControllerShowUrl" should {
@@ -70,14 +83,25 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
+        val testBusinessTrade: String = ("Test Business Trade")
+        val testBusinessName: String = ("Test Business Name")
+
         val formData: Map[String, Seq[String]] = {
           Map(
-            BusinessTradeForm.businessTrade -> Seq("Test Business Trade")
+            BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
           )
         }
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+
+        And("Mongo storage is successfully set")
+
         When(s"I call POST ${addBusinessTradeSubmitUrl}")
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-trade", clientDetailsWithConfirmation)(formData)
+
+        sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(addBusinessAddressUrl)
