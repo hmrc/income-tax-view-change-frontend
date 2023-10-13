@@ -22,6 +22,8 @@ import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, M
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.{AesGcmAdCrypto, Cypher, KeyValue}
+import uk.gov.hmrc.crypto.EncryptedValue
 import utils.Encrypter
 import utils.Encrypter.KeyValue
 
@@ -29,7 +31,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
+class SessionService @Inject()(
+                                val uiJourneySessionDataRepository: UIJourneySessionDataRepository,
+                                val crypto: AesGcmAdCrypto)  {
 
   def get(key: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     Future {
@@ -103,16 +107,30 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   def setMongoKey(keyValue: KeyValue, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+    implicit val associatedText = "SomeTestadasr"
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None)
     val jsonAccessorPath = journeyType.operation match {
-      case Add => AddIncomeSourceData.getJSONKeyPath(keyValue.key)
+      case Add =>
+        println(s"Path: ${keyValue.key}")
+        AddIncomeSourceData.getJSONKeyPath(keyValue.key)
+
       case Manage => ManageIncomeSourceData.getJSONKeyPath(keyValue.key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(keyValue.key)
     }
-    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, keyValue.value).map(
+    val encValue : String = crypto.encrypt(keyValue.value) match {
+      case EncryptedValue(value, nonce) => value
+    }
+    println(s"Update: ${uiJourneySessionData}")
+    println(s"Update2: ${jsonAccessorPath}")
+    println(s"Update3: ${encValue}")
+    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, encValue ).map(
       result => result.wasAcknowledged() match {
-        case true => Right(true)
-        case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+        case true =>
+          println(s"Saved ...")
+          Right(true)
+        case false =>
+          println( new Exception("Mongo Save data operation was not acknowledged") )
+          Left(new Exception("Mongo Save data operation was not acknowledged"))
       }
     )
   }
