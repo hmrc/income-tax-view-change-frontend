@@ -86,6 +86,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession)
+  }
+
   s"calling GET ${showCheckCeaseBusinessDetailsControllerUrl}" should {
     "render the Cease Business Page" when {
       "User is authorised" in {

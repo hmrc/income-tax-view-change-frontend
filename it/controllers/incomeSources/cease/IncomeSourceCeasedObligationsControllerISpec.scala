@@ -31,6 +31,10 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
   val day: LocalDate = LocalDate.of(2023, 1, 1)
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")))))
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession)
+  }
 
   s"calling GET $businessCeasedObligationsShowUrl" should {
     "render the Business Ceased obligations page" when {

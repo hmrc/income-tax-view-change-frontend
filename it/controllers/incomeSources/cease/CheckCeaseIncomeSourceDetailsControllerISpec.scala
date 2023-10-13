@@ -14,7 +14,6 @@ import testConstants.BaseIntegrationTestConstants.{stringTrue, testEndDate2022, 
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, businessOnlyResponseWithUnknownAddressName, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
 
@@ -67,6 +66,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     incomeSourceId = foreignProperty.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession)
+  }
 
   s"calling GET ${showCheckCeaseBusinessDetailsControllerUrl}" should {
     "render the Cease Business Details Page" when {

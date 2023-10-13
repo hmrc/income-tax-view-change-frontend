@@ -21,10 +21,17 @@ import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
   val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
   val showDeclareUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
   val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
@@ -36,6 +43,11 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   val pageTitleMsgKeyFP = "incomeSources.cease.FP.property.heading"
   val pageTitleMsgKeyUK = "incomeSources.cease.UK.property.heading"
   val buttonLabel: String = messagesAPI("base.continue")
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession)
+  }
 
   s"calling GET ${showDeclareUKPropertyCeasedControllerUrl}" should {
     "render the Cease UK Property Page" when {
