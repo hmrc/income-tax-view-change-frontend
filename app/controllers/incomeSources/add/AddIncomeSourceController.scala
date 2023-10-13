@@ -29,13 +29,12 @@ import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, SessionKeyValue}
 import views.html.incomeSources.add.AddIncomeSources
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
-import utils.{IncomeSourcesUtils, KeyValue}
 import enums.JourneyType.{Add, JourneyType}
 
 @Singleton
@@ -97,11 +96,6 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
         case Success(viewModel) =>
           for {
             _ <- sessionService.createSession( "ADD-SE")
-            x <- sessionService.setMongoKey(
-              KeyValue(
-                "businessName",
-                "someValue"
-              ), JourneyType(Add, SelfEmployment))
           } yield {
             Ok(addIncomeSources(
               sources = viewModel,

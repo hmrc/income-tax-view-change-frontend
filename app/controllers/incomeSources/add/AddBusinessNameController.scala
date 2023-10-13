@@ -30,10 +30,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{Encrypter, IncomeSourcesUtils}
+import utils.{IncomeSourcesUtils, SessionKeyValue}
 import views.html.incomeSources.add.AddBusinessName
-import utils.CypherSyntax.{DecryptableOps, EncryptableOps}
-import utils.Encrypter.KeyValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -173,19 +171,18 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                 useFallbackLink = true))),
 
           formData => {
-            println(s"\nSETTING MONGO KEY\n")
             sessionService.setMongoKey(
-              KeyValue(
+              SessionKeyValue(
                 SessionKeys.businessName,
                 formData.name
               ),
               JourneyType(Add, SelfEmployment)
             ).flatMap {
               case Right(true) =>
-                println(s"\nADDED NAME TO MONGO\n")
                 Future.successful(Redirect(redirectLocal))
               case Right(false) =>
-                Future.successful(BadRequest("FAILED TO UPDATE"))
+                // TODO: CHANGE BELOW
+                Future.failed(new Error("FAIL"))
               case Left(exception) => Future.failed(exception)
             }
           }
