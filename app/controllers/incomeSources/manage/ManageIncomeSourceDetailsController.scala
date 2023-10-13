@@ -33,7 +33,8 @@ import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.Encrypter.KeyValue
+import utils.{Encrypter, IncomeSourcesUtils}
 import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
@@ -120,7 +121,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     implicit user =>
       withIncomeSourcesFS {
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
-          sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, id, JourneyType(Manage, SelfEmployment)).flatMap {
+          sessionService.setMongoKey(KeyValue(ManageIncomeSourceData.incomeSourceIdField, id), JourneyType(Manage, SelfEmployment)).flatMap {
             case Right(_) => handleRequest(
               sources = user.incomeSources,
               isAgent = false,
@@ -154,7 +155,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
               sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
                 case true =>
-                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, id, JourneyType(Manage, SelfEmployment)).flatMap {
+                  sessionService.setMongoKey(KeyValue(ManageIncomeSourceData.incomeSourceIdField, id), JourneyType(Manage, SelfEmployment)).flatMap {
                     case Right(_) => result
                     case Left(exception) => Future.failed(exception)
                   }

@@ -22,7 +22,8 @@ import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, M
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.KeyValue
+import utils.Encrypter
+import utils.Encrypter.KeyValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
