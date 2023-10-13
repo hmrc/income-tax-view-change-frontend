@@ -18,8 +18,11 @@ package controllers.agent.incomeSources.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.CeaseIncomeSourceData.ceasePropertyDeclare
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -43,6 +46,9 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   val pageTitleMsgKeyFP = "incomeSources.cease.FP.property.heading"
   val pageTitleMsgKeyUK = "incomeSources.cease.UK.property.heading"
   val buttonLabel: String = messagesAPI("base.continue")
+
+  val stringTrue: String = "true"
+  val stringFalse: String = "false"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -76,22 +82,32 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
+
         val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(Some("true"), clientDetailsWithConfirmation)
         result.status shouldBe SEE_OTHER
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(showUKPropertyEndDateControllerUrl)
         )
+
+        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
+
       }
       "form is filled incorrectly" in {
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
+
         val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(None, clientDetailsWithConfirmation)
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("cease-property-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageUK)
         )
+
+        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringFalse))
+
       }
     }
   }
@@ -123,22 +139,32 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
+
         val result = IncomeTaxViewChangeFrontend.postCeaseForeignProperty(Some("true"), clientDetailsWithConfirmation)
         result.status shouldBe SEE_OTHER
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(showForeignPropertyEndDateControllerUrl)
         )
+
+        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
+
       }
       "form is filled incorrectly" in {
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
+
         val result = IncomeTaxViewChangeFrontend.postCeaseForeignProperty(None, clientDetailsWithConfirmation)
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("cease-property-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageFP)
         )
+
+        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringFalse))
+
       }
     }
   }
