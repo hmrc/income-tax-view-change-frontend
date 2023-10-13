@@ -19,11 +19,15 @@ package controllers.incomeSources.manage
 import audit.models.ManageYourDetailsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, LatencyDetails}
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.businessForManageYourDetailsAudit
 import testConstants.CalculationListIntegrationTestConstants
@@ -31,6 +35,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignPropertyAudit, ukPropertyAudit}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
 import java.time.Month.APRIL
 
@@ -69,6 +74,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val messagesChangeLinkText: String = messagesAPI("incomeSources.manage.business-manage-details.change")
   val messagesUnknown: String = messagesAPI("incomeSources.generic.unknown")
 
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
   s"calling GET $manageSelfEmploymentShowUrl" should {
     "render the Manage Self Employment business page" when {
       "URL contains a valid income source ID and authorised user has no latency information" in {
@@ -82,6 +89,9 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -109,6 +119,9 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -139,6 +152,9 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
 
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
+
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
@@ -163,6 +179,9 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -193,6 +212,9 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
         IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         AuditStub.verifyAuditEvent(
           ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelSelfEmploymentBusiness)(
