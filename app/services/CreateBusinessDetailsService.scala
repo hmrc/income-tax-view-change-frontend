@@ -25,6 +25,7 @@ import models.incomeSourceDetails.viewmodels._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -65,19 +66,19 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       CreateBusinessIncomeSourceRequest(
         List(
           BusinessDetails(
-            accountingPeriodStartDate = viewModel.businessStartDate.toString,
-            accountingPeriodEndDate = viewModel.accountingPeriodEndDate.toString,
+            accountingPeriodStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
+            accountingPeriodEndDate = viewModel.accountingPeriodEndDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
             tradingName = viewModel.businessName.get,
             addressDetails = AddressDetails(
               addressLine1 = viewModel.businessAddressLine1,
               addressLine2 = viewModel.businessAddressLine2,
               addressLine3 = viewModel.businessAddressLine3,
               addressLine4 = viewModel.businessAddressLine4,
-              countryCode = viewModel.businessCountryCode,
+              countryCode = Some("GB"), // required to be GB by API when postcode present
               postalCode = viewModel.businessPostalCode
             ),
             typeOfBusiness = Some(viewModel.businessTrade),
-            tradingStartDate = viewModel.businessStartDate.toString,
+            tradingStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
             cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.toUpperCase,
             cessationDate = None,
             cessationReason = None

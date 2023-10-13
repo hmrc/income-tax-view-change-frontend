@@ -95,14 +95,14 @@ trait IncomeSourcesDataHelper {
     businessName = Some("someBusinessName"),
     businessStartDate = Some(LocalDate.of(2022, 11, 11)),
     businessTrade = "someBusinessTrade",
-    businessAddressLine1 = "businessAddressLine1",
     businessPostalCode = Some("SE15 4ER"),
     incomeSourcesAccountingMethod = None,
     accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
+    businessAddressLine1 = "businessAddressLine1",
     businessAddressLine2 = None,
     businessAddressLine3 = None,
     businessAddressLine4 = None,
-    businessCountryCode = Some("UK"),
+    businessCountryCode = Some("GB"),
     cashOrAccrualsFlag = "CASH",
     skippedAccountingMethod = false
   )
