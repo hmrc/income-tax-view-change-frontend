@@ -39,7 +39,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionIdAgent}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId, testSessionIdAgent}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -184,7 +184,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
-          "Csrf-Token" -> "nocheck", "X-Session-ID" -> "xssession-1234567")
+          "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }
 
