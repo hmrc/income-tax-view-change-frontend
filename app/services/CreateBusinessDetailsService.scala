@@ -61,6 +61,13 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
+  private def removeEmptyStrings(strOpt: Option[String]): Option[String] = {
+      strOpt match {
+        case Some(s) => if (s == "") None else Some(s)
+        case None => None
+      }
+  }
+
   def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
       CreateBusinessIncomeSourceRequest(
@@ -71,9 +78,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
             tradingName = viewModel.businessName.get,
             addressDetails = AddressDetails(
               addressLine1 = viewModel.businessAddressLine1,
-              addressLine2 = viewModel.businessAddressLine2,
-              addressLine3 = viewModel.businessAddressLine3,
-              addressLine4 = viewModel.businessAddressLine4,
+              addressLine2 = removeEmptyStrings(viewModel.businessAddressLine2),
+              addressLine3 = removeEmptyStrings(viewModel.businessAddressLine3),
+              addressLine4 = removeEmptyStrings(viewModel.businessAddressLine4),
               countryCode = Some("GB"), // required to be GB by API when postcode present
               postalCode = viewModel.businessPostalCode
             ),
