@@ -95,7 +95,8 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>
           for {
-            _ <- sessionService.createSession( "ADD-SE")
+            // TODO: REMOVE HARDCODED JOURNEY
+            _ <- sessionService.createSession("ADD-SE")
           } yield {
             Ok(addIncomeSources(
               sources = viewModel,
