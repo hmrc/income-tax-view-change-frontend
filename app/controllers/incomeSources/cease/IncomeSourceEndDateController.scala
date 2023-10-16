@@ -250,11 +250,11 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
   def validInputProcess(id: Option[String], isAgent: Boolean,
                         incomeSourceType: IncomeSourceType, date: LocalDate, redirectAction: Call)
-                       (implicit user: MtdItUser[_]) = {
+                       (implicit user: MtdItUser[_]): Future[Result] = {
     {
       for {
         _ <- sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
-        t <- {
+        updateResult <- {
           (incomeSourceType, id) match {
             case (SelfEmployment, None) => Future {
               Left(new Exception(s"errorMessage"))
@@ -269,7 +269,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
               sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = date.toString, journeyType = JourneyType(Cease, incomeSourceType))
           }
         }
-      } yield t match {
+      } yield updateResult match {
         case Right(_) => Future { Redirect(redirectAction) }
         case Left(ex) =>
           Logger("application").error(s"$ex")
