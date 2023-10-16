@@ -203,7 +203,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> "xssession-12345")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> testSessionId)
         .get().futureValue
     }
 
