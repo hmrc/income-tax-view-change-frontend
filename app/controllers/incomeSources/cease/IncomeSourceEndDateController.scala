@@ -281,9 +281,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                       sessionService.setMongoKey(
                         CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId, JourneyType(Cease, incomeSourceType)
                       ).flatMap {
-                        case Right(true) =>
-                          Future.successful(result)
-                        case _ => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
+                        case Right(_) => Future.successful(result)
+                        case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
                       }
                     }
                     case _ => Future.failed(new Error(s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))

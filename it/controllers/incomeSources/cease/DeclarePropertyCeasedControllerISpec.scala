@@ -25,6 +25,7 @@ import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.incomeSourceDetails.CeaseIncomeSourceData.{ceasePropertyDeclare, dateCeasedField}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{stringTrue, testEndDate2022, testMtditid, testSelfEmploymentId}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
@@ -34,6 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
   val showDeclareUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
@@ -52,7 +54,9 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(sessionService.deleteSession)
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-SE")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-UK")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-FP")))
   }
 
   s"calling GET ${showDeclareUKPropertyCeasedControllerUrl}" should {

@@ -115,10 +115,6 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     )
   }
 
-  def deleteSession(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    uiJourneySessionDataRepository.deleteOne(hc.sessionId.get.value)
-  }
-
   def setList(result: Result, keyValue: (String, String)*)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
     Future {
       Right(result.addingToSession(keyValue: _*))
