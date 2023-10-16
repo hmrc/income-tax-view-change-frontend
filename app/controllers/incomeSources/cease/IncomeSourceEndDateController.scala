@@ -17,6 +17,7 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
@@ -246,6 +247,35 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         }
   }
 
+
+  def validInputProcess(id: Option[String], isAgent: Boolean,
+                        incomeSourceType: IncomeSourceType, date: LocalDate, redirectAction: Call)
+                       (implicit user: MtdItUser[_]) = {
+    val composedResult = for {
+      _ <- sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
+      t <- {
+        (incomeSourceType, id) match {
+          case (SelfEmployment, None) => Future { Left(new Exception(s"errorMessage")) }
+          case (SelfEmployment, Some(incomeSourceId)) => {
+            for {
+              _ <- EitherT(sessionService.setMongoKey(CeaseIncomeSourceData.dateCeasedField, date.toString, JourneyType(Cease, incomeSourceType)))
+              setKeyB <- EitherT(sessionService.setMongoKey(CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId, JourneyType(Cease, incomeSourceType)))
+            } yield (setKeyB)
+          }.value
+          case _ =>
+            sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = date.toString, journeyType = JourneyType(Cease, incomeSourceType))
+        }
+      }
+    } yield t
+    composedResult.flatMap(r => r match {
+      case Right(_) => Future { Redirect(redirectAction) }
+      case Left(ex) =>
+        Logger("application").error(s"$ex")
+        Future.failed(new Exception(s"$ex"))
+    })
+  }
+
+
   def handleSubmitRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
@@ -263,39 +293,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
           )(user, messages)))
         },
 
-        validatedInput =>
-          sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
-            (incomeSourceType, id) match {
-              case (SelfEmployment, None) =>
-                val errorMessage: String = s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."
-                Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-                  s"$errorMessage")
-                Future.failed(new Exception(s"$errorMessage"))
-              case (SelfEmployment, Some(incomeSourceId)) =>
-                val result = Redirect(redirectAction)
-                sessionService.setMongoKey(
-                  CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
-                ).flatMap {
-                  case Right(_) => {
-                    sessionService.setMongoKey(
-                      CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId, JourneyType(Cease, incomeSourceType)
-                    ).flatMap {
-                      case Right(_) => Future.successful(result)
-                      case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
-                    }
-                  }
-                  case Left(_) => Future.failed(new Error(s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
-                }
-
-              case _ =>
-                val propertyEndDate = validatedInput.date.toString
-                val result = Redirect(redirectAction)
-                sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate, journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
-                  case Right(_) => Future.successful(result)
-                  case Left(exception) => Future.failed(exception)
-                }
-            }
-          }
+        validatedInput => validInputProcess(id, isAgent, incomeSourceType, validatedInput.date, redirectAction)
       )
     }
   } recover {
