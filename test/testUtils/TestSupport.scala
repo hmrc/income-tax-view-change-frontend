@@ -35,6 +35,7 @@ import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
 import services.DateService
+import testConstants.BaseIntegrationTestConstants.testSessionId
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -130,7 +131,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     SessionKeys.authToken -> "Bearer Token"
   ).withHeaders(
     HeaderNames.REFERER -> "/test/url",
-    "X-Session-ID" -> "xssession-12345"
+    "X-Session-ID" -> testSessionId
   )
 
   lazy val fakePostRequestWithActiveSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withMethod("POST").withSession(
