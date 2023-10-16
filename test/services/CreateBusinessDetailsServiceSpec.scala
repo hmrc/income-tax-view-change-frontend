@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import connectors.CreateIncomeSourceConnector
 import connectors.helpers.IncomeSourcesDataHelper
-import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
+import models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -90,6 +90,16 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       result.futureValue match {
         case Left(_) => succeed
         case Right(_) => fail("Incorrect data in the view model")
+      }
+    }
+    "convertToCreateBusinessIncomeSourceRequest" should {
+      "convert to correct CreateBusinessIncomeSourceRequest model " in {
+        val viewModel = createBusinessViewModel
+        val result = UnderTestCreateBusinessDetailsService.convertToCreateBusinessIncomeSourceRequest(viewModel)
+        result shouldBe Right(CreateBusinessIncomeSourceRequest(
+          List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
+            AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
+            Some("someBusinessTrade"), "2022-11-11", "CASH", None, None))))
       }
     }
 
