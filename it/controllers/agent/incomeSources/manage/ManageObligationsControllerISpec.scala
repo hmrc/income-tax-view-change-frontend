@@ -85,7 +85,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
 
         When(s"I call GET $manageSEObligationsShowUrl")
@@ -117,7 +117,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
@@ -159,7 +159,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = None)))
 
         When(s"I call GET $manageSEObligationsShowUrl")

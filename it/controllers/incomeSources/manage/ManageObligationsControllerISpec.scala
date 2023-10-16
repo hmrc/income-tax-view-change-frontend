@@ -91,7 +91,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
 
         And("API 1771  returns a success response")
@@ -120,7 +120,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
     "return the audit event" when {
       "User is authorised" in {
         enable(IncomeSources)
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
@@ -164,7 +164,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $manageSEObligationsShowUrl")
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = None)))
 
         And("API 1771  returns a success response")

@@ -68,7 +68,7 @@ object BaseIntegrationTestConstants {
   val otherTestSelfEmploymentId = "ABC123456780"
   val testPropertyIncomeId = "1234"
   val otherTestPropertyIncomeId = "ABC123456789"
-
+  val testEndDate2022: String = "2022-10-10"
 
   val testTradeName = "business"
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
@@ -77,6 +77,8 @@ object BaseIntegrationTestConstants {
 
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
+
+  val stringTrue = "true"
 
   val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
 

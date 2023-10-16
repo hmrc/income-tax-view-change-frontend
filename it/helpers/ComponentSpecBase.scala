@@ -100,8 +100,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-  val sessionId: String = "xssession-12345"
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
+  val testSessionId: String = "xssession-12345"
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val dateService: DateService = new DateService() {
@@ -185,7 +185,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     buildClient(uri)
-      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
       .get().futureValue
   }
 
@@ -205,7 +205,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> sessionId)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> testSessionId)
         .get().futureValue
     }
 
@@ -220,7 +220,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       buildClient(uri)
         .withFollowRedirects(false)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck",
-          "X-Session-ID" -> sessionId)
+          "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }
 
@@ -331,7 +331,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getAddBusinessName: WSResponse = getWithHeaders("/income-sources/add/business-name",
-      "X-Session-ID" -> sessionId)
+      "X-Session-ID" -> testSessionId)
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)
@@ -425,11 +425,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/add/business-added", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details", session)
+    def getCheckCeaseUKPropertyDetails: WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/uk-property-check-details")
 
-    def postCheckCeaseUKPropertyDetails(session: Map[String, String]): WSResponse =
-      post("/income-sources/cease/uk-property-check-details", session)(Map.empty)
+    def postCheckCeaseUKPropertyDetails: WSResponse =
+      post("/income-sources/cease/uk-property-check-details")(Map.empty)
 
     def getManageIncomeSource: WSResponse = get("/income-sources/manage/view-and-manage-income-sources")
 
@@ -473,11 +473,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/manage/$mode-will-report", additionalCookies)(Map.empty)
     }
 
-    def getCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession("/income-sources/cease/foreign-property-check-details", session)
+    def getCheckCeaseForeignPropertyDetails: WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/foreign-property-check-details")
 
-    def postCheckCeaseForeignPropertyDetails(session: Map[String, String]): WSResponse =
-      post(s"/income-sources/cease/foreign-property-check-details/", session)(Map.empty)
+    def postCheckCeaseForeignPropertyDetails: WSResponse =
+      post(s"/income-sources/cease/foreign-property-check-details/")(Map.empty)
 
 
     def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -495,17 +495,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
-    def getCheckCeaseBusinessDetails(session: Map[String, String]): WSResponse =
-      getWithClientDetailsInSession("/income-sources/cease/business-check-details", session)
+    def getCheckCeaseBusinessDetails: WSResponse =
+      getWithClientDetailsInSession("/income-sources/cease/business-check-details")
 
-    def postCheckCeaseBusinessDetails(session: Map[String, String]): WSResponse =
-      post("/income-sources/cease/business-check-details", session)(Map.empty)
+    def postCheckCeaseBusinessDetails: WSResponse =
+      post("/income-sources/cease/business-check-details")(Map.empty)
 
     def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-foreign-property-success", session)
 
     def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-uk-property-success", session)
 
-    def getBusinessCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/income-sources/cease/cease-business-success", session)
+    def getBusinessCeasedObligations: WSResponse = get(uri = "/income-sources/cease/cease-business-success")
 
     def getAddChangeBusinessAddress: WSResponse =
       get("/income-sources/add/change-business-address-lookup")

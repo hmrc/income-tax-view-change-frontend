@@ -144,7 +144,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         And("API 1771  returns a success response")
@@ -170,7 +170,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is disabled")
         disable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         When(s"I call GET $confirmReportingMethodShowSoleTraderBusinessUrl")
@@ -194,7 +194,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       "Income Sources FS is Enabled" in {
         enable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -294,7 +294,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         And("API 1771  returns a success response")
@@ -319,7 +319,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         And("API 1771  returns a success response")
@@ -342,7 +342,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         enable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

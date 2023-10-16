@@ -260,7 +260,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         And("API 1771  returns a success response")
@@ -284,7 +284,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
         And("API 1771  returns a success response")
@@ -330,7 +330,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        await(sessionService.setMongoData(UIJourneySessionData(sessionId, "MANAGE-SE",
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
           manageIncomeSourceData = None)))
 
         And("API 1771  returns a success response")

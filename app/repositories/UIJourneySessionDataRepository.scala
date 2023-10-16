@@ -105,4 +105,5 @@ class UIJourneySessionDataRepository @Inject()(
       .deleteOne(dataFilter(data))
       .toFuture()
       .map(_ => true)
+
 }
