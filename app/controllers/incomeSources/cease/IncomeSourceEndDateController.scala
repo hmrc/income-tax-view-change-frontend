@@ -251,28 +251,31 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def validInputProcess(id: Option[String], isAgent: Boolean,
                         incomeSourceType: IncomeSourceType, date: LocalDate, redirectAction: Call)
                        (implicit user: MtdItUser[_]) = {
-    val composedResult = for {
-      _ <- sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
-      t <- {
-        (incomeSourceType, id) match {
-          case (SelfEmployment, None) => Future { Left(new Exception(s"errorMessage")) }
-          case (SelfEmployment, Some(incomeSourceId)) => {
-            for {
-              _ <- EitherT(sessionService.setMongoKey(CeaseIncomeSourceData.dateCeasedField, date.toString, JourneyType(Cease, incomeSourceType)))
-              setKeyB <- EitherT(sessionService.setMongoKey(CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId, JourneyType(Cease, incomeSourceType)))
-            } yield (setKeyB)
-          }.value
-          case _ =>
-            sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = date.toString, journeyType = JourneyType(Cease, incomeSourceType))
+    {
+      for {
+        _ <- sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
+        t <- {
+          (incomeSourceType, id) match {
+            case (SelfEmployment, None) => Future {
+              Left(new Exception(s"errorMessage"))
+            }
+            case (SelfEmployment, Some(incomeSourceId)) => {
+              for {
+                _ <- EitherT(sessionService.setMongoKey(CeaseIncomeSourceData.dateCeasedField, date.toString, JourneyType(Cease, incomeSourceType)))
+                setKeyB <- EitherT(sessionService.setMongoKey(CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId, JourneyType(Cease, incomeSourceType)))
+              } yield (setKeyB)
+            }.value
+            case _ =>
+              sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = date.toString, journeyType = JourneyType(Cease, incomeSourceType))
+          }
         }
+      } yield t match {
+        case Right(_) => Future { Redirect(redirectAction) }
+        case Left(ex) =>
+          Logger("application").error(s"$ex")
+          Future.failed(new Exception(s"$ex"))
       }
-    } yield t
-    composedResult.flatMap(r => r match {
-      case Right(_) => Future { Redirect(redirectAction) }
-      case Left(ex) =>
-        Logger("application").error(s"$ex")
-        Future.failed(new Exception(s"$ex"))
-    })
+    }.flatten
   }
 
 
