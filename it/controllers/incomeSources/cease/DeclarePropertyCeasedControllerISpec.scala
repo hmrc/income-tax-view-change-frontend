@@ -17,17 +17,17 @@
 package controllers.incomeSources.cease
 
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
-import models.incomeSourceDetails.CeaseIncomeSourceData.{ceasePropertyDeclare, dateCeasedField}
+import models.incomeSourceDetails.CeaseIncomeSourceData.ceasePropertyDeclare
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{stringTrue, testEndDate2022, testMtditid, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global

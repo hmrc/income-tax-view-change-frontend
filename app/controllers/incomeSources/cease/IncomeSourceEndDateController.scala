@@ -264,39 +264,37 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         },
 
         validatedInput =>
-          sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap {
-            case true =>
-              (incomeSourceType, id) match {
-                case (SelfEmployment, None) =>
-                  val errorMessage: String = s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."
-                  Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-                    s"$errorMessage")
-                  Future.failed(new Exception(s"$errorMessage"))
-                case (SelfEmployment, Some(incomeSourceId)) =>
-                  val result = Redirect(redirectAction)
-                  sessionService.setMongoKey(
-                    CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
-                  ).flatMap {
-                    case Right(true) => {
-                      sessionService.setMongoKey(
-                        CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId, JourneyType(Cease, incomeSourceType)
-                      ).flatMap {
-                        case Right(_) => Future.successful(result)
-                        case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
-                      }
+          sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
+            (incomeSourceType, id) match {
+              case (SelfEmployment, None) =>
+                val errorMessage: String = s"[IncomeSourceEndDateController][handleSubmitRequest]: missing income source ID - $id."
+                Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+                  s"$errorMessage")
+                Future.failed(new Exception(s"$errorMessage"))
+              case (SelfEmployment, Some(incomeSourceId)) =>
+                val result = Redirect(redirectAction)
+                sessionService.setMongoKey(
+                  CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
+                ).flatMap {
+                  case Right(_) => {
+                    sessionService.setMongoKey(
+                      CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId, JourneyType(Cease, incomeSourceType)
+                    ).flatMap {
+                      case Right(_) => Future.successful(result)
+                      case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
                     }
-                    case _ => Future.failed(new Error(s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
                   }
+                  case Left(_) => Future.failed(new Error(s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
+                }
 
-                case _ =>
-                  val propertyEndDate = validatedInput.date.toString
-                  val result = Redirect(redirectAction)
-                  sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate, journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
-                    case Right(_) => Future.successful(result)
-                    case Left(exception) => Future.failed(exception)
-                  }
-              }
-            case false => Future.failed(new Error("Failed to create mongo session"))
+              case _ =>
+                val propertyEndDate = validatedInput.date.toString
+                val result = Redirect(redirectAction)
+                sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate, journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
+                  case Right(_) => Future.successful(result)
+                  case Left(exception) => Future.failed(exception)
+                }
+            }
           }
       )
     }
