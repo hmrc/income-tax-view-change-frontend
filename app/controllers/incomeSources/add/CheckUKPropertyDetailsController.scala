@@ -22,8 +22,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
+import enums.JourneyType.{Add, JourneyType}
 import implicits.ImplicitDateFormatter
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -36,6 +38,7 @@ import utils.IncomeSourcesUtils
 import utils.IncomeSourcesUtils.getUKPropertyDetailsFromSession
 import views.html.incomeSources.add.CheckUKPropertyDetails
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -97,13 +100,12 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         }
   }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val backUrl = getBackUrl(isAgent)
     val postAction = getSubmitUrl(isAgent)
     val errorHandler = getErrorHandler(isAgent)
 
-    withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(sessionService)(user, ec).map(_.toOption).map {
+      getUKPropertyDetailsFromSession(user, ec).map(_.toOption).map {
         case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
           Ok(
             checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
@@ -113,7 +115,27 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         case None => Logger("application").error(
           s"[CheckUKPropertyDetailsController][handleRequest] - Error: Unable to build UK property details")
           errorHandler.showInternalServerError()
-      }
+    }
+  }
+
+  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
+    for {
+      startDate <- sessionService.getMongoKeyTyped[String](dateStartedField, JourneyType(Add, UkProperty))
+      accMethod <- sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, UkProperty))
+    } yield (startDate, accMethod) match {
+      case (Right(dateMaybe), Right(methodMaybe)) =>
+        val maybeModel = for {
+          ukPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+          cashOrAccrualsFlag <- methodMaybe
+        } yield {
+          CheckUKPropertyViewModel(
+            tradingStartDate = ukPropertyStartDate,
+            cashOrAccrualsFlag = cashOrAccrualsFlag)
+        }
+        maybeModel.map(Right(_))
+          .getOrElse(Left(new Error("Unable to construct UK property view model")))
+      case (_, _) =>
+        Left(new Error("Error occurred when retrieving start dat and accounting method from session storage"))
     }
   }
 
@@ -137,7 +159,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     else routes.IncomeSourceNotAddedController.show(UkProperty)
 
     withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(sessionService)(user, ec) flatMap {
+      getUKPropertyDetailsFromSession(user, ec) flatMap {
         case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
             case Left(ex) => Logger("application").error(

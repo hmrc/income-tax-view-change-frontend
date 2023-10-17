@@ -20,11 +20,16 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.UkProperty
+import enums.IncomeSourceJourney.UkProperty.journeyType
+import enums.JourneyType.{Add, JourneyType}
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import mocks.services.MockSessionService
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -45,8 +50,14 @@ import views.html.incomeSources.add.{CheckBusinessDetails, CheckUKPropertyDetail
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
+class CheckUKPropertyDetailsControllerSpec extends TestSupport
+  with MockAuthenticationPredicate
+  with MockIncomeSourceDetailsPredicate
+  with MockNavBarEnumFsPredicate
+  with FeatureSwitching
+  with ImplicitDateFormatter
+  with IncomeSourcesUtils
+  with MockSessionService{
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockCheckBusinessDetails: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
@@ -55,7 +66,8 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
   val date = "2023-05-01"
   val propertyStartDate: LocalDate = LocalDate.parse(date)
   val testUKPropertyStartDate: String = LocalDate.of(2023, 1, 2).toString
-  val cash: String = messages("incomeSources.add.accountingMethod.cash")
+  val accruals: String = messages("incomeSources.add.accountingMethod.accruals")
+  val journeyType: JourneyType = JourneyType(Add, UkProperty)
 
 
   lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty).url
@@ -74,7 +86,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
     retrieveBtaNavBar = MockNavBarPredicate
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
-    sessionService = app.injector.instanceOf[SessionService],
+    sessionService = mockSessionService,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -97,20 +109,23 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestCheckUKPropertyDetailsController.show()(
-          fakeRequestWithActiveSession
-            .withSession(
-              addUkPropertyStartDate -> date,
-              addIncomeSourcesAccountingMethod -> "CASH"
-            ))
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
+
+        val result = TestCheckUKPropertyDetailsController.show()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
+
+
+        //mockSessionService.getMongoKey(dateStartedField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(date))
 
         status(result) shouldBe OK
         document.title shouldBe TestCheckUKPropertyDetailsController.title
         document.select("h1:nth-child(1)").text shouldBe TestCheckUKPropertyDetailsController.heading
         document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe propertyStartDate.toLongDate
-        document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe cash
+        document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe accruals
 
       }
     }
@@ -122,18 +137,20 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
         val incomeSourceId = "incomeSourceId"
         when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse(incomeSourceId))
           })
 
-        val result = TestCheckUKPropertyDetailsController.submit()(
-          fakeRequestWithActiveSession
-            .withSession(
-              addUkPropertyStartDate -> date,
-              addIncomeSourcesAccountingMethod -> "CASH"
-            ))
+
+        val result = TestCheckUKPropertyDetailsController.submit()(fakeRequestWithActiveSession)
+
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.show(incomeSourceId).url
@@ -149,15 +166,13 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
 
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
         when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any())).
           thenReturn(Future(Left(new Error(s"Failed to created incomeSources"))))
-        val result = TestCheckUKPropertyDetailsController.submit()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.addUkPropertyStartDate -> testUKPropertyStartDate,
-              SessionKeys.addIncomeSourcesAccountingMethod -> cash
-            )
-        )
+        val result = TestCheckUKPropertyDetailsController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(errorUrl)
@@ -213,12 +228,11 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestCheckUKPropertyDetailsController.showAgent()(
-          fakeRequestConfirmedClient()
-            .withSession(
-              addUkPropertyStartDate -> date,
-              addIncomeSourcesAccountingMethod -> "CASH"
-            ))
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
+        val result = TestCheckUKPropertyDetailsController.showAgent()(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -226,7 +240,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         document.title shouldBe TestCheckUKPropertyDetailsController.agentsTitle
         document.select("h1:nth-child(1)").text shouldBe TestCheckUKPropertyDetailsController.heading
         document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe propertyStartDate.toLongDate
-        document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe cash
+        document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe accruals
       }
     }
 
@@ -237,6 +251,11 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
         val incomeSourceId = "incomeSourceId"
         when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any()))
           .thenReturn(Future {
@@ -244,11 +263,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
           })
 
         val result = TestCheckUKPropertyDetailsController.submitAgent()(
-          fakeRequestConfirmedClient()
-            .withSession(
-              addUkPropertyStartDate -> date,
-              addIncomeSourcesAccountingMethod -> "CASH"
-            ))
+          fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.showAgent(incomeSourceId).url
@@ -264,16 +279,17 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         val incomeSourceId = "incomeSourceId"
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
         when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse(incomeSourceId))
           })
 
-        val result = TestCheckUKPropertyDetailsController.submitAgent()(
-          fakeRequestConfirmedClient()
-            .withSession(
-              addUkPropertyStartDate -> testUKPropertyStartDate
-            ))
+        val result = TestCheckUKPropertyDetailsController.submitAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(agentErrorUrl)
@@ -306,14 +322,17 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse("incomeSourceId"))
           })
 
         val result = TestCheckUKPropertyDetailsController.showAgent()(
-          fakeRequestConfirmedClient()
-            .withSession())
+          fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
