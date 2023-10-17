@@ -97,6 +97,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
   val testErrorNotFoundStatus: Int = Status.NOT_FOUND
   val testErrorMessage = "Dummy Error Message"
+  val testSessionId = "xsession-12345"
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testListLink = Seq(

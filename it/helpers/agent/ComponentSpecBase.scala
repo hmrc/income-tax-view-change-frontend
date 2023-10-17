@@ -39,7 +39,8 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId, testSessionIdAgent}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionIdAgent}
+import testConstants.BaseTestConstants.testSessionId
 
 import java.time.LocalDate
 import java.time.Month.APRIL
