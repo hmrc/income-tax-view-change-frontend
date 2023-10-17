@@ -35,7 +35,6 @@ import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
 import services.DateService
-import testConstants.BaseIntegrationTestConstants.testSessionId
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
