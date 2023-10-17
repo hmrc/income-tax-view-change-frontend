@@ -81,6 +81,11 @@ class CalculationListServiceSpec extends TestSupport with MockIncomeTaxViewChang
         setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListMin)
         TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe None
       }
+      "returns Some(false) given 404 response from 1404" in {
+        val error = CalculationListErrorModel(NOT_FOUND, "not found")
+        setupGetLegacyCalculationList(testNino, taxYearEnd)(error)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
+      }
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
         setupGetLegacyCalculationList(testNino, taxYearEnd)(error)
@@ -102,6 +107,11 @@ class CalculationListServiceSpec extends TestSupport with MockIncomeTaxViewChang
       "returns None" in {
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListMin)
         TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe None
+      }
+      "returns Some(false) given 404 response from 1896" in {
+        val error = CalculationListErrorModel(NOT_FOUND, "not found")
+        setupGetCalculationList(testNino, testTaxYearRange)(error)
+        TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
       }
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
