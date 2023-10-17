@@ -48,12 +48,14 @@ class CalculationListService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVi
     if (taxYear <= 2023) {
       incomeTaxViewChangeConnector.getLegacyCalculationList(Nino(user.nino), taxYear.toString).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised)
+        case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
         case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
       }
     } else {
       val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
       incomeTaxViewChangeConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised)
+        case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
         case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
       }
     }
