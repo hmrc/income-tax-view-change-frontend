@@ -17,6 +17,7 @@
 package services
 
 import auth.MtdItUser
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import connectors.IncomeTaxViewChangeConnector
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
@@ -27,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationListService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
+class CalculationListService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector, dateService: DateService)
                                       (implicit ec: ExecutionContext) {
 
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
@@ -44,21 +45,35 @@ class CalculationListService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVi
     incomeTaxViewChangeConnector.getCalculationList(nino, taxYearRange)
   }
 
-  def isTaxYearCrystallised(taxYear: Int)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] = {
-    if (taxYear <= 2023) {
-      incomeTaxViewChangeConnector.getLegacyCalculationList(Nino(user.nino), taxYear.toString).flatMap {
-        case res: CalculationListModel => Future.successful(res.crystallised)
-        case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
-        case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
-      }
-    } else {
-      val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
-      incomeTaxViewChangeConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
-        case res: CalculationListModel => Future.successful(res.crystallised)
-        case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
-        case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
-      }
+  private def getLegacyCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+    incomeTaxViewChangeConnector.getLegacyCalculationList(Nino(user.nino), taxYear.toString).flatMap {
+      case res: CalculationListModel => Future.successful(res.crystallised)
+      case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
+      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
     }
+  }
 
+  private def getTYSCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+    val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
+    incomeTaxViewChangeConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
+      case res: CalculationListModel => Future.successful(res.crystallised)
+      case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
+      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+    }
+  }
+
+  def isTaxYearCrystallised(taxYear: Int, isEnabledTimeMachineAddYear: Boolean = false)(
+    implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[Boolean]] = {
+
+    val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabledTimeMachineAddYear)
+    val futureTaxYear = taxYear >= currentTaxYearEnd
+    val legacyTaxYear = taxYear <= 2023
+    (futureTaxYear, legacyTaxYear) match {
+      case (true, _) =>
+        // tax year cannot be crystallised unless it is in the past
+        Future.successful(Some(false))
+      case (_, true) => getLegacyCrystallisationResult(user, taxYear)
+      case (_, false) => getTYSCrystallisationResult(user, taxYear)
+    }
   }
 }

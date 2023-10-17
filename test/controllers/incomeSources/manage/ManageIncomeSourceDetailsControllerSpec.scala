@@ -126,9 +126,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any))
           .thenReturn(Future.successful(Some(false)))
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
           .thenReturn(Future.successful(Some(false)))
 
       case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
@@ -136,9 +136,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any))
           .thenReturn(Future.successful(Some(true)))
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
           .thenReturn(Future.successful(Some(true)))
 
       case NON_ELIGIBLE_ITSA_STATUS =>

@@ -19,7 +19,7 @@ package controllers.incomeSources.manage
 import audit.AuditingService
 import audit.models.ManageYourDetailsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -173,8 +173,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     latencyDetails match {
       case Some(x) =>
         for {
-          i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
-          j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
+          i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt, isEnabled(TimeMachineAddYear))
+          j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt, isEnabled(TimeMachineAddYear))
         } yield {
           Some(List(i.get, j.get))
         }
