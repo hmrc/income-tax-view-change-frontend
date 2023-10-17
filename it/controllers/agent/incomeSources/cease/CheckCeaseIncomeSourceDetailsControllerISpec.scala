@@ -59,7 +59,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val redirectUriSE = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url
   val requestSE: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
-    incomeSourceId = business1.incomeSourceId,
+    incomeSourceID = business1.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
@@ -72,7 +72,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val redirectUriUK = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url
   val requestUK: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
-    incomeSourceId = ukProperty.incomeSourceId,
+    incomeSourceID = ukProperty.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
@@ -85,7 +85,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val redirectUriFP = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url
   val requestFP: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
-    incomeSourceId = foreignProperty.incomeSourceId,
+    incomeSourceID = foreignProperty.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 

@@ -30,25 +30,25 @@ object UpdateIncomeSourceTestConstants {
   val taxYearSpecific = TaxYearSpecific("2022", true)
   val request: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
-    incomeSourceId = incomeSourceId,
+    incomeSourceID = incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
   val requestTaxYearSpecific: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
-    incomeSourceId = incomeSourceId,
+    incomeSourceID = incomeSourceId,
     taxYearSpecific = Some(taxYearSpecific)
   )
 
   val requestTaxYearSpecificJson: JsValue = Json.obj(
     "nino" -> testNino,
-    "incomeSourceId" -> incomeSourceId,
+    "incomeSourceID" -> incomeSourceId,
     "taxYearSpecific" -> Json.obj("taxYear" -> "2022", "latencyIndicator" -> true)
   )
 
   val requestJson: JsValue = Json.obj(
     "nino" -> testNino,
-    "incomeSourceId" -> incomeSourceId,
+    "incomeSourceID" -> incomeSourceId,
     "cessation" -> Json.obj("cessationIndicator" -> true, "cessationDate" -> cessationDate)
   )
 
