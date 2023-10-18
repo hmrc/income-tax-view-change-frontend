@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType, Manage}
 import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys
 import play.api.Logger
@@ -29,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, SessionKeyValue}
 import views.html.incomeSources.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
@@ -158,9 +159,9 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       case (false, true) => (checkDetailsBackUrl, submitChangeAction, checkDetailsRedirect)
       case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
     }
-    sessionService.get(SessionKeys.businessTrade).flatMap {
-      case Right(businessTradeName) =>
-        BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeName).fold(
+    sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
+      case true =>
+        BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), Some("businessTradeName-test")).fold(
           formWithErrors =>
             Future.successful(
               Ok(addBusinessView(formWithErrors,
@@ -170,15 +171,23 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                 useFallbackLink = true))),
 
           formData => {
-            val redirect = Redirect(redirectLocal)
-            sessionService.set(SessionKeys.businessName, formData.name, redirect).flatMap {
-              case Right(result) => Future.successful(result)
+            sessionService.setMongoKey(
+              SessionKeyValue(
+                SessionKeys.businessName,
+                formData.name
+              ),
+              JourneyType(Add, SelfEmployment)
+            ).flatMap {
+              case Right(true) =>
+                Future.successful(Redirect(redirectLocal))
+              case Right(false) =>
+                // TODO: CHANGE BELOW
+                Future.failed(new Error("FAIL"))
               case Left(exception) => Future.failed(exception)
             }
           }
         )
-
-      case Left(exception) => Future.failed(exception)
+      case false => Future.failed(new Error("failed to create session"))
     }
   }.recover {
     case exception =>

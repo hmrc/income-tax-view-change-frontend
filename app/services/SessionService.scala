@@ -17,17 +17,22 @@
 package services
 
 import auth.MtdItUser
+import config.FrontendAppConfig
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.{AesGcmAdCrypto, SessionKeyValue}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
+class SessionService @Inject()(
+                                val uiJourneySessionDataRepository: UIJourneySessionDataRepository,
+                                implicit val aesGcmAdCrypto: AesGcmAdCrypto,
+                                val appConfig: FrontendAppConfig)  {
 
   def get(key: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
     Future {
@@ -99,16 +104,25 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
-  def setMongoKey(key: String, value: String, journeyType: JourneyType)
+  def setMongoKey(sessionKeyValue: SessionKeyValue, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None)
+
+    val sessionId = hc.sessionId.get.value
+    val uiJourneySessionData = UIJourneySessionData(sessionId, journeyType.toString, None)
     val jsonAccessorPath = journeyType.operation match {
-      case Add => AddIncomeSourceData.getJSONKeyPath(key)
-      case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
-      case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
+      case Add => AddIncomeSourceData.getJSONKeyPath(sessionKeyValue.key)
+      case Manage => ManageIncomeSourceData.getJSONKeyPath(sessionKeyValue.key)
+      case Cease => CeaseIncomeSourceData.getJSONKeyPath(sessionKeyValue.key)
     }
-    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
-      result => result.wasAcknowledged() match {
+
+    val encrpytedValue = sessionKeyValue.encrypted(aesGcmAdCrypto, sessionId).value.value
+
+    uiJourneySessionDataRepository.updateData(
+      uiJourneySessionData,
+      jsonAccessorPath,
+      if(appConfig.useEncryption) encrpytedValue else sessionKeyValue.value
+    ) map(
+      _.wasAcknowledged() match {
         case true => Right(true)
         case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
       }

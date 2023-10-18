@@ -21,17 +21,21 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.Add
+import forms.utils.SessionKeys
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, SessionKeyValue}
 import views.html.incomeSources.add.AddIncomeSources
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+import enums.JourneyType.{Add, JourneyType}
 
 @Singleton
 class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources,
@@ -55,6 +59,8 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+
+
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -88,16 +94,15 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>
-          withIncomeSourcesRemovedFromSession {
+          for {
+            // TODO: REMOVE HARDCODED JOURNEY
+            _ <- sessionService.createSession("ADD-SE")
+          } yield {
             Ok(addIncomeSources(
               sources = viewModel,
               isAgent = isAgent,
               backUrl = backUrl
             ))
-          } recover {
-            case ex: Exception =>
-              Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
-              showInternalServerError(isAgent)
           }
         case Failure(ex) =>
           Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
