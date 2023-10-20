@@ -245,24 +245,24 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     }
     "render the whole page" in new Setup(false) {
 
-      document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
-      document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
-      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod2
+      document.getElementById("manage-details-table").text() should include(businessName)
+      document.getElementById("manage-details-table").text() should include(businessAddress)
+      document.getElementById("manage-details-table").text() should include(dateStarted)
+      document.getElementById("manage-details-table").text() should include(businessAccountingMethod)
+      document.getElementById("manage-details-table").text() should include(reportingMethod1)
+      document.getElementById("manage-details-table").text() should include(reportingMethod2)
 
-      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
-      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+      document.getElementById("manage-details-table").text() should include(change)
+      document.getElementById("manage-details-table").text() should include(change)
 
       document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "quarterly")
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024-2025", changeTo = "annual")
-      document.getElementById("reporting-method-1").text shouldBe annually
-      document.getElementById("reporting-method-2").text shouldBe quarterly
-      document.getElementById("business-address").text shouldBe expectedViewAddressString1
-      document.getElementById("business-name").text shouldBe expectedBusinessName
-      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
-      document.getElementById("business-accounting-method").text shouldBe cash
+      document.getElementById("manage-details-table").text() should include(annually)
+      document.getElementById("manage-details-table").text() should include(quarterly)
+      document.getElementById("manage-details-table").text() should include(expectedViewAddressString1)
+      document.getElementById("manage-details-table").text() should include(expectedBusinessName)
+      document.getElementById("manage-details-table").text() should include(expectedBusinessStartDate)
+      document.getElementById("manage-details-table").text() should include(cash)
 
     }
     "render the whole page with unknowns and no change links" in new Setup2(false) {

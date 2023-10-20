@@ -57,15 +57,15 @@
     viewModel.incomeSourceType match {
         case SelfEmployment =>
             controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, SelfEmployment).url
-        case UkProperty  =>
+        case UkProperty =>
             controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, UkProperty).url
-        case ForeignProperty  =>
+        case ForeignProperty =>
             controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, ForeignProperty).url
     }
 }
 
 @changeToValue(currentMethod: String) = @{
-    if (currentMethod == "Q") {
+    if(currentMethod == "Q") {
         "annual"
     } else {
         "quarterly"
@@ -115,11 +115,11 @@
             ),
             value = Value(
                 content = (
-                    getLongAddressFromBusinessAddressDetails(viewModel.address) match {
-                        case Some(x) =>  HtmlContent(s"""$x""")
-                        case None => Text(messages("incomeSources.generic.unknown"))
-                    }
-                )
+                        getLongAddressFromBusinessAddressDetails(viewModel.address) match {
+                            case Some(x) => HtmlContent(s"""$x""")
+                            case None => Text(messages("incomeSources.generic.unknown"))
+                        }
+                        )
             )
         )
     )
@@ -154,7 +154,9 @@
                 items = Seq(
                     ActionItem(
                         href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
-                        content = Text(getMessage("change"))
+                        content = Text(getMessage("change")),
+                        visuallyHiddenText = Some(getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1, viewModel.latencyDetails.get.taxYear2)),
+                        attributes = Map("id" -> "change-link-1")
                     )
                 )
             ))
@@ -170,7 +172,9 @@
                 items = Seq(
                     ActionItem(
                         href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),
-                        content = Text(getMessage("change"))
+                        content = Text(getMessage("change")),
+                        visuallyHiddenText = Some(getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2, (viewModel.latencyDetails.get.taxYear2.toInt + 1).toString)),
+                        attributes = Map("id" -> "change-link-2")
                     )
                 )
             ))
@@ -192,7 +196,9 @@
     ))
 
     @govukSummaryList(SummaryList(
-        rows = {if (viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty} ++ Seq(
+        rows = {
+            if(viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty
+        } ++ Seq(
             SummaryListRow(
                 key = Key(
                     content = Text(getMessage("date-started"))
@@ -214,9 +220,11 @@
                     content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.businessAccountingMethod)))
                 )
             ))
-                ++ {if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
-            && viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty}
-        )
+                ++ {
+            if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
+                    && viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty
+        },
+        attributes = Map("id" -> "manage-details-table")),
     )
     <br>
     <br>
