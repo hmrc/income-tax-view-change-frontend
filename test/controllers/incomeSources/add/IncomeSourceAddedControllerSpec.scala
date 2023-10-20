@@ -384,7 +384,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             "123456",
             None,
             None,
-            Some("03-foreign-property"),
+            Some("foreign-property"),
             Some(LocalDate.of(2022, 4, 21)),
             None
           )))
@@ -423,7 +423,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             "123",
             None,
             None,
-            Some("03-foreign-property"),
+            Some("foreign-property"),
             Some(LocalDate.of(2022, 4, 21)),
             None
           )))
