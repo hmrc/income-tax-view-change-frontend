@@ -120,12 +120,12 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
 
   def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
     for {
-      startDate <- sessionService.getMongoKeyTyped[String](dateStartedField, JourneyType(Add, UkProperty))
+      startDate <- sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, UkProperty))
       accMethod <- sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, UkProperty))
     } yield (startDate, accMethod) match {
       case (Right(dateMaybe), Right(methodMaybe)) =>
         val maybeModel = for {
-          ukPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+          ukPropertyStartDate <- dateMaybe
           cashOrAccrualsFlag <- methodMaybe
         } yield {
           CheckUKPropertyViewModel(

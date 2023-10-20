@@ -66,20 +66,20 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
 
   val testJourneyTypeString: String = JourneyType(Add, UkProperty).toString
 
-  val testAddIncomeSourceData = AddIncomeSourceData(
-    dateStarted = Some(testPropertyStartDate),
-    incomeSourcesAccountingMethod = Some(testPropertyAccountingMethod)
-  )
+//  val testAddIncomeSourceData = AddIncomeSourceData(
+//    dateStarted = Some(testPropertyStartDate),
+//    incomeSourcesAccountingMethod = Some(testPropertyAccountingMethod)
+//  )
+//
+//  val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData(
+//    sessionId = testSessionId,
+//    journeyType = testJourneyTypeString,
+//    addIncomeSourceData = Some(testAddIncomeSourceData))
 
-  val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = testJourneyTypeString,
-    addIncomeSourceData = Some(testAddIncomeSourceData))
-
-//  override def beforeEach(): Unit = {
-//    super.beforeEach()
-//    await(uiRepository.deleteOne(UIJourneySessionData(testSessionId, testJourneyTypeString)))
-//  }
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(uiRepository.deleteOne(UIJourneySessionData(testSessionId, testJourneyTypeString)))
+  }
 
 
   s"calling GET ${CheckUKPropertyDetails.showUrl}" should {
@@ -89,11 +89,9 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        //sessionService.createSession(testJourneyTypeString)
 
-//        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, testJourneyTypeString, addIncomeSourceData =
-//          Some(AddIncomeSourceData(dateStarted = Some(testPropertyStartDate), incomeSourcesAccountingMethod = Some(testPropertyAccountingMethod))))))
-        await(sessionService.setMongoData(testUIJourneySessionData))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, testJourneyTypeString, addIncomeSourceData =
+          Some(AddIncomeSourceData(dateStarted = Some(testPropertyStartDate), incomeSourcesAccountingMethod = Some(testPropertyAccountingMethod))))))
 
 
         When(s"I call GET ${CheckUKPropertyDetails.showUrl}")
@@ -148,11 +146,10 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
 
         Given("I wiremock stub a successful Create Income Sources (UK Property) response")
         val createResponseJson = List(CreateIncomeSourceResponse("1234567890"))
-        val testBody = Map(
-          "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
-          "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),
-          "ukPropertyDetails.startDate" -> Seq("2011-01-01")
-        )
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, testJourneyTypeString, addIncomeSourceData =
+          Some(AddIncomeSourceData(dateStarted = Some(testPropertyStartDate), incomeSourcesAccountingMethod = Some(testPropertyAccountingMethod))))))
+
 
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, createResponseJson)
 

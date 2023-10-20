@@ -21,9 +21,11 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.ForeignProperty
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import forms.utils.SessionKeys._
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
 import play.api.Logger
@@ -108,8 +110,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
   def getDetails(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckForeignPropertyViewModel]] = {
 
-    sessionService.get(foreignPropertyStartDate).flatMap { startDate: Either[Throwable, Option[String]] =>
-      sessionService.get(addIncomeSourcesAccountingMethod).map { accMethod: Either[Throwable, Option[String]] =>
+    sessionService.getMongoKeyTyped[String](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[String]] =>
+      sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, ForeignProperty)).map { accMethod: Either[Throwable, Option[String]] =>
         val errors: Seq[String] = getErrors(startDate, accMethod)
         val result: Option[CheckForeignPropertyViewModel] = getResult(startDate, accMethod)
 
@@ -211,12 +213,13 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
             Future.successful(Redirect(redirectErrorUrl))
 
           case Right(CreateIncomeSourceResponse(id)) =>
-            withIncomeSourcesRemovedFromSession(
-              if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
-              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
-            ) recover {
-              case _: Exception => Redirect(redirectErrorUrl)
-            }
+            sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+            Future.successful(if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
+            else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
+            )
+              .recover {
+                case _: Exception => Redirect(redirectErrorUrl)
+              }
         }
       case Left(_) =>
         Logger("application").error(
