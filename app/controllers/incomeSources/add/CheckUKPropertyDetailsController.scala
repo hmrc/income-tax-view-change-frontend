@@ -154,25 +154,21 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         }
   }
 
-  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
     else routes.IncomeSourceNotAddedController.show(UkProperty)
 
-    withIncomeSourcesFS {
       getUKPropertyDetailsFromSession(user, ec) flatMap {
         case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
             case Left(ex) => Logger("application").error(
               s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              withIncomeSourcesRemovedFromSession(
-                Redirect(redirectErrorUrl)
-              )
+              sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+              Future.successful(Redirect(redirectErrorUrl))
+
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession(
-                Redirect(getUKPropertyReportingMethodUrl(isAgent, id))
-              ) recover {
-                case _: Exception => Redirect(redirectErrorUrl)
-              }
+              sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+              Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
           }.recover {
             case ex: Exception =>
               if (isAgent) {
@@ -193,7 +189,6 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
           ) recover {
             case _: Exception => Redirect(redirectErrorUrl)
           }
-      }
     }
   }
 }

@@ -113,13 +113,12 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
-
         val result = TestCheckUKPropertyDetailsController.show()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
 
-
-        //mockSessionService.getMongoKey(dateStartedField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(date))
+        //TODO - cant access sessionService
+        //sessionService.getMongoKey(incomeSourcesAccountingMethodField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(accruals))
 
         status(result) shouldBe OK
         document.title shouldBe TestCheckUKPropertyDetailsController.title
@@ -148,13 +147,10 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
             Right(CreateIncomeSourceResponse(incomeSourceId))
           })
 
-
         val result = TestCheckUKPropertyDetailsController.submit()(fakeRequestWithActiveSession)
-
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result).get shouldBe routes.UKPropertyReportingMethodController.show(incomeSourceId).url
-
       }
     }
 
@@ -204,14 +200,17 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse("incomeSourceId"))
           })
 
-        val result = TestCheckUKPropertyDetailsController.show()(
-          fakeRequestWithActiveSession
-            .withSession())
+        val result = TestCheckUKPropertyDetailsController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -272,22 +271,19 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
     }
 
     "redirect to custom error page on submit" when {
-      "foreign property model successfully created and user clicks continue button (agent)" in {
+      "Uk property model could not be created and user clicks continue button (agent)" in {
         disableAllSwitches()
         enable(IncomeSources)
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        val incomeSourceId = "incomeSourceId"
 
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
-        when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any()))
-          .thenReturn(Future {
-            Right(CreateIncomeSourceResponse(incomeSourceId))
-          })
+        when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any())).
+          thenReturn(Future(Left(new Error(s"Failed to created incomeSources"))))
 
         val result = TestCheckUKPropertyDetailsController.submitAgent()(fakeRequestConfirmedClient())
 
@@ -319,20 +315,19 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
       "there is session data missing" in {
         disableAllSwitches()
         enable(IncomeSources)
-
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse("incomeSourceId"))
           })
 
-        val result = TestCheckUKPropertyDetailsController.showAgent()(
-          fakeRequestConfirmedClient())
+        val result = TestCheckUKPropertyDetailsController.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

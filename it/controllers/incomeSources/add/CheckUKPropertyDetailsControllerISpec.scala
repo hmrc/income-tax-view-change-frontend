@@ -18,16 +18,30 @@ package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.UkProperty
+import enums.JourneyType.{Add, JourneyType}
 import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+
+import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val uiRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
+
   object CheckUKPropertyDetails {
     val showUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit().url
@@ -41,6 +55,32 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
     val confirmText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.confirm")
   }
 
+  val testPropertyStartDateString: String = "2022-04-21"
+
+  val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
+  val testPropertyAccountingMethod: String = "CASH"
+  val testPropertyAccountingMethodView: String = "Cash basis accounting"
+  val continueButtonText: String = messagesAPI("base.confirm-and-continue")
+  val testJourneyType: JourneyType = JourneyType(Add, UkProperty)
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+
+  val testJourneyTypeString: String = JourneyType(Add, UkProperty).toString
+
+  val testAddIncomeSourceData = AddIncomeSourceData(
+    dateStarted = Some(testPropertyStartDate),
+    incomeSourcesAccountingMethod = Some(testPropertyAccountingMethod)
+  )
+
+  val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = testJourneyTypeString,
+    addIncomeSourceData = Some(testAddIncomeSourceData))
+
+//  override def beforeEach(): Unit = {
+//    super.beforeEach()
+//    await(uiRepository.deleteOne(UIJourneySessionData(testSessionId, testJourneyTypeString)))
+//  }
+
 
   s"calling GET ${CheckUKPropertyDetails.showUrl}" should {
     "200 - render the Check UK Property Details page" when {
@@ -49,8 +89,15 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
+        //sessionService.createSession(testJourneyTypeString)
+
+//        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, testJourneyTypeString, addIncomeSourceData =
+//          Some(AddIncomeSourceData(dateStarted = Some(testPropertyStartDate), incomeSourcesAccountingMethod = Some(testPropertyAccountingMethod))))))
+        await(sessionService.setMongoData(testUIJourneySessionData))
+
+
         When(s"I call GET ${CheckUKPropertyDetails.showUrl}")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-check-details", CheckUKPropertyDetails.completedJourneyCookies)
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-check-details")
 
         result should have(
           httpStatus(OK),
