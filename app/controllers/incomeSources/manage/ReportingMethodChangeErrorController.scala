@@ -28,6 +28,7 @@ import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
+import models.IncomeSources.IncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.mvc._
@@ -76,7 +77,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     }
   }
 
-  private def handleShowRequest(soleTraderBusinessId: Option[String],
+  private def handleShowRequest(soleTraderBusinessId: Option[IncomeSourceId],
                                 incomeSourceType: IncomeSourceType,
                                 isAgent: Boolean
                                )(implicit user: MtdItUser[_]): Future[Result] = {
@@ -102,10 +103,10 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
 
   private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
 
-  private def getManageIncomeSourceDetailsUrl(incomeSourceId: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
+  private def getManageIncomeSourceDetailsUrl(incomeSourceId: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
-      case (_, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
+      case (false, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId.id)
+      case (_, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId.id)
       case (false, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkProperty()
       case (_, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
       case (false, _) => routes.ManageIncomeSourceDetailsController.showForeignProperty()

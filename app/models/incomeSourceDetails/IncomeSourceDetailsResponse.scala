@@ -17,6 +17,7 @@
 package models.incomeSourceDetails
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.IncomeSources.{IncomeSourceId, makeId}
 import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface
@@ -63,7 +64,7 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
     properties.find(_.isOngoingUkProperty)
   }
 
-  def getSoleTraderBusiness(id: String): Option[BusinessDetailsModel] = {
+  def getSoleTraderBusiness(id: IncomeSourceId): Option[BusinessDetailsModel] = {
     businesses.find(_.isOngoingSoleTraderBusiness(id))
   }
 
@@ -71,11 +72,11 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
     businesses.filterNot(_.isCeased)
   }
 
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
+  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[IncomeSourceId] = None): Option[IncomeSourceId] = {
     (incomeSourceType, soleTraderBusinessId) match {
-      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.incomeSourceId)
-      case (UkProperty, _) => getUKProperty.map(_.incomeSourceId)
-      case (ForeignProperty, _) => getForeignProperty.map(_.incomeSourceId)
+      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(x => makeId(x.incomeSourceId) )
+      case (UkProperty, _) => getUKProperty.map(x => makeId(x.incomeSourceId) )
+      case (ForeignProperty, _) => getForeignProperty.map(x => makeId(x.incomeSourceId) )
       case _ => None
     }
   }
