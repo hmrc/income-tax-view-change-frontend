@@ -44,8 +44,8 @@ object PropertyDetailsTestConstants {
   val testPropertyStartDateOption: Option[LocalDate] = Some(LocalDate.of(2022, 1, 1))
   val testPropertyStartDateOption2: Option[LocalDate] = Some(LocalDate.of(2021, 1, 1))
   val testIncomeType = "property-unspecified"
-  val ukIncomeType = "02-uk-property"
-  val foreignIncomeType = "03-foreign-property"
+  val ukIncomeType = "uk-property"
+  val foreignIncomeType = "foreign-property"
 
   val propertyDetails = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,

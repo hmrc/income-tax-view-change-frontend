@@ -233,8 +233,8 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
       for {
         property <- sources.properties.filter(_.isCeased)
         incomeSourceType <- property.incomeSourceType match {
-          case Some("02-uk-property") => Some(UkProperty)
-          case Some("03-foreign-property") => Some(ForeignProperty)
+          case Some("uk-property") => Some(UkProperty)
+          case Some("foreign-property") => Some(ForeignProperty)
           case _ => None
         }
         cessationDate <- property.cessation.flatMap(_.date)
