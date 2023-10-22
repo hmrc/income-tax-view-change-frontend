@@ -18,27 +18,62 @@ package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.UkProperty
-import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
+import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+
+import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val uiRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
   object CheckUKPropertyDetails {
     val showUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submitAgent().url
     val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty).url
     val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent("1234567890").url
     val failureUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(UkProperty).url
-    val completedJourneyCookies: Map[String, String] = Map(addUkPropertyStartDate -> "2022-10-10",
-      addIncomeSourcesAccountingMethod -> "CASH") ++ clientDetailsWithConfirmation
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +
       messagesAPI("incomeSources.add.checkUKPropertyDetails.change") // duplicated due to visually hidden text
     val confirmText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.confirm")
+  }
+
+  val testPropertyStartDateLong: String = "1 January 2023"
+  val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
+  val testPropertyAccountingMethod: String = "CASH"
+  val testPropertyAccountingMethodView: String = "Cash basis accounting"
+  val continueButtonText: String = messagesAPI("base.confirm-and-continue")
+  val testJourneyType: JourneyType = JourneyType(Add, UkProperty)
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+
+  val testJourneyTypeString: String = JourneyType(Add, UkProperty).toString
+
+  val testAddIncomeSourceData = AddIncomeSourceData(
+    dateStarted = Some(testPropertyStartDate),
+    incomeSourcesAccountingMethod = Some(testPropertyAccountingMethod)
+  )
+
+  val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = testJourneyTypeString,
+    addIncomeSourceData = Some(testAddIncomeSourceData))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(uiRepository.deleteOne(UIJourneySessionData(testSessionId, testJourneyTypeString)))
   }
 
 
@@ -50,13 +85,18 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
+        await(sessionService.setMongoData(testUIJourneySessionData))
+
+
         When(s"I call GET ${CheckUKPropertyDetails.showUrl}")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-check-details", CheckUKPropertyDetails.completedJourneyCookies)
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-check-details", clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
           pageTitleAgent("incomeSources.add.checkUKPropertyDetails.heading"),
+          elementTextByID("change-start-date-link-value")(testPropertyStartDateLong),
           elementTextByID("change-start-date-link")(CheckUKPropertyDetails.changeText),
+          elementTextByID("change-accounting-method-link-value")("Cash basis accounting"),
           elementTextByID("change-accounting-method-link")(CheckUKPropertyDetails.changeText),
           elementTextByID("continue-button")(CheckUKPropertyDetails.confirmText)
         )
@@ -84,7 +124,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           When(s"I call GET ${CheckUKPropertyDetails.showUrl}")
-          val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-check-details", CheckUKPropertyDetails.completedJourneyCookies)
+          val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-check-details", clientDetailsWithConfirmation)
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -105,16 +145,16 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
 
         Given("I wiremock stub a successful Create Income Sources (UK Property) response")
         val createResponseJson = List(CreateIncomeSourceResponse("1234567890"))
-        val testBody = Map(
-          "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
-          "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),
-          "ukPropertyDetails.startDate" -> Seq("2011-01-01")
+
+        val formData: Map[String, Seq[String]] = Map(
+          "tradingStartDate" -> Seq("2021-01-01"),
+          "cashOrAccrualsFlag" -> Seq("CASH")
         )
 
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, createResponseJson)
 
         When(s"I call POST ${CheckUKPropertyDetails.submitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", CheckUKPropertyDetails.completedJourneyCookies)(testBody)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -130,16 +170,16 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         Given("I wiremock stub an unsuccessful Create Income Sources (UK Property) response")
-        val testBody = Map(
-          "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
-          "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),
-          "ukPropertyDetails.startDate" -> Seq("2011-01-01")
+
+        val formData: Map[String, Seq[String]] = Map(
+          "tradingStartDate" -> Seq("2021-01-01"),
+          "cashOrAccrualsFlag" -> Seq("CASH")
         )
 
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponse(testMtditid)
 
         When(s"I call POST ${CheckUKPropertyDetails.submitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", CheckUKPropertyDetails.completedJourneyCookies)(testBody)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -155,13 +195,14 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         val createResponseJson = List(CreateIncomeSourceResponse("1234567890"))
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, createResponseJson)
 
-        val testBody = Map(
-          "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
-          "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),
-          "ukPropertyDetails.startDate" -> Seq("2011-01-01")
+
+        val formData: Map[String, Seq[String]] = Map(
+          "tradingStartDate" -> Seq("2021-01-01"),
+          "cashOrAccrualsFlag" -> Seq("CASH")
         )
+
         When(s"I call POST ${CheckUKPropertyDetails.submitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", CheckUKPropertyDetails.completedJourneyCookies)(testBody)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR)
@@ -175,14 +216,13 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         disable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val testBody = Map(
-          "ukPropertyDetails.tradingStartDate" -> Seq("2011-01-01"),
-          "ukPropertyDetails.cashOrAccrualsFlag" -> Seq("CASH"),
-          "ukPropertyDetails.startDate" -> Seq("2011-01-01")
+        val formData: Map[String, Seq[String]] = Map(
+          "tradingStartDate" -> Seq("2021-01-01"),
+          "cashOrAccrualsFlag" -> Seq("CASH")
         )
 
         When(s"I call POST ${CheckUKPropertyDetails.submitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", CheckUKPropertyDetails.completedJourneyCookies)(testBody)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
