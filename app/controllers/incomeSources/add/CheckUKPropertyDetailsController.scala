@@ -105,27 +105,27 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     val postAction = getSubmitUrl(isAgent)
     val errorHandler = getErrorHandler(isAgent)
 
-      getUKPropertyDetailsFromSession(user, ec).map(_.toOption).map {
-        case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
-          Ok(
-            checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
-              isAgent = isAgent,
-              backUrl = backUrl,
-              postAction = postAction))
-        case None => Logger("application").error(
-          s"[CheckUKPropertyDetailsController][handleRequest] - Error: Unable to build UK property details")
-          errorHandler.showInternalServerError()
+    getUKPropertyDetailsFromSession(user, ec).map(_.toOption).map {
+      case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+        Ok(
+          checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
+            isAgent = isAgent,
+            backUrl = backUrl,
+            postAction = postAction))
+      case None => Logger("application").error(
+        s"[CheckUKPropertyDetailsController][handleRequest] - Error: Unable to build UK property details")
+        errorHandler.showInternalServerError()
     }
   }
 
   def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
     for {
-      startDate <- sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, UkProperty))
+      startDate <- sessionService.getMongoKeyTyped[String](dateStartedField, JourneyType(Add, UkProperty))
       accMethod <- sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, UkProperty))
     } yield (startDate, accMethod) match {
       case (Right(dateMaybe), Right(methodMaybe)) =>
         val maybeModel = for {
-          ukPropertyStartDate <- dateMaybe
+          ukPropertyStartDate <- dateMaybe.map(LocalDate.parse)
           cashOrAccrualsFlag <- methodMaybe
         } yield {
           CheckUKPropertyViewModel(
@@ -158,37 +158,37 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
     else routes.IncomeSourceNotAddedController.show(UkProperty)
 
-      getUKPropertyDetailsFromSession(user, ec) flatMap {
-        case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
-          businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
-            case Left(ex) => Logger("application").error(
-              s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              sessionService.deleteMongoData(JourneyType(Add, UkProperty))
-              Future.successful(Redirect(redirectErrorUrl))
+    getUKPropertyDetailsFromSession(user, ec) flatMap {
+      case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+        businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
+          case Left(ex) => Logger("application").error(
+            s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+            sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+            Future.successful(Redirect(redirectErrorUrl))
 
-            case Right(CreateIncomeSourceResponse(id)) =>
-              sessionService.deleteMongoData(JourneyType(Add, UkProperty))
-              Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
-          }.recover {
-            case ex: Exception =>
-              if (isAgent) {
-                Logger("application").error(
-                  s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-                Redirect(redirectErrorUrl)
-              } else {
-                Logger("application").error(
-                  s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-                Redirect(redirectErrorUrl)
-              }
-          }
-        case Left(ex: Throwable) =>
-          Logger("application").error(
-            s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
-          withIncomeSourcesRemovedFromSession(
-            Redirect(redirectErrorUrl)
-          ) recover {
-            case _: Exception => Redirect(redirectErrorUrl)
-          }
+          case Right(CreateIncomeSourceResponse(id)) =>
+            sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+            Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
+        }.recover {
+          case ex: Exception =>
+            if (isAgent) {
+              Logger("application").error(
+                s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+              Redirect(redirectErrorUrl)
+            } else {
+              Logger("application").error(
+                s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+              Redirect(redirectErrorUrl)
+            }
+        }
+      case Left(ex: Throwable) =>
+        Logger("application").error(
+          s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
+        withIncomeSourcesRemovedFromSession(
+          Redirect(redirectErrorUrl)
+        ) recover {
+          case _: Exception => Redirect(redirectErrorUrl)
+        }
     }
   }
 }

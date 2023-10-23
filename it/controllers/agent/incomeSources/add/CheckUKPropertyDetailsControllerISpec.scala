@@ -87,7 +87,6 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData))
 
-
         When(s"I call GET ${CheckUKPropertyDetails.showUrl}")
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-check-details", clientDetailsWithConfirmation)
 
