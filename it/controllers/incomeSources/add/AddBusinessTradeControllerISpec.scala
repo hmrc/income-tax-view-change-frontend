@@ -7,14 +7,17 @@ import forms.incomeSources.add.BusinessTradeForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSessionId}
+import testConstants.BusinessDetailsIntegrationTestConstants.testBusinessAddress
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+
+import java.time.LocalDate
 
 class AddBusinessTradeControllerISpec extends ComponentSpecBase {
 
@@ -39,6 +42,16 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
+  val testBusinessId: String = testSelfEmploymentId
+  val testBusinessStartDate: LocalDate = LocalDate.of(2023, 1, 1)
+  val testBusinessAccountingMethod: String = "cash"
+  val testBusinessAccountingMethodView: String = "Cash basis accounting"
+  val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
+  val testBusinessAddressLine1: String = "Test Road"
+  val testBusinessPostCode: String = "B32 1PQ"
+  val testCountryCode = "GB"
+  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
+  val testJourneyType: String = JourneyType(Add, SelfEmployment).toString
 
   s"calling GET $addBusinessTradeControllerShowUrl" should {
     "render the Add Business trade page for an Individual" when {
@@ -46,6 +59,10 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         Given("I wiremock stub a successful Income Source Details response with multiple businesses and a uk property")
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
 
         When(s"I call GET $addBusinessTradeControllerShowUrl")
         val result = IncomeTaxViewChangeFrontend.getAddBusinessTrade
@@ -132,12 +149,21 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
+
+
         When(s"I call GET $changeBusinessTradeUrl")
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-trade")
+
+
+        sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
         result should have(
           httpStatus(OK),
           pageTitleIndividual(pageTitleMsgKey),
+          elementTextByID("business-trade")(testBusinessTrade),
           elementTextByID("business-trade-hint")(pageHint),
           elementTextByID("continue-button")(button)
         )

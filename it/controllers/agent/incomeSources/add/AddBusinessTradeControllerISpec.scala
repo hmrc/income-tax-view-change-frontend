@@ -135,13 +135,22 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
+
+
         When(s"I call GET $changeBusinessTradeUrl")
         val res = IncomeTaxViewChangeFrontend.getAddBusinessTrade(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
+        sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+
+
         res should have(
           httpStatus(OK),
           pageTitleAgent(pageTitleMsgKey),
+          elementTextByID("business-trade")(testBusinessTrade),
           elementTextByID("business-trade-hint")(pageHint),
           elementTextByID("continue-button")(button)
         )
