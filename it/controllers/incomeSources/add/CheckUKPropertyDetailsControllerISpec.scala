@@ -91,6 +91,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
         When(s"I call GET ${CheckUKPropertyDetails.showUrl}")
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-check-details")
 
+
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.add.checkUKPropertyDetails.heading"),
