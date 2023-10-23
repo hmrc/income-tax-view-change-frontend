@@ -32,22 +32,23 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import scala.concurrent.Future
 
-class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate
-  with ImplicitDateFormatter
-  with MockIncomeSourceDetailsService
-  with MockNavBarEnumFsPredicate
-  with MockFrontendAuthorisedFunctions
-  with FeatureSwitching
-  with TestSupport {
+class ConfirmReportingMethodSharedControllerSpec
+  extends MockAuthenticationPredicate
+    with MockIncomeSourceDetailsPredicate
+    with ImplicitDateFormatter
+    with MockIncomeSourceDetailsService
+    with MockNavBarEnumFsPredicate
+    with MockFrontendAuthorisedFunctions
+    with FeatureSwitching
+    with TestSupport {
 
   val mockSessionService: SessionService = mock(classOf[SessionService])
 
@@ -66,7 +67,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       dateService = dateService,
       auditingService = app.injector.instanceOf[AuditingService],
       sessionService = mockSessionService
-    )(itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    )(
+      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
@@ -85,10 +87,17 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
   val testChangeToQuarterly = "quarterly"
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+    enable(IncomeSources)
+  }
+
   "Individual: ConfirmReportingMethodSharedController.show" should {
     "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
+
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -100,8 +109,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "taxYear parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
@@ -113,8 +120,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "changeTo parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -125,8 +130,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "the given incomeSourceId cannot be found in the user's Sole Trader business income sources" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(None)))
@@ -138,8 +141,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.OK}" when {
       "all query parameters are valid" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -166,8 +167,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "taxYear parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
@@ -203,8 +202,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a UK property" when {
       "the user's UK property reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -221,8 +218,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a UK property" when {
       "the user's UK property reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -239,8 +234,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a Foreign property" when {
       "the user's Foreign property reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -257,8 +250,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a Foreign property" when {
       "the user's Foreign property reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -275,8 +266,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a Sole Trader Business" when {
       "the user's Sole Trader Business reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -294,8 +283,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a Sole Trader Business" when {
       "the user's Sole Trader Business reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
@@ -348,8 +335,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "taxYear parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
@@ -361,8 +346,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "changeTo parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -373,8 +356,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "the given incomeSourceId is can not be found in the user's income sources" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(None)))
@@ -386,8 +367,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.OK}" when {
       "all query parameters are valid" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -398,8 +377,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.OK}" when {
       "all query parameters are valid for a Sole Trader Business" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
@@ -411,8 +388,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.OK}" when {
       "all query parameters are valid for a Foreign Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -423,7 +398,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
   }
 
-  "ConfirmReportingMethodSharedController.submitAgent" should {
+  "Agent: ConfirmReportingMethodSharedController.submit" should {
     "redirect to home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
@@ -438,8 +413,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "taxYear parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -450,8 +423,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "changeTo parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -462,8 +433,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.BAD_REQUEST}" when {
       "the form is empty" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -474,8 +443,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a UK property" when {
       "the user's UK property reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -493,8 +460,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a UK property" when {
       "the user's UK property reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockUKPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -512,8 +477,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a Foreign property" when {
       "the user's Foreign property reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -530,8 +493,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a Foreign property" when {
       "the user's Foreign property reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockForeignPropertyIncomeSource()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -549,8 +510,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a Sole Trader Business" when {
       "the user's Sole Trader Business reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -568,8 +527,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     "redirect to the Manage Obligations page for a Sole Trader Business" when {
       "the user's Sole Trader Business reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -587,8 +544,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response" in {
-        disableAllSwitches()
-        enable(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
