@@ -47,8 +47,8 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
   val continueButtonText: String = messagesAPI("base.continue")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+  implicit override val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  implicit override val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
