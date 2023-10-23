@@ -118,8 +118,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderNoLatency()
-        when(mockSessionService.createSession(any())(any(),any())).thenReturn(Future.successful(true))
-        when(mockSessionService.setMongoKey(any(),any(),any())(any(),any())).thenReturn(Future(Right(true)))
+        when(mockSessionService.createSession(any())(any(), any())).thenReturn(Future.successful(true))
+        when(mockSessionService.setMongoKey(any(), any(), any())(any(), any())).thenReturn(Future(Right(true)))
 
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
@@ -204,7 +204,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.businessWithLatencyAddress)
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
@@ -217,9 +217,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
-        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.businessWithLatencyAddress)
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -233,9 +233,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
-        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.businessWithLatencyAddress)
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, but non eligable itsa status" in {
@@ -251,10 +251,10 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-name").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
 
       }
     }
@@ -275,7 +275,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.businessWithLatencyAddress)
 
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
@@ -289,9 +289,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
-        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.businessWithLatencyAddress)
 
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -305,9 +305,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
-        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.businessWithLatencyAddress)
 
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, but non eligable itsa status" in {
@@ -323,10 +323,10 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-address").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-name").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
 
       }
     }
@@ -359,8 +359,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -374,8 +374,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, but non eligable itsa status" in {
@@ -391,8 +391,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
 
       }
     }
@@ -426,8 +426,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -441,8 +441,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {
@@ -458,8 +458,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
 
       }
     }
@@ -492,8 +492,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -507,8 +507,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, but non eligable itsa status" in {
@@ -524,8 +524,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
 
       }
     }
@@ -559,8 +559,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -574,8 +574,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
-        document.getElementById("reporting-method-1").text shouldBe TestManageIncomeSourceDetailsController.annually
-        document.getElementById("reporting-method-2").text shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.annually)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.quarterly)
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {
@@ -591,8 +591,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-1")).isDefined shouldBe false
         Option(document.getElementById("reporting-method-2")).isDefined shouldBe false
-        document.getElementById("business-date-started").text shouldBe TestManageIncomeSourceDetailsController.unknown
-        document.getElementById("business-accounting-method").text shouldBe TestManageIncomeSourceDetailsController.unknown
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
+        document.getElementById("manage-details-table").text() should include(TestManageIncomeSourceDetailsController.unknown)
 
       }
     }

@@ -107,7 +107,14 @@
             ),
             value = Value(
                 content = Text(extractOption(viewModel.tradingName))
-            )
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        attributes = Map("id" -> "business-name")
+                    )
+                )
+            ))
         ),
         SummaryListRow(
             key = Key(
@@ -150,16 +157,16 @@
             value = Value(
                 content = Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
             ),
-            actions = Some(Actions(
+            actions = if(!viewModel.taxYearOneCrystallised.get) Some(Actions(
                 items = Seq(
                     ActionItem(
                         href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
                         content = Text(getMessage("change")),
-                        visuallyHiddenText = Some(getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1, viewModel.latencyDetails.get.taxYear2)),
                         attributes = Map("id" -> "change-link-1")
                     )
                 )
             ))
+            else None
         ),
         SummaryListRow(
             key = Key(
@@ -168,16 +175,15 @@
             value = Value(
                 content = HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
             ),
-            actions = Some(Actions(
+            actions = if(!viewModel.taxYearTwoCrystallised.get) Some(Actions(
                 items = Seq(
                     ActionItem(
                         href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),
                         content = Text(getMessage("change")),
-                        visuallyHiddenText = Some(getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2, (viewModel.latencyDetails.get.taxYear2.toInt + 1).toString)),
                         attributes = Map("id" -> "change-link-2")
                     )
                 )
-            ))
+            )) else None
         )
     )
 }
