@@ -73,7 +73,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
         x match {
           case LatencyDetails(_, _, _, taxYear2, _) if taxYear2.toInt < currentTaxYearEnd => Future.successful(None)
           case LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator) =>
-            calculationListService.isTaxYearCrystallised(taxYear1.toInt).flatMap {
+            calculationListService.isTaxYearCrystallised(taxYear1.toInt, isEnabled(TimeMachineAddYear)).flatMap {
               case Some(true) =>
                 Future.successful(Some(BusinessReportingMethodViewModel(None, None, Some(taxYear2), Some(taxYear2LatencyIndicator))))
               case _ =>

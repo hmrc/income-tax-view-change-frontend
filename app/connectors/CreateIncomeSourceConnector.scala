@@ -39,7 +39,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClient,
                         (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
     val url = createBusinessIncomeSourcesUrl(mtdItid)
     val jsonRequest = Json.toJson(request)
-
+    Logger("application").debug("[CreateIncomeSourceConnector][createBusiness] createBusinessRequest json: " + jsonRequest)
     http.POST[JsValue, HttpResponse](url, jsonRequest).flatMap(handleResponse)
   }
 

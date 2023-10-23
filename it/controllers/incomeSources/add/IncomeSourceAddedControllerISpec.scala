@@ -102,7 +102,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         And("API 1330 getNextUpdates return a success response")
@@ -123,7 +123,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
 
 
@@ -142,7 +142,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         Given("Income Sources FS is disabled")
         disable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
 
 

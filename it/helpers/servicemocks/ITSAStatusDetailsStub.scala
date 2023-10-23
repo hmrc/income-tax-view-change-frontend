@@ -23,14 +23,14 @@ import testConstants.BaseIntegrationTestConstants.{testNino, testTaxYearRange}
 
 
 object ITSAStatusDetailsStub extends ComponentSpecBase {
+  def getUrl(taxYearRange: String = "23-24"): String =
+    s"/income-tax-view-change/itsa-status/status/$testNino/$taxYearRange?futureYears=false&history=false"
 
-  val url = s"/income-tax-view-change/itsa-status/status/$testNino/$testTaxYearRange?futureYears=false&history=false"
-
-  def stubGetITSAStatusDetails(status: String): StubMapping = {
-    WiremockHelper.stubGet(url, OK,
+  def stubGetITSAStatusDetails(status: String, taxYearRange: String = "2023-24"): StubMapping = {
+    WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5)), OK,
       s"""|[
           |  {
-          |    "taxYear": "2023-24",
+          |    "taxYear": "$taxYearRange",
           |    "itsaStatusDetails": [
           |      {
           |        "submittedOn": "2023-06-01T10:19:00.303Z",
@@ -45,7 +45,7 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
   }
 
   def stubGetITSAStatusDetailsError: StubMapping = {
-    WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
+    WiremockHelper.stubGet(getUrl(), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
   }
 
 

@@ -304,7 +304,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
           case _ if latencyDetails.taxYear2.toInt < currentTaxYearEnd =>
             Future.successful(Left(new Error("Current tax year not in scope of change period")))
           case LatencyDetails(_, tY1, tY1LatencyIndicator, tY2, tY2LatencyIndicator) =>
-            calculationListService.isTaxYearCrystallised(tY1.toInt).flatMap {
+            calculationListService.isTaxYearCrystallised(tY1.toInt, isEnabled(TimeMachineAddYear)).flatMap {
               case Some(true) =>
                 Future.successful(
                   Right(

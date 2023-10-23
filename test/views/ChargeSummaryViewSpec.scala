@@ -97,7 +97,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
     val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutMessage", 2017, 2018)
     val codingOutMessage2017To2018WithStringMessagesArgument: String = messages("chargeSummary.codingOutMessage", "2017", "2018")
     val chargeSummaryCodingOutHeading2017To2018: String = s"$taxYearHeading 6 April 2017 to 5 April 2018 ${messages("chargeSummary.codingOut.text")}"
-    val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")}${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
+    val insetPara: String = s"${messages("chargeSummary.codingOutInset-1")} ${messages("chargeSummary.codingOutInset-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.codingOutInset-3")}"
     val paymentBreakdownInterestLocksCharging: String = messages("chargeSummary.paymentBreakdown.interestLocks.charging")
 
     def poaHeading(year: Int, number: Int) = s"$taxYearHeading 6 April ${year - 1} to 5 April $year Payment on account $number of 2"
@@ -121,8 +121,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
     val chargeHistoryHeading: String = messages("chargeSummary.chargeHistory.heading")
     val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
     val codingOutHeader: String = s"$taxYearHeading ${messages("taxYears.taxYears", "6 April 2017", "5 April 2018")} PAYE self assessment"
-    val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")}${messages("pagehelp.opensInNewTabText")}"
-    val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")}${messages("pagehelp.opensInNewTabText")}"
+    val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")}"
+    val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")} ${messages("pagehelp.opensInNewTabText")}"
 
     def paymentOnAccountCreated(number: Int) = s"Payment on account $number of 2 created"
 
@@ -146,14 +146,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
     def payeTaxCodeTextWithStringMessage(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", (year - 1).toString, year.toString)}"
 
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
-    val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")}${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
+    val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
     val cancellledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
     def remainingTaxYouOwe(year: Int) = messages("chargeSummary.codingOutMessage", year - 1, year)
 
     val balancingChargeRequest: String = messages("chargeSummary.chargeHistory.request.balancingCharge.text")
     val dunningLockBannerHeader: String = messages("chargeSummary.dunning.locks.banner.title")
-    val dunningLockBannerLink: String = s"${messages("chargeSummary.dunning.locks.banner.linkText")}${messages("pagehelp.opensInNewTabText")}."
+    val dunningLockBannerLink: String = s"${messages("chargeSummary.dunning.locks.banner.linkText")} ${messages("pagehelp.opensInNewTabText")}."
     val interestLinkFirstWord: String = messages("chargeSummary.whatYouOwe.textOne")
     val interestLinkFirstWordAgent: String = messages("chargeSummary.whatYouOwe.textOne-agent")
     val interestLinkText: String = messages("chargeSummary.whatYouOwe.linkText")

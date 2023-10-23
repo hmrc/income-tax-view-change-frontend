@@ -17,7 +17,7 @@
 package controllers.incomeSources.cease
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -73,11 +73,11 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS{
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     showCeaseIncomeSourceView(sources, isAgent, backUrl)
   }
 
-  private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String) (implicit user: MtdItUser[_]): Future[Result] = {
+  private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
       case Right(viewModel) =>
         withIncomeSourcesRemovedFromSession {
@@ -92,9 +92,9 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
             showInternalServerError(isAgent)
         }
       case Left(ex) =>
-          Logger("application").error(
-            s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
-          Future(showInternalServerError(isAgent))
+        Logger("application").error(
+          s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+        Future(showInternalServerError(isAgent))
     }
   }
 
