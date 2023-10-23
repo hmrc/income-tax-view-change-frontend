@@ -22,12 +22,19 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import controllers.routes
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.JourneyType.{Add, JourneyType, Operation}
 import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, verify}
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any

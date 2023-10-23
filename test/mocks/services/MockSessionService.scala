@@ -18,6 +18,8 @@ package mocks.services
 
 import enums.JourneyType.JourneyType
 import models.incomeSourceDetails.UIJourneySessionData
+import models.incomeSourceDetails.UIJourneySessionData
+import enums.JourneyType.JourneyType
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
