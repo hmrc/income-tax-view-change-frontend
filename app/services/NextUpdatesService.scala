@@ -110,7 +110,11 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       source =>
         DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true)
     },
-      model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
+      model.obligations
+        // Attempt to fix issue
+        //.filter(x => x.identification == id)
+        .flatMap(obligation =>
+          obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
     ).flatten
   }
 
