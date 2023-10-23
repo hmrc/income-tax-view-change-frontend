@@ -70,17 +70,17 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val validUKPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, UkProperty, None)
-  val validUKPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, UkProperty, None)
+  val validUKPropertyBusinessCall: Html = view(viewModel, isAgent = false, UkProperty, None)
+  val validUKPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, UkProperty, None)
 
-  val validForeignPropertyBusinessCall: Html = view(viewModel, backUrl, isAgent = false, ForeignProperty, None)
-  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, ForeignProperty, None)
+  val validForeignPropertyBusinessCall: Html = view(viewModel, isAgent = false, ForeignProperty, None)
+  val validForeignPropertyBusinessAgentCall: Html = view(viewModel, isAgent = true, ForeignProperty, None)
 
-  val validSoleTreaderBusinessCall: Html = view(viewModel, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
-  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
+  val validSoleTreaderBusinessCall: Html = view(viewModel, isAgent = false, SelfEmployment, Some("Test Name"))
+  val validSoleTreaderBusinessAgentCall: Html = view(viewModel, isAgent = true, SelfEmployment, Some("Test Name"))
 
-  val validCallWithData: Html = view(viewModelWithAllData, backUrl, isAgent = false, SelfEmployment, Some("Test Name"))
-  val validAgentCallWithData: Html = view(viewModelWithAllData, agentBackUrl, isAgent = true, SelfEmployment, Some("Test Name"))
+  val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"))
+  val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"))
 
   val addIncomeSourceShowURL = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url

@@ -160,7 +160,6 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
     }
     else {
-      val backUrl: String = getBackurl(isAgent, mode, changeTo, taxYear)
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
       val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
@@ -181,8 +180,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                     changeTo,
                     years
                   ))
-                  if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
-                  else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, backUrl, postUrl))
+                  if (isAgent) Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
+                  else Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
                 }
             }
           }

@@ -51,8 +51,8 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
     val confirmText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.confirm")
   }
 
-  val testPropertyStartDateLong: String = "1 January 2023"
-  val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
+  val testPropertyStartDate: String = "1 January 2023"
+  val testPropertyStartDateLong: LocalDate = LocalDate.of(2023, 1, 1)
   val testPropertyAccountingMethod: String = "CASH"
   val testPropertyAccountingMethodView: String = "Cash basis accounting"
   val continueButtonText: String = messagesAPI("base.confirm-and-continue")
