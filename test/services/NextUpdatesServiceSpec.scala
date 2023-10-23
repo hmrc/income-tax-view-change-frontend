@@ -16,22 +16,22 @@
 
 package services
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
-
-import java.time.LocalDate
-import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import testConstants.NextUpdatesTestConstants._
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import mocks.connectors.MockIncomeTaxViewChangeConnector
+import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
+import play.api.libs.json.Json
+import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
+import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
 
+import java.time.LocalDate
 import scala.concurrent.Future
+import scala.io.Source
 
 class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
 
@@ -320,6 +320,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
   }
 
   "getObligationsViewModel" should {
+
     "return a valid view model with EOPS and quarterly obligations and final declaration(s)" in {
       disableAllSwitches()
       enable(IncomeSources)
@@ -352,6 +353,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         showPrevTaxYears = true
       )
     }
+
     "return a valid view model if no EOPS obligations" in {
       disableAllSwitches()
       enable(IncomeSources)
@@ -370,6 +372,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         showPrevTaxYears = true
       )
     }
+
     "return a valid view model if no quarterly obligations" in {
       disableAllSwitches()
       enable(IncomeSources)
@@ -386,6 +389,27 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         Seq.empty,
         dateService.getCurrentTaxYearEnd(),
         showPrevTaxYears = true
+      )
+    }
+
+    "Fix for MISUV-6494" in new Setup {
+      val source = Source.fromURL(getClass.getResource("/data/1330_Transformed.json"))
+      val jsonString = source.getLines().toList.mkString("")
+      val json = Json.parse(jsonString)
+      json.validate[ObligationsModel].fold(
+        _ => {
+          fail("Incorrect conversion")
+        },
+        valid => {
+          val result = convertFromObligationsToDateModel("", valid)
+          val expected = List(DatesModel(
+            LocalDate.of(2023, 4, 6),
+            LocalDate.of(2024, 4, 5),
+            LocalDate.of(2025, 1, 31),
+            periodKey = "23P0",
+            true))
+          expected shouldBe result
+        }
       )
     }
   }

@@ -105,6 +105,14 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
     }
   }
 
+  def convertFromObligationsToDateModel(id: String, model: ObligationsModel ) : Seq[DatesModel] = {
+    Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
+      source =>
+        DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true)
+    },
+      model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
+    ).flatten
+  }
 
   def getObligationDates(id: String)
                         (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
@@ -116,12 +124,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       case NextUpdateModel(start, end, due, _, _, periodKey) =>
         Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
       case model: ObligationsModel =>
-        Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
-          source =>
-            DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true)
-        },
-          model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
-        ).flatten
+        convertFromObligationsToDateModel(id, model)
     }
   }
 
@@ -142,6 +145,7 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
 
       ObligationsViewModel(quarterlyDatesYearOne, quarterlyDatesYearTwo, eopsDates, finalDecDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears)
+
     }
     processingRes
   }
