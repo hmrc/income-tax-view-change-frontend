@@ -39,7 +39,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -60,14 +60,14 @@ class TestDateService extends DateServiceInterface {
 
   override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2022, 4, 6)
 
-  override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+  override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
     val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
     if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
-      accountingPeriodEndDate.toString
+      accountingPeriodEndDate
     } else {
-      accountingPeriodEndDate.plusYears(1).toString
+      accountingPeriodEndDate.plusYears(1)
     }
   }
 }
@@ -170,7 +170,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> "xsession-1234567")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> testSessionId)
         .get().futureValue
     }
 
@@ -184,7 +184,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
-          "Csrf-Token" -> "nocheck", "X-Session-ID" -> "xsession-1234567")
+          "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }
 

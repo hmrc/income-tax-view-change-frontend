@@ -49,11 +49,11 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
-                                               val businessDetailsService: CreateBusinessDetailsService)
+                                               val businessDetailsService: CreateBusinessDetailsService,
+                                               val sessionService: SessionService)
                                               (implicit val ec: ExecutionContext,
                                                implicit override val mcc: MessagesControllerComponents,
                                                val appConfig: FrontendAppConfig,
-                                               implicit val sessionService: SessionService,
                                                implicit val itvcErrorHandler: ItvcErrorHandler,
                                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with IncomeSourcesUtils with FeatureSwitching {
@@ -146,7 +146,9 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         case Right(viewModel) =>
           businessDetailsService.createBusinessDetails(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession(Redirect(redirect(id).url)) recover {
+              sessionService.deleteSession.map { _ =>
+                Redirect(redirect(id).url)
+              }.recover {
                 case ex: Exception =>
                   Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
                   Redirect(errorHandler)

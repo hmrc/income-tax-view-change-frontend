@@ -45,7 +45,7 @@ object UIJourneySessionData {
         (__ \ "manageIncomeSourceData").readNullable[ManageIncomeSourceData] and
         (__ \ "ceaseIncomeSourceData").readNullable[CeaseIncomeSourceData] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-      ) (UIJourneySessionData.apply _)
+      )(UIJourneySessionData.apply _)
   }
 
   val writes: OWrites[UIJourneySessionData] = {
@@ -59,7 +59,7 @@ object UIJourneySessionData {
         (__ \ "manageIncomeSourceData").writeNullable[ManageIncomeSourceData] and
         (__ \ "ceaseIncomeSourceData").writeNullable[CeaseIncomeSourceData] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-      ) (unlift(UIJourneySessionData.unapply))
+      )(unlift(UIJourneySessionData.unapply))
   }
 
   implicit val format: OFormat[UIJourneySessionData] = OFormat(reads, writes)
@@ -67,14 +67,19 @@ object UIJourneySessionData {
 
 case class AddIncomeSourceData(
                                 businessName: Option[String] = None,
+                                businessTrade: Option[String] = None,
                                 dateStarted: Option[LocalDate] = None,
-                                createdIncomeSourceId: Option[String] = None
+                                createdIncomeSourceId: Option[String] = None,
+                                accountingPeriodStartDate: Option[LocalDate] = None,
+                                accountingPeriodEndDate: Option[LocalDate] = None
                               )
 
 object AddIncomeSourceData {
   val businessNameField = "businessName"
   val businessTradeField = "businessTrade"
   val dateStartedField = "dateStarted"
+  val accountingPeriodStartDateField = "accountingPeriodStartDate"
+  val accountingPeriodEndDateField = "accountingPeriodEndDate"
 
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 

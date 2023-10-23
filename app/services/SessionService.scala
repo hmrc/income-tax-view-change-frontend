@@ -101,7 +101,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None)
+    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
     val jsonAccessorPath = journeyType.operation match {
       case Add => AddIncomeSourceData.getJSONKeyPath(key)
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
@@ -135,5 +135,13 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
       )
     }
   }
-}
 
+  def deleteMongoData(journeyType: JourneyType)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    uiJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
+  }
+
+  def deleteSession(implicit hc: HeaderCarrier): Future[Boolean] = {
+    uiJourneySessionDataRepository.deleteOne(hc.sessionId.get.value)
+  }
+}

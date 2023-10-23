@@ -40,7 +40,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -72,14 +72,14 @@ class TestDateService extends DateServiceInterface {
 
   override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2022, 4, 6)
 
-  override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+  override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
     val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
     if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
-      accountingPeriodEndDate.toString
+      accountingPeriodEndDate
     } else {
-      accountingPeriodEndDate.plusYears(1).toString
+      accountingPeriodEndDate.plusYears(1)
     }
   }
 
@@ -203,7 +203,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> "xssession-12345")
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> testSessionId)
         .get().futureValue
     }
 
@@ -218,7 +218,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       buildClient(uri)
         .withFollowRedirects(false)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck",
-          "X-Session-ID" -> "xssession-12345")
+          "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }
 
@@ -327,7 +327,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getAddBusinessName: WSResponse = getWithHeaders("/income-sources/add/business-name",
-      "X-Session-ID" -> "xsession-1234567")
+      "X-Session-ID" -> testSessionId)
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)

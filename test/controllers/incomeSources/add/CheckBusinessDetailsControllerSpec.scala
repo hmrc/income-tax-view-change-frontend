@@ -65,10 +65,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    businessDetailsService = mockBusinessDetailsService
+    businessDetailsService = mockBusinessDetailsService,
+    sessionService = app.injector.instanceOf[SessionService],
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
-    sessionService = app.injector.instanceOf[SessionService],
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   ) {

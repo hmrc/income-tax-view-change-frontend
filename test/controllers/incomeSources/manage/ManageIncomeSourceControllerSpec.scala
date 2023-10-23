@@ -60,13 +60,13 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       retrieveNino = app.injector.instanceOf[NinoPredicate],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
+      sessionService = app.injector.instanceOf[SessionService],
       auditingService = app.injector.instanceOf[AuditingService]
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
-      sessionService = app.injector.instanceOf[SessionService],
+      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       ec = ec
     )

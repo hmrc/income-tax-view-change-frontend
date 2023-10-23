@@ -18,13 +18,19 @@ package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys.businessName
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+
+import scala.concurrent.ExecutionContext
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
@@ -45,6 +51,12 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")
 
+  val testBusinessName: String = "Test Business"
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+
+  val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
 
   s"calling GET $addBusinessNameShowUrl" should {
     "render the Add Business Name page" when {
@@ -99,6 +111,8 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(addBusinessStartDateUrl)
         )
+
+        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
       }
     }
     "show error when form is filled incorrectly" in {
@@ -113,7 +127,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
       val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-name")(formData)
       result should have(
-        httpStatus(OK),
+        httpStatus(BAD_REQUEST),
         elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
           messagesAPI("add-business-name.form.error.invalidNameFormat"))
       )
@@ -137,6 +151,8 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           elementTextByID("business-name-hint > p")(formHint),
           elementTextByID("continue-button")(continueButtonText)
         )
+
+        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
       }
     }
     "303 SEE_OTHER - redirect to home page" when {
@@ -173,6 +189,8 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(checkBusinessDetailsUrl)
         )
+
+        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
       }
     }
     "show error when form is filled incorrectly" in {
@@ -187,11 +205,10 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
       val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name")(formData)
       result should have(
-        httpStatus(OK),
+        httpStatus(BAD_REQUEST),
         elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
           messagesAPI("add-business-name.form.error.invalidNameFormat"))
       )
     }
   }
 }
-

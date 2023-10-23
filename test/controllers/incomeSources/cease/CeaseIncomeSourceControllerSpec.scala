@@ -52,11 +52,11 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
     mockIncomeSourceDetailsService,
+    sessionService = app.injector.instanceOf[SessionService],
     app.injector.instanceOf[NavBarPredicate]
   )(
     ec,
     app.injector.instanceOf[MessagesControllerComponents],
-    sessionService = app.injector.instanceOf[SessionService],
     app.injector.instanceOf[FrontendAppConfig]
   )
 
