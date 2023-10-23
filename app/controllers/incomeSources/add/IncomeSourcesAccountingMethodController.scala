@@ -69,7 +69,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       case Some(cashOrAccrualsFieldMaybe) =>
         if (cashOrAccrualsFieldMaybe.isDefined) {
           val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) "accruals" else "cash"
-
           sessionService.setMongoKey(
             AddIncomeSourceData.incomeSourcesAccountingMethodField,
             accountingMethodIsAccruals,
@@ -77,13 +76,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             case Right(_) => Future.successful(Redirect(successRedirectUrl))
             case Left(ex) => Future.failed(ex)
           }
-
-        }.recover {
-          case exception =>
-            Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] ${exception.getMessage}")
-            errorHandler.showInternalServerError()
-        }
-        else {
+        } else {
           Logger("application").error(s"${if (isAgent) "[Agent]"}" +
             s"Error getting business cashOrAccruals field")
           Future.successful(errorHandler.showInternalServerError())
@@ -99,6 +92,10 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           btaNavPartial = user.btaNavPartial
         )(user, messages)))
     }
+  }.recover {
+    case exception =>
+      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] ${exception.getMessage}")
+      errorHandler.showInternalServerError()
   }
 
   private def loadIncomeSourceAccountingMethod(isAgent: Boolean, incomeSourceType: IncomeSourceType, cashOrAccrualsFlag: Option[String])
