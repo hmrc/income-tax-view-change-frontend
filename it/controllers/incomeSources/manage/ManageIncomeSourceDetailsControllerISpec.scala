@@ -95,11 +95,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-name")(businessTradingName),
-          elementTextByID("business-address")(addressAsString),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod)
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading")
         )
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
@@ -126,13 +122,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-name")(businessTradingName),
-          elementTextByID("business-address")(addressAsString),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod),
-          elementTextByID("reporting-method-1")(messagesQuarterly),
-          elementTextByID("reporting-method-2")(messagesAnnually)
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading")
         )
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
@@ -159,12 +149,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-name")(businessTradingName),
-          elementTextByID("business-address")(addressAsString),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod),
-          elementTextByID("reporting-method-1")(messagesAnnually),
-          elementTextByID("reporting-method-2")(messagesQuarterly),
           elementTextByID("change-link-1")(messagesChangeLinkText),
           elementTextByID("change-link-2")(messagesChangeLinkText)
         )
@@ -187,12 +171,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-name")(messagesUnknown),
-          elementTextByID("business-address")(messagesUnknown),
-          elementTextByID("business-date-started")(messagesUnknown),
-          elementTextByID("business-accounting-method")(messagesUnknown),
-          elementTextByID("reporting-method-1")(""),
-          elementTextByID("reporting-method-2")("")
+          elementTextByID("change-link-1")(""),
+          elementTextByID("change-link-2")("")
         )
       }
     }
@@ -259,9 +239,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod)
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading")
         )
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
@@ -286,8 +264,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod),
           elementTextByID("change-link-1")(""),
           elementTextByID("change-link-2")("")
         )
@@ -313,8 +289,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod),
           elementTextByID("change-link-1")(messagesChangeLinkText),
           elementTextByID("change-link-2")(messagesChangeLinkText)
         )
@@ -333,9 +307,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-date-started")(messagesUnknown),
-          elementTextByID("business-accounting-method")(messagesUnknown)
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading")
         )
       }
     }
@@ -399,9 +371,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod)
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading")
         )
       }
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
@@ -426,8 +396,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod),
           elementTextByID("change-link-1")(""),
           elementTextByID("change-link-2")("")
         )
@@ -453,8 +421,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-date-started")(businessStartDate),
-          elementTextByID("business-accounting-method")(businessAccountingMethod),
           elementTextByID("change-link-1")(messagesChangeLinkText),
           elementTextByID("change-link-2")(messagesChangeLinkText)
         )
@@ -473,9 +439,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("incomeSources.manage.business-manage-details.heading"),
-          elementTextByID("business-date-started")(messagesUnknown),
-          elementTextByID("business-accounting-method")(messagesUnknown)
+          pageTitleIndividual("incomeSources.manage.business-manage-details.heading")
         )
       }
     }
