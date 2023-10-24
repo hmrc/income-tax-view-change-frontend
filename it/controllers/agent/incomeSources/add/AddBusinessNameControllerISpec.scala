@@ -23,11 +23,14 @@ import forms.incomeSources.add.BusinessNameForm
 import forms.utils.SessionKeys.businessName
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+
+import scala.concurrent.ExecutionContext
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
@@ -46,9 +49,10 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
     messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")
+  val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
-  val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
 
 
   s"calling GET $addBusinessNameShowUrl" should {
@@ -110,6 +114,8 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(addBusinessStartDateUrl)
         )
+
+        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
       }
     }
     "show error when form is filled incorrectly" in {
@@ -183,7 +189,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
         val formData: Map[String, Seq[String]] = {
           Map(
-            BusinessNameForm.businessName -> Seq("Test Business2")
+            BusinessNameForm.businessName -> Seq("Test Business")
           )
         }
 
@@ -193,6 +199,8 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(checkBusinessDetailsUrl)
         )
+
+        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
       }
     }
     "show error when form is filled incorrectly" in {
@@ -215,4 +223,3 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
     }
   }
 }
-

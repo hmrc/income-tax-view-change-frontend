@@ -117,9 +117,6 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
 
         val document: Document = Jsoup.parse(contentAsString(result))
 
-        //TODO - cant access sessionService
-        //sessionService.getMongoKey(incomeSourcesAccountingMethodField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(accruals))
-
         status(result) shouldBe OK
         document.title shouldBe TestCheckUKPropertyDetailsController.title
         document.select("h1:nth-child(1)").text shouldBe TestCheckUKPropertyDetailsController.heading
@@ -333,5 +330,4 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
       }
     }
   }
-
 }
