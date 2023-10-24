@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear
 import mocks.connectors.MockIncomeTaxViewChangeConnector
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
@@ -393,37 +394,22 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
     }
 
     "Fix for MISUV-6494" in new Setup {
+      // Read response from plain json file
       val source = Source.fromURL(getClass.getResource("/data/1330_Transformed.json"))
       val jsonString = source.getLines().toList.mkString("")
       val json = Json.parse(jsonString)
-      json.validate[ObligationsModel].fold(
-        _ => {
-          fail("Incorrect conversion")
-        },
-        valid => {
-//          val result = convertFromObligationsToDateModel("", valid)
-//          val expected = List(
-//            DatesModel(
-//              LocalDate.of(2023, 4, 6),
-//              LocalDate.of(2024, 4, 5),
-//              LocalDate.of(2025, 1, 31),
-//              periodKey = "23P0", true)
-//          )
 
-          /*
-            List(DatesModel(2023-04-06,2024-04-05,2025-01-31,23P0,true)) was not equal to
-            List(DatesModel(2023-04-06,2024-04-05,2025-01-31,23P0,true),
-            DatesModel(2023-04-06,2024-04-05,2025-01-31,23P0,false),
-            DatesModel(2023-04-06,2024-04-05,2025-01-31,EOPS,false),
-            DatesModel(2024-01-06,2024-04-05,2024-05-05,23P4,false),
-            DatesModel(2023-10-06,2024-01-05,2024-02-05,23P3,false),
-            DatesModel(2023-10-02,2023-10-05,2023-11-05,23P2,false),
-            DatesModel(2023-04-06,2024-04-05,2025-01-31,EOPS,false)) (NextUpdatesServiceSpec.scala:411)
-           */
-          //expected shouldBe result
-          succeed
-        }
-      )
+      val expectedResponse : ObligationsModel = json.validate[ObligationsModel].fold(
+        _ => None, valid => Some(valid) ).get
+
+      println(s"ExpectedResponse: $expectedResponse")
+
+      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(expectedResponse))
+
+      val result = getObligationsViewModel("XTIT00001015155", false)
+      result.value shouldBe None
+
     }
   }
 }

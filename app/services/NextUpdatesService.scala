@@ -115,11 +115,14 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       case NextUpdateModel(start, end, due, _, _, periodKey) =>
         Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
       case model: ObligationsModel =>
+        println(s"Here is response: $model")
         Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
           source =>
             DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true)
         },
-          model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
+          model.obligations
+            //.filter(x => x.identification == id)
+            .flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
         ).flatten
     }
   }
