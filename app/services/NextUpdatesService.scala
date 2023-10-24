@@ -115,13 +115,12 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       case NextUpdateModel(start, end, due, _, _, periodKey) =>
         Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
       case model: ObligationsModel =>
-        println(s"Here is response: $model")
         Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
           source =>
             DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true)
         },
           model.obligations
-            //.filter(x => x.identification == id)
+            .filter(x => x.identification == id)
             .flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
         ).flatten
     }
@@ -134,7 +133,9 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
     } yield {
       val (finalDeclarationDates, otherObligationDates) = datesList.partition(x => x.isFinalDec)
 
-      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("00")).sortBy(_.inboundCorrespondenceFrom)
+      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.obligationType == "Quarterly" )
+        .sortBy(_.inboundCorrespondenceFrom)
+
       val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
       val quarterlyDatesYearOne = quarterlyDatesByYear._1.distinct.sortBy(_.periodKey)
       val quarterlyDatesYearTwo = quarterlyDatesByYear._2.distinct.sortBy(_.periodKey)

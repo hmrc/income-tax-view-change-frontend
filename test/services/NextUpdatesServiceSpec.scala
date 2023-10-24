@@ -399,17 +399,23 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       val jsonString = source.getLines().toList.mkString("")
       val json = Json.parse(jsonString)
 
-      val expectedResponse : ObligationsModel = json.validate[ObligationsModel].fold(
-        _ => None, valid => Some(valid) ).get
-
-      println(s"ExpectedResponse: $expectedResponse")
+      val expectedResponse: ObligationsModel = json.validate[ObligationsModel].fold(
+        _ => None, valid => Some(valid)).get
 
       when(mockIncomeTaxViewChangeConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(expectedResponse))
 
-      val result = getObligationsViewModel("XTIT00001015155", false)
-      result.value shouldBe None
+      val expectedResult = ObligationsViewModel(
+        quarterlyObligationsDatesYearOne = List.empty,
+        quarterlyObligationsDatesYearTwo = List.empty,
+        eopsObligationsDates = List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "EOPS", false)),
+        finalDeclarationDates = List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "23P0", true)),
+        currentTaxYear = 2024,
+        showPrevTaxYears = false
+      )
 
+      val result = getObligationsViewModel("XTIT00001015155", false)
+      result.futureValue shouldBe expectedResult
     }
   }
 }
