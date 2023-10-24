@@ -189,37 +189,37 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
           setupMockCreateSession(true)
-          val businessTrade: String = "Test Name"
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(businessTrade)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(businessTrade)))
+          val businessNameAsTrade: String = "Test Name"
+          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(businessNameAsTrade)))
+          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(businessNameAsTrade)))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-              BusinessTradeForm.businessTrade -> businessTrade
+              BusinessTradeForm.businessTrade -> businessNameAsTrade
             ))
 
-          status(result) mustBe OK
+          status(result) mustBe BAD_REQUEST
           contentAsString(result) must include("Trade and business name cannot be the same")
         }
         "trade name is same as business name for agent" in {
           disableAllSwitches()
           enable(IncomeSources)
 
-          val businessTrade = "Test Name"
+          val businessNameAsTrade = "Test Name"
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(businessTrade)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(businessTrade)))
+          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(businessNameAsTrade)))
+          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(businessNameAsTrade)))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClientwithBusinessName()
               .withFormUrlEncodedBody(
-                BusinessTradeForm.businessTrade -> businessTrade
+                BusinessTradeForm.businessTrade -> businessNameAsTrade
               ))
 
           status(result) mustBe BAD_REQUEST
-          contentAsString(result) must include("You cannot enter the same trade and same business name")
+          contentAsString(result) must include("Trade and business name cannot be the same")
         }
 
         "trade name contains invalid characters" in {
