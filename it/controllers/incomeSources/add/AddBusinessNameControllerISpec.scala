@@ -19,10 +19,10 @@ package controllers.incomeSources.add
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessNameForm
-import forms.utils.SessionKeys.businessName
+import forms.utils.SessionKeys.{businessName, incomeSourceId}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER, isRedirect}
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
@@ -186,48 +186,68 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
       "agent has incorrectly filled form" in {
         formFillErrorTest(true)
       }
-
     }
   }
 
   s"calling GET $changeBusinessNameShowUrl" should {
     "render the Add Business Name page" when {
-      "User is authorised" in {
+      def changeShowTest(isAgent: Boolean) = {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
         enable(IncomeSources)
+        if (isAgent) stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        When(s"I call GET $changeBusinessNameShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-name")
+        When(s"I call GET ${getShowChangeUrl(isAgent)}")
+        val result = IncomeTaxViewChangeFrontend.newGet(isAgent, "/income-sources/add/change-business-name", {
+          if (isAgent) clientDetailsWithConfirmation else Map.empty
+        })
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual("add-business-name.heading"),
+          if (isAgent) pageTitleAgent("add-business-name.heading") else pageTitleIndividual("add-business-name.heading"),
           elementTextByID("business-name-hint > p")(formHint),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
+
+      "Individual is authorised" in {
+        changeShowTest(false)
+      }
+      "Agent is authorised" in {
+        changeShowTest(true)
+      }
     }
     "303 SEE_OTHER - redirect to home page" when {
-      "Income Sources FS disabled" in {
+      def changeFSDisabledTest(isAgent: Boolean) = {
         Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
         disable(IncomeSources)
+        if (isAgent) stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        When(s"I call GET ${changeBusinessNameShowUrl}")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-name")
+        When(s"I call GET ${getShowChangeUrl(isAgent)}")
+        val result = IncomeTaxViewChangeFrontend.newGet(isAgent, "/income-sources/add/change-business-name", {
+          if (isAgent) clientDetailsWithConfirmation else Map.empty
+        })
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(incomeSourcesUrl)
+          redirectURI(getIncomeSourcesUrl(isAgent))
         )
+      }
+
+      "Income Sources FS disabled for individual" in {
+        changeFSDisabledTest(false)
+      }
+      "Income Sources FS disabled for agent" in {
+        changeFSDisabledTest(true)
       }
     }
   }
 
-  s"calling POST ${changeBusinessNameSubmitUrl}" should {
-    s"303 SEE_OTHER and redirect to $checkBusinessDetailsUrl" when {
-      "User is authorised and business name is valid" in {
+  s"calling POST $changeBusinessNameSubmitUrl & $changeBusinessNameSubmitAgentUrl" should {
+    s"303 SEE_OTHER and redirect to $checkBusinessDetailsUrl and $checkBusinessDetailsAgentUrl" when {
+      def changeSuccessPostTest(isAgent: Boolean): Unit = {
         enable(IncomeSources)
+        if (isAgent) stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val formData: Map[String, Seq[String]] = {
@@ -236,31 +256,53 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           )
         }
 
-        When(s"I call POST ${changeBusinessNameSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name")(formData)
+        When(s"I call POST ${getSubmitUrl(isAgent)}")
+        val result = IncomeTaxViewChangeFrontend.newPost(isAgent, "/income-sources/add/change-business-name", {
+          if (isAgent) clientDetailsWithConfirmation else Map.empty
+        })(formData)
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(checkBusinessDetailsUrl)
-        )
-      }
-    }
-    "show error when form is filled incorrectly" in {
-      enable(IncomeSources)
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-      val formData: Map[String, Seq[String]] = {
-        Map(
-          BusinessNameForm.businessName -> Seq("£££")
+          redirectURI(getCheckDetailsUrl(isAgent))
         )
       }
 
-      val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name")(formData)
-      result should have(
-        httpStatus(OK),
-        elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
-          messagesAPI("add-business-name.form.error.invalidNameFormat"))
-      )
+      "Individual is authorised and business name is valid" in {
+        changeSuccessPostTest(false)
+      }
+      "Agent is authorised and business name is valid" in {
+        changeSuccessPostTest(true)
+      }
     }
+    "show error" when {
+      def changeFormFillErrorTest(isAgent: Boolean) = {
+        enable(IncomeSources)
+        if (isAgent) stubAuthorisedAgentUser(authorised = true)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        val formData: Map[String, Seq[String]] = {
+          Map(
+            BusinessNameForm.businessName -> Seq("£££")
+          )
+        }
+
+        val result = IncomeTaxViewChangeFrontend.newPost(isAgent, "/income-sources/add/change-business-name", {
+          if (isAgent) clientDetailsWithConfirmation else Map.empty
+        })(formData)
+        result should have(
+          httpStatus(OK),
+          elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +
+            messagesAPI("add-business-name.form.error.invalidNameFormat"))
+        )
+      }
+
+      "individual has incorrectly filled form" in {
+        changeFormFillErrorTest(false)
+      }
+      "agent has incorrectly filled form" in {
+        changeFormFillErrorTest(true)
+      }
+    }
+
   }
 }
 
