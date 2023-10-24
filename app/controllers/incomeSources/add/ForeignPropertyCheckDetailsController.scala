@@ -111,7 +111,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
   def getDetails(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckForeignPropertyViewModel]] = {
 
-    sessionService.getMongoKeyTyped[String](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[String]] =>
+    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
       sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, ForeignProperty)).map { accMethod: Either[Throwable, Option[String]] =>
         val errors: Seq[String] = getErrors(startDate, accMethod)
         val result: Option[CheckForeignPropertyViewModel] = getResult(startDate, accMethod)
@@ -127,11 +127,11 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
   }
 
-  def getResult(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Option[CheckForeignPropertyViewModel] = {
+  def getResult(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Option[CheckForeignPropertyViewModel] = {
     (startDate, accMethod) match {
       case (Right(dateMaybe), Right(methodMaybe)) =>
         for {
-          foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
+          foreignPropertyStartDate <- dateMaybe
           cashOrAccrualsFlag <- methodMaybe
         } yield {
           CheckForeignPropertyViewModel(
@@ -142,7 +142,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     }
   }
 
-  def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
+  def getErrors(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
     case class MissingKey(msg: String)
 
     Seq(

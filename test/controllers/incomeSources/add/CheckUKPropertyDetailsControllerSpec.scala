@@ -25,6 +25,7 @@ import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,10 +34,10 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{await, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{CreateBusinessDetailsService, SessionService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -56,14 +57,13 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
   with MockSessionService{
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
-  val mockCheckBusinessDetails: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
   val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
-  val date = "2023-05-01"
-  val propertyStartDate: LocalDate = LocalDate.parse(date)
-  val testUKPropertyStartDate: String = LocalDate.of(2023, 1, 2).toString
+  val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
+  val testPropertyAccountingMethod: String = "CASH"
   val accruals: String = messages("incomeSources.add.accountingMethod.accruals")
   val journeyType: JourneyType = JourneyType(Add, UkProperty)
+  val testJourneyTypeString: String = JourneyType(Add, UkProperty).toString
 
 
   lazy val errorUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = UkProperty).url
@@ -80,7 +80,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     createBusinessDetailsService = mockBusinessDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    sessionService = app.injector.instanceOf[SessionService],
+    sessionService = mockSessionService,
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -106,7 +106,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
         val result = TestCheckUKPropertyDetailsController.show()(fakeRequestWithActiveSession)
@@ -116,7 +116,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         status(result) shouldBe OK
         document.title shouldBe TestCheckUKPropertyDetailsController.title
         document.select("h1:nth-child(1)").text shouldBe TestCheckUKPropertyDetailsController.heading
-        document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe propertyStartDate.toLongDate
+        document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe testPropertyStartDate.toLongDate
         document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe accruals
 
       }
@@ -131,7 +131,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
         val incomeSourceId = "incomeSourceId"
@@ -156,7 +156,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
 
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
         when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any())).
@@ -195,7 +195,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(None))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
@@ -221,7 +221,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
         val result = TestCheckUKPropertyDetailsController.showAgent()(fakeRequestConfirmedClient())
@@ -231,7 +231,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         status(result) shouldBe OK
         document.title shouldBe TestCheckUKPropertyDetailsController.agentsTitle
         document.select("h1:nth-child(1)").text shouldBe TestCheckUKPropertyDetailsController.heading
-        document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe propertyStartDate.toLongDate
+        document.select("dl:nth-of-type(1) > div > dd.govuk-summary-list__value").text() shouldBe testPropertyStartDate.toLongDate
         document.select("dl:nth-of-type(2) > div > dd.govuk-summary-list__value").text() shouldBe accruals
       }
     }
@@ -245,7 +245,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
         val incomeSourceId = "incomeSourceId"
@@ -272,7 +272,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(Some(date)))
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
         when(mockBusinessDetailsService.createUKProperty(any())(any(), any(), any())).
