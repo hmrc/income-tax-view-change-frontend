@@ -60,12 +60,12 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
-    businessDetailsService = mockBusinessDetailsService
+    businessDetailsService = mockBusinessDetailsService,
+    sessionService = app.injector.instanceOf[SessionService],
   )(
     ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
-    sessionService = app.injector.instanceOf[SessionService],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 

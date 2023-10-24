@@ -425,7 +425,6 @@ class AddBusinessNameControllerSpec extends TestSupport
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) must include("Trade and business name cannot be the same")
-
     }
   }
 

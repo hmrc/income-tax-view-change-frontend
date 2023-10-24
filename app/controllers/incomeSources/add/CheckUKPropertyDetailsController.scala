@@ -47,11 +47,11 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val retrieveNino: NinoPredicate,
                                                  val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                  val businessDetailsService: CreateBusinessDetailsService,
+                                                 val sessionService: SessionService,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val createBusinessDetailsService: CreateBusinessDetailsService,
                                                  val retrieveBtaNavBar: NavBarPredicate)
                                                 (implicit val appConfig: FrontendAppConfig,
-                                                 implicit val sessionService: SessionService,
                                                  mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext,
                                                  val itvcErrorHandler: ItvcErrorHandler,
@@ -133,24 +133,19 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
-    else routes.IncomeSourceNotAddedController.show(UkProperty)
 
     withIncomeSourcesFS {
       getUKPropertyDetailsFromSession(sessionService)(user, ec) flatMap {
         case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+          val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
+          else routes.IncomeSourceNotAddedController.show(UkProperty)
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
-            case Left(ex) => Logger("application").error(
-              s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              withIncomeSourcesRemovedFromSession(
-                Redirect(redirectErrorUrl)
-              )
+            case Left(ex) =>
+              Logger("application").error(
+                s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+              Future.successful(Redirect(redirectErrorUrl))
             case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession(
-                Redirect(getUKPropertyReportingMethodUrl(isAgent, id))
-              ) recover {
-                case _: Exception => Redirect(redirectErrorUrl)
-              }
+              Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
           }.recover {
             case ex: Exception =>
               if (isAgent) {
@@ -163,15 +158,14 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                 Redirect(redirectErrorUrl)
               }
           }
-        case Left(ex: Throwable) =>
+        case Left(_) =>
+          val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
+          else routes.IncomeSourceNotAddedController.show(UkProperty)
           Logger("application").error(
-            s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
-          withIncomeSourcesRemovedFromSession(
-            Redirect(redirectErrorUrl)
-          ) recover {
-            case _: Exception => Redirect(redirectErrorUrl)
-          }
+            s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit")
+          Future.successful(Redirect(redirectErrorUrl))
       }
     }
   }
+
 }
