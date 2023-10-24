@@ -105,10 +105,16 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
   private def getBusinessTrade(journeyType: JourneyType, isChange: Boolean)
                               (implicit user: MtdItUser[_]): Future[Option[String]] = {
 
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-      case Right(tradeOpt) => Future.successful(tradeOpt)
-      case Left(err) => Future.failed(err)
+    if (isChange) {
+      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
+        case Right(tradeOpt) => println(tradeOpt)
+          Future.successful(tradeOpt)
+        case Left(err) => Future.failed(err)
+      }
+    } else {
+      Future(None)
     }
+
   }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -122,7 +128,6 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
           val backURL = getBackURL(isAgent, isChange)
           val postAction = controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
-
           Future.successful(Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL)))
       }
     }

@@ -45,7 +45,6 @@ object BaseIntegrationTestConstants {
   val testSaUtr = "1234567890"
   val credId = "12345-credId"
   val testSessionId = "xsession-12345"
-  val testSessionIdAgent = "xsession-1234567"
 
   val testNinoEnrolmentKey = "HMRC-NI"
   val testNinoEnrolmentIdentifier = "NINO"

@@ -27,7 +27,7 @@ import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionIdAgent}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
@@ -52,7 +52,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionIdAgent)))
+  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
 
   s"calling GET $addBusinessNameShowUrl" should {

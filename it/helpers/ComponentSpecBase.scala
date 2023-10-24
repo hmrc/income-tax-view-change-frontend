@@ -338,6 +338,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-trade", additionalCookies)(Map.empty)
     }
+
+    def getChangeAddBusinessTrade: WSResponse = getWithHeaders("/income-sources/add/change-business-trade",
+      "X-Session-ID" -> testSessionId)
+
     def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
 
     def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {

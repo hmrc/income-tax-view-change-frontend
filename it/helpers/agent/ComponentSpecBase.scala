@@ -39,7 +39,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionIdAgent, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -170,7 +170,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       When(s"I call GET /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> testSessionIdAgent)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> testSessionId)
         .get().futureValue
     }
 
@@ -314,6 +314,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-trade", additionalCookies)(Map.empty)
+    }
+
+    def getAddChangeBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      get("/income-sources/add/change-business-trade", additionalCookies)
+
+    def postAddChangeBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/change-business-trade", additionalCookies)(Map.empty)
     }
 
     def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
