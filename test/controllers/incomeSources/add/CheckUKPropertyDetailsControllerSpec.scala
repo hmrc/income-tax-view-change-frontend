@@ -20,16 +20,12 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.UkProperty
-import enums.IncomeSourceJourney.UkProperty.journeyType
 import enums.JourneyType.{Add, JourneyType}
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -83,10 +79,10 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
     businessDetailsService = mockBusinessDetailsService,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     createBusinessDetailsService = mockBusinessDetailsService,
-    retrieveBtaNavBar = MockNavBarPredicate
+    retrieveBtaNavBar = MockNavBarPredicate,
+    sessionService = app.injector.instanceOf[SessionService],
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
-    sessionService = mockSessionService,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

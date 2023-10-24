@@ -32,7 +32,6 @@ import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessRe
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
@@ -58,8 +57,6 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
   val testPropertyAccountingMethodView: String = "Cash basis accounting"
   val continueButtonText: String = messagesAPI("base.confirm-and-continue")
   val testJourneyType: JourneyType = JourneyType(Add, UkProperty)
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-
   val testJourneyTypeString: String = JourneyType(Add, UkProperty).toString
 
   val testAddIncomeSourceData = AddIncomeSourceData(

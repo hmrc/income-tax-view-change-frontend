@@ -52,9 +52,9 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val businessDetailsService: CreateBusinessDetailsService,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val createBusinessDetailsService: CreateBusinessDetailsService,
-                                                 val retrieveBtaNavBar: NavBarPredicate)
+                                                 val retrieveBtaNavBar: NavBarPredicate,
+                                                 val sessionService: SessionService)
                                                 (implicit val appConfig: FrontendAppConfig,
-                                                 implicit val sessionService: SessionService,
                                                  mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext,
                                                  val itvcErrorHandler: ItvcErrorHandler,
@@ -184,11 +184,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
       case Left(ex: Throwable) =>
         Logger("application").error(
           s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
-        withIncomeSourcesRemovedFromSession(
-          Redirect(redirectErrorUrl)
-        ) recover {
-          case _: Exception => Redirect(redirectErrorUrl)
-        }
+        sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+        Future.successful(Redirect(redirectErrorUrl))
     }
   }
 }

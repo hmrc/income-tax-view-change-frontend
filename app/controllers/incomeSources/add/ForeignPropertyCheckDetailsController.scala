@@ -49,11 +49,12 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val retrieveBtaNavBar: NavBarPredicate,
-                                                      val businessDetailsService: CreateBusinessDetailsService)
+                                                      val businessDetailsService: CreateBusinessDetailsService,
+                                                      val sessionService: SessionService,
+                                                      )
                                                      (implicit val ec: ExecutionContext,
                                                       implicit override val mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
-                                                      implicit val sessionService: SessionService,
                                                       implicit val itvcErrorHandler: ItvcErrorHandler,
                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
@@ -224,6 +225,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
       case Left(_) =>
         Logger("application").error(
           s"[CheckBusinessDetailsController][submit] - Error: Unable to build view model on submit")
+        sessionService.deleteMongoData(JourneyType(Add, UkProperty))
         Future.successful(Redirect(redirectErrorUrl))
     }
   }

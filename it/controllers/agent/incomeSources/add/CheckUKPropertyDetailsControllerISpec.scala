@@ -29,10 +29,7 @@ import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
-
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
@@ -57,8 +54,6 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
   val testPropertyAccountingMethodView: String = "Cash basis accounting"
   val continueButtonText: String = messagesAPI("base.confirm-and-continue")
   val testJourneyType: JourneyType = JourneyType(Add, UkProperty)
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-
   val testJourneyTypeString: String = JourneyType(Add, UkProperty).toString
 
   val testAddIncomeSourceData = AddIncomeSourceData(
@@ -144,13 +139,14 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
 
         Given("I wiremock stub a successful Create Income Sources (UK Property) response")
         val createResponseJson = List(CreateIncomeSourceResponse("1234567890"))
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, createResponseJson)
+
+        await(sessionService.setMongoData(testUIJourneySessionData))
 
         val formData: Map[String, Seq[String]] = Map(
           "tradingStartDate" -> Seq("2021-01-01"),
           "cashOrAccrualsFlag" -> Seq("CASH")
         )
-
-        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, createResponseJson)
 
         When(s"I call POST ${CheckUKPropertyDetails.submitUrl}")
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-check-details", clientDetailsWithConfirmation)(formData)
