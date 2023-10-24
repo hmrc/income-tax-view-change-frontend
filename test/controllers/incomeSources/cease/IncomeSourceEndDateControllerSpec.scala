@@ -21,8 +21,6 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
@@ -30,7 +28,6 @@ import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
@@ -77,56 +74,56 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     }
 
     def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], isChange: Boolean): (Call, Call, Call) = {
-          (incomeSourceType, isAgent, isChange) match {
-            case (UkProperty, true, false) =>
-              (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
-                routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
-            case (UkProperty, false, false) =>
-              (routes.DeclarePropertyCeasedController.show(incomeSourceType),
-                routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
-            case (UkProperty, true, true) =>
-              (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
-                routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
-            case (UkProperty, false, true) =>
-              (routes.DeclarePropertyCeasedController.show(incomeSourceType),
-                routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
-            case (ForeignProperty, true, false) =>
-              (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
-                routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
-            case (ForeignProperty, false, false) =>
-              (routes.DeclarePropertyCeasedController.show(incomeSourceType),
-                routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
-            case (ForeignProperty, true, true) =>
-              (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
-                routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
-            case (ForeignProperty, false, true) =>
-              (routes.DeclarePropertyCeasedController.show(incomeSourceType),
-                routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
-            case (SelfEmployment, true, false) =>
-              (routes.CeaseIncomeSourceController.showAgent(),
-                routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
-            case (SelfEmployment, false, false) =>
-              (routes.CeaseIncomeSourceController.show(),
-                routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
-            case (SelfEmployment, true, true) =>
-              (routes.CeaseIncomeSourceController.showAgent(),
-                routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
-            case (SelfEmployment, false, true) =>
-              (routes.CeaseIncomeSourceController.show(),
-                routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
-                routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
-          }
+      (incomeSourceType, isAgent, isChange) match {
+        case (UkProperty, true, false) =>
+          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
+        case (UkProperty, false, false) =>
+          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
+            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
+        case (UkProperty, true, true) =>
+          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
+        case (UkProperty, false, true) =>
+          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
+        case (ForeignProperty, true, false) =>
+          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
+        case (ForeignProperty, false, false) =>
+          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
+            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
+        case (ForeignProperty, true, true) =>
+          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
+        case (ForeignProperty, false, true) =>
+          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
+            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
+        case (SelfEmployment, true, false) =>
+          (routes.CeaseIncomeSourceController.showAgent(),
+            routes.IncomeSourceEndDateController.submitAgent(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
+        case (SelfEmployment, false, false) =>
+          (routes.CeaseIncomeSourceController.show(),
+            routes.IncomeSourceEndDateController.submit(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
+        case (SelfEmployment, true, true) =>
+          (routes.CeaseIncomeSourceController.showAgent(),
+            routes.IncomeSourceEndDateController.submitChangeAgent(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType))
+        case (SelfEmployment, false, true) =>
+          (routes.CeaseIncomeSourceController.show(),
+            routes.IncomeSourceEndDateController.submitChange(id = id, incomeSourceType = incomeSourceType),
+            routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType))
+      }
     }
 
     def testShowResponse(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Unit = {
@@ -231,10 +228,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockGetSession(Some(testSelfEmploymentId))
-
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestNoSession.withMethod("POST")
@@ -243,18 +238,16 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
-        result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe Some(testSelfEmploymentId)
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url)
+        verifyMockSetMongoKeyResponse(2)
       }
       "UK Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         disableAllSwitches()
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
-        setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseUKPropertyEndDate -> validCeaseDate)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(None, UkProperty)(fakeRequestNoSession.withMethod("POST")
@@ -263,17 +256,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(UkProperty.endDateSessionKey) shouldBe Some("2022-08-27")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
-        setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseForeignPropertyEndDate -> validCeaseDate)
-
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(None, ForeignProperty)(fakeRequestNoSession.withMethod("POST")
@@ -282,8 +273,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(ForeignProperty.endDateSessionKey) shouldBe Some("2022-08-27")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -292,7 +283,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestNoSession.withMethod("POST")
             .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
@@ -300,8 +290,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.BAD_REQUEST
-        result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe None
-        result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe None
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
@@ -309,6 +297,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
+
         val incomeSourceType = SelfEmployment
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(None, incomeSourceType)(fakeRequestNoSession
@@ -322,6 +311,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
+
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submit(None, incomeSourceType = SelfEmployment)(fakeRequestNoSession
             .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
@@ -329,7 +319,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
-
     }
   }
   "Agent - IncomeSourceEndDateController.showAgent" should {
@@ -399,9 +388,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockGetSession(Some(testSelfEmploymentId))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestConfirmedClient().withMethod("POST")
@@ -410,17 +398,16 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
-        result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe Some(testSelfEmploymentId)
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url)
+        verifyMockSetMongoKeyResponse(2)
       }
       "UK Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
-        setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseUKPropertyEndDate -> validCeaseDate)
+
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitAgent(None, UkProperty)(fakeRequestConfirmedClient()
@@ -429,16 +416,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(UkProperty.endDateSessionKey) shouldBe Some("2022-08-27")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
-        setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseForeignPropertyEndDate -> validCeaseDate)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitAgent(None, ForeignProperty)(fakeRequestConfirmedClient()
@@ -447,8 +433,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(ForeignProperty.endDateSessionKey) shouldBe Some("2022-08-27")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -457,7 +443,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitAgent(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestConfirmedClient().withMethod("POST")
             .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
@@ -465,8 +450,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.BAD_REQUEST
-        result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe None
-        result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe None
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
@@ -504,8 +487,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       disableAllSwitches()
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
-      setupMockGetSession(Some("2022-08-27"))
-
+      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
     }
 
     "return 200 OK" when {
@@ -515,18 +497,21 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         stage()
         val incomeSourceType = SelfEmployment
         TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = false, isChange = true)
+        verifyMockGetMongoKeyTypedResponse[String](1)
       }
 
       "navigating to the page with FS Enabled with income source type as Foreign Property" in {
         stage()
         val incomeSourceType = ForeignProperty
         TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent, isChange = true)
+        verifyMockGetMongoKeyTypedResponse[String](1)
       }
 
       "navigating to the page with FS Enabled with income source type as UK Property" in {
         stage()
         val incomeSourceType = UkProperty
         TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent, isChange = true)
+        verifyMockGetMongoKeyTypedResponse[String](1)
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page" when {
@@ -568,9 +553,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockGetSession(Some(testSelfEmploymentId))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChange(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestNoSession.withMethod("POST")
@@ -579,18 +563,16 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
-        result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe Some(testSelfEmploymentId)
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url)
+        verifyMockSetMongoKeyResponse(2)
       }
       "UK Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         disableAllSwitches()
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
-        setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseUKPropertyEndDate -> validCeaseDate)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChange(None, UkProperty)(fakeRequestNoSession.withMethod("POST")
@@ -599,17 +581,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(UkProperty.endDateSessionKey) shouldBe Some("2022-08-27")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
-        setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseForeignPropertyEndDate -> validCeaseDate)
-
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChange(None, ForeignProperty)(fakeRequestNoSession.withMethod("POST")
@@ -618,8 +598,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(ForeignProperty.endDateSessionKey) shouldBe Some("2022-08-27")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -628,7 +608,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChange(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestNoSession.withMethod("POST")
             .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
@@ -636,8 +615,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.BAD_REQUEST
-        result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe None
-        result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe None
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
@@ -674,8 +651,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       disableAllSwitches()
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
-      setupMockGetSession(Some("2022-08-27"))
-
+      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
     }
 
     "return 200 OK" when {
@@ -685,18 +661,21 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         stage()
         val incomeSourceType = SelfEmployment
         TestIncomeSourceEndDateController.testShowResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = isAgent, isChange = true)
+        verifyMockGetMongoKeyTypedResponse[String](1)
       }
 
       "navigating to the page with FS Enabled with income source type as Foreign Property" in {
         stage()
         val incomeSourceType = ForeignProperty
         TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent, isChange = true)
+        verifyMockGetMongoKeyTypedResponse[String](1)
       }
 
       "navigating to the page with FS Enabled with income source type as UK Property" in {
         stage()
         val incomeSourceType = UkProperty
         TestIncomeSourceEndDateController.testShowResponse(id = None, incomeSourceType, isAgent = isAgent, isChange = true)
+        verifyMockGetMongoKeyTypedResponse[String](1)
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
@@ -705,12 +684,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         val incomeSourceType = SelfEmployment
         val result: Future[Result] = TestIncomeSourceEndDateController.showChangeAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+        verifyMockGetMongoKeyTypedResponse[String](0)
       }
 
       "income source ID is missing" in {
         stage()
         val result: Future[Result] = TestIncomeSourceEndDateController.showChangeAgent(None, incomeSourceType = SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
+        verifyMockGetMongoKeyTypedResponse[String](0)
       }
     }
   }
@@ -720,9 +701,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockBusinessIncomeSource()
-        setupMockGetSession(Some(testSelfEmploymentId))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseBusinessEndDate -> validCeaseDate, SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChangeAgent(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestConfirmedClient().withMethod("POST")
@@ -731,17 +711,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe Some("2022-08-27")
-        result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe Some(testSelfEmploymentId)
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url)
+        verifyMockSetMongoKeyResponse(2)
       }
       "UK Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockUKPropertyIncomeSource()
-        setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseUKPropertyEndDate -> validCeaseDate)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChangeAgent(None, UkProperty)(fakeRequestConfirmedClient()
@@ -750,16 +728,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(UkProperty.endDateSessionKey) shouldBe Some("2022-08-27")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockForeignPropertyIncomeSource()
-        setupMockGetSession(Some("value"))
-        val redirect = Redirect(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
-        setupMockSetSession(redirect, SessionKeys.ceaseForeignPropertyEndDate -> validCeaseDate)
+        setupMockCreateSession(true)
+        setupMockSetSessionKeyMongo(Right(true))
 
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChangeAgent(None, ForeignProperty)(fakeRequestConfirmedClient()
@@ -768,8 +745,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.SEE_OTHER
-        result.futureValue.session.get(ForeignProperty.endDateSessionKey) shouldBe Some("2022-08-27")
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -778,7 +755,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBusinessIncomeSource()
 
-
         lazy val result: Future[Result] = {
           TestIncomeSourceEndDateController.submitChangeAgent(Some(testSelfEmploymentId), SelfEmployment)(fakeRequestConfirmedClient().withMethod("POST")
             .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
@@ -786,8 +762,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
 
         status(result) shouldBe Status.BAD_REQUEST
-        result.futureValue.session.get(SelfEmployment.endDateSessionKey) shouldBe None
-        result.futureValue.session.get(ceaseBusinessIncomeSourceId) shouldBe None
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {

@@ -42,7 +42,7 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
     val title: String = s"${messages("agent.client_relationship_failure.heading")} - GOV.UK"
     val info: String = messages("agent.client_relationship_failure.info")
       .replace("{0}", messages("agent.client_relationship_failure.info.link") + " (opens in new tab)")
-    val clientAuthorisationLink: String = s"${messages("agent.client_relationship_failure.info.link")}${messages("pagehelp.opensInNewTabText")}"
+    val clientAuthorisationLink: String = s"${messages("agent.client_relationship_failure.info.link")} ${messages("pagehelp.opensInNewTabText")}"
     val enterDifferentDetails: String = messages("agent.client_relationship_failure.enter_different_details")
   }
 

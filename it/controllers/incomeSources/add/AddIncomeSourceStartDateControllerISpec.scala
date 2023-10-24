@@ -28,10 +28,8 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext
 
 class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
@@ -74,8 +72,6 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
   val journeyTypeUK: JourneyType = JourneyType(Add, UkProperty)
   val journeyTypeFP: JourneyType = JourneyType(Add, ForeignProperty)
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-  implicit val ec = app.injector.instanceOf[ExecutionContext]
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testBusinessName: String = "Test Business"
   val testBusinessTrade: String = "Plumbing"

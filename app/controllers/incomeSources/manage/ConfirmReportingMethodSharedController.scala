@@ -24,11 +24,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
@@ -71,10 +72,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     withIncomeSourcesFS {
-      sessionService.get(SessionKeys.incomeSourceId).flatMap {
-        case Right(incomeSourceIdMayBe) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdMayBe)
-        case Left(exception) => Future.failed(exception)
+      if (incomeSourceType == SelfEmployment) {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
+          case Right(incomeSourceIdMayBe) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdMayBe)
+          case Left(exception) => Future.failed(exception)
+        }
       }
+      else handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, None)
     }.recover {
       case exception =>
         Logger("application").error(s"[ConfirmReportingMethodSharedController][show] ${exception.getMessage}")
@@ -89,10 +93,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
     withIncomeSourcesFS {
-      sessionService.get(SessionKeys.incomeSourceId).flatMap {
-        case Right(incomeSourceIdMayBe) => handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdMayBe, incomeSourceType)
-        case Left(exception) => Future.failed(exception)
+      if (incomeSourceType == SelfEmployment) {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
+          case Right(incomeSourceIdMayBe) => handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdMayBe, incomeSourceType)
+          case Left(exception) => Future.failed(exception)
+        }
       }
+      else handleSubmitRequest(taxYear, changeTo, isAgent, None, incomeSourceType)
     }.recover {
       case exception =>
         Logger("application").error(s"[ConfirmReportingMethodSharedController][submit] ${exception.getMessage}")

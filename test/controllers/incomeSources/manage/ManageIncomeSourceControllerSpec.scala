@@ -17,27 +17,24 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
-import config.featureswitch.FeatureSwitch.switches
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import controllers.incomeSources.manage.ManageIncomeSourceController
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
+import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAuthAgentSuccessWithSaUtrResponse, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
+import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 import testUtils.TestSupport
-import play.api.http.Status
-import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
-import services.SessionService
-import testConstants.BusinessDetailsTestConstants.{ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2, viewBusinessDetailsViewModel}
-import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel, viewUkPropertyDetailsViewModel}
 import views.html.incomeSources.manage.ManageIncomeSources
 
 import scala.concurrent.Future
@@ -49,7 +46,8 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
   with MockNavBarEnumFsPredicate
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
-  with TestSupport {
+  with TestSupport
+  with MockSessionService {
 
   object TestManageIncomeSourceController
     extends ManageIncomeSourceController(
@@ -61,7 +59,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      sessionService = app.injector.instanceOf[SessionService],
+      sessionService = mockSessionService,
       auditingService = app.injector.instanceOf[AuditingService]
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -75,7 +73,6 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
     "redirect an individual back to the home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
-        isDisabled(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -88,7 +85,6 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
     "redirect an agent back to the home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
-        isDisabled(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -104,6 +100,8 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
         enable(IncomeSources)
         mockBothIncomeSources()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockCreateSession(true)
+        setupMockDeleteSession(true)
 
         when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
           .thenReturn(Right(ViewIncomeSourcesViewModel(
@@ -123,6 +121,8 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
         enable(IncomeSources)
         mockBothIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockCreateSession(true)
+        setupMockDeleteSession(true)
 
         when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
           .thenReturn(Right(ViewIncomeSourcesViewModel(
@@ -142,6 +142,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
         enable(IncomeSources)
         mockBothIncomeSources()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockCreateSession(true)
 
         when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
           .thenReturn(Left(MissingFieldException("Trading Name")))
@@ -155,6 +156,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
         enable(IncomeSources)
         mockBothIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockCreateSession(true)
 
         when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
           .thenReturn(Left(MissingFieldException("Trading Name")))

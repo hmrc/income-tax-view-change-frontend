@@ -38,7 +38,6 @@ class CeaseIncomeSourcesControllerISpec extends ComponentSpecBase {
   val ceasedBusinessMessage: String = messagesAPI("cease-income-sources.ceased-businesses.h1")
   val ceasedBusinessName: String = "ceasedBusiness"
 
-
   s"calling GET $showIndividualCeaseIncomeSourceControllerUrl" should {
     "render the Cease Income Source page for an Individual" when {
       "User is authorised" in {

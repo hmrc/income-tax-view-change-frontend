@@ -20,9 +20,11 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.SelfEmployment
-import forms.utils.SessionKeys
+import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import mocks.services.MockSessionService
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -31,7 +33,7 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CreateBusinessDetailsService, SessionService}
+import services.CreateBusinessDetailsService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
@@ -42,19 +44,35 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching {
+  with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockSessionService with FeatureSwitching {
 
+  val testBusinessId: String = "some-income-source-id"
   val testBusinessName: String = "Test Business"
-  val testBusinessStartDate: String = LocalDate.of(2023, 1, 2).toString
+  val testBusinessStartDate: LocalDate = LocalDate.of(2023, 1, 2)
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "123 Main Street"
   val testBusinessPostCode: String = "AB123CD"
+  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
   val testBusinessAccountingMethod = "Quarterly"
-  val testAccountingPeriodEndDate: String = LocalDate.of(2023, 11, 11).toString
-
+  val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
+  val testCountryCode = "GB"
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockCheckBusinessDetails: CheckBusinessDetails = app.injector.instanceOf[CheckBusinessDetails]
   val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
+
+  val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData(
+    sessionId = "some-session-id",
+    journeyType = JourneyType(Add, SelfEmployment).toString,
+    addIncomeSourceData = Some(AddIncomeSourceData(
+      businessName = Some(testBusinessName),
+      businessTrade = Some(testBusinessTrade),
+      dateStarted = Some(testBusinessStartDate),
+      createdIncomeSourceId = Some(testBusinessId),
+      address = Some(testBusinessAddress),
+      countryCode = Some(testCountryCode),
+      accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
+      incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
+    )))
 
   object TestCheckBusinessDetailsController extends CheckBusinessDetailsController(
     checkBusinessDetails = app.injector.instanceOf[CheckBusinessDetails],
@@ -65,10 +83,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    businessDetailsService = mockBusinessDetailsService,
-    sessionService = app.injector.instanceOf[SessionService],
+    businessDetailsService = mockBusinessDetailsService
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
+    sessionService = mockSessionService,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler]
   ) {
@@ -87,18 +105,9 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetMongo(Right(Some(testUIJourneySessionData)))
 
-          val result = TestCheckBusinessDetailsController.show()(
-            fakeRequestWithActiveSession
-              .withSession(
-                SessionKeys.businessName -> testBusinessStartDate,
-                SessionKeys.businessStartDate -> testBusinessStartDate,
-                SessionKeys.businessTrade -> testBusinessTrade,
-                SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-                SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
-                SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
-                SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-              ))
+          val result = TestCheckBusinessDetailsController.show()(fakeRequestWithActiveSession)
 
           val document: Document = Jsoup.parse(contentAsString(result))
           val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
@@ -135,18 +144,9 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
-            .thenReturn(Future {
-              Right(CreateIncomeSourceResponse("incomeSourceId"))
-            })
+            .thenReturn(Future(Right(CreateIncomeSourceResponse(testBusinessId))))
 
-          val result = TestCheckBusinessDetailsController.show()(
-            fakeRequestWithActiveSession
-              .withSession(
-                SessionKeys.businessName -> testBusinessStartDate,
-                SessionKeys.businessStartDate -> testBusinessStartDate,
-                SessionKeys.businessTrade -> testBusinessTrade,
-                SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-              ))
+          val result = TestCheckBusinessDetailsController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
@@ -164,24 +164,14 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
             .thenReturn(Future {
-              Right(CreateIncomeSourceResponse("incomeSourceId"))
+              Right(CreateIncomeSourceResponse(testBusinessId))
             })
+          setupMockGetMongo(Right(Some(testUIJourneySessionData)))
 
-          val result = TestCheckBusinessDetailsController.submit()(
-            fakeRequestWithActiveSession
-              .withSession(
-                SessionKeys.businessName -> testBusinessStartDate,
-                SessionKeys.businessStartDate -> testBusinessStartDate,
-                SessionKeys.businessTrade -> testBusinessTrade,
-                SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-                SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-                SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
-                SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
-                SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-              ))
+          val result = TestCheckBusinessDetailsController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.show("incomeSourceId").url)
+          redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.show(testBusinessId).url)
         }
       }
 
@@ -193,19 +183,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(CreateIncomeSourceResponse("incomeSourceId"))
+            Right(CreateIncomeSourceResponse(testBusinessId))
           })
-
-        val result = TestCheckBusinessDetailsController.submit()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.businessName -> testBusinessStartDate,
-              SessionKeys.businessStartDate -> testBusinessStartDate,
-              SessionKeys.businessTrade -> testBusinessTrade,
-              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-              SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod
-            ))
+        setupMockGetMongo(Right(Some(testUIJourneySessionData.copy(addIncomeSourceData = None))))
+        val result = TestCheckBusinessDetailsController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType = SelfEmployment).url)
@@ -224,20 +205,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
           mockSingleBusinessIncomeSource()
           when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
             .thenReturn(Future {
-              Right(CreateIncomeSourceResponse("incomeSourceId"))
+              Right(CreateIncomeSourceResponse(testBusinessId))
             })
-
-          val result = TestCheckBusinessDetailsController.showAgent()(
-            fakeRequestConfirmedClient().withSession(
-              SessionKeys.businessName -> testBusinessStartDate,
-              SessionKeys.businessStartDate -> testBusinessStartDate,
-              SessionKeys.businessTrade -> testBusinessTrade,
-              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-              SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
-              SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
-              SessionKeys.addBusinessPostalCode -> testBusinessPostCode
-            ))
+          setupMockGetMongo(Right(Some(testUIJourneySessionData)))
+          val result = TestCheckBusinessDetailsController.showAgent()(fakeRequestConfirmedClient())
 
           status(result) shouldBe Status.OK
 
@@ -281,18 +252,8 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
             .thenReturn(Future {
               Right(CreateIncomeSourceResponse("incomeSourceId"))
             })
-
-          val result = TestCheckBusinessDetailsController.submitAgent()(
-            fakeRequestConfirmedClient().withSession(
-              SessionKeys.businessName -> testBusinessStartDate,
-              SessionKeys.businessStartDate -> testBusinessStartDate,
-              SessionKeys.businessTrade -> testBusinessTrade,
-              SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-              SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
-              SessionKeys.addBusinessAccountingPeriodEndDate -> testAccountingPeriodEndDate,
-              SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            ))
+          setupMockGetMongo(Right(Some(testUIJourneySessionData)))
+          val result = TestCheckBusinessDetailsController.submitAgent()(fakeRequestConfirmedClient())
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("incomeSourceId").url)
@@ -306,18 +267,10 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         mockSingleBusinessIncomeSource()
         when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
           .thenReturn(Future {
-            Right(CreateIncomeSourceResponse("incomeSourceId"))
+            Right(CreateIncomeSourceResponse(testBusinessId))
           })
-
-        val result = TestCheckBusinessDetailsController.submitAgent()(
-          fakeRequestConfirmedClient().withSession(
-            SessionKeys.businessName -> testBusinessStartDate,
-            SessionKeys.businessStartDate -> testBusinessStartDate,
-            SessionKeys.businessTrade -> testBusinessTrade,
-            SessionKeys.addBusinessAddressLine1 -> testBusinessAddressLine1,
-            SessionKeys.addBusinessPostalCode -> testBusinessPostCode,
-            SessionKeys.addIncomeSourcesAccountingMethod -> testBusinessAccountingMethod,
-          ))
+        setupMockGetMongo(Right(Some(testUIJourneySessionData.copy(addIncomeSourceData = None))))
+        val result = TestCheckBusinessDetailsController.submitAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment).url)

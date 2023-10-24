@@ -150,11 +150,11 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUKPropertyIncomeSourceWithLatency2023()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any)).thenReturn(Future(Some(true)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022), any)(any, any, any)).thenReturn(Future(Some(true)))
 
       case CURRENT_TAX_YEAR_IN_LATENCY_YEARS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any)).thenReturn(Future(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022), any)(any, any, any)).thenReturn(Future(Some(false)))
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUKPropertyIncomeSourceWithLatency2023()
@@ -164,7 +164,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUKPropertyIncomeSourceWithLatency2024()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any)).thenReturn(Future(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any)).thenReturn(Future(Some(false)))
 
       case NON_ELIGIBLE_ITS_STATUS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)

@@ -2,18 +2,24 @@ package controllers.agent.incomeSources.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 import java.time.LocalDate
 
 class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val businessCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url
   val ukPropertyCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url
@@ -24,6 +30,13 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
   val htmlTitle = " - Manage your Income Tax updates - GOV.UK"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")))))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-SE")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-UK")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-FP")))
+  }
 
   s"calling GET $businessCeasedObligationsShowUrl" should {
     "render the Business Ceased obligations page" when {
@@ -40,7 +53,10 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        val result = IncomeTaxViewChangeFrontend.getBusinessCeasedObligations(clientDetailsWithConfirmation ++ Map(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None)))))
+
+        val result = IncomeTaxViewChangeFrontend.getBusinessCeasedObligations(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")

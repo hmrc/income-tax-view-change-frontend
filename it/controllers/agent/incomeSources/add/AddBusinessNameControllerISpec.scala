@@ -51,8 +51,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val continueButtonText: String = messagesAPI("base.continue")
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
 
 

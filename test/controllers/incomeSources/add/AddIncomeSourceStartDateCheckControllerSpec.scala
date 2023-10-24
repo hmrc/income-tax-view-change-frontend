@@ -28,7 +28,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
+import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodStartDateField, dateStartedField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -76,7 +76,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
   val addIncomeSourceDataEmpty = AddIncomeSourceData()
   val addIncomeSourceDataProperty = AddIncomeSourceData(dateStarted = Some(testStartDate))
-  val addIncomeSourceDataSE = AddIncomeSourceData(None, None, Some(testStartDate), None, Some(testBusinessAccountingPeriodStartDate), Some(testBusinessAccountingPeriodEndDate))
+  val addIncomeSourceDataSE = AddIncomeSourceData(dateStarted = Some(testStartDate), accountingPeriodStartDate = Some(testBusinessAccountingPeriodStartDate),
+    accountingPeriodEndDate = Some(testBusinessAccountingPeriodEndDate))
 
   val uiJourneySessionDataSE: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(addIncomeSourceDataSE))
   val uiJourneySessionDataUK: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-UK", Some(addIncomeSourceDataProperty))

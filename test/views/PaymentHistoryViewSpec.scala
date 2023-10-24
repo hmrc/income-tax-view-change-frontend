@@ -41,7 +41,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val agentTitle: String = messages("htmlTitle.agent", heading)
     val titlePaymentRefundEnabled: String = messages("htmlTitle", messages("paymentHistory.paymentAndRefundHistory.heading"))
 
-    val info: String = s"${messages("PaymentHistory.classicSA")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
+    val info: String = s"${messages("PaymentHistory.classicSA")} ${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}."
 
     def button(year: Int): String = s"$year payments"
 
@@ -54,7 +54,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val paymentHeadingDescription: String = messages("paymentHistory.table.header.description")
     val paymentHeadingAmount: String = messages("paymentHistory.table.header.amount")
     val partialH2Heading = "payments"
-    val saLink: String = s"${messages("whatYouOwe.sa-link")}${messages("pagehelp.opensInNewTabText")}"
+    val saLink: String = s"${messages("whatYouOwe.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
   }
 
   val paymentEntriesMFA = List(
@@ -98,7 +98,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     paymentHistoryView(testPayments,paymentHistoryAndRefundsEnabled = false ,"testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
   )
 
-  val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
+  val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
   "The payments history view with payment response model" should {
     "when the user has payment history for a single Year" should {
@@ -178,7 +178,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   "The payments history view with payment response model when logged as an Agent" should {
     s"have the information ${messages("paymentHistory.info")}" in new PaymentHistorySetup(paymentEntriesMFA, isAgent = true) {
       layoutContent.select(Selectors.p).text shouldBe paymentHistoryMessageInfo
-      layoutContent.selectFirst(Selectors.p).hasCorrectLink(s"${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}", saForAgents)
+      layoutContent.selectFirst(Selectors.p).hasCorrectLink(s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}", saForAgents)
     }
 
     s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, None, isAgent = true) {

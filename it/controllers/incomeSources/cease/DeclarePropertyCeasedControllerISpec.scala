@@ -18,13 +18,23 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.CeaseIncomeSourceData.ceasePropertyDeclare
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
   val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
   val showDeclareUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.show(UkProperty).url
   val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, ForeignProperty).url
@@ -36,6 +46,16 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   val pageTitleMsgKeyFP = "incomeSources.cease.FP.property.heading"
   val pageTitleMsgKeyUK = "incomeSources.cease.UK.property.heading"
   val buttonLabel: String = messagesAPI("base.continue")
+
+  val stringTrue: String = "true"
+  val stringFalse: String = "false"
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-SE")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-UK")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-FP")))
+  }
 
   s"calling GET ${showDeclareUKPropertyCeasedControllerUrl}" should {
     "render the Cease UK Property Page" when {
@@ -62,21 +82,33 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
       "form is filled correctly" in {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
+
         val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(Some("true"))
         result.status shouldBe SEE_OTHER
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(showUKPropertyEndDateControllerUrl)
         )
+
+        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringTrue))
+
       }
       "form is filled incorrectly" in {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
+
         val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(None)
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("cease-property-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageUK)
         )
+
+        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringFalse))
+
       }
     }
   }
@@ -106,21 +138,33 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
       "form is filled correctly" in {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
+
         val result = IncomeTaxViewChangeFrontend.postCeaseForeignProperty(Some("true"))
         result.status shouldBe SEE_OTHER
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(showForeignPropertyEndDateControllerUrl)
         )
+
+        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringTrue))
+
       }
       "form is filled incorrectly" in {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
+
         val result = IncomeTaxViewChangeFrontend.postCeaseForeignProperty(None)
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("cease-property-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageFP)
         )
+
+        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringFalse))
+
       }
     }
   }

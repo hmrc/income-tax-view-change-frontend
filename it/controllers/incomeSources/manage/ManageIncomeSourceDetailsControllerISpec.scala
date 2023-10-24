@@ -18,12 +18,16 @@ package controllers.incomeSources.manage
 
 import audit.models.ManageYourDetailsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.IncomeSources
+import config.featureswitch.{IncomeSources, TimeMachineAddYear}
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, LatencyDetails}
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.businessForManageYourDetailsAudit
 import testConstants.CalculationListIntegrationTestConstants
@@ -69,19 +73,24 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val messagesChangeLinkText: String = messagesAPI("incomeSources.manage.business-manage-details.change")
   val messagesUnknown: String = messagesAPI("incomeSources.generic.unknown")
 
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
   s"calling GET $manageSelfEmploymentShowUrl" should {
     "render the Manage Self Employment business page" when {
       "URL contains a valid income source ID and authorised user has no latency information" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -95,20 +104,24 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+        enable(TimeMachineAddYear)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
 
         And("API 1404 getCalculationList returns a success response")
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -125,7 +138,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -138,6 +151,9 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -156,13 +172,16 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         result should have(
           httpStatus(OK),
@@ -180,7 +199,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseManageYourDetailsAudit)
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -193,6 +212,9 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
         IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
         AuditStub.verifyAuditEvent(
           ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelSelfEmploymentBusiness)(
@@ -226,7 +248,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -244,16 +266,16 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+        enable(TimeMachineAddYear)
 
-
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
 
         And("API 1404 getCalculationList returns a success response")
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -273,7 +295,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -300,7 +322,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -320,7 +342,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUkPropertyResponseManageYourDetailsAudit)
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -366,7 +388,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -384,16 +406,16 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+        enable(TimeMachineAddYear)
 
-
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
 
         And("API 1404 getCalculationList returns a success response")
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -413,7 +435,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -440,7 +462,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -460,7 +482,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
       "User is authorised" in {
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseManageYourDetailsAudit)
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")

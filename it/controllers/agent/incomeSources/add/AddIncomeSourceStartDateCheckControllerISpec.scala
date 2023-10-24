@@ -76,8 +76,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
   val journeyTypeUK: JourneyType = JourneyType(Add, UkProperty)
   val journeyTypeFP: JourneyType = JourneyType(Add, ForeignProperty)
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-  implicit val ec = app.injector.instanceOf[ExecutionContext]
+  override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testAccountingPeriodStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 4, 5)

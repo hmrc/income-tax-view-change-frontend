@@ -74,8 +74,6 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
   val journeyTypeUK: JourneyType = JourneyType(Add, UkProperty)
   val journeyTypeFP: JourneyType = JourneyType(Add, ForeignProperty)
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-  implicit val ec = app.injector.instanceOf[ExecutionContext]
   val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
   val testBusinessName: String = "Test Business"
   val testBusinessTrade: String = "Plumbing"

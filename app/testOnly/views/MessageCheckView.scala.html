@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,28 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package enums.JourneyType
+@import helper._
+@import views.html.layouts.unifiedLayout
 
-import enums.IncomeSourceJourney.IncomeSourceType
+@this( unifiedLayout: unifiedLayout)
 
-case class JourneyType(operation: Operation, businessType: IncomeSourceType) {
-  override def toString: String = operation.operationType + "-" + businessType.key
+@(messageKey: List[String])(implicit request: Request[_], messages: Messages)
+
+@unifiedLayout(pageTitle = Messages("Message Check")) {
+<span id="messagesCheck">
+    @for(key <- messageKey) {
+      <span class="messageRow">
+       <span class="messageKey">@key</span> =
+       <span class="messageValue">@messages(key)</span>
+      </span><br><br>
+    }
+</span>
 }
 
-sealed trait Operation {
-  val operationType: String
-}
-
-case object Add extends Operation {
-  override val operationType = "ADD"
-}
-
-case object Manage extends Operation {
-  override val operationType = "MANAGE"
-}
-
-case object Cease extends Operation {
-  override val operationType = "CEASE"
-}

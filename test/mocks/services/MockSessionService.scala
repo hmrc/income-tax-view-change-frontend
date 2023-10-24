@@ -20,7 +20,7 @@ import enums.JourneyType.JourneyType
 import models.incomeSourceDetails.UIJourneySessionData
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{RequestHeader, Result}
 import services.SessionService
@@ -96,6 +96,20 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
+  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit = {
+    when(
+      mockSessionService.getMongo(ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockSetMongoData(result: Boolean): Unit = {
+    when(
+      mockSessionService.setMongoData(ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
   def setupMockSetSessionKeyMongo(expectedKey: String,
                                   expectedValue: String,
                                   expectedJourneyType: JourneyType,
@@ -114,17 +128,12 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit = {
-    when(
-      mockSessionService.getMongo(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
-    ).thenReturn(Future.successful(result))
-  }
+  def verifyMockGetMongoKeyResponse(noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).getMongoKey(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
 
-  def setupMockSetMongoData(result: Boolean): Unit = {
-    when(
-      mockSessionService.setMongoData(ArgumentMatchers.any())
-      (ArgumentMatchers.any(), ArgumentMatchers.any())
-    ).thenReturn(Future.successful(result))
-  }
+  def verifyMockGetMongoKeyTypedResponse[A](noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).getMongoKeyTyped[A](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+
+  def verifyMockSetMongoKeyResponse(noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
 }

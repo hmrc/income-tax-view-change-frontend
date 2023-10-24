@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.cease
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -24,14 +23,13 @@ import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.SessionService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.BusinessDetailsTestConstants.{ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2}
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
@@ -40,7 +38,8 @@ import testUtils.TestSupport
 import scala.concurrent.Future
 
 class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with ImplicitDateFormatter
-  with MockIncomeSourceDetailsService with MockNavBarEnumFsPredicate with MockFrontendAuthorisedFunctions with FeatureSwitching with TestSupport {
+  with MockIncomeSourceDetailsService with MockNavBarEnumFsPredicate with MockFrontendAuthorisedFunctions with FeatureSwitching with TestSupport
+  with MockSessionService {
 
   val controller = new CeaseIncomeSourceController(
     app.injector.instanceOf[views.html.incomeSources.cease.CeaseIncomeSources],
@@ -52,7 +51,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
     mockIncomeSourceDetailsService,
-    sessionService = app.injector.instanceOf[SessionService],
+    sessionService = mockSessionService,
     app.injector.instanceOf[NavBarPredicate]
   )(
     ec,
@@ -64,7 +63,6 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     "redirect an individual back to the home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
-        isDisabled(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
@@ -77,7 +75,6 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
     "redirect an agent back to the home page" when {
       "the IncomeSources FS is disabled" in {
         disableAllSwitches()
-        isDisabled(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
@@ -93,6 +90,8 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
         enable(IncomeSources)
         mockBothIncomeSources()
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockCreateSession(true)
+        setupMockDeleteSession(true)
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
           .thenReturn(Right(CeaseIncomeSourcesViewModel(
@@ -112,6 +111,8 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
         enable(IncomeSources)
         mockBothIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockCreateSession(true)
+        setupMockDeleteSession(true)
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
           .thenReturn(Right(CeaseIncomeSourcesViewModel(

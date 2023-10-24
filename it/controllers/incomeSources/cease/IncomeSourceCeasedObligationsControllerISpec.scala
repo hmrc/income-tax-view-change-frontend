@@ -1,19 +1,41 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.incomeSources.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{testEndDate2022, testMtditid, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 import java.time.LocalDate
 
 class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val businessCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url
   val foreignPropertyCeasedObligationsShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url
@@ -25,6 +47,12 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
   val day: LocalDate = LocalDate.of(2023, 1, 1)
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")))))
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-SE")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-UK")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-FP")))
+  }
 
   s"calling GET $businessCeasedObligationsShowUrl" should {
     "render the Business Ceased obligations page" when {
@@ -40,7 +68,10 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        val result = IncomeTaxViewChangeFrontend.getBusinessCeasedObligations(Map(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None)))))
+
+        val result = IncomeTaxViewChangeFrontend.getBusinessCeasedObligations
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")

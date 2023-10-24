@@ -601,7 +601,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: Option[LocalDate])(implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceId = incomeSourceId,
+    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId,
       cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate)))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
@@ -627,7 +627,7 @@ trait IncomeTaxViewChangeConnector extends RawResponseReads with FeatureSwitchin
   }
 
   def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)(implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
+    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
       getUpdateIncomeSourceUrl,

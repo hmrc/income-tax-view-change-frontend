@@ -137,7 +137,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
   }
 
   def deleteMongoData(journeyType: JourneyType)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+                     (implicit hc: HeaderCarrier): Future[Boolean] = {
     uiJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
   }
 

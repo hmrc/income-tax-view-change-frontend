@@ -40,11 +40,12 @@ import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId}
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestDateService extends DateServiceInterface {
@@ -86,6 +87,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val testAppConfig: FrontendAppConfig = appConfig
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
   implicit val dateService: DateService = new DateService() {
     override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
@@ -149,7 +152,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   def getWithClientDetailsInSession(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
     buildClient(uri)
-      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck")
+      .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
       .get().futureValue
   }
 
@@ -183,7 +186,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
       buildClient("/agents" + uri)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
           "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }
@@ -514,6 +517,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
 
     def getBusinessEndDate(session: Map[String, String]): WSResponse = get(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentId", session)
+
+    def getAddIncomeSource(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/new-income-sources", session)
   }
 
   def unauthorisedTest(uri: String): Unit = {

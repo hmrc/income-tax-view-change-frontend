@@ -24,9 +24,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
+import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
@@ -60,14 +62,13 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
     withIncomeSourcesFS {
-      sessionService.get(SessionKeys.incomeSourceId).flatMap {
-        case Right(incomeSourceIdMayBe) =>
-          incomeSourceIdMayBe match {
-            case Some(incomeSourceId) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
-            case None => Future.failed(MissingSessionKey(incomeSourceId))
-          }
-        case Left(exception) => Future.failed(exception)
+      if (incomeSourceType == SelfEmployment) {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
+          case Right(Some(incomeSourceId)) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
+          case _ => Future.failed(MissingSessionKey(incomeSourceId))
+        }
       }
+      else handleShowRequest(None, incomeSourceType, isAgent)
     }.recover {
       case exception =>
         Logger("application").error(s"[ReportingMethodChangeErrorController][show] ${exception.getMessage}")

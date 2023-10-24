@@ -47,6 +47,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
   val mockDateService: DateService = mock(classOf[DateService])
   val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
+  val mockSessionService: SessionService = mock(classOf[SessionService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -69,7 +70,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     mockDateService,
     retrieveBtaNavBar = MockNavBarPredicate,
     mockCalculationListService,
-    sessionService = app.injector.instanceOf[SessionService],
+    sessionService = mockSessionService,
     auditingService = app.injector.instanceOf[AuditingService]
   )(
     ec,
@@ -101,6 +102,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
   case object ERROR_TESTING extends Scenario
 
   val testBusinessAddress: AddressModel = address
+  val testId = "XAIS00000000001"
 
   def mockAndBasicSetup(scenario: Scenario, isAgent: Boolean = false): Unit = {
     disableAllSwitches()
@@ -116,15 +118,17 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderNoLatency()
+        when(mockSessionService.createSession(any())(any(),any())).thenReturn(Future.successful(true))
+        when(mockSessionService.setMongoKey(any(),any(),any())(any(),any())).thenReturn(Future(Right(true)))
 
       case FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any))
           .thenReturn(Future.successful(Some(false)))
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
           .thenReturn(Future.successful(Some(false)))
 
       case FIRST_AND_SECOND_YEAR_CRYSTALLIZED =>
@@ -132,9 +136,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockUkPlusForeignPlusSoleTraderWithLatency()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any))
           .thenReturn(Future.successful(Some(true)))
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024))(any, any, any))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
           .thenReturn(Future.successful(Some(true)))
 
       case NON_ELIGIBLE_ITSA_STATUS =>
