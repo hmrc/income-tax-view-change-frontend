@@ -147,11 +147,11 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockBusinessIncomeSourceWithLatency2023()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any)).thenReturn(Future.successful(Some(true)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022), any)(any, any, any)).thenReturn(Future.successful(Some(true)))
 
       case CURRENT_TAX_YEAR_IN_LATENCY_YEARS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022))(any, any, any)).thenReturn(Future.successful(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2022), any)(any, any, any)).thenReturn(Future.successful(Some(false)))
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockBusinessIncomeSourceWithLatency2023()
@@ -161,7 +161,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(true))
         mockBusinessIncomeSourceWithLatency2024()
-        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023))(any, any, any)).thenReturn(Future.successful(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any)).thenReturn(Future.successful(Some(false)))
 
       case NON_ELIGIBLE_ITS_STATUS =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)

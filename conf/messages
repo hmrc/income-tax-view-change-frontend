@@ -65,7 +65,7 @@ agent.utr_error.reason.bullet2_link                             = sign up for Ma
 agent.utr_error.go_back                                         = Enter another UTR
 
 ## Agent Error Page ##
-agent-error.heading                                            = You can''t use this service yet
+agent-error.heading                                            = You can’t use this service yet
 agent-error.note                                               = To use this service, you need to
 agent-error.link                                               = set up an agent services account
 
@@ -361,7 +361,7 @@ tax-year-summary.agent.message.C559103                             = your client
 tax-year-summary.agent.message.C559107                             = your client claimed Property Income Allowance. This means that they cannot claim any further expenses.
 tax-year-summary.agent.message.C559104                             = your client claimed Property Income Allowance for their foreign property. This means that they cannot claim for private use adjustment.
 tax-year-summary.agent.message.C559105                             = the amount your client claimed for private use adjustment for their foreign property is more than the total allowable expenses.
-tax-year-summary.agent.message.C559113                             = for your client’s  foreign property, they need to submit either consolidated or detailed expenses but not both.
+tax-year-summary.agent.message.C559113                             = for your client’s foreign property, they need to submit either consolidated or detailed expenses but not both.
 tax-year-summary.agent.message.C559114                             = for your client’s EEA furnished holiday lettings, they need to submit either consolidated or detailed expenses but not both.
 
 
@@ -818,14 +818,14 @@ whatYouOwe.remaining-balance.heading                               = Balancing p
 whatYouOwe.remaining-balance.line1                                 = The Balancing payment is the tax you still need to pay for a tax year.
 whatYouOwe.remaining-balance.line1.agent                           = The Balancing payment is the tax your client still needs to pay for a tax year.
 whatYouOwe.payment-on-account.heading                              = Payment on account
-whatYouOwe.payment-on-account.line1                                = This is a payment towards next year''s tax bill. Each payment is half of your previous year''s tax bill.
-whatYouOwe.payment-on-account.line1.agent                          = This is a payment towards next year''s tax bill. Each payment is half of your client''s previous year''s bill.
+whatYouOwe.payment-on-account.line1                                = This is a payment towards next year’s tax bill. Each payment is half of your previous year’s tax bill.
+whatYouOwe.payment-on-account.line1.agent                          = This is a payment towards next year’s tax bill. Each payment is half of your client’s previous year’s bill.
 whatYouOwe.late-payment-interest.heading                           = Late payment interest
 whatYouOwe.late-payment-interest.line1                             = This is interest you owe for a late payment.
 whatYouOwe.late-payment-interest.line1.agent                       = This is the interest your client owes for a late payment.
 whatYouOwe.class2-nic.heading                                      = Class 2 National Insurance
 whatYouOwe.class2-nic.line1                                        = This is a payment specifically for your Class 2 National Insurance contributions.
-whatYouOwe.class2-nic.line1.agent                                  = This is a payment specifically for your client''s Class 2 National Insurance contributions.
+whatYouOwe.class2-nic.line1.agent                                  = This is a payment specifically for your client’s Class 2 National Insurance contributions.
 whatYouOwe.cancelled-paye-sa.heading                               = Cancelled PAYE Self Assessment
 whatYouOwe.cancelled-paye-sa.line1                                 = You agreed to pay some of your self-assessment tax through your PAYE tax code. We have been unable to collect all of these payments, so this is the remaining tax you need to pay.
 whatYouOwe.cancelled-paye-sa.line1.agent                           = Your client agreed to pay some of their self-assessment tax through their PAYE tax code. We have been unable to collect all of these payments, so this is the remaining tax they need to pay.
@@ -862,8 +862,8 @@ whatYouOwe.moneyOnAccount                                          = Money in yo
 whatYouOwe.moneyOnAccount-1                                        = There is a total of
 whatYouOwe.moneyOnAccount-2                                        = in your account. You can leave the money there to pay your next bill or
 whatYouOwe.moneyOnAccount-3                                        = claim a refund
-whatYouOwe.moneyOnAccount-agent                                    = Money in your client''s account
-whatYouOwe.moneyOnAccount-agent-2                                  = in your client''s account. You can leave the money there to pay their next bill or
+whatYouOwe.moneyOnAccount-agent                                    = Money in your client’s account
+whatYouOwe.moneyOnAccount-agent-2                                  = in your client’s account. You can leave the money there to pay their next bill or
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = Payment on account 1 of 2
@@ -976,7 +976,7 @@ regimes.Scotland = Scotland
 regimes.Wales = Wales
 
 ## Timeout
-timeoutDialog.title                                             = You're about to be signed out
+timeoutDialog.title                                             = You’re about to be signed out
 timeoutDialog.seconds                                           = seconds
 timeoutDialog.minutes                                           = minutes
 timeoutDialog.minutes.two                                       = minutes
@@ -1152,7 +1152,7 @@ incomeSources.add.error.incomeSourceNotSaved.fp                  = foreign prope
 incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Your income sources
 
 incomeSources.add.error.reportingMethodNotSaved.p1                  = Your {0} business was added, but we were unable to save the reporting frequency for one or more tax years.
-incomeSources.add.error.reportingMethodNotSaved.p2                  = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ''view and manage income sources''.
+incomeSources.add.error.reportingMethodNotSaved.p2                  = For those tax years where we were unable to save the reporting method, your frequency of income and expense updates will default to annual. You can change this later in ’view and manage income sources’.
 incomeSources.add.error.reportingMethodNotSaved.se                  = sole trader
 incomeSources.add.error.reportingMethodNotSaved.uk                  = UK property
 incomeSources.add.error.reportingMethodNotSaved.fp                  = foreign property
@@ -1187,7 +1187,7 @@ view-income-sources.unknown-field            = Unknown
 # add Business page
 add-business-name.heading                                         = What is the name of your business?
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
-add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, '', \, /, -.
+add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, ’, \, /, -.
 add-business-name.form.error.required                             = Enter your name or the name of your business
 add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
 add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
@@ -1199,7 +1199,7 @@ add-business-trade.form.error.empty         = Enter the trade of your business
 add-business-trade.form.error.short         = Business trade must have at least two letters
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
-add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
+add-business-trade.form.error.same-name     = Trade and business name cannot be the same
 
 ## Add business address page
 add-business-address.select.heading         = Select business address
@@ -1239,11 +1239,11 @@ language-switcher.nav                                           = Language switc
 
 #technical helper
 getpagehelp.linkText                                            = Get help with this page
-pagehelp.opensInNewTabText                                      = ' (opens in new tab)'
+pagehelp.opensInNewTabText                                      = (opens in new tab)
 
 #Not migrated to ETMP
 notmigrated.user.heading                                        = How to claim a refund
-notmigrated.user.content                                        = To claim money that's in your account from earlier tax years (before you signed up to Making Tax Digital for Income Tax), you need to visit your earlier
+notmigrated.user.content                                        = To claim money that’s in your account from earlier tax years (before you signed up to Making Tax Digital for Income Tax), you need to visit your earlier
 notmigrated.agent.content                                       = To claim money from earlier tax years (before your client signed up to Making Tax Digital for Income Tax), you need to visit your
 notmigrated.agent.content_extra                                 = This will be a different Government Gateway ID and password to your Agent Services account.
 notmigrated.user.link_title                                     = Self Assessment online account
@@ -1325,10 +1325,10 @@ incomeSources.add.FP.AccountingMethod.example                 = Show me an examp
 incomeSources.add.FP.AccountingMethod.radio-1-title           = Cash basis accounting
 incomeSources.add.FP.AccountingMethod.radio-1-hint            = You record on the date you either receive a payment from your tenants into your bank account, or pay a bill, for example for repairs and maintenance. Most small businesses use this method.
 incomeSources.add.FP.AccountingMethod.radio-2-title           = Traditional accounting
-incomeSources.add.FP.AccountingMethod.radio-2-hint            = You record on the date you send an invoice to, or request a payment from your tenants, even if you do not receive or pay any money. You record the date you receive an invoice for repairs or maintenance. This is also called '‘accruals'’ or '‘standard accounting'’.
+incomeSources.add.FP.AccountingMethod.radio-2-hint            = You record on the date you send an invoice to, or request a payment from your tenants, even if you do not receive or pay any money. You record the date you receive an invoice for repairs or maintenance. This is also called ‘accruals’ or ‘standard accounting’.
 incomeSources.add.FP.AccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
-incomeSources.add.FP.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ''cash basis accounting''
-incomeSources.add.FP.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ''traditional accounting''
+incomeSources.add.FP.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
+incomeSources.add.FP.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
 incomeSources.add.FP.AccountingMethod.no-selection            = Enter the accounting method you use for your foreign property business
 
 
@@ -1341,11 +1341,11 @@ incomeSources.ceaseUKProperty.checkDetails.change                = Change
 # add Business page
 add-business-name.heading                                         = What is the name of your business?
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
-add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, '', \, /, -.
+add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, ’, \, /, -.
 add-business-name.form.error.required                             = Enter your name or the name of your business
 add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
 add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
-add-business-name.form.error.invalidName                          = You cannot enter the same trade and same business name
+add-business-name.form.error.invalidName                          = Trade and business name cannot be the same
 
 ## Add business trade page
 add-business-trade.heading                  = What is the trade of your business?
@@ -1354,7 +1354,7 @@ add-business-trade.form.error.empty         = Enter the trade of your business
 add-business-trade.form.error.short         = Business trade must have at least two letters
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
-add-business-trade.form.error.same-name     = You cannot enter the same trade and same business name
+add-business-trade.form.error.same-name     = Trade and business name cannot be the same
 
 ## Add business address page
 add-business-address.select.heading         = Select business address
@@ -1388,7 +1388,7 @@ incomeSources.add.SE.AccountingMethod.example                 = Show me an examp
 incomeSources.add.SE.AccountingMethod.radio-1-title           = Cash basis accounting
 incomeSources.add.SE.AccountingMethod.radio-1-hint            = You record on the date you receive money or pay a bill. Most sole traders and small businesses use this method.
 incomeSources.add.SE.AccountingMethod.radio-2-title           = Traditional accounting
-incomeSources.add.SE.AccountingMethod.radio-2-hint            = You record on the date you send or receive an invoice, even if you do not receive or pay any money. This is called ''accruals'' or ''standard accounting''.
+incomeSources.add.SE.AccountingMethod.radio-2-hint            = You record on the date you send or receive an invoice, even if you do not receive or pay any money. This is called ’accruals’ or ’standard accounting’.
 incomeSources.add.SE.AccountingMethod.drop-down-text          = You created an invoice for someone in March 2017, but did not receive the money until May 2017. If you tell HMRC you received this income in:
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-1     = May 2017, you use ’cash basis accounting’
 incomeSources.add.SE.AccountingMethod.drop-down-text-bp-2     = March 2017, you use ’traditional accounting’
@@ -1540,10 +1540,10 @@ incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I wan
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.annual           = Select that you want to switch to annual reporting
-incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual         = HMRC will remove any income updates you''ve already submitted for this tax year. You''ll need to include any previously submitted income in your annual tax return.
-incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent              = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client''s annual tax return.
-incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual      = HMRC will remove any income updates you''ve already submitted for this tax year. You''ll need to include any previously submitted income in your quarterly tax return.
-incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent           = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client''s quarterly tax return.
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.individual         = HMRC will remove any income updates you’ve already submitted for this tax year. You’ll need to include any previously submitted income in your annual tax return.
+incomeSources.manage.propertyReportingMethod.changingToAnnualWarning.agent              = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client’s annual tax return.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.individual      = HMRC will remove any income updates you’ve already submitted for this tax year. You’ll need to include any previously submitted income in your quarterly tax return.
+incomeSources.manage.propertyReportingMethod.changingToQuarterlyWarning.agent           = HMRC will remove any income updates your client has already submitted for this tax year. Any previously submitted income will need to be included in your client’s quarterly tax return.
 
 # manage obligations page
 incomeSources.add.manageObligations.h1                                =

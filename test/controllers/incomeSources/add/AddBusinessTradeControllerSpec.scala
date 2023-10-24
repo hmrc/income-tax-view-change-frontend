@@ -198,8 +198,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
               BusinessTradeForm.businessTrade -> businessTrade
             ))
 
-          status(result) mustBe BAD_REQUEST
-          contentAsString(result) must include("You cannot enter the same trade and same business name")
+          status(result) mustBe OK
+          contentAsString(result) must include("Trade and business name cannot be the same")
         }
         "trade name is same as business name for agent" in {
           disableAllSwitches()

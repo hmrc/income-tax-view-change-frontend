@@ -31,9 +31,9 @@ class TaxYearsViewSpec extends ViewSpec {
   val taxYearsView: TaxYears = app.injector.instanceOf[TaxYears]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val taxYearsViewSummary: String = messages("taxYears.viewSummary")
-  val taxYearsOldSaLink = s"${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}"
+  val taxYearsOldSaLink = s"${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote = s"${messages("taxYears.oldSa.content.text")} $taxYearsOldSaLink."
-  val saLinkAgent = s"${messages("taxYears.oldSa.agent.content.2")}${messages("pagehelp.opensInNewTabText")}"
+  val saLinkAgent = s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}"
   val taxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.taxYears", year, yearPlusOne)}"
 
   class TestSetup(calcs: List[Int],

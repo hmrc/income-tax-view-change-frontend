@@ -20,19 +20,18 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
+import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, SessionService}
+import services.DateService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
@@ -51,7 +50,8 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
   with MockNavBarEnumFsPredicate
   with MockClientDetailsService
   with MockNextUpdatesService
-  with FeatureSwitching {
+  with FeatureSwitching
+  with MockSessionService {
 
   val mockDateService: DateService = mock(classOf[DateService])
 
@@ -66,7 +66,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceCeasedObligations],
     mockNextUpdatesService,
-    sessionService = app.injector.instanceOf[SessionService])(
+    sessionService = mockSessionService)(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -123,6 +123,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        setupMockGetSessionKeyMongoTyped[String](Right(None))
 
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
@@ -130,18 +131,11 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
-      "Property start date was not retrieved" in {
-        enable(IncomeSources)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        mockBusinessIncomeSource()
-
-        val result = TestIncomeSourceObligationController.show(UkProperty)(fakeRequestWithActiveSession)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
       "user has no active foreign properties" in {
         disableAllSwitches()
         enable(IncomeSources)
         mockNoIncomeSources()
+        setupMockGetSessionKeyMongoTyped[String](Right(None))
 
         when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(
@@ -157,6 +151,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
         mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
+        setupMockGetSessionKeyMongoTyped[String](Right(None))
 
         when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(
@@ -177,12 +172,13 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         mockBusinessIncomeSource()
         mockGetObligationsViewModel(IncomeSourcesObligationsTestConstants.viewModel)
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-        val result: Future[Result] = TestIncomeSourceObligationController.show(SelfEmployment)(fakeRequestWithActiveSession.withSession(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
+        val result: Future[Result] = TestIncomeSourceObligationController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
       "IncomeSourceType is Foreign property" in {
@@ -226,12 +222,13 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockBusinessIncomeSource()
         mockGetObligationsViewModel(IncomeSourcesObligationsTestConstants.viewModel)
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 12, 1))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment)(fakeRequestConfirmedClient().withSession(ceaseBusinessIncomeSourceId -> testSelfEmploymentId))
+        val result: Future[Result] = TestIncomeSourceObligationController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       "IncomeSourceType is Foreign property" in {
@@ -266,6 +263,5 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         status(result) shouldBe OK
       }
     }
-
   }
 }

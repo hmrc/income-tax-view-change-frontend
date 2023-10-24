@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.IncomeSources
+import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.ForeignProperty
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
 import helpers.ComponentSpecBase
@@ -56,7 +56,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -78,12 +78,13 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
       "URL contains a valid income source ID and authorised user is within latency period (Tax Year 1 is crystallised)" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+        enable(TimeMachineAddYear)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2024-25")
 
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -113,8 +114,9 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
 
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+        disable(TimeMachineAddYear)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -149,7 +151,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -174,7 +176,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         And("API 1878 getITSAStatus returns a success response with one of these statuses: Annual, No Status, Non Digital, Dormant, MTD Exempt")
@@ -207,8 +209,9 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
       "API 1896 getCalculationList returns an error" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+        enable(TimeMachineAddYear)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -238,8 +241,9 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
 
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
+        disable(TimeMachineAddYear)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -258,7 +262,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with one of these statuses: Annual, No Status, Non Digital, Dormant, MTD Exempt")
@@ -273,11 +277,11 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
           httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
-      "API 1525 getIncomeSourceDetails returns an error" in {
+      "API 1171 getIncomeSourceDetails returns an error" in {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns an error response")
+        And("API 1171 getIncomeSourceDetails returns an error response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR,
           IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention."))
 
@@ -310,7 +314,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
@@ -345,7 +349,7 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         Given("Income Sources FS is enabled")
         enable(IncomeSources)
 
-        And("API 1525 getIncomeSourceDetails returns a success response")
+        And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")

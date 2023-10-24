@@ -184,7 +184,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "checking the earlier tax year page when the cutOverCredit FS enabled with no payment items" in
         new PaymentAllocationSetup(paymentAllocationViewModelNoPayment, true, saUtr = Some("1234567890")) {
           document.getElementsByTag("h1").text shouldBe messages("paymentAllocation.earlyTaxYear.heading")
-          document.getElementById("sa-note-migrated").text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")}${messages("pagehelp.opensInNewTabText")}."
+          document.getElementById("sa-note-migrated").text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}."
           val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
           moneyOnAccountData.get(0).text() shouldBe moneyOnAccount
           moneyOnAccountData.get(1).text() shouldBe "31 Jan 2021"

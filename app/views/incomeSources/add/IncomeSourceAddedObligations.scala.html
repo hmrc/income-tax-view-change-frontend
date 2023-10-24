@@ -34,7 +34,7 @@
   errorSummary: ErrorSummary
 )
 
-@(sources: ObligationsViewModel, backUrl: String, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(sources: ObligationsViewModel, isAgent: Boolean, incomeSourceType: IncomeSourceType, businessName: Option[String] = None)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
   messages(s"business-added.$key", args: _*)
@@ -94,7 +94,6 @@
 
 @import implicitDateFormatter.longDate
 @mainTemplate(pageTitle = getPageTitle,
-  backUrl = Some(backUrl),
   isAgent = isAgent,
   btaNavPartial = user.btaNavPartial) {
 
