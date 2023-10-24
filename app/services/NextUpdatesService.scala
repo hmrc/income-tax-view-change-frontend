@@ -105,19 +105,6 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
     }
   }
 
-  def convertFromObligationsToDateModel(id: String, model: ObligationsModel ) : Seq[DatesModel] = {
-    Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
-      source =>
-        DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true)
-    },
-      model.obligations
-        // Attempt to fix issue
-        //.filter(x => x.identification == id)
-        .flatMap(obligation =>
-          obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
-    ).flatten
-  }
-
   def getObligationDates(id: String)
                         (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
     getNextUpdates() map {
@@ -128,7 +115,12 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       case NextUpdateModel(start, end, due, _, _, periodKey) =>
         Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
       case model: ObligationsModel =>
-        convertFromObligationsToDateModel(id, model)
+        Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
+          source =>
+            DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true)
+        },
+          model.obligations.filter(x => x.identification == id).flatMap(obligation => obligation.obligations.map(x => DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false)))
+        ).flatten
     }
   }
 
