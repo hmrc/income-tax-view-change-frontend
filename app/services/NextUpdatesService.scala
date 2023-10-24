@@ -137,8 +137,6 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
       val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.obligationType == "Quarterly" )
         .sortBy(_.inboundCorrespondenceFrom)
 
-      println(s"Here is $id - $quarterlyDates - $otherObligationDates")
-
       val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
       val quarterlyDatesYearOne = quarterlyDatesByYear._1.distinct.sortBy(_.periodKey)
       val quarterlyDatesYearTwo = quarterlyDatesByYear._2.distinct.sortBy(_.periodKey)
