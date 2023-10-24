@@ -23,7 +23,6 @@ import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
-import helpers.agent.SessionCookieBaker
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
 import org.scalatest._

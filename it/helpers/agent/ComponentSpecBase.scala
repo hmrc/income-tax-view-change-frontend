@@ -24,7 +24,7 @@ import forms.agent.ClientsUTRForm
 import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
 import helpers.servicemocks.AuditStub
-import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
+import helpers.{CustomMatchers, GenericStubMethods, SessionCookieBaker, WiremockHelper}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers

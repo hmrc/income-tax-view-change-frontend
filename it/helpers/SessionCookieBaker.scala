@@ -1,12 +1,11 @@
 
-package helpers.agent
-
-import java.net.URLEncoder
-import java.time.LocalDateTime
+package helpers
 
 import play.api.libs.crypto.DefaultCookieSigner
 import uk.gov.hmrc.crypto.{CompositeSymmetricCrypto, PlainText}
 import uk.gov.hmrc.http.SessionKeys
+
+import java.net.URLEncoder
 
 trait SessionCookieBaker {
 

@@ -16,7 +16,8 @@
 
 package controllers.agent
 
-import helpers.agent.{ComponentSpecBase, SessionCookieBaker}
+import helpers.SessionCookieBaker
+import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
