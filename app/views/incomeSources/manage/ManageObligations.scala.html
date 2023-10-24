@@ -41,7 +41,6 @@
         taxYear: TaxYear,
         changeTo: String,
         isAgent: Boolean,
-        backUrl: String,
         postAction: Call
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -75,7 +74,6 @@
     }
 
     @mainTemplate(pageTitle = getPageTitle,
-        backUrl = Some(backUrl),
         isAgent = isAgent,
         btaNavPartial = user.btaNavPartial) {
 

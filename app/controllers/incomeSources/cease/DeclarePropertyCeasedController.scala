@@ -22,7 +22,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.IncomeSourceType
+import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
+import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -118,17 +120,19 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
           backUrl = backAction.url,
           isAgent = isAgent
         ))
-        sessionService.set(key = incomeSourceType.ceasePropertyDeclarationSessionKey, value = "false", result = result).flatMap {
-          case Right(result) => Future.successful(result)
-          case Left(exception) => Future.failed(exception)
-        }
+        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceasePropertyDeclare, value = "false", journeyType = JourneyType(Cease, incomeSourceType))
+          .flatMap {
+            case Right(_) => Future.successful(result)
+            case Left(exception) => Future.failed(exception)
+          }
       },
       _ => {
         val result = Redirect(redirectAction)
-        sessionService.set(key = incomeSourceType.ceasePropertyDeclarationSessionKey, value = "true", result = result).flatMap {
-          case Right(result) => Future.successful(result)
-          case Left(exception) => Future.failed(exception)
-        }
+        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceasePropertyDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
+          .flatMap {
+            case Right(_) => Future.successful(result)
+            case Left(exception) => Future.failed(exception)
+          }
       }
     )
   }.recover {

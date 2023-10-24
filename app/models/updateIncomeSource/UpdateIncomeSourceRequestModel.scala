@@ -35,7 +35,7 @@ object Cessation {
 }
 
 case class UpdateIncomeSourceRequestModel(nino: String,
-                                          incomeSourceId: String,
+                                          incomeSourceID: String,
                                           cessation: Option[Cessation] = None,
                                           taxYearSpecific: Option[TaxYearSpecific] = None) extends UpdateIncomeSourceRequest
 

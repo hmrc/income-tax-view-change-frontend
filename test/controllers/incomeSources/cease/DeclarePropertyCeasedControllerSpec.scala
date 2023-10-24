@@ -21,26 +21,24 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
-import forms.utils.SessionKeys.{ceaseForeignPropertyDeclare, ceaseUKPropertyDeclare}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.mock
 import play.api.data.FormError
 import play.api.http.Status
-import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.SessionService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.cease.{DeclarePropertyCeased, IncomeSourceEndDate}
 
 import scala.concurrent.Future
 
-class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with FeatureSwitching {
+class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with
+  MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockDeclarePropertyCeased: DeclarePropertyCeased = app.injector.instanceOf[DeclarePropertyCeased]
@@ -55,7 +53,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[DeclarePropertyCeased],
-    app.injector.instanceOf[SessionService])(appConfig,
+    sessionService = mockSessionService)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
@@ -75,6 +73,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
       "income source is UK Property and FS Enabled" in {
         enable(IncomeSources)
         mockPropertyIncomeSource()
+
         val result: Future[Result] = TestDeclarePropertyCeasedController.show(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -115,33 +114,33 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockPropertyIncomeSource()
+        setupMockSetSessionKeyMongo(Right(true))
+
         val incomeSourceType = UkProperty
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "true")))
 
         lazy val result: Future[Result] = {
-          TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestCeaseUKPropertyDeclarationComplete
+          TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta")
             .withFormUrlEncodedBody(DeclarePropertyCeasedForm.declaration -> "true", DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"))
         }
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationComplete).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         mockPropertyIncomeSource()
+        setupMockSetSessionKeyMongo(Right(true))
+
         val incomeSourceType = ForeignProperty
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "true")))
 
         lazy val result: Future[Result] = {
-          TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestCeaseForeignPropertyDeclarationComplete
+          TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta")
             .withFormUrlEncodedBody(DeclarePropertyCeasedForm.declaration -> "true", DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"))
         }
-        result.futureValue.session(fakeRequestCeaseForeignPropertyDeclarationComplete).get(ceaseForeignPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -150,9 +149,9 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         enable(IncomeSources)
         disable(NavBarFs)
         mockPropertyIncomeSource()
+        setupMockSetSessionKeyMongo(Right(true))
+
         val incomeSourceType = UkProperty
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "invalid")))
 
         val incompleteForm = DeclarePropertyCeasedForm.form(incomeSourceType).withError(FormError(DeclarePropertyCeasedForm.declaration, "incomeSources.cease.UK.property.checkboxError"))
         val expectedContent: String = mockDeclarePropertyCeased(
@@ -164,22 +163,22 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         ).toString
 
         lazy val result: Future[Result] = {
-          TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestCeaseUKPropertyDeclarationIncomplete
+          TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta")
             .withFormUrlEncodedBody(DeclarePropertyCeasedForm.declaration -> "invalid", DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"))
         }
 
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncomplete).get(ceaseUKPropertyDeclare) shouldBe Some("false")
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - the form is not completed successfully" in {
         setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         enable(IncomeSources)
         disable(NavBarFs)
         mockPropertyIncomeSource()
+        setupMockSetSessionKeyMongo(Right(true))
+
         val incomeSourceType = ForeignProperty
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "invalid")))
 
         val incompleteForm = DeclarePropertyCeasedForm.form(incomeSourceType).withError(FormError(DeclarePropertyCeasedForm.declaration, "incomeSources.cease.FP.property.checkboxError"))
         val expectedContent: String = mockDeclarePropertyCeased(
@@ -191,13 +190,13 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         ).toString
 
         lazy val result: Future[Result] = {
-          TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestCeaseForeignPropertyDeclarationIncomplete
+          TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta")
             .withFormUrlEncodedBody(DeclarePropertyCeasedForm.declaration -> "invalid", DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"))
         }
 
-        result.futureValue.session(fakeRequestCeaseForeignPropertyDeclarationIncomplete).get(ceaseForeignPropertyDeclare) shouldBe Some("false")
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
+        verifyMockSetMongoKeyResponse(1)
       }
     }
   }
@@ -250,33 +249,33 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockPropertyIncomeSource()
+        setupMockSetSessionKeyMongo(Right(true))
+
         val incomeSourceType = UkProperty
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "true")))
 
         lazy val result: Future[Result] = {
-          TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestCeaseUKPropertyDeclarationCompleteAgent
+          TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
             .withFormUrlEncodedBody(DeclarePropertyCeasedForm.declaration -> "true", DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"))
         }
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationCompleteAgent).get(ceaseUKPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url)
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - form is completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockPropertyIncomeSource()
+        setupMockSetSessionKeyMongo(Right(true))
+
         val incomeSourceType = ForeignProperty
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "true")))
 
         lazy val result: Future[Result] = {
-          TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestCeaseForeignPropertyDeclarationCompleteAgent
+          TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
             .withFormUrlEncodedBody(DeclarePropertyCeasedForm.declaration -> "true", DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"))
         }
-        result.futureValue.session(fakeRequestCeaseForeignPropertyDeclarationCompleteAgent).get(ceaseForeignPropertyDeclare) shouldBe Some("true")
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url)
+        verifyMockSetMongoKeyResponse(1)
       }
     }
     "return 400 BAD_REQUEST" when {
@@ -284,9 +283,9 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockPropertyIncomeSource()
+        setupMockSetSessionKeyMongo(Right(true))
+
         val incomeSourceType = UkProperty
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "invalid")))
 
         val incompleteForm = DeclarePropertyCeasedForm.form(incomeSourceType).withError(FormError(DeclarePropertyCeasedForm.declaration, "incomeSources.cease.UK.property.checkboxError"))
         val expectedContent: String = mockDeclarePropertyCeased(
@@ -298,21 +297,21 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         ).toString
 
         lazy val result: Future[Result] = {
-          TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestCeaseUKPropertyDeclarationIncompleteAgent
+          TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
             .withFormUrlEncodedBody(DeclarePropertyCeasedForm.declaration -> "invalid", DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"))
         }
 
-        result.futureValue.session(fakeRequestCeaseUKPropertyDeclarationIncompleteAgent).get(ceaseUKPropertyDeclare) shouldBe Some("false")
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
+        verifyMockSetMongoKeyResponse(1)
       }
       "Foreign Property - the form is not completed successfully" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         enable(IncomeSources)
         mockPropertyIncomeSource()
+        setupMockSetSessionKeyMongo(Right(true))
+
         val incomeSourceType = ForeignProperty
-        when(mockHttpClient.POSTForm[HttpResponse](any(), any(), any())(any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "invalid")))
 
         val incompleteForm = DeclarePropertyCeasedForm.form(incomeSourceType).withError(FormError(DeclarePropertyCeasedForm.declaration, "incomeSources.cease.FP.property.checkboxError"))
         val expectedContent: String = mockDeclarePropertyCeased(
@@ -324,13 +323,13 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         ).toString
 
         val result: Future[Result] = {
-          TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestCeaseForeignPropertyDeclarationIncompleteAgent
+          TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
             .withFormUrlEncodedBody(DeclarePropertyCeasedForm.declaration -> "invalid", DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"))
         }
 
-        result.futureValue.session(fakeRequestCeaseForeignPropertyDeclarationIncompleteAgent).get(ceaseForeignPropertyDeclare) shouldBe Some("false")
         status(result) shouldBe Status.BAD_REQUEST
         contentAsString(result) shouldBe expectedContent
+        verifyMockSetMongoKeyResponse(1)
       }
     }
   }

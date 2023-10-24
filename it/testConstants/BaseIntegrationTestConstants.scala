@@ -18,15 +18,15 @@ package testConstants
 
 import controllers.agent.utils.SessionKeys
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import play.api.http.Status
-
-import java.time.LocalDate
 import models.btaNavBar.{NavContent, NavLinks}
 import models.core.AddressModel
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+
+import java.time.LocalDate
 
 object BaseIntegrationTestConstants {
 
@@ -44,8 +44,7 @@ object BaseIntegrationTestConstants {
   val testSaUtrEnrolmentIdentifier = "UTR"
   val testSaUtr = "1234567890"
   val credId = "12345-credId"
-  val testSessionId = "xssession-12345"
-  val testSessionIdAgent = "xsession-1234567"
+  val testSessionId = "xsession-12345"
 
   val testNinoEnrolmentKey = "HMRC-NI"
   val testNinoEnrolmentIdentifier = "NINO"
@@ -70,7 +69,7 @@ object BaseIntegrationTestConstants {
   val otherTestSelfEmploymentId = "ABC123456780"
   val testPropertyIncomeId = "1234"
   val otherTestPropertyIncomeId = "ABC123456789"
-
+  val testEndDate2022: String = "2022-10-10"
 
   val testTradeName = "business"
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
@@ -79,6 +78,8 @@ object BaseIntegrationTestConstants {
 
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
+
+  val stringTrue = "true"
 
   val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
 

@@ -20,7 +20,7 @@ import enums.JourneyType.JourneyType
 import models.incomeSourceDetails.UIJourneySessionData
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{RequestHeader, Result}
 import services.SessionService
@@ -83,11 +83,16 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
+  <<<<<<< HEAD
+
   def setupMockGetSessionKeyMongoTyped[A](key: String, journeyType: JourneyType, result: Either[Throwable, Option[A]]): Unit = {
     when(
       mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.eq(key), ArgumentMatchers.eq(journeyType))(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
+
+  =======
+  >>>>>>> origin / main
 
   def setupMockSetSessionKeyMongo(result: Either[Throwable, Boolean]): Unit = {
     when(
@@ -127,4 +132,13 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     )(any(), any())
     ).thenReturn(Future.successful(result))
   }
+
+  def verifyMockGetMongoKeyResponse(noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).getMongoKey(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+
+  def verifyMockGetMongoKeyTypedResponse[A](noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).getMongoKeyTyped[A](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
+
+  def verifyMockSetMongoKeyResponse(noOfCalls: Int) =
+    verify(mockSessionService, times(noOfCalls)).setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
 }

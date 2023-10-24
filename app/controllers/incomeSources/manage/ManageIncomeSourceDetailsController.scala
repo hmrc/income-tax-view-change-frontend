@@ -19,14 +19,15 @@ package controllers.incomeSources.manage
 import audit.AuditingService
 import audit.models.ManageYourDetailsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, ManageIncomeSourceData, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CalculationListService, DateService, ITSAStatusService, IncomeSourceDetailsService, SessionService}
@@ -118,19 +119,17 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        val result = handleRequest(
-          sources = user.incomeSources,
-          isAgent = false,
-          backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-          id = Some(id),
-          incomeSourceType = SelfEmployment
-        )
-
-        result.flatMap(
-          sessionService.set(SessionKeys.incomeSourceId, id, _)
-        ).flatMap {
-          case Right(result) => Future.successful(result)
-          case Left(exception) => Future.failed(exception)
+        sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
+          sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, id, JourneyType(Manage, SelfEmployment)).flatMap {
+            case Right(_) => handleRequest(
+              sources = user.incomeSources,
+              isAgent = false,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+              id = Some(id),
+              incomeSourceType = SelfEmployment
+            )
+            case Left(exception) => Future.failed(exception)
+          }
         }
       }.recover {
         case exception =>
@@ -153,11 +152,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 incomeSourceType = SelfEmployment
               )
 
-              result.flatMap(
-                sessionService.set(SessionKeys.incomeSourceId, id, _)
-              ).flatMap {
-                case Right(result) => Future.successful(result)
-                case Left(exception) => Future.failed(exception)
+              sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
+                case true =>
+                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, id, JourneyType(Manage, SelfEmployment)).flatMap {
+                    case Right(_) => result
+                    case Left(exception) => Future.failed(exception)
+                  }
+                case false => Future.failed(new Error("Failed to create mongo session"))
               }
             }.recover {
               case exception =>
@@ -172,8 +173,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     latencyDetails match {
       case Some(x) =>
         for {
-          i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt)
-          j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt)
+          i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt, isEnabled(TimeMachineAddYear))
+          j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt, isEnabled(TimeMachineAddYear))
         } yield {
           Some(List(i.get, j.get))
         }
