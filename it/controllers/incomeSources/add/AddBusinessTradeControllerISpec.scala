@@ -36,8 +36,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
-  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+
 
   override def beforeEach(): Unit = {
     super.beforeEach()

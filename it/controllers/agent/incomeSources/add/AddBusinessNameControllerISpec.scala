@@ -54,7 +54,6 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
-  val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
 
