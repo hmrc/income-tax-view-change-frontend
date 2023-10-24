@@ -101,6 +101,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
   val testSessionId: String = "xssession-12345"
+  val testSessionIdAgent: String = "xsession-1234567"
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
   implicit val testAppConfig: FrontendAppConfig = appConfig
@@ -209,6 +210,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .get().futureValue
     }
 
+    def getUri(isAgent: Boolean, uri: String): String = if (isAgent) "/agents" + uri else uri
+
+    def newGet(isAgent: Boolean, tempUri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      val uri = getUri(isAgent, tempUri)
+      When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> {if (isAgent) testSessionIdAgent else testSessionId})
+        .get().futureValue
+    }
+
     def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
       buildClient(uri)
         .withHttpHeaders(headers: _*)
@@ -221,6 +232,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         .withFollowRedirects(false)
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck",
           "X-Session-ID" -> testSessionId)
+        .post(body).futureValue
+    }
+
+    def newPost(isAgent: Boolean, tempUri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
+      val uri = getUri(isAgent, tempUri)
+      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withFollowRedirects(false)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck",
+          "X-Session-ID" -> {if (isAgent) testSessionIdAgent else testSessionId})
         .post(body).futureValue
     }
 
@@ -330,8 +351,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/add/foreign-property-added", additionalCookies)(Map.empty)
     }
 
-    def getAddBusinessName: WSResponse = getWithHeaders("/income-sources/add/business-name",
-      "X-Session-ID" -> testSessionId)
+    def getAddBusinessName(isAgent: Boolean, additionalCookies: Map[String, String] = Map.empty): WSResponse =
+      newGet(isAgent, "/income-sources/add/business-name", additionalCookies)
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)
