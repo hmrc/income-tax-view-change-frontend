@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport
@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.InternalServerException
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import scala.io.Source
+import scala.io.{BufferedSource, Source}
 
 class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
 
@@ -292,8 +292,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
+      val expectedResult = Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS"))
       val result = TestNextUpdatesService.getObligationDates("123")
-      result.futureValue shouldBe Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false))
+      result.futureValue shouldBe expectedResult
     }
     "return the correct set of dates given a NextUpdateModel" in {
       disableAllSwitches()
@@ -344,15 +345,18 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
-      val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
-      result.futureValue shouldBe ObligationsViewModel(
-        Seq(DatesModel(day.minusYears(1), day.minusYears(1).plusDays(1), day.minusYears(1).plusDays(2), "#001", isFinalDec = false)),
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false)),
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true)),
+      val expectedResult = ObligationsViewModel(
+        Seq(DatesModel(day.minusYears(1), day.minusYears(1).plusDays(1),
+          day.minusYears(1).plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
         dateService.getCurrentTaxYearEnd(),
         showPrevTaxYears = true
       )
+
+      val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
+      result.futureValue shouldBe expectedResult
     }
 
     "return a valid view model if no EOPS obligations" in {
@@ -364,14 +368,23 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
+// TODO: to be removed if fix verified for MISUV-6494
+//      val expectedResult = ObligationsViewModel(
+//        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
+//        Seq.empty, Seq.empty,
+//        Seq.empty,
+//        dateService.getCurrentTaxYearEnd(),
+//        showPrevTaxYears = true
+//      )
+      val expectedResult = ObligationsViewModel(
+              Seq.empty,
+              Seq.empty, Seq.empty,
+              Seq.empty,
+              dateService.getCurrentTaxYearEnd(),
+              showPrevTaxYears = true
+            )
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
-      result.futureValue shouldBe ObligationsViewModel(
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
-        Seq.empty, Seq.empty,
-        Seq.empty,
-        dateService.getCurrentTaxYearEnd(),
-        showPrevTaxYears = true
-      )
+      result.futureValue shouldBe expectedResult
     }
 
     "return a valid view model if no quarterly obligations" in {
@@ -395,9 +408,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
     "Fix for MISUV-6494" in new Setup {
       // Read response from plain json file
-      val source = Source.fromURL(getClass.getResource("/data/1330_Transformed.json"))
-      val jsonString = source.getLines().toList.mkString("")
-      val json = Json.parse(jsonString)
+      val source: BufferedSource = Source.fromURL(getClass.getResource("/data/1330_Transformed.json"))
+      val jsonString: String = source.getLines().toList.mkString("")
+      val json: JsValue = Json.parse(jsonString)
 
       val expectedResponse: ObligationsModel = json.validate[ObligationsModel].fold(
         _ => None, valid => Some(valid)).get
@@ -405,17 +418,16 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       when(mockIncomeTaxViewChangeConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(expectedResponse))
 
-      val expectedResult = ObligationsViewModel(
+      val expectedResult: ObligationsViewModel = ObligationsViewModel(
         quarterlyObligationsDatesYearOne = List.empty,
         quarterlyObligationsDatesYearTwo = List.empty,
-        eopsObligationsDates = List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "EOPS", false)),
-        finalDeclarationDates = List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "23P0", true)),
+        eopsObligationsDates = List(),  // List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "EOPS", false)),
+        finalDeclarationDates = List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "23P0", true, obligationType = "Crystallised")),
         currentTaxYear = 2024,
         showPrevTaxYears = false
       )
-
-      val result = getObligationsViewModel("XTIT00001015155", false)
-      result.futureValue shouldBe expectedResult
+      val actualResult: Future[ObligationsViewModel] = getObligationsViewModel("XTIT00001015155", showPreviousTaxYears = false)
+      actualResult.futureValue shouldBe expectedResult
     }
   }
 }
