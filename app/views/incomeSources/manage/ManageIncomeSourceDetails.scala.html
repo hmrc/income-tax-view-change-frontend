@@ -54,14 +54,7 @@
 }
 
 @changeReportingMethodUrl(taxYear: String, changeTo: String) = @{
-    viewModel.incomeSourceType match {
-        case SelfEmployment =>
-            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, SelfEmployment).url
-        case UkProperty =>
-            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, UkProperty).url
-        case ForeignProperty =>
-            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, ForeignProperty).url
-    }
+    controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, viewModel.incomeSourceType).url
 }
 
 @changeToValue(currentMethod: String) = @{

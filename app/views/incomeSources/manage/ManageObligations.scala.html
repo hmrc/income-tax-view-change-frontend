@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.TaxYear
 @import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+@import models.incomeSourceDetails.viewmodels.DatesModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -33,7 +34,6 @@
         hr: hr,
         govukTable: GovukTable
 )
-
 
 @(
         sources: ObligationsViewModel,
@@ -66,6 +66,10 @@
     @getPeriodMessage(changeTo: String) = @{
         if(changeTo == "annual") getUniqueMessage("annually")
         else getUniqueMessage("quarterly")
+    }
+
+    @getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
+        s"${getMessage("table.heading-1")} ${quarterly.head.inboundCorrespondenceFrom.getYear} ${getMessage("to")} ${quarterly.head.inboundCorrespondenceFrom.getYear + 1}"
     }
 
     @getPageTitle = @{
@@ -111,7 +115,7 @@
                         rows = sources.quarterlyObligationsDatesYearOne.map { x =>
                             Seq(
                                 TableRow(
-                                    content = Text(x.inboundCorrespondenceFrom.toLongDate + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.toLongDate)
+                                    content = Text(s"${x.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${x.inboundCorrespondenceTo.toLongDate}")
                                 ),
                                 TableRow(
                                     content = Text(x.inboundCorrespondenceDue.toLongDate)
@@ -120,7 +124,7 @@
                         },
                         head = Some(Seq(
                             HeadCell(
-                                content = Text(getMessage("table.heading-1") + " " + sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + (sources.quarterlyObligationsDatesYearOne.head.inboundCorrespondenceFrom.getYear + 1))
+                                content = Text(getQuarterlyTableHeading(sources.quarterlyObligationsDatesYearOne))
                             ),
                             HeadCell(
                                 content = Text(getMessage("table.heading-2"))
@@ -135,7 +139,7 @@
                             rows = sources.quarterlyObligationsDatesYearTwo.map { x =>
                                 Seq(
                                     TableRow(
-                                        content = Text(x.inboundCorrespondenceFrom.toLongDate + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.toLongDate)
+                                        content = Text(s"${x.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${x.inboundCorrespondenceTo.toLongDate}")
                                     ),
                                     TableRow(
                                         content = Text(x.inboundCorrespondenceDue.toLongDate)
@@ -144,7 +148,7 @@
                             },
                             head = Some(Seq(
                                 HeadCell(
-                                    content = Text(getMessage("table.heading-1") + " " + sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + " " + getMessage("to") + " " + (sources.quarterlyObligationsDatesYearTwo.head.inboundCorrespondenceFrom.getYear + 1))
+                                    content = Text(getQuarterlyTableHeading(sources.quarterlyObligationsDatesYearTwo))
                                 ),
                                 HeadCell(
                                     content = Text(getMessage("table.heading-2"))
@@ -166,7 +170,7 @@
                         rows = sources.eopsObligationsDates.map { x =>
                             Seq(
                                 TableRow(
-                                    content = Text(x.inboundCorrespondenceFrom.getYear.toString + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear.toString)
+                                    content = Text(s"${x.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${x.inboundCorrespondenceTo.getYear.toString}")
                                 ),
                                 TableRow(
                                     content = Text(x.inboundCorrespondenceDue.toLongDate)
@@ -196,7 +200,7 @@
                     rows = sources.finalDeclarationDates.map { x =>
                         Seq(
                             TableRow(
-                                content = Text(x.inboundCorrespondenceFrom.getYear.toString + " " + getMessage("to") + " " + x.inboundCorrespondenceTo.getYear.toString)
+                                content = Text(s"${x.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${x.inboundCorrespondenceTo.getYear.toString}")
                             ),
                             TableRow(
                                 content = Text(x.inboundCorrespondenceDue.toLongDate)
