@@ -51,7 +51,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       val retrieveBtaNavBar: NavBarPredicate,
                                                       val businessDetailsService: CreateBusinessDetailsService,
                                                       val sessionService: SessionService,
-                                                      )
+                                                     )
                                                      (implicit val ec: ExecutionContext,
                                                       implicit override val mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
@@ -65,47 +65,42 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   lazy val backUrlAgent: String = agentForeignPropertyAccountingMethodUrl
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
     val backUrl: String = if (isAgent) backUrlAgent else backUrlIndividual
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else {
       controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
     }
-
-    if (isDisabled(IncomeSources)) {
-      if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent)) else Future.successful(Redirect(controllers.routes.HomeController.show()))
-    } else {
-      getDetails(user) map {
-        case Right(viewModel) =>
-          Ok(checkForeignPropertyDetails(
-            viewModel,
-            postAction = postAction,
-            isAgent,
-            backUrl = backUrl
-          ))
-        case Left(ex) =>
-          if (isAgent) {
-            Logger("application").error(
-              s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
-            errorHandler.showInternalServerError()
-          } else {
-            Logger("application").error(
-              s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
-            errorHandler.showInternalServerError()
-          }
-      } recover {
-        case ex: Exception =>
-          if (isAgent) {
-            Logger("application").error(
-              s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-            errorHandler.showInternalServerError()
-          } else {
-            Logger("application").error(
-              s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-            errorHandler.showInternalServerError()
-          }
-      }
+    getDetails(user) map {
+      case Right(viewModel) =>
+        Ok(checkForeignPropertyDetails(
+          viewModel,
+          postAction = postAction,
+          isAgent,
+          backUrl = backUrl
+        ))
+      case Left(ex) =>
+        if (isAgent) {
+          Logger("application").error(
+            s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
+          errorHandler.showInternalServerError()
+        } else {
+          Logger("application").error(
+            s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
+          errorHandler.showInternalServerError()
+        }
+    } recover {
+      case ex: Exception =>
+        if (isAgent) {
+          Logger("application").error(
+            s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+          errorHandler.showInternalServerError()
+        } else {
+          Logger("application").error(
+            s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+          errorHandler.showInternalServerError()
+        }
     }
   }
 

@@ -52,6 +52,11 @@
     messages(s"incomeSources.add.foreign-property-check-details.$key", args: _*)
 }
 
+
+@accountingMethodMessageKey = @{
+viewModel.getAccountingMethodMessageKey
+}
+
 @changeForeignPropertyStartDateURL = @{
     controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = true, ForeignProperty).url
 }
@@ -94,12 +99,9 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
-                <dd class="govuk-summary-list__value" id="business-accounting-value">@{
-                    if (viewModel.cashOrAccrualsFlag == "cash") {
-                        getMessage("cash-basis-accounting")
-                    } else {
-                        getMessage("traditional-accounting")
-                    }
+                <dd class="govuk-summary-list__value" id="business-accounting-value">
+                    @{
+                    messages(accountingMethodMessageKey)
                 }</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link" id="accounting-method-change-details-link" href=@changeForeignPropertyAccountingMethodURL>
