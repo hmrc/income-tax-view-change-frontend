@@ -97,7 +97,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           When(s"I call GET $showAgentUrl")
-          val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-check-details")
+          val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-check-details", clientDetailsWithConfirmation)
 
           result should have(
             httpStatus(SEE_OTHER),
