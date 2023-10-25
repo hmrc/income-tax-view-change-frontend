@@ -18,7 +18,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.incomeSourceDetails.TaxYear
+@import models.TaxYear
 @import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 
 @this(
@@ -69,7 +69,7 @@
     }
 
     @getPageTitle = @{
-        val title = getUniqueMessage("h1") + " " + getBusinessName(businessName) + " " + getUniqueMessage("h2") + " " + getPeriodMessage(changeTo) + " " + getUniqueMessage("tax-year") + " " + taxYear.startYear + " " + getMessage("to") + " " + taxYear.endYear
+        val title = getUniqueMessage("h1") + " " + getBusinessName(businessName) + " " + getUniqueMessage("h2") + " " + getPeriodMessage(changeTo) + " " + getUniqueMessage("tax-year") + " " + taxYear.firstYear + " " + getMessage("to") + " " + taxYear.secondYear
         title.trim
     }
 
@@ -90,9 +90,9 @@
                     @getUniqueMessage("h2")
                     @getPeriodMessage(changeTo)
                     @getUniqueMessage("tax-year")
-                    @taxYear.startYear
+                    @taxYear.firstYear
                     @getMessage("to")
-                    @taxYear.endYear
+                    @taxYear.secondYear
                 </div>
             </div>
 

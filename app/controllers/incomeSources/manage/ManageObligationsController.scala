@@ -26,6 +26,8 @@ import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
+import models.TaxYear
+import models.TaxYear.mkTaxYear
 import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
@@ -58,7 +60,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   with FeatureSwitching with IncomeSourcesUtils {
 
 
-  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showSelfEmployment(changeTo: String, taxYearString: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
@@ -67,7 +69,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             handleRequest(
               mode = SelfEmployment,
               isAgent = false,
-              taxYear,
+              mkTaxYear(taxYearString).toOption.get,
               changeTo,
               incomeSourceIdMayBe
             )
@@ -80,7 +82,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }
   }
 
-  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = authenticatedAction(isAgent = true) {
+  def showAgentSelfEmployment(changeTo: String, taxYearString: String): Action[AnyContent] = authenticatedAction(isAgent = true) {
     implicit user =>
       withIncomeSourcesFS {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
@@ -88,7 +90,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             handleRequest(
               mode = SelfEmployment,
               isAgent = true,
-              taxYear,
+              mkTaxYear(taxYearString).toOption.get,
               changeTo,
               incomeSourceIdMayBe
             )
@@ -101,19 +103,24 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }
   }
 
-  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  import models.TaxYear._
+
+  def showUKProperty(changeTo: String, taxYearString: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(
-        mode = UkProperty,
-        isAgent = false,
-        taxYear,
-        changeTo,
-        None
-      )
+      mkTaxYear(taxYearString).toOption.map {
+        taxYear =>
+          handleRequest(
+            mode = UkProperty,
+            isAgent = false,
+            taxYear,
+            changeTo,
+            None
+          )
+      }.getOrElse( Future.failed( throw new Error("Error : Boom") ) )
   }
 
-  def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = Authenticated.async {
+  def showAgentUKProperty(changeTo: String, taxYearString: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -121,26 +128,26 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             handleRequest(
               mode = UkProperty,
               isAgent = true,
-              taxYear,
+              mkTaxYear(taxYearString).toOption.get,
               changeTo,
               None
             )
         }
   }
 
-  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showForeignProperty(changeTo: String, taxYearString: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         mode = ForeignProperty,
         isAgent = false,
-        taxYear,
+        mkTaxYear(taxYearString).toOption.get,
         changeTo,
         None
       )
   }
 
-  def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = Authenticated.async {
+  def showAgentForeignProperty(changeTo: String, taxYearString: String): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -148,14 +155,14 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             handleRequest(
               mode = ForeignProperty,
               isAgent = true,
-              taxYear,
+              mkTaxYear(taxYearString).toOption.get,
               changeTo,
               None
             )
         }
   }
 
-  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: TaxYear, changeTo: String, incomeSourceId: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
@@ -165,7 +172,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
       val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
 
-      getTaxYearModel(taxYear) match {
+      Option(taxYear) match {
         case Some(years) =>
           if (changeTo == "annual" || changeTo == "quarterly") {
             getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
@@ -175,13 +182,13 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               })
               case Right(value) =>
                 nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
-                  auditingService.extendedAudit(ObligationsAuditModel(
-                    incomeSourceType = mode,
-                    obligations = viewModel,
-                    businessName = addedBusinessName,
-                    changeTo,
-                    years
-                  ))
+//                  auditingService.extendedAudit(ObligationsAuditModel(
+//                    incomeSourceType = mode,
+//                    obligations = viewModel,
+//                    businessName = addedBusinessName,
+//                    changeTo,
+//                    years
+//                  ))
                   Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
                 }
             }
