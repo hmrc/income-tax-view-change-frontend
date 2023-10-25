@@ -133,12 +133,15 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    lazy val redirectErrorUrl: Call = if (isAgent) {
+      routes.IncomeSourceNotAddedController.showAgent(UkProperty)
+    } else {
+      routes.IncomeSourceNotAddedController.show(UkProperty)
+    }
 
     withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(sessionService)(user, ec) flatMap {
+      getUKPropertyDetailsFromSession(sessionService)(user, ec).flatMap {
         case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
-          val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
-          else routes.IncomeSourceNotAddedController.show(UkProperty)
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
             case Left(ex) =>
               Logger("application").error(
@@ -148,19 +151,11 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
               Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
           }.recover {
             case ex: Exception =>
-              if (isAgent) {
-                Logger("application").error(
-                  s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-                Redirect(redirectErrorUrl)
-              } else {
-                Logger("application").error(
-                  s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-                Redirect(redirectErrorUrl)
-              }
+              Logger("application").error(
+                s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+              Redirect(redirectErrorUrl)
           }
         case Left(_) =>
-          val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
-          else routes.IncomeSourceNotAddedController.show(UkProperty)
           Logger("application").error(
             s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit")
           Future.successful(Redirect(redirectErrorUrl))
