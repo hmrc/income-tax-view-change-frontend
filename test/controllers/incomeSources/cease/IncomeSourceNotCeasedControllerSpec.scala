@@ -43,6 +43,10 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
     app.injector.instanceOf[MessagesControllerComponents],
     ec)
 
+  val selfEmploymentMessage: String = messages("incomeSources.cease.error.SE.notCeased.text")
+  val ukPropertyMessage: String = messages("incomeSources.cease.error.UK.notCeased.text")
+  val foreignPropertyMessage: String = messages("incomeSources.cease.error.FP.notCeased.text")
+
   "IncomeSourceNotCeasedController.show" should {
     "200 OK" when {
       "authenticated user navigates to page with a UK Property income source type in the request" in {
@@ -54,6 +58,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe OK
         document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
+        document.text() should include(ukPropertyMessage)
       }
       "authenticated agent navigates to page with a UK Property income source type in the request" in {
         disableAllSwitches()
@@ -64,6 +69,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe OK
         document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
+        document.text() should include(ukPropertyMessage)
       }
       "authenticated user navigates to page with a Foreign Property income source type in the request" in {
         disableAllSwitches()
@@ -74,6 +80,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe OK
         document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
+        document.text() should include(foreignPropertyMessage)
       }
       "authenticated agent navigates to page with a Foreign Property income source type in the request" in {
         disableAllSwitches()
@@ -84,6 +91,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe OK
         document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
+        document.text() should include(foreignPropertyMessage)
       }
       "authenticated user navigates to page with a Self-employment business income source type in the request" in {
         disableAllSwitches()
@@ -94,6 +102,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe OK
         document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
+        document.text() should include(selfEmploymentMessage)
       }
       "authenticated agent navigates to page with a Self-employment business income source type in the request" in {
         disableAllSwitches()
@@ -104,6 +113,7 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
 
         status(result) shouldBe OK
         document.title shouldBe messages("htmlTitle.errorPage", messages("standardError.heading"))
+        document.text() should include(selfEmploymentMessage)
       }
     }
     "303 SEE_OTHER" when {
