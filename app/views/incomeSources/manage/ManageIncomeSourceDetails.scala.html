@@ -73,7 +73,7 @@
 }
 
 @taxYearValue(taxYear: String) = @{
-    s"${taxYear}-${(taxYear.toInt + 1).toString}"
+    s"${taxYear.toInt - 1}-${taxYear}"
 }
 
 @extractOption(content: Option[String]) = @{
@@ -164,7 +164,7 @@
         @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
                 && viewModel.latencyDetails.isDefined) {
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1, viewModel.latencyDetails.get.taxYear2)</dt>
+                <dt class="govuk-summary-list__key">@getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1)</dt>
                 <dd class="govuk-summary-list__value" id="reporting-method-1">@{
                     getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1))
                 }</dd>
@@ -177,7 +177,7 @@
                 }
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2, (viewModel.latencyDetails.get.taxYear2.toInt + 1).toString)</dt>
+                <dt class="govuk-summary-list__key">@getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2)</dt>
                 <dd class="govuk-summary-list__value" id="reporting-method-2">@{
                     getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2))
                 }</dd>
