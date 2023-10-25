@@ -36,10 +36,6 @@ import java.time.LocalDate
 
 class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
 
-  val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val uiRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
-
-
   object CheckUKPropertyDetails {
     val showUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit().url
@@ -50,6 +46,9 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
       messagesAPI("incomeSources.add.checkUKPropertyDetails.change") // duplicated due to visually hidden text
     val confirmText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.confirm")
   }
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val uiRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val testPropertyStartDateLong: String = "1 January 2023"
   val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
