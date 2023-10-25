@@ -71,10 +71,10 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport with MockAuthenti
     businessDetailsService = mockBusinessDetailsService,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     createBusinessDetailsService = mockBusinessDetailsService,
+    sessionService = app.injector.instanceOf[SessionService],
     retrieveBtaNavBar = MockNavBarPredicate
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
-    sessionService = app.injector.instanceOf[SessionService],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

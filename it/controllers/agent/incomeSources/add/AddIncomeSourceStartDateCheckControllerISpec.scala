@@ -17,13 +17,22 @@
 package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import forms.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, clientDetailsWithStartDate, testMtditid}
+import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, clientDetailsWithStartDate, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+
+import java.time.LocalDate
+import scala.concurrent.ExecutionContext
 
 class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val testDate: String = "2020-11-1"
@@ -63,9 +72,45 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val addUKPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true).url
   val addUKPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url
 
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
+  val journeyTypeUK: JourneyType = JourneyType(Add, UkProperty)
+  val journeyTypeFP: JourneyType = JourneyType(Add, ForeignProperty)
+  override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  val testBusinessStartDate: LocalDate = LocalDate.of(2022, 10, 10)
+  val testAccountingPeriodStartDate: LocalDate = LocalDate.of(2022, 10, 10)
+  val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 4, 5)
+  val testBusinessName: String = "Test Business"
+  val testBusinessTrade: String = "Plumbing"
+
+
+  val testAddIncomeSourceDataWithStartDate: IncomeSourceType => AddIncomeSourceData = (incomeSourceType: IncomeSourceType) =>
+    if (incomeSourceType.equals(SelfEmployment)) {
+      AddIncomeSourceData(
+        businessName = Some(testBusinessName),
+        businessTrade = Some(testBusinessTrade),
+        dateStarted = Some(testBusinessStartDate)
+      )
+    } else {
+      AddIncomeSourceData(
+        businessName = None,
+        businessTrade = None,
+        dateStarted = Some(testBusinessStartDate)
+      )
+    }
+
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = JourneyType(Add, incomeSourceType).toString,
+    addIncomeSourceData = Some(testAddIncomeSourceDataWithStartDate(incomeSourceType)))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession)
+  }
 
   s"calling GET $addBusinessStartDateCheckShowUrl" should {
-    "render the Add Business Start Date Check Page" when {
+    "render the Business Start Date Check Page" when {
       "User is authorised" in {
         stubAuthorisedAgentUser(authorised = true)
 
@@ -74,6 +119,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $addBusinessStartDateCheckShowUrl")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend.getAddBusinessStartDateCheck(clientDetailsWithStartDate ++ testAddBusinessStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -95,7 +142,14 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+
         val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheck(Some("Yes"))(clientDetailsWithConfirmation ++ testAddBusinessStartDate)
+
+        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessStartDate))
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeSE).futureValue shouldBe
+          Right(Some(testAccountingPeriodStartDate))
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeSE).futureValue shouldBe Right(Some(testAccountingPeriodEndDate))
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -111,12 +165,18 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+
         val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheck(Some("No"))(clientDetailsWithConfirmation ++ testAddBusinessStartDate)
 
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(addBusinessStartDateShowUrl)
         )
+
+        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeSE).futureValue shouldBe Right(None)
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeSE).futureValue shouldBe Right(None)
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeSE).futureValue shouldBe Right(None)
       }
     }
     "return a BAD_REQUEST" when {
@@ -126,6 +186,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheck(None)(clientDetailsWithConfirmation ++ testAddBusinessStartDate)
 
@@ -143,6 +205,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend
           .postAddBusinessStartDateCheck(Some("@"))(clientDetailsWithConfirmation ++ testAddBusinessStartDate)
@@ -162,6 +226,9 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $foreignPropertyStartDateCheckShowUrl")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-start-date-check",
           testAddForeignPropertyStartDate ++ clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -183,12 +250,18 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
         val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheck(Some("Yes"))(clientDetailsWithConfirmation ++ testAddForeignPropertyStartDate)
 
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(foreignPropertyAccountingMethodShowUrl)
         )
+
+        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeFP).futureValue shouldBe Right(Some(testBusinessStartDate))
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeFP).futureValue shouldBe Right(None)
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeFP).futureValue shouldBe Right(None)
       }
       "form is filled correctly with input No" in {
 
@@ -196,7 +269,13 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
         val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheck(Some("No"))(clientDetailsWithConfirmation ++ testAddForeignPropertyStartDate)
+
+        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeFP).futureValue shouldBe Right(None)
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeFP).futureValue shouldBe Right(None)
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeFP).futureValue shouldBe Right(None)
 
 
         result should have(
@@ -209,6 +288,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheck(None)(clientDetailsWithConfirmation ++ testAddForeignPropertyStartDate)
 
@@ -230,6 +311,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $checkUKPropertyStartDateShowUrl")
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
         val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-start-date-check",
           testAddUKPropertyStartDate ++ clientDetailsWithConfirmation)
 
@@ -249,12 +332,18 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
         val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheck(Some("Yes"))(testAddUKPropertyStartDate ++ clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(ukPropertyAccountingMethodShowUrl)
         )
+
+        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeUK).futureValue shouldBe Right(Some(testBusinessStartDate))
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeUK).futureValue shouldBe Right(None)
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeUK).futureValue shouldBe Right(None)
       }
       s"redirect to $addUKPropertyStartDateShowUrl" when {
         "user selects 'no' the date entered is not correct" in {
@@ -262,12 +351,16 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
+          await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
           val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheck(Some("No"))(testAddUKPropertyStartDate ++ clientDetailsWithConfirmation)
 
           result should have(
             httpStatus(SEE_OTHER),
             redirectURI(addUKPropertyStartDateShowUrl)
           )
+
+          sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeUK).futureValue shouldBe Right(None)
         }
       }
       s"return BAD_REQUEST $checkUKPropertyStartDateShowUrl" when {
@@ -276,6 +369,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
           stubAuthorisedAgentUser(authorised = true)
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
           val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheck(Some(""))(testAddUKPropertyStartDate ++ clientDetailsWithConfirmation)
 
@@ -299,6 +394,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $addBusinessStartDateCheckChangeShowUrl")
 
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+
         val result = IncomeTaxViewChangeFrontend.getAddBusinessStartDateCheckChange(clientDetailsWithStartDate ++ testAddBusinessStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -320,6 +417,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         When(s"I call GET $addForeignPropertyStartDateCheckChangeShowUrl")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val result = IncomeTaxViewChangeFrontend.getAddForeignPropertyStartDateCheckChange(clientDetailsWithStartDate ++ testAddForeignPropertyStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -343,6 +442,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $addUKPropertyStartDateCheckChangeSubmitUrl")
 
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
         val result = IncomeTaxViewChangeFrontend.getAddUKPropertyStartDateCheckChange(clientDetailsWithStartDate ++ testAddUKPropertyStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -364,6 +465,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         When(s"I call GET $addBusinessStartDateCheckChangeSubmitUrl")
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend.postAddBusinessStartDateCheckChange(Some("Yes"))(clientDetailsWithStartDate ++ testAddBusinessStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -372,6 +474,11 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(addBusinessStartDateCheckDetailsShowUrl)
         )
+
+        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessStartDate))
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeSE).futureValue shouldBe
+          Right(Some(testAccountingPeriodStartDate))
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeSE).futureValue shouldBe Right(Some(testAccountingPeriodEndDate))
       }
     }
   }
@@ -386,6 +493,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $addForeignPropertyStartDateCheckChangeSubmitUrl")
 
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
         val result = IncomeTaxViewChangeFrontend.postAddForeignPropertyStartDateCheckChange(Some("Yes"))(clientDetailsWithStartDate ++ testAddForeignPropertyStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -393,6 +502,10 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(addForeignPropertyStartDateCheckDetailsShowUrl)
         )
+
+        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeFP).futureValue shouldBe Right(Some(testBusinessStartDate))
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeFP).futureValue shouldBe Right(None)
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeFP).futureValue shouldBe Right(None)
       }
     }
   }
@@ -407,6 +520,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET $addUKPropertyStartDateCheckChangeSubmitUrl")
 
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
         val result = IncomeTaxViewChangeFrontend.postAddUKPropertyStartDateCheckChange(Some("Yes"))(clientDetailsWithStartDate ++ testAddUKPropertyStartDate)
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -414,6 +529,10 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(addUKPropertyStartDateCheckDetailsShowUrl)
         )
+
+        sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyTypeUK).futureValue shouldBe Right(Some(testBusinessStartDate))
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyTypeUK).futureValue shouldBe Right(None)
+        sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyTypeUK).futureValue shouldBe Right(None)
       }
     }
   }

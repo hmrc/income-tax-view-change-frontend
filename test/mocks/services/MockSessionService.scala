@@ -83,27 +83,16 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  <<<<<<< HEAD
-
   def setupMockGetSessionKeyMongoTyped[A](key: String, journeyType: JourneyType, result: Either[Throwable, Option[A]]): Unit = {
     when(
       mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.eq(key), ArgumentMatchers.eq(journeyType))(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
-  =======
-  >>>>>>> origin / main
-
   def setupMockSetSessionKeyMongo(result: Either[Throwable, Boolean]): Unit = {
     when(
       mockSessionService.setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any())
-    ).thenReturn(Future.successful(result))
-  }
-
-  def setupMockDeleteSession(result: Boolean): Unit = {
-    when(
-      mockSessionService.deleteSession(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
@@ -130,6 +119,12 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
       ArgumentMatchers.eq(expectedValue),
       ArgumentMatchers.eq(expectedJourneyType)
     )(any(), any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockDeleteSession(result: Boolean): Unit = {
+    when(
+      mockSessionService.deleteSession(ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 

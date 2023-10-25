@@ -42,10 +42,10 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                            val sessionService: SessionService,
                                             val retrieveBtaNavBar: NavBarPredicate)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
-                                            implicit val sessionService: SessionService,
                                             val appConfig: FrontendAppConfig)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
@@ -80,7 +80,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
       case Right(viewModel) =>
-        withIncomeSourcesRemovedFromSession {
+        sessionService.deleteSession.map { _ =>
           Ok(ceaseIncomeSources(
             viewModel,
             isAgent = isAgent,

@@ -47,11 +47,11 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val retrieveBtaNavBar: NavBarPredicate,
-                                                      val businessDetailsService: CreateBusinessDetailsService)
+                                                      val businessDetailsService: CreateBusinessDetailsService,
+                                                      val sessionService: SessionService)
                                                      (implicit val ec: ExecutionContext,
                                                       implicit override val mcc: MessagesControllerComponents,
                                                       val appConfig: FrontendAppConfig,
-                                                      implicit val sessionService: SessionService,
                                                       implicit val itvcErrorHandler: ItvcErrorHandler,
                                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
@@ -211,12 +211,15 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
             Future.successful(Redirect(redirectErrorUrl))
 
           case Right(CreateIncomeSourceResponse(id)) =>
-            withIncomeSourcesRemovedFromSession(
-              if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
-              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
-            ) recover {
-              case _: Exception => Redirect(redirectErrorUrl)
-            }
+            //            sessionService.deleteSession.map { _ =>
+            //              if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
+            //              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
+            //            } recover {
+            //              case _: Exception => Redirect(redirectErrorUrl)
+            //            }
+            //TODO: uncomment above and remove below redirect in MISUV-6437
+            if (isAgent) Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url))
+            else Future.successful(Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url))
         }
       case Left(_) =>
         Logger("application").error(

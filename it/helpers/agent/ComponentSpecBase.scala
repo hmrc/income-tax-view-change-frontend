@@ -61,14 +61,14 @@ class TestDateService extends DateServiceInterface {
 
   override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2022, 4, 6)
 
-  override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+  override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
     val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
     if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
-      accountingPeriodEndDate.toString
+      accountingPeriodEndDate
     } else {
-      accountingPeriodEndDate.plusYears(1).toString
+      accountingPeriodEndDate.plusYears(1)
     }
   }
 }
@@ -89,7 +89,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
   implicit val dateService: DateService = new DateService() {
     override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)

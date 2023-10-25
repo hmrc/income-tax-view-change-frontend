@@ -110,6 +110,7 @@ class UIJourneySessionDataRepository @Inject()(
       .deleteOne(dataFilter(data))
       .toFuture()
       .map(_ => true)
+
   def deleteOne(sessionId: String): Future[Boolean] =
     collection
       .deleteOne(sessionFilter(sessionId))

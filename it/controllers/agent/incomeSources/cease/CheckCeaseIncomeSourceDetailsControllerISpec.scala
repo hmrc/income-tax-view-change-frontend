@@ -27,12 +27,11 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, stringTrue, testEndDate2022, testMtditid, testNino, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
 
 class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
