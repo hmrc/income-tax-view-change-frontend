@@ -27,6 +27,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
   val submitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent().url
   val reportingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("ABC123456789").url
   val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(ForeignProperty).url
+  val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
 
   val testPropertyStartDateLong: String = "1 January 2023"
   val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
@@ -100,7 +101,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI("/report-quarterly/income-and-expenses/view")
+            redirectURI(incomeSourcesUrl)
           )
         }
       }
