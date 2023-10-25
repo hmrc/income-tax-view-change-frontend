@@ -66,7 +66,7 @@
 }
 
 @taxYearValue(taxYear: String) = @{
-    s"${taxYear}-${(taxYear.toInt + 1).toString}"
+    s"${taxYear.toInt - 1}-${taxYear}"
 }
 
 @extractOption(content: Option[String]) = @{
@@ -218,6 +218,7 @@
         },
         attributes = Map("id" -> "manage-details-table")),
     )
+
     <br>
     <br>
 

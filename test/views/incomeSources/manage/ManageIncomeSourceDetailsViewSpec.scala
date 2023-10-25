@@ -41,8 +41,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val businessAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
   val ukAccountingMethod = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
   val foreignAccountingMethod = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
-  val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
-  val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2024", "2025")
+  val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
+  val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
   val change = messages("incomeSources.manage.business-manage-details.change")
   val quarterly = messages("incomeSources.manage.business-manage-details.quarterly")
   val annually = messages("incomeSources.manage.business-manage-details.annually")
@@ -367,7 +367,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
       document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
-
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(true) {
 
