@@ -39,7 +39,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
   def generateDatesModel(year: Int): DatesModel = {
     DatesModel(LocalDate.of(year, 1, 6),
       LocalDate.of(year, 4, 5),
-      LocalDate.of(year, 5, 5), "EOPS", false)
+      LocalDate.of(year, 5, 5), "EOPS", false, obligationType = "Quarterly")
   }
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
