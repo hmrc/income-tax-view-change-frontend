@@ -22,4 +22,4 @@ final case class ObligationsViewModel(quarterlyObligationsDatesYearOne: Seq[Date
                                       eopsObligationsDates: Seq[DatesModel], finalDeclarationDates: Seq[DatesModel], currentTaxYear: Int, showPrevTaxYears: Boolean)
 
 final case class DatesModel(inboundCorrespondenceFrom: LocalDate, inboundCorrespondenceTo: LocalDate,
-                            inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String = "")
+                            inboundCorrespondenceDue: LocalDate, periodKey: String, isFinalDec: Boolean, obligationType: String)

@@ -112,8 +112,13 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
         Logger("application").error(
           s"[IncomeSourceAddedController][handleRequest] - Error: $message, code $code")
         Seq.empty
-      case NextUpdateModel(start, end, due, _, _, periodKey) =>
-        Seq(DatesModel(start, end, due, periodKey, isFinalDec = false))
+      case NextUpdateModel(start, end, due, obligationType, _, periodKey) =>
+        Seq(DatesModel(start,
+          end,
+          due,
+          periodKey,
+          isFinalDec = false,
+          obligationType = obligationType))
       case model: ObligationsModel =>
         Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
           source =>
