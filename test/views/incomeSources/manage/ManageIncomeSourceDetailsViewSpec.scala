@@ -255,8 +255,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessName
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe expectedViewAddressString1
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe expectedBusinessStartDate
@@ -298,8 +298,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessName
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe expectedViewAddressString1
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe expectedBusinessStartDate
@@ -327,8 +327,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
@@ -361,8 +361,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
@@ -396,8 +396,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
@@ -430,8 +430,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually

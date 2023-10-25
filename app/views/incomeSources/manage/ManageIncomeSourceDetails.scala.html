@@ -138,7 +138,7 @@
     Seq(
         SummaryListRow(
             key = Key(
-                content = Text(getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1, viewModel.latencyDetails.get.taxYear2))
+                content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1))
             ),
             value = Value(
                 content = Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
@@ -156,7 +156,7 @@
         ),
         SummaryListRow(
             key = Key(
-                content = Text(getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2, (viewModel.latencyDetails.get.taxYear2.toInt + 1).toString))
+                content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2))
             ),
             value = Value(
                 content = HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
