@@ -306,7 +306,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationDates("123")
-      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false)))
+      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "Crystallised")))
     }
     "show correct error when given a NextUpdatesErrorModel" in {
       disableAllSwitches()
@@ -368,14 +368,6 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
-// TODO: to be removed if fix verified for MISUV-6494
-//      val expectedResult = ObligationsViewModel(
-//        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
-//        Seq.empty, Seq.empty,
-//        Seq.empty,
-//        dateService.getCurrentTaxYearEnd(),
-//        showPrevTaxYears = true
-//      )
       val expectedResult = ObligationsViewModel(
               Seq.empty,
               Seq.empty, Seq.empty,
@@ -399,7 +391,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
       result.futureValue shouldBe ObligationsViewModel(
         Seq.empty, Seq.empty,
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false)),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
         Seq.empty,
         dateService.getCurrentTaxYearEnd(),
         showPrevTaxYears = true

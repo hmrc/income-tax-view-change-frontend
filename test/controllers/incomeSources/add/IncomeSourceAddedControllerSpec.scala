@@ -181,7 +181,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
-          DatesModel(day, day, day, "EOPS", isFinalDec = false)
+          DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
         )
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
         setupMockGetIncomeSourceDetails()(sources)
@@ -216,7 +216,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         mockSelfEmployment()
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
-          DatesModel(day, day, day, "EOPS", isFinalDec = false)
+          DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
         )
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 12, 1))
         setupMockGetIncomeSourceDetails()(sources)
@@ -391,7 +391,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           val day = LocalDate.of(2023, 1, 1)
           val dates: Seq[DatesModel] = Seq(
-            DatesModel(day, day, day, "EOPS", isFinalDec = false)
+            DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
           )
 
           when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
@@ -430,7 +430,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           val day = LocalDate.of(2023, 1, 1)
           val dates: Seq[DatesModel] = Seq(
-            DatesModel(day, day, day, "EOPS", isFinalDec = false)
+            DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
           )
 
           when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))

@@ -92,24 +92,24 @@ object IncomeSourcesObligationsTestConstants {
 
   val viewModel: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDatesYearOne = Seq(
-      DatesModel(startDateQ1, endDateQ1, endDateQ1.plusMonths(1), "#001", isFinalDec = false),
-      DatesModel(startDateQ2, endDateQ2, endDateQ2.plusMonths(1), "#002", isFinalDec = false),
-      DatesModel(startDateQ3, endDateQ3, endDateQ3.plusMonths(1), "#003", isFinalDec = false),
-      DatesModel(startDateQ4, endDateQ4, endDateQ4.plusMonths(1), "#004", isFinalDec = false)
+      DatesModel(startDateQ1, endDateQ1, endDateQ1.plusMonths(1), "#001", isFinalDec = false, obligationType = "Quarterly"),
+      DatesModel(startDateQ2, endDateQ2, endDateQ2.plusMonths(1), "#002", isFinalDec = false, obligationType = "Quarterly"),
+      DatesModel(startDateQ3, endDateQ3, endDateQ3.plusMonths(1), "#003", isFinalDec = false, obligationType = "Quarterly"),
+      DatesModel(startDateQ4, endDateQ4, endDateQ4.plusMonths(1), "#004", isFinalDec = false, obligationType = "Quarterly")
     ),
     quarterlyObligationsDatesYearTwo = Seq(
-      DatesModel(startDateQ1_2024, endDateQ1_2024, endDateQ1_2024.plusMonths(1), "#001", isFinalDec = false),
-      DatesModel(startDateQ2_2024, endDateQ2_2024, endDateQ2_2024.plusMonths(1), "#002", isFinalDec = false),
-      DatesModel(startDateQ3_2024, endDateQ3_2024, endDateQ3_2024.plusMonths(1), "#003", isFinalDec = false),
-      DatesModel(startDateQ4_2024, endDateQ4_2024, endDateQ4_2024.plusMonths(1), "#004", isFinalDec = false)
+      DatesModel(startDateQ1_2024, endDateQ1_2024, endDateQ1_2024.plusMonths(1), "#001", isFinalDec = false, obligationType = "Quarterly"),
+      DatesModel(startDateQ2_2024, endDateQ2_2024, endDateQ2_2024.plusMonths(1), "#002", isFinalDec = false, obligationType = "Quarterly"),
+      DatesModel(startDateQ3_2024, endDateQ3_2024, endDateQ3_2024.plusMonths(1), "#003", isFinalDec = false, obligationType = "Quarterly"),
+      DatesModel(startDateQ4_2024, endDateQ4_2024, endDateQ4_2024.plusMonths(1), "#004", isFinalDec = false, obligationType = "Quarterly")
     ),
     eopsObligationsDates = Seq(
-      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "EOPS", isFinalDec = false),
-      DatesModel(startDateTaxYear2024, endDateTaxYear2024, eopsDeadlineTaxYear2024, "EOPS", isFinalDec = false)
+      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "EOPS", isFinalDec = false, obligationType = "Quarterly"),
+      DatesModel(startDateTaxYear2024, endDateTaxYear2024, eopsDeadlineTaxYear2024, "EOPS", isFinalDec = false, obligationType = "Quarterly")
     ),
     finalDeclarationDates = Seq(
-      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true),
-      DatesModel(startDateTaxYear2024, endDateTaxYear2024, eopsDeadlineTaxYear2024, "C", isFinalDec = true)
+      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised"),
+      DatesModel(startDateTaxYear2024, endDateTaxYear2024, eopsDeadlineTaxYear2024, "C", isFinalDec = true, obligationType = "Crystallised")
     ),
     currentTaxYear = taxYear2023,
     showPrevTaxYears = true
@@ -117,16 +117,16 @@ object IncomeSourcesObligationsTestConstants {
 
   val obligationsViewModelSimple: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationsDatesYearOne = Seq(
-      DatesModel(startDateQ1, endDateQ1, endDateQ1.plusMonths(1), "#001", isFinalDec = false)
+      DatesModel(startDateQ1, endDateQ1, endDateQ1.plusMonths(1), "#001", isFinalDec = false, obligationType = "Quarterly")
     ),
     quarterlyObligationsDatesYearTwo = Seq(
-      DatesModel(startDateQ1_2024, endDateQ1_2024, endDateQ1_2024.plusMonths(1), "#001", isFinalDec = false)
+      DatesModel(startDateQ1_2024, endDateQ1_2024, endDateQ1_2024.plusMonths(1), "#001", isFinalDec = false, obligationType = "Quarterly")
     ),
     eopsObligationsDates = Seq(
-      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "EOPS", isFinalDec = false)
+      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "EOPS", isFinalDec = false, obligationType = "EOPS")
     ),
     finalDeclarationDates = Seq(
-      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true)
+      DatesModel(startDateTaxYear2023, endDateTaxYear2023, eopsDeadlineTaxYear2023, "C", isFinalDec = true, obligationType = "Crystallised")
     ),
     currentTaxYear = taxYear2023,
     showPrevTaxYears = true

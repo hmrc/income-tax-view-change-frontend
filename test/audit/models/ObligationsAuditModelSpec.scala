@@ -42,6 +42,7 @@ class ObligationsAuditModelSpec extends TestSupport {
       LocalDate.of(2024, 5, 5),
       "Quarterly",
       false,
+      obligationType = "Quarterly"
     )),
     Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )
