@@ -306,7 +306,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationDates("123")
-      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "Crystallised")))
+      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS")))
     }
     "show correct error when given a NextUpdatesErrorModel" in {
       disableAllSwitches()
@@ -364,7 +364,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       enable(IncomeSources)
 
       val day = LocalDate.of(2023, 1, 1)
-      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001")
+      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "#001")
       when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
