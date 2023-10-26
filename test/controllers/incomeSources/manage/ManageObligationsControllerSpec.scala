@@ -118,7 +118,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
-      DatesModel(day, day, day, "EOPS", isFinalDec = false)
+      DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       dates,
@@ -145,7 +145,7 @@ class ManageObligationsControllerSpec extends TestSupport
               incomeSourceId = testPropertyIncomeId,
               accountingPeriod = None,
               firstAccountingPeriodEndDate = None,
-              incomeSourceType = Some("02-uk-property"),
+              incomeSourceType = Some("uk-property"),
               tradingStartDate = None,
               cessation = None,
               cashOrAccruals = None,
@@ -163,7 +163,7 @@ class ManageObligationsControllerSpec extends TestSupport
               incomeSourceId = testPropertyIncomeId,
               accountingPeriod = None,
               firstAccountingPeriodEndDate = None,
-              incomeSourceType = Some("03-foreign-property"),
+              incomeSourceType = Some("foreign-property"),
               tradingStartDate = None,
               cessation = None,
               cashOrAccruals = None,
@@ -174,7 +174,7 @@ class ManageObligationsControllerSpec extends TestSupport
     }
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
-      DatesModel(day, day, day, "EOPS", isFinalDec = false)
+      DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       dates,
@@ -350,7 +350,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
-          DatesModel(day, day, day, "EOPS", isFinalDec = false)
+          DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
         )
 
         setupMockGetIncomeSourceDetails()(sources)
