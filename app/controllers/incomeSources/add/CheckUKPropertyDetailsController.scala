@@ -182,4 +182,5 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         Future.successful(Redirect(redirectErrorUrl))
     }
   }
+
 }

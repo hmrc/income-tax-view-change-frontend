@@ -18,15 +18,15 @@ package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
+import enums.JourneyType.{Add, JourneyType}
 import forms.utils.SessionKeys.businessName
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
@@ -106,7 +106,6 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(addBusinessStartDateUrl)
         )
-
         sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
       }
     }
