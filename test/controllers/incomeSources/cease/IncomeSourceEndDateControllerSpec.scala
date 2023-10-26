@@ -238,7 +238,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         }
       }
     }
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
+    "return 303 SEE_OTHER and redirect to home page" when {
       "navigating to the page with FS Disabled" when {
         def testFSDisabled(isAgent: Boolean, isChange: Boolean): Unit = {
           if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
