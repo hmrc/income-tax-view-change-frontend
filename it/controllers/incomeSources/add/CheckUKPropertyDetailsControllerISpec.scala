@@ -45,6 +45,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +
       messagesAPI("incomeSources.add.checkUKPropertyDetails.change") // duplicated due to visually hidden text
     val confirmText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.confirm")
+    val accountingMethodText: String = messagesAPI("incomeSources.add.accountingMethod.cash")
   }
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -93,7 +94,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
           pageTitleIndividual("incomeSources.add.checkUKPropertyDetails.heading"),
           elementTextByID("change-start-date-link-value")(testPropertyStartDateLong),
           elementTextByID("change-start-date-link")(CheckUKPropertyDetails.changeText),
-          elementTextByID("change-accounting-method-link-value")("Cash basis accounting"),
+          elementTextByID("change-accounting-method-link-value")(CheckUKPropertyDetails.accountingMethodText),
           elementTextByID("change-accounting-method-link")(CheckUKPropertyDetails.changeText),
           elementTextByID("continue-button")(CheckUKPropertyDetails.confirmText)
         )

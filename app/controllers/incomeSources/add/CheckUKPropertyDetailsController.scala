@@ -105,7 +105,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     val postAction = getSubmitUrl(isAgent)
     val errorHandler = getErrorHandler(isAgent)
 
-    getUKPropertyDetailsFromSession(user, ec).map(_.toOption).map {
+    getUKPropertyDetailsFromSession(user).map(_.toOption).map {
       case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
         Ok(
           checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
@@ -118,7 +118,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     }
   }
 
-  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
+  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
     for {
       startDate <- sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, UkProperty))
       accMethod <- sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, UkProperty))
@@ -133,9 +133,9 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
             cashOrAccrualsFlag = cashOrAccrualsFlag)
         }
         maybeModel.map(Right(_))
-          .getOrElse(Left(new Error("Unable to construct UK property view model")))
+          .getOrElse(Left(new Exception("Unable to construct UK property view model")))
       case (_, _) =>
-        Left(new Error("Error occurred when retrieving start dat and accounting method from session storage"))
+        Left(new Exception("Error occurred when retrieving start date and accounting method from session storage"))
     }
   }
 
@@ -158,7 +158,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
     else routes.IncomeSourceNotAddedController.show(UkProperty)
 
-    getUKPropertyDetailsFromSession(user, ec) flatMap {
+    getUKPropertyDetailsFromSession(user) flatMap {
       case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
         businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
           case Left(ex) => Logger("application").error(
@@ -171,15 +171,9 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
             Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
         }.recover {
           case ex: Exception =>
-            if (isAgent) {
-              Logger("application").error(
-                s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-              Redirect(redirectErrorUrl)
-            } else {
               Logger("application").error(
                 s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
               Redirect(redirectErrorUrl)
-            }
         }
       case Left(ex: Throwable) =>
         Logger("application").error(

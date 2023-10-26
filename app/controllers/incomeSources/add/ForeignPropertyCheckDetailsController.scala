@@ -65,7 +65,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   lazy val backUrlAgent: String = agentForeignPropertyAccountingMethodUrl
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     val backUrl: String = if (isAgent) backUrlAgent else backUrlIndividual
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -81,26 +81,14 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
           backUrl = backUrl
         ))
       case Left(ex) =>
-        if (isAgent) {
-          Logger("application").error(
-            s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
-          errorHandler.showInternalServerError()
-        } else {
           Logger("application").error(
             s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
           errorHandler.showInternalServerError()
-        }
     } recover {
       case ex: Exception =>
-        if (isAgent) {
           Logger("application").error(
-            s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+            s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct getCheckForeignPropertyViewModel ${ex.getMessage}")
           errorHandler.showInternalServerError()
-        } else {
-          Logger("application").error(
-            s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-          errorHandler.showInternalServerError()
-        }
     }
   }
 
