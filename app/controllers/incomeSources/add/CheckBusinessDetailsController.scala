@@ -195,8 +195,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         if futureAcc.isRight // stop exec if there was any error previously
         futureRes <- sessionService.get(fieldName)
       } yield (futureAcc, futureRes) match {
-        case (Right(m), Right(optVal)) =>
-          val finalMap = m + (fieldName -> optVal)
+        case (Right(accMapVal), Right(optVal)) =>
+          val finalMap = accMapVal + (fieldName -> optVal)
           Right(finalMap)
         case (_, _) =>
           futureAcc

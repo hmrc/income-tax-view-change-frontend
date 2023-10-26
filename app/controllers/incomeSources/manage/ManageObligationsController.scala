@@ -205,7 +205,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     (mode, incomeSourceId) match {
       case (SelfEmployment, Some(incomeSourceId)) =>
         val businessDetailsParams = for {
-          addedBusiness <- user.incomeSources.businesses.find(x => x.incomeSourceId.contains(incomeSourceId))
+          addedBusiness <- user.incomeSources.businesses.find(businessDetailsModel => businessDetailsModel.incomeSourceId.contains(incomeSourceId))
           businessName <- addedBusiness.tradingName
         } yield (addedBusiness, businessName)
         businessDetailsParams match {

@@ -123,8 +123,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
         )
         keyValuePairs.foldLeft[Future[Either[Throwable, Result]]](Future{Right(redirect)}) {(acc, keyValue) =>
           val result = for {
-            a <- acc
-          } yield a match {
+            resAccumulator <- acc
+          } yield resAccumulator match {
             case Right(res) =>
               sessionService.set(keyValue._1, keyValue._2, res)
             case Left(ex) =>

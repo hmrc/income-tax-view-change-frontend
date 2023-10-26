@@ -120,14 +120,14 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
           isFinalDec = false,
           obligationType = obligationType))
       case model: ObligationsModel =>
-        Seq(model.obligations.flatMap(x => x.currentCrystDeadlines) map {
+        Seq(model.obligations.flatMap(nextUpdatesModel => nextUpdatesModel.currentCrystDeadlines) map {
           source =>
             DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true, obligationType = source.obligationType)
         },
           model.obligations
-            .filter(x => x.identification == id)
-            .flatMap(obligation => obligation.obligations.map(x =>
-              DatesModel(x.start, x.end, x.due, x.periodKey, isFinalDec = false, obligationType = x.obligationType)))
+            .filter(nextUpdatesModel => nextUpdatesModel.identification == id)
+            .flatMap(obligation => obligation.obligations.map(nextUpdateModel =>
+              DatesModel(nextUpdateModel.start, nextUpdateModel.end, nextUpdateModel.due, nextUpdateModel.periodKey, isFinalDec = false, obligationType = nextUpdateModel.obligationType)))
         ).flatten
     }
   }
@@ -137,16 +137,16 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
     val processingRes = for {
       datesList <- getObligationDates(id)
     } yield {
-      val (finalDeclarationDates, otherObligationDates) = datesList.partition(x => x.isFinalDec)
+      val (finalDeclarationDates, otherObligationDates) = datesList.partition(datesModel => datesModel.isFinalDec)
 
-      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(x => x.obligationType == "Quarterly" )
+      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.obligationType == "Quarterly" )
         .sortBy(_.inboundCorrespondenceFrom)
 
-      val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(x => dateService.getAccountingPeriodEndDate(x.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
+      val quarterlyDatesByYear: (Seq[DatesModel], Seq[DatesModel]) = quarterlyDates.partition(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo) == dateService.getAccountingPeriodEndDate(quarterlyDates.head.inboundCorrespondenceTo))
       val quarterlyDatesYearOne = quarterlyDatesByYear._1.distinct.sortBy(_.periodKey)
       val quarterlyDatesYearTwo = quarterlyDatesByYear._2.distinct.sortBy(_.periodKey)
 
-      val eopsDates: Seq[DatesModel] = otherObligationDates.filter(x => x.periodKey.contains("EOPS")).distinct.sortBy(_.inboundCorrespondenceFrom)
+      val eopsDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.periodKey.contains("EOPS")).distinct.sortBy(_.inboundCorrespondenceFrom)
 
       val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
 
