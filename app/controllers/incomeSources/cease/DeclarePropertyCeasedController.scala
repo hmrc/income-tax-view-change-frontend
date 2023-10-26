@@ -112,20 +112,16 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
     }
 
     DeclarePropertyCeasedForm.form(incomeSourceType).bindFromRequest().fold(
-      hasErrors => {
-        val result = BadRequest(view(
-          declarePropertyCeasedForm = hasErrors,
-          incomeSourceType = incomeSourceType,
-          postAction = postAction,
-          backUrl = backAction.url,
-          isAgent = isAgent
-        ))
-        sessionService.setMongoKey(key = CeaseIncomeSourceData.ceasePropertyDeclare, value = "false", journeyType = JourneyType(Cease, incomeSourceType))
-          .flatMap {
-            case Right(_) => Future.successful(result)
-            case Left(exception) => Future.failed(exception)
-          }
-      },
+      hasErrors =>
+        Future.successful {
+          BadRequest(view(
+            declarePropertyCeasedForm = hasErrors,
+            incomeSourceType = incomeSourceType,
+            postAction = postAction,
+            backUrl = backAction.url,
+            isAgent = isAgent
+          ))
+        },
       _ => {
         val result = Redirect(redirectAction)
         sessionService.setMongoKey(key = CeaseIncomeSourceData.ceasePropertyDeclare, value = "true", journeyType = JourneyType(Cease, incomeSourceType))
