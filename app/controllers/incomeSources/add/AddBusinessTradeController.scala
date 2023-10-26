@@ -107,7 +107,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
     if (isChange) {
       sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-        case Right(tradeOpt) => println(tradeOpt)
+        case Right(tradeOpt) =>
           Future.successful(tradeOpt)
         case Left(err) => Future.failed(err)
       }
