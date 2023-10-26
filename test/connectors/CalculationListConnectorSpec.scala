@@ -49,43 +49,36 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CalculationListConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
-  trait Setup extends CalculationListConnector {
-
-    val http: HttpClient = mockHttpGet
-    val auditingService: AuditingService = mockAuditingService
-    val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
-    val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-
+  trait Setup {
+    val connector = new CalculationListConnector(mockHttpGet, appConfig)
     val baseUrl = "http://localhost:9999"
-
     when(appConfig.itvcProtectedService) thenReturn baseUrl
-
   }
 
   ".getLegacyCalculationList (API 1404)" should {
     "return a valid CalculationListResponseModel" in new Setup {
-      val itvc1404Url: String = getLegacyCalculationListUrl(testNino, testTaxYear.toString)
+      val itvc1404Url: String = connector.getLegacyCalculationListUrl(testNino, testTaxYear.toString)
       val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
       setupMockHttpGet(itvc1404Url)(successResponse)
 
-      val result: Future[CalculationListResponseModel] = getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
+      val result: Future[CalculationListResponseModel] = connector.getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
       result.futureValue shouldBe CalculationListTestConstants.calculationListFull
     }
     "return an error" when {
       "receiving a 400-499 response" in new Setup {
-        val itvc1404Url: String = getLegacyCalculationListUrl(testNino, testTaxYear.toString)
+        val itvc1404Url: String = connector.getLegacyCalculationListUrl(testNino, testTaxYear.toString)
         val errorResponse: HttpResponse = HttpResponse(status = IM_A_TEAPOT, """I'm a teapot""", headers = Map.empty)
         setupMockHttpGet(itvc1404Url)(errorResponse)
 
-        val result: Future[CalculationListResponseModel] = getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
+        val result: Future[CalculationListResponseModel] = connector.getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
         result.futureValue shouldBe CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
       }
       "receiving a 500-599 response" in new Setup {
-        val itvc1404Url: String = getLegacyCalculationListUrl(testNino, testTaxYear.toString)
+        val itvc1404Url: String = connector.getLegacyCalculationListUrl(testNino, testTaxYear.toString)
         val errorResponse: HttpResponse = HttpResponse(status = SERVICE_UNAVAILABLE, """Dependent systems are currently not responding.""", headers = Map.empty)
         setupMockHttpGet(itvc1404Url)(errorResponse)
 
-        val result: Future[CalculationListResponseModel] = getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
+        val result: Future[CalculationListResponseModel] = connector.getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
         result.futureValue shouldBe CalculationListErrorModel(SERVICE_UNAVAILABLE, "Dependent systems are currently not responding.")
       }
     }
@@ -93,36 +86,36 @@ class CalculationListConnectorSpec extends TestSupport with MockHttp with MockAu
 
   ".getCalculationList (API 1896)" should {
     "return a valid CalculationListResponseModel (including optional field `crystallised`)" in new Setup {
-      val itvc1896Url: String = getCalculationListUrl(testNino, testTaxYearRange)
+      val itvc1896Url: String = connector.getCalculationListUrl(testNino, testTaxYearRange)
       val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
       setupMockHttpGet(itvc1896Url)(successResponse)
 
-      val result: Future[CalculationListResponseModel] = getCalculationList(Nino(testNino), testTaxYearRange)
+      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
       result.futureValue shouldBe CalculationListTestConstants.calculationListFull
     }
     "return a valid CalculationListResponseModel (excluding optional field `crystallised`)" in new Setup {
-      val itvc1896Url: String = getCalculationListUrl(testNino, testTaxYearRange)
+      val itvc1896Url: String = connector.getCalculationListUrl(testNino, testTaxYearRange)
       val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
       setupMockHttpGet(itvc1896Url)(successResponse)
 
-      val result: Future[CalculationListResponseModel] = getCalculationList(Nino(testNino), testTaxYearRange)
+      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
       result.futureValue shouldBe CalculationListTestConstants.calculationListFull
     }
     "return an error" when {
       "receiving a 400-499 response" in new Setup {
-        val itvc1896Url: String = getCalculationListUrl(testNino, testTaxYearRange)
+        val itvc1896Url: String = connector.getCalculationListUrl(testNino, testTaxYearRange)
         val errorResponse: HttpResponse = HttpResponse(status = IM_A_TEAPOT, """I'm a teapot""", headers = Map.empty)
         setupMockHttpGet(itvc1896Url)(errorResponse)
 
-        val result: Future[CalculationListResponseModel] = getCalculationList(Nino(testNino), testTaxYearRange)
+        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
         result.futureValue shouldBe CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
       }
       "receiving a 500-599 response" in new Setup {
-        val itvc1896Url: String = getCalculationListUrl(testNino, testTaxYearRange)
+        val itvc1896Url: String = connector.getCalculationListUrl(testNino, testTaxYearRange)
         val errorResponse: HttpResponse = HttpResponse(status = SERVICE_UNAVAILABLE, """Dependent systems are currently not responding.""", headers = Map.empty)
         setupMockHttpGet(itvc1896Url)(errorResponse)
 
-        val result: Future[CalculationListResponseModel] = getCalculationList(Nino(testNino), testTaxYearRange)
+        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
         result.futureValue shouldBe CalculationListErrorModel(SERVICE_UNAVAILABLE, "Dependent systems are currently not responding.")
       }
     }
