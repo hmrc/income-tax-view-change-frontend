@@ -44,7 +44,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
 
-class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearJsonSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(

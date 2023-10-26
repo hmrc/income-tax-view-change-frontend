@@ -23,17 +23,19 @@ import play.api.libs.json.{JsPath, Writes}
 import play.api.libs.functional.syntax._
 
 
-case class TaxYear private (startYear: Int, endYear: Int)
+// To be used as a model to generate required Json only;
+// Ine the rest of the cases please use TaxYearId type
+case class TaxYearJson private(startYear: Int, endYear: Int)
 
-object TaxYear {
+object TaxYearJson {
 
   // decorate TaxYear case class creation with "smart constructor" to have a valid object
-  def mkTaxYear(id: TaxYearId): TaxYear = new TaxYear(id.from.getYear, id.to.getYear)
+  def mkTaxYear(id: TaxYearId): TaxYearJson = new TaxYearJson(id.from.getYear, id.to.getYear)
 
-  implicit val taxYearWrites: Writes[TaxYear] = (
+  implicit val taxYearWrites: Writes[TaxYearJson] = (
     (JsPath \ "startYear").write[Int] and
       (JsPath \ "endYear").write[Int]
-    )(unlift(TaxYear.unapply))
+    )(unlift(TaxYearJson.unapply))
 
   // TODO: review these method below / if we really need these ???
   private def areValidYears(yearOne: String, yearTwo: String): Boolean = {
@@ -51,12 +53,12 @@ object TaxYear {
         differenceIsOne(yearOne, yearTwo)
   }
 
-  def getTaxYearModel(years: String): Option[TaxYear] = {
+  def getTaxYearModel(years: String): Option[TaxYearJson] = {
 
     years.split('-') match {
       case Array(yearOne, yearTwo) if areValidYears(yearOne, yearTwo) =>
         Some(
-          TaxYear(yearOne.toInt, yearTwo.toInt)
+          TaxYearJson(yearOne.toInt, yearTwo.toInt)
         )
       case _ => None
     }

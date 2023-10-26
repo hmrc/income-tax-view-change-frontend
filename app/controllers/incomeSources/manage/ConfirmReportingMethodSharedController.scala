@@ -29,7 +29,7 @@ import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
-import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
+import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYearJson}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
@@ -115,7 +115,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
-    val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearModel(taxYear)
+    val maybeTaxYearModel: Option[TaxYearJson] = TaxYearJson.getTaxYearModel(taxYear)
     val maybeIncomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId)
 
     withIncomeSourcesFS {
@@ -164,7 +164,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
-    val maybeTaxYearModel: Option[TaxYear] = TaxYear.getTaxYearModel(taxYear)
+    val maybeTaxYearModel: Option[TaxYearJson] = TaxYearJson.getTaxYearModel(taxYear)
     val incomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId)
     val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
@@ -211,7 +211,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def handleValidForm(errorCall: Call,
                               isAgent: Boolean,
                               successCall: Call,
-                              taxYears: TaxYear,
+                              taxYears: TaxYearJson,
                               incomeSourceIdMaybe: Option[String],
                               reportingMethod: String
                              )(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {

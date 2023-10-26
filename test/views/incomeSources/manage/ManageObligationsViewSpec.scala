@@ -17,7 +17,7 @@
 package views.incomeSources.manage
 
 import enums.IncomeSourceJourney.UkProperty
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.TaxYearJson
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -59,7 +59,7 @@ class ManageObligationsViewSpec extends ViewSpec {
     showPrevTaxYears = true
   )
 
-  val taxYear: TaxYear = TaxYear(2023, 2024)
+  val taxYear: TaxYearJson = TaxYearJson(2023, 2024)
   val taxYearString: String = "2023-2024"
   val quarterly = "quarterly"
   val annually = "annual"

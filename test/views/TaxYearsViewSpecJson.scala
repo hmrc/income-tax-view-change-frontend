@@ -26,7 +26,7 @@ import testConstants.BaseTestConstants._
 import testUtils.ViewSpec
 import views.html.TaxYears
 
-class TaxYearsViewSpec extends ViewSpec {
+class TaxYearsViewSpecJson extends ViewSpec {
 
   val taxYearsView: TaxYears = app.injector.instanceOf[TaxYears]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]

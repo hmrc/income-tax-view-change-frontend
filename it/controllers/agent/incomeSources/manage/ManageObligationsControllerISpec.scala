@@ -23,7 +23,7 @@ import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYearJson, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -130,7 +130,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
             obligations = obligationsViewModel,
             businessName = "business",
             reportingMethod = "quarterly",
-            taxYear = TaxYear(2023, 2024)
+            taxYear = TaxYearJson(2023, 2024)
           )(
             MtdItUser(
               mtditid = testMtditid,

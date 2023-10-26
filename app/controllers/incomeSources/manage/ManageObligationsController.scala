@@ -29,7 +29,7 @@ import forms.utils.SessionKeys
 import models.TaxYearId
 import models.TaxYearId.mkTaxYear
 import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
-import models.incomeSourceDetails.TaxYear.getTaxYearModel
+import models.incomeSourceDetails.TaxYearJson.getTaxYearModel
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}

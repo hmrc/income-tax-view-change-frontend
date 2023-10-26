@@ -31,7 +31,7 @@ import testConstants.messages.TaxYearsMessages.{taxYearMessage, updateReturn, vi
 
 import java.time.LocalDate
 
-class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearsControllerISpecJson extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
