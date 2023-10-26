@@ -16,26 +16,26 @@
 
 package services.agent
 
-import connectors.IncomeTaxViewChangeConnector
+import connectors.BusinessDetailsConnector
 import connectors.agent.CitizenDetailsConnector
-import javax.inject.{Inject, Singleton}
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import play.api.Logger
 import services.agent.ClientDetailsService._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector,
-                                     incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)
+                                     businessDetailsConnector: BusinessDetailsConnector)
                                     (implicit ec: ExecutionContext) {
 
   def checkClientDetails(utr: String)(implicit hc: HeaderCarrier): Future[Either[ClientDetailsFailure, ClientDetails]] =
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
-        incomeTaxViewChangeConnector.getBusinessDetails(nino) flatMap {
+        businessDetailsConnector.getBusinessDetails(nino) flatMap {
           case IncomeSourceDetailsModel(mtdbsa, _, _, _) =>
             Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
           case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))

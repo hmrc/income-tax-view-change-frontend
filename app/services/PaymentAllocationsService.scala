@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import connectors.IncomeTaxViewChangeConnector
+import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
 import models.core.Nino
 import models.financialDetails.FinancialDetailsModel
 import models.paymentAllocationCharges._
@@ -30,32 +30,34 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentAllocationsService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDetailsConnector,
                                           financialDetailsService: FinancialDetailsService,
                                           val appConfig: FrontendAppConfig)
                                          (implicit ec: ExecutionContext) {
-
   def getPaymentAllocation(nino: Nino, documentNumber: String)
                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
 
-    incomeTaxViewChangeConnector.getFinancialDetailsByDocumentId(nino, documentNumber) flatMap {
-      case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel if documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.isEmpty && documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLotItem.isEmpty =>
-        Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, Seq.empty)))
+    val functionName = "[PaymentAllocationsService][getPaymentAllocation]"
+    financialDetailsConnector.getFinancialDetailsByDocumentId(nino, documentNumber) flatMap {
+      case docDetailsWithFDModel: FinancialDetailsWithDocumentDetailsModel
+        if docDetailsWithFDModel.documentDetails.head.paymentLot.isEmpty &&
+          docDetailsWithFDModel.documentDetails.head.paymentLotItem.isEmpty =>
+        Future.successful(Right(PaymentAllocationViewModel(docDetailsWithFDModel, Seq.empty)))
       case documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel =>
-        incomeTaxViewChangeConnector.getPaymentAllocations(nino,
+        financialDetailsConnector.getPaymentAllocations(nino,
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLot.get,
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLotItem.get) flatMap {
           case paymentAllocations: PaymentAllocations =>
             handlePaymentAllocations(paymentAllocations, documentDetailsWithFinancialDetailsModel)
           case _ =>
-            Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve payment allocations with document details")
+            Logger("application").error(s"$functionName Could not retrieve payment allocations with document details")
             Future.successful(Left(PaymentAllocationError()))
         }
       case paymentAllocation: FinancialDetailsWithDocumentDetailsErrorModel if paymentAllocation.code == 404 =>
-        Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] payment allocation could not be found")
+        Logger("application").error(s"$functionName payment allocation could not be found")
         Future.successful(Left(PaymentAllocationError(Some(paymentAllocation.code))))
       case _ =>
-        Logger("application").error("[PaymentAllocationsService][getPaymentAllocation] Could not retrieve document with financial details for payment charge model")
+        Logger("application").error(s"$functionName Could not retrieve document with financial details for payment charge model")
         Future.successful(Left(PaymentAllocationError()))
     }
   }

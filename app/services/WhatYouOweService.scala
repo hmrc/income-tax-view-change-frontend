@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import connectors.IncomeTaxViewChangeConnector
+import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
-                                  val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                  val financialDetailsConnector: FinancialDetailsConnector,
                                   implicit val dateService: DateServiceInterface)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
 
@@ -94,7 +94,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                     (implicit headerCarrier: HeaderCarrier): Future[Option[OutstandingChargesModel]] = {
     if (saUtr.isDefined && yearOfMigration.isDefined && yearOfMigration.get.toInt >= currentTaxYear - 1) {
       val saPreviousYear = yearOfMigration.get.toInt - 1
-      incomeTaxViewChangeConnector.getOutstandingCharges("utr", saUtr.get, saPreviousYear.toString) map {
+      financialDetailsConnector.getOutstandingCharges("utr", saUtr.get, saPreviousYear.toString) map {
         case outstandingChargesModel: OutstandingChargesModel => Some(outstandingChargesModel)
         case outstandingChargesErrorModel: OutstandingChargesErrorModel if outstandingChargesErrorModel.code == 404 => None
         case _ => throw new Exception("[WhatYouOweService][callOutstandingCharges] Error response while getting outstanding charges")

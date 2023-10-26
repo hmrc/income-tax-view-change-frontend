@@ -21,7 +21,7 @@ import audit.models.ChargeSummaryAudit
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.IncomeTaxViewChangeConnector
+import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
@@ -48,7 +48,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
                                         val financialDetailsService: FinancialDetailsService,
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
-                                        val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                        val financialDetailsConnector: FinancialDetailsConnector,
                                         val chargeSummaryView: ChargeSummary,
                                         val retrievebtaNavPartial: NavBarPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -78,7 +78,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   }
 
   private def isMFADebit(fdm: FinancialDetailsModel, id: String): Boolean = {
-    fdm.financialDetails.exists(fd => fd.transactionId == Some(id) && MfaDebitUtils.isMFADebitMainType(fd.mainType))
+    fdm.financialDetails.exists(fd => fd.transactionId.contains(id) && MfaDebitUtils.isMFADebitMainType(fd.mainType))
   }
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
@@ -177,7 +177,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   private def chargeHistoryResponse(isLatePaymentCharge: Boolean, isPayeSelfAssessment: Boolean, documentNumber: String)
                                    (implicit user: MtdItUser[_]): Future[Either[ChargeHistoryResponseModel, List[ChargeHistoryModel]]] = {
     if (!isLatePaymentCharge && isEnabled(ChargeHistory) && !(isEnabled(CodingOut) && isPayeSelfAssessment)) {
-      incomeTaxViewChangeConnector.getChargeHistory(user.mtditid, documentNumber).map {
+      financialDetailsConnector.getChargeHistory(user.mtditid, documentNumber).map {
         case chargesHistory: ChargesHistoryModel => Right(chargesHistory.chargeHistoryDetails.getOrElse(Nil))
         case errorResponse => Left(errorResponse)
       }

@@ -19,7 +19,7 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.IncomeTaxViewChangeConnector
+import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
@@ -59,12 +59,12 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
               chargeHistory: ChargeHistoryResponseModel = testChargeHistoryModel(),
               isAgent: Boolean = false) {
     val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
-    val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
+    val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
 
     when(financialDetailsService.getAllFinancialDetails(any(), any(), any()))
       .thenReturn(Future.successful(List((2018, financialDetails))))
 
-    when(incomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+    when(mockFinancialDetailsConnector.getChargeHistory(any(), any())(any()))
       .thenReturn(Future.successful(chargeHistory))
 
     mockBothIncomeSources()
@@ -78,7 +78,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       financialDetailsService,
       mockAuditingService,
       app.injector.instanceOf[ItvcErrorHandler],
-      incomeTaxViewChangeConnector,
+      mockFinancialDetailsConnector,
       app.injector.instanceOf[views.html.ChargeSummary],
       app.injector.instanceOf[NavBarPredicate],
       mockIncomeSourceDetailsService,

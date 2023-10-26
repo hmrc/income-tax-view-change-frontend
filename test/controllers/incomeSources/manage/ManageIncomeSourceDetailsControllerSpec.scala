@@ -20,7 +20,7 @@ import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.MockBusinessDetailsConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.core.AddressModel
 import org.jsoup.Jsoup
@@ -42,7 +42,7 @@ import views.html.incomeSources.manage.ManageIncomeSourceDetails
 import scala.concurrent.Future
 
 class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector with MockNavBarEnumFsPredicate {
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockBusinessDetailsConnector with MockNavBarEnumFsPredicate {
 
   val mockDateService: DateService = mock(classOf[DateService])
   val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])

@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import connectors.IncomeTaxViewChangeConnector
+import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
@@ -30,12 +30,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+class FinancialDetailsService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
                                         implicit val dateService: DateServiceInterface)
                                        (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext) {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[FinancialDetailsResponseModel] = {
-    incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino)
+    financialDetailsConnector.getFinancialDetails(taxYear, nino)
   }
 
   def getChargeDueDates(financialDetails: List[FinancialDetailsResponseModel])(implicit isTimeMachineEnabled: Boolean): Option[Either[(LocalDate, Boolean), Int]] = {
@@ -57,7 +57,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
 
   def getChargeHistoryDetails(mtdBsa: String, docNumber: String)
                              (implicit hc: HeaderCarrier): Future[Option[List[ChargeHistoryModel]]] = {
-    incomeTaxViewChangeConnector.getChargeHistory(mtdBsa, docNumber) flatMap {
+    financialDetailsConnector.getChargeHistory(mtdBsa, docNumber) flatMap {
       case ok: ChargesHistoryModel => Future.successful(ok.chargeHistoryDetails)
 
       case error: ChargesHistoryErrorModel =>
@@ -73,7 +73,7 @@ class FinancialDetailsService @Inject()(val incomeTaxViewChangeConnector: Income
 
     Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
-        incomeTaxViewChangeConnector.getFinancialDetails(taxYear, user.nino).map {
+        financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
           case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
           case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
           case _ => None
