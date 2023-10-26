@@ -16,12 +16,26 @@
 
 package models.incomeSourceDetails
 
-import scala.util.Try
+import models.TaxYearId
 
-case class TaxYear(startYear: Int, endYear: Int)
+import scala.util.Try
+import play.api.libs.json.{JsPath, Writes}
+import play.api.libs.functional.syntax._
+
+
+case class TaxYear private (startYear: Int, endYear: Int)
 
 object TaxYear {
 
+  // decorate TaxYear case class creation with "smart constructor" to have a valid object
+  def mkTaxYear(id: TaxYearId): TaxYear = new TaxYear(id.from.getYear, id.to.getYear)
+
+  implicit val taxYearWrites: Writes[TaxYear] = (
+    (JsPath \ "startYear").write[Int] and
+      (JsPath \ "endYear").write[Int]
+    )(unlift(TaxYear.unapply))
+
+  // TODO: review these method below / if we really need these ???
   private def areValidYears(yearOne: String, yearTwo: String): Boolean = {
 
     def isValidYear(year: String): Boolean =

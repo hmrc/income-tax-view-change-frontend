@@ -173,7 +173,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
 
       Option(taxYear) match {
-        case Some(years) =>
+        case Some(taxYearId) =>
           if (changeTo == "annual" || changeTo == "quarterly") {
             getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
               case Left(error) =>
@@ -182,14 +182,14 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               })
               case Right(value) =>
                 nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
-//                  auditingService.extendedAudit(ObligationsAuditModel(
-//                    incomeSourceType = mode,
-//                    obligations = viewModel,
-//                    businessName = addedBusinessName,
-//                    changeTo,
-//                    years
-//                  ))
-                  Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
+                  auditingService.extendedAudit(ObligationsAuditModel(
+                    incomeSourceType = mode,
+                    obligations = viewModel,
+                    businessName = addedBusinessName,
+                    changeTo,
+                    taxYearId
+                  ))
+                  Ok(obligationsView(viewModel, addedBusinessName, taxYearId, changeTo, isAgent, postUrl))
                 }
             }
           }

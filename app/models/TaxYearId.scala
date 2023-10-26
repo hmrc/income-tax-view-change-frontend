@@ -21,7 +21,6 @@ import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-
 class TaxYearId private(val firstYear: Int) extends AnyVal {
   def secondYear: Int = firstYear + 1 // Always
   def next: TaxYearId = new TaxYearId(firstYear + 1)
@@ -45,17 +44,16 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
   override def toString: String = this.full
 }
 
-
 object TaxYearId {
 
   // Enforce instance creation via "smart constructors"
   // Examples of "smart constructors" to create type instance
 
-  def mkTaxYear(s: Int): Either[Throwable, TaxYearId] = Try {
+  def mkTaxYear(s: Int): TaxYearId =  {
     // Step 1: validate TaxYear before creating instance
     // Step 2: create taxYear string (TODO: add normalisation here / use fixed format, ie. 2023-2024     ?)
     new TaxYearId(s)
-  }.toEither
+  }
 
   def mkTaxYear(in: String): Either[Throwable, TaxYearId] = Try {
     // Parse input string and validate if its comply with any taxYear formats we use

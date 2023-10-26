@@ -20,6 +20,7 @@ import audit.Utilities
 import utils.Utilities._
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.TaxYearId
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -28,7 +29,7 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
                                  obligations: ObligationsViewModel,
                                  businessName: String,
                                  reportingMethod: String,
-                                 taxYear: TaxYear
+                                 taxYearId: TaxYearId
                                 )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.Obligations
@@ -60,12 +61,14 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
         ))
   }
 
+  import models.TaxYearId._
   private val quarterlyUpdatesOption: Option[Seq[JsObject]] = {
     if (quarterly.nonEmpty) {
       Some(quarterly.collect {
-        case (taxYear, dataModel) =>
+        case (taxYear, dataModel) => {
+          val localTaxYearId = mkTaxYear(taxYear)
           Json.obj(
-            "taxYear" -> s"${taxYear}-${taxYear + 1}",
+            "taxYear" -> s"${localTaxYearId.normalised}",
             "quarter" -> dataModel.map { entry =>
               Json.obj(
                 "startDate" -> entry.inboundCorrespondenceFrom,
@@ -74,6 +77,7 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
               )
             }
           )
+        }
       })
     } else None
   }
@@ -109,7 +113,7 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
           Json.obj(
             "businessName" -> name,
             "reportingMethod" -> repMethod,
-            "taxYear" -> s"${taxYear.startYear}-${taxYear.endYear}"
+            "taxYear" -> s"${taxYearId.normalised}"
           )) ++
       ("quarterlyUpdates", quarterlyUpdatesOption) ++
       ("EOPstatement", eopsObligationsOption) ++
