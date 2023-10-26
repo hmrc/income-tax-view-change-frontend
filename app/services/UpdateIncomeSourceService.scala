@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.{IncomeTaxViewChangeConnector, UpdateIncomeSourceConnector}
+import connectors.UpdateIncomeSourceConnector
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier

@@ -17,7 +17,7 @@
 package services
 
 import auth.{MtdItUser, MtdItUserWithNino}
-import connectors.{BusinessDetailsConnector, IncomeTaxViewChangeConnector}
+import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._

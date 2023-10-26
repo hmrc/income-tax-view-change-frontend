@@ -18,17 +18,14 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
-import exceptions.MissingFieldException
-import models.financialDetails.{DocumentDetail, FinancialDetail}
+import connectors.FinancialDetailsConnector
 import models.creditDetailModel._
-import models.financialDetails.FinancialDetailsModel
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetailsConnector,
                                      val appConfig: FrontendAppConfig)

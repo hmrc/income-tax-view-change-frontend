@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
+import connectors.FinancialDetailsConnector
 import models.core.Nino
 import models.financialDetails.FinancialDetailsModel
 import models.paymentAllocationCharges._

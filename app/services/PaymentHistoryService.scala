@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector, RepaymentHistoryConnector}
+import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import models.core.Nino
 import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}

@@ -17,8 +17,7 @@
 package services
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import connectors.{CalculationListConnector, IncomeTaxViewChangeConnector}
+import connectors.CalculationListConnector
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
 import play.api.Logger
