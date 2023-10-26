@@ -44,13 +44,13 @@ object AddForeignPropertyReportingMethodForm extends CustomConstraints {
   )
 
   def updateErrorMessagesWithValues(form: Form[AddForeignPropertyReportingMethodForm]): Form[AddForeignPropertyReportingMethodForm] = {
-    form.errors.foldLeft[Form[AddForeignPropertyReportingMethodForm]](form.discardingErrors)((a, b) => {
-      a.data.get(b.message + "_tax_year") match {
+    form.errors.foldLeft[Form[AddForeignPropertyReportingMethodForm]](form.discardingErrors)((reportingMethodFormValues, formError) => {
+      reportingMethodFormValues.data.get(formError.message + "_tax_year") match {
         case Some(year) =>
           val taxYearTo = year.toInt
           val taxYearFrom = taxYearTo - 1
-          a.withError(b.message, radioMustBeSelectedMessageKey, taxYearFrom.toString, taxYearTo.toString)
-        case _ => a
+          reportingMethodFormValues.withError(formError.message, radioMustBeSelectedMessageKey, taxYearFrom.toString, taxYearTo.toString)
+        case _ => reportingMethodFormValues
       }
     })
   }
