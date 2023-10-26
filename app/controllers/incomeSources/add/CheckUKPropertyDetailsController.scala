@@ -133,12 +133,14 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-
+    lazy val redirectErrorUrl: Call = if (isAgent) {
+      routes.IncomeSourceNotAddedController.showAgent(UkProperty)
+    } else {
+      routes.IncomeSourceNotAddedController.show(UkProperty)
+    }
     withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(sessionService)(user, ec) flatMap {
+      getUKPropertyDetailsFromSession(sessionService)(user, ec).flatMap {
         case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
-          val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
-          else routes.IncomeSourceNotAddedController.show(UkProperty)
           businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
             case Left(ex) =>
               Logger("application").error(
@@ -159,8 +161,6 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
               }
           }
         case Left(_) =>
-          val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
-          else routes.IncomeSourceNotAddedController.show(UkProperty)
           Logger("application").error(
             s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit")
           Future.successful(Redirect(redirectErrorUrl))

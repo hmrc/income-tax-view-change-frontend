@@ -31,7 +31,6 @@ import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessRe
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
@@ -53,7 +52,6 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   override implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
 
@@ -117,7 +115,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           redirectURI(addBusinessStartDateUrl)
         )
 
-        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
+        sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))
       }
     }
     "show error when form is filled incorrectly" in {
@@ -202,7 +200,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
           redirectURI(checkBusinessDetailsUrl)
         )
 
-        sessionService.getMongoKeyTyped[String](businessNameField, journeyTypeSE).futureValue shouldBe Right(Some(testBusinessName))
+        sessionService.getMongoKeyTyped[String](businessNameField, journeyType).futureValue shouldBe Right(Some(testBusinessName))
       }
     }
     "show error when form is filled incorrectly" in {
