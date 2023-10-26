@@ -33,6 +33,7 @@
 package connectors
 
 import audit.mocks.MockAuditingService
+import config.FrontendAppConfig
 import mocks.MockHttp
 import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
 import models.financialDetails._
@@ -40,6 +41,7 @@ import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingCharg
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -50,6 +52,7 @@ import testConstants.OutstandingChargesTestConstants._
 import testConstants.PaymentAllocationsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -57,9 +60,13 @@ import scala.concurrent.Future
 class FinancialDetailsConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
   trait Setup {
-    val connector = new FinancialDetailsConnector(mockHttpGet, appConfig)
     val baseUrl = "http://localhost:9999"
-    when(appConfig.itvcProtectedService) thenReturn baseUrl
+    def getAppConfig(): FrontendAppConfig =
+      new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
+        override lazy val itvcProtectedService: String = "http://localhost:9999"
+      }
+
+    val connector = new FinancialDetailsConnector(mockHttpGet, getAppConfig())
   }
 
   "getOutstandingChargesUrl" should {

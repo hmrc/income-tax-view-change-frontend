@@ -32,30 +32,37 @@
 
 package connectors
 
-import audit.AuditingService
 import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
 import mocks.MockHttp
 import models.core.{NinoResponse, NinoResponseError}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
-import org.mockito.Mockito.{mock, when}
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants._
 import testConstants.NinoLookupTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
   trait Setup {
-    val connector = new BusinessDetailsConnector(mockHttpGet, mockAuditingService, appConfig)
     val baseUrl = "http://localhost:9999"
-    when(appConfig.itvcProtectedService) thenReturn baseUrl
+
+    def getAppConfig(): FrontendAppConfig =
+      new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
+        override lazy val itvcProtectedService: String = "http://localhost:9999"
+        override def incomeSourceOverrides(): Option[Seq[String]] = Some(incomeSourceOverride)
+      }
+
+    val connector = new BusinessDetailsConnector(mockHttpGet, mockAuditingService, getAppConfig())
+
   }
 
   "getBusinessDetailsUrl" should {
@@ -130,7 +137,6 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
 
     "return an IncomeSourceDetailsModel when successful JSON is received" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponse)
-      when(appConfig.incomeSourceOverrides()).thenReturn(Some(incomeSourceOverride))
 
       val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
       result.futureValue shouldBe singleBusinessAndPropertyMigrat2019
@@ -140,7 +146,6 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(successResponseBadJson)
-      when(appConfig.incomeSourceOverrides()).thenReturn(Some(incomeSourceOverride))
 
       val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
       result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
@@ -149,7 +154,6 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
 
     "return IncomeSourceDetailsError model in case of failure" in new Setup {
       setupMockHttpGet(getIncomeSourcesTestUrl)(badResponse)
-      when(appConfig.incomeSourceOverrides()).thenReturn(Some(incomeSourceOverride))
 
       val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
       result.futureValue shouldBe IncomeSourceDetailsError(Status.BAD_REQUEST, "Error Message")
@@ -158,7 +162,6 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
 
     "return IncomeSourceDetailsError model in case of future failed scenario" in new Setup {
       setupMockFailedHttpGet(getIncomeSourcesTestUrl)
-      when(appConfig.incomeSourceOverrides()).thenReturn(Some(incomeSourceOverride))
 
       val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
       result.futureValue shouldBe IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Unexpected future failed error, unknown error")

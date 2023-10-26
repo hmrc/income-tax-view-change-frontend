@@ -33,9 +33,11 @@
 package connectors
 
 import audit.mocks.MockAuditingService
+import config.FrontendAppConfig
 import mocks.MockHttp
 import models.updateIncomeSource.UpdateIncomeSourceResponse
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants._
@@ -43,6 +45,7 @@ import testConstants.UpdateIncomeSourceTestConstants
 import testConstants.UpdateIncomeSourceTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -51,9 +54,13 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with Moc
   val http: HttpClient = mockHttpGet
 
   trait Setup {
-    val connector = new UpdateIncomeSourceConnector(http, appConfig)(ec)
     val baseUrl = "http://localhost:9999"
-    when(appConfig.itvcProtectedService) thenReturn baseUrl
+    def getAppConfig(): FrontendAppConfig =
+      new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
+        override lazy val itvcProtectedService: String = "http://localhost:9999"
+      }
+
+    val connector = new UpdateIncomeSourceConnector(mockHttpGet, getAppConfig())
   }
 
   "updateCessationDate" should {

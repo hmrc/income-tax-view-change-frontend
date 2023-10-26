@@ -34,24 +34,31 @@ package connectors
 
 import audit.mocks.MockAuditingService
 import audit.models._
+import config.FrontendAppConfig
 import mocks.MockHttp
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.Future
 
 class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
   trait Setup {
-    val connector = new ObligationsConnector(mockHttpGet, mockAuditingService, appConfig)
     val baseUrl = "http://localhost:9999"
-    when(appConfig.itvcProtectedService) thenReturn baseUrl
+    def getAppConfig(): FrontendAppConfig =
+      new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
+        override lazy val itvcProtectedService: String = "http://localhost:9999"
+      }
+
+    val connector = new ObligationsConnector(mockHttpGet, mockAuditingService, getAppConfig())
   }
 
   "getNextUpdatesUrl" should {

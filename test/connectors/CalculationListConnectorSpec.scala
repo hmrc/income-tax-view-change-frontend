@@ -32,27 +32,30 @@
 
 package connectors
 
-import audit.AuditingService
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import mocks.MockHttp
 import models.calculationList.{CalculationListErrorModel, CalculationListResponseModel}
 import models.core.Nino
-import org.mockito.Mockito.{mock, when}
+import play.api.Configuration
 import play.api.http.Status._
 import testConstants.BaseTestConstants._
 import testConstants.CalculationListTestConstants
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class CalculationListConnectorSpec extends TestSupport with MockHttp with MockAuditingService {
 
   trait Setup {
-    val connector = new CalculationListConnector(mockHttpGet, appConfig)
-    val baseUrl = "http://localhost:9999"
-    when(appConfig.itvcProtectedService) thenReturn baseUrl
+    def getAppConfig(): FrontendAppConfig =
+      new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
+        override lazy val itvcProtectedService: String = "http://localhost:9999"
+      }
+
+    val connector = new CalculationListConnector(mockHttpGet, getAppConfig())
   }
 
   ".getLegacyCalculationList (API 1404)" should {
