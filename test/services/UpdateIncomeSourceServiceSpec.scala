@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import connectors.{IncomeTaxViewChangeConnector, UpdateIncomeSourceConnector}
+import connectors.UpdateIncomeSourceConnector
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

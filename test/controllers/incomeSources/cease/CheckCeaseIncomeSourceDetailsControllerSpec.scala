@@ -18,7 +18,7 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.{IncomeTaxViewChangeConnector, UpdateIncomeSourceConnector}
+import connectors.UpdateIncomeSourceConnector
 import controllers.incomeSources.add.routes
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}

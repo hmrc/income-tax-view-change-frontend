@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
+import connectors.FinancialDetailsConnector
 import models.calculationList.CalculationListResponseModel
 import models.core.{Nino, NinoResponse}
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}

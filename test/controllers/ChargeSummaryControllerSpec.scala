@@ -19,7 +19,7 @@ package controllers
 import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.{FinancialDetailsConnector, IncomeTaxViewChangeConnector}
+import connectors.FinancialDetailsConnector
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
@@ -32,8 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.FinancialDetailsService
-import services.{DateService, FinancialDetailsService, IncomeSourceDetailsService}
+import services.{DateService, FinancialDetailsService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.TestSupport
