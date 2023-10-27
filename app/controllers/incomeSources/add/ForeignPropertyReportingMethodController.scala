@@ -231,10 +231,10 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
       )
     } yield {
       val errors = results.collect {
-        case e: UpdateIncomeSourceResponseError => e
+        case error: UpdateIncomeSourceResponseError => error
       }
       val success = results.collect {
-        case c: UpdateIncomeSourceResponseModel => c
+        case success: UpdateIncomeSourceResponseModel => success
       }
       (errors, success) match {
         case (es: Seq[UpdateIncomeSourceResponseError], _) if es.isEmpty =>
