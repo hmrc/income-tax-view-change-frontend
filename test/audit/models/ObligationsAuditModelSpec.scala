@@ -19,7 +19,7 @@ package audit.models
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYearJson}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.obligationsViewModelSimple
@@ -56,7 +56,7 @@ class ObligationsAuditModelSpec extends TestSupport {
     obligations = obligations,
     businessName = businessName,
     reportingMethod = reportingMethod,
-    taxYear = TaxYearJson(2023, 2024)
+    taxYear = TaxYear(2023, 2024)
   )(user = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,

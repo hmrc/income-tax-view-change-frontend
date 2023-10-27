@@ -25,7 +25,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub.verifyGetNextUpdates
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYearJson, UIJourneySessionData}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -133,7 +133,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
             obligations = obligationsViewModel,
             businessName = "business",
             reportingMethod = "quarterly",
-            taxYear = TaxYearJson(2023, 2024)
+            taxYear = TaxYear(2023, 2024)
           )(
             MtdItUser(
               mtditid = testMtditid,

@@ -23,7 +23,7 @@ import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class TaxYearJsonSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
+class TaxYearSummaryViewModelSpec extends UnitSpec with ImplicitDateParser {
 
   "TaxYearSummaryViewModel model" when {
     "create a minimal TaxYearSummaryViewModel when there is a minimal Calculation response" in {

@@ -48,7 +48,7 @@ import views.html.TaxYearSummary
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class TaxYearJsonSummaryControllerSpec extends TestSupport with MockCalculationService
+class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
   with MockAuditingService with MockNextUpdatesService {

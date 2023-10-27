@@ -30,7 +30,7 @@ import forms.incomeSources.manage.ConfirmReportingMethodForm
 import forms.utils.SessionKeys.incomeSourceId
 import models.core.TaxYearId
 import models.core.TaxYearId.mkTaxYearId
-import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYearJson}
+import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
@@ -210,7 +210,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def handleValidForm(errorCall: Call,
                               isAgent: Boolean,
                               successCall: Call,
-                              taxYears: TaxYearJson,
+                              taxYears: TaxYear,
                               incomeSourceIdMaybe: Option[String],
                               reportingMethod: String
                              )(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {

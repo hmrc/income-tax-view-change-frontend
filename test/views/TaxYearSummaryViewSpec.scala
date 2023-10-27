@@ -35,7 +35,7 @@ import views.html.TaxYearSummary
 
 import java.time.LocalDate
 
-class TaxYearJsonSummaryViewSpec extends ViewSpec with FeatureSwitching {
+class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testYear: Int = 2018
   val hrefForecastSelector: String = """a[href$="#forecast"]"""

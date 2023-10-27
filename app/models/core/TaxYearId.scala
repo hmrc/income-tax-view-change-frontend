@@ -16,8 +16,8 @@
 
 package models.core
 
-import models.incomeSourceDetails.TaxYearJson
-import models.incomeSourceDetails.TaxYearJson._
+import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.TaxYear._
 
 import java.time.{LocalDate, Month}
 import java.time.format.DateTimeFormatter
@@ -30,7 +30,7 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
   def next: TaxYearId = new TaxYearId(firstYear + 1)
   def prev: TaxYearId = new TaxYearId(firstYear - 1)
 
-  def toModel : TaxYearJson =  mkTaxYear(this)
+  def toModel : TaxYear =  mkTaxYear(this)
 
   def from: LocalDate = LocalDate.of(firstYear, Month.APRIL, 6)
   def to: LocalDate = LocalDate.of(secondYear, Month.APRIL, 5)

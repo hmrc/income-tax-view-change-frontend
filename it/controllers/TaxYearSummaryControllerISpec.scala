@@ -39,7 +39,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
-class TaxYearJsonSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

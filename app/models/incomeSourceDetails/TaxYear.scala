@@ -23,16 +23,16 @@ import play.api.libs.functional.syntax._
 
 // To be used as a model to generate required Json only;
 // In the rest of the cases please use TaxYearId type
-case class TaxYearJson private(startYear: Int, endYear: Int)
+case class TaxYear private(startYear: Int, endYear: Int)
 
-object TaxYearJson {
+object TaxYear {
 
   // decorate TaxYear case class creation with "smart constructor" to have a valid object
-  def mkTaxYear(id: TaxYearId): TaxYearJson = new TaxYearJson(id.from.getYear, id.to.getYear)
+  def mkTaxYear(id: TaxYearId): TaxYear = new TaxYear(id.from.getYear, id.to.getYear)
 
-  implicit val taxYearWrites: Writes[TaxYearJson] = (
+  implicit val taxYearWrites: Writes[TaxYear] = (
     (JsPath \ "startYear").write[Int] and
       (JsPath \ "endYear").write[Int]
-    )(unlift(TaxYearJson.unapply))
+    )(unlift(TaxYear.unapply))
 
 }
