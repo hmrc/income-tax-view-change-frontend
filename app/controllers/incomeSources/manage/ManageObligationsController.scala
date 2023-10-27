@@ -113,7 +113,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             changeTo,
             None
           )
-      }.getOrElse( Future.failed( throw new Error("Error : Boom") ) )
+      }.getOrElse(Future.failed(throw new Error("Error : Boom")))
   }
 
   def showAgentUKProperty(changeTo: String, taxYearString: String): Action[AnyContent] = Authenticated.async {
@@ -158,42 +158,39 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: TaxYearId, changeTo: String, incomeSourceId: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYearId: TaxYearId, changeTo: String, incomeSourceId: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
     }
     else {
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
-
       val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
 
-      Option(taxYear) match {
-        case Some(taxYearId) =>
-          if (changeTo == "annual" || changeTo == "quarterly") {
-            getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
-              case Left(error) =>
-                showError(isAgent, {
-                error.getMessage
-              })
-              case Right(value) =>
-                nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
-                  auditingService.extendedAudit(ObligationsAuditModel(
-                    incomeSourceType = mode,
-                    obligations = viewModel,
-                    businessName = addedBusinessName,
-                    changeTo,
-                    taxYearId
-                  ))
-                  Ok(obligationsView(viewModel, addedBusinessName, taxYearId, changeTo, isAgent, postUrl))
-                }
+      if (changeTo == "annual" || changeTo == "quarterly") {
+        getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
+          case Left(error) =>
+            showError(isAgent, {
+              error.getMessage
+            })
+          case Right(value) =>
+            nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+              auditingService.extendedAudit(ObligationsAuditModel(
+                incomeSourceType = mode,
+                obligations = viewModel,
+                businessName = addedBusinessName,
+                changeTo,
+                taxYearId
+              ))
+              Ok(obligationsView(viewModel, addedBusinessName, taxYearId, changeTo, isAgent, postUrl))
             }
-          }
-          else {
-            showError(isAgent, "invalid changeTo mode provided")
-          }
-        case None => showError(isAgent, "invalid tax year provided")
+        }
       }
+      else {
+        showError(isAgent, "invalid changeTo mode provided")
+      }
+
+
     }
   }
 

@@ -16,7 +16,7 @@
 
 package models.core
 
-import models.core.TaxYearId.{FIFTHS_DAY_OF_MONTH, SIX_DAY_OF_MONTH}
+import models.core.TaxYearId.{FIFTHS_DAY_OF_MONTH, SIXTH_DAY_OF_MONTH, formatterFull, formatterShort}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear._
 
@@ -34,20 +34,17 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
 
   def toModel: TaxYear = mkTaxYear(this)
 
-  def from: LocalDate = LocalDate.of(firstYear, Month.APRIL, SIX_DAY_OF_MONTH)
+  def from: LocalDate = LocalDate.of(firstYear, Month.APRIL, SIXTH_DAY_OF_MONTH)
 
   def to: LocalDate = LocalDate.of(secondYear, Month.APRIL, FIFTHS_DAY_OF_MONTH)
 
   // tax year in format: YYYY-YY
   def normalised: String = {
-    val formatterFull = DateTimeFormatter.ofPattern("YYYY")
-    val formatterShort = DateTimeFormatter.ofPattern("YY")
     s"${from.format(formatterFull)}-${to.format(formatterShort)}"
   }
 
   // tax year in format: YYYY-YYYY
   def full: String = {
-    val formatterFull = DateTimeFormatter.ofPattern("YYYY")
     s"${from.format(formatterFull)}-${to.format(formatterFull)}"
   }
 
@@ -56,8 +53,12 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
 }
 
 object TaxYearId {
-  private val SIX_DAY_OF_MONTH: Int = 6
+  private val SIXTH_DAY_OF_MONTH: Int = 6
   private val FIFTHS_DAY_OF_MONTH: Int = 5
+
+  private val formatterFull = DateTimeFormatter.ofPattern("YYYY")
+  private val formatterShort = DateTimeFormatter.ofPattern("YY")
+
   // Enforce instance creation via "smart constructors"
   // Examples of "smart constructors" to create type instance
 
