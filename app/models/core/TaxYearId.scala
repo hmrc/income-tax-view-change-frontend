@@ -16,11 +16,12 @@
 
 package models.core
 
+import models.core.TaxYearId.{FIFTHS_DAY_OF_MONTH, SIX_DAY_OF_MONTH}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear._
 
-import java.time.{LocalDate, Month}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
@@ -28,12 +29,14 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
   def secondYear: Int = firstYear + 1 // Always
 
   def next: TaxYearId = new TaxYearId(firstYear + 1)
+
   def prev: TaxYearId = new TaxYearId(firstYear - 1)
 
-  def toModel : TaxYear =  mkTaxYear(this)
+  def toModel: TaxYear = mkTaxYear(this)
 
-  def from: LocalDate = LocalDate.of(firstYear, Month.APRIL, 6)
-  def to: LocalDate = LocalDate.of(secondYear, Month.APRIL, 5)
+  def from: LocalDate = LocalDate.of(firstYear, Month.APRIL, SIX_DAY_OF_MONTH)
+
+  def to: LocalDate = LocalDate.of(secondYear, Month.APRIL, FIFTHS_DAY_OF_MONTH)
 
   // tax year in format: YYYY-YY
   def normalised: String = {
@@ -53,14 +56,16 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
 }
 
 object TaxYearId {
-
+  private val SIX_DAY_OF_MONTH: Int = 6
+  private val FIFTHS_DAY_OF_MONTH: Int = 5
   // Enforce instance creation via "smart constructors"
   // Examples of "smart constructors" to create type instance
 
-  def mkTaxYearId(s: Int): TaxYearId =  {
+  def mkTaxYearId(s: Int): TaxYearId = {
     new TaxYearId(s)
   }
 
+  // TODO: refactor this method(s) to be more granular/flexible
   private def areValidYears(yearOne: String, yearTwo: String): Boolean = {
 
     def isValidYear(year: String): Boolean =
@@ -76,19 +81,21 @@ object TaxYearId {
       differenceIsOne(yearOne, yearTwo)
   }
 
-  def mkTaxYearId(years: String): Either[Throwable, TaxYearId] =  {
+  def mkTaxYearId(years: String): Either[Throwable, TaxYearId] = {
     // Parse input string and validate if its comply with any taxYear formats we use
     years.split('-') match {
       case Array(yearOne, yearTwo) if areValidYears(yearOne, yearTwo) =>
-        Try { new TaxYearId(yearOne.toInt) }.toEither
+        Try {
+          new TaxYearId(yearOne.toInt)
+        }.toEither
       case _ =>
-        Left( new Error(s"Unable to parse input taxYear: $years"))
+        Left(new Error(s"Unable to parse input taxYear: $years"))
     }
   }
 
   // create TaxYear based on the outcome of running external validator returning Future[Boolean]
-  def mkTaxYearId(s: Int, validationRule : TaxYearId => Future[Boolean])
-                 (implicit  ec : ExecutionContext): Future[Either[Throwable, TaxYearId]] = {
+  def mkTaxYearId(s: Int, validationRule: TaxYearId => Future[Boolean])
+                 (implicit ec: ExecutionContext): Future[Either[Throwable, TaxYearId]] = {
     for {
       internalTaxYear <- Future.successful(new TaxYearId(s))
       validationOutcome <- validationRule(internalTaxYear)
