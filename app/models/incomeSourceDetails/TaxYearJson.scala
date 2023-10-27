@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails
 
-import models.TaxYearId
+import models.core.TaxYearId
 import play.api.libs.json.{JsPath, Writes}
 import play.api.libs.functional.syntax._
 

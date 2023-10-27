@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package models.core
 
-import models.TaxYearId.mkTaxYearId
 import models.incomeSourceDetails.TaxYearJson
-
+import models.incomeSourceDetails.TaxYearJson._
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
-import models.incomeSourceDetails.TaxYearJson._
 
 class TaxYearId private(val firstYear: Int) extends AnyVal {
   def secondYear: Int = firstYear + 1 // Always

@@ -20,9 +20,10 @@ import audit.Utilities
 import utils.Utilities._
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.TaxYearId
+import models.core.TaxYearId
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
+import models.core.TaxYearId._
 
 case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
                                  obligations: ObligationsViewModel,
@@ -60,7 +61,6 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
         ))
   }
 
-  import models.TaxYearId._
   private val quarterlyUpdatesOption: Option[Seq[JsObject]] = {
     if (quarterly.nonEmpty) {
       Some(quarterly.collect {

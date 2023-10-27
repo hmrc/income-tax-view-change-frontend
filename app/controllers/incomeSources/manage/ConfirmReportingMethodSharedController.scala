@@ -27,15 +27,13 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
-import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
-import models.TaxYearId
-import models.incomeSourceDetails.TaxYearJson.mkTaxYear
+import models.core.TaxYearId
+import models.core.TaxYearId.mkTaxYearId
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYearJson}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
-import play.api.data.FormError
 import play.api.i18n.Lang
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
@@ -108,8 +106,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         showInternalServerError(isAgent)
     }
   }
-
-  import models.TaxYearId._
   private def handleShowRequest(taxYearAsString: String,
                                 changeTo: String,
                                 isAgent: Boolean,

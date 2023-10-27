@@ -25,8 +25,8 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
-import models.TaxYearId
-import models.TaxYearId.mkTaxYearId
+import models.core.TaxYearId
+import models.core.TaxYearId.mkTaxYearId
 import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
@@ -100,8 +100,6 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           showInternalServerError(isAgent = true)
       }
   }
-
-  import models.TaxYearId._
 
   def showUKProperty(changeTo: String, taxYearString: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
