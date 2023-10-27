@@ -58,6 +58,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   with FeatureSwitching with IncomeSourcesUtils {
 
 
+  // Main example: verify external parameters before firing handlerRequest method
   def showSelfEmployment(changeTo: String, taxYearString: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -67,17 +68,18 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             taxYearIdE <- Future {
               mkTaxYearId(taxYearString)
             }
-            res <- sessionService
+            incomeSourceIdE <- sessionService
               .getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment))
-          } yield (res, taxYearIdE) match {
-            case (Right(incomeSourceIdMayBe), Right(taxYearId)) =>
+          } yield (incomeSourceIdE, taxYearIdE) match {
+            case (Right(Some(incomeSourceId)), Right(taxYearId)) =>
               handleRequest(
                 mode = SelfEmployment,
                 isAgent = false,
                 taxYearId,
                 changeTo,
-                incomeSourceIdMayBe
+                Some(incomeSourceId) // TODO: continue refactor downstream method as incomeSourceId verified at this point (new story?)
               )
+            case (Right(None), _) => Future.failed( new Error(s"Unable to find incomeSourceId in mongo: ${Manage} - ${SelfEmployment}"))
             case (Left(exception), _) => Future.failed(exception)
             case (_, Left(exception)) => Future.failed(exception)
           }
