@@ -114,7 +114,6 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     } else {
       Future(None)
     }
-
   }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -134,7 +133,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
   }.recover {
     case error =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleRequest] ${error.getMessage}")
+      Logger("application").error(s"[AddBusinessTradeController][handleRequest] ${error.getMessage}")
       errorHandler.showInternalServerError()
   }
 
