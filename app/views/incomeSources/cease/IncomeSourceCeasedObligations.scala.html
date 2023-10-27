@@ -14,15 +14,13 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.helpers.injected.ErrorSummary
-@import models.incomeSourceDetails.viewmodels._
-@import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import models.incomeSourceDetails.viewmodels._
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import views.html.components._
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.layouts.unifiedLayout
 
 
 @this(
@@ -87,7 +85,7 @@ incomeSourceType match {
         bannerHtmlContent("",getMessage("heading1.foreign-property.part2"),getMessage("heading1.base"))
     }
 }
-    
+
 @import implicitDateFormatter.longDate
 @mainTemplate(pageTitle = getPageTitle,
   isAgent = isAgent,
