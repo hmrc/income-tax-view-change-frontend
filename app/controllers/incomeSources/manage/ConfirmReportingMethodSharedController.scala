@@ -203,7 +203,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 )
               )
             },
-            _ => handleValidForm(errorCall, isAgent, successCall, mkTaxYear(taxYearId), incomeSourceId, reportingMethod)
+            _ => handleValidForm(errorCall, isAgent, successCall, taxYearId.toModel, incomeSourceId, reportingMethod)
           )
         case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYearString"))
         case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
