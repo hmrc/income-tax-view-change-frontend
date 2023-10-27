@@ -71,9 +71,9 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
     val latencyDetails: Option[LatencyDetails] = user.incomeSources.properties
       .filter(_.isUkProperty).find(_.incomeSourceId.equals(incomeSourceId)).flatMap(_.latencyDetails)
     latencyDetails match {
-      case Some(x) =>
+      case Some(latencyValue) =>
         val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-        x match {
+        latencyValue match {
           case LatencyDetails(_, _, _, taxYear2, _) if taxYear2.toInt < currentTaxYearEnd => Future.successful(None)
           case LatencyDetails(_, taxYear1, taxYear1LatencyIndicator, taxYear2, taxYear2LatencyIndicator) =>
             calculationListService.isTaxYearCrystallised(taxYear1.toInt).flatMap {

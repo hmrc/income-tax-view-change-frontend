@@ -18,26 +18,26 @@ package services
 
 import audit.mocks.MockAuditingService
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.MockBusinessDetailsConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
 import models.incomeSourceDetails.viewmodels._
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants.{testPropertyCessation2, testPropertyCessation3, testPropertyStartDateOption, testPropertyStartDateOption2, viewUkPropertyDetailsViewModel}
+import testConstants.PropertyDetailsTestConstants.{testStartDate => _, _}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport
 
 import scala.util.Success
 
 //scalastyle:off
-class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockNextUpdatesService
+class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetailsConnector with MockNextUpdatesService
   with MockAuditingService with MockAsyncCacheApi {
   val cache = app.injector.instanceOf[AsyncCacheApi]
   val expectedAddressString1: Option[String] = Some("Line 1<br>Line 2<br>Line 3<br>Line 4<br>LN1 1NL<br>NI")
   val expectedAddressString2: Option[String] = Some("A Line 1<br>A Line 3<br>LN2 2NL<br>GB")
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockIncomeTaxViewChangeConnector, cache)
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, cache)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -225,7 +225,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockIncomeTaxViewC
           viewUkProperty = None,
           viewForeignProperty = Some(ViewPropertyDetailsViewModel(testStartDateOption)),
           viewCeasedBusinesses = List(
-//            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
+            //            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
             CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get)
           )
         ))

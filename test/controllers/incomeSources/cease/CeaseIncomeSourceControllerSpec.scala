@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.cease
 
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
@@ -61,57 +60,37 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
   )
 
   "The CeaseIncomeSourcesController" should {
-    "redirect an individual back to the home page" when {
-      "the IncomeSources FS is disabled" in {
+
+    "redirect user back to the home page" when {
+      def testFSDisabled(isAgent: Boolean): Unit = {
         disableAllSwitches()
         isDisabled(IncomeSources)
         mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        if (isAgent) {
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          val result = controller.showAgent()(fakeRequestConfirmedClient())
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        } else {
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          val result = controller.show()(fakeRequestWithActiveSession)
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        }
+      }
+
+      "user is an individual and the IncomeSources FS is disabled " in {
+        testFSDisabled(isAgent = false)
+      }
+      "user is an agent and the IncomeSources FS is disabled " in {
+        testFSDisabled(isAgent = true)
       }
     }
 
-    "redirect an agent back to the home page" when {
-      "the IncomeSources FS is disabled" in {
-        disableAllSwitches()
-        isDisabled(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.SEE_OTHER
-
-      }
-    }
-
-    "redirect an individual to the cease an income source page" when {
-      "user has a sole trader business and a UK property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockBothIncomeSources()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Right(CeaseIncomeSourcesViewModel(
-            soleTraderBusinesses = List(ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2),
-            ukProperty = Some(ceaseUkPropertyDetailsViewModel),
-            foreignProperty = None,
-            ceasedBusinesses = Nil)))
-
-        val result = controller.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.OK
-      }
-    }
-
-    "redirect an agent to the cease an income source page" when {
-      "agent's client has a sole trader business and a UK property" in {
+    "redirect user to the cease an income source page" when {
+      def testCeaseIncomeSourcePage(isAgent: Boolean): Unit = {
         disableAllSwitches()
         enable(IncomeSources)
         mockBothIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
           .thenReturn(Right(CeaseIncomeSourcesViewModel(
@@ -120,36 +99,53 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
             foreignProperty = Some(ceaseForeignPropertyDetailsViewModel),
             ceasedBusinesses = Nil)))
 
-        val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
-        status(result) shouldBe Status.OK
+        if (isAgent) {
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          val result = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+          status(result) shouldBe Status.OK
+        } else {
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          val result = controller.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.OK
+        }
+
+      }
+
+      "user is an individual and has a sole trader business and a UK property" in {
+        testCeaseIncomeSourcePage(isAgent = false)
+      }
+
+      "user is an agent and the client has a sole trader business and a UK property" in {
+        testCeaseIncomeSourcePage(isAgent = true)
       }
     }
 
     "show error page" when {
-      "error response from service for individual" in {
+      def testErrorResponse(isAgent: Boolean): Unit = {
         disableAllSwitches()
         enable(IncomeSources)
         mockBothIncomeSources()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
           .thenReturn(Left(MissingFieldException("Trading Name")))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        if (isAgent) {
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        } else {
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+      }
+
+      "error response from service for individual" in {
+        testErrorResponse(isAgent = false)
       }
 
       "error response from service for agent" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockBothIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
-          .thenReturn(Left(MissingFieldException("Trading Name")))
-
-        val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        testErrorResponse(isAgent = true)
       }
     }
   }

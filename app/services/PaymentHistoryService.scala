@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import connectors.IncomeTaxViewChangeConnector
+import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import models.core.Nino
 import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
@@ -29,7 +29,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistoryConnector,
+                                      financialDetailsConnector: FinancialDetailsConnector,
                                       implicit val dateService: DateServiceInterface,
                                       val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) {
@@ -38,7 +39,7 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
 
     val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
 
-    Future.sequence(orderedTaxYears.map(incomeTaxViewChangeConnector.getPayments)) map { paymentResponses =>
+    Future.sequence(orderedTaxYears.map(financialDetailsConnector.getPayments)) map { paymentResponses =>
       val paymentsContainsFailure: Boolean = paymentResponses.exists {
         case Payments(_) => false
         case PaymentsError(status, _) if status == 404 => false
@@ -56,7 +57,7 @@ class PaymentHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxVie
 
   def getRepaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[RepaymentHistoryErrorModel.type, List[RepaymentHistory]]] = {
 
-    incomeTaxViewChangeConnector.getRepaymentHistoryByNino(Nino(user.nino)).map {
+    repaymentHistoryConnector.getRepaymentHistoryByNino(Nino(user.nino)).map {
       case RepaymentHistoryModel(repaymentsViewerDetails) => Right(repaymentsViewerDetails)
       case RepaymentHistoryErrorModel(status, _) if status == 404 => Right(List())
       case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)

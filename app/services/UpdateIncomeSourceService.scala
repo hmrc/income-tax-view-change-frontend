@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.IncomeTaxViewChangeConnector
+import connectors.UpdateIncomeSourceConnector
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -26,11 +26,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnector) {
+class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateIncomeSourceConnector) {
 
   def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: String)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
-    connector.updateCessationDate(
+    updateIncomeSourceConnector.updateCessationDate(
       nino = nino,
       incomeSourceId = incomeSourceId,
       cessationDate = Some(LocalDate.parse(cessationDate))
@@ -42,7 +42,7 @@ class UpdateIncomeSourceService @Inject()(connector: IncomeTaxViewChangeConnecto
 
   def updateTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateIncomeSourceResponse] = {
-    connector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific).map {
+    updateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific).map {
       case res: UpdateIncomeSourceResponseModel =>
         Logger("application").info(s"Updated tax year specific reporting method : $res")
         res

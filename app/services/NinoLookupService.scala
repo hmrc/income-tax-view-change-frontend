@@ -16,19 +16,19 @@
 
 package services
 
-import connectors.IncomeTaxViewChangeConnector
-import javax.inject.{Inject, Singleton}
+import connectors.BusinessDetailsConnector
 import models.core.NinoResponse
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class NinoLookupService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector) {
+class NinoLookupService @Inject()(val businessDetailsConnector: BusinessDetailsConnector) {
 
   def getNino(mtdRef: String)(implicit hc: HeaderCarrier): Future[NinoResponse] = {
     Logger("application").debug(s"[NinoLookupService][getNino] - Requesting NINO from connector for user with MtdRef: $mtdRef")
-    incomeTaxViewChangeConnector.getNino(mtdRef)
+    businessDetailsConnector.getNino(mtdRef)
   }
 }

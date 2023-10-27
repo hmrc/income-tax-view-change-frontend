@@ -21,7 +21,7 @@ import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import connectors.IncomeTaxViewChangeConnector
+import connectors.RepaymentHistoryConnector
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import models.core.Nino
@@ -42,7 +42,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val checkSessionTimeout: SessionTimeoutPredicate,
                                            val authenticate: AuthenticationPredicate,
                                            val retrieveNino: NinoPredicate,
-                                           val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+                                           val repaymentHistoryConnector: RepaymentHistoryConnector,
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                            val authorisedFunctions: AuthorisedFunctions,
@@ -62,7 +62,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                    (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
     if (isEnabled(PaymentHistoryRefunds)) {
       (for {
-        repaymentHistoryModel <- incomeTaxViewChangeConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).collect {
+        repaymentHistoryModel <- repaymentHistoryConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).collect {
           case repaymentHistoryModel: RepaymentHistoryModel => repaymentHistoryModel
         }
       } yield {

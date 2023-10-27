@@ -45,6 +45,15 @@ trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
     setupMockAuthRetrievalSuccess(testAuthSuccessResponse())
   }
 
+  val setupMockAuthorisationException: Boolean => Unit = (isAgent: Boolean) => {
+    if (isAgent) setupMockAgentAuthorisationException(InsufficientEnrolments()) else setupMockAuthorisationException(InsufficientEnrolments())
+  }
+
+  val setupMockAuthorisationSuccess: Boolean => Unit = (isAgent: Boolean) => {
+    if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+  }
+
   def setupMockAuthRetrievalSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
     when(mockAuthService.authorised(Enrolment("HMRC-MTD-IT")))
       .thenReturn(

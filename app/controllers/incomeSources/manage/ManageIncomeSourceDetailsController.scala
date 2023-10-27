@@ -173,10 +173,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     latencyDetails match {
       case Some(x) =>
         for {
-          i <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt, isEnabled(TimeMachineAddYear))
-          j <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt, isEnabled(TimeMachineAddYear))
+          isTY1Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear1.toInt, isEnabled(TimeMachineAddYear))
+          isTY2Crystallised <- calculationListService.isTaxYearCrystallised(x.taxYear2.toInt, isEnabled(TimeMachineAddYear))
         } yield {
-          Some(List(i.get, j.get))
+          Some(List(isTY1Crystallised.get, isTY2Crystallised.get))
         }
       case _ =>
         Future.successful(None)
@@ -220,7 +220,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
-      .find(e => e.incomeSourceId == id)
+      .find(businessDetailsModel => businessDetailsModel.incomeSourceId == id)
 
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
