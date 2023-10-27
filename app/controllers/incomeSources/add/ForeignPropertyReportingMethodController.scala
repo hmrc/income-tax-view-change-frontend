@@ -225,23 +225,56 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = ForeignProperty) else
       routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = ForeignProperty)
 
-    val futures = newReportingMethods.map(taxYearSpecific =>
-      updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+//    val futures = newReportingMethods.map(taxYearSpecific =>
+//      updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+//
+//    val updateResults: Future[Seq[UpdateIncomeSourceResponse]] = Future.sequence(futures)
+//
+//    updateResults.map { results =>
+//      manageReportingMethodUpdateResponses(results, redirectUrl) match {
+//        case Left(ex) => Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]: " +
+//          s"Unable to update tax year specific reporting method: ${ex.getMessage}")
+//          Redirect(redirectErrorUrl)
+//        case Right(redirectCall) => redirectCall
+//      }
+//    }.recover {
+//      case ex: Exception =>
+//        Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]: " +
+//          s"Error updating tax year specific reporting method: ${ex.getMessage}")
+//        Redirect(redirectErrorUrl)
+//    }
 
-    val updateResults: Future[Seq[UpdateIncomeSourceResponse]] = Future.sequence(futures)
-
-    updateResults.map { results =>
-      manageReportingMethodUpdateResponses(results, redirectUrl) match {
-        case Left(ex) => Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]: " +
-          s"Unable to update tax year specific reporting method: ${ex.getMessage}")
-          Redirect(redirectErrorUrl)
-        case Right(redirectCall) => redirectCall
+    for {
+      results <- Future.sequence(newReportingMethods.map(taxYearSpecific =>
+        updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
+      )
+    } yield {
+      val errors = results.collect {
+        case e: UpdateIncomeSourceResponseError => e
       }
-    }.recover {
-      case ex: Exception =>
-        Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]: " +
-          s"Error updating tax year specific reporting method: ${ex.getMessage}")
-        Redirect(redirectErrorUrl)
+      val success = results.collect {
+        case c: UpdateIncomeSourceResponseModel => c
+      }
+      (errors, success) match {
+        case (es: Seq[UpdateIncomeSourceResponseError], _) if es.isEmpty =>
+          Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+            s"Updated tax year specific reporting method for all supplied tax years")
+          Redirect(redirectUrl)
+        case (es: Seq[UpdateIncomeSourceResponseError], ss: UpdateIncomeSourceResponseModel) if es.nonEmpty =>
+          for (success <- ss) {
+            Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+              s"Updated tax year specific reporting method for $success")
+          }
+          for (error <- es) {
+            Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+              s"Error updating specific reporting method: $error")
+          }
+          Redirect(redirectErrorUrl)
+        case _ =>
+          Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+            s"Error updating tax year specific reporting method")
+          Redirect(redirectErrorUrl)
+      }
     }
   }
 
