@@ -69,6 +69,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     val headingForeignProperty: String = messages("incomeSources.cease.FP.property.heading")
   }
 
+
   def showCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Future[Result] = {
     (isAgent, incomeSourceType) match {
       case (true, UkProperty) => TestDeclarePropertyCeasedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
@@ -78,12 +79,21 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     }
   }
 
-  def submitCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Future[Result] = {
+  def submitCall(isAgent: Boolean, incomeSourceType: IncomeSourceType, formBody: Option[Map[String, String]] = None): Future[Result] = {
+    val formData = formBody.getOrElse(Map(
+      DeclarePropertyCeasedForm.declaration -> "true",
+      DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"
+    ))
+
     (isAgent, incomeSourceType) match {
-      case (true, UkProperty) => TestDeclarePropertyCeasedController.submitAgent(UkProperty)(fakeRequestConfirmedClient())
-      case (_, UkProperty) => TestDeclarePropertyCeasedController.showAgent(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
-      case (true, _) => TestDeclarePropertyCeasedController.submitAgent(ForeignProperty)(fakeRequestConfirmedClient())
-      case (_, _) => TestDeclarePropertyCeasedController.showAgent(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      case (true, UkProperty) => TestDeclarePropertyCeasedController.submitAgent(UkProperty)(fakeRequestConfirmedClient()
+        .withFormUrlEncodedBody(formData.toSeq: _*))
+      case (_, UkProperty) => TestDeclarePropertyCeasedController.submit(UkProperty)(fakeRequestWithNinoAndOrigin("pta")
+        .withFormUrlEncodedBody(formData.toSeq: _*))
+      case (true, _) => TestDeclarePropertyCeasedController.submitAgent(ForeignProperty)(fakeRequestConfirmedClient()
+        .withFormUrlEncodedBody(formData.toSeq: _*))
+      case (_, _) => TestDeclarePropertyCeasedController.submit(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta")
+        .withFormUrlEncodedBody(formData.toSeq: _*))
     }
   }
 
@@ -210,16 +220,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
             case (true, _) => controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, incomeSourceType).url
             case (false, _) => controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, incomeSourceType).url
           }
-        val result = {
-          val formBody = Map(
-            DeclarePropertyCeasedForm.declaration -> "true",
-            DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"
-          )
-          if (isAgent) TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody(formBody.toSeq: _*))
-          else TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta")
-            .withFormUrlEncodedBody(formBody.toSeq: _*))
-        }
+        val result = submitCall(isAgent, incomeSourceType)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType))
@@ -241,23 +242,43 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     }
 
 
+    "return 303 SEE_OTHER and redirect to home page" when {
+      def testFeatureSwitchRedirectsToHomePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
+        setupMockAuthorisationSuccess(isAgent)
+
+        disable(IncomeSources)
+        mockPropertyIncomeSource()
+
+        lazy val result: Future[Result] = submitCall(isAgent, incomeSourceType)
+        val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+      }
+
+      "POST call to the UK Property declaration page with FS Disabled - Individual" in {
+        testFeatureSwitchRedirectsToHomePage(isAgent = false, UkProperty)
+      }
+      "POST call to the UK Property declaration page with FS Disabled - Agent" in {
+        testFeatureSwitchRedirectsToHomePage(isAgent = true, UkProperty)
+      }
+      "POST call to the Foreign Property declaration page with FS Disabled - Individual" in {
+        testFeatureSwitchRedirectsToHomePage(isAgent = false, ForeignProperty)
+      }
+      "POST call to the Foreign Property declaration page with FS Disabled - Agent" in {
+        testFeatureSwitchRedirectsToHomePage(isAgent = true, ForeignProperty)
+      }
+    }
+
+
     "return 400 BAD_REQUEST" when {
       def testInvalidForm(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
         setupMockAuthorisationSuccess(isAgent)
         enable(IncomeSources)
         mockPropertyIncomeSource()
         setupMockSetSessionKeyMongo(Right(true))
-
-        lazy val result = {
-          val formBody = Map(
-            DeclarePropertyCeasedForm.declaration -> "help",
-            DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"
-          )
-          if (isAgent) TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody(formBody.toSeq: _*))
-          else TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta")
-            .withFormUrlEncodedBody(formBody.toSeq: _*))
-        }
+        val invalidForm = Map(DeclarePropertyCeasedForm.declaration -> "invalid")
+        lazy val result = submitCall(isAgent, incomeSourceType, Some(invalidForm))
 
         status(result) shouldBe Status.BAD_REQUEST
       }
@@ -284,16 +305,7 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         mockPropertyIncomeSource()
         setupMockSetSessionKeyMongo(Left(new Exception))
 
-        lazy val result = {
-          val formBody = Map(
-            DeclarePropertyCeasedForm.declaration -> "true",
-            DeclarePropertyCeasedForm.ceaseCsrfToken -> "12345"
-          )
-          if (isAgent) TestDeclarePropertyCeasedController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody(formBody.toSeq: _*))
-          else TestDeclarePropertyCeasedController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta")
-            .withFormUrlEncodedBody(formBody.toSeq: _*))
-        }
+        lazy val result = submitCall(isAgent, incomeSourceType)
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
