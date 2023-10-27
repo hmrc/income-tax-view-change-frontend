@@ -48,7 +48,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val retrieveBtaNavBar: NavBarPredicate,
                                                       val businessDetailsService: CreateBusinessDetailsService,
-                                                      val sessionService: SessionService,
+                                                      val sessionService: SessionService
                                                      )
                                                      (implicit val ec: ExecutionContext,
                                                       implicit override val mcc: MessagesControllerComponents,
