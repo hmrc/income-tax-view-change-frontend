@@ -225,25 +225,6 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, incomeSourceType = ForeignProperty) else
       routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = ForeignProperty)
 
-//    val futures = newReportingMethods.map(taxYearSpecific =>
-//      updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
-//
-//    val updateResults: Future[Seq[UpdateIncomeSourceResponse]] = Future.sequence(futures)
-//
-//    updateResults.map { results =>
-//      manageReportingMethodUpdateResponses(results, redirectUrl) match {
-//        case Left(ex) => Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]: " +
-//          s"Unable to update tax year specific reporting method: ${ex.getMessage}")
-//          Redirect(redirectErrorUrl)
-//        case Right(redirectCall) => redirectCall
-//      }
-//    }.recover {
-//      case ex: Exception =>
-//        Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]: " +
-//          s"Error updating tax year specific reporting method: ${ex.getMessage}")
-//        Redirect(redirectErrorUrl)
-//    }
-
     for {
       results <- Future.sequence(newReportingMethods.map(taxYearSpecific =>
         updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpecific))
