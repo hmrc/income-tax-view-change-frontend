@@ -247,7 +247,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
               s"Updated tax year specific reporting method for $success")
           }
           for (error <- es) {
-            Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+            Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]: " +
               s"Error updating specific reporting method: $error")
           }
           Redirect(redirectErrorUrl)

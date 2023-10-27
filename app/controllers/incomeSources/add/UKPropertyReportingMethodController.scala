@@ -220,7 +220,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
               s"Updated tax year specific reporting method for $success")
           }
           for (error <- es) {
-            Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+            Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]: " +
               s"Error updating specific reporting method: $error")
           }
           Redirect(redirectErrorUrl)
