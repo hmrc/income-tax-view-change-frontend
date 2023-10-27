@@ -25,7 +25,7 @@ import enums.IncomeSourceJourney.ForeignProperty
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.ForeignPropertyReportingMethodViewModel
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -36,7 +36,6 @@ import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.ForeignPropertyReportingMethod
 
 import javax.inject.Inject
-import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 

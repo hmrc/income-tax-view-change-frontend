@@ -25,7 +25,7 @@ import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.UKPropertyReportingMethodViewModel
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
@@ -37,7 +37,6 @@ import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.UKPropertyReportingMethod
 
 import javax.inject.Inject
-import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 
 class UKPropertyReportingMethodController @Inject()(val authenticate: AuthenticationPredicate,
