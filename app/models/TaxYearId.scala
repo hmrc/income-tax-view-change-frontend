@@ -59,8 +59,6 @@ object TaxYearId {
   // Examples of "smart constructors" to create type instance
 
   def mkTaxYearId(s: Int): TaxYearId =  {
-    // Step 1: validate TaxYear before creating instance
-    // Step 2: create taxYear string (TODO: add normalisation here / use fixed format, ie. 2023-2024     ?)
     new TaxYearId(s)
   }
 
@@ -85,7 +83,7 @@ object TaxYearId {
       case Array(yearOne, yearTwo) if areValidYears(yearOne, yearTwo) =>
         Try { new TaxYearId(yearOne.toInt) }.toEither
       case _ =>
-        Left( new Error(s"Unable to parse input taxYear string: $years"))
+        Left( new Error(s"Unable to parse input taxYear: $years"))
     }
   }
 

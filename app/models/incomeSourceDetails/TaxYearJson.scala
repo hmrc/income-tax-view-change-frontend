@@ -35,32 +35,4 @@ object TaxYearJson {
       (JsPath \ "endYear").write[Int]
     )(unlift(TaxYearJson.unapply))
 
-  /*
-  private def areValidYears(yearOne: String, yearTwo: String): Boolean = {
-
-    def isValidYear(year: String): Boolean =
-      year.length == 4 &&
-        year.forall(_.isDigit) &&
-          Try(year.toInt).toOption.isDefined
-
-    def differenceIsOne(yearOne: String, yearTwo: String): Boolean =
-      yearOne.toInt + 1 == yearTwo.toInt
-
-    isValidYear(yearOne) &&
-      isValidYear(yearTwo) &&
-        differenceIsOne(yearOne, yearTwo)
-  }
-
-  def getTaxYearModel(years: String): Option[TaxYearJson] = {
-
-    years.split('-') match {
-      case Array(yearOne, yearTwo) if areValidYears(yearOne, yearTwo) =>
-        Some(
-          TaxYearJson(yearOne.toInt, yearTwo.toInt)
-        )
-      case _ => None
-    }
-  }
-
-   */
 }
