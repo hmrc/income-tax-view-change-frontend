@@ -23,6 +23,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
@@ -322,28 +323,38 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
-      "income source ID is missing and income source type is Self Employment " when {
-        def testMissingIncomeSourceID(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
-          if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-          disableAllSwitches()
-          enable(IncomeSources)
-          mockBothPropertyBothBusiness()
+      def testInternalServerErrors(isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean = false): Unit = {
+        if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothPropertyBothBusiness()
 
-          val result: Future[Result] = if (isAgent) {
-            TestIncomeSourceEndDateController.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
-          } else {
-            TestIncomeSourceEndDateController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
-          }
-          status(result) shouldBe INTERNAL_SERVER_ERROR
+
+
+        val result: Future[Result] = if (isChange && !isAgent) {
+          TestIncomeSourceEndDateController.showChange(None, incomeSourceType)(fakeRequestWithActiveSession)
+        }else if (isAgent){
+          TestIncomeSourceEndDateController.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
+        } else {
+          TestIncomeSourceEndDateController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
         }
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
 
+      "income source ID is missing and income source type is Self Employment " when {
         val incomeSourceType = SelfEmployment
         "user is an Individual" in {
-          testMissingIncomeSourceID(isAgent = false, incomeSourceType)
+          testInternalServerErrors(isAgent = false, incomeSourceType)
         }
         "user is an Agent" in {
-          testMissingIncomeSourceID(isAgent = true, incomeSourceType)
+          testInternalServerErrors(isAgent = true, incomeSourceType)
+        }
+      }
+      s"failed to get session data - ${CeaseIncomeSourceData.dateCeasedField}" when {
+        "called .showChange" in {
+          setupMockGetSessionKeyMongoTyped(Left(new Exception()))
+          testInternalServerErrors(isAgent = false,incomeSourceType = ForeignProperty, isChange = true)
         }
       }
     }
@@ -496,7 +507,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
-      def testMissingIncomeSourceID(isAgent: Boolean, isChange: Boolean): Unit = {
+      def testInternalServerErrors(isAgent: Boolean, isChange: Boolean, id: Option[String] = None, incomeSourceType: IncomeSourceType = SelfEmployment): Unit = {
         implicit class FormEncoding(request: FakeRequest[AnyContentAsEmpty.type]) {
           def withDateInFormEncoding: FakeRequest[AnyContentAsFormUrlEncoded] = request.withMethod("POST")
             .withFormUrlEncodedBody("income-source-end-date.day" -> "27", "income-source-end-date.month" -> "8",
@@ -505,9 +516,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
         if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val incomeSourceType = SelfEmployment
-        val id = None
 
         disableAllSwitches()
         enable(IncomeSources)
@@ -531,19 +539,41 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       "income source ID is missing and income source type is Self Employment " when {
         "called .submit" when {
           "user is an Individual" in {
-            testMissingIncomeSourceID(isAgent = false, isChange = false)
+            testInternalServerErrors(isAgent = false, isChange = false)
           }
           "user is an Agent" in {
-            testMissingIncomeSourceID(isAgent = true, isChange = false)
+            testInternalServerErrors(isAgent = true, isChange = false)
           }
         }
         "called .submitChange" when {
           "user is an Individual" in {
-            testMissingIncomeSourceID(isAgent = false, isChange = true)
+            testInternalServerErrors(isAgent = false, isChange = true)
           }
           "user is an Agent" in {
-            testMissingIncomeSourceID(isAgent = true, isChange = true)
+            testInternalServerErrors(isAgent = true, isChange = true)
           }
+        }
+      }
+      s"SelfEmployment - unable to set session data ${CeaseIncomeSourceData.dateCeasedField}" when {
+        "called .submit" in {
+          setupMockCreateSession(true)
+          setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
+          testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
+        }
+      }
+      s"SelfEmployment - unable to set session data ${CeaseIncomeSourceData.incomeSourceIdField}" when {
+        "called .submit" in {
+          setupMockCreateSession(true)
+          setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Right(true))
+          setupMockSetSessionKeyMongo(CeaseIncomeSourceData.incomeSourceIdField)(Left(new Exception()))
+          testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
+        }
+      }
+      s"Property - unable to set session data ${CeaseIncomeSourceData.dateCeasedField}" when {
+        "called .submit" in {
+          setupMockCreateSession(true)
+          setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
+          testInternalServerErrors(isAgent = false, isChange = false, id = None, incomeSourceType = ForeignProperty)
         }
       }
     }

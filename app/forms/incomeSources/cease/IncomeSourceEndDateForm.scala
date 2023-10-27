@@ -57,7 +57,8 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
             .headOption.getOrElse(LocalDate.MIN)
           List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate))
         case SelfEmployment =>
-          val incomeSourceId = id.get
+          val errorMessage: String = s"missing income source ID"
+          val incomeSourceId = id.getOrElse(throw new Exception(errorMessage))
           val businessStartDate = user.incomeSources.businesses
             .find(_.incomeSourceId == incomeSourceId).flatMap(_.tradingStartDate).getOrElse(LocalDate.MIN)
           List(minDate(businessStartDate, dateMustBeAfterBusinessStartDate),
