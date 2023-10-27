@@ -245,20 +245,22 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
     }
   }
 
+
   @tailrec
   private def manageReportingMethodUpdateResponses(results: Seq[UpdateIncomeSourceResponse], redirectUrl: Call): Either[Throwable, Result] = {
     results match {
+      case Nil => Left(new Error("No responses received when updating tax year specific reporting methods"))
       case head :: Nil =>
         head match {
           case UpdateIncomeSourceResponseModel(_) => Right(Redirect(redirectUrl))
           case UpdateIncomeSourceResponseError(status, reason) => Left(new Error(s"Error response received when updating tax year specific reporting method: status: $status, reason: $reason"))
         }
-      case head :: tail =>
+      case head :: tail if (tail.length == 1) =>
         head match {
           case UpdateIncomeSourceResponseModel(_) => manageReportingMethodUpdateResponses(tail, redirectUrl)
           case UpdateIncomeSourceResponseError(status, reason) => Left(new Error(s"Error response received when updating tax year specific reporting method: status: $status, reason: $reason"))
         }
-      case _ => Left(new Error("No responses received when updating tax year specific reporting methods"))
+      case _ => Left(new Error("Too many responses received when updating tax year specific reporting methods"))
     }
   }
 

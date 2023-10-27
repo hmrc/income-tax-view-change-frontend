@@ -37,6 +37,7 @@ import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.BusinessReportingMethod
 
 import javax.inject.Inject
+import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 
 class BusinessReportingMethodController @Inject()(val authenticate: AuthenticationPredicate,
@@ -189,65 +190,35 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     val updateResults: Future[Seq[UpdateIncomeSourceResponse]] = Future.sequence(futures)
 
     updateResults.map { results =>
-      val responseCount = results.length
-
-      responseCount match {
-        case 0 =>
-          Logger("application").error("[BusinessReportingMethodController][updateReportingMethod]: " +
-            "No responses received when updating tax year specific reporting methods")
+      manageReportingMethodUpdateResponses(results, redirectUrl) match {
+        case Left(ex) => Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]: " +
+          s"Unable to update tax year specific reporting method: ${ex.getMessage}")
           Redirect(redirectErrorUrl)
-        case 1 =>
-          val result = results.head
-          result match {
-            case _: UpdateIncomeSourceResponseModel =>
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Updated tax year specific reporting method: $result")
-              Redirect(redirectUrl)
-            case _: UpdateIncomeSourceResponseError =>
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Error response received when updating tax year specific reporting method: $result")
-              Redirect(redirectErrorUrl)
-            case _ =>
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Unexpected response received when updating tax year specific reporting method: $result")
-              Redirect(redirectErrorUrl)
-          }
-        case 2 =>
-          val (result1, result2) = (results.head, results(1))
-          (result1, result2) match {
-            case (_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseError) =>
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Errors received when updating tax year specific reporting methods: $result1\n$result2")
-              Redirect(redirectErrorUrl)
-            case (_: UpdateIncomeSourceResponseModel, _: UpdateIncomeSourceResponseError) =>
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Updated tax year specific reporting method: $result1")
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Error received when updating tax year specific reporting method: $result2")
-              //TODO: redirect to a new error page based on 1 success, 1 error
-              Redirect(redirectErrorUrl)
-            case (_: UpdateIncomeSourceResponseError, _: UpdateIncomeSourceResponseModel) =>
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Error received when updating tax year specific reporting method: $result2")
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Updated tax year specific reporting method: $result1")
-              //TODO: redirect to a new error page based on 1 success, 1 error
-              Redirect(redirectErrorUrl)
-            case (_: UpdateIncomeSourceResponseModel, _: UpdateIncomeSourceResponseModel) =>
-              Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
-                s"Updated tax year specific reporting methods: $result1\n$result2")
-              Redirect(redirectUrl)
-          }
-        case _ =>
-          Logger("application").error("[BusinessReportingMethodController][updateReportingMethod]: " +
-            "Unexpected response received when updating tax year specific reporting methods")
-          Redirect(redirectErrorUrl)
+        case Right(redirectCall) => redirectCall
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+        Logger("application").error(s"[ForeignPropertyReportingMethodController][updateReportingMethod]: " +
           s"Error updating tax year specific reporting method: ${ex.getMessage}")
         Redirect(redirectErrorUrl)
+    }
+  }
+
+  @tailrec
+  private def manageReportingMethodUpdateResponses(results: Seq[UpdateIncomeSourceResponse], redirectUrl: Call): Either[Throwable, Result] = {
+    results match {
+      case Nil => Left(new Error("No responses received when updating tax year specific reporting methods"))
+      case head :: Nil =>
+        head match {
+          case UpdateIncomeSourceResponseModel(_) => Right(Redirect(redirectUrl))
+          case UpdateIncomeSourceResponseError(status, reason) => Left(new Error(s"Error response received when updating tax year specific reporting method: status: $status, reason: $reason"))
+        }
+      case head :: tail if (tail.length == 1) =>
+        head match {
+          case UpdateIncomeSourceResponseModel(_) => manageReportingMethodUpdateResponses(tail, redirectUrl)
+          case UpdateIncomeSourceResponseError(status, reason) => Left(new Error(s"Error response received when updating tax year specific reporting method: status: $status, reason: $reason"))
+        }
+      case _ => Left(new Error("Too many responses received when updating tax year specific reporting methods"))
     }
   }
 
