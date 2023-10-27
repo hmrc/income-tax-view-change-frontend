@@ -22,8 +22,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
+import enums.JourneyType.{Add, JourneyType}
 import implicits.ImplicitDateFormatter
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -36,6 +38,7 @@ import utils.IncomeSourcesUtils
 import utils.IncomeSourcesUtils.getUKPropertyDetailsFromSession
 import views.html.incomeSources.add.CheckUKPropertyDetails
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,10 +50,10 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val retrieveNino: NinoPredicate,
                                                  val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                  val businessDetailsService: CreateBusinessDetailsService,
-                                                 val sessionService: SessionService,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                  val createBusinessDetailsService: CreateBusinessDetailsService,
-                                                 val retrieveBtaNavBar: NavBarPredicate)
+                                                 val retrieveBtaNavBar: NavBarPredicate,
+                                                 val sessionService: SessionService)
                                                 (implicit val appConfig: FrontendAppConfig,
                                                  mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext,
@@ -97,23 +100,42 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         }
   }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val backUrl = getBackUrl(isAgent)
     val postAction = getSubmitUrl(isAgent)
     val errorHandler = getErrorHandler(isAgent)
 
-    withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(sessionService)(user, ec).map(_.toOption).map {
-        case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
-          Ok(
-            checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
-              isAgent = isAgent,
-              backUrl = backUrl,
-              postAction = postAction))
-        case None => Logger("application").error(
-          s"[CheckUKPropertyDetailsController][handleRequest] - Error: Unable to build UK property details")
-          errorHandler.showInternalServerError()
-      }
+    getUKPropertyDetailsFromSession(user).map(_.toOption).map {
+      case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+        Ok(
+          checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
+            isAgent = isAgent,
+            backUrl = backUrl,
+            postAction = postAction))
+      case None => Logger("application").error(
+        s"[CheckUKPropertyDetailsController][handleRequest] - Error: Unable to build UK property details")
+        errorHandler.showInternalServerError()
+    }
+  }
+
+  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
+    for {
+      startDate <- sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, UkProperty))
+      accMethod <- sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, UkProperty))
+    } yield (startDate, accMethod) match {
+      case (Right(dateMaybe), Right(methodMaybe)) =>
+        val maybeModel = for {
+          ukPropertyStartDate <- dateMaybe
+          cashOrAccrualsFlag <- methodMaybe
+        } yield {
+          CheckUKPropertyViewModel(
+            tradingStartDate = ukPropertyStartDate,
+            cashOrAccrualsFlag = cashOrAccrualsFlag)
+        }
+        maybeModel.map(Right(_))
+          .getOrElse(Left(new Exception("Unable to construct UK property view model")))
+      case (_, _) =>
+        Left(new Exception("Error occurred when retrieving start date and accounting method from session storage"))
     }
   }
 
@@ -132,39 +154,32 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
         }
   }
 
-  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    lazy val redirectErrorUrl: Call = if (isAgent) {
-      routes.IncomeSourceNotAddedController.showAgent(UkProperty)
-    } else {
-      routes.IncomeSourceNotAddedController.show(UkProperty)
-    }
-    withIncomeSourcesFS {
-      getUKPropertyDetailsFromSession(sessionService)(user, ec).flatMap {
-        case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
-          businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
-            case Left(ex) =>
+  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(UkProperty)
+    else routes.IncomeSourceNotAddedController.show(UkProperty)
+
+    getUKPropertyDetailsFromSession(user) flatMap {
+      case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+        businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
+          case Left(ex) => Logger("application").error(
+            s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
+            sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+            Future.successful(Redirect(redirectErrorUrl))
+
+          case Right(CreateIncomeSourceResponse(id)) =>
+            sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+            Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
+        }.recover {
+          case ex: Exception =>
               Logger("application").error(
-                s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")
-              Future.successful(Redirect(redirectErrorUrl))
-            case Right(CreateIncomeSourceResponse(id)) =>
-              Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
-          }.recover {
-            case ex: Exception =>
-              if (isAgent) {
-                Logger("application").error(
-                  s"[Agent][ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-                Redirect(redirectErrorUrl)
-              } else {
-                Logger("application").error(
-                  s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-                Redirect(redirectErrorUrl)
-              }
-          }
-        case Left(_) =>
-          Logger("application").error(
-            s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit")
-          Future.successful(Redirect(redirectErrorUrl))
-      }
+                s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+              Redirect(redirectErrorUrl)
+        }
+      case Left(ex: Throwable) =>
+        Logger("application").error(
+          s"[CheckUKPropertyDetailsController][handleSubmit] - Error: Unable to build UK property details on submit ${ex.getMessage}")
+        sessionService.deleteMongoData(JourneyType(Add, UkProperty))
+        Future.successful(Redirect(redirectErrorUrl))
     }
   }
 

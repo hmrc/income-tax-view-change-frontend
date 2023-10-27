@@ -41,6 +41,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testMtditidAgent = "XAIT00000000015"
   val testNinoAgent = "AA111111A"
   val testNino = "AB123456C"
+  val testSessionId = "xsession-12345"
   val repaymentId = "123456789"
   val dateFrom = "12/02/2021"
   val dateTo = "12/02/2022"
@@ -97,7 +98,6 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
   val testErrorNotFoundStatus: Int = Status.NOT_FOUND
   val testErrorMessage = "Dummy Error Message"
-  val testSessionId = "xsession-12345"
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testListLink = Seq(
