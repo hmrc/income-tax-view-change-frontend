@@ -62,17 +62,26 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(incomeSourceIdMayBe) =>
-            handleRequest(
-              mode = SelfEmployment,
-              isAgent = false,
-              mkTaxYearId(taxYearString).toOption.get,
-              changeTo,
-              incomeSourceIdMayBe
-            )
-          case Left(exception) => Future.failed(exception)
-        }
+        {
+          for {
+            taxYearIdE <- Future {
+              mkTaxYearId(taxYearString)
+            }
+            res <- sessionService
+              .getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment))
+          } yield (res, taxYearIdE) match {
+            case (Right(incomeSourceIdMayBe), Right(taxYearId)) =>
+              handleRequest(
+                mode = SelfEmployment,
+                isAgent = false,
+                taxYearId,
+                changeTo,
+                incomeSourceIdMayBe
+              )
+            case (Left(exception), _) => Future.failed(exception)
+            case (_, Left(exception)) => Future.failed(exception)
+          }
+        }.flatten
       }.recover {
         case exception =>
           Logger("application").error(s"[ManageObligationsController][showSelfEmployment] ${exception.getMessage}")
