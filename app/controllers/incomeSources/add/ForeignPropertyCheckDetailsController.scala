@@ -17,13 +17,12 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import forms.utils.SessionKeys._
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -32,7 +31,6 @@ import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.ForeignPropertyCheckDetails
 
@@ -72,7 +70,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else {
       controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
     }
-    getDetails(user) map {
+    getDetails(user).map{
       case Right(viewModel) =>
         Ok(checkForeignPropertyDetails(
           viewModel,
@@ -81,14 +79,14 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
           backUrl = backUrl
         ))
       case Left(ex) =>
-          Logger("application").error(
-            s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
-          errorHandler.showInternalServerError()
+        Logger("application").error(
+          s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
     } recover {
       case ex: Exception =>
-          Logger("application").error(
-            s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct getCheckForeignPropertyViewModel ${ex.getMessage}")
-          errorHandler.showInternalServerError()
+        Logger("application").error(
+          s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct getCheckForeignPropertyViewModel ${ex.getMessage}")
+        errorHandler.showInternalServerError()
     }
   }
 
@@ -107,7 +105,6 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
         }
       }
     }
-
   }
 
   def getResult(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Option[CheckForeignPropertyViewModel] = {
@@ -184,7 +181,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
         }
   }
 
-  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[AnyContent], request: Request[AnyContent]): Future[Result] = {
+  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[AnyContent]): Future[Result] = {
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(ForeignProperty)
     else routes.IncomeSourceNotAddedController.show(ForeignProperty)
 
@@ -198,12 +195,12 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
           case Right(CreateIncomeSourceResponse(id)) =>
             sessionService.deleteMongoData(JourneyType(Add, UkProperty))
-            Future.successful(if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
-            else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
-            )
-              .recover {
-                case _: Exception => Redirect(redirectErrorUrl)
-              }
+            Future.successful(
+              if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
+              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
+            ).recover {
+              case _: Exception => Redirect(redirectErrorUrl)
+            }
         }
       case Left(_) =>
         Logger("application").error(
