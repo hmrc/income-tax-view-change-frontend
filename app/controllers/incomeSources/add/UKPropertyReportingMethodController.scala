@@ -225,12 +225,18 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
       case Nil => Left(new Error("No responses received when updating tax year specific reporting methods"))
       case head :: Nil =>
         head match {
-          case UpdateIncomeSourceResponseModel(_) => Right(Redirect(redirectUrl))
+          case UpdateIncomeSourceResponseModel(_) =>
+            Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+              s"Updated tax year specific reporting method: $head")
+            Right(Redirect(redirectUrl))
           case UpdateIncomeSourceResponseError(status, reason) => Left(new Error(s"Error response received when updating tax year specific reporting method: status: $status, reason: $reason"))
         }
       case head :: tail if (tail.length == 1) =>
         head match {
-          case UpdateIncomeSourceResponseModel(_) => manageReportingMethodUpdateResponses(tail, redirectUrl)
+          case UpdateIncomeSourceResponseModel(_) =>
+            Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
+              s"Updated tax year specific reporting method: $head")
+            manageReportingMethodUpdateResponses(tail, redirectUrl)
           case UpdateIncomeSourceResponseError(status, reason) => Left(new Error(s"Error response received when updating tax year specific reporting method: status: $status, reason: $reason"))
         }
       case _ => Left(new Error("Too many responses received when updating tax year specific reporting methods"))
