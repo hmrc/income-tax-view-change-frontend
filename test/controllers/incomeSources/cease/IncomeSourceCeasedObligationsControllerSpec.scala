@@ -19,16 +19,19 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import org.scalatest.Assertion
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
@@ -72,6 +75,114 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec = ec,
     mockDateService)
+
+
+  val heading: IncomeSourceType => String = {
+    case SelfEmployment => messages("business-ceased.obligation.heading1.se.part2") + " " + messages("business-ceased.obligation.heading1.base")
+    case ForeignProperty => messages("business-ceased.obligation.heading1.foreign-property.part2") + " " + messages("business-ceased.obligation.heading1.base")
+    case UkProperty => messages("business-ceased.obligation.heading1.uk-property.part2") + " " + messages("business-ceased.obligation.heading1.base")
+  }
+  val title: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) => {
+    if (isAgent) {
+      messages("htmlTitle.agent", heading(incomeSourceType))
+    } else {
+      messages("htmlTitle", heading(incomeSourceType))
+    }
+  }
+
+  def showCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Future[Result] = {
+    (isAgent, incomeSourceType) match {
+      case (true, UkProperty) => TestIncomeSourceObligationController.showAgent(UkProperty)(fakeRequestConfirmedClient())
+      case (_, UkProperty) => TestIncomeSourceObligationController.show(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      case (true, ForeignProperty) => TestIncomeSourceObligationController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+      case (_, ForeignProperty) => TestIncomeSourceObligationController.show(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      case (true, SelfEmployment) => TestIncomeSourceObligationController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
+      case (_, _) => TestIncomeSourceObligationController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("pta"))
+    }
+  }
+
+  "IncomeSourceCeasedObligationsController.show / showAgent" should {
+    def testViewReturnsOkWithCorrectContent(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
+      setupMockAuthorisationSuccess(isAgent)
+      enable(IncomeSources)
+      mockBothPropertyBothBusiness()
+      mockGetObligationsViewModel(IncomeSourcesObligationsTestConstants.viewModel)
+      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
+
+      when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
+      when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
+        thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
+
+      if (incomeSourceType.equals(ForeignProperty)) {
+        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+          .thenReturn(Right(foreignPropertyDetails))
+      } else if (incomeSourceType.equals(UkProperty)) {
+        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+          .thenReturn(Right(ukPropertyDetails))
+      }
+
+      val result: Future[Result] = showCall(isAgent, incomeSourceType)
+      val document: Document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe OK
+      document.title shouldBe title(isAgent, incomeSourceType)
+      document.select("#banner").text shouldBe heading(incomeSourceType)
+    }
+
+    "return 200 OK" when {
+      "navigating to the Self Employment ceased page with FS enabled - Individual" in {
+        testViewReturnsOkWithCorrectContent(isAgent = false, SelfEmployment)
+      }
+      "navigating to the Self Employment ceased page with FS enabled - Agent" in {
+        testViewReturnsOkWithCorrectContent(isAgent = true, SelfEmployment)
+      }
+      "navigating to the UK Property ceased page with FS enabled - Individual" in {
+        testViewReturnsOkWithCorrectContent(isAgent = false, UkProperty)
+      }
+      "navigating to the UK Property ceased page with FS enabled - Agent" in {
+        testViewReturnsOkWithCorrectContent(isAgent = true, UkProperty)
+      }
+      "navigating to the Foreign Property ceased page with FS enabled - Individual" in {
+        testViewReturnsOkWithCorrectContent(isAgent = false, ForeignProperty)
+      }
+      "navigating to the Foreign Property ceased page with FS enabled - Agent" in {
+        testViewReturnsOkWithCorrectContent(isAgent = true, ForeignProperty)
+      }
+    }
+
+    "return 303 SEE_OTHER" when {
+      def testFeatureSwitch(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
+        setupMockAuthorisationSuccess(isAgent)
+        disable(IncomeSources)
+        mockBothPropertyBothBusiness()
+
+        val result: Future[Result] = showCall(isAgent, incomeSourceType)
+        val expectedRedirectUrl: String = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+
+        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+      }
+
+      "navigating to the Self Employment ceased page with FS disabled - Individual" in {
+        testFeatureSwitch(isAgent = false, SelfEmployment)
+      }
+      "navigating to the Self Employment ceased page with FS disabled - Agent" in {
+        testFeatureSwitch(isAgent = true, SelfEmployment)
+      }
+      "navigating to the UK Property ceased page with FS disabled - Individual" in {
+        testFeatureSwitch(isAgent = false, UkProperty)
+      }
+      "navigating to the UK Property ceased page with FS disabled - Agent" in {
+        testFeatureSwitch(isAgent = true, UkProperty)
+      }
+      "navigating to the Foreign Property ceased page with FS disabled - Individual" in {
+        testFeatureSwitch(isAgent = false, ForeignProperty)
+      }
+      "navigating to the Foreign Property ceased page with FS disabled - Agent" in {
+        testFeatureSwitch(isAgent = true, ForeignProperty)
+      }
+    }
+  }
+
 
   "IncomeSourceCeaObligationsController" should {
     "redirect user back to the Sign In page" when {
