@@ -241,7 +241,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
           Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
             s"Updated tax year specific reporting method for all supplied tax years")
           Redirect(redirectUrl)
-        case (es: Seq[UpdateIncomeSourceResponseError], ss: UpdateIncomeSourceResponseModel) if es.nonEmpty =>
+        case (es: Seq[UpdateIncomeSourceResponseError], ss: UpdateIncomeSourceResponseModel) =>
           for (success <- ss) {
             Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
               s"Updated tax year specific reporting method for $success")
