@@ -18,7 +18,6 @@ package config
 
 import auth.FrontendAuthorisedFunctions
 import com.google.inject.AbstractModule
-import connectors.{IncomeTaxViewChangeConnector, IncomeTaxViewChangeConnectorImpl}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 import java.time.{Clock, ZoneOffset}
@@ -26,7 +25,6 @@ import java.time.{Clock, ZoneOffset}
 class DIModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[AuthorisedFunctions]).to(classOf[FrontendAuthorisedFunctions]).asEagerSingleton()
-    bind(classOf[IncomeTaxViewChangeConnector]).to(classOf[IncomeTaxViewChangeConnectorImpl]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
   }
 }

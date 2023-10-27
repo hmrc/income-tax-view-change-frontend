@@ -33,14 +33,14 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
-  val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(b => b.cessation.forall(_.date.isEmpty)) ||
-    properties.exists(p => p.cessation.forall(_.date.isEmpty))
+  val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(businessDetailsModel => businessDetailsModel.cessation.forall(_.date.isEmpty)) ||
+    properties.exists(propertyDetailsModel => propertyDetailsModel.cessation.forall(_.date.isEmpty))
 
   override def toJson: JsValue = Json.toJson(this)
 
   def sanitise: IncomeSourceDetailsModel = {
-    val property2 = properties.map(p => p.copy(incomeSourceId = "", accountingPeriod = None))
-    val businesses2 = businesses.map(b => b.copy(incomeSourceId = "", accountingPeriod = None))
+    val property2 = properties.map(propertyDetailsModel => propertyDetailsModel.copy(incomeSourceId = "", accountingPeriod = None))
+    val businesses2 = businesses.map(businessDetailsModel => businessDetailsModel.copy(incomeSourceId = "", accountingPeriod = None))
     this.copy(properties = property2, businesses = businesses2)
   }
 

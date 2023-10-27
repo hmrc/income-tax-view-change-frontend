@@ -16,14 +16,14 @@
 
 package services
 
+import mocks.connectors.MockBusinessDetailsConnector
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.NinoLookupTestConstants._
-import mocks.connectors.MockIncomeTaxViewChangeConnector
 import testUtils.TestSupport
 
-class NinoLookupServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
+class NinoLookupServiceSpec extends TestSupport with MockBusinessDetailsConnector {
 
-  object TestNinoLookupService extends NinoLookupService(mockIncomeTaxViewChangeConnector)
+  object TestNinoLookupService extends NinoLookupService(mockBusinessDetailsConnector)
 
 
   "The NinoLookupService.getNino method" when {

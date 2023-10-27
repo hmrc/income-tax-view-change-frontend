@@ -128,6 +128,13 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
+  def setupMockSetSessionKeyMongo(key:String)(result: Either[Throwable, Boolean]): Unit = {
+    when(
+      mockSessionService.setMongoKey(ArgumentMatchers.eq(key), ArgumentMatchers.any(), ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
   def verifyMockGetMongoKeyResponse(noOfCalls: Int) =
     verify(mockSessionService, times(noOfCalls)).getMongoKey(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
 

@@ -69,11 +69,11 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
         case UkProperty =>
           Future.successful((incomeSourceDetailsService
             .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)
-            .map(v => Some(v.incomeSourceId)), UkProperty))
+            .map(propertyDetailsModel => Some(propertyDetailsModel.incomeSourceId)), UkProperty))
         case ForeignProperty =>
           Future.successful((incomeSourceDetailsService
             .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)
-            .map(v => Some(v.incomeSourceId)), ForeignProperty))
+            .map(propertyDetailsModel => Some(propertyDetailsModel.incomeSourceId)), ForeignProperty))
       }
 
       incomeSourceDetails.flatMap {

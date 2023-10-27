@@ -21,7 +21,6 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.AddBusinessReportingMethodForm
-import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -45,7 +44,7 @@ import views.html.incomeSources.add.BusinessReportingMethod
 import scala.concurrent.Future
 
 class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector {
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockBusinessReportingMethod: BusinessReportingMethod = app.injector.instanceOf[BusinessReportingMethod]

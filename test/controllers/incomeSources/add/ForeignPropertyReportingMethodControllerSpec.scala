@@ -21,7 +21,6 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.ForeignProperty
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
-import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.incomeSourceDetails.viewmodels.ForeignPropertyReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -45,7 +44,7 @@ import views.html.incomeSources.add.ForeignPropertyReportingMethod
 import scala.concurrent.Future
 
 class ForeignPropertyReportingMethodControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector {
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockForeignPropertyReportingMethod: ForeignPropertyReportingMethod = app.injector.instanceOf[ForeignPropertyReportingMethod]

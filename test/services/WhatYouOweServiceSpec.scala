@@ -17,15 +17,14 @@
 package services
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{CodingOut, FeatureSwitching, MFACreditsAndDebits, TimeMachineAddYear}
-import connectors.IncomeTaxViewChangeConnector
+import connectors.FinancialDetailsConnector
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito.{mock, when}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.FinancialDetailsTestConstants._
@@ -57,7 +56,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
   }
 
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
-  val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
+  val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
   val currentYearAsInt: Int = 2022
   implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
   implicit val headCarrier: HeaderCarrier = headerCarrier
@@ -68,12 +67,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = currentYearAsInt
   }
 
-  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockIncomeTaxViewChangeConnector, mockDateService)
+  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockFinancialDetailsConnector, mockDateService)
 
   "The WhatYouOweService.getWhatYouOweChargesList method" when {
     "when both financial details and outstanding charges return success response and valid data of due more than 30 days" should {
       "return a success response back" in {
-        when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+        when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(outstandingChargesDueInMoreThan30Days))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
@@ -83,7 +82,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     }
     "when both financial details and outstanding charges return success response and valid data of due in 30 days" should {
       "return a success response back" in {
-        when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+        when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(outstandingChargesDueIn30Days))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetailsDueIn30Days())))
@@ -92,7 +91,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       }
       "when both financial details and outstanding charges return success response and valid data of overdue" should {
         "return a success response back" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(outstandingChargesOverdueData))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsOverdueData())))
@@ -102,7 +101,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and in future payments" should {
         "return a success response back" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesModel(List())))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData1)))
@@ -112,7 +111,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and dueInThirtyDays" should {
         "return a success response back" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesModel(List())))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithMixedData2)))
@@ -122,7 +121,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       }
       "when both financial details return success and outstanding charges return 500" should {
         "return a success response back" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(500, "test message")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
@@ -136,7 +135,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       }
       "when both financial details return error and outstanding charges return success" should {
         "return a success response back" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(outstandingChargesOverdueData))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days(), FinancialDetailsErrorModel(500, "test message"))))
@@ -150,7 +149,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
       }
       "when both financial details return success and outstanding charges return 404" should {
         "return a success response back" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsDueInMoreThan30Days())))
@@ -164,7 +163,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
       "when both financial details return success and with balancing charges returned" should {
         "return a success response back" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsBalancingCharges)))
@@ -178,7 +177,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
 
       "when both financial details return success and with balancing charges returned with mixed outstanding charges" should {
         "return a success empty response back with both outstanding amount zero and no late payment interest" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(Some(0), Some(0))))))
@@ -188,7 +187,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           )
         }
         "return a success empty response with outstanding amount zero and late payment interest amount zero" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(Some(0), Some(0)),
@@ -199,7 +198,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           )
         }
         "return a success POA2 only response with outstanding amount zero and late payment interest amount non-zero" in {
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(Some(0), Some(0)),
@@ -234,7 +233,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
             effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED), amountCodedOut = Some(2500.00))
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -275,7 +274,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             interestFromDate = Some(LocalDate.parse("2019-05-25")), interestEndDate = Some(LocalDate.parse("2019-06-25")),
             latePaymentInterestAmount = None, effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED))
-          when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+          when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -304,7 +303,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
     "with MFA Debits and non-MFA Debits charges" should {
       def testGetWhatYouOweChargesList(MFADebitsEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
         if (MFADebitsEnabled) enable(MFACreditsAndDebits) else disable(MFACreditsAndDebits)
-        when(mockIncomeTaxViewChangeConnector.getOutstandingCharges(any(), any(), any())(any()))
+        when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(OutstandingChargesModel(List())))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(financialDetails)))

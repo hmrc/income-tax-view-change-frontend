@@ -63,7 +63,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
 
   private def removeEmptyStrings(strOpt: Option[String]): Option[String] = {
       strOpt match {
-        case Some(s) => if (s == "") None else Some(s)
+        case Some(str) => if (str == "") None else Some(str)
         case None => None
       }
   }

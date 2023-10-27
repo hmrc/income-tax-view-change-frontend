@@ -22,7 +22,7 @@ import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.MockRepaymentHistoryConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.repaymentHistory._
 import play.api.http.Status
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockItvcErrorHandler
-  with MockIncomeTaxViewChangeConnector with FeatureSwitching with MockAuditingService {
+  with MockRepaymentHistoryConnector with FeatureSwitching with MockAuditingService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -98,7 +98,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       app.injector.instanceOf[NinoPredicate],
-      mockIncomeTaxViewChangeConnector,
+      mockRepaymentHistoryConnector,
       MockIncomeSourceDetailsPredicate,
       mockIncomeSourceDetailsService,
       mockAuthService,

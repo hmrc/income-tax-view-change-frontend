@@ -54,18 +54,11 @@
 }
 
 @changeReportingMethodUrl(taxYear: String, changeTo: String) = @{
-    viewModel.incomeSourceType match {
-        case SelfEmployment =>
-            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, SelfEmployment).url
-        case UkProperty  =>
-            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, UkProperty).url
-        case ForeignProperty  =>
-            controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, ForeignProperty).url
-    }
+    controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, changeTo, isAgent, viewModel.incomeSourceType).url
 }
 
 @changeToValue(currentMethod: String) = @{
-    if (currentMethod == "Q") {
+    if(currentMethod == "Q") {
         "annual"
     } else {
         "quarterly"
@@ -73,7 +66,7 @@
 }
 
 @taxYearValue(taxYear: String) = @{
-    s"${taxYear}-${(taxYear.toInt + 1).toString}"
+    s"${taxYear.toInt - 1}-${taxYear}"
 }
 
 @extractOption(content: Option[String]) = @{
@@ -99,6 +92,32 @@
     }
 }
 
+@getSEList = @{
+    Seq(
+        SummaryListRow(
+            key = Key(
+                content = Text(getMessage("business-name"))
+            ),
+            value = Value(
+                content = Text(extractOption(viewModel.tradingName))
+            )
+        ),
+        SummaryListRow(
+            key = Key(
+                content = Text(getMessage("business-address"))
+            ),
+            value = Value(
+                content = (
+                        getLongAddressFromBusinessAddressDetails(viewModel.address) match {
+                            case Some(x) => HtmlContent(s"""$x""")
+                            case None => Text(messages("incomeSources.generic.unknown"))
+                        }
+                        )
+            )
+        )
+    )
+}
+
 @getLongAddressFromBusinessAddressDetails(address: Option[AddressModel]) = @{
     address match {
         case Some(address) =>
@@ -115,6 +134,46 @@
     }
 }
 
+@getTaxYears = @{
+    Seq(
+        SummaryListRow(
+            key = Key(
+                content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear1.toInt - 1).toString, viewModel.latencyDetails.get.taxYear1))
+            ),
+            value = Value(
+                content = Text(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1)))
+            ),
+            actions = if(!viewModel.taxYearOneCrystallised.get) Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1)),
+                        content = Text(getMessage("change")),
+                        attributes = Map("id" -> "change-link-1")
+                    )
+                )
+            ))
+            else None
+        ),
+        SummaryListRow(
+            key = Key(
+                content = Text(getMessage("reporting-method", (viewModel.latencyDetails.get.taxYear2.toInt - 1).toString, viewModel.latencyDetails.get.taxYear2))
+            ),
+            value = Value(
+                content = HtmlContent(getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2)))
+            ),
+            actions = if(!viewModel.taxYearTwoCrystallised.get) Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2)),
+                        content = Text(getMessage("change")),
+                        attributes = Map("id" -> "change-link-2")
+                    )
+                )
+            )) else None
+        )
+    )
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -128,69 +187,38 @@
         captionClasses = Some("govuk-caption-l")
     ))
 
-    <dl class="govuk-summary-list" id="manage-details-table">
-        @if(viewModel.incomeSourceType == SelfEmployment) {
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
-                <dd class="govuk-summary-list__value" id="business-name">@{
-                    extractOption(viewModel.tradingName)
-                }</dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
-                <dd class="govuk-summary-list__value" id="business-address">@{
-                    getLongAddressFromBusinessAddressDetails(viewModel.address) match {
-                        case Some(x) => HtmlFormat.raw(x)
-                        case None => messages("incomeSources.generic.unknown")
-                    }
-                }</dd>
-            </div>
-        }
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@getMessage("date-started")</dt>
-            <dd class="govuk-summary-list__value" id="business-date-started">@{
-                viewModel.tradingStartDate match {
-                    case Some(x) => x.toLongDate
-                    case None => messages("incomeSources.generic.unknown")
-                }
-            }</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@getAccountingMethodMessage</dt>
-            <dd class="govuk-summary-list__value" id="business-accounting-method">@{
-                messages(viewModel.businessAccountingMethodAsKey(viewModel.businessAccountingMethod))
-            }</dd>
-        </div>
-        @if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
-                && viewModel.latencyDetails.isDefined) {
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear1, viewModel.latencyDetails.get.taxYear2)</dt>
-                <dd class="govuk-summary-list__value" id="reporting-method-1">@{
-                    getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator1))
-                }</dd>
-                @if(!viewModel.taxYearOneCrystallised.get){
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0" id="change-box-1">
-                        <a class="govuk-link" id="change-link-1" href=@changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear1), changeToValue(viewModel.latencyDetails.get.latencyIndicator1))>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                }
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("reporting-method", viewModel.latencyDetails.get.taxYear2, (viewModel.latencyDetails.get.taxYear2.toInt + 1).toString)</dt>
-                <dd class="govuk-summary-list__value" id="reporting-method-2">@{
-                    getMessage(viewModel.latencyValueAsKey(viewModel.latencyDetails.get.latencyIndicator2))
-                }</dd>
-                @if(!viewModel.taxYearTwoCrystallised.get){
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0" id="change-box-2">
-                        <a class="govuk-link" id="change-link-2" href=@changeReportingMethodUrl(taxYearValue(viewModel.latencyDetails.get.taxYear2), changeToValue(viewModel.latencyDetails.get.latencyIndicator2))>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                }
-            </div>
-        }
-    </dl>
+    @govukSummaryList(SummaryList(
+        rows = {
+            if(viewModel.incomeSourceType == SelfEmployment) getSEList else Seq.empty
+        } ++ Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("date-started"))
+                ),
+                value = Value(
+                    content = Text(
+                        viewModel.tradingStartDate match {
+                            case Some(x) => x.toLongDate
+                            case None => messages("incomeSources.generic.unknown")
+                        }
+                    )
+                )
+            ),
+            SummaryListRow(
+                key = Key(
+                    content = Text(getAccountingMethodMessage)
+                ),
+                value = Value(
+                    content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.businessAccountingMethod)))
+                )
+            ))
+                ++ {
+            if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
+                    && viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty
+        },
+        attributes = Map("id" -> "manage-details-table")),
+    )
+
     <br>
     <br>
 

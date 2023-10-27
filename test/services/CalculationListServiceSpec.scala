@@ -16,10 +16,9 @@
 
 package services
 
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.MockCalculationListConnector
 import models.calculationList.CalculationListErrorModel
 import models.core.Nino
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
 import testConstants.BaseTestConstants.{testNino, testTaxYear, testTaxYearRange}
@@ -27,9 +26,11 @@ import testConstants.CalculationListTestConstants
 import testUtils.TestSupport
 
 
-class CalculationListServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
+class CalculationListServiceSpec extends TestSupport with MockCalculationListConnector {
   val mockDateService: DateService = mock(classOf[DateService])
-  object TestCalculationListService extends CalculationListService(mockIncomeTaxViewChangeConnector, mockDateService)
+
+  object TestCalculationListService extends CalculationListService(mockCalculationListConnector, mockDateService)
+
   val taxYearEnd = 2024
   when(mockDateService.getCurrentTaxYearEnd(false)).thenReturn(taxYearEnd)
   when(mockDateService.getCurrentTaxYearEnd(true)).thenReturn(taxYearEnd + 1)

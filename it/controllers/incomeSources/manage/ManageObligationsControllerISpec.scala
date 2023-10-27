@@ -65,13 +65,15 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
       LocalDate.of(year, 5, 5),
       "Quarterly",
       false,
+      obligationType = "Quarterly"
     ),
       DatesModel(
         LocalDate.of(year, 1, 6),
         LocalDate.of(year, 4, 5),
         LocalDate.of(year, 5, 5),
         "Quarterly",
-        false
+        false,
+        obligationType = "Quarterly"
       )),
     Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )

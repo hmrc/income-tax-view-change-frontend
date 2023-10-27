@@ -41,8 +41,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val businessAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
   val ukAccountingMethod = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
   val foreignAccountingMethod = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
-  val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
-  val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2024", "2025")
+  val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
+  val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
   val change = messages("incomeSources.manage.business-manage-details.change")
   val quarterly = messages("incomeSources.manage.business-manage-details.quarterly")
   val annually = messages("incomeSources.manage.business-manage-details.annually")
@@ -252,17 +252,17 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod2
 
-      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
-      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+      document.getElementById("change-link-1").text() shouldBe change
+      document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024-2025", changeTo = "annual")
-      document.getElementById("reporting-method-1").text shouldBe annually
-      document.getElementById("reporting-method-2").text shouldBe quarterly
-      document.getElementById("business-address").text shouldBe expectedViewAddressString1
-      document.getElementById("business-name").text shouldBe expectedBusinessName
-      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
-      document.getElementById("business-accounting-method").text shouldBe cash
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessName
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe expectedViewAddressString1
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe expectedBusinessStartDate
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe cash
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe quarterly
 
     }
     "render the whole page with unknowns and no change links" in new Setup2(false) {
@@ -272,10 +272,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
 
-      document.getElementById("business-address").text shouldBe unknown
-      document.getElementById("business-name").text shouldBe unknown
-      document.getElementById("business-date-started").text shouldBe unknown
-      document.getElementById("business-accounting-method").text shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe unknown
     }
   }
   "ManageSelfEmployment - Agent" should {
@@ -295,17 +295,17 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod2
 
-      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
-      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+      document.getElementById("change-link-1").text() shouldBe change
+      document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2024-2025", changeTo = "annual")
-      document.getElementById("reporting-method-1").text shouldBe annually
-      document.getElementById("reporting-method-2").text shouldBe quarterly
-      document.getElementById("business-address").text shouldBe expectedViewAddressString1
-      document.getElementById("business-name").text shouldBe expectedBusinessName
-      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
-      document.getElementById("business-accounting-method").text shouldBe cash
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessName
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe expectedViewAddressString1
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe expectedBusinessStartDate
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe cash
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe quarterly
     }
   }
 
@@ -324,23 +324,23 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
 
-      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
-      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+      document.getElementById("change-link-1").text() shouldBe change
+      document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
-      document.getElementById("reporting-method-1").text shouldBe annually
-      document.getElementById("reporting-method-2").text shouldBe quarterly
-      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
-      document.getElementById("business-accounting-method").text shouldBe cash
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(false) {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
 
-      document.getElementById("business-date-started").text shouldBe unknown
-      document.getElementById("business-accounting-method").text shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
     }
   }
   "Manage Uk Property - Agent" should {
@@ -358,23 +358,23 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
 
-      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
-      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+      document.getElementById("change-link-1").text() shouldBe change
+      document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
-      document.getElementById("reporting-method-1").text shouldBe annually
-      document.getElementById("reporting-method-2").text shouldBe quarterly
-      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
-      document.getElementById("business-accounting-method").text shouldBe cash
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(true) {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
 
-      document.getElementById("business-date-started").text shouldBe unknown
-      document.getElementById("business-accounting-method").text shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
     }
   }
 
@@ -393,23 +393,23 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
 
-      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
-      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+      document.getElementById("change-link-1").text() shouldBe change
+      document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
-      document.getElementById("reporting-method-1").text shouldBe annually
-      document.getElementById("reporting-method-2").text shouldBe quarterly
-      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
-      document.getElementById("business-accounting-method").text shouldBe cash
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
     }
     "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(false) {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
 
-      document.getElementById("business-date-started").text shouldBe unknown
-      document.getElementById("business-accounting-method").text shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
     }
   }
   "Manage Foreign Property - Agent" should {
@@ -427,23 +427,23 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
 
-      document.getElementsByClass("govuk-summary-list__actions").eq(0).text() shouldBe change
-      document.getElementsByClass("govuk-summary-list__actions").eq(1).text() shouldBe change
+      document.getElementById("change-link-1").text() shouldBe change
+      document.getElementById("change-link-2").text() shouldBe change
 
-      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "quarterly")
-      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2024-2025", changeTo = "annual")
-      document.getElementById("reporting-method-1").text shouldBe annually
-      document.getElementById("reporting-method-2").text shouldBe quarterly
-      document.getElementById("business-date-started").text shouldBe expectedBusinessStartDate
-      document.getElementById("business-accounting-method").text shouldBe cash
+      document.getElementById("change-link-1").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
     }
     "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(true) {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
 
-      document.getElementById("business-date-started").text shouldBe unknown
-      document.getElementById("business-accounting-method").text shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
     }
   }
 }
