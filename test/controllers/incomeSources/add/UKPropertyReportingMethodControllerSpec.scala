@@ -21,7 +21,6 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
-import mocks.connectors.MockIncomeTaxViewChangeConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.incomeSourceDetails.viewmodels.UKPropertyReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -37,7 +36,6 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.UpdateIncomeSourceTestConstants.incomeSourceId
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
@@ -46,7 +44,7 @@ import views.html.incomeSources.add.UKPropertyReportingMethod
 import scala.concurrent.Future
 
 class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockIncomeTaxViewChangeConnector {
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
   val mockUKPropertyReportingMethod: UKPropertyReportingMethod = app.injector.instanceOf[UKPropertyReportingMethod]

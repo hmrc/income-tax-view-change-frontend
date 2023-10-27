@@ -16,15 +16,11 @@
 
 package services
 
-import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd}
-import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import auth.MtdItUser
 import config.featureswitch.{CodingOut, FeatureSwitching, TimeMachineAddYear}
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.MockFinancialDetailsConnector
 import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -32,7 +28,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import testConstants.BaseTestConstants._
+import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd}
+import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
+import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -40,7 +39,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
+class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsConnector with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -91,7 +90,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     None
   )(FakeRequest())
 
-  object TestFinancialDetailsService extends FinancialDetailsService(mockIncomeTaxViewChangeConnector, dateService)
+  object TestFinancialDetailsService extends FinancialDetailsService(mockFinancialDetailsConnector, dateService)
 
   val testUserWithRecentYears: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(
     mtdbsa = testMtditid,
@@ -249,19 +248,19 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
         val docNumber = "chargeId"
         val hc = implicitly[HeaderCarrier]
 
-        when(mockIncomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+        when(mockFinancialDetailsConnector.getChargeHistory(any(), any())(any()))
           .thenReturn(Future.successful(testValidChargeHistoryModel))
 
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, docNumber)(hc)
 
         result.futureValue shouldBe testValidChargeHistoryModel.chargeHistoryDetails
-        verify(mockIncomeTaxViewChangeConnector).getChargeHistory(testMtditid, docNumber)(hc)
+        verify(mockFinancialDetailsConnector).getChargeHistory(testMtditid, docNumber)(hc)
       }
     }
 
     "the connector returns an erroneous ChargesHistoryErrorModel" should {
       "generate a failure with InternalServerException" in {
-        when(mockIncomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+        when(mockFinancialDetailsConnector.getChargeHistory(any(), any())(any()))
           .thenReturn(Future.successful(testChargeHistoryErrorModel))
 
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)
@@ -274,7 +273,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockIncomeTaxViewChan
     "the connector call fails" should {
       "propagate a failure from the connector" in {
         val emulatedConnectorFailure = Future.failed(new RuntimeException)
-        when(mockIncomeTaxViewChangeConnector.getChargeHistory(any(), any())(any()))
+        when(mockFinancialDetailsConnector.getChargeHistory(any(), any())(any()))
           .thenReturn(emulatedConnectorFailure)
 
         val result = TestFinancialDetailsService.getChargeHistoryDetails(testMtditid, "chargeId")(implicitly)

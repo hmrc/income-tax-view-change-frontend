@@ -16,17 +16,17 @@
 
 package services
 
+import mocks.connectors.MockFinancialDetailsConnector
+import mocks.services.MockFinancialDetailsService
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationError}
+import models.paymentAllocations.PaymentAllocationsError
 import testConstants.BaseTestConstants._
 import testConstants.PaymentAllocationsTestConstants._
-import mocks.connectors.MockIncomeTaxViewChangeConnector
-import mocks.services.MockFinancialDetailsService
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationError, PaymentAllocationViewModel}
-import models.paymentAllocations.PaymentAllocationsError
 import testUtils.TestSupport
 
-class PaymentAllocationsServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with MockFinancialDetailsService {
+class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService {
 
-  object TestPaymentAllocationsService extends PaymentAllocationsService(mockIncomeTaxViewChangeConnector, mockFinancialDetailsService, appConfig)
+  object TestPaymentAllocationsService extends PaymentAllocationsService(mockFinancialDetailsConnector, mockFinancialDetailsService, appConfig)
 
   "get paymentAllocations" should {
     "return successful payment allocation details" when {

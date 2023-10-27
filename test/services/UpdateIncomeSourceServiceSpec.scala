@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import connectors.IncomeTaxViewChangeConnector
+import connectors.UpdateIncomeSourceConnector
 import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -60,19 +60,19 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
 
   val cessationDate = "2022-07-01"
 
-  val mockIncomeTaxViewChangeConnector: IncomeTaxViewChangeConnector = mock(classOf[IncomeTaxViewChangeConnector])
+  val mockUpdateIncomeSourceConnector: UpdateIncomeSourceConnector = mock(classOf[UpdateIncomeSourceConnector])
 
-  object TestUpdateIncomeSourceService extends UpdateIncomeSourceService(mockIncomeTaxViewChangeConnector)
+  object TestUpdateIncomeSourceService extends UpdateIncomeSourceService(mockUpdateIncomeSourceConnector)
 
   "The UpdateIncomeSourceService.updateCessationDate method" should {
     "return UpdateIncomeSourceResponse " when {
       "valid response" in {
-        when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
+        when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
         TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtdItId, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess(testMtdItId))
       }
       "invalid response" in {
-        when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
+        when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
         TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtdItId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
       }
@@ -83,12 +83,12 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
     "return UpdateIncomeSourceSuccess" when {
       val testIncomeSourceId = "123"
       "valid response" in {
-        when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
+        when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
         TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Right(UpdateIncomeSourceSuccess(testIncomeSourceId))
       }
       "invalid response" in {
-        when(mockIncomeTaxViewChangeConnector.updateCessationDate(any(), any(), any())(any()))
+        when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
         TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
       }
@@ -99,12 +99,12 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
     "return UpdateIncomeSourceSuccess" when {
       val testIncomeSourceId = "123"
       "valid response" in {
-        when(mockIncomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
+        when(mockUpdateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.successResponse))
         TestUpdateIncomeSourceService.updateTaxYearSpecific(testNino, testIncomeSourceId, taxYearSpecific).futureValue shouldBe successResponse
       }
       "invalid response" in {
-        when(mockIncomeTaxViewChangeConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
+        when(mockUpdateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
         TestUpdateIncomeSourceService.updateTaxYearSpecific(testNino, testIncomeSourceId, taxYearSpecific).futureValue shouldBe failureResponse
       }
