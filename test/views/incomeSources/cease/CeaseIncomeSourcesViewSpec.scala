@@ -100,6 +100,10 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       "all fields have value" in new Setup(false) {
         val table = document.getElementById("sole-trader-businesses-table")
 
+        println("ZZZZZZZ")
+        println(table)
+        println(table.getElementById("cease-link-business-0").attr("href"))
+
         document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
         table.getElementById("table-row-trading-name-0").text() shouldBe testTradeName
         table.getElementById("table-row-trading-start-date-0").text() shouldBe testStartDate.toLongDate
