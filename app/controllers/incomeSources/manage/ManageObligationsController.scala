@@ -25,11 +25,9 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
-import forms.utils.SessionKeys
 import models.TaxYearId
-import models.TaxYearId.mkTaxYear
+import models.TaxYearId.mkTaxYearId
 import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
-import models.incomeSourceDetails.TaxYearJson.getTaxYearModel
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
@@ -69,7 +67,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             handleRequest(
               mode = SelfEmployment,
               isAgent = false,
-              mkTaxYear(taxYearString).toOption.get,
+              mkTaxYearId(taxYearString).toOption.get,
               changeTo,
               incomeSourceIdMayBe
             )
@@ -90,7 +88,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             handleRequest(
               mode = SelfEmployment,
               isAgent = true,
-              mkTaxYear(taxYearString).toOption.get,
+              mkTaxYearId(taxYearString).toOption.get,
               changeTo,
               incomeSourceIdMayBe
             )
@@ -108,7 +106,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   def showUKProperty(changeTo: String, taxYearString: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      mkTaxYear(taxYearString).toOption.map {
+      mkTaxYearId(taxYearString).toOption.map {
         taxYear =>
           handleRequest(
             mode = UkProperty,
@@ -128,7 +126,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             handleRequest(
               mode = UkProperty,
               isAgent = true,
-              mkTaxYear(taxYearString).toOption.get,
+              mkTaxYearId(taxYearString).toOption.get,
               changeTo,
               None
             )
@@ -141,7 +139,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       handleRequest(
         mode = ForeignProperty,
         isAgent = false,
-        mkTaxYear(taxYearString).toOption.get,
+        mkTaxYearId(taxYearString).toOption.get,
         changeTo,
         None
       )
@@ -155,7 +153,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             handleRequest(
               mode = ForeignProperty,
               isAgent = true,
-              mkTaxYear(taxYearString).toOption.get,
+              mkTaxYearId(taxYearString).toOption.get,
               changeTo,
               None
             )

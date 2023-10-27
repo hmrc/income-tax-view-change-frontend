@@ -49,20 +49,20 @@ object TaxYearId {
   // Enforce instance creation via "smart constructors"
   // Examples of "smart constructors" to create type instance
 
-  def mkTaxYear(s: Int): TaxYearId =  {
+  def mkTaxYearId(s: Int): TaxYearId =  {
     // Step 1: validate TaxYear before creating instance
     // Step 2: create taxYear string (TODO: add normalisation here / use fixed format, ie. 2023-2024     ?)
     new TaxYearId(s)
   }
 
-  def mkTaxYear(in: String): Either[Throwable, TaxYearId] = Try {
+  def mkTaxYearId(in: String): Either[Throwable, TaxYearId] = Try {
     // Parse input string and validate if its comply with any taxYear formats we use
     new TaxYearId(2025) // temporary use of in param as a valida value
   }.toEither
 
   // create TaxYear based on the outcome of running external validator returning Future[Boolean]
-  def mkTaxYear(s: Int, validationRule : TaxYearId => Future[Boolean])
-               (implicit  ec : ExecutionContext): Future[Either[Throwable, TaxYearId]] = {
+  def mkTaxYearId(s: Int, validationRule : TaxYearId => Future[Boolean])
+                 (implicit  ec : ExecutionContext): Future[Either[Throwable, TaxYearId]] = {
     for {
       internalTaxYear <- Future.successful(new TaxYearId(s))
       validationOutcome <- validationRule(internalTaxYear)

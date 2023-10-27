@@ -17,8 +17,6 @@
 package models.incomeSourceDetails
 
 import models.TaxYearId
-
-import scala.util.Try
 import play.api.libs.json.{JsPath, Writes}
 import play.api.libs.functional.syntax._
 
@@ -37,7 +35,7 @@ object TaxYearJson {
       (JsPath \ "endYear").write[Int]
     )(unlift(TaxYearJson.unapply))
 
-  // TODO: review these method below / if we really need these ???
+  /*
   private def areValidYears(yearOne: String, yearTwo: String): Boolean = {
 
     def isValidYear(year: String): Boolean =
@@ -63,4 +61,6 @@ object TaxYearJson {
       case _ => None
     }
   }
+
+   */
 }

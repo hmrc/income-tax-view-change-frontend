@@ -65,7 +65,7 @@ case class ObligationsAuditModel(incomeSourceType: IncomeSourceType,
     if (quarterly.nonEmpty) {
       Some(quarterly.collect {
         case (taxYearAsInt, dataModel) => {
-          val localTaxYearId = mkTaxYear(taxYearAsInt)
+          val localTaxYearId = mkTaxYearId(taxYearAsInt)
           Json.obj(
             "taxYear" -> s"${localTaxYearId.normalised}",
             "quarter" -> dataModel.map { entry =>

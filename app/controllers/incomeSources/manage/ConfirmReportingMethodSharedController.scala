@@ -29,6 +29,8 @@ import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
+import models.TaxYearId
+import models.incomeSourceDetails.TaxYearJson.mkTaxYear
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYearJson}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
@@ -107,7 +109,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
-  private def handleShowRequest(taxYear: String,
+  import models.TaxYearId._
+  private def handleShowRequest(taxYearAsString: String,
                                 changeTo: String,
                                 isAgent: Boolean,
                                 incomeSourceType: IncomeSourceType,
@@ -115,20 +118,20 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
-    val maybeTaxYearModel: Option[TaxYearJson] = TaxYearJson.getTaxYearModel(taxYear)
+    val maybeTaxYearId: Option[TaxYearId] = mkTaxYearId(taxYearAsString).toOption
     val maybeIncomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId)
 
     withIncomeSourcesFS {
       Future.successful(
-        (maybeTaxYearModel, newReportingMethod, maybeIncomeSourceId) match {
-          case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
+        (maybeTaxYearId, newReportingMethod, maybeIncomeSourceId) match {
+          case (Some(taxYearId), Some(reportingMethod), Some(id)) =>
 
-            val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
+            val (backCall, _) = getRedirectCalls(taxYearAsString, isAgent, changeTo, Some(id), incomeSourceType)
 
             auditingService
               .extendedAudit(
                 SwitchReportingMethodAuditModel(
-                  taxYear = taxYear,
+                  taxYear = taxYearAsString,
                   errorMessage = None,
                   reportingMethodChangeTo = changeTo,
                   journeyType = incomeSourceType.journeyType
@@ -141,13 +144,13 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 backUrl = backCall.url,
                 newReportingMethod = reportingMethod,
                 form = ConfirmReportingMethodForm(changeTo),
-                taxYearEndYear = taxYearModel.endYear.toString,
-                taxYearStartYear = taxYearModel.startYear.toString,
-                postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+                taxYearEndYear = taxYearId.secondYear.toString,
+                taxYearStartYear = taxYearId.firstYear.toString,
+                postAction = getPostAction(taxYearAsString, changeTo, isAgent, incomeSourceType),
+                isCurrentTaxYear = dateService.getCurrentTaxYearEnd() == taxYearId.secondYear
               )
             )
-          case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
+          case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYearAsString")
           case (_, None, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse reporting method: $changeTo")
           case (_, _, None) => logAndShowError(isAgent, s"[handleShowRequest]: Could not find incomeSourceId for $incomeSourceType")
         }
@@ -160,25 +163,25 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     (if (isAgent) itvcErrorHandler else itvcErrorHandlerAgent).showInternalServerError()
   }
 
-  private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[String], incomeSourceType: IncomeSourceType)
+  private def handleSubmitRequest(taxYearString: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[String], incomeSourceType: IncomeSourceType)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val newReportingMethod: Option[String] = getReportingMethod(changeTo)
-    val maybeTaxYearModel: Option[TaxYearJson] = TaxYearJson.getTaxYearModel(taxYear)
+    val maybeTaxYearId: Option[TaxYearId] = mkTaxYearId(taxYearString).toOption
     val incomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId)
-    val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
+    val (backCall, successCall) = getRedirectCalls(taxYearString, isAgent, changeTo, incomeSourceId, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
 
     withIncomeSourcesFS {
-      (maybeTaxYearModel, newReportingMethod) match {
-        case (Some(taxYearModel), Some(reportingMethod)) =>
+      (maybeTaxYearId, newReportingMethod) match {
+        case (Some(taxYearId), Some(reportingMethod)) =>
           ConfirmReportingMethodForm(changeTo).bindFromRequest().fold(
             formWithErrors => {
 
               auditingService
                 .extendedAudit(
                   SwitchReportingMethodAuditModel(
-                    taxYear = taxYear,
+                    taxYear = taxYearString,
                     reportingMethodChangeTo = changeTo.toLowerCase.capitalize,
                     errorMessage = formWithErrors.errors.flatMap(_.messages.map(messagesApi(_)(Lang("GB")))).headOption,
                     journeyType = incomeSourceType.journeyType
@@ -192,17 +195,17 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                     form = formWithErrors,
                     backUrl = backCall.url,
                     newReportingMethod = reportingMethod,
-                    taxYearEndYear = taxYearModel.endYear.toString,
-                    taxYearStartYear = taxYearModel.startYear.toString,
-                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear),
-                    postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType)
+                    taxYearEndYear = taxYearId.secondYear.toString,
+                    taxYearStartYear = taxYearId.firstYear.toString,
+                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd() == taxYearId.secondYear,
+                    postAction = getPostAction(taxYearString, changeTo, isAgent, incomeSourceType)
                   )
                 )
               )
             },
-            _ => handleValidForm(errorCall, isAgent, successCall, taxYearModel, incomeSourceId, reportingMethod)
+            _ => handleValidForm(errorCall, isAgent, successCall, mkTaxYear(taxYearId), incomeSourceId, reportingMethod)
           )
-        case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
+        case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYearString"))
         case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
       }
     }
