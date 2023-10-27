@@ -147,7 +147,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     utils.SessionKeys.businessName -> "Test Name"
   ).withHeaders(
     HeaderNames.REFERER -> "/test/url",
-    "X-Session-ID" -> "xssession-12345"
+    "X-Session-ID" -> testSessionId
   )
 
   def fakeRequestWithActiveSessionWithReferer(referer: String): FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
