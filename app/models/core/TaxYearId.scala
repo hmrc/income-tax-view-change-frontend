@@ -18,7 +18,8 @@ package models.core
 
 import models.incomeSourceDetails.TaxYearJson
 import models.incomeSourceDetails.TaxYearJson._
-import java.time.LocalDate
+
+import java.time.{LocalDate, Month}
 import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -31,17 +32,17 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
 
   def toModel : TaxYearJson =  mkTaxYear(this)
 
-  def from: LocalDate = LocalDate.of(firstYear, 4, 6)
-  def to: LocalDate = LocalDate.of(secondYear, 4, 6)
+  def from: LocalDate = LocalDate.of(firstYear, Month.APRIL, 6)
+  def to: LocalDate = LocalDate.of(secondYear, Month.APRIL, 5)
 
-  // Will return taxYear in format: YYYY-YY
+  // tax year in format: YYYY-YY
   def normalised: String = {
     val formatterFull = DateTimeFormatter.ofPattern("YYYY")
     val formatterShort = DateTimeFormatter.ofPattern("YY")
     s"${from.format(formatterFull)}-${to.format(formatterShort)}"
   }
 
-  // Will return taxYear in format YYYY-YYYY
+  // tax year in format: YYYY-YYYY
   def full: String = {
     val formatterFull = DateTimeFormatter.ofPattern("YYYY")
     s"${from.format(formatterFull)}-${to.format(formatterFull)}"

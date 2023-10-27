@@ -22,7 +22,7 @@ import play.api.libs.functional.syntax._
 
 
 // To be used as a model to generate required Json only;
-// Ine the rest of the cases please use TaxYearId type
+// In the rest of the cases please use TaxYearId type
 case class TaxYearJson private(startYear: Int, endYear: Int)
 
 object TaxYearJson {
