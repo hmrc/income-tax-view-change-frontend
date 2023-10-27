@@ -80,28 +80,37 @@
         @h2(msg = getMessage("self-employment.h1"),
             optId = Some("self-employment-h1"))
 
-        <table class="govuk-table govuk-!-margin-bottom-3" id="sole-trader-businesses-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col" id="table-head-business-name">@getMessage("table-head.business-name")</th>
-                    <th class="govuk-table__header" scope="col" id="table-head-date-started">@getMessage("table-head.date-started")</th>
-                    <td class="govuk-table__header" id="empty0"></td>
-                </tr>
-            </thead>
-            <tbody>
-                @for((item, index) <- sources.soleTraderBusinesses.zipWithIndex) {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@noneToUnknown(item.tradingName)</td>
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@noneToUnknown(item.tradingStartDate.map(_.toLongDate))</td>
-                    <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="@{s"cease-link-business-$index"}" href=@ceaseSoleTraderBusinessURL(item.incomeSourceId)>
-                            @getMessage("cease")
-                        </a>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.business-name")),
+                    attributes = Map("id" -> "table-head-business-name")),
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started", "colspan" -> "2"))
+            )),
+            rows = sources.soleTraderBusinesses.zipWithIndex.map { case (business, index) => Seq(
+                TableRow(
+                    content = Text(noneToUnknown(business.tradingName)),
+                    attributes = Map("id" -> s"table-row-trading-name-$index")),
+
+                TableRow(
+                    content = Text(noneToUnknown(business.tradingStartDate.map(_.toLongDate))),
+                    attributes = Map("id" -> s"table-row-trading-start-date-$index")),
+
+                TableRow(
+                    content = HtmlContent(
+                        s"""
+                                <a class="govuk-link" href='${ceaseSoleTraderBusinessURL(business.incomeSourceId)}'>
+                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
+                                </a>"""
+                    ),
+                    classes = "govuk-!-text-align-right"
+                )
+            )},
+            attributes = Map("id" -> "sole-trader-businesses-table")
+        ))
 
         <br>
 
@@ -115,24 +124,29 @@
         @p(id = Some("uk-property-p1")) {
             @getMessage("uk-property.p1") }
 
-        <table class="govuk-table govuk-!-margin-bottom-3" id="uk-property-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col" id="table-head-date-started-uk">@getMessage("table-head.date-started")</th>
-                    <td class="govuk-table__header" id="empty1"></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@noneToUnknown(sources.ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)))</td>
-                    <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="cease-link-uk" href=@ceaseUkPropertyURL>
-                            @getMessage("cease")
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started-uk", "colspan" -> "2")),
+            )),
+
+            rows = Seq(Seq(
+                TableRow(
+                    content = Text(noneToUnknown(sources.ukProperty.flatMap(_.tradingStartDate.map(_.toLongDate)))),
+                    attributes = Map("id" -> "table-row-trading-start-date-uk")),
+                TableRow(
+                    content = HtmlContent(
+                        s"""
+                                <a class="govuk-link" href='${ceaseUkPropertyURL}'>
+                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
+                                </a>"""
+                    ),
+                    classes = "govuk-!-text-align-right"
+                )
+            )),
+            attributes = Map("id" -> "uk-property-table")
+        ))
 
         <br>
 
@@ -146,24 +160,29 @@
         @p(id = Some("foreign-property-p1")) {
             @getMessage("foreign-property.p1") }
 
-        <table class="govuk-table govuk-!-margin-bottom-3" id="foreign-property-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col" id="table-head-date-started-foreign">@getMessage("table-head.date-started")</th>
-                    <td class="govuk-table__header" id="empty2"></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@noneToUnknown(sources.foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)))</td>
-                    <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="cease-link-foreign" href=@ceaseForeignPropertyURL>
-                            @getMessage("cease")
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        @govukTable(Table(
+            head = Some(List(
+                HeadCell(
+                    content = Text(getMessage("table-head.date-started")),
+                    attributes = Map("id" -> "table-head-date-started-foreign", "colspan" -> "2")),
+            )),
+
+            rows = Seq(Seq(
+                TableRow(
+                    content = Text(noneToUnknown(sources.foreignProperty.flatMap(_.tradingStartDate.map(_.toLongDate)))),
+                    attributes = Map("id" -> "table-row-trading-start-date-foreign")),
+                TableRow(
+                    content = HtmlContent(
+                        s"""
+                                <a class="govuk-link" href='${ceaseForeignPropertyURL}'>
+                                    ${getMessage("cease")}<span class="govuk-visually-hidden">cease</span>
+                                </a>"""
+                    ),
+                    classes = "govuk-!-text-align-right"
+                )
+            )),
+            attributes = Map("id" -> "foreign-property-table")
+        ))
 
         <br>
 
