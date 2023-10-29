@@ -323,7 +323,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
                                       withUpdateIncomeSourceResponseError: Boolean = false
                                      ): Future[Result] = {
     if (disableIncomeSourcesFS)
-      disableAllSwitches()
+      disable(IncomeSources)
 
     mockSingleBISWithCurrentYearAsMigrationYear()
     mockAuthRetrieval(isAgent)
