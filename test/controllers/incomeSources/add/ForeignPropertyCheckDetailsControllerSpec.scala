@@ -20,9 +20,12 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.ForeignProperty
+import enums.JourneyType.{Add, JourneyType}
 import forms.utils.SessionKeys
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
+import mocks.services.MockSessionService
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -42,14 +45,17 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class ForeignPropertyCheckDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
-with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching {
+with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with FeatureSwitching with MockSessionService{
 
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
-
   val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
-  val testForeignPropertyStartDate: String = LocalDate.of(2023, 1, 2).toString
-  val testForeignPropertyAccountingMethod: String = "cash"
+  val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
+  val testPropertyAccountingMethod: String = "CASH"
+  val accruals: String = messages("incomeSources.add.accountingMethod.accruals")
+  val journeyType: JourneyType = JourneyType(Add, ForeignProperty)
+  val testJourneyTypeString: String = JourneyType(Add, ForeignProperty).toString
+
 
   object TestForeignPropertyCheckDetailsController extends ForeignPropertyCheckDetailsController(
     app.injector.instanceOf[ForeignPropertyCheckDetails],
@@ -60,12 +66,12 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
-    businessDetailsService = mockBusinessDetailsService
+    businessDetailsService = mockBusinessDetailsService,
+    sessionService = mockSessionService,
   )(
     ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
-    sessionService = app.injector.instanceOf[SessionService],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
@@ -139,14 +145,14 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         disableAllSwitches()
         enable(IncomeSources)
 
+        mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(noIncomeDetails)
-        val result = TestForeignPropertyCheckDetailsController.show()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
-            ))
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
+        val result = TestForeignPropertyCheckDetailsController.show()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
         val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
@@ -163,12 +169,12 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
-        val result = TestForeignPropertyCheckDetailsController.showAgent()(
-          fakeRequestConfirmedClient()
-            .withSession(
-              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
-            ))
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
+        val result = TestForeignPropertyCheckDetailsController.showAgent()(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
         val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
@@ -189,11 +195,12 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
-        val result = TestForeignPropertyCheckDetailsController.show()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
-            ))
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
+        val result = TestForeignPropertyCheckDetailsController.show()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -206,11 +213,12 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
-        val result = TestForeignPropertyCheckDetailsController.showAgent()(
-          fakeRequestConfirmedClient()
-            .withSession(
-              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
-            ))
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
+        val result = TestForeignPropertyCheckDetailsController.showAgent()(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -224,11 +232,11 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
-        val result = TestForeignPropertyCheckDetailsController.show()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate
-            ))
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(None))
+        val result = TestForeignPropertyCheckDetailsController.show()(fakeRequestWithActiveSession)
 
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -241,11 +249,11 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
-        val result = TestForeignPropertyCheckDetailsController.showAgent()(
-          fakeRequestConfirmedClient()
-            .withSession(
-              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate
-            ))
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(None))
+        val result = TestForeignPropertyCheckDetailsController.showAgent()(fakeRequestConfirmedClient())
 
         val document: Document = Jsoup.parse(contentAsString(result))
 
@@ -264,15 +272,13 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
 
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(testPropertyAccountingMethod)))
+
         when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
           thenReturn(Future(Right(CreateIncomeSourceResponse("123"))))
-        val result = TestForeignPropertyCheckDetailsController.submit()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
-            )
-        )
+        val result = TestForeignPropertyCheckDetailsController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("123").url)
@@ -283,14 +289,15 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(testPropertyAccountingMethod)))
+
         when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
           thenReturn(Future(Right(CreateIncomeSourceResponse("123"))))
 
-        val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
-          .withSession(
-            SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-            SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
-          ))
+        val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("123").url)
@@ -303,8 +310,11 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
-        val result = TestForeignPropertyCheckDetailsController.submit()(
-          fakeRequestWithActiveSession)
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
+        val result = TestForeignPropertyCheckDetailsController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(errorUrl)
@@ -315,8 +325,12 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
-        val result = TestForeignPropertyCheckDetailsController.submitAgent(
-          fakeRequestConfirmedClient())
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
+
+        val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(agentErrorUrl)
@@ -329,15 +343,13 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
 
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(testPropertyAccountingMethod)))
+
         when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
           thenReturn(Future(Left(new Error(s"Failed to created incomeSources"))))
-        val result = TestForeignPropertyCheckDetailsController.submit()(
-          fakeRequestWithActiveSession
-            .withSession(
-              SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-              SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
-            )
-        )
+        val result = TestForeignPropertyCheckDetailsController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(errorUrl)
@@ -348,14 +360,15 @@ with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with Featur
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(noIncomeDetails)
+
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testPropertyStartDate)))
+        setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(testPropertyAccountingMethod)))
+
         when(mockBusinessDetailsService.createForeignProperty(any())(any(), any(), any())).
           thenReturn(Future(Left(new Error(s"Failed to created incomeSources"))))
 
-        val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient()
-          .withSession(
-            SessionKeys.foreignPropertyStartDate -> testForeignPropertyStartDate,
-            SessionKeys.addIncomeSourcesAccountingMethod -> testForeignPropertyAccountingMethod
-          ))
+        val result = TestForeignPropertyCheckDetailsController.submitAgent(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(agentErrorUrl)

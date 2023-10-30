@@ -27,10 +27,8 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
 

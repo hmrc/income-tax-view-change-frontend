@@ -19,13 +19,18 @@ package controllers.agent.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
-import forms.utils.SessionKeys._
+import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId, testSessionId}
+import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+
+import java.time.LocalDate
 
 class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
 
@@ -34,24 +39,48 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
   val addBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(testSelfEmploymentId).url
   val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url
 
-  val sessionData: Map[String, String] = Map(businessName -> "Test Business",
-    businessStartDate -> "2022-01-01",
-    businessTrade -> "Plumbing",
-    addBusinessAddressLine1 -> "Test Road",
-    addBusinessPostalCode -> "B32 1PQ",
-    addIncomeSourcesAccountingMethod -> "ACCRUALS",
-    addBusinessAccountingPeriodEndDate -> "2023-11-11")
-
+  val testBusinessId: String = testSelfEmploymentId
   val testBusinessName: String = "Test Business"
-  val testBusinessStartDate: String = "1 January 2022"
+  val testBusinessStartDate: LocalDate = LocalDate.of(2023, 1, 1)
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "Test Road"
   val testBusinessPostCode: String = "B32 1PQ"
   val testBusinessCountryCode: String = "United Kingdom"
-  val testBusinessAccountingMethod: String = "Traditional accounting"
-  val continueButtonText: String = messagesAPI("base.confirm-and-continue")
-
+  val testBusinessAccountingMethod: String = "cash"
+  val testBusinessAccountingMethodView: String = "Cash basis accounting"
+  val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
+  val testCountryCode = "GB"
   val noAccountingMethod: String = ""
+  val continueButtonText: String = messagesAPI("base.confirm-and-continue")
+  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
+  val testJourneyType: String = JourneyType(Add, SelfEmployment).toString
+
+  val testAddIncomeSourceData = AddIncomeSourceData(
+    businessName = Some(testBusinessName),
+    businessTrade = Some(testBusinessTrade),
+    dateStarted = Some(testBusinessStartDate),
+    createdIncomeSourceId = Some(testBusinessId),
+    address = Some(testBusinessAddress),
+    countryCode = Some(testCountryCode),
+    accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
+    incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
+  )
+
+  val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = testJourneyType,
+    addIncomeSourceData = Some(testAddIncomeSourceData))
+
+  val testUIJourneySessionDataNoAccountingMethod = testUIJourneySessionData.copy(
+    addIncomeSourceData = Some(testAddIncomeSourceData.copy(
+      incomeSourcesAccountingMethod = None)))
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession(Add))
+  }
 
 
   s"calling GET $checkBusinessDetailsShowUrlAgent" should {
@@ -64,41 +93,17 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
-
+        await(sessionService.setMongoData(testUIJourneySessionData))
         When(s"I call GET $checkBusinessDetailsShowUrlAgent")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
           elementTextByID("business-name-value")(testBusinessName),
-          elementTextByID("business-date-value")(testBusinessStartDate),
+          elementTextByID("business-date-value")("1 January 2023"),
           elementTextByID("business-trade-value")(testBusinessTrade),
-          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode+ " " + testBusinessCountryCode),
-          elementTextByID("business-accounting-value")(testBusinessAccountingMethod),
-          elementTextByID("confirm-button")(continueButtonText)
-        )
-      }
-    }
-    "render the Check Business details page without accounting method" when {
-      "User is authorised" in {
-        Given("I wiremock stub a successful Income Source Details response with existing businesses")
-        stubAuthorisedAgentUser(authorised = true)
-
-        enable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-        val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
-        IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
-
-        When(s"I call GET $checkBusinessDetailsShowUrlAgent")
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)
-
-        result should have(
-          httpStatus(OK),
-          elementTextByID("business-name-value")(testBusinessName),
-          elementTextByID("business-date-value")(testBusinessStartDate),
-          elementTextByID("business-trade-value")(testBusinessTrade),
-          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode+ " " + testBusinessCountryCode),
-          elementTextByID("business-accounting-value")(noAccountingMethod),
+          elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCode),
+          elementTextByID("business-accounting-value")(testBusinessAccountingMethodView),
           elementTextByID("confirm-button")(continueButtonText)
         )
       }
@@ -120,8 +125,8 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
-
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)(formData)
+        await(sessionService.setMongoData(testUIJourneySessionData))
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -129,7 +134,6 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         )
       }
     }
-
     s"redirect to $errorPageUrl" when {
       "error in response from API" in {
         Given("Income Sources FS is enabled")
@@ -137,20 +141,10 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val formData: Map[String, Seq[String]] = Map(
-          "addBusinessName" -> Seq("Test Business Name"),
-          "addBusinessTrade" -> Seq("Test Business Trade"),
-          "addBusinessStartDate" -> Seq("2011-11-11"),
-          "addBusinessAddressLine1" -> Seq("Test Business Address"),
-          "addBusinessPostalCode" -> Seq("SE15 1WR"),
-          "addIncomeSourcesAccountingMethod" -> Seq("CASH"),
-          "addBusinessAccountingPeriodEndDate" -> Seq("2023-11-11")
-        )
-
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponse(testMtditid)
+        await(sessionService.setMongoData(testUIJourneySessionData))
 
-        When(s"I call $checkBusinessDetailsSubmitUrlAgent")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", clientDetailsWithConfirmation)(Map.empty)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -159,18 +153,13 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
       }
 
       "agent session details are empty" in {
-        val formData: Map[String, Seq[String]] = Map("addBusinessName" -> Seq(""),
-          "addBusinessTrade" -> Seq(""),
-          "addBusinessStartDate" -> Seq(""),
-          "addBusinessAddressLine1" -> Seq(""),
-          "addBusinessPostalCode" -> Seq(""),
-          "addIncomeSourcesAccountingMethod" -> Seq(""))
+
         stubAuthorisedAgentUser(authorised = true)
 
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", sessionData ++ clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-check-details", clientDetailsWithConfirmation)(Map.empty)
 
         result should have(
           httpStatus(SEE_OTHER),

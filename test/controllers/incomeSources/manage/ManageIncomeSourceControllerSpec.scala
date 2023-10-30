@@ -17,28 +17,24 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
-import config.featureswitch.FeatureSwitch.switches
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import controllers.incomeSources.manage.ManageIncomeSourceController
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
+import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents, Result}
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAuthAgentSuccessWithSaUtrResponse, testIndividualAuthSuccessWithSaUtrResponse}
-import testUtils.TestSupport
 import play.api.http.Status
-import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
-import play.api.test.FakeRequest
-import services.SessionService
-import testConstants.BusinessDetailsTestConstants.{ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2, viewBusinessDetailsViewModel}
-import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel, viewUkPropertyDetailsViewModel}
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
+import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
+import testUtils.TestSupport
 import views.html.incomeSources.manage.ManageIncomeSources
 
 import scala.concurrent.Future
@@ -50,7 +46,8 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
   with MockNavBarEnumFsPredicate
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
-  with TestSupport {
+  with TestSupport
+  with MockSessionService {
 
   object TestManageIncomeSourceController
     extends ManageIncomeSourceController(
@@ -61,99 +58,112 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       retrieveNino = app.injector.instanceOf[NinoPredicate],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
-      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
+      sessionService = mockSessionService,
       auditingService = app.injector.instanceOf[AuditingService]
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
-      sessionService = app.injector.instanceOf[SessionService],
+      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+      itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       ec = ec
     )
 
   "The ManageIncomeSourcesController" should {
-    s"return ${Status.SEE_OTHER} and redirect to the home page" when {
-      "the IncomeSources FS is disabled for an Individual" in {
-        val result = runTest(isAgent = false, disableIncomeSources = true)
+    "redirect an individual back to the home page" when {
+      "the IncomeSources FS is disabled" in {
+        disableAllSwitches()
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
+        val result: Future[Result] = TestManageIncomeSourceController.show(false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
+    }
 
-      "the IncomeSources FS is disabled for an Agent" in {
-        val result = runTest(isAgent = true, disableIncomeSources = true)
+    "redirect an agent back to the home page" when {
+      "the IncomeSources FS is disabled" in {
+        disableAllSwitches()
+        mockSingleBISWithCurrentYearAsMigrationYear()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
+        val result: Future[Result] = TestManageIncomeSourceController.show(true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+
       }
     }
 
-    s"return ${Status.OK}" when {
-      "Individual has a sole trader business and a UK property" in {
-        val result = runTest(isAgent = false)
-        status(result) shouldBe Status.OK
-      }
+    "redirect an individual to the view and manage income sources page" when {
+      "user has a sole trader business and a UK property" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothIncomeSources()
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockCreateSession(true)
+        setupMockDeleteSession(true)
 
-      "Agent has a sole trader business and a UK property" in {
-        val result = runTest(isAgent = true)
+        when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+          .thenReturn(Right(ViewIncomeSourcesViewModel(
+            viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
+            viewUkProperty = Some(viewUkPropertyDetailsViewModel),
+            viewForeignProperty = None,
+            viewCeasedBusinesses = Nil)))
+
+        val result = TestManageIncomeSourceController.show(false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.OK
       }
     }
 
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
+    "redirect an agent to the view and manage income sources page" when {
+      "agent's client has a sole trader business and a UK property" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockCreateSession(true)
+        setupMockDeleteSession(true)
+
+        when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+          .thenReturn(Right(ViewIncomeSourcesViewModel(
+            viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
+            viewUkProperty = Some(viewUkPropertyDetailsViewModel),
+            viewForeignProperty = None,
+            viewCeasedBusinesses = Nil)))
+
+        val result = TestManageIncomeSourceController.show(true)(fakeRequestConfirmedClient("AB123456C"))
+        status(result) shouldBe Status.OK
+      }
+    }
+
+    "show error page" when {
       "error response from service for individual" in {
-        val result = runTest(isAgent = false, errorResponse = true)
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothIncomeSources()
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockCreateSession(true)
+
+        when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+          .thenReturn(Left(MissingFieldException("Trading Name")))
+
+        val result: Future[Result] = TestManageIncomeSourceController.show(false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
       "error response from service for agent" in {
-        val result = runTest(isAgent = true, errorResponse = true)
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockCreateSession(true)
+
+        when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
+          .thenReturn(Left(MissingFieldException("Trading Name")))
+
+        val result: Future[Result] = TestManageIncomeSourceController.show(true)(fakeRequestConfirmedClient("AB123456C"))
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
-  }
-
-  def runTest(isAgent: Boolean,
-              errorResponse: Boolean = false,
-              disableIncomeSources: Boolean = false
-             ): Future[Result] = {
-
-    if (disableIncomeSources)
-      disable(IncomeSources)
-
-    if (isAgent)
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    else
-      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-    mockBothIncomeSources()
-
-    when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
-      .thenReturn(
-        if (errorResponse)
-          Left(MissingFieldException("Trading Name"))
-        else
-          Right(
-            ViewIncomeSourcesViewModel(
-              viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel),
-              viewUkProperty = Some(viewUkPropertyDetailsViewModel),
-              viewForeignProperty = None,
-              viewCeasedBusinesses = Nil
-            )
-          )
-      )
-
-    TestManageIncomeSourceController.show(isAgent)(
-      if (isAgent)
-        fakeRequestConfirmedClient()
-      else
-        fakeRequestWithActiveSession
-    )
-  }
-
-  override def beforeEach(): Unit = {
-    disableAllSwitches()
-    enable(IncomeSources)
   }
 }

@@ -18,7 +18,6 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.JourneyType
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
@@ -28,12 +27,11 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{stringTrue, testEndDate2022, testMtditid, testNino, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, businessOnlyResponseWithUnknownAddressName, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
 
 class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {

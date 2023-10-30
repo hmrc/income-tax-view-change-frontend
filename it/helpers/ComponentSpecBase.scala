@@ -40,7 +40,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -48,7 +48,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -72,14 +72,14 @@ class TestDateService extends DateServiceInterface {
 
   override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2022, 4, 6)
 
-  override def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+  override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
     val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
     if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
-      accountingPeriodEndDate.toString
+      accountingPeriodEndDate
     } else {
-      accountingPeriodEndDate.plusYears(1).toString
+      accountingPeriodEndDate.plusYears(1)
     }
   }
 
@@ -96,13 +96,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
   val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
-  implicit val lang: Lang = Lang("GB")
   val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   val mockLanguageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
+  implicit val lang: Lang = Lang("GB")
   implicit val mockImplicitDateFormatter: ImplicitDateFormatterImpl = new ImplicitDateFormatterImpl(mockLanguageUtils)
-  val testSessionId: String = "xssession-12345"
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
-
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val dateService: DateService = new DateService() {
     override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.of(2023, 4, 5)
@@ -337,6 +336,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/income-sources/add/business-name", additionalCookies)(Map.empty)
     }
 
+    def getAddBusinessTrade: WSResponse = getWithHeaders("/income-sources/add/business-trade",
+      "X-Session-ID" -> testSessionId)
+
+    def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/income-sources/add/business-trade", additionalCookies)(Map.empty)
+    }
+
+    def getChangeAddBusinessTrade: WSResponse = getWithHeaders("/income-sources/add/change-business-trade",
+      "X-Session-ID" -> testSessionId)
+
     def getAddBusinessStartDate: WSResponse = get("/income-sources/add/business-start-date")
 
     def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
@@ -518,6 +527,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getUkPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved?id=$id", session)
 
     def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
+
+    def getAddIncomeSource(): WSResponse = get(uri = s"/income-sources/add/new-income-sources")
   }
 
   def unauthorisedTest(uri: String): Unit = {
