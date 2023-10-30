@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import models.IncomeSourceId
 import models.core.AddressModel
 import models.incomeSourceDetails.LatencyDetails
 
@@ -26,7 +27,7 @@ case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusines
                                       viewForeignProperty: Option[ViewPropertyDetailsViewModel],
                                       viewCeasedBusinesses: List[CeasedBusinessDetailsViewModel])
 
-case class ViewBusinessDetailsViewModel(incomeSourceId: String,
+case class ViewBusinessDetailsViewModel(incomeSourceId: IncomeSourceId,
                                         tradingName: Option[String],
                                         tradingStartDate: Option[LocalDate]
                                        )
