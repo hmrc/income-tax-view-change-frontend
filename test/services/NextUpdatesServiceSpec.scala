@@ -17,7 +17,7 @@
 package services
 
 import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.MockObligationsConnector
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers
@@ -34,11 +34,11 @@ import java.time.LocalDate
 import scala.concurrent.Future
 import scala.io.{BufferedSource, Source}
 
-class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
+class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector with FeatureSwitching {
 
-  object TestNextUpdatesService extends NextUpdatesService(mockIncomeTaxViewChangeConnector)
+  object TestNextUpdatesService extends NextUpdatesService(mockObligationsConnector)
 
-  class Setup extends NextUpdatesService(mockIncomeTaxViewChangeConnector)
+  class Setup extends NextUpdatesService(mockObligationsConnector)
 
   val previousObligation: NextUpdateModel = NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now, "Quarterly", Some(LocalDate.now), "#001")
   implicit val isTimeMachineEnabled = isEnabled(TimeMachineAddYear)
@@ -289,7 +289,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
           NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C")
         ))
       ))
-      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val expectedResult = Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS"))
@@ -302,18 +302,18 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C")
-      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationDates("123")
-      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false)))
+      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS")))
     }
     "show correct error when given a NextUpdatesErrorModel" in {
       disableAllSwitches()
       enable(IncomeSources)
 
       val nextModel: NextUpdatesErrorModel = NextUpdatesErrorModel(1, "fail")
-      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationDates("123")
@@ -342,7 +342,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
           NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Crystallised", None, "C")
         ))
       ))
-      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val expectedResult = ObligationsViewModel(
@@ -364,18 +364,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       enable(IncomeSources)
 
       val day = LocalDate.of(2023, 1, 1)
-      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001")
-      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+      val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "#001")
+      when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
-// TODO: to be removed if fix verified for MISUV-6494
-//      val expectedResult = ObligationsViewModel(
-//        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
-//        Seq.empty, Seq.empty,
-//        Seq.empty,
-//        dateService.getCurrentTaxYearEnd(),
-//        showPrevTaxYears = true
-//      )
       val expectedResult = ObligationsViewModel(
               Seq.empty,
               Seq.empty, Seq.empty,
@@ -393,13 +385,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
 
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")
-      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(any(), any())).
+      when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
       result.futureValue shouldBe ObligationsViewModel(
         Seq.empty, Seq.empty,
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false)),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
         Seq.empty,
         dateService.getCurrentTaxYearEnd(),
         showPrevTaxYears = true
@@ -415,7 +407,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockIncomeTaxViewChangeCon
       val expectedResponse: ObligationsModel = json.validate[ObligationsModel].fold(
         _ => None, valid => Some(valid)).get
 
-      when(mockIncomeTaxViewChangeConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(mockObligationsConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(expectedResponse))
 
       val expectedResult: ObligationsViewModel = ObligationsViewModel(

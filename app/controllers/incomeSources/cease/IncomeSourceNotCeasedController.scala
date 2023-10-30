@@ -69,7 +69,7 @@ class IncomeSourceNotCeasedController @Inject()(val authenticate: Authentication
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     val pageTitle = messagesApi.preferred(user)("standardError.heading")
     val heading = messagesApi.preferred(user)("standardError.heading")
-    val message = messagesApi.preferred(user)(s"incomeSources.cease.error.$incomeSourceType.notCeased.text")
+    val message = messagesApi.preferred(user)(s"incomeSources.cease.error.${incomeSourceType.key}.notCeased.text")
     val linkText = messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.text")
     val linkUrl = if (isAgent) routes.CeaseIncomeSourceController.showAgent().url else routes.CeaseIncomeSourceController.show().url
     val linkPrefix = Some(messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.prefix"))

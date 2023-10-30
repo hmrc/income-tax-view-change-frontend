@@ -18,19 +18,16 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import connectors.IncomeTaxViewChangeConnector
-import exceptions.MissingFieldException
-import models.financialDetails.{DocumentDetail, FinancialDetail}
+import connectors.FinancialDetailsConnector
 import models.creditDetailModel._
-import models.financialDetails.FinancialDetailsModel
+import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
-class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetailsConnector,
                                      val appConfig: FrontendAppConfig)
                                     (implicit ec: ExecutionContext) {
 
@@ -40,7 +37,7 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
   // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
   private def getCreditsByTaxYear(taxYear: Int, nino: String)
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-    incomeTaxViewChangeConnector.getFinancialDetails(taxYear, nino).flatMap {
+    financialDetailsConnector.getFinancialDetails(taxYear, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) =>
@@ -90,7 +87,8 @@ class CreditHistoryService @Inject()(incomeTaxViewChangeConnector: IncomeTaxView
     }
   }
 
-  private def filterExcludedCredits(credits: List[CreditDetailModel], isMFACreditsEnabled: Boolean, isCutoverCreditsEnabled: Boolean): List[CreditDetailModel] = {
+  private def filterExcludedCredits(credits: List[CreditDetailModel], isMFACreditsEnabled: Boolean,
+                                    isCutoverCreditsEnabled: Boolean): List[CreditDetailModel] = {
     (isMFACreditsEnabled, isCutoverCreditsEnabled) match {
       case (true, false) => credits.filterNot(_.creditType == CutOverCreditType)
       case (false, true) => credits.filterNot(_.creditType == MfaCreditType)

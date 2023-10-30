@@ -55,10 +55,10 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
 
   val day = LocalDate.of(2022, 1, 1)
 
-  val quarterlyDatesYearOne = DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)
-  val quarterlyDatesYearTwo = DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "#001", isFinalDec = false)
-  val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false)
-  val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true)
+  val quarterlyDatesYearOne = DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")
+  val quarterlyDatesYearTwo = DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")
+  val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
+  val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     Seq(quarterlyDatesYearOne),

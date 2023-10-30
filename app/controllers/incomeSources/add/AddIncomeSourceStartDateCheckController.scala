@@ -207,8 +207,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       Right(result)
     }) { (acc, keyValue) =>
       val result = for {
-        a <- acc
-      } yield a match {
+        resAccumulator <- acc
+      } yield resAccumulator match {
         case Right(res) =>
           sessionService.set(keyValue._1, keyValue._2, res)
         case Left(ex) =>

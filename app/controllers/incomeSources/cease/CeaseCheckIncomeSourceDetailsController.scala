@@ -152,10 +152,10 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
       case (Right(None), Right(Some(cessationEndDate))) =>
         // Update for Property
         val propertyIncomeSources = if (incomeSourceType.equals(UkProperty)) {
-          user.incomeSources.properties.find(x => x.isUkProperty && !x.isCeased)
+          user.incomeSources.properties.find(propertyDetailsModel => propertyDetailsModel.isUkProperty && !propertyDetailsModel.isCeased)
         }
         else {
-          user.incomeSources.properties.find(x => x.isForeignProperty && !x.isCeased)
+          user.incomeSources.properties.find(propertyDetailsModel => propertyDetailsModel.isForeignProperty && !propertyDetailsModel.isCeased)
         }
 
         val incomeSourceId = propertyIncomeSources.head.incomeSourceId

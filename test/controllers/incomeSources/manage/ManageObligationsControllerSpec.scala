@@ -118,7 +118,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
-      DatesModel(day, day, day, "EOPS", isFinalDec = false)
+      DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       dates,
@@ -174,7 +174,7 @@ class ManageObligationsControllerSpec extends TestSupport
     }
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
-      DatesModel(day, day, day, "EOPS", isFinalDec = false)
+      DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
       dates,
@@ -350,7 +350,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
-          DatesModel(day, day, day, "EOPS", isFinalDec = false)
+          DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
         )
 
         setupMockGetIncomeSourceDetails()(sources)

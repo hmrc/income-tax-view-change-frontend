@@ -51,10 +51,10 @@ class ManageObligationsViewSpec extends ViewSpec {
 
   val day: LocalDate = LocalDate.of(2022, 1, 1)
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
-    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false)),
-    Seq(DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "#001", isFinalDec = false)),
-    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false)),
-    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true)),
+    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")),
+    Seq(DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")),
+    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
+    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
     2023,
     showPrevTaxYears = true
   )

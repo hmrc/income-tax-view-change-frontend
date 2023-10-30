@@ -18,7 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits}
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.FinancialDetailsErrorModel
 import play.api.test.FakeRequest
 import services.CreditHistoryService.CreditHistoryError
@@ -28,7 +28,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetai
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector
+class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConnector
   with FeatureSwitching with CreditHistoryDataHelper {
 
   val user: MtdItUser[_] = MtdItUser(
@@ -47,7 +47,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeC
     super.beforeEach()
   }
 
-  object TestCreditHistoryService extends CreditHistoryService(mockIncomeTaxViewChangeConnector, appConfig)
+  object TestCreditHistoryService extends CreditHistoryService(mockFinancialDetailsConnector, appConfig)
 
   "getCreditHistory" when {
 
