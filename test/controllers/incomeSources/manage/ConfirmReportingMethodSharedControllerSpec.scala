@@ -272,7 +272,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         val result = runSubmitTest(isAgent = true, ForeignProperty)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showForeignProperty(testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentForeignProperty(testChangeToAnnual, testTaxYear).url)
       }
     }
   }
@@ -333,7 +333,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       )
 
     TestConfirmReportingMethodSharedController
-      .submit(testTaxYear, changeTo, isAgent, incomeSourceType)(
+      .submit(taxYear, changeTo, isAgent, incomeSourceType)(
         getUserSession(isAgent)
           .withFormUrlEncodedBody(
             if (withValidForm)
