@@ -72,25 +72,6 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       ec = ec
     )
 
-  override def beforeEach(): Unit = {
-    disableAllSwitches()
-    enable(IncomeSources)
-  }
-
-  def mockAuthRetrieval(isAgent: Boolean): Unit = {
-    if (isAgent)
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    else
-      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-  }
-
-  def getUserSession(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {
-    if (isAgent)
-      fakeRequestConfirmedClient()
-    else
-      fakeRequestWithActiveSession
-  }
-
   "The ManageIncomeSourcesController" should {
     s"return ${Status.SEE_OTHER} and redirect to the home page" when {
       "the IncomeSources FS is disabled for an Individual" in {
@@ -141,7 +122,11 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
     if (disableIncomeSources)
       disable(IncomeSources)
 
-    mockAuthRetrieval(isAgent)
+    if (isAgent)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+
     mockBothIncomeSources()
 
     when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
@@ -160,7 +145,15 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       )
 
     TestManageIncomeSourceController.show(isAgent)(
-      getUserSession(isAgent)
+      if (isAgent)
+        fakeRequestConfirmedClient()
+      else
+        fakeRequestWithActiveSession
     )
+  }
+
+  override def beforeEach(): Unit = {
+    disableAllSwitches()
+    enable(IncomeSources)
   }
 }

@@ -30,8 +30,7 @@ import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeS
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.mvc.{AnyContent, AnyContentAsEmpty, MessagesControllerComponents, Result}
-import play.api.test.FakeRequest
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
@@ -66,28 +65,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       dateService = dateService,
       auditingService = app.injector.instanceOf[AuditingService],
       sessionService = mockSessionService
-    )(itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    )(
+      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       ec = ec
     )
-
-
-  override def beforeEach(): Unit = {
-    disableAllSwitches()
-    enable(IncomeSources)
-  }
-
-  private lazy val testIncomeSourceId = "XA00001234"
-  private lazy val testTaxYear = "2022-2023"
-  private lazy val invalidTaxYear = "$$$$-££££"
-  private lazy val invalidChangeTo = "randomText"
-  private lazy val testChangeToAnnual = "annual"
-  private lazy val testChangeToQuarterly = "quarterly"
-  private lazy val validTestForm: (String, String) = ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-  private lazy val invalidTestForm: (String, String) = "INVALID_ENTRY" -> "INVALID_ENTRY"
-
 
   "ConfirmReportingMethodSharedController.show" should {
     s"return ${Status.SEE_OTHER} and redirect to the home page" when {
@@ -355,11 +339,23 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         (if (isAgent) fakeRequestConfirmedClient()
         else fakeRequestWithActiveSession)
           .withFormUrlEncodedBody(
-            if (withValidForm)
-              validTestForm
-            else
-              invalidTestForm
+            if (withValidForm) validTestForm
+            else invalidTestForm
           )
       )
   }
+
+  override def beforeEach(): Unit = {
+    disableAllSwitches()
+    enable(IncomeSources)
+  }
+
+  private lazy val testIncomeSourceId = "XA00001234"
+  private lazy val testTaxYear = "2022-2023"
+  private lazy val invalidTaxYear = "$$$$-££££"
+  private lazy val invalidChangeTo = "randomText"
+  private lazy val testChangeToAnnual = "annual"
+  private lazy val testChangeToQuarterly = "quarterly"
+  private lazy val validTestForm: (String, String) = ConfirmReportingMethodForm.confirmReportingMethod -> "true"
+  private lazy val invalidTestForm: (String, String) = "INVALID_ENTRY" -> "INVALID_ENTRY"
 }
