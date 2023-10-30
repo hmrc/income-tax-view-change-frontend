@@ -73,46 +73,21 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       ec = ec
     )
 
+
   override def beforeEach(): Unit = {
     disableAllSwitches()
     enable(IncomeSources)
   }
 
-  def mockAuthRetrieval(isAgent: Boolean): Unit = {
-    if (isAgent)
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    else
-      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-  }
+  private lazy val testIncomeSourceId = "XA00001234"
+  private lazy val testTaxYear = "2022-2023"
+  private lazy val invalidTaxYear = "$$$$-££££"
+  private lazy val invalidChangeTo = "randomText"
+  private lazy val testChangeToAnnual = "annual"
+  private lazy val testChangeToQuarterly = "quarterly"
+  private lazy val validTestForm: (String, String) = ConfirmReportingMethodForm.confirmReportingMethod -> "true"
+  private lazy val invalidTestForm: (String, String) = "INVALID_ENTRY" -> "INVALID_ENTRY"
 
-  def getUserSession(isAgent: Boolean): FakeRequest[AnyContent] = {
-    if (isAgent)
-      fakeRequestConfirmedClient()
-    else
-      fakeRequestWithActiveSession
-  }
-
-  private lazy val manageObligationsController = controllers.incomeSources.manage.routes
-    .ManageObligationsController
-
-  private lazy val reportingMethodChangeErrorController = controllers.incomeSources.manage.routes
-    .ReportingMethodChangeErrorController
-
-  val testIncomeSourceId = "XA00001234"
-
-  val testTaxYear = "2022-2023"
-
-  val invalidTaxYear = "$$$$-££££"
-
-  val invalidChangeTo = "randomText"
-
-  val testChangeToAnnual = "annual"
-
-  val testChangeToQuarterly = "quarterly"
-
-  val validTestForm: (String, String) = ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-
-  val invalidTestForm: (String, String) = "INVALID_ENTRY" -> "INVALID_ENTRY"
 
   "ConfirmReportingMethodSharedController.show" should {
     s"return ${Status.SEE_OTHER} and redirect to the home page" when {
@@ -188,7 +163,11 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         val result = runSubmitTest(isAgent = false, incomeSourceType = UkProperty, withUpdateIncomeSourceResponseError = true)
 
-        redirectLocation(result) shouldBe Some(reportingMethodChangeErrorController.show(isAgent = false, UkProperty).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ReportingMethodChangeErrorController.show(isAgent = false, UkProperty).url
+        )
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -196,7 +175,11 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
         val result = runSubmitTest(isAgent = true, incomeSourceType = UkProperty, withUpdateIncomeSourceResponseError = true)
 
-        redirectLocation(result) shouldBe Some(reportingMethodChangeErrorController.show(isAgent = true, UkProperty).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ReportingMethodChangeErrorController.show(isAgent = true, UkProperty).url
+        )
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -236,13 +219,21 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         val result = runSubmitTest(isAgent = false, UkProperty, testChangeToAnnual)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showUKProperty(testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showUKProperty(testChangeToAnnual, testTaxYear).url
+        )
       }
       "the Agent's UK property reporting method is updated to annual" in {
         val result = runSubmitTest(isAgent = true, UkProperty, testChangeToAnnual)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentUKProperty(testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showAgentUKProperty(testChangeToAnnual, testTaxYear).url
+          )
       }
     }
 
@@ -251,13 +242,21 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         val result = runSubmitTest(isAgent = false, ForeignProperty, testChangeToQuarterly)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showForeignProperty(testChangeToQuarterly, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showForeignProperty(testChangeToQuarterly, testTaxYear).url
+          )
       }
       "the Agent's Foreign property reporting method is updated to quarterly" in {
         val result = runSubmitTest(isAgent = true, ForeignProperty, testChangeToQuarterly)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentForeignProperty(testChangeToQuarterly, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showAgentForeignProperty(testChangeToQuarterly, testTaxYear).url
+          )
       }
     }
 
@@ -266,13 +265,21 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         val result = runSubmitTest(isAgent = false, SelfEmployment)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showSelfEmployment(testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showSelfEmployment(testChangeToAnnual, testTaxYear).url
+          )
       }
       "the Agent's Foreign property reporting method is updated to annual" in {
         val result = runSubmitTest(isAgent = true, ForeignProperty)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentForeignProperty(testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showAgentForeignProperty(testChangeToAnnual, testTaxYear).url
+          )
       }
     }
   }
@@ -290,14 +297,21 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       disable(IncomeSources)
 
     mockBothPropertyBothBusiness()
-    mockAuthRetrieval(isAgent)
+
+    if (isAgent)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
     when(mockSessionService.getMongoKey(any(), any())(any(), any()))
       .thenReturn(Future(Right(incomeSourceId)))
 
     TestConfirmReportingMethodSharedController
       .show(taxYear, changeTo, isAgent, incomeSourceType)(
-        getUserSession(isAgent)
+        if (isAgent)
+          fakeRequestConfirmedClient()
+        else
+          fakeRequestWithActiveSession
       )
   }
 
@@ -315,7 +329,11 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       disable(IncomeSources)
 
     mockBothPropertyBothBusiness()
-    mockAuthRetrieval(isAgent)
+
+    if (isAgent)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
     when(mockSessionService.getMongoKey(any(), any())(any(), any()))
       .thenReturn(Future(Right(incomeSourceId)))
@@ -334,7 +352,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
     TestConfirmReportingMethodSharedController
       .submit(taxYear, changeTo, isAgent, incomeSourceType)(
-        getUserSession(isAgent)
+        (if (isAgent) fakeRequestConfirmedClient()
+        else fakeRequestWithActiveSession)
           .withFormUrlEncodedBody(
             if (withValidForm)
               validTestForm
