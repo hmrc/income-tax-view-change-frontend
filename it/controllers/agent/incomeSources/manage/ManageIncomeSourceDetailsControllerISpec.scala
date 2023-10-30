@@ -35,7 +35,6 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignPropertyAudit, ukPropertyAudit}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
 import java.time.Month.APRIL
 

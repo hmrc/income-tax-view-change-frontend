@@ -17,12 +17,11 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import org.bouncycastle.crypto.engines.ISAACEngine
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

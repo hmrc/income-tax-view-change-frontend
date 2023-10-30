@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.JourneyType.Cease
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -42,10 +43,10 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                            val sessionService: SessionService,
                                             val retrieveBtaNavBar: NavBarPredicate)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
-                                            implicit val sessionService: SessionService,
                                             val appConfig: FrontendAppConfig)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
@@ -80,7 +81,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
       case Right(viewModel) =>
-        withIncomeSourcesRemovedFromSession {
+        sessionService.deleteSession(Cease).map { _ =>
           Ok(ceaseIncomeSources(
             viewModel,
             isAgent = isAgent,

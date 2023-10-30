@@ -16,9 +16,11 @@
 
 package mocks.services
 
+import enums.JourneyType.JourneyType
+import models.incomeSourceDetails.UIJourneySessionData
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, times, verify, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.{RequestHeader, Result}
 import services.SessionService
@@ -81,10 +83,48 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
+  def setupMockGetSessionKeyMongoTyped[A](key: String, journeyType: JourneyType, result: Either[Throwable, Option[A]]): Unit = {
+    when(
+      mockSessionService.getMongoKeyTyped[A](ArgumentMatchers.eq(key), ArgumentMatchers.eq(journeyType))(ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
   def setupMockSetSessionKeyMongo(result: Either[Throwable, Boolean]): Unit = {
     when(
       mockSessionService.setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockGetMongo(result: Either[Throwable, Option[UIJourneySessionData]]): Unit = {
+    when(
+      mockSessionService.getMongo(ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockSetMongoData(result: Boolean): Unit = {
+    when(
+      mockSessionService.setMongoData(ArgumentMatchers.any())
+      (ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockSetSessionKeyMongo(expectedKey: String,
+                                  expectedValue: String,
+                                  expectedJourneyType: JourneyType,
+                                  result: Either[Throwable, Boolean]): Unit = {
+    when(mockSessionService.setMongoKey(
+      ArgumentMatchers.eq(expectedKey),
+      ArgumentMatchers.eq(expectedValue),
+      ArgumentMatchers.eq(expectedJourneyType)
+    )(any(), any())
+    ).thenReturn(Future.successful(result))
+  }
+
+  def setupMockDeleteSession(result: Boolean): Unit = {
+    when(
+      mockSessionService.deleteSession(ArgumentMatchers.any())(ArgumentMatchers.any())
     ).thenReturn(Future.successful(result))
   }
 
@@ -103,5 +143,4 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
 
   def verifyMockSetMongoKeyResponse(noOfCalls: Int) =
     verify(mockSessionService, times(noOfCalls)).setMongoKey(ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())
-
 }

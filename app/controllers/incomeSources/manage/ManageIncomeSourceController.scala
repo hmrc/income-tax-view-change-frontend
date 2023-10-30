@@ -23,6 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.JourneyType.Manage
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -41,14 +42,14 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val authorisedFunctions: AuthorisedFunctions,
                                              val retrieveNino: NinoPredicate,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                             implicit val itvcErrorHandler: ItvcErrorHandler,
-                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                             val sessionService: SessionService,
                                              auditingService: AuditingService,
                                              val retrieveBtaNavBar: NavBarPredicate)
                                             (implicit val ec: ExecutionContext,
-                                             implicit val sessionService: SessionService,
                                              implicit override val mcc: MessagesControllerComponents,
+                                             implicit val itvcErrorHandler: ItvcErrorHandler,
+                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
@@ -69,7 +70,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          withIncomeSourcesRemovedFromSession {
+          sessionService.deleteSession(Manage).map { _ =>
             auditingService
               .extendedAudit(
                 ManageIncomeSourcesAuditModel(

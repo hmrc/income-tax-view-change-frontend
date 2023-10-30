@@ -31,11 +31,8 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
-import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class ReportingMethodErrorControllerISpec extends ComponentSpecBase {

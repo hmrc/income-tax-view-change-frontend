@@ -18,15 +18,15 @@ package testConstants
 
 import controllers.agent.utils.SessionKeys
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import play.api.http.Status
-
-import java.time.LocalDate
 import models.btaNavBar.{NavContent, NavLinks}
 import models.core.AddressModel
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+
+import java.time.LocalDate
 
 object BaseIntegrationTestConstants {
 
@@ -44,6 +44,7 @@ object BaseIntegrationTestConstants {
   val testSaUtrEnrolmentIdentifier = "UTR"
   val testSaUtr = "1234567890"
   val credId = "12345-credId"
+  val testSessionId = "xsession-12345"
 
   val testNinoEnrolmentKey = "HMRC-NI"
   val testNinoEnrolmentIdentifier = "NINO"
