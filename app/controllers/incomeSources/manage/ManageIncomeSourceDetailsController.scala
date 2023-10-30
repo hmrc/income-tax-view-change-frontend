@@ -26,6 +26,8 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
+import models.IncomeSourceId
+import models.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, ManageIncomeSourceData, PropertyDetailsModel}
 import play.api.Logger
@@ -118,14 +120,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
+      val incomeSourceId = mkIncomeSourceId(id)
       withIncomeSourcesFS {
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
-          sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, id, JourneyType(Manage, SelfEmployment)).flatMap {
+          sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
             case Right(_) => handleRequest(
               sources = user.incomeSources,
               isAgent = false,
               backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-              id = Some(id),
+              id = Some(incomeSourceId),
               incomeSourceType = SelfEmployment
             )
             case Left(exception) => Future.failed(exception)
@@ -148,7 +151,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 sources = mtdItUser.incomeSources,
                 isAgent = true,
                 backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-                id = Some(id),
+                id = Some(mkIncomeSourceId(id)),
                 incomeSourceType = SelfEmployment
               )
 
@@ -215,12 +218,12 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     )
   }
 
-  def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, id: String, isAgent: Boolean)
+  def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, id: IncomeSourceId, isAgent: Boolean)
                                     (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
-      .find(businessDetailsModel => businessDetailsModel.incomeSourceId == id)
+      .find(businessDetailsModel => businessDetailsModel.incomeSourceId == id.value)
 
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -307,7 +310,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: Option[String], incomeSourceType: IncomeSourceType)
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: Option[IncomeSourceId], incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     withIncomeSourcesFS {
