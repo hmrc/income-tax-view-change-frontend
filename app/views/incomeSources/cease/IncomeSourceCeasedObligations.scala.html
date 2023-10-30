@@ -22,7 +22,7 @@
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
-@import models.incomeSourceDetails.TaxYear
+@import uk.gov.hmrc.govukfrontend.views.Aliases._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -39,11 +39,9 @@
 
 @(
         sources: ObligationsViewModel,
-        businessName: String,
-        taxYear: TaxYear,
-        changeTo: String,
+        businessName: Option[String] = None,
         isAgent: Boolean,
-        postAction: Call
+        incomeSourceType: IncomeSourceType
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -53,21 +51,24 @@
 }
 
 @getUniqueMessage(key: String, args: String*) = @{
-    messages(s"incomeSources.add.manageObligations.$key", args: _*)
+    messages(s"business-ceased.obligation.$key", args: _*)
 }
 
-@getBusinessName(name: String) = @{
+@getBusinessName(name: Option[String]) = @{
     name match {
-        case "Not Found" => getUniqueMessage("sole-trader")
-        case "UK property" => getUniqueMessage("uk-property")
-        case "Foreign property" => getUniqueMessage("foreign-property")
-        case _ => name
+        case Some("UK property") => getUniqueMessage("uk-property.part2")
+        case Some("Foreign property") => getUniqueMessage("foreign-property.part2")
+        case Some(seBusinessName) => seBusinessName
+        case None => getUniqueMessage("heading1.se.part2")
     }
 }
 
-@getPeriodMessage(changeTo: String) = @{
-    if(changeTo == "annual") getUniqueMessage("annually")
-    else getUniqueMessage("quarterly")
+@getCeaseIncomeSourceCall = @{
+    if(isAgent) {
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent()
+    } else {
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show()
+    }
 }
 
 @getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
@@ -75,7 +76,7 @@
 }
 
 @getPageTitle = @{
-    val title = getUniqueMessage("h1") + " " + getBusinessName(businessName) + " " + getUniqueMessage("h2") + " " + getPeriodMessage(changeTo) + " " + getUniqueMessage("tax-year") + " " + taxYear.startYear + " " + getMessage("to") + " " + taxYear.endYear
+    val title = getUniqueMessage("heading1.se.part1") + " " + getBusinessName(businessName) + " " + getUniqueMessage("heading1.base")
     title.trim
 }
 
@@ -83,28 +84,23 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @formWithCSRF(action = postAction) {
+    @formWithCSRF(action = getCeaseIncomeSourceCall) {
 
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
             <div class="govuk-panel__body govuk-!-margin-bottom-3">
-            @getUniqueMessage("h1")
+            @getUniqueMessage("heading1.se.part1")
             </div>
             <h1 class="govuk-panel__title">
             @getBusinessName(businessName)
             </h1>
             <div class="govuk-panel__body">
-                @getUniqueMessage("h2")
-                @getPeriodMessage(changeTo)
-                @getUniqueMessage("tax-year")
-                @taxYear.startYear
-                @getMessage("to")
-                @taxYear.endYear
+                @getUniqueMessage("heading1.base")
             </div>
         </div>
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getUniqueMessage("heading")
+            @getUniqueMessage("heading2.text")
             </label>
         </h2>
 
@@ -172,7 +168,7 @@
                     rows = sources.eopsObligationsDates.map { x =>
                         Seq(
                             TableRow(
-                                content = Text(s"${x.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${x.inboundCorrespondenceTo.getYear.toString}")
+                                content = Text(s"${x.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${x.inboundCorrespondenceTo.toLongDate}")
                             ),
                             TableRow(
                                 content = Text(x.inboundCorrespondenceDue.toLongDate)
@@ -202,7 +198,7 @@
                 rows = sources.finalDeclarationDates.map { x =>
                     Seq(
                         TableRow(
-                            content = Text(s"${x.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${x.inboundCorrespondenceTo.getYear.toString}")
+                            content = Text(s"${x.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${x.inboundCorrespondenceTo.toLongDate}")
                         ),
                         TableRow(
                             content = Text(x.inboundCorrespondenceDue.toLongDate)

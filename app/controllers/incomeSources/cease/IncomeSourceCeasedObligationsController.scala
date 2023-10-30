@@ -81,8 +81,8 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
           val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(incomeSourceId) else None
           nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
-              businessName = businessName,
               sources = viewModel,
+              businessName = businessName,
               isAgent = isAgent,
               incomeSourceType = incomeSourceType))
           }
