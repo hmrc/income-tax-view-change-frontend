@@ -26,6 +26,8 @@ import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import forms.utils.SessionKeys
+import models.IncomeSourceId
+import models.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
@@ -69,7 +71,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = false,
               taxYear,
               changeTo,
-              incomeSourceIdMayBe
+              incomeSourceIdMayBe.map(mkIncomeSourceId)
             )
           case Left(exception) => Future.failed(exception)
         }
@@ -90,7 +92,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               isAgent = true,
               taxYear,
               changeTo,
-              incomeSourceIdMayBe
+              incomeSourceIdMayBe.map(mkIncomeSourceId)
             )
           case Left(exception) => Future.failed(exception)
         }
@@ -155,7 +157,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceIdMaybe: Option[IncomeSourceId])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
@@ -163,12 +165,12 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     else {
       val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
 
-      val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
+      val addedBusinessName: String = getBusinessName(mode, incomeSourceIdMaybe.map(_.value))
 
       getTaxYearModel(taxYear) match {
         case Some(years) =>
           if (changeTo == "annual" || changeTo == "quarterly") {
-            getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
+            getIncomeSourceId(mode, incomeSourceIdMaybe.map(_.value), isAgent = isAgent) match {
               case Left(error) =>
                 showError(isAgent, {
                 error.getMessage

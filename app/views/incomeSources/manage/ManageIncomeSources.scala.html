@@ -101,7 +101,7 @@
                     <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@business.tradingName.getOrElse(getMessage("unknown-field"))</td>
                     <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="@{s"view-link-business-$index"}" href=@viewSelfEmploymentDetailsURL(business.incomeSourceId)>
+                        <a class="govuk-link" id="@{s"view-link-business-$index"}" href=@viewSelfEmploymentDetailsURL(business.incomeSourceId.toHash.hash)>
                         @getMessage("choose")
                         </a>
                     </td>

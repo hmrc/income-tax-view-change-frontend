@@ -19,6 +19,7 @@ package services
 import auth.{MtdItUser, MtdItUserWithNino}
 import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.IncomeSourceId.mkIncomeSourceId
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
@@ -121,7 +122,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
         viewSoleTraderBusinesses = if (soleTraderBusinessesExists) {
           maybeSoleTraderBusinesses.map { business =>
             ViewBusinessDetailsViewModel(
-              business.incomeSourceId,
+              mkIncomeSourceId(business.incomeSourceId),
               business.tradingName,
               business.tradingStartDate
             )
