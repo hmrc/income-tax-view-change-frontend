@@ -30,7 +30,7 @@ import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeS
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents, Result}
+import play.api.mvc.{AnyContent, AnyContentAsEmpty, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService}
@@ -85,7 +85,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
   }
 
-  def getUserSession(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {
+  def getUserSession(isAgent: Boolean): FakeRequest[AnyContent] = {
     if (isAgent)
       fakeRequestConfirmedClient()
     else
@@ -110,43 +110,59 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
   val testChangeToQuarterly = "quarterly"
 
-  val testForm: (String, String) = ConfirmReportingMethodForm.confirmReportingMethod -> "true"
+  val validTestForm: (String, String) = ConfirmReportingMethodForm.confirmReportingMethod -> "true"
+
+  val invalidTestForm: (String, String) = "INVALID_ENTRY" -> "INVALID_ENTRY"
 
   "ConfirmReportingMethodSharedController.show" should {
     s"return ${Status.SEE_OTHER} and redirect to the home page" when {
       "the IncomeSources FS is disabled for an Individual" in {
-        runShowWithReturnSeeOtherTest(isAgent = false)
+        val result = runShowTest(isAgent = false, disableIncomeSources = true)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "the IncomeSources FS is disabled for an Agent" in {
-        runShowWithReturnSeeOtherTest(isAgent = true)
+        val result = runShowTest(isAgent = true, disableIncomeSources = true)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "taxYear parameter has an invalid format for an Individual" in {
-        runShowWithReturnISETest(isAgent = false, taxYear = invalidTaxYear)
+        val result = runShowTest(isAgent = false, taxYear = invalidTaxYear)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "changeTo parameter has an invalid format for an Individual" in {
-        runShowWithReturnISETest(isAgent = false, changeTo = invalidChangeTo)
+        val result = runShowTest(isAgent = false, changeTo = invalidChangeTo)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "the given incomeSourceId cannot be found in the Individual's Sole Trader business income sources" in {
-        runShowWithReturnISETest(isAgent = false, incomeSourceId = None)
+        val result = runShowTest(isAgent = false, incomeSourceId = None)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "taxYear parameter has an invalid format for an Agent" in {
-        runShowWithReturnISETest(isAgent = true, taxYear = invalidTaxYear)
+        val result = runShowTest(isAgent = true, taxYear = invalidTaxYear)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "changeTo parameter has an invalid format for an Agent" in {
-        runShowWithReturnISETest(isAgent = true, changeTo = invalidChangeTo)
+        val result = runShowTest(isAgent = true, changeTo = invalidChangeTo)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "the given incomeSourceId cannot be found in the Agent's Sole Trader business income sources" in {
-        runShowWithReturnISETest(isAgent = true, incomeSourceId = None)
+        val result = runShowTest(isAgent = true, incomeSourceId = None)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
     s"return ${Status.OK}" when {
       "all query parameters are valid for an Individual" in {
-        runShowWithReturnOKTest(isAgent = false)
+        val result = runShowTest(isAgent = false)
+        status(result) shouldBe Status.OK
       }
       "all query parameters are valid for an Agent" in {
-        runShowWithReturnOKTest(isAgent = true)
+        val result = runShowTest(isAgent = true)
+        status(result) shouldBe Status.OK
       }
     }
   }
@@ -155,14 +171,14 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     s"return ${Status.SEE_OTHER} and redirect to the home page" when {
       "the IncomeSources FS is disabled for an Individual" in {
 
-        val result = runSubmitWithReturnSeeOtherTest(isAgent = false, disableIncomeSourcesFS = true)
+        val result = runSubmitTest(isAgent = false, disableIncomeSources = true)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
       "the IncomeSources FS is disabled for an Agent" in {
 
-        val result = runSubmitWithReturnSeeOtherTest(isAgent = true, disableIncomeSourcesFS = true)
+        val result = runSubmitTest(isAgent = true, disableIncomeSources = true)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
@@ -170,44 +186,46 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
       "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response for an Individual" in {
 
-        val result = runSubmitWithReturnSeeOtherTest(isAgent = false, withUpdateIncomeSourceResponseError = true)
+        val result = runSubmitTest(isAgent = false, incomeSourceType = UkProperty, withUpdateIncomeSourceResponseError = true)
 
-        redirectLocation(result) shouldBe Some(reportingMethodChangeErrorController.show(isAgent = false, SelfEmployment).url)
+        redirectLocation(result) shouldBe Some(reportingMethodChangeErrorController.show(isAgent = false, UkProperty).url)
         status(result) shouldBe Status.SEE_OTHER
       }
 
       "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response for an Agent" in {
 
-        val result = runSubmitWithReturnSeeOtherTest(isAgent = true, withUpdateIncomeSourceResponseError = true)
+        val result = runSubmitTest(isAgent = true, incomeSourceType = UkProperty, withUpdateIncomeSourceResponseError = true)
 
-        redirectLocation(result) shouldBe Some(reportingMethodChangeErrorController.show(isAgent = true, SelfEmployment).url)
+        redirectLocation(result) shouldBe Some(reportingMethodChangeErrorController.show(isAgent = true, UkProperty).url)
         status(result) shouldBe Status.SEE_OTHER
       }
     }
 
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "taxYear parameter has an invalid format for an Individual" in {
-        runSubmitWithReturnISETest(isAgent = false, taxYear = invalidTaxYear)
+        val result = runSubmitTest(isAgent = false, taxYear = invalidTaxYear)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "changeTo parameter has an invalid format for an Individual" in {
-        runSubmitWithReturnISETest(isAgent = false, changeTo = invalidChangeTo)
+        val result = runSubmitTest(isAgent = false, changeTo = invalidChangeTo)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "taxYear parameter has an invalid format for an Agent" in {
-        runSubmitWithReturnISETest(isAgent = true, taxYear = invalidTaxYear)
+        val result = runSubmitTest(isAgent = true, taxYear = invalidTaxYear)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "changeTo parameter has an invalid format for an Agent" in {
-        runSubmitWithReturnISETest(isAgent = true, changeTo = invalidChangeTo)
+        val result = runSubmitTest(isAgent = true, changeTo = invalidChangeTo)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
 
     s"return ${Status.BAD_REQUEST}" when {
       "the form is empty for an Individual" in {
-
         val result = runSubmitTest(isAgent = false, SelfEmployment, withValidForm = false)
         status(result) shouldBe Status.BAD_REQUEST
       }
       "the form is empty for an Agent" in {
-
         val result = runSubmitTest(isAgent = true, SelfEmployment, withValidForm = false)
         status(result) shouldBe Status.BAD_REQUEST
       }
@@ -215,14 +233,12 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
     s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a UK property" when {
       "the Individual's UK property reporting method is updated to annual" in {
-
         val result = runSubmitTest(isAgent = false, UkProperty, testChangeToAnnual)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(manageObligationsController.showUKProperty(testChangeToAnnual, testTaxYear).url)
       }
       "the Agent's UK property reporting method is updated to annual" in {
-
         val result = runSubmitTest(isAgent = true, UkProperty, testChangeToAnnual)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -232,14 +248,12 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
     s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a Foreign property" when {
       "the Individual's Foreign property reporting method is updated to quarterly" in {
-
         val result = runSubmitTest(isAgent = false, ForeignProperty, testChangeToQuarterly)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(manageObligationsController.showForeignProperty(testChangeToQuarterly, testTaxYear).url)
       }
       "the Agent's Foreign property reporting method is updated to quarterly" in {
-
         val result = runSubmitTest(isAgent = true, ForeignProperty, testChangeToQuarterly)
 
         status(result) shouldBe Status.SEE_OTHER
@@ -249,148 +263,83 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
     s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a Sole Trader Business" when {
       "the Individual's Sole Trader Business reporting method is updated to annual" in {
-
         val result = runSubmitTest(isAgent = false, SelfEmployment)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(manageObligationsController.showSelfEmployment(testChangeToAnnual, testTaxYear).url)
       }
       "the Agent's Foreign property reporting method is updated to annual" in {
-
-        val result = runSubmitTest(isAgent = true, SelfEmployment)
+        val result = runSubmitTest(isAgent = true, ForeignProperty)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentSelfEmployment(testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe Some(manageObligationsController.showForeignProperty(testChangeToAnnual, testTaxYear).url)
       }
     }
   }
 
 
-  def runShowWithReturnSeeOtherTest(isAgent: Boolean): Unit = {
-    disableAllSwitches()
-    mockSingleBISWithCurrentYearAsMigrationYear()
-    mockAuthRetrieval(isAgent)
+  def runShowTest(isAgent: Boolean,
+                  disableIncomeSources: Boolean = false,
+                  changeTo: String = testChangeToAnnual,
+                  taxYear: String = testTaxYear,
+                  incomeSourceType: IncomeSourceType = SelfEmployment,
+                  incomeSourceId: Option[String] = Some(testIncomeSourceId)
+                 ): Future[Result] = {
 
-    val result: Future[Result] = TestConfirmReportingMethodSharedController
-      .show(testTaxYear, testChangeToAnnual, isAgent, SelfEmployment)(
-        getUserSession(isAgent)
-      )
-
-    status(result) shouldBe Status.SEE_OTHER
-
-    redirectLocation(result) shouldBe Some(
-      if (isAgent)
-        controllers.routes.HomeController.showAgent
-      else
-        controllers.routes.HomeController.show()
-    ).map(_.url)
-  }
-
-  def runShowWithReturnISETest(isAgent: Boolean,
-                               taxYear: String = testTaxYear,
-                               changeTo: String = testChangeToAnnual,
-                               incomeSourceId: Option[String] = Some(testIncomeSourceId)
-                              ): Unit = {
-
-    mockSingleBISWithCurrentYearAsMigrationYear()
-    mockAuthRetrieval(isAgent)
-    when(mockSessionService.getMongoKey(any(), any())(any(), any()))
-      .thenReturn(Future(Right(incomeSourceId)))
-
-    val result: Future[Result] = TestConfirmReportingMethodSharedController
-      .show(taxYear, changeTo, isAgent, SelfEmployment)(
-        getUserSession(isAgent)
-      )
-
-    status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-  }
-
-  def runShowWithReturnOKTest(isAgent: Boolean): Unit = {
-
-    mockUKPropertyIncomeSource()
-    mockAuthRetrieval(isAgent)
-
-    val result: Future[Result] = TestConfirmReportingMethodSharedController
-      .show(testTaxYear, testChangeToQuarterly, isAgent, UkProperty)(
-        getUserSession(isAgent)
-      )
-
-    status(result) shouldBe Status.OK
-  }
-
-  def runSubmitWithReturnSeeOtherTest(isAgent: Boolean,
-                                      disableIncomeSourcesFS: Boolean = false,
-                                      withUpdateIncomeSourceResponseError: Boolean = false
-                                     ): Future[Result] = {
-    if (disableIncomeSourcesFS)
+    if (disableIncomeSources)
       disable(IncomeSources)
-
-    mockSingleBISWithCurrentYearAsMigrationYear()
-    mockAuthRetrieval(isAgent)
-
-    when(mockSessionService.getMongoKey(any(), any())(any(), any()))
-      .thenReturn(Future(Right(Some(testIncomeSourceId))))
-
-    if (withUpdateIncomeSourceResponseError)
-      when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-        .thenReturn(Future(
-          UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")
-        ))
-
-    TestConfirmReportingMethodSharedController
-      .submit(testTaxYear, testChangeToAnnual, isAgent, SelfEmployment)(
-        getUserSession(isAgent)
-          .withFormUrlEncodedBody(
-            ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-          )
-      )
-  }
-
-  def runSubmitWithReturnISETest(isAgent: Boolean,
-                                 taxYear: String = testTaxYear,
-                                 changeTo: String = testChangeToAnnual,
-                                 incomeSourceId: Option[String] = Some(testIncomeSourceId)
-                                ): Unit = {
-
-    mockSingleBISWithCurrentYearAsMigrationYear()
-    mockAuthRetrieval(isAgent)
-
-    when(mockSessionService.getMongoKey(any(), any())(any(), any()))
-      .thenReturn(Future(Right(incomeSourceId)))
-
-    val result: Future[Result] = TestConfirmReportingMethodSharedController
-      .submit(taxYear, changeTo, isAgent, SelfEmployment)(
-        getUserSession(isAgent)
-      )
-
-    status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-  }
-
-  def runSubmitTest(isAgent: Boolean,
-                    incomeSourceType: IncomeSourceType,
-                    changeTo: String = testChangeToAnnual,
-                    withValidForm: Boolean = true
-                   ): Future[Result] = {
 
     mockBothPropertyBothBusiness()
     mockAuthRetrieval(isAgent)
 
     when(mockSessionService.getMongoKey(any(), any())(any(), any()))
-      .thenReturn(Future(Right(Some(testIncomeSourceId))))
+      .thenReturn(Future(Right(incomeSourceId)))
 
-    when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-      .thenReturn(Future(
-        UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
-      ))
+    TestConfirmReportingMethodSharedController
+      .show(taxYear, changeTo, isAgent, incomeSourceType)(
+        getUserSession(isAgent)
+      )
+  }
+
+  def runSubmitTest(isAgent: Boolean,
+                    incomeSourceType: IncomeSourceType = SelfEmployment,
+                    changeTo: String = testChangeToAnnual,
+                    taxYear: String = testTaxYear,
+                    withValidForm: Boolean = true,
+                    disableIncomeSources: Boolean = false,
+                    withUpdateIncomeSourceResponseError: Boolean = false,
+                    incomeSourceId: Option[String] = Some(testIncomeSourceId)
+                   ): Future[Result] = {
+
+    if (disableIncomeSources)
+      disable(IncomeSources)
+
+    mockBothPropertyBothBusiness()
+    mockAuthRetrieval(isAgent)
+
+    when(mockSessionService.getMongoKey(any(), any())(any(), any()))
+      .thenReturn(Future(Right(incomeSourceId)))
+
+    when(
+      TestConfirmReportingMethodSharedController
+        .updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
+        .thenReturn(
+          Future(
+            if (withUpdateIncomeSourceResponseError)
+              UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")
+            else
+              UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
+          )
+      )
 
     TestConfirmReportingMethodSharedController
       .submit(testTaxYear, changeTo, isAgent, incomeSourceType)(
         getUserSession(isAgent)
           .withFormUrlEncodedBody(
             if (withValidForm)
-              testForm
+              validTestForm
             else
-              "INVALID_ENTRY" -> "INVALID_ENTRY"
+              invalidTestForm
           )
       )
   }
