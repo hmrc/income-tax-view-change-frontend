@@ -223,7 +223,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
-      .find(businessDetailsModel => businessDetailsModel.incomeSourceId == id.value)
+      .find(businessDetailsModel => businessDetailsModel.incomeSourceIdTyped == id)
 
     if (desiredIncomeSourceMaybe.isDefined) {
       itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {

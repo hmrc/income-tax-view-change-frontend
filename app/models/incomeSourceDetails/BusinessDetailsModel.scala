@@ -16,8 +16,11 @@
 
 package models.incomeSourceDetails
 
+import models.IncomeSourceId
+import models.IncomeSourceId.mkIncomeSourceId
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import play.api.libs.json.{Format, Json}
+
 import java.time.LocalDate
 
 case class BusinessDetailsModel(incomeSourceId: String,
@@ -29,6 +32,8 @@ case class BusinessDetailsModel(incomeSourceId: String,
                                 cashOrAccruals: Option[Boolean] = None,
                                 address: Option[AddressModel] = None,
                                 latencyDetails: Option[LatencyDetails] = None) {
+
+  def incomeSourceIdTyped: IncomeSourceId = mkIncomeSourceId(incomeSourceId)
 
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 
