@@ -54,12 +54,11 @@
     messages(s"business-ceased.obligation.$key", args: _*)
 }
 
-@getBusinessName(name: Option[String]) = @{
-    name match {
-        case Some("UK property") => getUniqueMessage("uk-property.part2")
-        case Some("Foreign property") => getUniqueMessage("foreign-property.part2")
-        case Some(seBusinessName) => seBusinessName
-        case None => getUniqueMessage("heading1.se.part2")
+@getBusinessName(name: Option[String], incomeSourceType: IncomeSourceType) = @{
+    incomeSourceType match {
+        case UkProperty => getUniqueMessage("heading1.uk-property.part2")
+        case ForeignProperty => getUniqueMessage("heading1.foreign-property.part2")
+        case SelfEmployment => name.getOrElse(getUniqueMessage("heading1.se.part2"))
     }
 }
 
@@ -76,7 +75,7 @@
 }
 
 @getPageTitle = @{
-    val title = getUniqueMessage("heading1.se.part1") + " " + getBusinessName(businessName) + " " + getUniqueMessage("heading1.base")
+    val title = getUniqueMessage("heading1.se.part1") + " " + getBusinessName(name = businessName, incomeSourceType = incomeSourceType) + " " + getUniqueMessage("heading1.base")
     title.trim
 }
 
@@ -91,7 +90,7 @@
             @getUniqueMessage("heading1.se.part1")
             </div>
             <h1 class="govuk-panel__title">
-            @getBusinessName(businessName)
+            @getBusinessName(name = businessName, incomeSourceType = incomeSourceType)
             </h1>
             <div class="govuk-panel__body">
                 @getUniqueMessage("heading1.base")
@@ -190,7 +189,7 @@
         }
 
 
-        <div class="box-simple" id="finalDec">
+        <div class="box-simple" id="finalDeclaration">
             <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
             <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
