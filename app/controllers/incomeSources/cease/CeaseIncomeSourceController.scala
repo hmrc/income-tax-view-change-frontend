@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.JourneyType.Cease
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -80,7 +81,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
   private def showCeaseIncomeSourceView(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources) match {
       case Right(viewModel) =>
-        sessionService.deleteSession.map { _ =>
+        sessionService.deleteSession(Cease).map { _ =>
           Ok(ceaseIncomeSources(
             viewModel,
             isAgent = isAgent,

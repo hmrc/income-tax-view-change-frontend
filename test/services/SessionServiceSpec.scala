@@ -106,7 +106,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
       "deleteSession method" should {
         "return a future boolean value" in {
           mockDeleteSession()
-          val result: Boolean = TestSessionService.deleteSession(headerCarrier).futureValue
+          val result: Boolean = TestSessionService.deleteSession(Add)(headerCarrier).futureValue
           result shouldBe result
         }
       }

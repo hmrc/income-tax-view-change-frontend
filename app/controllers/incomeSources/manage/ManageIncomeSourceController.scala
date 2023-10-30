@@ -23,6 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.JourneyType.Manage
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -69,7 +70,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
     withIncomeSourcesFS {
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
-          sessionService.deleteSession.map { _ =>
+          sessionService.deleteSession(Manage).map { _ =>
             auditingService
               .extendedAudit(
                 ManageIncomeSourcesAuditModel(

@@ -52,7 +52,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(sessionService.deleteSession)
+    await(sessionService.deleteSession(Add))
     await(sessionService.createSession(JourneyType(Add, SelfEmployment).toString))
     await(sessionService.createSession(JourneyType(Add, UkProperty).toString))
     await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))

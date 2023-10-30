@@ -106,7 +106,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(sessionService.deleteSession)
+    await(sessionService.deleteSession(Add))
   }
 
   s"calling GET $addBusinessStartDateCheckShowUrl" should {

@@ -17,6 +17,7 @@
 package repositories
 
 import config.FrontendAppConfig
+import enums.JourneyType.Operation
 import models.incomeSourceDetails.UIJourneySessionData
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
@@ -60,9 +61,9 @@ class UIJourneySessionDataRepository @Inject()(
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
   }
 
-  private def sessionFilter(sessionID: String): Bson = {
+  private def sessionFilter(sessionId: String, operation: Operation): Bson = {
     import Filters._
-    and(equal("sessionId", sessionID))
+    and(equal("sessionId", sessionId), regex("journeyType", operation.operationType))
   }
 
   def keepAlive(data: UIJourneySessionData): Future[Boolean] =
@@ -111,9 +112,9 @@ class UIJourneySessionDataRepository @Inject()(
       .toFuture()
       .map(_ => true)
 
-  def deleteOne(sessionId: String): Future[Boolean] =
+  def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
     collection
-      .deleteOne(sessionFilter(sessionId))
+      .deleteOne(sessionFilter(sessionId, operation))
       .toFuture()
       .map(_ => true)
 }

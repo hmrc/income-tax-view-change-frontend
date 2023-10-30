@@ -97,7 +97,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         lazy val journeyType = JourneyType(Add, incomeSourceType)
         sessionService.createSession(journeyType.toString).flatMap {
           case true => Future.successful(None)
-          case false => Future.failed(new Exception("Unable to create session"))
+          case false => throw new Exception("Unable to create session")
         }
       }
 

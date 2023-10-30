@@ -17,7 +17,7 @@
 package services
 
 import auth.MtdItUser
-import enums.JourneyType.{Add, Cease, JourneyType, Manage}
+import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
@@ -141,7 +141,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     uiJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
   }
 
-  def deleteSession(implicit hc: HeaderCarrier): Future[Boolean] = {
-    uiJourneySessionDataRepository.deleteOne(hc.sessionId.get.value)
+  def deleteSession(operation: Operation)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    uiJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
   }
 }

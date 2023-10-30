@@ -16,6 +16,7 @@
 
 package mocks.repositories
 
+import enums.JourneyType.Operation
 import models.incomeSourceDetails.UIJourneySessionData
 import org.bson.BsonValue
 import org.mockito.ArgumentMatchers
@@ -64,6 +65,6 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
   }
 
   def mockDeleteSession(): Unit = {
-    when(mockUIJourneySessionDataRepository.deleteOne(anyString())).thenReturn(Future.successful(true))
+    when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
   }
 }
