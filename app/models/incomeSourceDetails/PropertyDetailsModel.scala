@@ -16,6 +16,9 @@
 
 package models.incomeSourceDetails
 
+import models.IncomeSourceId
+import models.IncomeSourceId.mkIncomeSourceId
+
 import java.time.LocalDate
 import models.core.{AccountingPeriodModel, CessationModel}
 import play.api.libs.json.{Json, OFormat}
@@ -28,6 +31,8 @@ case class PropertyDetailsModel(incomeSourceId: String,
                                 cessation: Option[CessationModel],
                                 cashOrAccruals: Option[Boolean] = None,
                                 latencyDetails: Option[LatencyDetails] = None) {
+
+  def incomeSourceIdTyped: IncomeSourceId = mkIncomeSourceId(incomeSourceId)
 
   def isUkProperty: Boolean = incomeSourceType.contains("uk-property")
 
