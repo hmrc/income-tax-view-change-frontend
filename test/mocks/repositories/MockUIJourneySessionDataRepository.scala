@@ -16,21 +16,17 @@
 
 package mocks.repositories
 
-import enums.JourneyType.JourneyType
+import enums.JourneyType.Operation
 import models.incomeSourceDetails.UIJourneySessionData
 import org.bson.BsonValue
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito._
-import org.mongodb.scala.result.UpdateResult
 import org.scalatest.BeforeAndAfterEach
 import repositories.UIJourneySessionDataRepository
-import services.agent.ClientDetailsService
-import services.agent.ClientDetailsService.{ClientDetails, ClientDetailsFailure}
 import testUtils.UnitSpec
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEach {
 
@@ -50,13 +46,25 @@ trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEac
     when(mockUIJourneySessionDataRepository.set(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
+
   def mockRepositoryUpdateData(): Unit = {
-    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(),ArgumentMatchers.any(),ArgumentMatchers.any()))
+    when(mockUIJourneySessionDataRepository.updateData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(new org.mongodb.scala.result.UpdateResult {
         override def wasAcknowledged(): Boolean = true
+
         override def getMatchedCount: Long = 4
+
         override def getModifiedCount: Long = 5
+
         override def getUpsertedId: BsonValue = null
       }))
+  }
+
+  def mockDeleteOne(): Unit = {
+    when(mockUIJourneySessionDataRepository.deleteOne(any[UIJourneySessionData]())).thenReturn(Future.successful(true))
+  }
+
+  def mockDeleteSession(): Unit = {
+    when(mockUIJourneySessionDataRepository.deleteJourneySession(anyString(), any[Operation]())).thenReturn(Future.successful(true))
   }
 }

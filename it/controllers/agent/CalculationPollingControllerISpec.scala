@@ -34,9 +34,6 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 class CalculationPollingControllerISpec extends ComponentSpecBase {
-
-  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)
   val (hour, minute) = (12, 0)
 

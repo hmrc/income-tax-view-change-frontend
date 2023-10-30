@@ -7,17 +7,17 @@ import helpers.servicemocks.BtaNavBarPartialConnectorStub.testNavLinkJson
 import models.btaNavBar.{NavContent, NavLinks}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+
+
 import play.api.test.Injecting
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class NavBarEnumFsConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
-
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  
   val timeout: PatienceConfig = PatienceConfig(5.seconds)
-  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   lazy val connector: BtaNavBarPartialConnector = inject[BtaNavBarPartialConnector]
 
   "ServiceInfoPartialConnector" when {

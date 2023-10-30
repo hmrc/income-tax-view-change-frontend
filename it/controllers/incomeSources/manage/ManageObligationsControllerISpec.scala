@@ -20,9 +20,7 @@ import audit.models.ObligationsAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub.verifyGetNextUpdates
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
@@ -30,16 +28,14 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testSaUtr, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesWithBothPropertiesAndCeasedBusiness, ukPropertyOnlyResponse}
-import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{taxYear, testObligationsModel, testObligationsViewModel}
+import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class ManageObligationsControllerISpec extends ComponentSpecBase {
 

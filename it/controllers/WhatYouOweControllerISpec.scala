@@ -78,14 +78,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
 
     override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2022, 4, 6)
 
-    override   def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+    override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
       val startDateYear = startDate.getYear
       val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
       if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
-        accountingPeriodEndDate.toString
+        accountingPeriodEndDate
       } else {
-        accountingPeriodEndDate.plusYears(1).toString
+        accountingPeriodEndDate.plusYears(1)
       }
     }
   }

@@ -18,19 +18,22 @@ package enums.JourneyType
 
 import enums.IncomeSourceJourney.IncomeSourceType
 
-case class JourneyType(operation: Operation, businessType: IncomeSourceType){
+case class JourneyType(operation: Operation, businessType: IncomeSourceType) {
   override def toString: String = operation.operationType + "-" + businessType.key
 }
 
 sealed trait Operation {
   val operationType: String
 }
+
 case object Add extends Operation {
   override val operationType = "ADD"
 }
+
 case object Manage extends Operation {
   override val operationType = "MANAGE"
 }
+
 case object Cease extends Operation {
   override val operationType = "CEASE"
 }

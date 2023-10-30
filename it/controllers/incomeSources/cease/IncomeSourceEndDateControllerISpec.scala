@@ -30,8 +30,6 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]

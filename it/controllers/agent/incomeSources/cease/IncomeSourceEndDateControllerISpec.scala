@@ -27,10 +27,8 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, stringTrue, testEndDate2022, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyAndCeasedBusiness, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyAndCeasedBusiness, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
