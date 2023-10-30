@@ -99,7 +99,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return a future boolean value" in {
           mockDeleteOne()
           val result: Boolean = TestSessionService.deleteMongoData(JourneyType(Add, SelfEmployment))(headerCarrier).futureValue
-          result shouldBe result
+          result shouldBe true
         }
       }
 
@@ -107,7 +107,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return a future boolean value" in {
           mockDeleteSession()
           val result: Boolean = TestSessionService.deleteSession(Add)(headerCarrier).futureValue
-          result shouldBe result
+          result shouldBe true
         }
       }
     }
