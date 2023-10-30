@@ -18,9 +18,7 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.IncomeTaxViewChangeConnector
 import connectors.UpdateIncomeSourceConnector
-import controllers.incomeSources.add.routes
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -101,6 +99,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         mockBusinessIncomeSource()
         setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
       }
+
       def testCheckCeaseIncomeSourcePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         stage(isAgent)
         val result: Future[Result] = incomeSourceType match {
