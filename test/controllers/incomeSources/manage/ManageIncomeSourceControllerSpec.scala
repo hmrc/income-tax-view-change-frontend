@@ -86,15 +86,11 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
     }
     s"return ${Status.OK}" when {
       "Individual has a sole trader business and a UK property" in {
-        setupMockCreateSession(true)
-        setupMockDeleteSession(true)
         val result = runTest(isAgent = false)
         status(result) shouldBe Status.OK
       }
 
       "Agent has a sole trader business and a UK property" in {
-        setupMockCreateSession(true)
-        setupMockDeleteSession(true)
         val result = runTest(isAgent = true)
         status(result) shouldBe Status.OK
       }
@@ -102,13 +98,11 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
 
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "error response from service for individual" in {
-        setupMockCreateSession(true)
         val result = runTest(isAgent = false, errorResponse = true)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 
       "error response from service for agent" in {
-        setupMockCreateSession(true)
         val result = runTest(isAgent = true, errorResponse = true)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -129,6 +123,9 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
     mockBothIncomeSources()
+
+    setupMockCreateSession(true)
+    setupMockDeleteSession(true)
 
     when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any()))
       .thenReturn(
