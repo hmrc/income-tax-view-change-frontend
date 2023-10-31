@@ -168,7 +168,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         }
       }
     }
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
+    "return 303 SEE_OTHER and redirect to Home page" when {
       "navigating to the page with FS Disabled" when {
         "user is an Individual" in {
           disable(IncomeSources)
