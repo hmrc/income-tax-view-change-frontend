@@ -20,9 +20,8 @@ import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
-import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -32,9 +31,9 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
@@ -66,543 +65,300 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       dateService = dateService,
       auditingService = app.injector.instanceOf[AuditingService],
       sessionService = mockSessionService
-    )(itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
+    )(
+      itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
       ec = ec
     )
 
+  "ConfirmReportingMethodSharedController.show" should {
+    s"return ${Status.SEE_OTHER} and redirect to the home page" when {
+      "the IncomeSources FS is disabled for an Individual" in {
+        val result = runShowTest(isAgent = false, disableIncomeSources = true)
 
-  private lazy val manageObligationsController = controllers.incomeSources.manage.routes
-    .ManageObligationsController
-
-  val testIncomeSourceId = "XA00001234"
-
-  val testTaxYear = "2022-2023"
-
-  val testChangeToAnnual = "annual"
-
-  val testChangeToQuarterly = "quarterly"
-
-  "Individual: ConfirmReportingMethodSharedController.show" should {
-    "redirect to home page" when {
-      "the IncomeSources FS is disabled" in {
-        disableAllSwitches()
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "taxYear parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
+      "the IncomeSources FS is disabled for an Agent" in {
+        val result = runShowTest(isAgent = true, disableIncomeSources = true)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          "$$$$-££££", testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "changeTo parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, "randomText", incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "the given incomeSourceId cannot be found in the user's Sole Trader business income sources" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(None)))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.OK}" when {
-      "all query parameters are valid" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = UkProperty, isAgent = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.OK
-      }
-    }
-  }
-
-  "Individual: ConfirmReportingMethodSharedController.submit" should {
-    "redirect to home page" when {
-      "the IncomeSources FS is disabled" in {
-        disableAllSwitches()
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "taxYear parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          "$$$$-££££", testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "changeTo parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, "randomText", incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.BAD_REQUEST}" when {
-      "the form is empty" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = UkProperty, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody())
-        status(result) shouldBe Status.BAD_REQUEST
-      }
-    }
-    "redirect to the Manage Obligations page for a UK property" when {
-      "the user's UK property reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = UkProperty, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showUKProperty(testChangeToAnnual, testTaxYear).url)
-      }
-    }
-    "redirect to the Manage Obligations page for a UK property" when {
-      "the user's UK property reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = UkProperty, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showUKProperty(testChangeToQuarterly, testTaxYear).url)
-      }
-    }
-    "redirect to the Manage Obligations page for a Foreign property" when {
-      "the user's Foreign property reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showForeignProperty(testChangeToAnnual, testTaxYear).url)
-      }
-    }
-    "redirect to the Manage Obligations page for a Foreign property" when {
-      "the user's Foreign property reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showForeignProperty(testChangeToQuarterly, testTaxYear).url)
-      }
-    }
-    "redirect to the Manage Obligations page for a Sole Trader Business" when {
-      "the user's Sole Trader Business reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showSelfEmployment(testChangeToAnnual, testTaxYear).url)
-      }
-    }
-    "redirect to the Manage Obligations page for a Sole Trader Business" when {
-      "the user's Sole Trader Business reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showSelfEmployment(testChangeToQuarterly, testTaxYear).url)
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = SelfEmployment, isAgent = false).url)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-  }
-
-  "Agent: ConfirmReportingMethodSharedController.show" should {
-    "redirect to home page" when {
-      "the IncomeSources FS is disabled" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "taxYear parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          "$$$$-££££", testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+      "taxYear parameter has an invalid format for an Individual" in {
+        val result = runShowTest(isAgent = false, taxYear = invalidTaxYear)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "changeTo parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, "randomText", incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient())
+      "changeTo parameter has an invalid format for an Individual" in {
+        val result = runShowTest(isAgent = false, changeTo = invalidChangeTo)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "the given incomeSourceId is can not be found in the user's income sources" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(None)))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+      "the given incomeSourceId cannot be found in the Individual's Sole Trader business income sources" in {
+        val result = runShowTest(isAgent = false, incomeSourceId = None)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "taxYear parameter has an invalid format for an Agent" in {
+        val result = runShowTest(isAgent = true, taxYear = invalidTaxYear)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "changeTo parameter has an invalid format for an Agent" in {
+        val result = runShowTest(isAgent = true, changeTo = invalidChangeTo)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "the given incomeSourceId cannot be found in the Agent's Sole Trader business income sources" in {
+        val result = runShowTest(isAgent = true, incomeSourceId = None)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
     s"return ${Status.OK}" when {
-      "all query parameters are valid" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = UkProperty, isAgent = true)(fakeRequestConfirmedClient())
+      "all query parameters are valid for an Individual" in {
+        val result = runShowTest(isAgent = false)
         status(result) shouldBe Status.OK
       }
-    }
-    s"return ${Status.OK}" when {
-      "all query parameters are valid for a Sole Trader Business" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testIncomeSourceId))))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withSession(SessionKeys.incomeSourceId -> testSelfEmploymentId))
-        status(result) shouldBe Status.OK
-      }
-    }
-    s"return ${Status.OK}" when {
-      "all query parameters are valid for a Foreign Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.show(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient())
+      "all query parameters are valid for an Agent" in {
+        val result = runShowTest(isAgent = true)
         status(result) shouldBe Status.OK
       }
     }
   }
 
-  "ConfirmReportingMethodSharedController.submitAgent" should {
-    "redirect to home page" when {
-      "the IncomeSources FS is disabled" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        mockSingleBISWithCurrentYearAsMigrationYear()
+  "ConfirmReportingMethodSharedController.submit" should {
+    s"return ${Status.SEE_OTHER} and redirect to the home page" when {
+      "the IncomeSources FS is disabled for an Individual" in {
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+        val result = runSubmitTest(isAgent = false, disableIncomeSources = true)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+      }
+      "the IncomeSources FS is disabled for an Agent" in {
+
+        val result = runSubmitTest(isAgent = true, disableIncomeSources = true)
+
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "taxYear parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          "$$$$-££££", testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+      "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response for an Individual" in {
+
+        val result = runSubmitTest(isAgent = false, incomeSourceType = UkProperty, withUpdateIncomeSourceResponseError = true)
+
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ReportingMethodChangeErrorController.show(isAgent = false, UkProperty).url
+        )
+        status(result) shouldBe Status.SEE_OTHER
+      }
+
+      "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response for an Agent" in {
+
+        val result = runSubmitTest(isAgent = true, incomeSourceType = UkProperty, withUpdateIncomeSourceResponseError = true)
+
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ReportingMethodChangeErrorController.show(isAgent = true, UkProperty).url
+        )
+        status(result) shouldBe Status.SEE_OTHER
+      }
+    }
+
+    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
+      "taxYear parameter has an invalid format for an Individual" in {
+        val result = runSubmitTest(isAgent = false, taxYear = invalidTaxYear)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "changeTo parameter has an invalid format for an Individual" in {
+        val result = runSubmitTest(isAgent = false, changeTo = invalidChangeTo)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "taxYear parameter has an invalid format for an Agent" in {
+        val result = runSubmitTest(isAgent = true, taxYear = invalidTaxYear)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "changeTo parameter has an invalid format for an Agent" in {
+        val result = runSubmitTest(isAgent = true, changeTo = invalidChangeTo)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "changeTo parameter has an invalid format" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, "randomText", incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient())
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-      }
-    }
     s"return ${Status.BAD_REQUEST}" when {
-      "the form is empty" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = UkProperty, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody())
+      "the form is empty for an Individual" in {
+        val result = runSubmitTest(isAgent = false, SelfEmployment, withValidForm = false)
+        status(result) shouldBe Status.BAD_REQUEST
+      }
+      "the form is empty for an Agent" in {
+        val result = runSubmitTest(isAgent = true, SelfEmployment, withValidForm = false)
         status(result) shouldBe Status.BAD_REQUEST
       }
     }
-    "redirect to the Manage Obligations page for a UK property" when {
-      "the user's UK property reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
+    s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a UK property" when {
+      "the Individual's UK property reporting method is updated to annual" in {
+        val result = runSubmitTest(isAgent = false, UkProperty, testChangeToAnnual)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = UkProperty, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentUKProperty(testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showUKProperty(testChangeToAnnual, testTaxYear).url
+        )
+      }
+      "the Agent's UK property reporting method is updated to annual" in {
+        val result = runSubmitTest(isAgent = true, UkProperty, testChangeToAnnual)
 
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showAgentUKProperty(testChangeToAnnual, testTaxYear).url
+          )
       }
     }
-    "redirect to the Manage Obligations page for a UK property" when {
-      "the user's UK property reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
+    s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a Foreign property" when {
+      "the Individual's Foreign property reporting method is updated to quarterly" in {
+        val result = runSubmitTest(isAgent = false, ForeignProperty, testChangeToQuarterly)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = UkProperty, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentUKProperty(testChangeToQuarterly, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showForeignProperty(testChangeToQuarterly, testTaxYear).url
+          )
+      }
+      "the Agent's Foreign property reporting method is updated to quarterly" in {
+        val result = runSubmitTest(isAgent = true, ForeignProperty, testChangeToQuarterly)
 
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showAgentForeignProperty(testChangeToQuarterly, testTaxYear).url
+          )
       }
     }
-    "redirect to the Manage Obligations page for a Foreign property" when {
-      "the user's Foreign property reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
+    s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a Sole Trader Business" when {
+      "the Individual's Sole Trader Business reporting method is updated to annual" in {
+        val result = runSubmitTest(isAgent = false, SelfEmployment)
 
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentForeignProperty(testChangeToAnnual, testTaxYear).url)
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showSelfEmployment(testChangeToAnnual, testTaxYear).url
+          )
       }
-    }
-    "redirect to the Manage Obligations page for a Foreign property" when {
-      "the user's Foreign property reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      "the Agent's Foreign property reporting method is updated to annual" in {
+        val result = runSubmitTest(isAgent = true, ForeignProperty)
 
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentForeignProperty(testChangeToQuarterly, testTaxYear).url)
-
-      }
-    }
-    "redirect to the Manage Obligations page for a Sole Trader Business" when {
-      "the user's Sole Trader Business reporting method is updated to annual" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToAnnual, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController.showAgentSelfEmployment(testChangeToAnnual, testTaxYear).url)
-      }
-    }
-    "redirect to the Manage Obligations page for a Sole Trader Business" when {
-      "the user's Sole Trader Business reporting method is updated to quarterly" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(manageObligationsController
-          .showAgentSelfEmployment(testChangeToQuarterly, testTaxYear).url)
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        when(TestConfirmReportingMethodSharedController.updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-          .thenReturn(Future(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")))
-
-        val result: Future[Result] = TestConfirmReportingMethodSharedController.submit(
-          testTaxYear, testChangeToQuarterly, incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-          ConfirmReportingMethodForm.confirmReportingMethod -> "true"
-        ))
-
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = SelfEmployment, isAgent = true).url)
-        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe
+          Some(
+            controllers.incomeSources.manage.routes
+              .ManageObligationsController.showAgentForeignProperty(testChangeToAnnual, testTaxYear).url
+          )
       }
     }
   }
+
+
+  def runShowTest(isAgent: Boolean,
+                  disableIncomeSources: Boolean = false,
+                  changeTo: String = testChangeToAnnual,
+                  taxYear: String = testTaxYear,
+                  incomeSourceType: IncomeSourceType = SelfEmployment,
+                  incomeSourceId: Option[String] = Some(testIncomeSourceId)
+                 ): Future[Result] = {
+
+    if (disableIncomeSources)
+      disable(IncomeSources)
+
+    mockBothPropertyBothBusiness()
+
+    if (isAgent)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+
+    when(mockSessionService.getMongoKey(any(), any())(any(), any()))
+      .thenReturn(Future(Right(incomeSourceId)))
+
+    TestConfirmReportingMethodSharedController
+      .show(taxYear, changeTo, isAgent, incomeSourceType)(
+        if (isAgent)
+          fakeRequestConfirmedClient()
+        else
+          fakeRequestWithActiveSession
+      )
+  }
+
+  def runSubmitTest(isAgent: Boolean,
+                    incomeSourceType: IncomeSourceType = SelfEmployment,
+                    changeTo: String = testChangeToAnnual,
+                    taxYear: String = testTaxYear,
+                    withValidForm: Boolean = true,
+                    disableIncomeSources: Boolean = false,
+                    withUpdateIncomeSourceResponseError: Boolean = false,
+                    incomeSourceId: Option[String] = Some(testIncomeSourceId)
+                   ): Future[Result] = {
+
+    if (disableIncomeSources)
+      disable(IncomeSources)
+
+    mockBothPropertyBothBusiness()
+
+    if (isAgent)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+
+    when(mockSessionService.getMongoKey(any(), any())(any(), any()))
+      .thenReturn(Future(Right(incomeSourceId)))
+
+    when(
+      TestConfirmReportingMethodSharedController
+        .updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
+        .thenReturn(
+          Future(
+            if (withUpdateIncomeSourceResponseError)
+              UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")
+            else
+              UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
+          )
+      )
+
+    TestConfirmReportingMethodSharedController
+      .submit(taxYear, changeTo, isAgent, incomeSourceType)(
+        (if (isAgent)
+          fakeRequestConfirmedClient()
+        else
+          fakeRequestWithActiveSession).withFormUrlEncodedBody(
+            if (withValidForm)
+              validTestForm
+            else
+              invalidTestForm
+          )
+      )
+  }
+
+  override def beforeEach(): Unit = {
+    disableAllSwitches()
+    enable(IncomeSources)
+  }
+
+  private lazy val testIncomeSourceId = "XA00001234"
+  private lazy val testTaxYear = "2022-2023"
+  private lazy val invalidTaxYear = "$$$$-££££"
+  private lazy val invalidChangeTo = "randomText"
+  private lazy val testChangeToAnnual = "annual"
+  private lazy val testChangeToQuarterly = "quarterly"
+  private lazy val validTestForm: (String, String) = ConfirmReportingMethodForm.confirmReportingMethod -> "true"
+  private lazy val invalidTestForm: (String, String) = "INVALID_ENTRY" -> "INVALID_ENTRY"
 }
