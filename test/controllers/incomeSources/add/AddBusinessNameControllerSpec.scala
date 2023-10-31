@@ -194,7 +194,6 @@ class AddBusinessNameControllerSpec extends TestSupport
         "Business name has invalid characters" in {
           disableAllSwitches()
           enable(IncomeSources)
-          setupMockGetSession(None)
           val invalidBusinessNameEmpty: String = "££"
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)

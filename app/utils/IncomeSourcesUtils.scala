@@ -45,27 +45,6 @@ object IncomeSourcesUtils {
 
   case class MissingKey(msg: String)
 
-  def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
-    for {
-      startDate <- sessionService.get(addUkPropertyStartDate)
-      accMethod <- sessionService.get(addIncomeSourcesAccountingMethod)
-    } yield (startDate, accMethod) match {
-      case (Right(dateMaybe), Right(methodMaybe)) =>
-        val maybeModel = for {
-          foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
-          cashOrAccrualsFlag <- methodMaybe
-        } yield {
-          CheckUKPropertyViewModel(
-            tradingStartDate = foreignPropertyStartDate,
-            cashOrAccrualsFlag = cashOrAccrualsFlag)
-        }
-        maybeModel.map(Right(_))
-          .getOrElse(Left(new Error("Unable to construct UK property view model")))
-      case (_, _) =>
-        Left(new Error("Error occurred when retrieving start dat and accounting method from session storage"))
-    }
-  }
-
   def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
 
     def checkError(field: Either[Throwable, Option[String]]): String = {

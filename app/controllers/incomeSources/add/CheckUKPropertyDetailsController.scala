@@ -35,7 +35,6 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.IncomeSourcesUtils
-import utils.IncomeSourcesUtils.getUKPropertyDetailsFromSession
 import views.html.incomeSources.add.CheckUKPropertyDetails
 
 import java.time.LocalDate

@@ -306,7 +306,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-          val result = TestIncomeSourceAddedController.show(testSelfEmploymentId, UkProperty)(fakeRequestWithActiveSession.withSession(addUkPropertyStartDate -> "2022-01-01", addIncomeSourcesAccountingMethod -> "cash"))
+          val result = TestIncomeSourceAddedController.show(testSelfEmploymentId, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
         }
       }
