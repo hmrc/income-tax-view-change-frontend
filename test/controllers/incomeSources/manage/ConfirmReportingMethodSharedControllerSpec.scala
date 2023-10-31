@@ -336,11 +336,14 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
 
     TestConfirmReportingMethodSharedController
       .submit(taxYear, changeTo, isAgent, incomeSourceType)(
-        (if (isAgent) fakeRequestConfirmedClient()
-        else fakeRequestWithActiveSession)
-          .withFormUrlEncodedBody(
-            if (withValidForm) validTestForm
-            else invalidTestForm
+        (if (isAgent)
+          fakeRequestConfirmedClient()
+        else
+          fakeRequestWithActiveSession).withFormUrlEncodedBody(
+            if (withValidForm)
+              validTestForm
+            else
+              invalidTestForm
           )
       )
   }
