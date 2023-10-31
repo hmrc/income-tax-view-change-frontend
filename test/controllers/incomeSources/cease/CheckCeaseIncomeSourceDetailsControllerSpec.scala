@@ -19,11 +19,8 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.UpdateIncomeSourceConnector
-import controllers.incomeSources.add.routes
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
@@ -31,14 +28,10 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.mvc.Results.Redirect
-import play.api.mvc.{Call, MessagesControllerComponents, Result}
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.BusinessDetailsTestConstants.businessIncomeSourceId
-import testConstants.UpdateIncomeSourceTestConstants.{cessationDate, successResponse}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{checkCeaseBusinessDetailsModel, checkCeaseForeignPropertyDetailsModel, checkCeaseUkPropertyDetailsModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -90,385 +83,242 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
 
   }
 
-  "Individual - CheckCeaseIncomeSourceDetailsController.show" should {
-    def stage(): Unit = {
-      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-      disableAllSwitches()
-      enable(IncomeSources)
-      mockBothPropertyBothBusiness()
-      mockBusinessIncomeSource()
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
-    }
+  val individual: Boolean = false
+  val agent: Boolean = true
 
+  "CheckCeaseIncomeSourceDetailsController.show" should {
     "return 200 OK" when {
-      "navigating to the page with FS Enabled with income source type as Self Employment" in {
-        stage()
+      def stage(isAgent: Boolean): Unit = {
 
-        when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
-          .thenReturn(Right(checkCeaseBusinessDetailsModel))
+        if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("pta"))
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe Status.OK
-        document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(
-          TestCeaseCheckIncomeSourceDetailsController.heading(SelfEmployment))
-        document.select("h1").text shouldBe checkDetailsHeading
-        verifyMockGetMongoKeyTypedResponse[String](2)
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothPropertyBothBusiness()
+        mockBusinessIncomeSource()
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
       }
 
-      "navigating to the page with FS Enabled with income source type as Foreign Property" in {
-        stage()
+      def testCheckCeaseIncomeSourcePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+        stage(isAgent)
+        val result: Future[Result] = incomeSourceType match {
+          case SelfEmployment =>
+            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
+              .thenReturn(Right(checkCeaseBusinessDetailsModel))
+            if (isAgent)
+              TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
+            else
+              TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("pta"))
 
-        when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
-          .thenReturn(Right(checkCeaseForeignPropertyDetailsModel))
+          case ForeignProperty =>
+            when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
+              .thenReturn(Right(checkCeaseForeignPropertyDetailsModel))
+            if (isAgent)
+              TestCeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+            else
+              TestCeaseCheckIncomeSourceDetailsController.show(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
 
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
+          case UkProperty =>
+            when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
+              .thenReturn(Right(checkCeaseUkPropertyDetailsModel))
+            if (isAgent)
+              TestCeaseCheckIncomeSourceDetailsController.showAgent(UkProperty)(fakeRequestConfirmedClient())
+            else
+              TestCeaseCheckIncomeSourceDetailsController.show(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
+        }
+
         val document: Document = Jsoup.parse(contentAsString(result))
-
         status(result) shouldBe Status.OK
         document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(
-          TestCeaseCheckIncomeSourceDetailsController.heading(ForeignProperty))
+          TestCeaseCheckIncomeSourceDetailsController.heading(incomeSourceType))
         document.select("h1").text shouldBe checkDetailsHeading
-        verifyMockGetMongoKeyTypedResponse[String](1)
+
+        if (incomeSourceType == SelfEmployment) {
+          verifyMockGetMongoKeyTypedResponse[String](2)
+        } else {
+          verifyMockGetMongoKeyTypedResponse[String](1)
+        }
       }
 
-      "navigating to the page with FS Enabled with income source type as UK Property" in {
-        stage()
+      "navigating to the page with FS Enabled with income source type as Self Employment" when {
+        "user is an Individual" in {
+          testCheckCeaseIncomeSourcePage(isAgent = individual, incomeSourceType = SelfEmployment)
+        }
+        "user is an Agent" in {
+          testCheckCeaseIncomeSourcePage(isAgent = agent, incomeSourceType = SelfEmployment)
+        }
+      }
 
-        when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
-          .thenReturn(Right(checkCeaseUkPropertyDetailsModel))
+      "navigating to the page with FS Enabled with income source type as Foreign Property" when {
+        "user is an Individual" in {
+          testCheckCeaseIncomeSourcePage(isAgent = individual, incomeSourceType = ForeignProperty)
+        }
+        "user is an Agent" in {
+          testCheckCeaseIncomeSourcePage(isAgent = agent, incomeSourceType = ForeignProperty)
+        }
+      }
 
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe Status.OK
-        document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(
-          TestCeaseCheckIncomeSourceDetailsController.heading(UkProperty))
-        document.select("h1").text shouldBe checkDetailsHeading
-        verifyMockGetMongoKeyTypedResponse[String](1)
+      "navigating to the page with FS Enabled with income source type as UK Property" when {
+        "user is an Individual" in {
+          testCheckCeaseIncomeSourcePage(isAgent = individual, incomeSourceType = UkProperty)
+        }
+        "user is an Agent" in {
+          testCheckCeaseIncomeSourcePage(isAgent = agent, incomeSourceType = UkProperty)
+        }
       }
     }
-
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
-      "navigating to the page with FS Disabled" in {
-        disable(IncomeSources)
-        mockPropertyIncomeSource()
-
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("BTA"))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+    "return 303 SEE_OTHER and redirect to Home page" when {
+      "navigating to the page with FS Disabled" when {
+        "user is an Individual" in {
+          disable(IncomeSources)
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          mockPropertyIncomeSource()
+          val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("BTA"))
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+        }
+        "user is an Agent" in {
+          disable(IncomeSources)
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          mockPropertyIncomeSource()
+          val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
+        }
       }
-      "called with an unauthenticated user" in {
-        setupMockAuthorisationException()
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
+      "called with an unauthenticated user" when {
+        "user is an Individual" in {
+          setupMockAuthorisationException()
+          val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
+          status(result) shouldBe Status.SEE_OTHER
+        }
+        "user is an Agent" in {
+          setupMockAgentAuthorisationException()
+          val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
+          status(result) shouldBe Status.SEE_OTHER
+        }
       }
     }
   }
-
-  "Individual - CheckCeaseIncomeSourceDetailsController.submit" should {
-    def stage(): Unit = {
-      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+  "CheckCeaseIncomeSourceDetailsController.submit" should {
+    def stage(isAgent: Boolean): Unit = {
+      if (isAgent) {
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      } else {
+        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+      }
       disableAllSwitches()
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
       setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
     }
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url}" when {
-      "submitted and Income Source Type = Self Employment" in {
-        stage()
 
-        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
+    def testSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
 
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submit(SelfEmployment)(fakeRequestWithNinoAndOrigin("pta"))
-        }
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url)
+      stage(isAgent)
+      when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
+        .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
+
+      lazy val result: Future[Result] = {
+        if (isAgent) TestCeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient().withMethod("POST"))
+        else TestCeaseCheckIncomeSourceDetailsController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta"))
+      }
+
+      val redirectResult = if (isAgent) controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType).url
+      else controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(incomeSourceType).url
+
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some(redirectResult)
+      if (incomeSourceType == SelfEmployment) {
         verifyMockGetMongoKeyTypedResponse[String](2)
+      } else {
+        verifyMockGetMongoKeyTypedResponse[String](1)
       }
     }
 
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url}" when {
-      "submitted and Income Source Type = UK Property" in {
-        stage()
+    def testMissingIncomeSourceOnSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
 
-        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
+      enable(IncomeSources)
+      mockNoIncomeSources()
+      setupMockGetSessionKeyMongoTyped[String](Right(None))
 
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submit(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      lazy val result: Future[Result] = {
+        if (isAgent) {
+          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+          TestCeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
+            .withMethod("POST"))
         }
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url)
+        else {
+          setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+          TestCeaseCheckIncomeSourceDetailsController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta")
+            .withMethod("POST"))
+        }
+      }
+
+
+      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      if (incomeSourceType == SelfEmployment) {
+        verifyMockGetMongoKeyTypedResponse[String](2)
+      } else {
         verifyMockGetMongoKeyTypedResponse[String](1)
+      }
+    }
+
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(SelfEmployment).url}" when {
+      "submitted and Income Source Type = Self Employment" when {
+        "user is an Individual" in {
+          testSubmit(isAgent = individual, SelfEmployment)
+        }
+        "user is an Agent" in {
+          testSubmit(isAgent = agent, SelfEmployment)
+        }
+      }
+    }
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(UkProperty).url}" when {
+      "submitted and Income Source Type = UK Property" when {
+        "user is an Individual" in {
+          testSubmit(isAgent = individual, UkProperty)
+        }
+        "user is an Agent" in {
+          testSubmit(isAgent = agent, UkProperty)
+        }
       }
     }
     s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url}" when {
-      "submitted Income Source Type = Foreign Property" in {
-        stage()
-
-        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submit(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
+      "submitted Income Source Type = Foreign Property" when {
+        "user is an Individual" in {
+          testSubmit(isAgent = individual, ForeignProperty)
         }
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(ForeignProperty).url)
-        verifyMockGetMongoKeyTypedResponse[String](1)
+        "user is an Agent" in {
+          testSubmit(isAgent = agent, ForeignProperty)
+        }
       }
     }
-
     s"return 500 INTERNAL_SERVER_ERROR" when {
-      "user has no Self Employment sources" in {
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submit(SelfEmployment)(fakeRequestConfirmedClient()
-            .withMethod("POST"))
+      "user has no Self Employment sources" when {
+        "user is an Individual" in {
+          testMissingIncomeSourceOnSubmit(isAgent = individual, SelfEmployment)
         }
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        verifyMockGetMongoKeyTypedResponse[String](2)
-      }
-    }
-
-    s"return 500 INTERNAL_SERVER_ERROR" when {
-      "user has no foreign property income sources" in {
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submit(ForeignProperty)(fakeRequestConfirmedClient()
-            .withMethod("POST"))
-        }
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        verifyMockGetMongoKeyTypedResponse[String](1)
-      }
-    }
-
-    s"return 500 INTERNAL_SERVER_ERROR" when {
-      "user has no UK property income sources" in {
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submit(UkProperty)(fakeRequestConfirmedClient()
-            .withMethod("POST"))
-        }
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        verifyMockGetMongoKeyTypedResponse[String](1)
-      }
-    }
-  }
-
-  "Agent - CheckCeaseIncomeSourceDetailsController.show" should {
-    def stage(): Unit = {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-      disableAllSwitches()
-      enable(IncomeSources)
-      mockBothPropertyBothBusiness()
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
-    }
-
-    "return 200 OK" when {
-      "return 200 OK" when {
-        "navigating to the page with FS Enabled with income source type as Self Employment" in {
-          stage()
-
-          when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
-            .thenReturn(Right(checkCeaseBusinessDetailsModel))
-
-          val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
-          val document: Document = Jsoup.parse(contentAsString(result))
-
-          status(result) shouldBe Status.OK
-          document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(
-            TestCeaseCheckIncomeSourceDetailsController.heading(SelfEmployment))
-          document.select("h1").text shouldBe checkDetailsHeading
-          verifyMockGetMongoKeyTypedResponse[String](2)
+        "user is an Agent" in {
+          testMissingIncomeSourceOnSubmit(isAgent = agent, SelfEmployment)
         }
       }
-
-      "navigating to the page with FS Enabled with income source type as Foreign Property" in {
-        stage()
-
-        when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
-          .thenReturn(Right(checkCeaseForeignPropertyDetailsModel))
-
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty)(fakeRequestConfirmedClient()
-          .withSession(forms.utils.SessionKeys.ceaseForeignPropertyEndDate -> cessationDate))
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe Status.OK
-        document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(
-          TestCeaseCheckIncomeSourceDetailsController.heading(ForeignProperty))
-        document.select("h1").text shouldBe checkDetailsHeading
-        verifyMockGetMongoKeyTypedResponse[String](1)
-      }
-
-      "navigating to the page with FS Enabled with income source type as UK Property" in {
-        stage()
-
-        when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
-          .thenReturn(Right(checkCeaseUkPropertyDetailsModel))
-
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.showAgent(UkProperty)(fakeRequestConfirmedClient()
-          .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> cessationDate))
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe Status.OK
-        document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(
-          TestCeaseCheckIncomeSourceDetailsController.heading(UkProperty))
-        document.select("h1").text shouldBe checkDetailsHeading
-        verifyMockGetMongoKeyTypedResponse[String](1)
-      }
-    }
-
-    "return 303 SEE_OTHER and redirect to custom not found error page" when {
-      "navigating to the page with FS Disabled" in {
-        disable(IncomeSources)
-        mockPropertyIncomeSource()
-
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("BTA"))
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
-      }
-      "called with an unauthenticated user" in {
-        setupMockAuthorisationException()
-
-        val result: Future[Result] = TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
-        status(result) shouldBe Status.SEE_OTHER
-      }
-    }
-  }
-
-  "Agent - CheckCeaseIncomeSourceDetailsController.submit" should {
-    def stage(): Unit = {
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-      disableAllSwitches()
-      enable(IncomeSources)
-      mockBothPropertyBothBusiness()
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
-    }
-
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url}" when {
-      "form is completed successfully with income source type = Self Employment" in {
-        stage()
-
-        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(businessIncomeSourceId))))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment)(fakeRequestConfirmedClient()
-            .withSession(forms.utils.SessionKeys.ceaseBusinessEndDate -> cessationDate)
-            .withSession(forms.utils.SessionKeys.ceaseBusinessIncomeSourceId -> businessIncomeSourceId)
-            .withMethod("POST"))
+      "user has no foreign property income sources" when {
+        "user is an Individual" in {
+          testMissingIncomeSourceOnSubmit(isAgent = individual, ForeignProperty)
         }
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url)
-        verifyMockGetMongoKeyTypedResponse[String](2)
-      }
-    }
-
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url}" when {
-      "form is completed successfully with income source type = Foreign Property" in {
-        stage()
-
-        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testPropertyIncomeId))))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty)(fakeRequestConfirmedClient()
-            .withSession(forms.utils.SessionKeys.ceaseForeignPropertyEndDate -> cessationDate)
-            .withMethod("POST"))
+        "user is an Agent" in {
+          testMissingIncomeSourceOnSubmit(isAgent = agent, ForeignProperty)
         }
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url)
-        verifyMockGetMongoKeyTypedResponse[String](1)
       }
-    }
-
-    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url}" when {
-      "form is completed successfully" in {
-        stage()
-
-        when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any())).thenReturn(Future.successful(successResponse))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty)(fakeRequestConfirmedClient()
-            .withSession(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> cessationDate)
-            .withMethod("POST"))
+      "user has no UK property income sources" when {
+        "user is an Individual" in {
+          testMissingIncomeSourceOnSubmit(isAgent = individual, UkProperty)
         }
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url)
-        verifyMockGetMongoKeyTypedResponse[String](1)
-      }
-    }
-
-    s"return 500 INTERNAL_SERVER_ERROR" when {
-      "user has no Self Employment sources" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment)(fakeRequestConfirmedClient()
-            .withMethod("POST"))
+        "user is an Agent" in {
+          testMissingIncomeSourceOnSubmit(isAgent = agent, UkProperty)
         }
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        verifyMockGetMongoKeyTypedResponse[String](2)
-      }
-    }
-
-    s"return 500 INTERNAL_SERVER_ERROR" when {
-      "user has no foreign property income sources" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty)(fakeRequestConfirmedClient()
-            .withMethod("POST"))
-        }
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        verifyMockGetMongoKeyTypedResponse[String](1)
-      }
-    }
-
-    s"return 500 INTERNAL_SERVER_ERROR" when {
-      "user has no UK property income sources" in {
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        enable(IncomeSources)
-        mockNoIncomeSources()
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
-
-        lazy val result: Future[Result] = {
-          TestCeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty)(fakeRequestConfirmedClient()
-            .withMethod("POST"))
-        }
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        verifyMockGetMongoKeyTypedResponse[String](1)
       }
     }
   }
