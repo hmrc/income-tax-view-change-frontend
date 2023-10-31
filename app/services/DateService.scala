@@ -20,9 +20,8 @@ import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 
 import java.time.LocalDate
-import java.time.Month.{APRIL, JANUARY}
+import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
-import scala.math.Ordered.orderingToOrdered
 
 @Singleton
 class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface {
@@ -59,14 +58,14 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     LocalDate.of(currentYear, APRIL, 6)
   }
 
-  def getAccountingPeriodEndDate(startDate: LocalDate): String = {
+  def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate = {
     val startDateYear = startDate.getYear
     val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
 
     if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
-      accountingPeriodEndDate.toString
+      accountingPeriodEndDate
     } else {
-      accountingPeriodEndDate.plusYears(1).toString
+      accountingPeriodEndDate.plusYears(1)
     }
   }
 }
@@ -81,5 +80,5 @@ trait DateServiceInterface {
 
   def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean
 
-  def getAccountingPeriodEndDate(startDate: LocalDate): String
+  def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate
 }

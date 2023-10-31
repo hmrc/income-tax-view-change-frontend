@@ -31,7 +31,7 @@ import models.incomeSourceDetails.viewmodels._
 import scala.util.Try
 
 @Singleton
-class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
+class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
 
   def getNextDeadlineDueDateAndOverDueObligations(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[(LocalDate, Seq[LocalDate])] = {
@@ -70,10 +70,10 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
   def getNextUpdates(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
     if (previous) {
       Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting previous Next Updates for nino: ${mtdUser.nino}")
-      incomeTaxViewChangeConnector.getPreviousObligations()
+      obligationsConnector.getPreviousObligations()
     } else {
       Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting current Next Updates for nino: ${mtdUser.nino}")
-      incomeTaxViewChangeConnector.getNextUpdates()
+      obligationsConnector.getNextUpdates()
     }
   }
 
@@ -90,8 +90,8 @@ class NextUpdatesService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxVi
   def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
     for {
-      previousObligations <- incomeTaxViewChangeConnector.getPreviousObligations(fromDate, toDate)
-      openObligations <- incomeTaxViewChangeConnector.getNextUpdates()
+      previousObligations <- obligationsConnector.getPreviousObligations(fromDate, toDate)
+      openObligations <- obligationsConnector.getNextUpdates()
     } yield {
       (previousObligations, openObligations) match {
         case (ObligationsModel(previous), open: ObligationsModel) =>

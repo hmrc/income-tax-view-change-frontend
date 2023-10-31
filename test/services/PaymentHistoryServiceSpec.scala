@@ -16,20 +16,22 @@
 
 package services
 
-import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import connectors.RepaymentHistoryConnector
+import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.{Payment, Payments, PaymentsError}
+import org.mockito.Mockito.mock
 import play.api.test.FakeRequest
 import services.PaymentHistoryService.PaymentHistoryError
+import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
-class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector with FeatureSwitching {
+class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsConnector with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -57,8 +59,10 @@ class PaymentHistoryServiceSpec extends TestSupport with MockIncomeTaxViewChange
     None
   )(FakeRequest())
 
+  val mockRepaymentHistoryConnector: RepaymentHistoryConnector = mock(classOf[RepaymentHistoryConnector])
 
-  object TestPaymentHistoryService extends PaymentHistoryService(mockIncomeTaxViewChangeConnector, dateService, appConfig)
+  object TestPaymentHistoryService extends PaymentHistoryService(mockRepaymentHistoryConnector,
+    mockFinancialDetailsConnector, dateService, appConfig)
 
   "getPaymentHistory" when {
     "An error is returned from the connector" should {

@@ -19,8 +19,8 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import connectors.IncomeTaxViewChangeConnector
-import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
+import connectors.ITSAStatusConnector
+import models.itsaStatus.ITSAStatusResponse
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ITSAStatusService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                   dateService: DateService,
                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
@@ -36,7 +36,7 @@ class ITSAStatusService @Inject()(incomeTaxViewChangeConnector: IncomeTaxViewCha
     val yearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString.substring(2).toInt
     val yearStart = yearEnd - 1
 
-    incomeTaxViewChangeConnector.getITSAStatusDetail(
+    itsaStatusConnector.getITSAStatusDetail(
       nino = user.nino,
       taxYear = s"$yearStart-$yearEnd",
       futureYears = false,

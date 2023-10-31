@@ -16,17 +16,17 @@
 
 package services
 
-import mocks.connectors.MockIncomeTaxViewChangeConnector
+import mocks.connectors.MockITSAStatusConnector
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import testConstants.BaseTestConstants.{testMtdItUser, testNino}
 import testConstants.ITSAStatusTestConstants.{errorITSAStatusError, successITSAStatusResponseMTDMandatedModel, successITSAStatusResponseModel}
 import testUtils.TestSupport
 
-class ITSAStatusServiceSpec extends TestSupport with MockIncomeTaxViewChangeConnector {
+class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
   val mockDateService: DateService = mock(classOf[DateService])
 
-  object TestITSAStatusService extends ITSAStatusService(mockIncomeTaxViewChangeConnector, mockDateService, appConfig)
+  object TestITSAStatusService extends ITSAStatusService(mockITSAStatusConnector, mockDateService, appConfig)
 
   "hasMandatedOrVoluntaryStatusCurrentYear " when {
     val taxYearEnd = 2020

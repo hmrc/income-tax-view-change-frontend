@@ -28,8 +28,6 @@ import scala.concurrent.ExecutionContext
 
 class CalculationPollingControllerISpec extends ComponentSpecBase {
 
-  implicit val ec = app.injector.instanceOf[ExecutionContext]
-
   unauthorisedTest(s"/calculation/$testYear/submitted")
 
   s"GET ${controllers.routes.CalculationPollingController.calculationPoller(testYearInt, isFinalCalc = false).url}" when {

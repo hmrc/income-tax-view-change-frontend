@@ -17,7 +17,7 @@
 package services
 
 import auth.{MtdItUser, MtdItUserWithNino}
-import connectors.IncomeTaxViewChangeConnector
+import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels._
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: IncomeTaxViewChangeConnector,
+class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
                                            val cache: AsyncCacheApi) extends ActivePropertyBusinessesHelper {
   implicit val ec = ExecutionContext.global
   val cacheExpiry: Duration = Duration(1, "day")
@@ -71,7 +71,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           Future.successful(sources)
         case None =>
           Logger("application").info(s"incomeSourceDetails cache MISS with ${cacheKey.get}")
-          incomeTaxViewChangeConnector.getIncomeSources().flatMap {
+          businessDetailsConnector.getIncomeSources().flatMap {
             case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
               cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
                 _ => incomeSourceDetailsModel
@@ -80,7 +80,7 @@ class IncomeSourceDetailsService @Inject()(val incomeTaxViewChangeConnector: Inc
           }
       }
     } else {
-      incomeTaxViewChangeConnector.getIncomeSources()
+      businessDetailsConnector.getIncomeSources()
     }
   }
 

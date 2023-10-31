@@ -16,7 +16,7 @@
 
 package services.agent
 
-import mocks.connectors.{MockCitizenDetailsConnector, MockIncomeTaxViewChangeConnector}
+import mocks.connectors._
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, UnexpectedResponse}
@@ -26,11 +26,11 @@ import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import scala.concurrent.Future
 
 class ClientDetailsServiceSpec extends TestSupport
-  with MockCitizenDetailsConnector with MockIncomeTaxViewChangeConnector {
+  with MockCitizenDetailsConnector with MockBusinessDetailsConnector {
 
   object TestClientDetailsService extends ClientDetailsService(
     mockCitizenDetailsConnector,
-    mockIncomeTaxViewChangeConnector
+    mockBusinessDetailsConnector
   )
 
   def createDelegatedEnrolment(id: String): Enrolment = {

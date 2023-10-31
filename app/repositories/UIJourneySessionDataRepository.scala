@@ -17,11 +17,12 @@
 package repositories
 
 import config.FrontendAppConfig
+import enums.JourneyType.Operation
 import models.incomeSourceDetails.UIJourneySessionData
-import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
+import org.mongodb.scala.result.UpdateResult
 import play.api.libs.json.Format
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -58,6 +59,11 @@ class UIJourneySessionDataRepository @Inject()(
   private def dataFilter(data: UIJourneySessionData): Bson = {
     import Filters._
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
+  }
+
+  private def sessionFilter(sessionId: String, operation: Operation): Bson = {
+    import Filters._
+    and(equal("sessionId", sessionId), regex("journeyType", operation.operationType))
   }
 
   def keepAlive(data: UIJourneySessionData): Future[Boolean] =
@@ -106,4 +112,9 @@ class UIJourneySessionDataRepository @Inject()(
       .toFuture()
       .map(_ => true)
 
+  def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
+    collection
+      .deleteOne(sessionFilter(sessionId, operation))
+      .toFuture()
+      .map(_ => true)
 }

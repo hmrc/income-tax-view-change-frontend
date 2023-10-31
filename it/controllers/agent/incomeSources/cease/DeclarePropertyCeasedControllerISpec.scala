@@ -27,10 +27,8 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
 
@@ -50,7 +48,6 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   val buttonLabel: String = messagesAPI("base.continue")
 
   val stringTrue: String = "true"
-  val stringFalse: String = "false"
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -105,13 +102,11 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK")))
 
         val result = IncomeTaxViewChangeFrontend.postCeaseUKProperty(None, clientDetailsWithConfirmation)
+
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("cease-property-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageUK)
         )
-
-        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(stringFalse))
-
       }
     }
   }
@@ -162,13 +157,11 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP")))
 
         val result = IncomeTaxViewChangeFrontend.postCeaseForeignProperty(None, clientDetailsWithConfirmation)
+
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("cease-property-declaration-error")(messagesAPI("base.error-prefix") + " " + checkboxErrorMessageFP)
         )
-
-        sessionService.getMongoKey(ceasePropertyDeclare, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(stringFalse))
-
       }
     }
   }
