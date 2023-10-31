@@ -47,18 +47,14 @@
 @import implicitDateFormatter.longDate
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"business-added.$key", args: _*)
-}
-
-@getUniqueMessage(key: String, args: String*) = @{
     messages(s"business-ceased.obligation.$key", args: _*)
 }
 
 @getBusinessName(name: Option[String], incomeSourceType: IncomeSourceType) = @{
     incomeSourceType match {
-        case UkProperty => getUniqueMessage("heading1.uk-property.part2")
-        case ForeignProperty => getUniqueMessage("heading1.foreign-property.part2")
-        case SelfEmployment => name.getOrElse(getUniqueMessage("heading1.se.part2"))
+        case UkProperty => getMessage("heading1.uk-property.part2")
+        case ForeignProperty => getMessage("heading1.foreign-property.part2")
+        case SelfEmployment => name.getOrElse(getMessage("heading1.se.part2"))
     }
 }
 
@@ -75,7 +71,7 @@
 }
 
 @getPageTitle = @{
-    val title = getUniqueMessage("heading1.se.part1") + " " + getBusinessName(name = businessName, incomeSourceType = incomeSourceType) + " " + getUniqueMessage("heading1.base")
+    val title = getMessage("heading1.se.part1") + " " + getBusinessName(name = businessName, incomeSourceType = incomeSourceType) + " " + getMessage("heading1.base")
     title.trim
 }
 
@@ -87,19 +83,19 @@
 
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
             <div class="govuk-panel__body govuk-!-margin-bottom-3">
-            @getUniqueMessage("heading1.se.part1")
+            @getMessage("heading1.se.part1")
             </div>
             <h1 class="govuk-panel__title">
             @getBusinessName(name = businessName, incomeSourceType = incomeSourceType)
             </h1>
             <div class="govuk-panel__body">
-                @getUniqueMessage("heading1.base")
+                @getMessage("heading1.base")
             </div>
         </div>
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getUniqueMessage("heading2.text")
+            @getMessage("heading2.text")
             </label>
         </h2>
 
