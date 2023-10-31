@@ -79,7 +79,7 @@ class NavBarEnumFsControllerSpec extends MockAuthenticationPredicate with MockIn
 
       when(mockNavBarService.partialList(any())(any())).thenReturn(listLinks)
 
-      val result = testController.btaNavBarPartial(userWithNino)(hc, ec)
+      val result = testController.btaNavBarPartial(userWithNino)
 
       whenReady(result) { response =>
         response.get.toString shouldBe (testView.apply(listLinks).toString())
@@ -95,7 +95,7 @@ class NavBarEnumFsControllerSpec extends MockAuthenticationPredicate with MockIn
 
       when(mockNavBarService.partialList(any())(any())).thenReturn(Seq())
 
-      val result = testController.btaNavBarPartial(successResponse)(hc, ec)
+      val result = testController.btaNavBarPartial(successResponse)
 
 
       whenReady(result) { response =>

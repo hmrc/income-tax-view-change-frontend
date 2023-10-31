@@ -22,8 +22,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
-import forms.utils.SessionKeys
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -36,7 +36,6 @@ import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.CheckBusinessDetails
 
 import java.net.URI
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -101,64 +100,53 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
     val backUrl: String = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER))
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent() else
       controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
 
-    withIncomeSourcesFS {
-      getBusinessDetailsFromSession(user, ec).flatMap {
-        case Right(viewModel) =>
-          Future.successful(Ok(checkBusinessDetails(
-            viewModel = viewModel,
-            postAction = postAction,
-            isAgent = isAgent,
-            backUrl = backUrl
-          )))
-        case Left(ex) => Future.failed(ex)
-      }.recover {
-        case ex: Throwable =>
-          if (isAgent) {
-            Logger("application").error(
-              s"[Agent][CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-            itvcErrorHandlerAgent.showInternalServerError()
-          } else {
-            Logger("application").error(
-              s"[CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
-            itvcErrorHandler.showInternalServerError()
-          }
-      }
+
+    getBusinessDetailsFromSession(user, ec).map {
+      viewModel =>
+        Ok(checkBusinessDetails(
+          viewModel = viewModel,
+          postAction = postAction,
+          isAgent = isAgent,
+          backUrl = backUrl
+        ))
+    }.recover {
+      case ex: Throwable =>
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(
+          s"${if (isAgent) "[Agent]"}[CheckBusinessDetailsController][handleRequest] - Error: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
     }
+
   }
 
 
-  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    withIncomeSourcesFS {
+  def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+    val (redirect, errorHandler) = {
+      if (isAgent)
+        (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url)
+      else
+        (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(SelfEmployment).url)
+    }
+    getBusinessDetailsFromSession(user, ec).flatMap {
+      viewModel => {
+        businessDetailsService.createBusinessDetails(viewModel).flatMap {
+          case Right(CreateIncomeSourceResponse(id)) =>
+            sessionService.deleteMongoData(JourneyType(Add, SelfEmployment))
+            Future.successful(Redirect(redirect(id).url))
 
-      val (redirect, errorHandler) = {
-        if (isAgent)
-          (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url)
-        else
-          (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(SelfEmployment).url)
+          case Left(ex) => Future.failed(ex)
+        }
       }
-      getBusinessDetailsFromSession(user, ec).flatMap {
-        case Right(viewModel) =>
-          businessDetailsService.createBusinessDetails(viewModel).flatMap {
-            case Right(CreateIncomeSourceResponse(id)) =>
-              withIncomeSourcesRemovedFromSession(Redirect(redirect(id).url)) recover {
-                case ex: Exception =>
-                  Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
-                  Redirect(errorHandler)
-              }
-            case Left(ex) => Future.failed(ex)
-          }
-        case Left(ex) => Future.failed(ex)
-      }.recover {
-        case ex: Exception =>
-          Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
-          Redirect(errorHandler)
-      }
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"[AddIncomeSourceController][handleRequest]${ex.getMessage}")
+        Redirect(errorHandler)
     }
   }
 
@@ -177,55 +165,39 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
         }
   }
 
-  private def getBusinessDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
+  private def getBusinessDetailsFromSession(implicit user: MtdItUser[_], ec: ExecutionContext): Future[CheckBusinessDetailsViewModel] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
+    val errorTracePrefix = "[CheckBusinessDetailsController][getBusinessDetailsFromSession]:"
+    sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).map {
+      case Right(Some(uiJourneySessionData)) =>
+        uiJourneySessionData.addIncomeSourceData match {
+          case Some(addIncomeSourceData) =>
 
-    // List of fields we are attempting to extract
-    val fields: Seq[String] = Seq(SessionKeys.businessName, SessionKeys.businessStartDate, SessionKeys.businessTrade,
-      SessionKeys.addBusinessAddressLine1, SessionKeys.addIncomeSourcesAccountingMethod, SessionKeys.addBusinessAccountingPeriodEndDate, SessionKeys.addBusinessAddressLine2,
-      SessionKeys.addBusinessAddressLine3, SessionKeys.addBusinessAddressLine4, SessionKeys.addBusinessPostalCode, SessionKeys.addBusinessCountryCode, SessionKeys.addIncomeSourcesAccountingMethod)
+            val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
+            CheckBusinessDetailsViewModel(
+              businessName = addIncomeSourceData.businessName,
+              businessStartDate = addIncomeSourceData.dateStarted,
+              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
+              businessTrade = addIncomeSourceData.businessTrade
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),
+              businessAddressLine1 = address.lines.headOption
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1")),
+              businessAddressLine2 = address.lines.lift(1),
+              businessAddressLine3 = address.lines.lift(2),
+              businessAddressLine4 = address.lines.lift(3),
+              businessPostalCode = address.postcode,
+              businessCountryCode = addIncomeSourceData.countryCode,
+              incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
+              cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
+              skippedAccountingMethod = skipAccountingMethod
+            )
 
-    val init: Future[Either[Throwable, Map[String, Option[String]]]] = Future {
-      Right(Map.empty)
-    }
-    val xs = fields.foldLeft(init) { (acc, fieldName) =>
-      for {
-        futureAcc <- acc
-        if futureAcc.isRight // stop exec if there was any error previously
-        futureRes <- sessionService.get(fieldName)
-      } yield (futureAcc, futureRes) match {
-        case (Right(accMapVal), Right(optVal)) =>
-          val finalMap = accMapVal + (fieldName -> optVal)
-          Right(finalMap)
-        case (_, _) =>
-          futureAcc
-      }
-    }
-
-    for {
-      res <- xs
-    } yield res match { // => Add extra validation for the date parsing + others where required
-      case Right(m) =>
-        Right(
-          CheckBusinessDetailsViewModel(
-            businessName = m.get(SessionKeys.businessName).flatten,
-            businessStartDate = m.get(SessionKeys.businessStartDate).flatten.map(LocalDate.parse(_)),
-            accountingPeriodEndDate = m.get(SessionKeys.addBusinessAccountingPeriodEndDate).flatten.map(LocalDate.parse(_)).get,
-            businessTrade = m.get(SessionKeys.businessTrade).flatten.get,
-            businessAddressLine1 = m.get(SessionKeys.addBusinessAddressLine1).flatten.get,
-            businessAddressLine2 = m.get(SessionKeys.addBusinessAddressLine2).flatten,
-            businessAddressLine3 = m.get(SessionKeys.addBusinessAddressLine3).flatten,
-            businessAddressLine4 = m.get(SessionKeys.addBusinessAddressLine4).flatten,
-            businessPostalCode = m.get(SessionKeys.addBusinessPostalCode).flatten,
-            businessCountryCode = m.get(SessionKeys.addBusinessCountryCode).flatten,
-            incomeSourcesAccountingMethod = m.get(SessionKeys.addIncomeSourcesAccountingMethod).flatten,
-            cashOrAccrualsFlag = m.get(SessionKeys.addIncomeSourcesAccountingMethod).flatten.get,
-            skippedAccountingMethod = skipAccountingMethod
-          )
-        )
-      case ex@Left(_) =>
-        Left(MissingSessionKey(s"[IncomeSourcesUtils][getBusinessDetailsFromSession]  - $ex"))
+          case None => throw new Exception(s"$errorTracePrefix failed to retrieve addIncomeSourceData")
+        }
+      case _ => throw new Exception(s"$errorTracePrefix failed to retrieve uiJourneySessionData ")
     }
 
   }

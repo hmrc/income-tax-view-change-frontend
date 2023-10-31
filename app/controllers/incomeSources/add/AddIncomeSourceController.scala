@@ -20,7 +20,8 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates._
+import enums.JourneyType.{Add, JourneyType}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.mvc._
@@ -88,7 +89,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>
-          withIncomeSourcesRemovedFromSession {
+          sessionService.deleteSession(Add).map { _ =>
             Ok(addIncomeSources(
               sources = viewModel,
               isAgent = isAgent,

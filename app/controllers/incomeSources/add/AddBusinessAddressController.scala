@@ -23,8 +23,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import forms.utils.SessionKeys
-import models.incomeSourceDetails.BusinessAddressModel
+import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
@@ -98,61 +99,41 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }).url
   }
 
-  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], redirect: Result)
-                          (implicit request: Request[_]): Future[Either[Throwable, Result]] = {
-    // multiple key / value pair update example
+  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel])
+                          (implicit request: Request[_]): Future[Boolean] = {
     addressLookUpResult match {
       case Right(value) =>
-        val keyValuePairs : Map[String, String] = Map(
-          SessionKeys.addBusinessAddressLine1 -> {
-            if (value.address.lines.isDefinedAt(0)) value.address.lines.head else ""
-          },
-          SessionKeys.addBusinessAddressLine2 -> {
-            if (value.address.lines.isDefinedAt(1)) value.address.lines(1) else ""
-          },
-          SessionKeys.addBusinessAddressLine3 -> {
-            if (value.address.lines.isDefinedAt(2)) value.address.lines(2) else ""
-          },
-          SessionKeys.addBusinessAddressLine4 -> {
-            if (value.address.lines.isDefinedAt(3)) value.address.lines(3) else ""
-          },
-          SessionKeys.addBusinessPostalCode -> {
-            value.address.postcode.getOrElse("")
-          },
-          SessionKeys.addBusinessCountryCode -> "GB"
-        )
-        keyValuePairs.foldLeft[Future[Either[Throwable, Result]]](Future{Right(redirect)}) {(acc, keyValue) =>
-          val result = for {
-            resAccumulator <- acc
-          } yield resAccumulator match {
-            case Right(res) =>
-              sessionService.set(keyValue._1, keyValue._2, res)
-            case Left(ex) =>
-              Future{ Left(ex) }
-          }
-          result.flatten
+        val journeyType = JourneyType(Add, SelfEmployment)
+        sessionService.getMongo(journeyType.toString).flatMap {
+          case Right(Some(sessionData)) =>
+            val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+            val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
+            val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+
+            sessionService.setMongoData(uiJourneySessionData)
+
+          case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
         }
-      case Left(ex) =>
-        Future.successful(Left(ex))
+      case Left(ex) => Future.failed(ex)
     }
   }
 
 
   def handleSubmitRequest(isAgent: Boolean, id: Option[String], isChange: Boolean)(implicit user: MtdItUser[_],
                                                                                    ec: ExecutionContext, request: Request[_]): Future[Result] = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
     val redirect = Redirect(redirectUrl)
-    for {
-      addressLookUpResult <- addressLookupService.fetchAddress(id)
-      sessionResult <- setUpSession(addressLookUpResult, redirect)(request)
-    } yield sessionResult match {
-      case Right(updateResult) =>
-        updateResult
-      case Left(ex) =>
-        Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: $ex ")
-        errorHandler.showInternalServerError()
-    }
+
+    addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
+      case true => Future.successful(redirect)
+      case false => Future.failed(new Exception(s"failed to set session data"))
+    })
+
+  }.recover {
+    case ex =>
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: $ex ")
+      errorHandler.showInternalServerError()
   }
 
   def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino

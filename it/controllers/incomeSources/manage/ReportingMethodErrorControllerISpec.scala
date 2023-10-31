@@ -34,8 +34,6 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
   private lazy val reportingMethodChangeErrorController = controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController

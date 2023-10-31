@@ -17,11 +17,9 @@
 package utils
 
 import auth.MtdItUser
-import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
-import play.api.mvc.{AnyContentAsEmpty, Result}
-import play.api.mvc.Results.Redirect
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.SessionService
 import testUtils.TestSupport
@@ -78,23 +76,6 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
       "returns an exception" in {
         val result = IncomeSourcesUtils.getUKPropertyDetailsFromSession(sessionService)
         result.futureValue.isLeft shouldBe true
-      }
-    }
-  }
-
-  "removeIncomeSourceDetailsFromSession" when {
-    "user has session data" should {
-      "remove session data" in {
-
-        implicit val user: MtdItUser[AnyContentAsEmpty.type] = individualUser.copy()(fakeRequest)
-
-        val redirect = withIncomeSourcesRemovedFromSession {
-          Redirect("nowhere")
-        }(individualUser, sessionService, ec)
-
-        SessionKeys.incomeSourcesSessionKeys.forall(
-          redirect.futureValue.session.get(_).isDefined == false
-        ) shouldBe true
       }
     }
   }

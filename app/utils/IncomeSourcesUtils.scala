@@ -18,13 +18,11 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import forms.utils.SessionKeys
 import forms.utils.SessionKeys._
-import models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
-import services.SessionService
+import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
@@ -39,17 +37,6 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       }
     } else {
       codeBlock
-    }
-  }
-
-  def withIncomeSourcesRemovedFromSession(redirect: Result)
-                                         (implicit user: MtdItUser[_],
-                                          sessionService: SessionService,
-                                          ec: ExecutionContext
-                                         ): Future[Result] = {
-    sessionService.remove(SessionKeys.incomeSourcesSessionKeys, redirect).map {
-      case Left(failedKey) => throw new Exception(s"Failed to remove key from session: $failedKey")
-      case Right(result) => result
     }
   }
 }
