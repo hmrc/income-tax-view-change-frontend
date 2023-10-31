@@ -22,7 +22,7 @@ import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 
-class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class TaxYearsControllerISpecJson extends ComponentSpecBase with FeatureSwitching {
 
   "Calling the TaxYearsController.viewTaxYears" when {
 

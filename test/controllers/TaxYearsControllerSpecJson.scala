@@ -41,7 +41,7 @@ import views.html.TaxYears
 
 import scala.concurrent.Future
 
-class TaxYearsControllerSpec extends MockAuthenticationPredicate
+class TaxYearsControllerSpecJson extends MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockIncomeSourceDetailsService
   with MockFrontendAuthorisedFunctions with MockItvcErrorHandler with MockTaxYears with ImplicitDateFormatter with TestSupport with FeatureSwitching {
 
