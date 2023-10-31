@@ -28,31 +28,31 @@
 @(incomeSourceType: IncomeSourceType, incomeSourceEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
-  messages(s"${incomeSourceType.endDateMessagePrefix}.$key",args:_*)
+    messages(s"${incomeSourceType.endDateMessagePrefix}.$key", args: _*)
 }
 
 @getHintContent = {
-  @p(classes = "govuk-hint") {
+@p(classes = "govuk-hint") {
     @messages("dateForm.hint")
-  }
+}
 }
 
 @mainTemplate(pageTitle = getMessage("heading"), isAgent = isAgent, backUrl = Some(backUrl), btaNavPartial = user.btaNavPartial) {
 
- @errorSummary(
-  form = incomeSourceEndDateForm
- )
+    @errorSummary(
+        form = incomeSourceEndDateForm
+    )
 
- @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
+    @formWithCSRF(action = postAction, Symbol("id") -> "income-source-end-date-form") {
 
-  @dateInput(
-   content = getMessage("heading"),
-   field = incomeSourceEndDateForm("income-source-end-date"),
-   hintContent = Some(HtmlContent(getHintContent)),
-   pageHeading = true
-  )
+        @dateInput(
+            content = getMessage("heading"),
+            field = incomeSourceEndDateForm("income-source-end-date"),
+            hintContent = Some(HtmlContent(getHintContent)),
+            pageHeading = true
+        )
 
-  @continueButton()
+        @continueButton()
 
- }
+    }
 }
