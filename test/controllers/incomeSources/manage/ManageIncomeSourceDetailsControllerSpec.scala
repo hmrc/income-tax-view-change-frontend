@@ -51,6 +51,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    disableAllSwitches()
+    enable(IncomeSources)
     reset(mockCalculationListService)
     reset(mockITSAStatusService)
     reset(mockDateService)
@@ -105,7 +107,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
   val testId = "XAIS00000000001"
 
   def mockAndBasicSetup(scenario: Scenario, isAgent: Boolean = false): Unit = {
-    disableAllSwitches()
     if (isAgent) {
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
     } else {
@@ -152,15 +153,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
           .thenReturn(Future.successful(false))
     }
-
-    enable(IncomeSources)
-
   }
 
   "Individual - ManageIncomeSourceDetailsController" should {
     "redirect an user to the home page" when {
       "incomeSources FS is disabled" in {
-        disableAllSwitches()
         disable(IncomeSources)
 
         mockNoIncomeSources()
@@ -176,7 +173,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
   "Agent - ManageIncomeSourceDetailsController" should {
     "redirect an agent to the home page" when {
       "incomeSources FS is disabled" in {
-        disableAllSwitches()
         disable(IncomeSources)
 
         mockNoIncomeSources()

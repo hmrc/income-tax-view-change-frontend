@@ -20,8 +20,7 @@ import audit.AuditingService
 import config.featureswitch.IncomeSources
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import forms.utils.SessionKeys
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -54,7 +53,7 @@ class ReportingMethodChangeErrorControllerSpec
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       auditingService = app.injector.instanceOf[AuditingService],
-      sessionService =mockSessionService,
+      sessionService = mockSessionService,
       reportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
     )(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -64,135 +63,128 @@ class ReportingMethodChangeErrorControllerSpec
       ec = ec
     )
 
-  val testSoleTraderBusinessIncomeSourceId = "XAIS00000099004"
-
-  "Individual: ReportingMethodChangeErrorController.show" should {
+  "ReportingMethodChangeErrorController.show" should {
     s"return ${Status.SEE_OTHER}: redirect to home page" when {
-      "the IncomeSources FS is disabled" in {
-        disableAllSwitches()
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+      "the IncomeSources FS is disabled for an Individual" in {
 
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
+        val result = runTest(isAgent = false, disableIncomeSources = true)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
-    }
-    s"return ${Status.OK}: render Reporting Method Change Error Page" when {
-      s"Calling .show with income source type: ${UkProperty} when user has a UK Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          incomeSourceType = UkProperty, isAgent = false)(fakeRequestWithActiveSession)
+      "the IncomeSources FS is disabled for an Agent" in {
 
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
-        status(result) shouldBe Status.OK
-      }
-      s"Calling .show with income source type: ${ForeignProperty} when user has a Foreign Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          incomeSourceType = ForeignProperty, isAgent = false)(fakeRequestWithActiveSession)
-
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
-        status(result) shouldBe Status.OK
-      }
-      s"Calling .show with income source type: ${SelfEmployment} when user has a Sole Trader Business for the given incomeSourceId" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBusinessIncomeSource()
-        setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testSelfEmploymentId))))
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          incomeSourceType = SelfEmployment, isAgent = false)(fakeRequestWithActiveSession)
-
-        val document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
-          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
-            .showSoleTraderBusiness(testSelfEmploymentId).url
-        status(result) shouldBe Status.OK
-      }
-    }
-  }
-
-  "Agent: ReportingMethodChangeErrorController.show" should {
-    s"return ${Status.SEE_OTHER}: redirect to home page" when {
-      "the IncomeSources FS is disabled" in {
-        disableAllSwitches()
-        mockSingleBISWithCurrentYearAsMigrationYear()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+        val result = runTest(isAgent = true, disableIncomeSources = true)
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
     }
+
     s"return ${Status.OK}: render Reporting Method Change Error Page" when {
-      s"Calling .show with key: ${UkProperty} when user has a UK Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockUKPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+      s"Calling .show with income source type: $UkProperty when Individual has a UK Property" in {
 
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          incomeSourceType = UkProperty, isAgent = true)(fakeRequestConfirmedClient())
-
+        val result = runTest(isAgent = false, incomeSourceType = UkProperty)
         val document = Jsoup.parse(contentAsString(result))
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
-          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
-            .showUkPropertyAgent().url
+          controllers.incomeSources.manage.routes
+            .ManageIncomeSourceDetailsController.showUkProperty().url
         status(result) shouldBe Status.OK
       }
-      s"Calling .show with income source type: ${ForeignProperty} when user has a Foreign Property" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockForeignPropertyIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          incomeSourceType = ForeignProperty, isAgent = true)(fakeRequestConfirmedClient())
+      s"Calling .show with income source type: $UkProperty when Agent has a UK Property" in {
 
+        val result = runTest(isAgent = true, incomeSourceType = UkProperty)
         val document = Jsoup.parse(contentAsString(result))
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
-          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
-            .showForeignPropertyAgent().url
+          controllers.incomeSources.manage.routes
+            .ManageIncomeSourceDetailsController.showUkPropertyAgent().url
         status(result) shouldBe Status.OK
       }
-      s"Calling .show with income source type: ${SelfEmployment} when user has a Sole Trader Business for the given incomeSourceId" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        mockSingleBusinessIncomeSource()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testSelfEmploymentId))))
 
-        val result: Future[Result] = TestReportingMethodChangeErrorController.show(
-          incomeSourceType = SelfEmployment, isAgent = true)(fakeRequestConfirmedClient())
+      s"Calling .show with income source type: $ForeignProperty when Individual has a Foreign Property" in {
 
+        val result = runTest(isAgent = false, incomeSourceType = ForeignProperty)
         val document = Jsoup.parse(contentAsString(result))
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
-          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController
-            .showSoleTraderBusinessAgent(testSelfEmploymentId).url
+          controllers.incomeSources.manage.routes
+            .ManageIncomeSourceDetailsController.showForeignProperty().url
+        status(result) shouldBe Status.OK
+      }
+
+      s"Calling .show with income source type: $ForeignProperty when Agent has a Foreign Property" in {
+
+        val result = runTest(isAgent = true, incomeSourceType = ForeignProperty)
+        val document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
+          controllers.incomeSources.manage.routes
+            .ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
+        status(result) shouldBe Status.OK
+      }
+
+      s"Calling .show with income source type: $SelfEmployment when Individual has a Sole Trader Business for the given incomeSourceId" in {
+
+        val result = runTest(isAgent = false, incomeSourceType = SelfEmployment)
+        val document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
+          controllers.incomeSources.manage.routes
+            .ManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId).url
+        status(result) shouldBe Status.OK
+      }
+
+      s"Calling .show with income source type: $SelfEmployment when Agent has a Sole Trader Business for the given incomeSourceId" in {
+
+        val result = runTest(isAgent = true, incomeSourceType = SelfEmployment)
+        val document = Jsoup.parse(contentAsString(result))
+
+        document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
+          controllers.incomeSources.manage.routes
+            .ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId).url
         status(result) shouldBe Status.OK
       }
     }
+  }
+
+  def runTest(isAgent: Boolean,
+              disableIncomeSources: Boolean = false,
+              incomeSourceType: IncomeSourceType = SelfEmployment,
+             ): Future[Result] = {
+
+    if (disableIncomeSources)
+      disable(IncomeSources)
+
+    mockBothPropertyBothBusiness()
+
+    if (isAgent)
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else
+      setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+
+    if (incomeSourceType == SelfEmployment)
+      when(mockSessionService.getMongoKey(any(), any())(any(), any()))
+        .thenReturn(
+          Future(
+            Right(Some(testSelfEmploymentId))
+          )
+        )
+
+    TestReportingMethodChangeErrorController
+      .show(isAgent, incomeSourceType)(
+        if (isAgent)
+          fakeRequestConfirmedClient()
+        else
+          fakeRequestWithActiveSession
+      )
+  }
+
+  override def beforeEach(): Unit = {
+    disableAllSwitches()
+    enable(IncomeSources)
   }
 }
