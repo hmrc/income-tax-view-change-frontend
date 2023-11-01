@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.BusinessDetailsTestConstants.testMtdItId
 import testConstants.UpdateIncomeSourceTestConstants
-import testConstants.UpdateIncomeSourceTestConstants.{failureResponse, successResponse, taxYearSpecific}
+import testConstants.UpdateIncomeSourceTestConstants.{failureResponseList, successResponse, taxYearSpecific}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -73,8 +73,8 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       }
       "invalid response" in {
         when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
-          .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtdItId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+          .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponseList))
+        TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtdItId, cessationDate).futureValue shouldBe Left(failureResponseList)
       }
     }
   }
@@ -89,8 +89,8 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       }
       "invalid response" in {
         when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
-          .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+          .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponseList))
+        TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(failureResponseList)
       }
     }
   }
@@ -105,8 +105,8 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       }
       "invalid response" in {
         when(mockUpdateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(any(), any(), any())(any()))
-          .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateTaxYearSpecific(testNino, testIncomeSourceId, taxYearSpecific).futureValue shouldBe failureResponse
+          .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponseList))
+        TestUpdateIncomeSourceService.updateTaxYearSpecific(testNino, testIncomeSourceId, taxYearSpecific).futureValue shouldBe failureResponseList
       }
     }
   }

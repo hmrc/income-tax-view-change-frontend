@@ -26,7 +26,7 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
-import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{UpdateIncomeSourceListResponseError, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
@@ -151,7 +151,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           Some(
             controllers.incomeSources.manage.routes
               .ReportingMethodChangeErrorController.show(isAgent = false, UkProperty).url
-        )
+          )
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -163,7 +163,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           Some(
             controllers.incomeSources.manage.routes
               .ReportingMethodChangeErrorController.show(isAgent = true, UkProperty).url
-        )
+          )
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -207,7 +207,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           Some(
             controllers.incomeSources.manage.routes
               .ManageObligationsController.showUKProperty(testChangeToAnnual, testTaxYear).url
-        )
+          )
       }
       "the Agent's UK property reporting method is updated to annual" in {
         val result = runSubmitTest(isAgent = true, UkProperty, testChangeToAnnual)
@@ -325,13 +325,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     when(
       TestConfirmReportingMethodSharedController
         .updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-        .thenReturn(
-          Future(
-            if (withUpdateIncomeSourceResponseError)
-              UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")
-            else
-              UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
-          )
+      .thenReturn(
+        Future(
+          if (withUpdateIncomeSourceResponseError)
+            UpdateIncomeSourceListResponseError(Seq(UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Dummy message")))
+          else
+            UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
+        )
       )
 
     TestConfirmReportingMethodSharedController
@@ -340,11 +340,11 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           fakeRequestConfirmedClient()
         else
           fakeRequestWithActiveSession).withFormUrlEncodedBody(
-            if (withValidForm)
-              validTestForm
-            else
-              invalidTestForm
-          )
+          if (withValidForm)
+            validTestForm
+          else
+            invalidTestForm
+        )
       )
   }
 

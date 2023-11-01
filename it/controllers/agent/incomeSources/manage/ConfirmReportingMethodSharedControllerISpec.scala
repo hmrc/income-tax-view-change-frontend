@@ -24,8 +24,8 @@ import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, UIJourneySessionData}
-import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
-import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import models.updateIncomeSource.UpdateIncomeSourceResponseModel
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -35,6 +35,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import testConstants.UpdateIncomeSourceIntegrationTestConstant
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
@@ -388,7 +389,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceIntegrationTestConstant.badJsonResponseList))
 
         val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
@@ -415,7 +416,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceIntegrationTestConstant.badJsonResponseList))
 
         val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
@@ -466,7 +467,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing response")))
+        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceIntegrationTestConstant.badJsonResponseList))
 
         val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))

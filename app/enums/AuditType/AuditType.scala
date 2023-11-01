@@ -134,7 +134,10 @@ case object SwitchReportingMethod extends AuditType {
   override val name: String = "SwitchReportingMethod"
 }
 
-
 case object ErrorChangeReportingMethodNotSaved extends AuditType {
   override val name: String = "ErrorChangeReportingMethodNotSaved"
+}
+
+case object CeaseIncomeSource extends AuditType {
+  override val name: String = "CeaseIncomeSource"
 }

@@ -16,13 +16,16 @@
 
 package controllers.incomeSources.cease
 
+import audit.models.CeaseIncomeSourceAuditModel
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.UpdateIncomeSourceConnector
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -31,7 +34,9 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.UpdateIncomeSourceTestConstants
+import testConstants.UpdateIncomeSourceTestConstants.failureResponseList
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{checkCeaseBusinessDetailsModel, checkCeaseForeignPropertyDetailsModel, checkCeaseUkPropertyDetailsModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -60,7 +65,8 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[CeaseCheckIncomeSourceDetails],
     mockUpdateIncomeSourceService,
-    sessionService = mockSessionService)(appConfig,
+    sessionService = mockSessionService,
+    auditingService = mockAuditingService)(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     ec,
     app.injector.instanceOf[ItvcErrorHandler],
@@ -211,29 +217,54 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
       disableAllSwitches()
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
     }
 
-    def testSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+    def testSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType, hasIncomeSourceUpdateFailed: Boolean = false): Unit = {
 
       stage(isAgent)
-      when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
-        .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
+      if (hasIncomeSourceUpdateFailed) {
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Left(UpdateIncomeSourceTestConstants.failureResponseList)))
+      } else {
+        when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
+          .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
+      }
+
+      setupMockGetSessionKeyMongoTyped[String](CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType), Right(Some(validCeaseDate)))
+
+      incomeSourceType match {
+        case SelfEmployment => setupMockGetSessionKeyMongoTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, incomeSourceType), Right(Some(testSelfEmploymentId)))
+        case UkProperty => setupMockGetSessionKeyMongoTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, incomeSourceType), Right(Some(testSelfEmploymentId)))
+        case ForeignProperty => setupMockGetSessionKeyMongoTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, incomeSourceType), Right(Some(testPropertyIncomeId)))
+      }
+      val redirectResult = (isAgent, hasIncomeSourceUpdateFailed) match {
+        case (true, false) => controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType).url
+        case (false, false) => controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(incomeSourceType).url
+        case (_, true) => controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType).url
+      }
 
       lazy val result: Future[Result] = {
         if (isAgent) TestCeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient().withMethod("POST"))
         else TestCeaseCheckIncomeSourceDetailsController.submit(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta"))
       }
 
-      val redirectResult = if (isAgent) controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType).url
-      else controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.show(incomeSourceType).url
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some(redirectResult)
-      if (incomeSourceType == SelfEmployment) {
-        verifyMockGetMongoKeyTypedResponse[String](2)
-      } else {
-        verifyMockGetMongoKeyTypedResponse[String](1)
+
+      (incomeSourceType, hasIncomeSourceUpdateFailed) match {
+        case (SelfEmployment, false) =>
+          verifyMockGetMongoKeyTypedResponse[String](2)
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testSelfEmploymentId, None))
+        case (UkProperty, false) =>
+          verifyMockGetMongoKeyTypedResponse[String](1)
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testSelfEmploymentId, None))
+        case (ForeignProperty, false) =>
+          verifyMockGetMongoKeyTypedResponse[String](1)
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testPropertyIncomeId, None))
+        case (SelfEmployment, true) | _ =>
+          verifyMockGetMongoKeyTypedResponse[String](2)
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testSelfEmploymentId, Some(failureResponseList)))
       }
     }
 
@@ -319,6 +350,11 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         "user is an Agent" in {
           testMissingIncomeSourceOnSubmit(isAgent = agent, UkProperty)
         }
+      }
+    }
+    s"return 303 SEE_OTHER and redirect to ${controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(true, SelfEmployment).url}" when {
+      "update income source fails" in {
+        testSubmit(isAgent = true, incomeSourceType = SelfEmployment, hasIncomeSourceUpdateFailed = true)
       }
     }
   }

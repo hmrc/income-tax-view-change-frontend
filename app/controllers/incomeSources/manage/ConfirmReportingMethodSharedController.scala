@@ -27,13 +27,11 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
-import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceListResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
-import play.api.data.FormError
 import play.api.i18n.Lang
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
@@ -232,7 +230,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     } yield updateIncomeSourceRes
 
     updateIncomeSourceResFuture flatMap {
-      case _: UpdateIncomeSourceResponseError =>
+      case _: UpdateIncomeSourceListResponseError =>
         logAndShowError(isAgent, s"[handleValidForm]: Failed to update reporting method")
         Future.successful(Redirect(errorCall))
       case res: UpdateIncomeSourceResponseModel =>

@@ -137,3 +137,7 @@ case object SwitchReportingMethod extends TransactionName {
 case object ErrorChangeReportingMethodNotSaved extends TransactionName {
   val name = "error-change-reporting-method-not-saved"
 }
+
+case object CeaseIncomeSource extends TransactionName {
+  val name = "cease-income-source"
+}

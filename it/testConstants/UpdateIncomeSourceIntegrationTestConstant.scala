@@ -19,12 +19,12 @@ package testConstants
 import models.updateIncomeSource._
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.testNino
+import testConstants.BaseIntegrationTestConstants.testNino
 import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate
 
-object UpdateIncomeSourceTestConstants {
+object UpdateIncomeSourceIntegrationTestConstant {
   val incomeSourceId = "11111111111"
   val cessationDate = "2023-04-01"
   val taxYearSpecific = TaxYearSpecific("2022", true)

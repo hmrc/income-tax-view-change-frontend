@@ -26,8 +26,14 @@ object UpdateIncomeSourceResponseModel {
   implicit val format: Format[UpdateIncomeSourceResponseModel] = Json.format
 }
 
-case class UpdateIncomeSourceResponseError(status: Int, reason: String) extends UpdateIncomeSourceResponse
+case class UpdateIncomeSourceResponseError(status: String, reason: String)
 
 object UpdateIncomeSourceResponseError {
   implicit val format: Format[UpdateIncomeSourceResponseError] = Json.format
+}
+
+case class UpdateIncomeSourceListResponseError(failures: Seq[UpdateIncomeSourceResponseError]) extends UpdateIncomeSourceResponse
+
+object UpdateIncomeSourceListResponseError {
+  implicit val format: Format[UpdateIncomeSourceListResponseError] = Json.format
 }

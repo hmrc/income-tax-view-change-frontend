@@ -17,7 +17,7 @@
 package services
 
 import connectors.UpdateIncomeSourceConnector
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceListResponseError, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -29,14 +29,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateIncomeSourceConnector) {
 
   def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: String)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceListResponseError, UpdateIncomeSourceSuccess]] = {
     updateIncomeSourceConnector.updateCessationDate(
       nino = nino,
       incomeSourceId = incomeSourceId,
       cessationDate = Some(LocalDate.parse(cessationDate))
     ) map {
       case _: UpdateIncomeSourceResponseModel => Right(UpdateIncomeSourceSuccess(incomeSourceId))
-      case _ => Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+      case error: UpdateIncomeSourceListResponseError => Left(error)
     }
   }
 
@@ -46,7 +46,7 @@ class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateInc
       case res: UpdateIncomeSourceResponseModel =>
         Logger("application").info(s"Updated tax year specific reporting method : $res")
         res
-      case err: UpdateIncomeSourceResponseError =>
+      case err: UpdateIncomeSourceListResponseError =>
         Logger("application").error(s"Failed to Updated tax year specific reporting method : $err")
         err
     }
