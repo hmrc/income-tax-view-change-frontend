@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import audit.models.ChangeReportingMethodNotSavedErrorAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -90,46 +89,6 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitle)
         )
       }
-
-      "Income Sources FS is enabled and return the audit event" in {
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property")
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle)
-        )
-
-        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(UkProperty)(
-          MtdItUser(
-            mtditid = testMtditid,
-            nino = testNino,
-            userName = None,
-            incomeSources = IncomeSourceDetailsModel(
-              mtdbsa = testMtditid,
-              yearOfMigration = None,
-              businesses = List(business1, business2, business3),
-              properties = List(ukProperty, foreignProperty)
-            ),
-            btaNavPartial = None,
-            saUtr = Some(testSaUtr),
-            credId = Some(credId),
-            userType = Some(Individual),
-            arn = None
-          )(
-            FakeRequest()
-          )
-        ))
-      }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "the user does not have a UK property Income Source" in {
@@ -175,50 +134,6 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           pageTitleIndividual(pageTitle)
         )
       }
-
-      "Income Sources FS is enabled and return the audit event" in {
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved")
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle)
-        )
-
-        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(SelfEmployment)(
-          MtdItUser(
-            mtditid = testMtditid,
-            nino = testNino,
-            userName = None,
-            incomeSources = IncomeSourceDetailsModel(
-              mtdbsa = testMtditid,
-              yearOfMigration = None,
-              businesses = List(business1, business2, business3),
-              properties = List(ukProperty, foreignProperty)
-            ),
-            btaNavPartial = None,
-            saUtr = Some(testSaUtr),
-            credId = Some(credId),
-            userType = Some(Individual),
-            arn = None
-          )(
-            FakeRequest()
-          )
-        ))
-      }
-
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       "Sole Trader Income Source Id does not exist" in {
@@ -265,46 +180,6 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual(pageTitle)
         )
-      }
-
-      "Income Sources FS is enabled and return the audit event" in {
-
-        Given("Income Sources FS is enabled")
-        enable(IncomeSources)
-
-        And("API 1771  returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-        val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property")
-
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        result should have(
-          httpStatus(OK),
-          pageTitleIndividual(pageTitle)
-        )
-
-        AuditStub.verifyAuditEvent(ChangeReportingMethodNotSavedErrorAuditModel(ForeignProperty)(
-          MtdItUser(
-            mtditid = testMtditid,
-            nino = testNino,
-            userName = None,
-            incomeSources = IncomeSourceDetailsModel(
-              mtdbsa = testMtditid,
-              yearOfMigration = None,
-              businesses = List(business1, business2, business3),
-              properties = List(ukProperty, foreignProperty)
-            ),
-            btaNavPartial = None,
-            saUtr = Some(testSaUtr),
-            credId = Some(credId),
-            userType = Some(Individual),
-            arn = None
-          )(
-            FakeRequest()
-          )
-        ))
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {

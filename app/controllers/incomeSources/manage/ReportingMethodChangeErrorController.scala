@@ -17,7 +17,6 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
-import audit.models.ChangeReportingMethodNotSavedErrorAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -48,7 +47,6 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                     val auditingService: AuditingService,
                                                      val sessionService: SessionService,
                                                      val retrieveBtaNavBar: NavBarPredicate)
                                                     (implicit val ec: ExecutionContext,
@@ -83,7 +81,6 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     Future.successful(
       user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
         case Some(id) =>
-          auditingService.extendedAudit(ChangeReportingMethodNotSavedErrorAuditModel(incomeSourceType))
           Ok(
             reportingMethodChangeError(
               isAgent = isAgent,
