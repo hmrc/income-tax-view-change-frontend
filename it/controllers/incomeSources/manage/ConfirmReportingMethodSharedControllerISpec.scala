@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import audit.models.SwitchReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -186,53 +185,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
       }
     }
-
-    "trigger the audit event" when {
-      "Income Sources FS is Enabled" in {
-        enable(IncomeSources)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        AuditStub
-          .verifyAuditEvent(
-            SwitchReportingMethodAuditModel(
-              journeyType = SelfEmployment.journeyType,
-              reportingMethodChangeTo = annual,
-              taxYear = taxYear,
-              errorMessage = None
-            )(
-              MtdItUser(
-                mtditid = testMtditid,
-                nino = testNino,
-                userName = None,
-                incomeSources = IncomeSourceDetailsModel(
-                  mtdbsa = testMtditid,
-                  yearOfMigration = None,
-                  businesses = List(business1, business2, business3),
-                  properties = List(ukProperty, foreignProperty)
-                ),
-                btaNavPartial = None,
-                saUtr = Some(testSaUtr),
-                credId = Some(credId),
-                userType = Some(Individual),
-                arn = None
-              )(
-                FakeRequest()
-              )
-            )
-          )
-        }
-      }
-    }
+  }
 
   s"calling POST $confirmReportingMethodSubmitUKPropertyUrl" should {
     s"redirect to $manageObligationsShowUKPropertyUrl" when {
@@ -334,53 +287,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
       }
     }
-    "trigger the audit event" when {
-      "called with an empty form" in {
 
-        enable(IncomeSources)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual)(
-          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq())
-        )
-
-        AuditStub
-          .verifyAuditEvent(
-            SwitchReportingMethodAuditModel(
-              journeyType = SelfEmployment.journeyType,
-              reportingMethodChangeTo = annual,
-              taxYear = taxYear,
-              errorMessage = Some(messagesAPI(ConfirmReportingMethodForm.noSelectionError(annual)))
-            )(
-              MtdItUser(
-                mtditid = testMtditid,
-                nino = testNino,
-                userName = None,
-                incomeSources = IncomeSourceDetailsModel(
-                  mtdbsa = testMtditid,
-                  yearOfMigration = None,
-                  businesses = List(business1, business2, business3),
-                  properties = List(ukProperty, foreignProperty)
-                ),
-                btaNavPartial = None,
-                saUtr = Some(testSaUtr),
-                credId = Some(credId),
-                userType = Some(Individual),
-                arn = None
-              )(
-                FakeRequest()
-              )
-            )
-          )
-      }
-    }
     "redirect to home page" when {
       "Income Sources FS is disabled" in {
 

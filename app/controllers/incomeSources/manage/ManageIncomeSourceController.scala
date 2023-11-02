@@ -17,7 +17,6 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
-import audit.models.ManageIncomeSourcesAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -44,7 +43,6 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val sessionService: SessionService,
-                                             auditingService: AuditingService,
                                              val retrieveBtaNavBar: NavBarPredicate)
                                             (implicit val ec: ExecutionContext,
                                              implicit override val mcc: MessagesControllerComponents,
@@ -71,15 +69,6 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
       incomeSourceDetailsService.getViewIncomeSourceViewModel(sources) match {
         case Right(viewModel) =>
           sessionService.deleteSession(Manage).map { _ =>
-            auditingService
-              .extendedAudit(
-                ManageIncomeSourcesAuditModel(
-                  ukProperty = viewModel.viewUkProperty,
-                  foreignProperty = viewModel.viewForeignProperty,
-                  ceasedBusinesses = viewModel.viewCeasedBusinesses,
-                  soleTraderBusinesses = viewModel.viewSoleTraderBusinesses
-                )
-              )
             Ok(manageIncomeSources(
               sources = viewModel,
               isAgent = isAgent,
