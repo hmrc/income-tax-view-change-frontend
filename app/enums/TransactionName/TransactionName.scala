@@ -118,18 +118,6 @@ case object CreditsSummary extends TransactionName {
   val name = "credits-summary"
 }
 
-case object Obligations extends TransactionName {
-  val name = "obligations"
-}
-
-case object SwitchReportingMethod extends TransactionName {
-  val name = "switch-reporting-method"
-}
-
-case object ErrorChangeReportingMethodNotSaved extends TransactionName {
-  val name = "error-change-reporting-method-not-saved"
-}
-
 case object CeaseIncomeSource extends TransactionName {
   val name = "cease-income-source"
 }
