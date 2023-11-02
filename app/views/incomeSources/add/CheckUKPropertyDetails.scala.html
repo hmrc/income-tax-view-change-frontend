@@ -22,7 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.helpers.injected.ErrorSummary
-@import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
+@import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 @import enums.IncomeSourceJourney.UkProperty
 
 
@@ -34,7 +34,7 @@
         implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
-@(viewModel: CheckUKPropertyViewModel, isAgent: Boolean, backUrl: String, postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: CheckPropertyViewModel, isAgent: Boolean, backUrl: String, postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @heading = @{messages("incomeSources.add.checkUKPropertyDetails.heading")}
 @caption = @{messages("incomeSources.add.checkUKPropertyDetails.caption")}

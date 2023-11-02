@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import implicits.ImplicitDateFormatter
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
-import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
+import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -106,7 +106,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     val errorHandler = getErrorHandler(isAgent)
 
     getUKPropertyDetailsFromSession(user).map(_.toOption).map {
-      case Some(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+      case Some(checkUKPropertyViewModel: CheckPropertyViewModel) =>
         Ok(
           checkUKPropertyDetails(viewModel = checkUKPropertyViewModel,
             isAgent = isAgent,
@@ -118,7 +118,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     }
   }
 
-  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
+  def getUKPropertyDetailsFromSession(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
     for {
       startDate <- sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, UkProperty))
       accMethod <- sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, UkProperty))
@@ -128,7 +128,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
           ukPropertyStartDate <- dateMaybe
           cashOrAccrualsFlag <- methodMaybe
         } yield {
-          CheckUKPropertyViewModel(
+          CheckPropertyViewModel(
             tradingStartDate = ukPropertyStartDate,
             cashOrAccrualsFlag = cashOrAccrualsFlag)
         }
@@ -159,7 +159,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     else routes.IncomeSourceNotAddedController.show(UkProperty)
 
     getUKPropertyDetailsFromSession(user) flatMap {
-      case Right(checkUKPropertyViewModel: CheckUKPropertyViewModel) =>
+      case Right(checkUKPropertyViewModel: CheckPropertyViewModel) =>
         businessDetailsService.createUKProperty(checkUKPropertyViewModel).flatMap {
           case Left(ex) => Logger("application").error(
             s"[CheckUKPropertyDetailsController][handleRequest] - Unable to create income source: ${ex.getMessage}")

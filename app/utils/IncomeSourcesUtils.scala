@@ -19,7 +19,7 @@ package utils
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys._
-import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
+import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.SessionService
@@ -45,7 +45,7 @@ object IncomeSourcesUtils {
 
   case class MissingKey(msg: String)
 
-  def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckUKPropertyViewModel]] = {
+  def getUKPropertyDetailsFromSession(sessionService: SessionService)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckPropertyViewModel]] = {
     for {
       startDate <- sessionService.get(addUkPropertyStartDate)
       accMethod <- sessionService.get(addIncomeSourcesAccountingMethod)
@@ -55,7 +55,7 @@ object IncomeSourcesUtils {
           foreignPropertyStartDate <- dateMaybe.map(LocalDate.parse)
           cashOrAccrualsFlag <- methodMaybe
         } yield {
-          CheckUKPropertyViewModel(
+          CheckPropertyViewModel(
             tradingStartDate = foreignPropertyStartDate,
             cashOrAccrualsFlag = cashOrAccrualsFlag)
         }

@@ -111,7 +111,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  def createForeignPropertyIncomeSourceRequest(viewModel: CheckForeignPropertyViewModel): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
+  def createForeignPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
     Try(
       CreateForeignPropertyIncomeSourceRequest(
         PropertyDetails(
@@ -123,7 +123,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     ).toEither
   }
 
-  def createForeignProperty(viewModel: CheckForeignPropertyViewModel)(implicit
+  def createForeignProperty(viewModel: CheckPropertyViewModel)(implicit
                                                                       ec: ExecutionContext,
                                                                       user: MtdItUser[_],
                                                                       hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
@@ -139,7 +139,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  def createUKPropertyIncomeSourceRequest(viewModel: CheckUKPropertyViewModel): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
+  def createUKPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
     Try(
       CreateUKPropertyIncomeSourceRequest(
         PropertyDetails(
@@ -151,7 +151,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     ).toEither
   }
 
-  def createUKProperty(viewModel: CheckUKPropertyViewModel)
+  def createUKProperty(viewModel: CheckPropertyViewModel)
                       (implicit
                        ec: ExecutionContext,
                        user: MtdItUser[_],

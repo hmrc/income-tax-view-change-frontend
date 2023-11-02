@@ -18,14 +18,15 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc._
@@ -33,13 +34,14 @@ import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, Sessi
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.add.CheckBusinessDetails
+import views.html.incomeSources.add.{CheckBusinessDetails, IncomeSourceCheckDetails}
 
 import java.net.URI
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCheckDetailsController @Inject()(val checkBusinessDetails: CheckBusinessDetails,
+class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetails,
                                                    val checkSessionTimeout: SessionTimeoutPredicate,
                                                    val authenticate: AuthenticationPredicate,
                                                    val authorisedFunctions: AuthorisedFunctions,
@@ -61,7 +63,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkBusinessDetails: Che
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
-        isAgent = false
+        isAgent = false,
+        incomeSourceType
       )
   }
 
@@ -72,13 +75,111 @@ class IncomeSourceCheckDetailsController @Inject()(val checkBusinessDetails: Che
           implicit mtdItUser =>
             handleRequest(
               sources = mtdItUser.incomeSources,
-              isAgent = true
+              isAgent = true,
+              incomeSourceType
             )
         }
   }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
+  private def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
+                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
+    val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType).url
+    else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType).url
+    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    //val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else {
+      //controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
+    //}
+    getDetails(user).map {
+      case Right(viewModel) =>
+        Ok(checkDetailsView(
+          viewModel,
+          postAction = ???,
+          isAgent,
+          backUrl = backUrl
+        ))
+      case Left(ex) =>
+        Logger("application").error(
+          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(
+          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: Unable to construct getCheckPropertyViewModel ${ex.getMessage}")
+        errorHandler.showInternalServerError()
+    }
+  }
+
+  private def getDetails(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
+//Make versatile
+    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
+      sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, ForeignProperty)).map { accMethod: Either[Throwable, Option[String]] =>
+        val errors: Seq[String] = getErrors(startDate, accMethod)
+        val result: Option[CheckPropertyViewModel] = getResult(startDate, accMethod)
+
+        result match {
+          case Some(checkForeignPropertyViewModel) =>
+            Right(checkForeignPropertyViewModel)
+          case None =>
+            Left(new IllegalArgumentException(s"Missing required session data: ${errors.map(x => x.mkString(" "))}"))
+        }
+      }
+    }
+  }
+
+  private def getResult(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Option[CheckPropertyViewModel] = {
+    (startDate, accMethod) match { //make versatile
+      case (Right(dateMaybe), Right(methodMaybe)) =>
+        for {
+          foreignPropertyStartDate <- dateMaybe
+          cashOrAccrualsFlag <- methodMaybe
+        } yield {
+          CheckPropertyViewModel(
+            tradingStartDate = foreignPropertyStartDate,
+            cashOrAccrualsFlag = cashOrAccrualsFlag)
+        }
+      case (_, _) => None
+    }
+  }
+
+  private def getErrors(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
+    case class MissingKey(msg: String) //make versatile
+
+    Seq(
+      startDate match {
+        case Right(nameOpt) => nameOpt match {
+          case Some(name) => name
+          case None => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+        }
+        case Left(_) => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+      },
+      accMethod match {
+        case Right(nameOpt) => nameOpt match {
+          case Some(name) => name
+          case None => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+        }
+        case Left(_) => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+      }
+    ).collect {
+      case Some(MissingKey(msg)) => msg
+    }
+  }
+
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      handleSubmit(isAgent = false)
+  }
+
+  def submitAgent(): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleSubmit(isAgent = true)
+        }
+  }
+
+  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     ???
   }
 

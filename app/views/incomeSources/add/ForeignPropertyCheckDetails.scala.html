@@ -15,7 +15,7 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
+@import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
@@ -39,7 +39,7 @@
 )
 
 @(
-        viewModel: CheckForeignPropertyViewModel,
+        viewModel: CheckPropertyViewModel,
         postAction: Call,
         isAgent: Boolean,
         backUrl: String,

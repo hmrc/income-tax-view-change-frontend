@@ -18,6 +18,11 @@ package models.incomeSourceDetails.viewmodels
 
 import java.time.LocalDate
 
+trait CheckDetailsViewModel{
+  val startDate: Option[LocalDate]
+  val cashOrAccruals: String
+}
+
 case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessStartDate: Option[LocalDate],
                                          accountingPeriodEndDate: LocalDate,
@@ -30,25 +35,19 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessCountryCode: Option[String],
                                          incomeSourcesAccountingMethod: Option[String],
                                          cashOrAccrualsFlag: String,
-                                         skippedAccountingMethod: Boolean) {
+                                         skippedAccountingMethod: Boolean) extends CheckDetailsViewModel{
+
+  override val startDate: Option[LocalDate] = businessStartDate
+  override val cashOrAccruals: String = cashOrAccrualsFlag
 
   def countryName: Option[String] = Some("United Kingdom")
 
 }
 
-case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String){
-  def getAccountingMethodMessageKey: String = {
-    val cashAccountingSelected = cashOrAccrualsFlag.toLowerCase.equals("cash")
+case class CheckPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String)extends CheckDetailsViewModel{
 
-    if (cashAccountingSelected) {
-      "incomeSources.add.accountingMethod.cash"
-    } else {
-      "incomeSources.add.accountingMethod.accruals"
-    }
-  }
-}
-
-case class CheckUKPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String) {
+  override val startDate: Option[LocalDate] = Some(tradingStartDate)
+  override val cashOrAccruals: String = cashOrAccrualsFlag
   def getAccountingMethodMessageKey: String = {
     val cashAccountingSelected = cashOrAccrualsFlag.toLowerCase.equals("cash")
 

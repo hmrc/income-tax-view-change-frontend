@@ -107,7 +107,7 @@ trait IncomeSourcesDataHelper {
     skippedAccountingMethod = false
   )
 
-  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
+  val createForeignPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
 
-  val createUKPropertyViewModel = CheckUKPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
+  val createUKPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
 }

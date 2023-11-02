@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
+import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
@@ -85,17 +85,17 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     } recover {
       case ex: Exception =>
         Logger("application").error(
-          s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct getCheckForeignPropertyViewModel ${ex.getMessage}")
+          s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct getCheckPropertyViewModel ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
   }
 
-  def getDetails(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckForeignPropertyViewModel]] = {
+  def getDetails(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
 
     sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
       sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, ForeignProperty)).map { accMethod: Either[Throwable, Option[String]] =>
         val errors: Seq[String] = getErrors(startDate, accMethod)
-        val result: Option[CheckForeignPropertyViewModel] = getResult(startDate, accMethod)
+        val result: Option[CheckPropertyViewModel] = getResult(startDate, accMethod)
 
         result match {
           case Some(checkForeignPropertyViewModel) =>
@@ -107,14 +107,14 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     }
   }
 
-  def getResult(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Option[CheckForeignPropertyViewModel] = {
+  def getResult(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Option[CheckPropertyViewModel] = {
     (startDate, accMethod) match {
       case (Right(dateMaybe), Right(methodMaybe)) =>
         for {
           foreignPropertyStartDate <- dateMaybe
           cashOrAccrualsFlag <- methodMaybe
         } yield {
-          CheckForeignPropertyViewModel(
+          CheckPropertyViewModel(
             tradingStartDate = foreignPropertyStartDate,
             cashOrAccrualsFlag = cashOrAccrualsFlag)
         }
@@ -186,7 +186,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     else routes.IncomeSourceNotAddedController.show(ForeignProperty)
 
     getDetails(user) flatMap {
-      case Right(viewModel: CheckForeignPropertyViewModel) =>
+      case Right(viewModel: CheckPropertyViewModel) =>
         businessDetailsService.createForeignProperty(viewModel).flatMap {
           case Left(ex) =>
             Logger("application").error(

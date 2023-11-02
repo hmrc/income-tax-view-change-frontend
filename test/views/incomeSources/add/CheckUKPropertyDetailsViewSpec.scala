@@ -18,7 +18,7 @@ package views.incomeSources.add
 
 import enums.IncomeSourceJourney.UkProperty
 import implicits.ImplicitDateFormatter
-import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
+import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -37,7 +37,7 @@ class CheckUKPropertyDetailsViewSpec extends TestSupport with ImplicitDateFormat
   val cash = messages("incomeSources.add.accountingMethod.cash")
   val continue = messages("incomeSources.add.checkUKPropertyDetails.confirm")
   val tradingStartDate = LocalDate.parse("2023-05-01")
-  val viewModel = CheckUKPropertyViewModel(tradingStartDate, cashOrAccrualsFlag)
+  val viewModel = CheckPropertyViewModel(tradingStartDate, cashOrAccrualsFlag)
   val heading = messages("incomeSources.add.checkUKPropertyDetails.heading")
   val caption = messages("incomeSources.add.checkUKPropertyDetails.caption")
   val startDateLabel = messages("incomeSources.add.checkUKPropertyDetails.startDateLabel")

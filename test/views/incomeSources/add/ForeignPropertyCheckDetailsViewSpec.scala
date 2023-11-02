@@ -17,7 +17,7 @@
 package views.incomeSources.add
 
 import enums.IncomeSourceJourney.ForeignProperty
-import models.incomeSourceDetails.viewmodels.CheckForeignPropertyViewModel
+import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -48,7 +48,7 @@ class ForeignPropertyCheckDetailsViewSpec extends ViewSpec{
   val changeDateLinkIndiv: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
   val changeAccMethodIndiv: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(ForeignProperty).url
 
-  val viewModel: CheckForeignPropertyViewModel = CheckForeignPropertyViewModel(LocalDate.of(2023,1,1), "cash")
+  val viewModel: CheckPropertyViewModel = CheckPropertyViewModel(LocalDate.of(2023,1,1), "cash")
   val validCallWithSessionDataCash: Html = foreignPropertyCheckDetailsView(viewModel, testCall, isAgent = false, backUrl)
 
   "Foreign Details Check Details Page" should {

@@ -18,7 +18,7 @@ package utils
 
 import auth.MtdItUser
 import forms.utils.SessionKeys._
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckUKPropertyViewModel}
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import services.SessionService
@@ -47,7 +47,7 @@ class IncomeSourcesUtilsSpec extends TestSupport with IncomeSourcesUtils {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val checkUKPropertyViewModel: CheckUKPropertyViewModel = CheckUKPropertyViewModel(
+  val checkUKPropertyViewModel: CheckPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2023, 5, 1),
     cashOrAccrualsFlag = "Cash")
 
