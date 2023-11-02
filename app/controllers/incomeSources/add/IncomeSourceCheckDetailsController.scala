@@ -21,24 +21,21 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType}
 import enums.JourneyType.{Add, JourneyType}
-import exceptions.MissingSessionKey
-import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.add.{CheckBusinessDetails, IncomeSourceCheckDetails}
+import views.html.incomeSources.add.IncomeSourceCheckDetails
 
-import java.net.URI
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetails,
