@@ -59,8 +59,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      sessionService = mockSessionService,
-      auditingService = app.injector.instanceOf[AuditingService]
+      sessionService = mockSessionService
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

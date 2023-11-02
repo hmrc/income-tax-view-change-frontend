@@ -118,14 +118,6 @@ case object CreditsSummary extends TransactionName {
   val name = "credits-summary"
 }
 
-case object ViewAndManageIncomeSourcesHome extends TransactionName {
-  val name = "view-and-manage-income-sources-home"
-}
-
-case object ManageIncomeSourceDetails extends TransactionName {
-  val name = "manage-your-details"
-}
-
 case object Obligations extends TransactionName {
   val name = "obligations"
 }
