@@ -68,8 +68,8 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }.url
 
   def getSubmitUrl(isAgent: Boolean): Call = {
-    if (isAgent) controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submitAgent() else
-      controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit()
+    if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(UkProperty) else
+      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(UkProperty)
   }
 
   def getUKPropertyReportingMethodUrl(isAgent: Boolean, id: String): Call = {

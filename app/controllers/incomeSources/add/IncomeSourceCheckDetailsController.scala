@@ -86,14 +86,14 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType).url
     else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType).url
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    //val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else {
-      //controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
-    //}
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
+      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
+    }
     getDetails(user).map {
       case Right(viewModel) =>
         Ok(checkDetailsView(
           viewModel,
-          postAction = ???,
+          postAction = postAction,
           isAgent,
           backUrl = backUrl
         ))
@@ -164,22 +164,22 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleSubmit(isAgent = false)
+      handleSubmit(isAgent = false, incomeSourceType)
   }
 
-  def submitAgent(): Action[AnyContent] = Authenticated.async {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmit(isAgent = true)
+            handleSubmit(isAgent = true, incomeSourceType)
         }
   }
 
-  def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+  def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     ???
   }
 

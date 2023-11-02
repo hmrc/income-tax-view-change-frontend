@@ -103,8 +103,8 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
     val backUrl: String = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER))
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent() else
-      controllers.incomeSources.add.routes.CheckBusinessDetailsController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(SelfEmployment) else
+      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(SelfEmployment)
 
 
     getBusinessDetailsFromSession(user, ec).map {

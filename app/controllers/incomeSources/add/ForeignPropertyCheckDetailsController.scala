@@ -67,8 +67,8 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
 
     val backUrl: String = if (isAgent) backUrlAgent else backUrlIndividual
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else {
-      controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(ForeignProperty) else {
+      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(ForeignProperty)
     }
     getDetails(user).map{
       case Right(viewModel) =>
