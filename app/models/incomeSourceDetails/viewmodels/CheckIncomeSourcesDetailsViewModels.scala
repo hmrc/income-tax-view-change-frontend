@@ -18,7 +18,7 @@ package models.incomeSourceDetails.viewmodels
 
 import java.time.LocalDate
 
-trait CheckDetailsViewModel{
+sealed trait CheckDetailsViewModel{
   val startDate: Option[LocalDate]
   val cashOrAccruals: String
 }
