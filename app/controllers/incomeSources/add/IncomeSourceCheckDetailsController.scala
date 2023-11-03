@@ -109,7 +109,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
   private def getDetails(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
     {
-      if (incomeSourceType == SelfEmployment) getBusinessModel else getPropertyModel
+      if (incomeSourceType == SelfEmployment) getBusinessModel else getPropertyModel(incomeSourceType)
     } map {
       case Right(checkDetailsViewModel: CheckDetailsViewModel) =>
         Right(checkDetailsViewModel)
@@ -118,7 +118,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getPropertyModel(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
+  private def getPropertyModel(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
     sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
       sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, ForeignProperty)).map { accMethod: Either[Throwable, Option[String]] =>
         (startDate, accMethod) match {
@@ -128,7 +128,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                 Right(CheckDetailsViewModel(
                   businessStartDate = Some(date),
                   cashOrAccrualsFlag = method,
-                  skippedAccountingMethod = false
+                  skippedAccountingMethod = false,
+                  incomeSourceType = incomeSourceType
                 ))
               case (_, _) =>
                 Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
@@ -166,7 +167,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
               cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
-              skippedAccountingMethod = skipAccountingMethod
+              skippedAccountingMethod = skipAccountingMethod,
+              incomeSourceType = SelfEmployment
             ))
 
           case None => throw new Exception(s"$errorTracePrefix failed to retrieve addIncomeSourceData")
@@ -175,30 +177,6 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
 
   }
-
-
-  //private def getErrors(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
-  //  case class MissingKey(msg: String) //make versatile
-  //
-  //  Seq(
-  //    startDate match {
-  //      case Right(nameOpt) => nameOpt match {
-  //        case Some(name) => name
-  //        case None => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
-  //      }
-  //      case Left(_) => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
-  //    },
-  //    accMethod match {
-  //      case Right(nameOpt) => nameOpt match {
-  //        case Some(name) => name
-  //        case None => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
-  //      }
-  //      case Left(_) => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
-  //    }
-  //  ).collect {
-  //    case Some(MissingKey(msg)) => msg
-  //  }
-  //}
 
   def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {

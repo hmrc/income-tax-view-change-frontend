@@ -51,7 +51,11 @@
     @import implicitDateFormatter.longDate
 
     @getMessage(key: String, args: String*) = @{
-        messages(s"incomeSources.add.foreign-property-check-details.$key", args: _*)
+        viewModel.incomeSourceType match {
+            case SelfEmployment => messages(s"check-business-details.$key", args: _*)
+            case UkProperty => messages(s"incomeSources.add.checkUKPropertyDetails.$key", args: _*)
+            case ForeignProperty => messages(s"incomeSources.add.foreign-property-check-details.$key", args: _*)
+        }
     }
 
     @accountingMethodMessageKey = @{
@@ -78,9 +82,9 @@
     btaNavPartial = user.btaNavPartial) {
 
     @hmrcPageHeading(PageHeading(
-        text = getMessage("heading"),
+        text = getMessage("title"),
         headingClasses = Some("govuk-heading-l"),
-        section = Some(getMessage("sole-trader-caption")),
+        section = Some(getMessage("heading")),
         captionClasses = Some("govuk-caption-l")
     ))
 
