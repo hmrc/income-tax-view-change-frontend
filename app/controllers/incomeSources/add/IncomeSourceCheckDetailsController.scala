@@ -21,9 +21,10 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
+import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
@@ -194,7 +195,37 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   }
 
   def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    ???
+    val (redirect, errorRedirect) = (isAgent, incomeSourceType) match {
+      case (true, SelfEmployment) => (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url)
+      case (false, SelfEmployment) => (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(SelfEmployment).url)
+      case (true, UkProperty) => (routes.UKPropertyReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(UkProperty).url)
+      case (false, UkProperty) => (routes.UKPropertyReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(UkProperty).url)
+      case (true, ForeignProperty) => (routes.ForeignPropertyReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(ForeignProperty).url)
+      case (false, ForeignProperty) => (routes.ForeignPropertyReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(ForeignProperty).url)
+    }
+    {
+      incomeSourceType match {
+        case SelfEmployment => getBusinessModel
+        case _ => getPropertyModel(incomeSourceType)
+      }
+    }.flatMap {
+      case Right(viewModel) =>
+        businessDetailsService.createBusiness(viewModel).flatMap {
+          case Right(CreateIncomeSourceResponse(id)) =>
+            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType))
+            Future.successful(Redirect(redirect(id).url))
+
+          case Left(ex) => Future.failed(ex)
+        }
+      case Left(ex) =>
+        Logger("application").error(
+          s"[IncomeSourceCheckDetailsController][handleSubmit] - Error: ${ex.getMessage}")
+        Future.successful(Redirect(errorRedirect))
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"[AddIncomeSourceController][handleRequest]${ex.getMessage}")
+        Redirect(errorRedirect)
+    }
   }
 
 }
