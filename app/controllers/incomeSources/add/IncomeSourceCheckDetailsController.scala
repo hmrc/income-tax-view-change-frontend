@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
+import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
@@ -111,25 +111,24 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     {
       if (incomeSourceType == SelfEmployment) getBusinessModel else getPropertyModel
     } map {
-      case Right(checkBusinessViewModel: CheckBusinessDetailsViewModel) =>
-        Right(checkBusinessViewModel)
-      case Right(checkPropertyViewModel: CheckPropertyViewModel) =>
-        Right(checkPropertyViewModel)
+      case Right(checkDetailsViewModel: CheckDetailsViewModel) =>
+        Right(checkDetailsViewModel)
       case Left(ex) =>
         Left(new IllegalArgumentException(s"Missing required session data: ${ex.getMessage}"))
     }
   }
 
-  private def getPropertyModel(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
+  private def getPropertyModel(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
     sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
       sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, ForeignProperty)).map { accMethod: Either[Throwable, Option[String]] =>
         (startDate, accMethod) match {
           case (Right(dateMaybe), Right(methodMaybe)) =>
             (dateMaybe, methodMaybe) match {
               case (Some(date), Some(method)) =>
-                Right(CheckPropertyViewModel(
-                  tradingStartDate = date,
-                  cashOrAccrualsFlag = method
+                Right(CheckDetailsViewModel(
+                  businessStartDate = Some(date),
+                  cashOrAccrualsFlag = method,
+                  skippedAccountingMethod = false
                 ))
               case (_, _) =>
                 Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
@@ -140,7 +139,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
+  private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckDetailsViewModel]] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
     val errorTracePrefix = "[CheckBusinessDetailsController][getBusinessDetailsFromSession]:"
@@ -150,15 +149,15 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           case Some(addIncomeSourceData) =>
 
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
-            Right(CheckBusinessDetailsViewModel(
+            Right(CheckDetailsViewModel(
               businessName = addIncomeSourceData.businessName,
               businessStartDate = addIncomeSourceData.dateStarted,
-              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
-              businessTrade = addIncomeSourceData.businessTrade
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),
-              businessAddressLine1 = address.lines.headOption
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1")),
+              accountingPeriodEndDate = Some(addIncomeSourceData.accountingPeriodEndDate
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate"))),
+              businessTrade = Some(addIncomeSourceData.businessTrade
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade"))),
+              businessAddressLine1 = Some(address.lines.headOption
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1"))),
               businessAddressLine2 = address.lines.lift(1),
               businessAddressLine3 = address.lines.lift(2),
               businessAddressLine4 = address.lines.lift(3),

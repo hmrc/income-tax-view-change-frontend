@@ -15,13 +15,14 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import enums.IncomeSourceJourney.SelfEmployment
+@import enums.IncomeSourceJourney._
 @import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import play.twirl.api.HtmlFormat
 
 @this(
         mainTemplate: unifiedLayout,
@@ -47,13 +48,27 @@
         origin: Option[String] = None
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@import play.twirl.api.HtmlFormat
-@import implicitDateFormatter.longDate
+    @import implicitDateFormatter.longDate
 
-@getMessage(key: String, args: String*) = @{
-    messages(s"check-business-details.$key", args: _*)
-}
+    @getMessage(key: String, args: String*) = @{
+        messages(s"incomeSources.add.foreign-property-check-details.$key", args: _*)
+    }
 
+    @accountingMethodMessageKey = @{
+        viewModel.getAccountingMethodMessageKey
+    }
+
+    @changeForeignPropertyStartDateURL = @{
+        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = true, ForeignProperty).url
+    }
+
+    @changeForeignPropertyAccountingMethodURL = @{
+        if(isAgent) {
+            controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(ForeignProperty).url
+        } else {
+            controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(ForeignProperty).url
+        }
+    }
 
 @mainTemplate(
     pageTitle = getMessage("heading"),
@@ -72,6 +87,31 @@
     @formWithCSRF(action = postAction) {
 
         @viewModel.toString
+
+        <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
+                <dd class="govuk-summary-list__value" id="foreign-property-date-value">@{
+                    viewModel.businessStartDate.get.toLongDate
+                }</dd>
+                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                    <a class="govuk-link" id="start-date-change-details-link" href=@changeForeignPropertyStartDateURL>
+                    @getMessage("change")
+                    </a>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
+                <dd class="govuk-summary-list__value" id="business-accounting-value">
+                @messages(accountingMethodMessageKey)
+                </dd>
+                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
+                    <a class="govuk-link" id="accounting-method-change-details-link" href=@changeForeignPropertyAccountingMethodURL>
+                    @getMessage("change")
+                    </a>
+                </dd>
+            </div>
+        </dl>
 
 @*        <dl class="govuk-summary-list" id="refund-to-taxpayer-table">*@
 @*            <div class="govuk-summary-list__row">*@
