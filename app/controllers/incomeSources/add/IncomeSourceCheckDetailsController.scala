@@ -21,11 +21,12 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
+import exceptions.MissingSessionKey
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
@@ -86,7 +87,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
       controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
     }
-    getDetails(user).map {
+    getDetails(incomeSourceType)(user).map {
       case Right(viewModel) =>
         Ok(checkDetailsView(
           viewModel,
@@ -106,78 +107,125 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getDetails(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
-//Make versatile
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
-      sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, ForeignProperty)).map { accMethod: Either[Throwable, Option[String]] =>
-        val errors: Seq[String] = getErrors(startDate, accMethod)
-        val result: Option[CheckPropertyViewModel] = getResult(startDate, accMethod)
+  private def getDetails(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
+    {
+      if (incomeSourceType == SelfEmployment) getBusinessModel else getPropertyModel
+    } map {
+      case Right(checkBusinessViewModel: CheckBusinessDetailsViewModel) =>
+        Right(checkBusinessViewModel)
+      case Right(checkPropertyViewModel: CheckPropertyViewModel) =>
+        Right(checkPropertyViewModel)
+      case Left(ex) =>
+        Left(new IllegalArgumentException(s"Missing required session data: ${ex.getMessage}"))
+    }
+  }
 
-        result match {
-          case Some(checkForeignPropertyViewModel) =>
-            Right(checkForeignPropertyViewModel)
-          case None =>
-            Left(new IllegalArgumentException(s"Missing required session data: ${errors.map(x => x.mkString(" "))}"))
-        }
+private def getPropertyModel(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
+  sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, ForeignProperty)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
+    sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, ForeignProperty)).map { accMethod: Either[Throwable, Option[String]] =>
+      (startDate, accMethod) match {
+        case (Right(dateMaybe), Right(methodMaybe)) =>
+          (dateMaybe, methodMaybe) match {
+            case (Some(date), Some(method)) =>
+              Right(CheckPropertyViewModel(
+                tradingStartDate = date,
+                cashOrAccrualsFlag = method
+              ))
+            case (_,_) =>
+              Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
+          }
+//          for {
+//            foreignPropertyStartDate <- dateMaybe
+//            cashOrAccrualsFlag <- methodMaybe
+//          } yield {
+//            CheckPropertyViewModel(
+//              tradingStartDate = foreignPropertyStartDate,
+//              cashOrAccrualsFlag = cashOrAccrualsFlag)
+//          }
+        case (_, _) => Left(new Error(s"Error while retrieving date started or accounting method from session"))
       }
     }
   }
+}
 
-  private def getResult(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Option[CheckPropertyViewModel] = {
-    (startDate, accMethod) match { //make versatile
-      case (Right(dateMaybe), Right(methodMaybe)) =>
-        for {
-          foreignPropertyStartDate <- dateMaybe
-          cashOrAccrualsFlag <- methodMaybe
-        } yield {
-          CheckPropertyViewModel(
-            tradingStartDate = foreignPropertyStartDate,
-            cashOrAccrualsFlag = cashOrAccrualsFlag)
-        }
-      case (_, _) => None
-    }
-  }
+private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
+  val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+  val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
+  val errorTracePrefix = "[CheckBusinessDetailsController][getBusinessDetailsFromSession]:"
+  sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).map {
+    case Right(Some(uiJourneySessionData)) =>
+      uiJourneySessionData.addIncomeSourceData match {
+        case Some(addIncomeSourceData) =>
 
-  private def getErrors(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
-    case class MissingKey(msg: String) //make versatile
+          val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
+          Right(CheckBusinessDetailsViewModel(
+            businessName = addIncomeSourceData.businessName,
+            businessStartDate = addIncomeSourceData.dateStarted,
+            accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate
+              .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
+            businessTrade = addIncomeSourceData.businessTrade
+              .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),
+            businessAddressLine1 = address.lines.headOption
+              .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1")),
+            businessAddressLine2 = address.lines.lift(1),
+            businessAddressLine3 = address.lines.lift(2),
+            businessAddressLine4 = address.lines.lift(3),
+            businessPostalCode = address.postcode,
+            businessCountryCode = addIncomeSourceData.countryCode,
+            incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
+            cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
+              .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
+            skippedAccountingMethod = skipAccountingMethod
+          ))
 
-    Seq(
-      startDate match {
-        case Right(nameOpt) => nameOpt match {
-          case Some(name) => name
-          case None => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
-        }
-        case Left(_) => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
-      },
-      accMethod match {
-        case Right(nameOpt) => nameOpt match {
-          case Some(name) => name
-          case None => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
-        }
-        case Left(_) => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+        case None => throw new Exception(s"$errorTracePrefix failed to retrieve addIncomeSourceData")
       }
-    ).collect {
-      case Some(MissingKey(msg)) => msg
-    }
+    case _ => throw new Exception(s"$errorTracePrefix failed to retrieve uiJourneySessionData ")
   }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+}
+
+
+//private def getErrors(startDate: Either[Throwable, Option[LocalDate]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
+//  case class MissingKey(msg: String) //make versatile
+//
+//  Seq(
+//    startDate match {
+//      case Right(nameOpt) => nameOpt match {
+//        case Some(name) => name
+//        case None => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+//      }
+//      case Left(_) => Some(MissingKey("MissingKey: addForeignPropertyStartDate"))
+//    },
+//    accMethod match {
+//      case Right(nameOpt) => nameOpt match {
+//        case Some(name) => name
+//        case None => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+//      }
+//      case Left(_) => Some(MissingKey("MissingKey: addIncomeSourcesAccountingMethod"))
+//    }
+//  ).collect {
+//    case Some(MissingKey(msg)) => msg
+//  }
+//}
+
+def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  implicit user =>
+    handleSubmit(isAgent = false, incomeSourceType)
+}
+
+def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
+  implicit request =>
     implicit user =>
-      handleSubmit(isAgent = false, incomeSourceType)
-  }
+      getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+        implicit mtdItUser =>
+          handleSubmit(isAgent = true, incomeSourceType)
+      }
+}
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleSubmit(isAgent = true, incomeSourceType)
-        }
-  }
-
-  def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    ???
-  }
+def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+  ???
+}
 
 }
