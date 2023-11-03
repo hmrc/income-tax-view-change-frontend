@@ -1407,8 +1407,8 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Change
 check-business-details.title                            = Sole trader business you entered
 check-business-details.heading                          = Check your details
 check-business-details.business-name                    = Business name
-check-business-details.change-details-link              = Change
-check-business-details.business-start-date              = Business trading start date
+check-business-details.change                           = Change
+check-business-details.start-date                       = Business trading start date
 check-business-details.business-description             = Business description
 check-business-details.business-address                 = Business address
 check-business-details.accounting-method                = Accounting method for sole trader income
@@ -1417,8 +1417,8 @@ check-business-details.traditional-accounting           = Traditional accounting
 
 incomeSources.add.checkUKPropertyDetails.title                  = Check your details
 incomeSources.add.checkUKPropertyDetails.heading                = UK property business you entered
-incomeSources.add.checkUKPropertyDetails.startDateLabel         = UK property business start date
-incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = UK property business accounting method
+incomeSources.add.checkUKPropertyDetails.start-date             = UK property business start date
+incomeSources.add.checkUKPropertyDetails.accounting-method      = UK property business accounting method
 incomeSources.add.checkUKPropertyDetails.change                 = Change
 incomeSources.add.checkUKPropertyDetails.confirm                = Confirm and continue
 

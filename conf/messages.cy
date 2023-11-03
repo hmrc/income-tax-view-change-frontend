@@ -1375,8 +1375,8 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
 check-business-details.title                            = Y busnes unig fasnachwr a nodwyd gennych
 check-business-details.heading                          = Gwirio’ch manylion
 check-business-details.business-name                    = Enw’r busnes
-check-business-details.change-details-link              = Newid
-check-business-details.business-start-date              = Dyddiad dechrau masnachu’r busnes
+check-business-details.change                           = Newid
+check-business-details.start-date                       = Dyddiad dechrau masnachu’r busnes
 check-business-details.business-description             = Disgrifiad o’r busnes
 check-business-details.business-address                 = Cyfeiriad y busnes
 check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
@@ -1386,8 +1386,8 @@ check-business-details.traditional-accounting           = Cyfrifyddu traddodiado
 
 incomeSources.add.checkUKPropertyDetails.title                  = Gwirio’ch manylion
 incomeSources.add.checkUKPropertyDetails.heading                = Y busnes eiddo yn y DU a nodwyd gennych
-incomeSources.add.checkUKPropertyDetails.startDateLabel         = Dyddiad dechrau’r busnes eiddo yn y DU
-incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifyddu’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.start-date             = Dyddiad dechrau’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.accounting-method      = Dull cyfrifyddu’r busnes eiddo yn y DU
 incomeSources.add.checkUKPropertyDetails.change                 = Newid
 incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
 
