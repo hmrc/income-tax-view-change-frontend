@@ -143,7 +143,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+          when(mockBusinessDetailsService.createBusiness(any())(any(), any(), any()))
             .thenReturn(Future(Right(CreateIncomeSourceResponse(testBusinessId))))
 
           val result = TestCheckBusinessDetailsController.show()(fakeRequestWithActiveSession)
@@ -162,7 +162,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+          when(mockBusinessDetailsService.createBusiness(any())(any(), any(), any()))
             .thenReturn(Future {
               Right(CreateIncomeSourceResponse(testBusinessId))
             })
@@ -181,7 +181,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+        when(mockBusinessDetailsService.createBusiness(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse(testBusinessId))
           })
@@ -203,7 +203,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
           enable(IncomeSources)
 
           mockSingleBusinessIncomeSource()
-          when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+          when(mockBusinessDetailsService.createBusiness(any())(any(), any(), any()))
             .thenReturn(Future {
               Right(CreateIncomeSourceResponse(testBusinessId))
             })
@@ -248,7 +248,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
           enable(IncomeSources)
 
           mockSingleBusinessIncomeSource()
-          when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+          when(mockBusinessDetailsService.createBusiness(any())(any(), any(), any()))
             .thenReturn(Future {
               Right(CreateIncomeSourceResponse("incomeSourceId"))
             })
@@ -265,7 +265,7 @@ class CheckBusinessDetailsControllerSpec extends TestSupport with MockAuthentica
         enable(IncomeSources)
 
         mockSingleBusinessIncomeSource()
-        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+        when(mockBusinessDetailsService.createBusiness(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse(testBusinessId))
           })

@@ -51,13 +51,13 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
   def handleResponse(response: Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]): Future[Either[Error, CreateIncomeSourceResponse]] = {
     response match {
       case Right(List(incomeSourceId)) =>
-        Logger("application").info(s"[CreateBusinessDetailsService][createIncomeSource] - New income source created successfully: $incomeSourceId")
+        Logger("application").info(s"[CreateBusinessDetailsService][handleResponse] - New income source created successfully: $incomeSourceId")
         Future.successful(Right(incomeSourceId))
       case Right(_) =>
-        Logger("application").error("[CreateBusinessDetailsService][createIncomeSource] - failed to create, unexpected response")
+        Logger("application").error("[CreateBusinessDetailsService][handleResponse] - failed to create, unexpected response")
         Future.successful(Left(new Error("Failed to create incomeSources")))
       case Left(ex) =>
-        Logger("application").error("[CreateBusinessDetailsService][createIncomeSource] - failed to create")
+        Logger("application").error("[CreateBusinessDetailsService][handleResponse] - failed to create")
         Future.successful(Left(new Error(s"Failed to create incomeSources: $ex")))
     }
   }
@@ -69,12 +69,12 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  def createBusiness(viewModel: CheckDetailsViewModel)(implicit
-                                                       ec: ExecutionContext,
-                                                       user: MtdItUser[_],
-                                                       hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+  def createRequest(viewModel: CheckDetailsViewModel)(implicit
+                                                      ec: ExecutionContext,
+                                                      user: MtdItUser[_],
+                                                      hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     viewModel.incomeSourceType match {
-      case SelfEmployment => createBusinessDetails(viewModel)
+      case SelfEmployment => createBusiness(viewModel)
       case UkProperty => createUKProperty(viewModel)
       case ForeignProperty => createForeignProperty(viewModel)
     }
@@ -107,18 +107,18 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }.toEither
   }
 
-  def createBusinessDetails(viewModel: CheckDetailsViewModel)(implicit
-                                                              ec: ExecutionContext,
-                                                              user: MtdItUser[_],
-                                                              hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+  def createBusiness(viewModel: CheckDetailsViewModel)(implicit
+                                                       ec: ExecutionContext,
+                                                       user: MtdItUser[_],
+                                                       hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
     convertToCreateBusinessIncomeSourceRequest(viewModel) match {
       case Right(requestObject) =>
         createBusiness(requestObject)
       case Left(ex) =>
-        Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - unable to create request object")
+        Logger("application").error("[CreateBusinessDetailsService][createBusiness] - unable to create request object")
         Future.successful(Left(ex))
       case _ =>
-        Logger("application").error("[CreateBusinessDetailsService][createBusinessDetails] - unknown error occurred")
+        Logger("application").error("[CreateBusinessDetailsService][createBusiness] - unknown error occurred")
         Future.successful(Left(new Error("Unknown error occurred")))
     }
   }

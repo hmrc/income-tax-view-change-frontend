@@ -61,7 +61,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
           Right(List(CreateIncomeSourceResponse("123")))
         })
 
-      val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(createBusinessViewModel)
+      val result = UnderTestCreateBusinessDetailsService.createBusiness(createBusinessViewModel)
 
       result.futureValue shouldBe Right(CreateIncomeSourceResponse("123"))
     }
@@ -71,7 +71,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         .thenReturn(Future {
           Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
-      val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(createBusinessViewModel)
+      val result = UnderTestCreateBusinessDetailsService.createBusiness(createBusinessViewModel)
       result.futureValue match {
         case Left(_) => succeed
         case Right(_) => fail("Expecting to fail")
@@ -86,7 +86,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
       // set view model with the wrong data
       val viewModel = createBusinessViewModel.copy(businessName = None)
-      val result = UnderTestCreateBusinessDetailsService.createBusinessDetails(viewModel)
+      val result = UnderTestCreateBusinessDetailsService.createBusiness(viewModel)
       result.futureValue match {
         case Left(_) => succeed
         case Right(_) => fail("Incorrect data in the view model")

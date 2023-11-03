@@ -198,7 +198,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(None))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
-        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+        when(mockBusinessDetailsService.createBusiness(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse("incomeSourceId"))
           })
@@ -315,7 +315,7 @@ class CheckUKPropertyDetailsControllerSpec extends TestSupport
         setupMockGetSessionKeyMongoTyped[String](dateStartedField, journeyType, Right(None))
         setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, journeyType, Right(Some(accruals)))
 
-        when(mockBusinessDetailsService.createBusinessDetails(any())(any(), any(), any()))
+        when(mockBusinessDetailsService.createBusiness(any())(any(), any(), any()))
           .thenReturn(Future {
             Right(CreateIncomeSourceResponse("incomeSourceId"))
           })

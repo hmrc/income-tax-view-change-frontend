@@ -32,7 +32,6 @@ import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceCheckDetails
 
@@ -81,7 +80,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   }
 
   private def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
+                           (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType).url
     else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType).url
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -144,7 +143,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckDetailsViewModel]] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
-    val errorTracePrefix = "[CheckBusinessDetailsController][getBusinessDetailsFromSession]:"
+    val errorTracePrefix = "[IncomeSourceCheckDetailsController][getBusinessModel]:"
     sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).map {
       case Right(Some(uiJourneySessionData)) =>
         uiJourneySessionData.addIncomeSourceData match {
@@ -194,7 +193,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         }
   }
 
-  def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val (redirect, errorRedirect) = (isAgent, incomeSourceType) match {
       case (true, SelfEmployment) => (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url)
       case (false, SelfEmployment) => (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(SelfEmployment).url)
@@ -210,7 +209,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       }
     }.flatMap {
       case Right(viewModel) =>
-        businessDetailsService.createBusiness(viewModel).flatMap {
+        businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
             sessionService.deleteMongoData(JourneyType(Add, incomeSourceType))
             Future.successful(Redirect(redirect(id).url))
@@ -223,7 +222,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         Future.successful(Redirect(errorRedirect))
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[AddIncomeSourceController][handleRequest]${ex.getMessage}")
+        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]${ex.getMessage}")
         Redirect(errorRedirect)
     }
   }
