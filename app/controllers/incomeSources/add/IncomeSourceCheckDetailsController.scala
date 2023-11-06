@@ -128,7 +128,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                 Right(CheckDetailsViewModel(
                   businessStartDate = Some(date),
                   cashOrAccrualsFlag = method,
-                  skippedAccountingMethod = false,
+                  showedAccountingMethod = false,
                   incomeSourceType = incomeSourceType
                 ))
               case (_, _) =>
@@ -142,7 +142,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
   private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckDetailsViewModel]] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
-    val skipAccountingMethod: Boolean = userActiveBusinesses.isEmpty
+    val showAccountingMethodPage: Boolean = userActiveBusinesses.isEmpty
     val errorTracePrefix = "[IncomeSourceCheckDetailsController][getBusinessModel]:"
     sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).map {
       case Right(Some(uiJourneySessionData)) =>
@@ -167,7 +167,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
               cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
-              skippedAccountingMethod = skipAccountingMethod,
+              showedAccountingMethod = showAccountingMethodPage,
               incomeSourceType = SelfEmployment
             ))
 

@@ -22,19 +22,19 @@ import java.time.LocalDate
 
 
 case class CheckDetailsViewModel(businessName: Option[String] = None,
-                                         businessStartDate: Option[LocalDate],
-                                         accountingPeriodEndDate: Option[LocalDate] = None, //enforce
-                                         businessTrade: Option[String] = None, //enforce
-                                         businessAddressLine1: Option[String] = None, //enforce
-                                         businessAddressLine2: Option[String] = None,
-                                         businessAddressLine3: Option[String] = None,
-                                         businessAddressLine4: Option[String] = None,
-                                         businessPostalCode: Option[String] = None,
-                                         businessCountryCode: Option[String] = None,
-                                         incomeSourcesAccountingMethod: Option[String] = None,
-                                         cashOrAccrualsFlag: String,
-                                         skippedAccountingMethod: Boolean,
-                                         incomeSourceType: IncomeSourceType
+                                 businessStartDate: Option[LocalDate],
+                                 accountingPeriodEndDate: Option[LocalDate] = None,
+                                 businessTrade: Option[String] = None,
+                                 businessAddressLine1: Option[String] = None,
+                                 businessAddressLine2: Option[String] = None,
+                                 businessAddressLine3: Option[String] = None,
+                                 businessAddressLine4: Option[String] = None,
+                                 businessPostalCode: Option[String] = None,
+                                 businessCountryCode: Option[String] = None,
+                                 incomeSourcesAccountingMethod: Option[String] = None,
+                                 cashOrAccrualsFlag: String,
+                                 showedAccountingMethod: Boolean,
+                                 incomeSourceType: IncomeSourceType
  ){
 
   def countryName: Option[String] = Some("United Kingdom")
