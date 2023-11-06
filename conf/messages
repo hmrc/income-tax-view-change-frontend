@@ -1404,8 +1404,8 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Change
 
 
 # check business details
-check-business-details.title                            = Sole trader business you entered
-check-business-details.heading                          = Check your details
+check-business-details.title                            = Check your details
+check-business-details.heading                          = Sole trader business you entered
 check-business-details.business-name                    = Business name
 check-business-details.change                           = Change
 check-business-details.start-date                       = Business trading start date

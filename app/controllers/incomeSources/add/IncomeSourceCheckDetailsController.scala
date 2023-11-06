@@ -128,7 +128,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                 Right(CheckDetailsViewModel(
                   businessStartDate = Some(date),
                   cashOrAccrualsFlag = method,
-                  showedAccountingMethod = false,
+                  showedAccountingMethod = true,
                   incomeSourceType = incomeSourceType
                 ))
               case (_, _) =>

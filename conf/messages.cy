@@ -1372,8 +1372,8 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
 
 
 # check business details
-check-business-details.title                            = Y busnes unig fasnachwr a nodwyd gennych
-check-business-details.heading                          = Gwirio’ch manylion
+check-business-details.title                            = Gwirio’ch manylion
+check-business-details.heading                          = Y busnes unig fasnachwr a nodwyd gennych
 check-business-details.business-name                    = Enw’r busnes
 check-business-details.change                           = Newid
 check-business-details.start-date                       = Dyddiad dechrau masnachu’r busnes

@@ -110,7 +110,7 @@
     }
 
 @mainTemplate(
-    pageTitle = getMessage("heading"),
+    pageTitle = getMessage("title"),
     backUrl = Some(backUrl),
     useFallbackBackLink = true,
     isAgent = isAgent,
@@ -125,7 +125,7 @@
 
     @formWithCSRF(action = postAction) {
 
-        <dl class="govuk-summary-list" id="check-details-table">
+        <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
             @if(viewModel.incomeSourceType == SelfEmployment){
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
@@ -141,11 +141,11 @@
             }
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
-                <dd class="govuk-summary-list__value" id="foreign-property-date-value">@{
+                <dd class="govuk-summary-list__value" id="start-date-value">@{
                     viewModel.businessStartDate.get.toLongDate
                 }</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                    <a class="govuk-link" id="start-date-change-details-link" href=@changeStartDateURL>
+                    <a class="govuk-link" id="change-start-date-link" href=@changeStartDateURL>
                     @getMessage("change")
                     </a>
                 </dd>
@@ -181,14 +181,14 @@
                     </dd>
                 </div>
             }
-            @if(viewModel.showedAccountingMethod) {
+            @if(viewModel.showedAccountingMethod || viewModel.incomeSourceType != SelfEmployment) {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
                     <dd class="govuk-summary-list__value" id="business-accounting-value">
                     @messages(accountingMethodMessageKey)
                     </dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" id="accounting-method-change-details-link" href=@changeAccountingMethodURL>
+                        <a class="govuk-link" id="change-accounting-method-link" href=@changeAccountingMethodURL>
                         @getMessage("change")
                         </a>
                     </dd>
