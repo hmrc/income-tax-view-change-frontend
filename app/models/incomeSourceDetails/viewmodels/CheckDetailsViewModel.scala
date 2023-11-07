@@ -33,7 +33,7 @@ case class CheckDetailsViewModel(businessName: Option[String] = None,
                                  businessCountryCode: Option[String] = None,
                                  incomeSourcesAccountingMethod: Option[String] = None,
                                  cashOrAccrualsFlag: String,
-                                 showedAccountingMethod: Boolean,
+                                 showedAccountingMethod: Boolean = true,
                                  incomeSourceType: IncomeSourceType
  ){
 

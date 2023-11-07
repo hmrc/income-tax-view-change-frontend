@@ -16,6 +16,7 @@
 
 package connectors.helpers
 
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.createIncomeSource._
 import models.incomeSourceDetails.viewmodels._
 import play.api.libs.json.{JsValue, Json}
@@ -91,23 +92,24 @@ trait IncomeSourcesDataHelper {
     |    }
     |}""".stripMargin)
 
-  val createBusinessViewModel = CheckBusinessDetailsViewModel(
+  val createBusinessViewModel = CheckDetailsViewModel(
     businessName = Some("someBusinessName"),
     businessStartDate = Some(LocalDate.of(2022, 11, 11)),
-    businessTrade = "someBusinessTrade",
+    businessTrade = Some("someBusinessTrade"),
     businessPostalCode = Some("SE15 4ER"),
     incomeSourcesAccountingMethod = None,
-    accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
-    businessAddressLine1 = "businessAddressLine1",
+    accountingPeriodEndDate = Some(LocalDate.of(2022, 11, 11)),
+    businessAddressLine1 = Some("businessAddressLine1"),
     businessAddressLine2 = Some(""),
     businessAddressLine3 = Some(""),
     businessAddressLine4 = None,
     businessCountryCode = Some("GB"),
     cashOrAccrualsFlag = "CASH",
-    skippedAccountingMethod = false
+    showedAccountingMethod = false,
+    incomeSourceType = SelfEmployment
   )
 
-  val createForeignPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
+  val createForeignPropertyViewModel = CheckDetailsViewModel(businessStartDate = Some(LocalDate.of(2011, 1, 1)), cashOrAccrualsFlag = "CASH", incomeSourceType = ForeignProperty)
 
-  val createUKPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
+  val createUKPropertyViewModel = CheckDetailsViewModel(businessStartDate = Some(LocalDate.of(2011, 1, 1)), cashOrAccrualsFlag = "CASH", incomeSourceType = UkProperty)
 }

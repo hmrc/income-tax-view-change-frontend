@@ -23,6 +23,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -32,6 +33,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.CreateBusinessDetailsService
 import testConstants.BaseTestConstants
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.add.IncomeSourceCheckDetails
@@ -55,6 +57,10 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
   val mockCheckBusinessDetails: IncomeSourceCheckDetails = app.injector.instanceOf[IncomeSourceCheckDetails]
   val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
+  val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
+  val testPropertyAccountingMethod: String = "CASH"
+  val accruals: String = messages("incomeSources.add.accountingMethod.accruals")
+
   val testUIJourneySessionDataBusiness: UIJourneySessionData = UIJourneySessionData(
     sessionId = "some-session-id",
     journeyType = JourneyType(Add, SelfEmployment).toString,
@@ -74,8 +80,6 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     journeyType = JourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(
       dateStarted = Some(testBusinessStartDate),
-      createdIncomeSourceId = Some(testBusinessId),
-      accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
       incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
 
@@ -98,24 +102,25 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
 
   def getHeading(sourceType: IncomeSourceType): String = {
     sourceType match {
-      case SelfEmployment => messages("check-business-details.heading")
-      case UkProperty => messages("incomeSources.add.checkUKPropertyDetails.heading")
-      case ForeignProperty => messages("incomeSources.add.foreign-property-check-details.heading")
+      case SelfEmployment => messages("check-business-details.title")
+      case UkProperty => messages("incomeSources.add.checkUKPropertyDetails.title")
+      case ForeignProperty => messages("incomeSources.add.foreign-property-check-details.title")
     }
   }
 
-  def getTitle(sourceType: IncomeSourceType, heading: String): String = {
+  def getTitle(sourceType: IncomeSourceType, isAgent: Boolean): String = {
+    val prefix: String = if (isAgent) "htmlTitle.agent" else "htmlTitle"
     sourceType match {
-      case SelfEmployment => s"${messages("htmlTitle", heading)}"
-      case UkProperty => s"${messages("htmlTitle", heading)}"
-      case ForeignProperty => s"${messages("incomeSources.add.foreign-property-check-details.title")}"
+      case SelfEmployment => s"${messages(prefix, messages("check-business-details.title"))}"
+      case UkProperty => messages(prefix, messages("incomeSources.add.checkUKPropertyDetails.title"))
+      case ForeignProperty => messages(prefix, messages("incomeSources.add.foreign-property-check-details.title"))
     }
   }
 
   def getLink(sourceType: IncomeSourceType): String = {
     sourceType match {
-      case SelfEmployment => s"${messages("check-business-details.change-details-link")}"
-      case UkProperty => s"${messages("check-business-details.change-details-link")}"
+      case SelfEmployment => s"${messages("check-business-details.change")}"
+      case UkProperty => s"${messages("check-business-details.change")}"
       case ForeignProperty => s"${messages("incomeSources.add.foreign-property-check-details.change")}"
     }
   }
@@ -129,18 +134,26 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             enable(IncomeSources)
 
             mockNoIncomeSources()
+            if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-            val sessionData: UIJourneySessionData = if (incomeSourceType == SelfEmployment) testUIJourneySessionDataBusiness else testUIJourneySessionDataProperty(incomeSourceType)
-            setupMockGetMongo(Right(Some(sessionData)))
+            if (incomeSourceType == SelfEmployment) {
+              val sessionData: UIJourneySessionData = if (incomeSourceType == SelfEmployment) testUIJourneySessionDataBusiness else testUIJourneySessionDataProperty(incomeSourceType)
+              setupMockGetMongo(Right(Some(sessionData)))
+            }
+            else{
+              setupMockCreateSession(true)
+              setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(Some(testPropertyStartDate)))
+              setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
+            }
 
-            val result = TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
 
             val document: Document = Jsoup.parse(contentAsString(result))
             val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
 
             status(result) shouldBe OK
-            val heading = getHeading(incomeSourceType)
-            document.title shouldBe getTitle(incomeSourceType, heading)
+            document.title shouldBe getTitle(incomeSourceType, isAgent)
             document.select("h1:nth-child(1)").text shouldBe getHeading(incomeSourceType)
             changeDetailsLinks.first().text shouldBe getLink(incomeSourceType)
           }

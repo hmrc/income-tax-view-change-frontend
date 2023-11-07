@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import connectors.CreateIncomeSourceConnector
 import connectors.helpers.IncomeSourcesDataHelper
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.viewmodels._
 import org.mockito.ArgumentMatchers.any
@@ -113,8 +114,10 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
           Right(List(CreateIncomeSourceResponse("561")))
         })
 
-      val viewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "CASH"
+      val viewModel = CheckDetailsViewModel(
+        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+        cashOrAccrualsFlag = "CASH",
+        incomeSourceType = ForeignProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
 
@@ -140,9 +143,10 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
 
       // set cashOrAccruals field to empty to cause failure
-      val viewModel = CheckPropertyViewModel(
-        tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = ""
+      val viewModel = CheckDetailsViewModel(
+        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+        cashOrAccrualsFlag = "",
+        incomeSourceType = ForeignProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
       result.futureValue match {
@@ -161,8 +165,10 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
           Right(List(CreateIncomeSourceResponse("561")))
         })
 
-      val viewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "CASH"
+      val viewModel = CheckDetailsViewModel(
+        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+        cashOrAccrualsFlag = "CASH",
+        incomeSourceType = UkProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
 
@@ -174,8 +180,10 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         .thenReturn(Future {
           Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
-      val viewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = "CASH"
+      val viewModel = CheckDetailsViewModel(
+        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+        cashOrAccrualsFlag = "CASH",
+        incomeSourceType = UkProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
       result.futureValue match {
@@ -191,9 +199,10 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
 
       // set cashOrAccrualsFlag field as empty to cause failure
-      val viewModel = CheckPropertyViewModel(
-        tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = ""
+      val viewModel = CheckDetailsViewModel(
+        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+        cashOrAccrualsFlag = "",
+        incomeSourceType = UkProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
       result.futureValue match {
