@@ -48,7 +48,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val testAddBusinessStartDate: Map[String, String] = Map(SessionKeys.addBusinessStartDate -> "2022-10-10")
   val addBusinessStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = true).url
   val addBusinessStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true).url
-  val addBusinessStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+  val addBusinessStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
 
   val foreignPropertyStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
@@ -57,7 +57,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
   val addForeignPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
   val addForeignPropertyStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
-  val addForeignPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show().url
+  val addForeignPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(ForeignProperty).url
 
 
   val testAddForeignPropertyStartDate: Map[String, String] = Map(SessionKeys.foreignPropertyStartDate -> "2022-10-10")
@@ -71,7 +71,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
   val ukPropertyAccountingMethodShowUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty).url
   val addUKPropertyStartDateCheckChangeSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
   val addUKPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
-  val addUKPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url
+  val addUKPropertyStartDateCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty).url
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val journeyTypeSE: JourneyType = JourneyType(Add, SelfEmployment)
