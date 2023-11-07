@@ -40,6 +40,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
         val latestDeadline = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _).head
         val overdueObligations = deadlines.obligations.flatMap(_.obligations.map(_.due)).filter(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled)))
         (latestDeadline, overdueObligations)
+      case NextUpdatesErrorModel(404, _) => (LocalDate.now(), Seq())
       case error: NextUpdatesErrorModel => throw new Exception(s"${error.message}")
       case _ =>
         Logger("application").error("Unexpected Exception getting next deadline due and Overdue Obligations")
