@@ -117,9 +117,6 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       case Left(ex) =>
         Logger("application").error("[CreateBusinessDetailsService][createBusiness] - unable to create request object")
         Future.successful(Left(ex))
-      case _ =>
-        Logger("application").error("[CreateBusinessDetailsService][createBusiness] - unknown error occurred")
-        Future.successful(Left(new Error("Unknown error occurred")))
     }
   }
 
@@ -145,9 +142,6 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       case Left(ex) =>
         Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - unable to create request object")
         Future.successful(Left(ex))
-      case _ =>
-        Logger("application").error("[CreateBusinessDetailsService][createForeignProperty] - unknown error occurred")
-        Future.successful(Left(new Error("Unknown error occurred")))
     }
   }
 
@@ -174,9 +168,6 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       case Left(ex) =>
         Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - unable to create request object")
         Future.successful(Left(ex))
-      case _ =>
-        Logger("application").error("[CreateBusinessDetailsService][createUKProperty] - unknown error occurred")
-        Future.successful(Left(new Error("Unknown error occurred")))
     }
   }
 }
