@@ -17,7 +17,6 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
-import audit.models.ManageYourDetailsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -53,8 +52,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val dateService: DateService,
                                                     val retrieveBtaNavBar: NavBarPredicate,
                                                     val calculationListService: CalculationListService,
-                                                    val sessionService: SessionService,
-                                                    auditingService: AuditingService)
+                                                    val sessionService: SessionService)
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)
@@ -320,7 +318,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       } yield {
         value match {
           case Right(viewModel) =>
-            auditingService.extendedAudit(ManageYourDetailsResponseAuditModel(viewModel = viewModel))
             Ok(view(viewModel = viewModel,
               isAgent = isAgent,
               backUrl = backUrl

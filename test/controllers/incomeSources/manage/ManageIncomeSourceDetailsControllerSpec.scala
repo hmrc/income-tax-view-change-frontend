@@ -72,8 +72,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     mockDateService,
     retrieveBtaNavBar = MockNavBarPredicate,
     mockCalculationListService,
-    sessionService = mockSessionService,
-    auditingService = app.injector.instanceOf[AuditingService]
+    sessionService = mockSessionService
   )(
     ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],

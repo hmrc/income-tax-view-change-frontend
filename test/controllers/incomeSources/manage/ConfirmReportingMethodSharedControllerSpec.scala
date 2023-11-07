@@ -63,7 +63,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
       dateService = dateService,
-      auditingService = app.injector.instanceOf[AuditingService],
       sessionService = mockSessionService
     )(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

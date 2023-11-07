@@ -16,7 +16,6 @@
 
 package controllers.agent.incomeSources.manage
 
-import audit.models.ManageYourDetailsResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.SelfEmployment
@@ -219,52 +218,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         )
       }
     }
-    "return the audit event" when {
-      "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-
-        And("API 1171 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseManageYourDetailsAudit)
-
-        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-
-        And("API 1404 getCalculationList returns a success response")
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-
-        And("API 1896 getCalculationList returns a success response")
-        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-
-        IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentId", clientDetailsWithConfirmation)
-
-        And("Mongo storage is successfully set")
-        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
-
-        AuditStub.verifyAuditEvent(
-          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelSelfEmploymentBusiness)(
-            MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              userName = None,
-              incomeSources = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(business1),
-                properties = List()
-              ),
-              btaNavPartial = None,
-              saUtr = Some(testSaUtr),
-              credId = None,
-              userType = Some(Agent),
-              arn = Some("1")
-            )(
-              FakeRequest()
-            )
-          )
-        )
-      }
-    }
   }
 
   s"callingGET $manageUKPropertyShowAgentUrl" should {
@@ -371,49 +324,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for UK property income"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(messagesUnknown),
-        )
-      }
-    }
-    "return the audit event" when {
-      "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-
-        And("API 1171 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUkPropertyResponseManageYourDetailsAudit)
-
-        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-
-        And("API 1404 getCalculationList returns a success response")
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-
-        And("API 1896 getCalculationList returns a success response")
-        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-
-        IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
-
-        AuditStub.verifyAuditEvent(
-          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelUkPropertyBusiness)(
-            MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              userName = None,
-              incomeSources = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(),
-                properties = List(ukPropertyAudit)
-              ),
-              btaNavPartial = None,
-              saUtr = Some(testSaUtr),
-              credId = None,
-              userType = Some(Agent),
-              arn = Some("1")
-            )(
-              FakeRequest()
-            )
-          )
         )
       }
     }
@@ -525,49 +435,6 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for foreign property income"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(messagesUnknown)
-        )
-      }
-    }
-    "return the audit event" when {
-      "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-
-        And("API 1171 getIncomeSourceDetails returns a success response")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseManageYourDetailsAudit)
-
-        And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-        ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-
-        And("API 1404 getCalculationList returns a success response")
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-
-        And("API 1896 getCalculationList returns a success response")
-        CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-
-        IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
-
-        AuditStub.verifyAuditEvent(
-          ManageYourDetailsResponseAuditModel(viewModel = manageIncomeSourceDetailsViewModelForeignPropertyBusiness)(
-            MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              userName = None,
-              incomeSources = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(),
-                properties = List(foreignPropertyAudit)
-              ),
-              btaNavPartial = None,
-              saUtr = Some(testSaUtr),
-              credId = None,
-              userType = Some(Agent),
-              arn = Some("1")
-            )(
-              FakeRequest()
-            )
-          )
         )
       }
     }

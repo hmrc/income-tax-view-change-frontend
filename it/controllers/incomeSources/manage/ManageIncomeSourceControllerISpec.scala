@@ -16,21 +16,12 @@
 
 package controllers.incomeSources.manage
 
-import audit.models.ManageIncomeSourcesAuditModel
-import auth.MtdItUser
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.SelfEmployment
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewPropertyDetailsViewModel}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
-import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{credId, testMtditid, testNino, testSaUtr}
-import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
-import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty}
 
 class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
 
@@ -86,69 +77,6 @@ class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
           elementTextByID("ceased-business-table-row-trading-name-0")(ceasedBusinessName),
           elementTextByID("table-head-date-started-foreign")(startDateMessage),
           elementTextByID("table-row-trading-start-date-foreign")(foreignPropertyStartDate)
-        )
-      }
-    }
-    "return the audit event" when {
-      "User is authorised" in {
-        enable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        IncomeTaxViewChangeFrontend.getManageIncomeSource
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        AuditStub
-          .verifyAuditEvent(
-            ManageIncomeSourcesAuditModel(
-              soleTraderBusinesses = List(
-                ViewBusinessDetailsViewModel(
-                  incomeSourceId = business1.incomeSourceId,
-                  tradingName = business1.tradingName,
-                  tradingStartDate = business1.tradingStartDate
-                ),
-                ViewBusinessDetailsViewModel(
-                  incomeSourceId = business2.incomeSourceId,
-                  tradingName = business2.tradingName,
-                  tradingStartDate = business2.tradingStartDate
-                )
-              ),
-              ukProperty = Some(
-                ViewPropertyDetailsViewModel(
-                  tradingStartDate = ukProperty.tradingStartDate
-                )
-              ),
-              foreignProperty = Some(
-                ViewPropertyDetailsViewModel(
-                  tradingStartDate = foreignProperty.tradingStartDate
-                )
-              ),
-              ceasedBusinesses = List(
-                CeasedBusinessDetailsViewModel(
-                  tradingName = business3.tradingName,
-                  incomeSourceType = SelfEmployment,
-                  tradingStartDate = business3.tradingStartDate,
-                  cessationDate = business3.cessation.flatMap(_.date).get
-                )
-              )
-            )(
-              MtdItUser(
-                mtditid = testMtditid,
-                nino = testNino,
-                userName = None,
-                incomeSources = IncomeSourceDetailsModel(
-                  mtdbsa = testMtditid,
-                  yearOfMigration = None,
-                  businesses = List(business1, business2, business3),
-                  properties = List(ukProperty, foreignProperty)
-                ),
-                btaNavPartial = None,
-                saUtr = Some(testSaUtr),
-                credId = Some(credId),
-                userType = Some(Individual),
-                arn = None
-              )(
-                FakeRequest()
-              )
-            )
         )
       }
     }

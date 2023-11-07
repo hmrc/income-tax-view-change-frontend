@@ -16,7 +16,6 @@
 
 package controllers.agent.incomeSources.manage
 
-import audit.models.ObligationsAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
@@ -114,47 +113,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         )
       }
     }
-    "return the audit event" when {
-      "User is authorised" in {
-        stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear, clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
 
-        AuditStub.verifyAuditEvent(
-          ObligationsAuditModel(
-            incomeSourceType = SelfEmployment,
-            obligations = obligationsViewModel,
-            businessName = "business",
-            reportingMethod = "quarterly",
-            taxYear = TaxYear(2023, 2024)
-          )(
-            MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              userName = None,
-              incomeSources = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(business1, business2, business3),
-                properties = List(ukProperty, foreignProperty)
-              ),
-              btaNavPartial = None,
-              saUtr = Some(testSaUtr),
-              credId = None,
-              userType = Some(Agent),
-              arn = Some("1")
-            )(
-              FakeRequest()
-            )
-          )
-        )
-      }
-    }
     "return an error" when {
       "there is no incomeSourceId in session storage" in {
         stubAuthorisedAgentUser(authorised = true)
