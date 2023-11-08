@@ -27,7 +27,7 @@ import exceptions.MissingSessionKey
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
@@ -125,8 +125,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           case (Right(dateMaybe), Right(methodMaybe)) =>
             (dateMaybe, methodMaybe) match {
               case (Some(date), Some(method)) =>
-                Right(CheckDetailsViewModel(
-                  businessStartDate = Some(date),
+                Right(CheckPropertyViewModel(
+                  tradingStartDate = date,
                   cashOrAccrualsFlag = method,
                   incomeSourceType = incomeSourceType
                 ))
@@ -149,15 +149,15 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           case Some(addIncomeSourceData) =>
 
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
-            Right(CheckDetailsViewModel(
+            Right(CheckBusinessDetailsViewModel(
               businessName = addIncomeSourceData.businessName,
               businessStartDate = addIncomeSourceData.dateStarted,
-              accountingPeriodEndDate = Some(addIncomeSourceData.accountingPeriodEndDate
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate"))),
-              businessTrade = Some(addIncomeSourceData.businessTrade
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade"))),
-              businessAddressLine1 = Some(address.lines.headOption
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1"))),
+              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
+              businessTrade = addIncomeSourceData.businessTrade
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),
+              businessAddressLine1 = address.lines.headOption
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1")),
               businessAddressLine2 = address.lines.lift(1),
               businessAddressLine3 = address.lines.lift(2),
               businessAddressLine4 = address.lines.lift(3),
@@ -166,8 +166,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
               cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
-              showedAccountingMethod = showAccountingMethodPage,
-              incomeSourceType = SelfEmployment
+              showedAccountingMethod = showAccountingMethodPage
             ))
 
           case None => throw new Exception(s"$errorTracePrefix failed to retrieve addIncomeSourceData")

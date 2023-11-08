@@ -23,6 +23,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
+@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -38,7 +39,6 @@
         govukButton: GovukButton,
         formWithCSRF: FormWithCSRF
 )
-
 
 @(
         viewModel: CheckDetailsViewModel,
@@ -109,6 +109,35 @@
         }
     }
 
+    @extractName = @{
+        viewModel match {
+            case x: CheckBusinessDetailsViewModel => x.businessName.getOrElse("")
+            case _ => ""
+        }
+    }
+
+    @extractTrade = @{
+        viewModel match {
+            case x: CheckBusinessDetailsViewModel => x.businessTrade
+            case _ => ""
+        }
+    }
+
+    @extractAddress = @{
+        viewModel match {
+            case x: CheckBusinessDetailsViewModel => HtmlFormat.raw(getLongAddressFromBusinessAddressDetails(
+                address1 = x.businessAddressLine1,
+                address2 = x.businessAddressLine2,
+                address3 = x.businessAddressLine3,
+                address4 = x.businessAddressLine4,
+                postCode = x.businessPostalCode,
+                countryCode = x.countryName,
+            ))
+            case _ => ""
+        }
+    }
+
+
 @mainTemplate(
     pageTitle = getMessage("title"),
     backUrl = Some(backUrl),
@@ -130,7 +159,7 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
                     <dd class="govuk-summary-list__value" id="business-name-value">@{
-                        viewModel.businessName.getOrElse("")
+                        extractName
                     }</dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                         <a class="govuk-link" href=@changeBusinessNameURL>
@@ -142,7 +171,7 @@
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
                 <dd class="govuk-summary-list__value" id="start-date-value">@{
-                    viewModel.businessStartDate.get.toLongDate
+                    viewModel.startDate.get.toLongDate
                 }</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link" id="change-start-date-link" href=@changeStartDateURL>
@@ -154,7 +183,7 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("business-description")</dt>
                     <dd class="govuk-summary-list__value" id="business-trade-value">@{
-                        viewModel.businessTrade
+                        extractTrade
                     }</dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                         <a class="govuk-link" href=@changeBusinessTradeURL>
@@ -165,14 +194,7 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
                     <dd class="govuk-summary-list__value" id="business-address-value">@{
-                        HtmlFormat.raw(getLongAddressFromBusinessAddressDetails(
-                            address1 = viewModel.businessAddressLine1.getOrElse(""),
-                            address2 = viewModel.businessAddressLine2,
-                            address3 = viewModel.businessAddressLine3,
-                            address4 = viewModel.businessAddressLine4,
-                            postCode = viewModel.businessPostalCode,
-                            countryCode = viewModel.countryName,
-                        ))
+                        extractAddress
                     }</dd>
                     <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                         <a class="govuk-link" href=@changeBusinessAddressURL>
