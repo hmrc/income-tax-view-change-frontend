@@ -214,7 +214,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               case true => Redirect(redirect(id).url)
               case false => Logger("application").error(
                 s"[IncomeSourceCheckDetailsController][handleSubmit] - Error deleting session data")
-                Future.successful(Redirect(errorRedirect))
+                Redirect(errorRedirect)
             }
           case Left(ex) => Future.failed(ex)
         }
