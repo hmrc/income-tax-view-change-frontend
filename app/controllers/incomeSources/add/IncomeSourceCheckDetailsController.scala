@@ -118,7 +118,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getPropertyModel(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
+  private def getPropertyModel(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
     sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
       sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).map { accMethod: Either[Throwable, Option[String]] =>
         (startDate, accMethod) match {
@@ -139,7 +139,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckDetailsViewModel]] = {
+  private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val showAccountingMethodPage: Boolean = userActiveBusinesses.isEmpty
     val errorTracePrefix = "[IncomeSourceCheckDetailsController][getBusinessModel]:"
