@@ -60,6 +60,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       handleRequest(isAgent = false, isChange = isChange)
   }
 
+
   def showAgent(isChange: Boolean): Action[AnyContent] =
     Authenticated.async {
       implicit request =>
