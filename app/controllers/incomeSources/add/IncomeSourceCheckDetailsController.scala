@@ -210,9 +210,12 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       case Right(viewModel) =>
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
-            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType))
-            Future.successful(Redirect(redirect(id).url))
-
+            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType)).map {
+              case true => Redirect(redirect(id).url)
+              case false => Logger("application").error(
+                s"[IncomeSourceCheckDetailsController][handleSubmit] - Error deleting session data")
+                Future.successful(Redirect(errorRedirect))
+            }
           case Left(ex) => Future.failed(ex)
         }
       case Left(ex) =>
