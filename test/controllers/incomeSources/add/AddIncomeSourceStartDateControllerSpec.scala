@@ -184,7 +184,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
         val result = TestAddIncomeSourceStartDateController
           .show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(
-            fakeRequestWithActiveSession.withSession(SessionKeys.addBusinessStartDate -> "INVALID_FORMAT"))
+            fakeRequestWithActiveSession)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

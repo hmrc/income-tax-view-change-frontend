@@ -44,7 +44,7 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
     credId = Some("credId"),
     userType = Some(Individual),
     None
-  )(FakeRequest().withSession(ceaseUKPropertyEndDate -> UpdateIncomeSourceTestConstants.cessationDate))
+  )(FakeRequest())
 
   val userWithOutSessionKey: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
