@@ -27,9 +27,8 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
-import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
+import models.incomeSourceDetails.{AddIncomeSourceData, ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
@@ -210,7 +209,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             case "quarterly" => false
           })
         )
-        case _ => Future.failed(MissingSessionKey(incomeSourceId))
+        case _ => Future.failed(MissingSessionKey(AddIncomeSourceData.createdIncomeSourceIdField))
       }
     } yield updateIncomeSourceRes
 
