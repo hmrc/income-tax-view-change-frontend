@@ -239,10 +239,10 @@ GET          /income-sources/add/uk-property-accounting-method            contro
 GET          /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
 POST         /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = UkProperty)
 POST         /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType: IncomeSourceType = UkProperty)
-GET          /income-sources/add/uk-property-check-details                controllers.incomeSources.add.CheckUKPropertyDetailsController.show()
-GET          /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.showAgent()
-POST         /income-sources/add/uk-property-check-details                controllers.incomeSources.add.CheckUKPropertyDetailsController.submit()
-POST         /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.CheckUKPropertyDetailsController.submitAgent()
+GET          /income-sources/add/uk-property-check-details                controllers.incomeSources.add.IncomeSourceCheckDetailsController.show(incomeSourceType: IncomeSourceType = UkProperty)
+GET          /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.IncomeSourceCheckDetailsController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
+POST         /income-sources/add/uk-property-check-details                controllers.incomeSources.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = UkProperty)
+POST         /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = UkProperty)
 
 GET          /income-sources/add/foreign-property-business-accounting-method         controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/income-sources/add/foreign-property-business-accounting-method  controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
@@ -265,20 +265,20 @@ POST         /income-sources/add/business-accounting-method                   co
 POST         /agents/income-sources/add/business-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
 #Check details / Change
-GET          /income-sources/add/business-check-details                     controllers.incomeSources.add.CheckBusinessDetailsController.show()
-GET          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.showAgent()
+GET          /income-sources/add/business-check-details                     controllers.incomeSources.add.IncomeSourceCheckDetailsController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.IncomeSourceCheckDetailsController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
 GET          /income-sources/add/change-business-name                       controllers.incomeSources.add.AddBusinessNameController.changeBusinessName()
 GET          /agents/income-sources/add/change-business-name                controllers.incomeSources.add.AddBusinessNameController.changeBusinessNameAgent()
 GET          /income-sources/add/change-business-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/income-sources/add/change-business-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
-POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.CheckBusinessDetailsController.submit()
-POST          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.CheckBusinessDetailsController.submitAgent()
+POST          /income-sources/add/business-check-details                    controllers.incomeSources.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
-GET          /income-sources/add/foreign-property-check-details                         controllers.incomeSources.add.ForeignPropertyCheckDetailsController.show()
-GET          /agents/income-sources/add/foreign-property-check-details                  controllers.incomeSources.add.ForeignPropertyCheckDetailsController.showAgent()
-POST         /income-sources/add/foreign-property-check-details                         controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submit()
-POST         /agents/income-sources/add/foreign-property-check-details                  controllers.incomeSources.add.ForeignPropertyCheckDetailsController.submitAgent()
+GET          /income-sources/add/foreign-property-check-details                         controllers.incomeSources.add.IncomeSourceCheckDetailsController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /agents/income-sources/add/foreign-property-check-details                  controllers.incomeSources.add.IncomeSourceCheckDetailsController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /income-sources/add/foreign-property-check-details                         controllers.incomeSources.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /agents/income-sources/add/foreign-property-check-details                  controllers.incomeSources.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
 GET          /income-sources/add/change-uk-property-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = UkProperty)
 GET          /agents/income-sources/add/change-uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType = UkProperty)

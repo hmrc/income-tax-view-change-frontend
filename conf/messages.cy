@@ -1160,13 +1160,6 @@ incomeSources.add.addIncomeSources.tableHead.dateStarted            = Dyddiad cy
 incomeSources.add.addIncomeSources.tableHead.dateEnded              = Y dyddiad dod i ben
 incomeSources.add.addIncomeSources.unknown                          = Anhysbys
 
-incomeSources.add.checkUKPropertyDetails.heading                = Gwirio’ch manylion
-incomeSources.add.checkUKPropertyDetails.caption                = Y busnes eiddo yn y DU a nodwyd gennych
-incomeSources.add.checkUKPropertyDetails.startDateLabel         = Dyddiad dechrau’r busnes eiddo yn y DU
-incomeSources.add.checkUKPropertyDetails.accountingMethodLabel  = Dull cyfrifyddu’r busnes eiddo yn y DU
-incomeSources.add.checkUKPropertyDetails.change                 = Newid
-incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
-
 incomeSources.add.error.standardError                            = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 incomeSources.add.error.incomeSourceNotSaved.p1                  = Nid oedd modd ychwanegu eich busnes {0}. Nid ydym wedi cadw’ch atebion. Rhowch gynnig arall arni yn nes ymlaen.
 incomeSources.add.error.incomeSourceNotSaved.se                  = unig fasnachwr
@@ -1379,17 +1372,32 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
 
 
 # check business details
-check-business-details.sole-trader-caption              = Y busnes unig fasnachwr a nodwyd gennych
-check-business-details.heading                          = Gwirio’ch manylion
+check-business-details.title                            = Gwirio’ch manylion
+check-business-details.heading                          = Y busnes unig fasnachwr a nodwyd gennych
 check-business-details.business-name                    = Enw’r busnes
-check-business-details.change-details-link              = Newid
-check-business-details.business-start-date              = Dyddiad dechrau masnachu’r busnes
+check-business-details.change                           = Newid
+check-business-details.start-date                       = Dyddiad dechrau masnachu’r busnes
 check-business-details.business-description             = Disgrifiad o’r busnes
 check-business-details.business-address                 = Cyfeiriad y busnes
 check-business-details.confirm-button                   = Cadarnhau ac yn eich blaen
 check-business-details.accounting-method                = Dull cyfrifyddu ar gyfer incwm unig fasnachwr
 check-business-details.cash-accounting                  = Cyfrifyddu ar sail arian parod
 check-business-details.traditional-accounting           = Cyfrifyddu traddodiadol
+
+incomeSources.add.checkUKPropertyDetails.title                  = Gwirio’ch manylion
+incomeSources.add.checkUKPropertyDetails.heading                = Y busnes eiddo yn y DU a nodwyd gennych
+incomeSources.add.checkUKPropertyDetails.start-date             = Dyddiad dechrau’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.accounting-method      = Dull cyfrifyddu’r busnes eiddo yn y DU
+incomeSources.add.checkUKPropertyDetails.change                 = Newid
+incomeSources.add.checkUKPropertyDetails.confirm                = Cadarnhau ac yn eich blaen
+
+incomeSources.add.foreign-property-check-details.cash-basis-accounting      = Cyfrifyddu ar sail arian parod
+incomeSources.add.foreign-property-check-details.traditional-accounting     = Cyfrifyddu traddodiadol
+incomeSources.add.foreign-property-check-details.heading                    = Y busnes eiddo tramor a nodwyd gennych
+incomeSources.add.foreign-property-check-details.title                      = Gwirio’ch manylion
+incomeSources.add.foreign-property-check-details.start-date                 = Dyddiad dechrau’r busnes eiddo tramor
+incomeSources.add.foreign-property-check-details.accounting-method          = Dull cyfrifyddu’r busnes eiddo tramor
+incomeSources.add.foreign-property-check-details.change                     = Newid
 
 # business added page
 business-added.text                                     = Yr hyn y mae’n rhaid i chi ei wneud
@@ -1449,14 +1457,6 @@ incomeSources.add.businessReportingMethod.taxYear                   =   Blwyddyn
 incomeSources.add.businessReportingMethod.chooseAnnualReport        =   Dewis cyflwyno adroddiadau’n flynyddol
 incomeSources.add.businessReportingMethod.chooseQuarterlyReport     =   Dewis cyflwyno adroddiadau’n chwarterol
 incomeSources.add.businessReportingMethod.error                     =   Dewiswch a hoffech gyflwyno adroddiad yn flynyddol neu’n chwarterol ar gyfer blwyddyn dreth {0} i {1}
-
-incomeSources.add.foreign-property-check-details.cash-basis-accounting      = Cyfrifyddu ar sail arian parod
-incomeSources.add.foreign-property-check-details.traditional-accounting     = Cyfrifyddu traddodiadol
-incomeSources.add.foreign-property-check-details.heading                    = Y busnes eiddo tramor a nodwyd gennych
-incomeSources.add.foreign-property-check-details.title                      = Gwirio’ch manylion
-incomeSources.add.foreign-property-check-details.start-date                 = Dyddiad dechrau’r busnes eiddo tramor
-incomeSources.add.foreign-property-check-details.accounting-method          = Dull cyfrifyddu’r busnes eiddo tramor
-incomeSources.add.foreign-property-check-details.change                     = Newid
 
 incomeSources.add.foreignPropertyReportingMethod.heading                   =   Dewis dull o gyflwyno adroddiad
 incomeSources.add.foreignPropertyReportingMethod.description1              =   Mae’ch busnes yn gymwys i gael cyfnod gras hyd at Ebrill {0}, lle y gallwch gyflwyno adroddiadau’n flynyddol.
