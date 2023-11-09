@@ -45,6 +45,18 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
     None
   )(FakeRequest())
 
+  val userWithOutSessionKey: MtdItUser[_] = MtdItUser(
+    mtditid = testMtditid,
+    nino = testNino,
+    userName = Some(testRetrievedUserName),
+    incomeSources = ukPropertyIncome,
+    btaNavPartial = None,
+    saUtr = Some("1234567890"),
+    credId = Some("credId"),
+    userType = Some(Individual),
+    None
+  )(FakeRequest())
+
   val cessationDate = "2022-07-01"
 
   val mockUpdateIncomeSourceConnector: UpdateIncomeSourceConnector = mock(classOf[UpdateIncomeSourceConnector])
