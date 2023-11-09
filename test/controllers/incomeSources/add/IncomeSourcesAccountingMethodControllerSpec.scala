@@ -21,7 +21,6 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import forms.utils.SessionKeys.addIncomeSourcesAccountingMethod
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -275,7 +274,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         status(result) shouldBe Status.BAD_REQUEST
         document.title shouldBe getTitle(incomeSourceType, isAgent)
-        result.futureValue.session.get(addIncomeSourcesAccountingMethod) shouldBe None
+        result.futureValue.session.get(AddIncomeSourceData.incomeSourcesAccountingMethodField) shouldBe None
       }
     }
   }

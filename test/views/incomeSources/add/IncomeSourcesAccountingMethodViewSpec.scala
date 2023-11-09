@@ -47,7 +47,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     userType = Some(Individual),
     arn = None,
     incomeSources = noIncomeDetails
-  )(fakeRequestCeaseUKPropertyDeclarationComplete)
+  )(fakeRequestWithNinoAndOrigin("pta"))
 
 
   class Setup(isAgent: Boolean, incomeSourcePrefix: String, incomeSourceType: IncomeSourceType, error: Boolean = false) extends TestSupport {

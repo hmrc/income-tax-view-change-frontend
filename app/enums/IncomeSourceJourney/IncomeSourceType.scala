@@ -26,10 +26,7 @@ sealed trait IncomeSourceType {
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
   val endDateMessagePrefix: String
-  val startDateSessionKey: String
-  val endDateSessionKey: String
   val reportingMethodChangeErrorPrefix: String
-  val ceasePropertyDeclarationSessionKey: String
   val ceaseCheckDetailsPrefix: String
 }
 
@@ -39,10 +36,7 @@ case object SelfEmployment extends IncomeSourceType {
   override val startDateMessagesPrefix: String = "add-business-start-date"
   override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
-  override val startDateSessionKey: String = SessionKeys.addBusinessStartDate
-  override val endDateSessionKey: String = SessionKeys.ceaseBusinessEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
-  override val ceasePropertyDeclarationSessionKey: String = ""
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
 }
 
@@ -52,10 +46,7 @@ case object UkProperty extends IncomeSourceType {
   override val startDateMessagesPrefix: String = "incomeSources.add.UKPropertyStartDate"
   override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
-  override val startDateSessionKey: String = SessionKeys.addUkPropertyStartDate
-  override val endDateSessionKey: String = SessionKeys.ceaseUKPropertyEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
-  override val ceasePropertyDeclarationSessionKey: String = SessionKeys.ceaseUKPropertyDeclare
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseUKProperty.checkDetails"
 
 }
@@ -66,10 +57,7 @@ case object ForeignProperty extends IncomeSourceType {
   override val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
   override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
-  override val startDateSessionKey: String = SessionKeys.foreignPropertyStartDate
-  override val endDateSessionKey: String = SessionKeys.ceaseForeignPropertyEndDate
   override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
-  override val ceasePropertyDeclarationSessionKey: String = SessionKeys.ceaseForeignPropertyDeclare
   override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
 }
 

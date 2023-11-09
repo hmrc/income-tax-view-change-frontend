@@ -340,14 +340,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           val redirectUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
 
           val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
-            BusinessNameForm.businessName -> validBusinessName,
-            SessionKeys.businessStartDate -> "21-04-2020",
-            SessionKeys.businessTrade -> "Plumber",
-            SessionKeys.addBusinessAddressLine1 -> "10 Test Road",
-            SessionKeys.addBusinessPostalCode -> "TE5 T69",
-            SessionKeys.addIncomeSourcesAccountingMethod -> "Quarterly"
-          )
-          )
+            BusinessNameForm.businessName -> validBusinessName))
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) mustBe Some(redirectUrl)
           verify(mockSessionService)

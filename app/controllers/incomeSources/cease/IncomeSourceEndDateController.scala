@@ -314,7 +314,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                 LocalDate.parse(date)
               )
             ))
-        case _ => Future.failed(new Exception(s"[IncomeSourceEndDateController][getFilledForm]: Error getting ${incomeSourceType.endDateSessionKey}:"))
+        case _ => Future.failed(new Exception(s"[IncomeSourceEndDateController][getFilledForm]: Error getting ${CeaseIncomeSourceData.dateCeasedField}:"))
       }
     } else {
       Future.successful(form)

@@ -47,7 +47,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
     userType = Some(Individual),
     arn = None,
     incomeSources = ukPlusForeignPropertyWithSoleTraderIncomeSource
-  )(fakeRequestCeaseUKPropertyDeclarationComplete)
+  )(fakeRequestWithNinoAndOrigin("pta"))
 
 
   class Setup(isAgent: Boolean, error: Boolean = false, incomeSourceType: IncomeSourceType) {

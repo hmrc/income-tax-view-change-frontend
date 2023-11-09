@@ -152,7 +152,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Business Start Date Check Page but session does not contain key: ${SessionKeys.addBusinessStartDate}" in {
+      s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -165,7 +165,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling UK Property Start Date Check Page but session does not contain key: ${SessionKeys.addUkPropertyStartDate}" in {
+      s"calling UK Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -178,7 +178,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Foreign Property Start Date Check Page but session does not contain key: ${SessionKeys.foreignPropertyStartDate}" in {
+      s"calling Foreign Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -191,7 +191,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling Business Start Date Check Page and session contains key: ${SessionKeys.addBusinessStartDate}" in {
+      s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -210,7 +210,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling Foreign Property Start Date Check Page and session contains key: ${SessionKeys.foreignPropertyStartDate}" in {
+      s"calling Foreign Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -229,7 +229,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling UK Property Start Date Check Page and session contains key: ${SessionKeys.addUkPropertyStartDate}" in {
+      s"calling UK Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -466,7 +466,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${SessionKeys.addUkPropertyStartDate} removed from session" when {
+    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -565,7 +565,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${SessionKeys.foreignPropertyStartDate} removed from session" when {
+    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -656,7 +656,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Business Start Date Check Page but session does not contain key: ${SessionKeys.addBusinessStartDate}" in {
+      s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -670,7 +670,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling UK Property Start Date Check Page but session does not contain key: ${SessionKeys.addUkPropertyStartDate}" in {
+      s"calling UK Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -684,7 +684,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Foreign Property Start Date Check Page and session does not contain key: ${SessionKeys.foreignPropertyStartDate}" in {
+      s"calling Foreign Property Start Date Check Page and session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -700,7 +700,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling Business Start Date Check Page and session contains key: ${SessionKeys.addBusinessStartDate}" in {
+      s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -719,7 +719,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling UK Property Start Date Check Page and session contains key: ${SessionKeys.addUkPropertyStartDate}" in {
+      s"calling UK Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -737,7 +737,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling Foreign Property Start Date Check Page and session contains key: ${SessionKeys.foreignPropertyStartDate}" in {
+      s"calling Foreign Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -975,7 +975,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${SessionKeys.addUkPropertyStartDate} removed from session" when {
+    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -1076,7 +1076,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${SessionKeys.foreignPropertyStartDate} removed from session" when {
+    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)

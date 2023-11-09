@@ -20,7 +20,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney._
-import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
