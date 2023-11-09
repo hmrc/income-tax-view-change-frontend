@@ -16,18 +16,22 @@
 
 package controllers.incomeSources.add
 
+import audit.models.IncomeSourceReportingMethodAuditModel
+import auth.MtdItUser
 import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.ForeignProperty
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, LatencyDetails}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testTaxYearRange}
 import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse, singleForeignPropertyResponseInLatencyPeriod}
+import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyOnlyResponse, multipleBusinessesAndPropertyResponse, singleForeignPropertyResponseInLatencyPeriod}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -49,6 +53,11 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
     taxYear2 = taxYear2.toString,
     latencyIndicator2 = quarterlyIndicator
   )
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
+  )(FakeRequest())
 
   s"calling GET $foreignPropertyReportingMethodShowUrl" should {
     "render the Foreign Property Reporting Method page" when {
@@ -327,6 +336,9 @@ class ForeignPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("")))
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId")(formData)
+
+        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(true, ForeignProperty.journeyType, "ADD", "Annually", "2023-2024", "Foreign property")(testUser).detail)
+
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/foreign-property-added?id=$testPropertyIncomeId")
