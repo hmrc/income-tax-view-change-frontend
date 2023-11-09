@@ -16,6 +16,8 @@
 
 package controllers.incomeSources.add
 
+import audit.AuditingService
+import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -24,7 +26,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
-import models.createIncomeSource.CreateIncomeSourceResponse
+import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
@@ -34,6 +36,7 @@ import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, Sessi
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceCheckDetails
+import
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -47,7 +50,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                    val retrieveBtaNavBar: NavBarPredicate,
-                                                   val businessDetailsService: CreateBusinessDetailsService)
+                                                   val businessDetailsService: CreateBusinessDetailsService,
+                                                   val auditingService: AuditingService)
                                                   (implicit val ec: ExecutionContext,
                                                    implicit override val mcc: MessagesControllerComponents,
                                                    val appConfig: FrontendAppConfig,
@@ -211,10 +215,14 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       case Right(viewModel) =>
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
+            auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
             sessionService.deleteMongoData(JourneyType(Add, incomeSourceType))
             Future.successful(Redirect(redirect(id).url))
 
-          case Left(ex) => Future.failed(ex)
+          case Left(ex) =>
+            auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None))
+            Future.failed(ex)
+
         }
       case Left(ex) =>
         Logger("application").error(
