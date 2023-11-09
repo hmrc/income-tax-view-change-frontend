@@ -43,7 +43,7 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
     credId = Some("credId"),
     userType = Some(Individual),
     None
-  )(FakeRequest().withSession(ceaseUKPropertyEndDate -> UpdateIncomeSourceTestConstants.cessationDate))
+  )(FakeRequest())
 
   val cessationDate = "2022-07-01"
 

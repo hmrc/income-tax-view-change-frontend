@@ -182,8 +182,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         val result = TestAddIncomeSourceStartDateController
-          .show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(
-            fakeRequestWithActiveSession.withSession(SessionKeys.addBusinessStartDate -> "INVALID_FORMAT"))
+          .show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }

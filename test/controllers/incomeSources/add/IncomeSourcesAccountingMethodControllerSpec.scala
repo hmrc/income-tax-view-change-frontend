@@ -85,9 +85,9 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
   def changeResult(incomeSourceType: IncomeSourceType, isAgent: Boolean = false, cashOrAccrualsFlag: Option[String] = None): Future[Result] = {
     if (isAgent)
-      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType)(fakeRequestConfirmedClient().withSession(addIncomeSourcesAccountingMethod -> cashOrAccrualsFlag.getOrElse("")))
+      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType)(fakeRequestConfirmedClient())
     else
-      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType)(fakeRequestWithActiveSession.withSession(addIncomeSourcesAccountingMethod -> cashOrAccrualsFlag.getOrElse("")))
+      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType)(fakeRequestWithActiveSession)
   }
 
   def setupMockAuth(isAgent: Boolean = false): Unit = {
