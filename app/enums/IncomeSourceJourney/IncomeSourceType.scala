@@ -16,7 +16,6 @@
 
 package enums.IncomeSourceJourney
 
-import forms.utils.SessionKeys
 import play.api.libs.json.{JsObject, JsString, Json, Writes}
 import play.api.mvc.JavascriptLiteral
 
