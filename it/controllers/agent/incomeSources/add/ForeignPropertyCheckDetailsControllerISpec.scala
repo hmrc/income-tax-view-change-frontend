@@ -3,7 +3,6 @@ package controllers.agent.incomeSources.add
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.ForeignProperty
 import enums.JourneyType.{Add, JourneyType}
-import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, foreignPropertyStartDate}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse

@@ -121,8 +121,7 @@ object BaseIntegrationTestConstants {
     SessionKeys.clientUTR -> "1234567890",
     SessionKeys.clientNino -> testNino,
     SessionKeys.clientMTDID -> testMtditid,
-    SessionKeys.confirmedClient -> "true",
-    SessionKeys.businessStartDate -> "2020-11-1"
+    SessionKeys.confirmedClient -> "true"
   )
 
   val getCurrentTaxYearEnd: LocalDate = {

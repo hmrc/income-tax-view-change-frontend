@@ -20,7 +20,6 @@ import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import forms.utils.SessionKeys.businessName
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
@@ -43,7 +42,6 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
   val prefix: String = "add-business-name"
   val htmlTitle = messagesAPI("htmlTitle")
-  val dateCookie: Map[String, String] = Map(businessName -> "Test Business")
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
     messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")
