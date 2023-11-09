@@ -92,7 +92,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
   }.recover {
     case exception: Exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: $exception")
+      Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: ${exception.getMessage}")
       errorHandler.showInternalServerError()
   }
 

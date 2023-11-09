@@ -37,7 +37,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val changeBusinessNameShowUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
   val changeBusinessNameSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent().url
   val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
-  val checkBusinessDetailsUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
+  val checkBusinessDetailsUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
   val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
 

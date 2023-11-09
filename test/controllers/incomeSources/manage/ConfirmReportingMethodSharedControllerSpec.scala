@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -62,8 +61,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
+      auditingService = mockAuditingService,
       dateService = dateService,
-      auditingService = app.injector.instanceOf[AuditingService],
       sessionService = mockSessionService
     )(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -151,7 +150,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           Some(
             controllers.incomeSources.manage.routes
               .ReportingMethodChangeErrorController.show(isAgent = false, UkProperty).url
-        )
+          )
         status(result) shouldBe Status.SEE_OTHER
       }
 
@@ -163,7 +162,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           Some(
             controllers.incomeSources.manage.routes
               .ReportingMethodChangeErrorController.show(isAgent = true, UkProperty).url
-        )
+          )
         status(result) shouldBe Status.SEE_OTHER
       }
     }
@@ -207,7 +206,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           Some(
             controllers.incomeSources.manage.routes
               .ManageObligationsController.showUKProperty(testChangeToAnnual, testTaxYear).url
-        )
+          )
       }
       "the Agent's UK property reporting method is updated to annual" in {
         val result = runSubmitTest(isAgent = true, UkProperty, testChangeToAnnual)
@@ -325,13 +324,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     when(
       TestConfirmReportingMethodSharedController
         .updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
-        .thenReturn(
-          Future(
-            if (withUpdateIncomeSourceResponseError)
-              UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")
-            else
-              UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
-          )
+      .thenReturn(
+        Future(
+          if (withUpdateIncomeSourceResponseError)
+            UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")
+          else
+            UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
+        )
       )
 
     TestConfirmReportingMethodSharedController
@@ -340,11 +339,11 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
           fakeRequestConfirmedClient()
         else
           fakeRequestWithActiveSession).withFormUrlEncodedBody(
-            if (withValidForm)
-              validTestForm
-            else
-              invalidTestForm
-          )
+          if (withValidForm)
+            validTestForm
+          else
+            invalidTestForm
+        )
       )
   }
 

@@ -20,7 +20,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface
-import uk.gov.hmrc.http.InternalServerException
 
 sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
@@ -76,6 +75,15 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.incomeSourceId)
       case (UkProperty, _) => getUKProperty.map(_.incomeSourceId)
       case (ForeignProperty, _) => getForeignProperty.map(_.incomeSourceId)
+      case _ => None
+    }
+  }
+
+  def getIncomeSourceBusinessName(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
+    (incomeSourceType, soleTraderBusinessId) match {
+      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.tradingName.getOrElse("Unknown"))
+      case (UkProperty, _) => Some("UK property")
+      case (ForeignProperty, _) => Some("Foreign property")
       case _ => None
     }
   }

@@ -426,7 +426,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         status(result) shouldBe SEE_OTHER
         verifySetMongoData(SelfEmployment)
-        redirectLocation(result) shouldBe Some(routes.CheckBusinessDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url)
       }
     }
   }
@@ -525,7 +525,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.CheckUKPropertyDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(UkProperty).url)
       }
     }
   }
@@ -625,7 +625,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyCheckDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(ForeignProperty).url)
       }
     }
   }
@@ -934,7 +934,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         status(result) shouldBe SEE_OTHER
         verifySetMongoData(SelfEmployment)
-        redirectLocation(result) shouldBe Some(routes.CheckBusinessDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url)
       }
     }
   }
@@ -1034,7 +1034,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.CheckUKPropertyDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(UkProperty).url)
       }
     }
   }
@@ -1135,7 +1135,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyCheckDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty).url)
       }
     }
   }

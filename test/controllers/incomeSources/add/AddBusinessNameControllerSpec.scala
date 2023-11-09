@@ -337,7 +337,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
 
-          val redirectUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+          val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
           val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
             BusinessNameForm.businessName -> validBusinessName))
@@ -465,7 +465,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
 
-        val redirectUrl = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
+        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 
         val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
           BusinessNameForm.businessName -> validBusinessName

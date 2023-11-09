@@ -16,14 +16,14 @@
 
 package controllers.agent.incomeSources.manage
 
-import audit.models.SwitchReportingMethodAuditModel
+import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -32,9 +32,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
-import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, multipleBusinessesAndPropertyResponse, ukPropertyOnlyResponse}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
@@ -78,6 +76,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   val pageTitle = messagesAPI(s"$prefix.heading.annual")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), None, Some(Agent), None
+  )(FakeRequest())
 
   s"calling GET $confirmReportingMethodShowUKPropertyUrl" should {
     "render the Confirm Reporting Method page" when {
@@ -194,54 +197,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
       }
     }
-    "trigger the audit event" when {
-      "Income Sources FS is Enabled" in {
-
-        stubAuthorisedAgentUser(authorised = true)
-
-        enable(IncomeSources)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        IncomeTaxViewChangeFrontend.getConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        AuditStub
-          .verifyAuditEvent(
-            SwitchReportingMethodAuditModel(
-              journeyType = SelfEmployment.journeyType,
-              reportingMethodChangeTo = annual,
-              taxYear = taxYear,
-              errorMessage = None
-            )(
-              MtdItUser(
-                mtditid = testMtditid,
-                nino = testNino,
-                userName = None,
-                incomeSources = IncomeSourceDetailsModel(
-                  mtdbsa = testMtditid,
-                  yearOfMigration = None,
-                  businesses = List(business1, business2, business3),
-                  properties = List(ukProperty, foreignProperty)
-                ),
-                btaNavPartial = None,
-                saUtr = Some(testSaUtr),
-                credId = None,
-                userType = Some(Agent),
-                arn = Some("1")
-              )(
-                FakeRequest()
-              )
-            )
-          )
-      }
-    }
   }
 
   s"calling POST $confirmReportingMethodSubmitSoleTraderBusinessUrl" should {
@@ -265,6 +220,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
+
+        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(true, SelfEmployment.journeyType, "MANAGE", "Annually", "2023-2024", "business")(testUser).detail)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -298,55 +255,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         )
       }
     }
-    "trigger the audit event" when {
-      "called with an empty form" in {
 
-        stubAuthorisedAgentUser(authorised = true)
-
-        enable(IncomeSources)
-
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-        And("API 1776 updateTaxYearSpecific returns a success response")
-        IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-        IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
-          Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq())
-        )
-
-        AuditStub
-          .verifyAuditEvent(
-            SwitchReportingMethodAuditModel(
-              journeyType = SelfEmployment.journeyType,
-              reportingMethodChangeTo = annual,
-              taxYear = taxYear,
-              errorMessage = Some(messagesAPI(ConfirmReportingMethodForm.noSelectionError(annual)))
-            )(
-              MtdItUser(
-                mtditid = testMtditid,
-                nino = testNino,
-                userName = None,
-                incomeSources = IncomeSourceDetailsModel(
-                  mtdbsa = testMtditid,
-                  yearOfMigration = None,
-                  businesses = List(business1, business2, business3),
-                  properties = List(ukProperty, foreignProperty)
-                ),
-                btaNavPartial = None,
-                saUtr = Some(testSaUtr),
-                credId = None,
-                userType = Some(Agent),
-                arn = Some("1")
-              )(
-                FakeRequest()
-              )
-            )
-          )
-      }
-    }
     "redirect to home page" when {
       "Income Sources FS is disabled" in {
 
@@ -394,6 +303,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
+        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(false, SelfEmployment.journeyType, "MANAGE", "Annually", "2023-2024", "business")(testUser).detail)
+
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = SelfEmployment, isAgent = true).url)
@@ -421,6 +332,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
 
+        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(false, ForeignProperty.journeyType, "MANAGE", "Annually", "2023-2024", "Foreign property")(testUser).detail)
+
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = ForeignProperty, isAgent = true).url)
@@ -444,6 +357,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
+
+        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(true, ForeignProperty.journeyType, "MANAGE", "Annually", "2023-2024", "Foreign property")(testUser).detail)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -471,6 +386,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual, clientDetailsWithConfirmation)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
+
+        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(false, UkProperty.journeyType, "MANAGE", "Annually", "2023-2024", "UK property")(testUser).detail)
 
         result should have(
           httpStatus(SEE_OTHER),

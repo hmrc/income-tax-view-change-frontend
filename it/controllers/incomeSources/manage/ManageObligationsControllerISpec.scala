@@ -16,24 +16,19 @@
 
 package controllers.incomeSources.manage
 
-import audit.models.ObligationsAuditModel
-import auth.MtdItUser
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.UkProperty
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
+import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
-import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -112,46 +107,6 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual(expectedText),
           elementTextByID("continue-button")(continueButtonText)
-        )
-      }
-    }
-    "return the audit event" when {
-      "User is authorised" in {
-        enable(IncomeSources)
-        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-          manageIncomeSourceData = Some(ManageIncomeSourceData(Some("123"))))))
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-        IncomeTaxViewChangeFrontend.getManageSEObligations(quarterly, taxYear)
-        verifyIncomeSourceDetailsCall(testMtditid)
-
-        AuditStub.verifyAuditEvent(
-          ObligationsAuditModel(
-            incomeSourceType = SelfEmployment,
-            obligations = obligationsViewModel,
-            businessName = "business",
-            reportingMethod = "quarterly",
-            taxYear = TaxYear(2023, 2024)
-          )(
-            MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              userName = None,
-              incomeSources = IncomeSourceDetailsModel(
-                mtdbsa = testMtditid,
-                yearOfMigration = None,
-                businesses = List(business1, business2, business3),
-                properties = List(ukProperty, foreignProperty)
-              ),
-              btaNavPartial = None,
-              saUtr = Some(testSaUtr),
-              credId = Some(credId),
-              userType = Some(Individual),
-              arn = None
-            )(
-              FakeRequest()
-            )
-          )
         )
       }
     }

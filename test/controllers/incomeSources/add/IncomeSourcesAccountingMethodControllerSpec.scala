@@ -108,9 +108,9 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
   def getRedirectUrl(isAgent: Boolean = false): String = {
     if (isAgent)
-      controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
+      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
     else
-      controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
   }
 
 

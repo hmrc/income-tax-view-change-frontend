@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -67,7 +66,6 @@ class ManageObligationsControllerSpec extends TestSupport
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
     obligationsView = app.injector.instanceOf[ManageObligations],
-    auditingService = app.injector.instanceOf[AuditingService],
     sessionService = mockSessionService,
     mockNextUpdatesService
   )(

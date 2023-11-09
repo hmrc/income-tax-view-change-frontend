@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
@@ -265,14 +265,14 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
     ((isAgent, isChange, incomeSourceType) match {
       case (_, false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
-      case (false, _, SelfEmployment) => routes.CheckBusinessDetailsController.show()
-      case (_, _, SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
+      case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
       case (false, false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType)
       case (_, false, _) => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType)
-      case (false, _, UkProperty) => routes.CheckUKPropertyDetailsController.show()
-      case (_, _, UkProperty) => routes.CheckUKPropertyDetailsController.showAgent()
-      case (false, _, _) => routes.ForeignPropertyCheckDetailsController.show()
-      case (_, _, _) => routes.ForeignPropertyCheckDetailsController.showAgent()
+      case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(UkProperty)
+      case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
+      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
+      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
     }).url
   }
 }

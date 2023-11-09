@@ -19,7 +19,6 @@ package utils
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import forms.utils.SessionKeys._
-import models.incomeSourceDetails.viewmodels.CheckUKPropertyViewModel
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.SessionService
@@ -38,25 +37,5 @@ trait IncomeSourcesUtils extends FeatureSwitching {
     } else {
       codeBlock
     }
-  }
-}
-
-object IncomeSourcesUtils {
-
-  case class MissingKey(msg: String)
-
-  def getErrors(startDate: Either[Throwable, Option[String]], accMethod: Either[Throwable, Option[String]]): Seq[String] = {
-
-    def checkError(field: Either[Throwable, Option[String]]): String = {
-      field match {
-        case Right(nameOpt) => nameOpt match {
-          case Some(name) => name
-          case None => "MissingKey: addUKPropertyStartDate"
-        }
-        case Left(_) => "MissingKey: addUKPropertyStartDate"
-      }
-    }
-
-    Seq(checkError(startDate), checkError(accMethod))
   }
 }
