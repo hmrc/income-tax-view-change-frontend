@@ -16,6 +16,8 @@
 
 package controllers.incomeSources.add
 
+import audit.AuditingService
+import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -51,6 +53,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                   val itsaStatusService: ITSAStatusService,
                                                   val dateService: DateService,
                                                   val calculationListService: CalculationListService,
+                                                  val auditingService: AuditingService,
                                                   val customNotFoundErrorView: CustomNotFoundError)
                                                  (implicit val appConfig: FrontendAppConfig,
                                                   mcc: MessagesControllerComponents,
@@ -176,12 +179,20 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
     }
   }
 
+  private def formatReportingMethodPeriod(latencyIndicator: Boolean): String = {
+    latencyIndicator match {
+      case true => "Annually"
+      case false => "Quarterly"
+    }
+  }
+
   private def updateReportingMethod(isAgent: Boolean, id: String, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
     val redirectUrl: Call = if (isAgent) routes.IncomeSourceAddedController.showAgent(id, SelfEmployment) else
       routes.IncomeSourceAddedController.show(id = id, incomeSourceType = SelfEmployment)
     val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id = id, SelfEmployment) else
       routes.IncomeSourceReportingMethodNotSavedController.show(id = id, incomeSourceType = SelfEmployment)
+    val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(SelfEmployment, Some(id))
 
     for {
       results <- Future.sequence(newReportingMethods.map(taxYearSpecific =>
@@ -198,6 +209,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
         case (es: Seq[UpdateIncomeSourceResponseError], _) if es.isEmpty =>
           Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
             s"Updated tax year specific reporting method for all supplied tax years")
+          addAudit(true, newReportingMethods, incomeSourceBusinessName)(user)
           Redirect(redirectUrl)
         case (es: Seq[UpdateIncomeSourceResponseError], ss: UpdateIncomeSourceResponseModel) =>
           for (success <- ss) {
@@ -208,12 +220,30 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
             Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]: " +
               s"Error updating specific reporting method: $error")
           }
+          addAudit(false, newReportingMethods, incomeSourceBusinessName)(user)
           Redirect(redirectErrorUrl)
         case _ =>
           Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]: " +
             s"Error updating tax year specific reporting method")
+          addAudit(false, newReportingMethods, incomeSourceBusinessName)(user)
           Redirect(redirectErrorUrl)
       }
+    }
+  }
+
+  private def addAudit(isSuccessful: Boolean, newReportingMethods: Seq[TaxYearSpecific], incomeSourceBusinessName: Option[String])(implicit user: MtdItUser[_]): Unit = {
+    for (taxYear <- newReportingMethods) {
+      auditingService
+        .extendedAudit(
+          IncomeSourceReportingMethodAuditModel(
+            isSuccessful = isSuccessful,
+            journeyType = SelfEmployment.journeyType,
+            operationType = "ADD",
+            reportingMethodChangeTo = formatReportingMethodPeriod(taxYear.latencyIndicator),
+            taxYear = (taxYear.taxYear.toInt - 1).toString + "-" + taxYear.taxYear,
+            businessName = incomeSourceBusinessName.getOrElse("Unknown")
+          )
+        )
     }
   }
 

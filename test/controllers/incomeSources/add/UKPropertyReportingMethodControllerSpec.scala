@@ -75,6 +75,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
     mockITSAStatusService,
     mockDateService,
     mockCalculationListService,
+    auditingService = mockAuditingService,
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
