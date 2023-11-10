@@ -221,7 +221,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         Future.successful(Redirect(errorRedirect))
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]${ex.getMessage}")
+        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit] -${ex.getMessage}- =${ex.getCause}=")
         Redirect(errorRedirect)
     }
   }
