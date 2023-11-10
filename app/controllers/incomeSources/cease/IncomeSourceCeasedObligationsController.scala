@@ -63,7 +63,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val incomeSourceDetails = incomeSourceType match {
+      val incomeSourceDetails: Future[ (Either[Throwable, Option[String]] ,IncomeSourceType)] = incomeSourceType match {
         case SelfEmployment =>
           sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
         case UkProperty =>
@@ -86,8 +86,11 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
               isAgent = isAgent,
               incomeSourceType = incomeSourceType))
           }
-        case (Right(None), _) => Future.failed(MissingSessionKey(ceaseBusinessIncomeSourceId))
-        case (Left(exception), _) => Future.failed(exception)
+        case incomeSourceX@(Right(None), _) =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][MissingSessionKey]: ${incomeSourceX._1} - ${incomeSourceX._2}")
+          Future.failed(MissingSessionKey(ceaseBusinessIncomeSourceId))
+        case (Left(exception), _) =>
+          Future.failed(exception)
       }
     }
   }.recover {

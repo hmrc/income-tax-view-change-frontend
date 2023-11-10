@@ -35,7 +35,9 @@ class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateInc
       incomeSourceId = incomeSourceId,
       cessationDate = Some(LocalDate.parse(cessationDate))
     ) map {
-      case _: UpdateIncomeSourceResponseModel => Right(UpdateIncomeSourceSuccess(incomeSourceId))
+      case _: UpdateIncomeSourceResponseModel =>
+        Logger("application").error(s"[UpdateIncomeSourceService][updateCessationDate] -  $incomeSourceId")
+        Right(UpdateIncomeSourceSuccess(incomeSourceId))
       case _ => Left(UpdateIncomeSourceError("Failed to update cessationDate"))
     }
   }
