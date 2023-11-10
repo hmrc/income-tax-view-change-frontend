@@ -86,7 +86,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
                 Right(Some(incomeSourceId))
               case None =>
                 Left(new Error("IncomeSourceId not found for Foreign Property"))
-            }, UkProperty)
+            }, ForeignProperty)
           )
       }
 
