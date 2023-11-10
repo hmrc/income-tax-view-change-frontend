@@ -24,6 +24,7 @@
 @import views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
 @import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
+@import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -123,6 +124,13 @@
         }
     }
 
+    @extractStartDate = @{
+        viewModel match {
+            case x: CheckBusinessDetailsViewModel => x.businessStartDate.map(_.toLongDate).getOrElse("")
+            case y: CheckPropertyViewModel => y.tradingStartDate.toLongDate
+        }
+    }
+
     @extractAddress = @{
         viewModel match {
             case x: CheckBusinessDetailsViewModel => HtmlFormat.raw(getLongAddressFromBusinessAddressDetails(
@@ -171,7 +179,7 @@
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
                 <dd class="govuk-summary-list__value" id="start-date-value">@{
-                    viewModel.startDate.get.toLongDate
+                    extractStartDate
                 }</dd>
                 <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
                     <a class="govuk-link" id="change-start-date-link" href=@changeStartDateURL>

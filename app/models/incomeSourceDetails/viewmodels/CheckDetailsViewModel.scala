@@ -21,7 +21,6 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import java.time.LocalDate
 
 sealed trait CheckDetailsViewModel{
-  val startDate: Option[LocalDate]
   val cashOrAccruals: String
   val incomeSourceType: IncomeSourceType
   val showedAccountingMethod: Boolean
@@ -51,7 +50,6 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          cashOrAccrualsFlag: String,
                                          showedAccountingMethod: Boolean) extends CheckDetailsViewModel {
 
-  override val startDate = businessStartDate
   override val cashOrAccruals: String = cashOrAccrualsFlag
   override val incomeSourceType: IncomeSourceType = SelfEmployment
 
@@ -62,7 +60,6 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
 case class CheckPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String, incomeSourceType: IncomeSourceType)
   extends CheckDetailsViewModel {
 
-  override val startDate = Some(tradingStartDate)
   override val cashOrAccruals: String = cashOrAccrualsFlag
   override val showedAccountingMethod: Boolean = true
 }
