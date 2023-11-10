@@ -17,6 +17,7 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
+import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -26,15 +27,12 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
-import forms.utils.SessionKeys
 import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
-import play.api.data.FormError
-import play.api.i18n.Lang
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -56,6 +54,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                        val retrieveBtaNavBar: NavBarPredicate,
                                                        val sessionService: SessionService,
+                                                       val auditingService: AuditingService,
                                                        val dateService: DateService)
                                                       (implicit val ec: ExecutionContext,
                                                        implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -151,6 +150,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val incomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId)
+    val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, maybeIncomeSourceId)
     val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
 
@@ -174,11 +174,18 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                 )
               )
             },
-            _ => handleValidForm(errorCall, isAgent, successCall, taxYearModel, incomeSourceId, reportingMethod)
+            _ => handleValidForm(errorCall, isAgent, successCall, taxYearModel, incomeSourceId, reportingMethod, incomeSourceBusinessName, incomeSourceType)
           )
         case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
         case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
       }
+    }
+  }
+
+  def formatReportingMethod(reportingMethod: String): String = {
+    reportingMethod match {
+      case "annual" => "Annually"
+      case "quarterly" => "Quarterly"
     }
   }
 
@@ -187,7 +194,9 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                               successCall: Call,
                               taxYears: TaxYear,
                               incomeSourceIdMaybe: Option[String],
-                              reportingMethod: String
+                              reportingMethod: String,
+                              incomeSourceBusinessName: Option[String],
+                              incomeSourceType: IncomeSourceType
                              )(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
 
@@ -208,9 +217,31 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     updateIncomeSourceResFuture flatMap {
       case _: UpdateIncomeSourceResponseError =>
         logAndShowError(isAgent, s"[handleValidForm]: Failed to update reporting method")
+        auditingService
+          .extendedAudit(
+            IncomeSourceReportingMethodAuditModel(
+              isSuccessful = false,
+              journeyType = incomeSourceType.journeyType,
+              operationType = "MANAGE",
+              reportingMethodChangeTo = formatReportingMethod(reportingMethod),
+              taxYear = taxYears.startYear.toString + "-" + taxYears.endYear.toString,
+              businessName = incomeSourceBusinessName.getOrElse("Unknown")
+            )
+          )
         Future.successful(Redirect(errorCall))
       case res: UpdateIncomeSourceResponseModel =>
         logAndShowError(isAgent, s"Updated tax year specific reporting method: $res")
+        auditingService
+          .extendedAudit(
+            IncomeSourceReportingMethodAuditModel(
+              isSuccessful = true,
+              journeyType = incomeSourceType.journeyType,
+              operationType = "MANAGE",
+              reportingMethodChangeTo = formatReportingMethod(reportingMethod),
+              taxYear = taxYears.startYear.toString + "-" + taxYears.endYear.toString,
+              businessName = incomeSourceBusinessName.getOrElse("Unknown")
+            )
+          )
         Future.successful(Redirect(successCall))
     } recover {
       case ex: Exception =>
