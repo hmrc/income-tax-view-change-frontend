@@ -133,6 +133,9 @@ case object Obligations extends TransactionName {
 case object SwitchReportingMethod extends TransactionName {
   val name = "switch-reporting-method"
 }
+case object UpdateIncomeSource extends TransactionName {
+  val name = "update-income-source"
+}
 
 case object ErrorChangeReportingMethodNotSaved extends TransactionName {
   val name = "error-change-reporting-method-not-saved"

@@ -131,7 +131,6 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                 Right(CheckDetailsViewModel(
                   businessStartDate = Some(date),
                   cashOrAccrualsFlag = method,
-                  showedAccountingMethod = true,
                   incomeSourceType = incomeSourceType
                 ))
               case (_, _) =>
@@ -215,13 +214,12 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
-            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType))
-            Future.successful(Redirect(redirect(id).url))
-
+            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType)).flatMap { _ =>
+              Future.successful(Redirect(redirect(id).url))
+            }
           case Left(ex) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None))
             Future.failed(ex)
-
         }
       case Left(ex) =>
         Logger("application").error(

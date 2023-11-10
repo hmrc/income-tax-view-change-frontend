@@ -38,7 +38,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
   val checkUKPropertyDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty).url
-  val foreignPropertyCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty).url
+  val foreignPropertyCheckDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(ForeignProperty).url
 
   val selfEmploymentAccountingMethod: String = "incomeSources.add." + SelfEmployment.key + ".AccountingMethod"
   val UKPropertyAccountingMethod: String = "incomeSources.add." + UkProperty.key + ".AccountingMethod"

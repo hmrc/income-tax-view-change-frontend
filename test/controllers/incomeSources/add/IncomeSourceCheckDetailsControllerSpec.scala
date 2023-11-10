@@ -335,6 +335,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
               setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(Some(testPropertyStartDate)))
               setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
             }
+            when(mockSessionService.deleteMongoData(any())(any())).thenReturn(Future(true))
 
             val result = if (isAgent) TestCheckDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
@@ -396,11 +397,12 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
               setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(Some(testPropertyStartDate)))
               setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
             }
+            when(mockSessionService.deleteMongoData(any())(any())).thenReturn(Future(true))
 
             val result = if (isAgent) TestCheckDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
 
-            val redirectUrl = if(isAgent) controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
             else controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType).url
 
             status(result) shouldBe SEE_OTHER
