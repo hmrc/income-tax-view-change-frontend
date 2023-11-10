@@ -69,7 +69,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
         case UkProperty =>
           Future.successful(
               (user.incomeSources.properties
-                .filterNot(_.isCeased).filter(_.isUkProperty)
+                .filter(_.isUkProperty)
                 .map(xs => xs.incomeSourceId).headOption match {
                 case Some(incomeSourceId) =>
                   Right(Some(incomeSourceId))
@@ -80,7 +80,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
         case ForeignProperty =>
           Future.successful(
             (user.incomeSources.properties
-              .filterNot(_.isCeased).filter(_.isForeignProperty)
+              .filter(_.isForeignProperty)
               .map(xs => xs.incomeSourceId).headOption match {
               case Some(incomeSourceId) =>
                 Right(Some(incomeSourceId))
