@@ -18,8 +18,8 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceListResponseError, CreateIncomeSourceResponse}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
@@ -30,7 +30,6 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                         failureCategory: Option[String],
                                         failureReason: Option[String],
                                         createIncomeSourceResponse: Option[CreateIncomeSourceResponse],
-                                        createIncomeSourceResponseError: CreateIncomeSourceListResponseError
                                        )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
 

@@ -16,6 +16,7 @@
 
 package controllers.incomeSources.add
 
+import audit.AuditingService
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -86,7 +87,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
       incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
 
-  object TestCheckDetailsController extends IncomeSourceCheckDetailsController(
+  protected object TestCheckDetailsController extends IncomeSourceCheckDetailsController(
     checkDetailsView = app.injector.instanceOf[IncomeSourceCheckDetails],
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
@@ -95,7 +96,8 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    businessDetailsService = mockBusinessDetailsService
+    businessDetailsService = mockBusinessDetailsService,
+    auditingService = app.injector.instanceOf[AuditingService]
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     sessionService = mockSessionService,
