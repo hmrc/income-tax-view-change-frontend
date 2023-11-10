@@ -85,7 +85,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
               isAgent = isAgent,
               incomeSourceType = incomeSourceType))
           }
-        case (Right(None), _) => Future.failed(MissingSessionKey(CeaseIncomeSourceData.dateCeasedField))
+        case (Right(None), _) => Future.failed(MissingSessionKey(CeaseIncomeSourceData.incomeSourceIdField))
         case (Left(exception), _) => Future.failed(exception)
       }
     }

@@ -209,7 +209,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             case "quarterly" => false
           })
         )
-        case _ => Future.failed(MissingSessionKey(AddIncomeSourceData.createdIncomeSourceIdField))
+        case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
       }
     } yield updateIncomeSourceRes
 
