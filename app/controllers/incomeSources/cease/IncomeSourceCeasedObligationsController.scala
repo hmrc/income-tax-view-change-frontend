@@ -67,13 +67,27 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
         case SelfEmployment =>
           sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
         case UkProperty =>
-          Future.successful((incomeSourceDetailsService
-            .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)
-            .map(propertyDetailsModel => Some(propertyDetailsModel.incomeSourceId)), UkProperty))
+          Future.successful(
+              (user.incomeSources.properties
+                .filter(_.isUkProperty)
+                .map(xs => xs.incomeSourceId).headOption match {
+                case Some(incomeSourceId) =>
+                  Right(Some(incomeSourceId))
+                case None =>
+                  Left(new Error("IncomeSourceId not found for UK property"))
+              }, UkProperty)
+          )
         case ForeignProperty =>
-          Future.successful((incomeSourceDetailsService
-            .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)
-            .map(propertyDetailsModel => Some(propertyDetailsModel.incomeSourceId)), ForeignProperty))
+          Future.successful(
+            (user.incomeSources.properties
+              .filter(_.isForeignProperty)
+              .map(xs => xs.incomeSourceId).headOption match {
+              case Some(incomeSourceId) =>
+                Right(Some(incomeSourceId))
+              case None =>
+                Left(new Error("IncomeSourceId not found for Foreign Property"))
+            }, ForeignProperty)
+          )
       }
 
       incomeSourceDetails.flatMap {
