@@ -95,7 +95,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
               countryCode = Some("GB"), // required to be GB by API when postcode present
               postalCode = viewModel.businessPostalCode
             ),
-            typeOfBusiness = viewModel.businessTrade,
+            typeOfBusiness = Some(viewModel.businessTrade),
             tradingStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
             cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.toUpperCase,
             cessationDate = None,
