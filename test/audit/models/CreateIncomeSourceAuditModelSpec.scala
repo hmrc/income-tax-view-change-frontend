@@ -37,7 +37,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   val createBusinessViewModel = CheckDetailsViewModel(
     businessName = Some("someBusinessName"),
-    businessStartDate = Some(LocalDate.of(2022, 11, 11)),
+    businessStartDate = Some(LocalDate.of(2022, 1, 1)),
     businessTrade = Some("someBusinessTrade"),
     businessPostalCode = Some("TE5 7TT"),
     businessAddressLine1 = Some("2 Test Lane"),
@@ -74,11 +74,11 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   val detailIndividualSE = Json.parse(
     """{
+      |    "nationalInsuranceNumber": "AB123456C",
       |    "mtditid": "XAIT0000123456",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",
       |    "userType": "Individual",
-      |    "nino": "AA111111A",
       |    "outcome": {
       |        "isSuccessful": true
       |    },
@@ -89,18 +89,17 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |    "businessDescription": "someBusinessTrade",
       |    "addressLine1": "2 Test Lane",
       |    "addressLine2": "Test Unit",
-      |    "addressLine3": "",
       |    "addressTownOrCity": "Test City",
       |    "addressPostcode": "TE5 7TT",
       |    "addressCountry": "GB",
-      |    "accountingMethod":"cash basis accounting"
+      |    "accountingMethod":"Cash basis accounting"
       |}""".stripMargin)
 
 
   val detailAgentSE = Json.parse(
     """{
+      |    "nationalInsuranceNumber": "AA111111A",
       |    "mtditid": "XAIT00000000015",
-      |    "nino": "AA111111A",
       |    "agentReferenceNumber": "XAIT0000123456",
       |    "saUtr": "1234567890",
       |    "credId": "testCredId",
@@ -111,21 +110,21 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |    "journeyType": "SE",
       |    "addedIncomeSourceID": "XA00001234",
       |    "dateStarted": "2022-01-01",
-      |    "businessName": "nextUpdates.business",
-      |    "businessDescription": "trade",
+      |    "businessName": "someBusinessName",
+      |    "businessDescription": "someBusinessTrade",
       |    "addressLine1": "2 Test Lane",
       |    "addressLine2": "Test Unit",
-      |    "addressLine3": "",
       |    "addressTownOrCity": "Test City",
       |    "addressPostcode": "TE5 7TT",
-      |    "addressCountry": "United Kingdom",
-      |    "accountingMethod":"cash basis accounting"
+      |    "addressCountry": "GB",
+      |    "accountingMethod":"Cash basis accounting"
       |}""".stripMargin)
+
 
   val detailOutcomeError = Json.parse(
     """{
+      |    "nationalInsuranceNumber": "AB123456C",
       |    "mtditid": "XAIT0000123456",
-      |    "nino": "AB123456C",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",
       |    "userType": "Individual",
@@ -135,24 +134,21 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |        "failureReason": "Failure Reason"
       |    },
       |    "journeyType": "SE",
-      |    "addedIncomeSourceID": "XA00001234",
       |    "dateStarted": "2022-01-01",
-      |    "businessName": "nextUpdates.business",
-      |    "businessDescription": "trade",
+      |    "businessName": "someBusinessName",
+      |    "businessDescription": "someBusinessTrade",
       |    "addressLine1": "2 Test Lane",
       |    "addressLine2": "Test Unit",
-      |    "addressLine3": "",
       |    "addressTownOrCity": "Test City",
       |    "addressPostcode": "TE5 7TT",
-      |    "addressCountry": "United Kingdom",
-      |    "accountingMethod":"cash basis accounting"
+      |    "addressCountry": "GB",
+      |    "accountingMethod":"Cash basis accounting"
       |}""".stripMargin)
 
   val detailProperty = Json.parse(
     """{
       |    "nationalInsuranceNumber": "AB123456C",
       |    "mtditid": "XAIT0000123456",
-      |    "nino": "AB123456C",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",
       |    "userType": "Individual",
@@ -160,10 +156,9 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |        "isSuccessful": true
       |    },
       |    "journeyType": "UKPROPERTY",
-      |    "addedIncomeSourceID":"XWIS00000033593",
+      |    "addedIncomeSourceID":"XA00001234",
       |    "dateStarted": "2022-01-01"
       |}""".stripMargin)
-
 
   "CeaseIncomeSourceAuditModel" should {
     s"have the correct transaction name of - $transactionName" in {

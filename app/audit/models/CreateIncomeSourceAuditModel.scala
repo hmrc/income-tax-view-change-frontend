@@ -74,7 +74,7 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
       } else Json.obj()) ++
         ("accountingMethod", viewModel.incomeSourcesAccountingMethod.map {
           case "accruals" => "Traditional accounting"
-          case "cash" => "Cash based accounting"
+          case "cash" => "Cash basis accounting"
         })
 
 
