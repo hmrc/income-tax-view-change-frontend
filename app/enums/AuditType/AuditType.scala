@@ -121,3 +121,7 @@ case object CreditsSummaryResponse extends AuditType {
 case object UpdateIncomeSource extends AuditType {
   override val name: String = "UpdateIncomeSource"
 }
+
+case object CreateIncomeSource extends AuditType {
+  override val name: String = "CreateIncomeSource"
+}

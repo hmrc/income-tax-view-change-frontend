@@ -121,3 +121,7 @@ case object CreditsSummary extends TransactionName {
 case object UpdateIncomeSource extends TransactionName {
   val name = "update-income-source"
 }
+
+case object CreateIncomeSource extends TransactionName {
+  val name = "create-income-source"
+}
