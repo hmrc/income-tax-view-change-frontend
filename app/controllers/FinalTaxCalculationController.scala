@@ -54,7 +54,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                               implicit val appConfig: FrontendAppConfig
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveIncomeSources andThen retrieveBtaNavBar
 
 
@@ -78,7 +78,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
 
-  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(

@@ -42,7 +42,6 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 val retrieveBtaNavBar: NavBarPredicate,
                                                 val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                val retrieveNino: NinoPredicate,
                                                 val view: DeclarePropertyCeased,
                                                 val sessionService: SessionService)
                                                (implicit val appConfig: FrontendAppConfig,
@@ -78,7 +77,7 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
 
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
+    (checkSessionTimeout andThen authenticate
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
@@ -139,7 +138,7 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(isAgent = false, incomeSourceType = incomeSourceType)

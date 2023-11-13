@@ -41,7 +41,6 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val checkSessionTimeout: SessionTimeoutPredicate,
                                    val authenticate: AuthenticationPredicate,
                                    val authorisedFunctions: AuthorisedFunctions,
-                                   val retrieveNino: NinoPredicate,
                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                    val retrieveBtaNavBar: NavBarPredicate,
                                    val feedbackView: Feedback,
@@ -55,7 +54,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                   ) extends ClientConfirmedController with I18nSupport {
 
 
-  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit)
@@ -80,7 +79,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
@@ -132,7 +131,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         )
   }
 
-  def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar) {
     implicit request =>
       val referer = request.session.get(REFERER).getOrElse(config.baseUrl)

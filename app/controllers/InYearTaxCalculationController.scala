@@ -95,7 +95,7 @@ class InYearTaxCalculationController @Inject()(
     }
   }
 
-  def show(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))

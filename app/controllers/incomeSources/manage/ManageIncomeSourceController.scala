@@ -39,7 +39,6 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val checkSessionTimeout: SessionTimeoutPredicate,
                                              val authenticate: AuthenticationPredicate,
                                              val authorisedFunctions: AuthorisedFunctions,
-                                             val retrieveNino: NinoPredicate,
                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val sessionService: SessionService,
@@ -98,7 +97,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
             }
       }
     else
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
+      (checkSessionTimeout andThen authenticate
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }

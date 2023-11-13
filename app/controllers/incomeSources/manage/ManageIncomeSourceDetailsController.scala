@@ -43,7 +43,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val checkSessionTimeout: SessionTimeoutPredicate,
                                                     val authenticate: AuthenticationPredicate,
                                                     val authorisedFunctions: AuthorisedFunctions,
-                                                    val retrieveNino: NinoPredicate,
                                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -59,7 +58,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils {
 
 
-  def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -86,7 +85,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         }
   }
 
-  def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -113,7 +112,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         }
   }
 
-  def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {

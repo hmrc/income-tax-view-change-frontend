@@ -44,7 +44,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val creditService: CreditService,
                                           val retrieveBtaNavBar: NavBarPredicate,
-                                          val retrieveNino: NinoPredicate,
                                           val authenticate: AuthenticationPredicate,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
@@ -63,7 +62,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
+    (checkSessionTimeout andThen authenticate
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
@@ -164,7 +163,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def startRefund(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
+    (checkSessionTimeout andThen authenticate
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         user.userType match {
@@ -182,7 +181,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     }
 
   def refundStatus(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
+    (checkSessionTimeout andThen authenticate
       andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         user.userType match {

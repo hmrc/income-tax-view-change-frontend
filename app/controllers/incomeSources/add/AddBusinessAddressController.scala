@@ -54,7 +54,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                             )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(isAgent = false, isChange = isChange)
@@ -136,7 +136,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       errorHandler.showInternalServerError()
   }
 
-  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(isAgent = false, id, isChange = isChange)

@@ -36,7 +36,6 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: AuthorisedFunctions,
-                                          val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -64,7 +63,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
       }
   }
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandler, isAgent = false,

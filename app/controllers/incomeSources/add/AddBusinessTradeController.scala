@@ -90,7 +90,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
       }
     } else {
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
+      (checkSessionTimeout andThen authenticate
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }

@@ -45,7 +45,6 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                     val retrieveBtaNavBar: NavBarPredicate,
                                                     val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                    val retrieveNino: NinoPredicate,
                                                     val view: UKPropertyReportingMethod,
                                                     val updateIncomeSourceService: UpdateIncomeSourceService,
                                                     val itsaStatusService: ITSAStatusService,
@@ -231,7 +230,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
     }
   }
 
-  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user => handleRequest(isAgent = false, id = id)
   }
@@ -245,7 +244,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
         }
   }
 
-  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(isAgent = false, id = id)

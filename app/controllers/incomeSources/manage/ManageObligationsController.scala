@@ -41,7 +41,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                             val authenticate: AuthenticationPredicate,
                                             val authorisedFunctions: AuthorisedFunctions,
-                                            val retrieveNino: NinoPredicate,
                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -56,7 +55,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   with FeatureSwitching with IncomeSourcesUtils {
 
 
-  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
@@ -99,7 +98,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }
   }
 
-  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -126,7 +125,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -224,7 +223,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false)))
@@ -250,7 +249,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             }
       }
     else
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
+      (checkSessionTimeout andThen authenticate
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }

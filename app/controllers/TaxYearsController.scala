@@ -43,7 +43,6 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                    val checkSessionTimeout: SessionTimeoutPredicate,
                                    val retrieveBtaNavBar: NavBarPredicate,
                                    val authenticate: AuthenticationPredicate,
-                                   val retrieveNino: NinoPredicate,
                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate
                                   ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
@@ -63,7 +62,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
   }
 
   def showTaxYears(origin: Option[String] = None): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,

@@ -45,7 +45,6 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                          val retrieveBtaNavBar: NavBarPredicate,
                                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                         val retrieveNino: NinoPredicate,
                                                          val foreignPropertyReportingMethodView: ForeignPropertyReportingMethod,
                                                          val updateIncomeSourceService: UpdateIncomeSourceService,
                                                          val itsaStatusService: ITSAStatusService,
@@ -59,7 +58,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -84,7 +83,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
         }
   }
 
-  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(

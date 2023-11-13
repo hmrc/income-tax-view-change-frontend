@@ -39,7 +39,6 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: AuthorisedFunctions,
-                                          val retrieveNino: NinoPredicate,
                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val retrieveBtaNavBar: NavBarPredicate)
@@ -54,7 +53,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
   lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(

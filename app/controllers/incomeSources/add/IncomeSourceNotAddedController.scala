@@ -33,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                                val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: AuthorisedFunctions,
-                                               val retrieveNino: NinoPredicate,
                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                val businessDetailsService: CreateBusinessDetailsService,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -59,7 +58,7 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
       )))
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(

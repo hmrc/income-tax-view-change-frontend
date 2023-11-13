@@ -41,7 +41,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayer,
                                            val checkSessionTimeout: SessionTimeoutPredicate,
                                            val authenticate: AuthenticationPredicate,
-                                           val retrieveNino: NinoPredicate,
                                            val repaymentHistoryConnector: RepaymentHistoryConnector,
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -88,7 +87,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
   }
 
   def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.PaymentHistoryController.show(origin).url,

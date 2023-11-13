@@ -43,7 +43,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val checkSessionTimeout: SessionTimeoutPredicate,
                                val authenticate: AuthenticationPredicate,
                                val authorisedFunctions: AuthorisedFunctions,
-                               val retrieveNino: NinoPredicate,
                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                val nextUpdatesService: NextUpdatesService,
                                val itvcErrorHandler: ItvcErrorHandler,
@@ -140,7 +139,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(

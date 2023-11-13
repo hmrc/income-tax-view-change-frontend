@@ -93,7 +93,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -146,7 +146,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(isAgent = false, isChange = false)
@@ -161,7 +161,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         }
   }
 
-  def submitChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submitChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(isAgent = false, isChange = true)
@@ -213,7 +213,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       errorHandler.showInternalServerError()
   }
 
-  def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(

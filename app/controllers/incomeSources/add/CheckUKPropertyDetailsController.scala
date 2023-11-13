@@ -47,7 +47,6 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
                                                  val checkSessionTimeout: SessionTimeoutPredicate,
                                                  val authenticate: AuthenticationPredicate,
                                                  val authorisedFunctions: AuthorisedFunctions,
-                                                 val retrieveNino: NinoPredicate,
                                                  val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                  val businessDetailsService: CreateBusinessDetailsService,
                                                  val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -81,7 +80,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
   }
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -139,7 +138,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
     }
   }
 
-  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmit(isAgent = false)

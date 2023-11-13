@@ -42,7 +42,6 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      val checkSessionTimeout: SessionTimeoutPredicate,
                                                      val authenticate: AuthenticationPredicate,
                                                      val authorisedFunctions: AuthorisedFunctions,
-                                                     val retrieveNino: NinoPredicate,
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
                                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
@@ -126,7 +125,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
             }
       }
     else
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
+      (checkSessionTimeout andThen authenticate
         andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }

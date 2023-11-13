@@ -44,7 +44,6 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
                                         val authorisedFunctions: AuthorisedFunctions,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val authenticate: AuthenticationPredicate,
-                                        val retrieveNino: NinoPredicate,
                                         val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val calculationService: CalculationService,
@@ -88,7 +87,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
   }
 
   def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           origin = origin,

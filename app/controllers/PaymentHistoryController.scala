@@ -45,7 +45,6 @@ import javax.inject.Inject
 class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val checkSessionTimeout: SessionTimeoutPredicate,
                                          val authenticate: AuthenticationPredicate,
-                                         val retrieveNino: NinoPredicate,
                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
                                          val authorisedFunctions: AuthorisedFunctions,
@@ -99,7 +98,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
 
     implicit user =>

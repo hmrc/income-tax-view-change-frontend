@@ -16,7 +16,7 @@
 
 package controllers.agent.predicates
 
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
@@ -73,15 +73,15 @@ trait ClientConfirmedController extends BaseAgentController {
 
   def getMtdItUserWithIncomeSources(incomeSourceDetailsService: IncomeSourceDetailsService)(
     implicit user: IncomeTaxAgentUser, request: Request[AnyContent], hc: HeaderCarrier): Future[MtdItUser[AnyContent]] = {
-    val userWithNino: MtdItUserWithNino[_] = MtdItUserWithNino(
-      getClientMtditid, getClientNino, getClientName, None, getClientUtr, user.credId, Some(Agent), user.agentReferenceNumber
+    val userOptionNino: MtdItUserOptionNino[_] = MtdItUserOptionNino(
+      getClientMtditid, Some(getClientNino), getClientName, None, getClientUtr, user.credId, Some(Agent), user.agentReferenceNumber
     )
 
     val cacheKey = None
-    incomeSourceDetailsService.getIncomeSourceDetails(cacheKey)(hc = hc, mtdUser = userWithNino) map {
-      case model@IncomeSourceDetailsModel(_, _, _, _) => MtdItUser(
-        userWithNino.mtditid, userWithNino.nino, userWithNino.userName, model, None, userWithNino.saUtr,
-        userWithNino.credId, userWithNino.userType, userWithNino.arn)
+    incomeSourceDetailsService.getIncomeSourceDetails(cacheKey)(hc = hc, mtdUser = userOptionNino) map {
+      case model@IncomeSourceDetailsModel(_, nino, _, _, _) => MtdItUser(
+        userOptionNino.mtditid, nino, userOptionNino.userName, model, None, userOptionNino.saUtr,
+        userOptionNino.credId, userOptionNino.userType, userOptionNino.arn)
       case _ =>
         Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - Failed to retrieve income sources for agent")
         throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")

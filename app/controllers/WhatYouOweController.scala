@@ -37,7 +37,6 @@ import enums.GatewayPage.WhatYouOwePage
 
 class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                      val authenticate: AuthenticationPredicate,
-                                     val retrieveNino: NinoPredicate,
                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                      val whatYouOweService: WhatYouOweService,
                                      val itvcErrorHandler: ItvcErrorHandler,
@@ -92,7 +91,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
+  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
