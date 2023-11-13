@@ -1,17 +1,22 @@
 package controllers.agent.incomeSources.add
 
+import audit.models.CreateIncomeSourceAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.createIncomeSource.CreateIncomeSourceResponse
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
+import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSelfEmploymentId, testSessionId}
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
@@ -40,13 +45,49 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   val noAccountingMethod: String = ""
   val continueButtonText: String = messagesAPI("base.confirm-and-continue")
   val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
+  val testErrorReason: String = "Failed to create incomeSources: CreateIncomeSourceErrorResponse(500,Error creating incomeSource: [{\"status\":500,\"reason\":\"INTERNAL_SERVER_ERROR\"}])"
+
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), None, Some(Agent), None
+  )(FakeRequest())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
   }
+
+  val testSEViewModel: CheckDetailsViewModel = CheckDetailsViewModel(
+    businessName = Some(testBusinessName),
+    businessStartDate = Some(testBusinessStartDate),
+    accountingPeriodEndDate = None,
+    businessTrade = Some(testBusinessTrade),
+    businessAddressLine1 = Some(testBusinessAddressLine1),
+    businessAddressLine2 = None,
+    businessAddressLine3 = None,
+    businessAddressLine4 = None,
+    businessPostalCode = Some(testBusinessPostCode),
+    businessCountryCode = Some(testCountryCode),
+    incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod),
+    cashOrAccrualsFlag = "CASH",
+    incomeSourceType = SelfEmployment
+  )
+
+  val testUKPropertyViewModel = CheckDetailsViewModel(
+    businessStartDate = Some(testBusinessStartDate),
+    cashOrAccrualsFlag = "CASH",
+    incomeSourceType = UkProperty
+  )
+
+  val testForeignPropertyViewModel = CheckDetailsViewModel(
+    businessStartDate = Some(testBusinessStartDate),
+    cashOrAccrualsFlag = "CASH",
+    incomeSourceType = ForeignProperty
+  )
+
 
   val testAddBusinessData: AddIncomeSourceData = AddIncomeSourceData(
     businessName = Some(testBusinessName),
@@ -158,6 +199,17 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)
 
+        incomeSourceType match {
+          case SelfEmployment => AuditStub.verifyAuditContainsDetail(
+            CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser).detail)
+
+          case UkProperty => AuditStub.verifyAuditContainsDetail(
+            CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser).detail)
+
+          case ForeignProperty => AuditStub.verifyAuditContainsDetail(
+            CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))(testUser).detail)
+        }
+
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(getRedirectUrl(incomeSourceType))
@@ -171,12 +223,23 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
       "error in response from API" in {
         enable(IncomeSources)
         stubAuthorisedAgentUser(authorised = true)
+        val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-
-        IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponse(testMtditid)
+        IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew(testMtditid)(response)
 
         When(s"I call ${checkBusinessDetailsSubmitUrl(incomeSourceType)}")
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)
+
+        incomeSourceType match {
+          case SelfEmployment => AuditStub.verifyAuditContainsDetail(
+            CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser).detail)
+
+          case UkProperty => AuditStub.verifyAuditContainsDetail(
+            CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser).detail)
+
+          case ForeignProperty => AuditStub.verifyAuditContainsDetail(
+            CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)(testUser).detail)
+        }
 
         result should have(
           httpStatus(SEE_OTHER),
