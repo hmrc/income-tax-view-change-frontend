@@ -61,7 +61,7 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       "invalid response" in {
         when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtdItId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+        TestUpdateIncomeSourceService.updateCessationDate(testNino, testMtdItId, cessationDate).futureValue shouldBe Left(failureResponse)
       }
     }
   }
@@ -77,7 +77,7 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
       "invalid response" in {
         when(mockUpdateIncomeSourceConnector.updateCessationDate(any(), any(), any())(any()))
           .thenReturn(Future.successful(UpdateIncomeSourceTestConstants.failureResponse))
-        TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+        TestUpdateIncomeSourceService.updateCessationDate(testNino, testIncomeSourceId, cessationDate).futureValue shouldBe Left(failureResponse)
       }
     }
   }

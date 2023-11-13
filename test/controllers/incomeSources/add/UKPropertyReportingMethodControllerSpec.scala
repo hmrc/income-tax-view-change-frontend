@@ -23,7 +23,7 @@ import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import models.incomeSourceDetails.viewmodels.UKPropertyReportingMethodViewModel
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -36,6 +36,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
@@ -408,12 +409,12 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponse))
 
         val result = TestUKPropertyReportingMethodController.submit(TestUKPropertyReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -435,7 +436,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
@@ -689,12 +690,12 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponse))
 
         val result = TestUKPropertyReportingMethodController.submitAgent(TestUKPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestUKPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
@@ -717,7 +718,7 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestUKPropertyReportingMethodController.testNino),

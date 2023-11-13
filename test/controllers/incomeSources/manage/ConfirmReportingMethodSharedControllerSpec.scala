@@ -327,7 +327,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       .thenReturn(
         Future(
           if (withUpdateIncomeSourceResponseError)
-            UpdateIncomeSourceResponseError(Status.INTERNAL_SERVER_ERROR, "Dummy message")
+            UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Dummy message")
           else
             UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
         )

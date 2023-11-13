@@ -72,7 +72,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   implicit val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock(classOf[ItvcHeaderCarrierForPartialsConverter])
 
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("session-123456"))).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("session-123456")), deviceID = Some("some device Id")).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
   implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier)
 
   implicit val conf: Configuration = app.configuration
