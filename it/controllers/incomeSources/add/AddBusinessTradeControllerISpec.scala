@@ -25,7 +25,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
 
   val addBusinessAddressUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url
   val incomeSourcesUrl: String = controllers.routes.HomeController.show().url
-  val checkDetailsUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+  val checkDetailsUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
   val pageTitleMsgKey: String = messagesAPI("add-business-trade.heading")
   val pageHint: String = messagesAPI("add-business-trade.p1")

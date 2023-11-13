@@ -43,6 +43,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
                                                       val checkSessionTimeout: SessionTimeoutPredicate,
                                                       val authenticate: AuthenticationPredicate,
                                                       val authorisedFunctions: AuthorisedFunctions,
+                                                      val retrieveNino: NinoPredicate,
                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val retrieveBtaNavBar: NavBarPredicate,
@@ -144,7 +145,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     }
   }
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
@@ -165,7 +166,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
         }
   }
 
-  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+  def submit(): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
     andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmit(isAgent = false)

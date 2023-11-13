@@ -16,6 +16,8 @@
 
 package controllers.incomeSources.add
 
+import audit.AuditingService
+import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -50,6 +52,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                                          val itsaStatusService: ITSAStatusService,
                                                          val dateService: DateService,
                                                          val calculationListService: CalculationListService,
+                                                         val auditingService: AuditingService,
                                                          val customNotFoundErrorView: CustomNotFoundError)
                                                         (implicit val appConfig: FrontendAppConfig,
                                                          override implicit val mcc: MessagesControllerComponents,
@@ -216,6 +219,29 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
     }
   }
 
+  private def formatReportingMethodPeriod(latencyIndicator: Boolean): String = {
+    latencyIndicator match {
+      case true => "Annually"
+      case false => "Quarterly"
+    }
+  }
+
+  private def addAudit(isSuccessful: Boolean, newReportingMethods: Seq[TaxYearSpecific])(implicit user: MtdItUser[_]): Unit = {
+    for (taxYear <- newReportingMethods) {
+      auditingService
+        .extendedAudit(
+          IncomeSourceReportingMethodAuditModel(
+            isSuccessful = isSuccessful,
+            journeyType = ForeignProperty.journeyType,
+            operationType = "ADD",
+            reportingMethodChangeTo = formatReportingMethodPeriod(taxYear.latencyIndicator),
+            taxYear = (taxYear.taxYear.toInt - 1).toString + "-" + taxYear.taxYear,
+            businessName = "Foreign property"
+          )
+        )
+    }
+  }
+
   private def updateReportingMethod(isAgent: Boolean, id: String, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -238,6 +264,7 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
         case (es: Seq[UpdateIncomeSourceResponseError], _) if es.isEmpty =>
           Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
             s"Updated tax year specific reporting method for all supplied tax years")
+          addAudit(true, newReportingMethods)(user)
           Redirect(redirectUrl)
         case (es: Seq[UpdateIncomeSourceResponseError], ss: UpdateIncomeSourceResponseModel) =>
           for (success <- ss) {
@@ -248,10 +275,12 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
             Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]: " +
               s"Error updating specific reporting method: $error")
           }
+          addAudit(false, newReportingMethods)(user)
           Redirect(redirectErrorUrl)
         case _ =>
           Logger("application").error(s"[BusinessReportingMethodController][updateReportingMethod]: " +
             s"Error updating tax year specific reporting method")
+          addAudit(false, newReportingMethods)(user)
           Redirect(redirectErrorUrl)
       }
     }

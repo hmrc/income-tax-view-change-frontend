@@ -62,7 +62,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         s"Error getting business cashOrAccruals Field")
     }
 
-    val successRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url else controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+    val successRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
     userActiveBusinesses.map(_.cashOrAccruals).headOption match {
       case Some(cashOrAccrualsFieldMaybe) =>
@@ -142,15 +142,15 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       case SelfEmployment =>
         (routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment),
           routes.AddBusinessAddressController.show(isChange = false).url,
-          routes.CheckBusinessDetailsController.show())
+          routes.IncomeSourceCheckDetailsController.show(SelfEmployment))
       case UkProperty =>
         (routes.IncomeSourcesAccountingMethodController.submit(UkProperty),
           routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, UkProperty).url,
-          routes.CheckUKPropertyDetailsController.show())
+          routes.IncomeSourceCheckDetailsController.show(UkProperty))
       case _ =>
         (routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty),
           routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, ForeignProperty).url,
-          routes.ForeignPropertyCheckDetailsController.show())
+          routes.IncomeSourceCheckDetailsController.show(ForeignProperty))
     }
   }
 
@@ -159,15 +159,15 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       case SelfEmployment =>
         (routes.IncomeSourcesAccountingMethodController.submitAgent(SelfEmployment),
           routes.AddBusinessAddressController.showAgent(isChange = false).url,
-          routes.CheckBusinessDetailsController.showAgent())
+          routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment))
       case UkProperty =>
         (routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty),
           routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, UkProperty).url,
-          routes.CheckUKPropertyDetailsController.showAgent())
+          routes.IncomeSourceCheckDetailsController.showAgent(UkProperty))
       case _ =>
         (routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty),
           routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, ForeignProperty).url,
-          routes.ForeignPropertyCheckDetailsController.showAgent())
+          routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty))
     }
   }
 
@@ -260,11 +260,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       implicit user =>
         val backUrl = incomeSourceType match {
           case SelfEmployment =>
-            routes.CheckBusinessDetailsController.show().url
+            routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
           case UkProperty =>
-            routes.CheckUKPropertyDetailsController.show().url
+            routes.IncomeSourceCheckDetailsController.show(UkProperty).url
           case _ =>
-            routes.ForeignPropertyCheckDetailsController.show().url
+            routes.IncomeSourceCheckDetailsController.show(ForeignProperty).url
         }
 
         sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
@@ -293,11 +293,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           implicit mtdItUser =>
             val backUrl = incomeSourceType match {
               case SelfEmployment =>
-                routes.CheckBusinessDetailsController.showAgent().url
+                routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
               case UkProperty =>
-                routes.CheckUKPropertyDetailsController.showAgent().url
+                routes.IncomeSourceCheckDetailsController.showAgent(UkProperty).url
               case _ =>
-                routes.ForeignPropertyCheckDetailsController.showAgent().url
+                routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty).url
             }
             sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
               case Right(cashOrAccrualsFlag) =>

@@ -22,6 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError
 import play.api.mvc.Call
+import play.mvc.Http.HeaderNames.{SERVER, UPGRADE}
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.incomeSources.add.AddIncomeSourceStartDate
@@ -107,12 +108,12 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   def getBackUrlChange(isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, UkProperty) => controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show()
-      case (true, UkProperty) => controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent()
-      case (false, ForeignProperty) => controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show()
-      case (true, ForeignProperty) => controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent()
-      case (false, SelfEmployment) => controllers.incomeSources.add.routes.CheckBusinessDetailsController.show()
-      case (true, SelfEmployment) => controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent()
+      case (false, UkProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty)
+      case (true, UkProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
+      case (false, ForeignProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
+      case (true, ForeignProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
+      case (false, SelfEmployment) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (true, SelfEmployment) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 

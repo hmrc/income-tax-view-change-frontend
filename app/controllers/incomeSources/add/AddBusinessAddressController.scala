@@ -93,9 +93,9 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
   def getRedirectUrl(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
       case (false, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment)
-      case (false, true) => routes.CheckBusinessDetailsController.show()
+      case (false, true) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
       case (true, false) => routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment)
-      case (true, true) => routes.CheckBusinessDetailsController.showAgent()
+      case (true, true) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
