@@ -141,7 +141,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
       "navigating to the UK Property ceased page with FS enabled - Agent" in {
         testViewReturnsOkWithCorrectContent(isAgent = true, UkProperty)
       }
-// TODO: fixes these failing tests
       "navigating to the Foreign Property ceased page with FS enabled - Individual" in {
         testViewReturnsOkWithCorrectContent(isAgent = false, ForeignProperty)
       }
