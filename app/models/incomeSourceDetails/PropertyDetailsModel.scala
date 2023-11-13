@@ -29,8 +29,6 @@ case class PropertyDetailsModel(incomeSourceId: String,
                                 cashOrAccruals: Option[Boolean] = None,
                                 latencyDetails: Option[LatencyDetails] = None) {
 
-  println(s"Here is Data: $incomeSourceId - $isCeased")
-
   def isUkProperty: Boolean = incomeSourceType.contains("uk-property")
 
   def isForeignProperty: Boolean = incomeSourceType.contains("foreign-property")
