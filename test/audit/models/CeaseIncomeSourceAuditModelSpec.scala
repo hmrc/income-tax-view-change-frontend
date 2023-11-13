@@ -43,7 +43,6 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
     """{
       |    "nationalInsuranceNumber": "AB123456C",
       |    "mtditid": "XAIT0000123456",
-      |    "nino": "AB123456C",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",
       |    "userType": "Individual",
@@ -60,7 +59,6 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
     """{
       |    "nationalInsuranceNumber": "AA111111A",
       |    "mtditid": "XAIT00000000015",
-      |    "nino": "AA111111A",
       |    "agentReferenceNumber": "XAIT0000123456",
       |    "saUtr": "1234567890",
       |    "credId": "testCredId",
@@ -78,13 +76,12 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
     """{
       |    "nationalInsuranceNumber": "AB123456C",
       |    "mtditid": "XAIT0000123456",
-      |    "nino": "AB123456C",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",
       |    "userType": "Individual",
       |    "outcome": {
       |        "isSuccessful": false,
-      |        "failureCategory": "INTERNAL_SERVER_ERROR",
+      |        "failureCategory": "API_FAILURE",
       |        "failureReason": "Error message"
       |    },
       |    "journeyType": "SE",
@@ -97,7 +94,6 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
     """{
       |    "nationalInsuranceNumber": "AB123456C",
       |    "mtditid": "XAIT0000123456",
-      |    "nino": "AB123456C",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",
       |    "userType": "Individual",
