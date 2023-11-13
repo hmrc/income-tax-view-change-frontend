@@ -66,7 +66,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val sessionCeaseUKPropertyEndDate = Map(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> cessationDate)
   val showCheckCeaseUKPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url
   val formActionUK = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty).url
   val businessStopDateLabelUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.content")
@@ -78,7 +77,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val sessionCeaseForeignPropertyEndDate = Map(forms.utils.SessionKeys.ceaseForeignPropertyEndDate -> cessationDate)
   val showCheckCeaseForeignPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url
   val formActionFP = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty).url
   val pageTitleMsgKeyFP = messagesAPI("check-cease-foreign-property-details.heading")

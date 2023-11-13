@@ -22,13 +22,12 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
-import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodStartDateField, dateStartedField}
+import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -152,7 +151,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Business Start Date Check Page but session does not contain key: ${SessionKeys.addBusinessStartDate}" in {
+      s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -165,7 +164,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling UK Property Start Date Check Page but session does not contain key: ${SessionKeys.addUkPropertyStartDate}" in {
+      s"calling UK Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -178,7 +177,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Foreign Property Start Date Check Page but session does not contain key: ${SessionKeys.foreignPropertyStartDate}" in {
+      s"calling Foreign Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -191,7 +190,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling Business Start Date Check Page and session contains key: ${SessionKeys.addBusinessStartDate}" in {
+      s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -210,7 +209,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling Foreign Property Start Date Check Page and session contains key: ${SessionKeys.foreignPropertyStartDate}" in {
+      s"calling Foreign Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -229,7 +228,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling UK Property Start Date Check Page and session contains key: ${SessionKeys.addUkPropertyStartDate}" in {
+      s"calling UK Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -426,7 +425,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         status(result) shouldBe SEE_OTHER
         verifySetMongoData(SelfEmployment)
-        redirectLocation(result) shouldBe Some(routes.CheckBusinessDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url)
       }
     }
   }
@@ -466,7 +465,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${SessionKeys.addUkPropertyStartDate} removed from session" when {
+    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -525,7 +524,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.CheckUKPropertyDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(UkProperty).url)
       }
     }
   }
@@ -565,7 +564,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${SessionKeys.foreignPropertyStartDate} removed from session" when {
+    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -625,7 +624,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyCheckDetailsController.show().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(ForeignProperty).url)
       }
     }
   }
@@ -656,7 +655,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Business Start Date Check Page but session does not contain key: ${SessionKeys.addBusinessStartDate}" in {
+      s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -670,7 +669,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling UK Property Start Date Check Page but session does not contain key: ${SessionKeys.addUkPropertyStartDate}" in {
+      s"calling UK Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -684,7 +683,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Foreign Property Start Date Check Page and session does not contain key: ${SessionKeys.foreignPropertyStartDate}" in {
+      s"calling Foreign Property Start Date Check Page and session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -700,7 +699,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling Business Start Date Check Page and session contains key: ${SessionKeys.addBusinessStartDate}" in {
+      s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -719,7 +718,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling UK Property Start Date Check Page and session contains key: ${SessionKeys.addUkPropertyStartDate}" in {
+      s"calling UK Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -737,7 +736,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       }
     }
     s"return ${Status.OK}" when {
-      s"calling Foreign Property Start Date Check Page and session contains key: ${SessionKeys.foreignPropertyStartDate}" in {
+      s"calling Foreign Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
         enable(IncomeSources)
 
@@ -934,7 +933,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         status(result) shouldBe SEE_OTHER
         verifySetMongoData(SelfEmployment)
-        redirectLocation(result) shouldBe Some(routes.CheckBusinessDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url)
       }
     }
   }
@@ -975,7 +974,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${SessionKeys.addUkPropertyStartDate} removed from session" when {
+    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -1034,7 +1033,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.CheckUKPropertyDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(UkProperty).url)
       }
     }
   }
@@ -1076,7 +1075,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         status(result) shouldBe BAD_REQUEST
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${SessionKeys.foreignPropertyStartDate} removed from session" when {
+    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
       "No is submitted with the form" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -1135,7 +1134,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
             ))
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.ForeignPropertyCheckDetailsController.showAgent().url)
+        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty).url)
       }
     }
   }

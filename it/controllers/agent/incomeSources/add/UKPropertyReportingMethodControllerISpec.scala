@@ -16,18 +16,22 @@
 
 package controllers.agent.incomeSources.add
 
+import audit.models.IncomeSourceReportingMethodAuditModel
+import auth.MtdItUser
 import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.UkProperty
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, LatencyDetails}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.{singleUKPropertyResponseInLatencyPeriod, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, singleUKPropertyResponseInLatencyPeriod, ukPropertyOnlyResponse}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -49,6 +53,11 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
     taxYear2 = taxYear2.toString,
     latencyIndicator2 = quarterlyIndicator
   )
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), None, Some(Agent), None
+  )(FakeRequest())
 
   s"calling GET $ukPropertyReportingMethodShowUrl" should {
     "render the UK Property Reporting Method page" when {
@@ -338,6 +347,8 @@ class UKPropertyReportingMethodControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("")))
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", clientDetailsWithConfirmation)(formData)
+
+        AuditStub.verifyAuditContainsDetail(IncomeSourceReportingMethodAuditModel(true, UkProperty.journeyType, "ADD", "Annually", "2023-2024", "UK property")(testUser).detail)
 
         result should have(
           httpStatus(SEE_OTHER),

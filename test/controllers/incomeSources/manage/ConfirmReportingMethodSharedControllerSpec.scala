@@ -16,7 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -62,6 +61,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
+      auditingService = mockAuditingService,
       dateService = dateService,
       sessionService = mockSessionService
     )(

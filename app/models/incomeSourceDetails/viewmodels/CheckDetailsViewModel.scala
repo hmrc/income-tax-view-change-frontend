@@ -16,7 +16,25 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+
 import java.time.LocalDate
+
+sealed trait CheckDetailsViewModel{
+  val cashOrAccruals: String
+  val incomeSourceType: IncomeSourceType
+  val showedAccountingMethod: Boolean
+
+  def getAccountingMethodMessageKey: String = {
+    val cashAccountingSelected = cashOrAccruals.toLowerCase.equals("cash")
+
+    if (cashAccountingSelected) {
+      "incomeSources.add.accountingMethod.cash"
+    } else {
+      "incomeSources.add.accountingMethod.accruals"
+    }
+  }
+}
 
 case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessStartDate: Option[LocalDate],
@@ -30,32 +48,18 @@ case class CheckBusinessDetailsViewModel(businessName: Option[String],
                                          businessCountryCode: Option[String],
                                          incomeSourcesAccountingMethod: Option[String],
                                          cashOrAccrualsFlag: String,
-                                         skippedAccountingMethod: Boolean) {
+                                         showedAccountingMethod: Boolean) extends CheckDetailsViewModel {
+
+  override val cashOrAccruals: String = cashOrAccrualsFlag
+  override val incomeSourceType: IncomeSourceType = SelfEmployment
 
   def countryName: Option[String] = Some("United Kingdom")
 
 }
 
-case class CheckForeignPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String){
-  def getAccountingMethodMessageKey: String = {
-    val cashAccountingSelected = cashOrAccrualsFlag.toLowerCase.equals("cash")
+case class CheckPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String, incomeSourceType: IncomeSourceType)
+  extends CheckDetailsViewModel {
 
-    if (cashAccountingSelected) {
-      "incomeSources.add.accountingMethod.cash"
-    } else {
-      "incomeSources.add.accountingMethod.accruals"
-    }
-  }
-}
-
-case class CheckUKPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: String) {
-  def getAccountingMethodMessageKey: String = {
-    val cashAccountingSelected = cashOrAccrualsFlag.toLowerCase.equals("cash")
-
-    if (cashAccountingSelected) {
-      "incomeSources.add.accountingMethod.cash"
-    } else {
-      "incomeSources.add.accountingMethod.accruals"
-    }
-  }
+  override val cashOrAccruals: String = cashOrAccrualsFlag
+  override val showedAccountingMethod: Boolean = true
 }

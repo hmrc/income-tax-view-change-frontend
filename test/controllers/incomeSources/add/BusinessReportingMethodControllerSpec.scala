@@ -74,6 +74,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     mockITSAStatusService,
     mockDateService,
     mockCalculationListService,
+    auditingService = mockAuditingService,
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],

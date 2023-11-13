@@ -74,6 +74,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
     mockITSAStatusService,
     mockDateService,
     mockCalculationListService,
+    auditingService = mockAuditingService,
     app.injector.instanceOf[CustomNotFoundError])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],

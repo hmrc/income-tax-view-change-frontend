@@ -24,7 +24,6 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import exceptions.MissingSessionKey
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -63,17 +62,31 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      val incomeSourceDetails = incomeSourceType match {
+      val incomeSourceDetails : Future[( Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
         case SelfEmployment =>
           sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
         case UkProperty =>
-          Future.successful((incomeSourceDetailsService
-            .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)
-            .map(propertyDetailsModel => Some(propertyDetailsModel.incomeSourceId)), UkProperty))
+          Future.successful(
+              (user.incomeSources.properties
+                .filter(_.isUkProperty)
+                .map(xs => xs.incomeSourceId).headOption match {
+                case Some(incomeSourceId) =>
+                  Right(Some(incomeSourceId))
+                case None =>
+                  Left(new Error("IncomeSourceId not found for UK property"))
+              }, UkProperty)
+          )
         case ForeignProperty =>
-          Future.successful((incomeSourceDetailsService
-            .getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)
-            .map(propertyDetailsModel => Some(propertyDetailsModel.incomeSourceId)), ForeignProperty))
+          Future.successful(
+            (user.incomeSources.properties
+              .filter(_.isForeignProperty)
+              .map(xs => xs.incomeSourceId).headOption match {
+              case Some(incomeSourceId) =>
+                Right(Some(incomeSourceId))
+              case None =>
+                Left(new Error("IncomeSourceId not found for Foreign Property"))
+            }, ForeignProperty)
+          )
       }
 
       incomeSourceDetails.flatMap {
@@ -86,14 +99,16 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
               isAgent = isAgent,
               incomeSourceType = incomeSourceType))
           }
-        case (Right(None), _) => Future.failed(MissingSessionKey(ceaseBusinessIncomeSourceId))
+        case incomeSourceD@(Right(None), _) =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: -${incomeSourceD._1}- =${incomeSourceD._2}=")
+          Future.failed(MissingSessionKey(CeaseIncomeSourceData.incomeSourceIdField))
         case (Left(exception), _) => Future.failed(exception)
       }
     }
   }.recover {
     case exception: Exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: $exception")
+      Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: -${exception.getMessage}- =${exception.getCause}=")
       errorHandler.showInternalServerError()
   }
 

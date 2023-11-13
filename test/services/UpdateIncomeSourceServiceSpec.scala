@@ -19,7 +19,6 @@ package services
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import connectors.UpdateIncomeSourceConnector
-import forms.utils.SessionKeys.ceaseUKPropertyEndDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.test.FakeRequest
@@ -35,18 +34,6 @@ import scala.concurrent.Future
 
 class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
   implicit val userWithSessionKey: MtdItUser[_] = MtdItUser(
-    mtditid = testMtditid,
-    nino = testNino,
-    userName = Some(testRetrievedUserName),
-    incomeSources = ukPropertyIncome,
-    btaNavPartial = None,
-    saUtr = Some("1234567890"),
-    credId = Some("credId"),
-    userType = Some(Individual),
-    None
-  )(FakeRequest().withSession(ceaseUKPropertyEndDate -> UpdateIncomeSourceTestConstants.cessationDate))
-
-  val userWithOutSessionKey: MtdItUser[_] = MtdItUser(
     mtditid = testMtditid,
     nino = testNino,
     userName = Some(testRetrievedUserName),

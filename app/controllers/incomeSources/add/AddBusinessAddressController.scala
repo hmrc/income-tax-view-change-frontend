@@ -24,7 +24,6 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
-import forms.utils.SessionKeys
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -93,9 +92,9 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
   def getRedirectUrl(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
       case (false, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment)
-      case (false, true) => routes.CheckBusinessDetailsController.show()
+      case (false, true) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
       case (true, false) => routes.IncomeSourcesAccountingMethodController.showAgent(SelfEmployment)
-      case (true, true) => routes.CheckBusinessDetailsController.showAgent()
+      case (true, true) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 

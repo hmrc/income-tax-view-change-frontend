@@ -16,8 +16,9 @@
 
 package connectors.helpers
 
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.createIncomeSource._
-import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
@@ -104,10 +105,10 @@ trait IncomeSourcesDataHelper {
     businessAddressLine4 = None,
     businessCountryCode = Some("GB"),
     cashOrAccrualsFlag = "CASH",
-    skippedAccountingMethod = false
+    showedAccountingMethod = false
   )
 
-  val createForeignPropertyViewModel = CheckForeignPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
+  val createForeignPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH", incomeSourceType = ForeignProperty)
 
-  val createUKPropertyViewModel = CheckUKPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH")
+  val createUKPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH", incomeSourceType = UkProperty)
 }
