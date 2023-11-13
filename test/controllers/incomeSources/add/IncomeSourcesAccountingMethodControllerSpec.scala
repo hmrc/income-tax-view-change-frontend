@@ -21,7 +21,6 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import forms.utils.SessionKeys.addIncomeSourcesAccountingMethod
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -86,9 +85,9 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
   def changeResult(incomeSourceType: IncomeSourceType, isAgent: Boolean = false, cashOrAccrualsFlag: Option[String] = None): Future[Result] = {
     if (isAgent)
-      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType)(fakeRequestConfirmedClient().withSession(addIncomeSourcesAccountingMethod -> cashOrAccrualsFlag.getOrElse("")))
+      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType)(fakeRequestConfirmedClient())
     else
-      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType)(fakeRequestWithActiveSession.withSession(addIncomeSourcesAccountingMethod -> cashOrAccrualsFlag.getOrElse("")))
+      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType)(fakeRequestWithActiveSession)
   }
 
   def setupMockAuth(isAgent: Boolean = false): Unit = {
@@ -275,7 +274,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         status(result) shouldBe Status.BAD_REQUEST
         document.title shouldBe getTitle(incomeSourceType, isAgent)
-        result.futureValue.session.get(addIncomeSourcesAccountingMethod) shouldBe None
+        result.futureValue.session.get(AddIncomeSourceData.incomeSourcesAccountingMethodField) shouldBe None
       }
     }
   }

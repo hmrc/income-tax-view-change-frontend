@@ -20,7 +20,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney._
-import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, addUkPropertyStartDate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -306,7 +305,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-          val result = TestIncomeSourceAddedController.show(testSelfEmploymentId, UkProperty)(fakeRequestWithActiveSession.withSession(addUkPropertyStartDate -> "2022-01-01", addIncomeSourcesAccountingMethod -> "cash"))
+          val result = TestIncomeSourceAddedController.show(testSelfEmploymentId, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
         }
       }

@@ -46,7 +46,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val testBusinessName = "business"
   val timestamp = "2023-01-31T09:26:17Z"
 
-  val sessionCeaseBusinessDetails = Map(forms.utils.SessionKeys.ceaseBusinessEndDate -> cessationDate, forms.utils.SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
   val showCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url
   val submitCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
   val formActionSE = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
@@ -62,7 +61,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val sessionCeaseUKPropertyEndDate = Map(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> cessationDate)
   val showCheckCeaseUKPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url
   val submitCheckCeaseUKPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
   val formActionUK = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
@@ -75,7 +73,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val sessionCeaseForeignPropertyEndDate = Map(forms.utils.SessionKeys.ceaseForeignPropertyEndDate -> cessationDate)
   val showCheckCeaseForeignPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
   val submitCheckCeaseForeignPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
 

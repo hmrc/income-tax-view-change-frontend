@@ -26,11 +26,4 @@ object SessionKeys {
 
   val confirmedClient: String = "ConfirmedClient"
 
-  val businessName: String = "addBusinessName"
-
-  val businessStartDate: String = "addBusinessStartDate"
-  val businessTrade: String = "addBusinessTrade"
-  val businessAddressLine1: String = "addBusinessAddressLine1"
-  val businessPostCode: String = "addBusinessPostalCode"
-  val businessAccountingMethod: String = "addIncomeSourcesAccountingMethod"
 }

@@ -29,12 +29,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
 
-  def get(key: String)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
-    Future {
-      Right(user.session.get(key))
-    }
-  }
-
   def getMongo(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
       case Some(data: UIJourneySessionData) =>
@@ -87,13 +81,6 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
-  def set(key: String, value: String, result: Result)
-         (implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
-    Future {
-      Right(result.addingToSession(key -> value))
-    }
-  }
-
   def setMongoData(uiJourneySessionData: UIJourneySessionData)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     uiJourneySessionDataRepository.set(uiJourneySessionData)
@@ -113,27 +100,6 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
         case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
       }
     )
-  }
-
-  def setList(result: Result, keyValue: (String, String)*)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
-    Future {
-      Right(result.addingToSession(keyValue: _*))
-    }
-  }
-
-  def set(result: Result, keyValue: (String, String)*)(implicit ec: ExecutionContext, request: RequestHeader): Future[Either[Throwable, Result]] = {
-    Future {
-      Right(result.addingToSession(keyValue: _*))
-    }
-  }
-
-  def remove(keys: Seq[String], result: Result)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Result]] = {
-    Future {
-      val newSession = user.session -- keys
-      Right(
-        result.withSession(newSession)
-      )
-    }
   }
 
   def deleteMongoData(journeyType: JourneyType)
