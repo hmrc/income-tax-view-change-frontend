@@ -78,14 +78,14 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with Moc
           UpdateIncomeSourceTestConstants.request,
           UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
         val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
-        result.futureValue shouldBe badJsonResponseList
+        result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
         setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
           UpdateIncomeSourceTestConstants.request, HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-            json = Json.toJson(failureResponseList), headers = Map.empty))
+            json = Json.toJson(failureResponse), headers = Map.empty))
         val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
-        result.futureValue shouldBe failureResponseList
+        result.futureValue shouldBe failureResponse
       }
     }
 
@@ -109,16 +109,16 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with Moc
           UpdateIncomeSourceTestConstants.successInvalidJsonResponse)
         val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
           testNino, incomeSourceId, taxYearSpecific)
-        result.futureValue shouldBe badJsonResponseList
+        result.futureValue shouldBe badJsonResponse
       }
       "receiving a 500+ response" in new Setup {
         setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
           UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
           HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-            json = Json.toJson(failureResponseList), headers = Map.empty))
+            json = Json.toJson(failureResponse), headers = Map.empty))
         val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
           testNino, incomeSourceId, taxYearSpecific)
-        result.futureValue shouldBe failureResponseList
+        result.futureValue shouldBe failureResponse
       }
     }
   }

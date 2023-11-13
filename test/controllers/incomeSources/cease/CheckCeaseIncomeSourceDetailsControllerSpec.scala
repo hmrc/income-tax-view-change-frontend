@@ -36,7 +36,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.UpdateIncomeSourceTestConstants
-import testConstants.UpdateIncomeSourceTestConstants.failureResponseList
+import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{checkCeaseBusinessDetailsModel, checkCeaseForeignPropertyDetailsModel, checkCeaseUkPropertyDetailsModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -224,7 +224,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
       stage(isAgent)
       if (hasIncomeSourceUpdateFailed) {
         when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
-          .thenReturn(Future.successful(Left(UpdateIncomeSourceTestConstants.failureResponseList)))
+          .thenReturn(Future.successful(Left(UpdateIncomeSourceTestConstants.failureResponse)))
       } else {
         when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
@@ -264,7 +264,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
           verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testPropertyIncomeId, None))
         case (SelfEmployment, true) | _ =>
           verifyMockGetMongoKeyTypedResponse[String](2)
-          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testSelfEmploymentId, Some(failureResponseList)))
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testSelfEmploymentId, Some(failureResponse)))
       }
     }
 

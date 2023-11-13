@@ -25,7 +25,7 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockIncomeSourceDetailsService
-import models.updateIncomeSource.{UpdateIncomeSourceListResponseError, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
@@ -327,7 +327,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       .thenReturn(
         Future(
           if (withUpdateIncomeSourceResponseError)
-            UpdateIncomeSourceListResponseError(Seq(UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Dummy message")))
+            UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Dummy message")
           else
             UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
         )

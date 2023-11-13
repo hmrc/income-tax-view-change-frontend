@@ -27,7 +27,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceListResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
@@ -200,18 +200,18 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
       )
     } yield {
       val errors = results.collect {
-        case error: UpdateIncomeSourceListResponseError => error
+        case error: UpdateIncomeSourceResponseError => error
       }
       val success = results.collect {
         case success: UpdateIncomeSourceResponseModel => success
       }
       (errors, success) match {
-        case (es: Seq[UpdateIncomeSourceListResponseError], _) if es.isEmpty =>
+        case (es: Seq[UpdateIncomeSourceResponseError], _) if es.isEmpty =>
           Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
             s"Updated tax year specific reporting method for all supplied tax years")
           addAudit(true, newReportingMethods, incomeSourceBusinessName)(user)
           Redirect(redirectUrl)
-        case (es: Seq[UpdateIncomeSourceListResponseError], ss: UpdateIncomeSourceResponseModel) =>
+        case (es: Seq[UpdateIncomeSourceResponseError], ss: UpdateIncomeSourceResponseModel) =>
           for (success <- ss) {
             Logger("application").info(s"[BusinessReportingMethodController][updateReportingMethod]: " +
               s"Updated tax year specific reporting method for $success")

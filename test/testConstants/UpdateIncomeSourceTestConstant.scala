@@ -57,9 +57,6 @@ object UpdateIncomeSourceTestConstants {
   val badJsonResponse = UpdateIncomeSourceResponseError("INTERNAL_SERVER_ERROR", "Json validation error parsing response")
   val successResponse = UpdateIncomeSourceResponseModel("2022-01-31T09:26:17Z")
   val successResponseJson = Json.obj("processingDate" -> "2022-01-31T09:26:17Z")
-  val errorListBadResponse = UpdateIncomeSourceListResponseError(failures = Seq(errorBadResponse))
-  val failureResponseList = UpdateIncomeSourceListResponseError(failures = Seq(failureResponse))
-  val badJsonResponseList = UpdateIncomeSourceListResponseError(failures = Seq(badJsonResponse))
 
   val successHttpResponse = HttpResponse(Status.OK, Json.toJson(successResponse), Map.empty)
   val successInvalidJsonResponse = HttpResponse(Status.OK, Json.toJson(""), Map.empty)

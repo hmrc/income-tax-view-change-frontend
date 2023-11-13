@@ -19,7 +19,7 @@ package audit.models
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.UpdateIncomeSourceTestConstants.failureResponseList
+import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testUtils.TestSupport
 
 class CeaseIncomeSourceAuditModelSpec extends TestSupport {
@@ -31,7 +31,7 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
 
   def getCeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, isAgent: Boolean, isError: Boolean): CeaseIncomeSourceAuditModel = {
     (incomeSourceType, isAgent, isError) match {
-      case (SelfEmployment, false, true) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, testSelfEmploymentId, Some(failureResponseList))
+      case (SelfEmployment, false, true) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, testSelfEmploymentId, Some(failureResponse))
       case (SelfEmployment, false, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, testSelfEmploymentId, None)
       case (SelfEmployment, true, false) => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, testSelfEmploymentId, None)(agentUserConfirmedClient(), headerCarrier)
       case _ => CeaseIncomeSourceAuditModel(incomeSourceType, cessationDate, testPropertyIncomeId, None)

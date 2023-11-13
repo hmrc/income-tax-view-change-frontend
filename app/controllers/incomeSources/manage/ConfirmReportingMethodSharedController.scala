@@ -29,7 +29,7 @@ import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceListResponseError, UpdateIncomeSourceResponseModel}
+import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.mvc._
@@ -214,7 +214,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     } yield updateIncomeSourceRes
 
     updateIncomeSourceResFuture flatMap {
-      case _: UpdateIncomeSourceListResponseError =>
+      case _: UpdateIncomeSourceResponseError =>
         logAndShowError(isAgent, s"[handleValidForm]: Failed to update reporting method")
         auditingService
           .extendedAudit(

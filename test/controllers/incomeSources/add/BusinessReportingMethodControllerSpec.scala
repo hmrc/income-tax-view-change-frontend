@@ -36,7 +36,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.UpdateIncomeSourceTestConstants.failureResponseList
+import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
@@ -408,7 +408,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
@@ -435,12 +435,12 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponse))
 
         val result = TestBusinessReportingMethodController.submit(TestBusinessReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -688,12 +688,12 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponse))
 
         val result = TestBusinessReportingMethodController.submitAgent(TestBusinessReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestBusinessReportingMethodController.testNino).withFormUrlEncodedBody(
@@ -716,7 +716,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),
           ArgumentMatchers.eq(TestBusinessReportingMethodController.incomeSourceId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(TestBusinessReportingMethodController.testNino),

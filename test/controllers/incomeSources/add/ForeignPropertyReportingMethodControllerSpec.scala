@@ -36,7 +36,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
-import testConstants.UpdateIncomeSourceTestConstants.failureResponseList
+import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.errorPages.CustomNotFoundError
@@ -410,12 +410,12 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponse))
 
         val result = TestForeignPropertyReportingMethodController.submit(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -442,7 +442,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponse))
 
         val result = TestForeignPropertyReportingMethodController.submit(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestWithActiveSession.withFormUrlEncodedBody(
@@ -690,12 +690,12 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(failureResponse))
 
         val result = TestForeignPropertyReportingMethodController.submitAgent(TestForeignPropertyReportingMethodController.incomeSourceId)(
           fakeRequestConfirmedClient(TestForeignPropertyReportingMethodController.testNino).withFormUrlEncodedBody(
@@ -719,7 +719,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
           any(),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponseList))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(failureResponse))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           any(),
