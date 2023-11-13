@@ -17,7 +17,7 @@
 package views.incomeSources.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -32,25 +32,24 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
   val checkBusinessDetailsView: IncomeSourceCheckDetails = app.injector.instanceOf[IncomeSourceCheckDetails]
 
-  def businessViewModelMax: CheckDetailsViewModel = CheckDetailsViewModel(
+  def businessViewModelMax: CheckDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("Test Business"),
     businessStartDate = Some(LocalDate.of(2022, 1, 1)),
-    businessTrade = Some("Test Trade"),
-    businessAddressLine1 = Some("64 Zoo Lane"),
+    businessTrade = "Test Trade",
+    businessAddressLine1 = "64 Zoo Lane",
     businessPostalCode = Some("ZO0 1AN"),
     incomeSourcesAccountingMethod = Some("ACCRUALS"),
-    accountingPeriodEndDate = Some(LocalDate.of(2022, 1, 1)),
+    accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
     businessAddressLine2 = None,
     businessAddressLine3 = Some("Cbeebies"),
     businessAddressLine4 = None,
     businessCountryCode = Some("United Kingdom"),
     cashOrAccrualsFlag = "ACCRUALS",
-    incomeSourceType = SelfEmployment
+    showedAccountingMethod = true
   )
 
-  def propertyViewModelMax(incomeSourceType: IncomeSourceType): CheckDetailsViewModel = CheckDetailsViewModel(
-    businessStartDate = Some(LocalDate.of(2022, 1, 1)),
-    incomeSourcesAccountingMethod = Some("ACCRUALS"),
+  def propertyViewModelMax(incomeSourceType: IncomeSourceType): CheckDetailsViewModel = CheckPropertyViewModel(
+    tradingStartDate = LocalDate.of(2022, 1, 1),
     cashOrAccrualsFlag = "ACCRUALS",
     incomeSourceType = incomeSourceType
   )

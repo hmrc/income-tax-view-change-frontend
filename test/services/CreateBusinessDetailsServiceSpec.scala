@@ -114,8 +114,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
           Right(List(CreateIncomeSourceResponse("561")))
         })
 
-      val viewModel = CheckDetailsViewModel(
-        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+      val viewModel = CheckPropertyViewModel(
+        tradingStartDate = LocalDate.of(2011, 1, 1),
         cashOrAccrualsFlag = "CASH",
         incomeSourceType = ForeignProperty
       )
@@ -143,8 +143,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
 
       // set cashOrAccruals field to empty to cause failure
-      val viewModel = CheckDetailsViewModel(
-        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+      val viewModel = CheckPropertyViewModel(
+        tradingStartDate = LocalDate.of(2011, 1, 1),
         cashOrAccrualsFlag = "",
         incomeSourceType = ForeignProperty
       )
@@ -165,8 +165,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
           Right(List(CreateIncomeSourceResponse("561")))
         })
 
-      val viewModel = CheckDetailsViewModel(
-        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+      val viewModel = CheckPropertyViewModel(
+        tradingStartDate = LocalDate.of(2011, 1, 1),
         cashOrAccrualsFlag = "CASH",
         incomeSourceType = UkProperty
       )
@@ -180,8 +180,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         .thenReturn(Future {
           Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
-      val viewModel = CheckDetailsViewModel(
-        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+      val viewModel = CheckPropertyViewModel(
+        tradingStartDate = LocalDate.of(2011, 1, 1),
         cashOrAccrualsFlag = "CASH",
         incomeSourceType = UkProperty
       )
@@ -199,8 +199,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
 
       // set cashOrAccrualsFlag field as empty to cause failure
-      val viewModel = CheckDetailsViewModel(
-        businessStartDate = Some(LocalDate.of(2011, 1, 1)),
+      val viewModel = CheckPropertyViewModel(
+        tradingStartDate = LocalDate.of(2011, 1, 1),
         cashOrAccrualsFlag = "",
         incomeSourceType = UkProperty
       )
