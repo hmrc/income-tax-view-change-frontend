@@ -47,7 +47,6 @@ class ReportingMethodChangeErrorControllerSpec
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      retrieveNino = app.injector.instanceOf[NinoPredicate],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,

@@ -56,7 +56,6 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[NavBarPredicate],
-    app.injector.instanceOf[NinoPredicate],
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[CeaseCheckIncomeSourceDetails],
     mockUpdateIncomeSourceService,

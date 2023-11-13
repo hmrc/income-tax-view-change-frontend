@@ -65,7 +65,6 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       mockAuthService,
-      app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       mockIncomeSourceDetailsService,
       app.injector.instanceOf[ItvcErrorHandler],

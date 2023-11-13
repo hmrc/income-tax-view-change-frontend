@@ -45,7 +45,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationPredicate,
                                                    val authorisedFunctions: AuthorisedFunctions,
                                                    checkSessionTimeout: SessionTimeoutPredicate,
-                                                   retrieveNino: NinoPredicate,
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                    val retrieveBtaNavBar: NavBarPredicate,

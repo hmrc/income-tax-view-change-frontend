@@ -89,7 +89,6 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
-      retrieveNino = app.injector.instanceOf[NinoPredicate],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       addIncomeSourceStartDateCheckView = app.injector.instanceOf[AddIncomeSourceStartDateCheck],
       languageUtils = languageUtils,

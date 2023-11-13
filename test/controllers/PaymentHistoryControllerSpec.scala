@@ -59,7 +59,6 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[PaymentHistory],
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
-      app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       mockIncomeSourceDetailsService,
       mockAuthService,

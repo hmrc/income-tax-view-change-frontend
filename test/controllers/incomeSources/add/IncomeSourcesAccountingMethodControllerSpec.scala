@@ -122,7 +122,6 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[IncomeSourcesAccountingMethod],
     app.injector.instanceOf[CustomNotFoundError],
     sessionService = mockSessionService)(appConfig,

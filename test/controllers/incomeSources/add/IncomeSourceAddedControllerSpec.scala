@@ -63,7 +63,6 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    retrieveNino = app.injector.instanceOf[NinoPredicate],
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     retrieveBtaNavBar = MockNavBarPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
@@ -169,7 +168,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
           testSelfEmploymentId,
           None,
           Some("Test name"),
@@ -205,7 +204,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockSingleBusinessIncomeSourceWithDeadlines()
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
           testSelfEmploymentId,
           None,
           Some("Test name"),
@@ -240,7 +239,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
           testSelfEmploymentId,
           None,
           None,
@@ -273,7 +272,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
           testSelfEmploymentId,
           None,
           Some("test"),
@@ -380,7 +379,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           enable(IncomeSources)
           mockForeignPropertyIncomeSource()
           mockProperty()
-          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
+          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List.empty, List(PropertyDetailsModel(
             "123456",
             None,
             None,
@@ -419,7 +418,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           enable(IncomeSources)
           mockForeignPropertyIncomeSource()
           mockProperty()
-          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List.empty, List(PropertyDetailsModel(
+          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List.empty, List(PropertyDetailsModel(
             "123",
             None,
             None,

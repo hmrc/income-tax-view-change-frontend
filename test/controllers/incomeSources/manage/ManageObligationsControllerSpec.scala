@@ -59,7 +59,6 @@ class ManageObligationsControllerSpec extends TestSupport
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    retrieveNino = app.injector.instanceOf[NinoPredicate],
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
@@ -103,7 +102,7 @@ class ManageObligationsControllerSpec extends TestSupport
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-    val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
+    val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
       testId,
       None,
       Some("Test name"),
@@ -331,7 +330,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "show page with 'Sole trader business' when business has no name" in {
         mockAuth(true)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
           testId,
           None,
           None,

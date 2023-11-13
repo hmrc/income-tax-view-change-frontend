@@ -67,7 +67,6 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate],
     mockForeignPropertyReportingMethod,
     mockUpdateIncomeSourceService,
     mockITSAStatusService,

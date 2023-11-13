@@ -43,7 +43,6 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
     mockIncomeSourceDetailsService,

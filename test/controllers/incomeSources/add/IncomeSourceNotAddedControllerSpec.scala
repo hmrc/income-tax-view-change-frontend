@@ -46,7 +46,6 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     businessDetailsService = mockBusinessDetailsService,
     mockIncomeSourceDetailsService,

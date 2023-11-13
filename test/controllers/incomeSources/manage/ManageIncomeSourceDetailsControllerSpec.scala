@@ -63,7 +63,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    retrieveNino = app.injector.instanceOf[NinoPredicate],
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],

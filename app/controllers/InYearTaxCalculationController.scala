@@ -44,7 +44,6 @@ class InYearTaxCalculationController @Inject()(
                                                 view: InYearTaxCalculationView,
                                                 checkSessionTimeout: SessionTimeoutPredicate,
                                                 authenticate: AuthenticationPredicate,
-                                                retrieveNino: NinoPredicate,
                                                 retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 calcService: CalculationService,

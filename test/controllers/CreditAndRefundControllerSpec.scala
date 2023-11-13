@@ -51,7 +51,6 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
     val controller = new CreditAndRefundController(
       authorisedFunctions = mockAuthService,
       retrieveBtaNavBar = MockNavBarPredicate,
-      retrieveNino = app.injector.instanceOf[NinoPredicate],
       authenticate = MockAuthenticationPredicate,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       retrieveIncomeSources = MockIncomeSourceDetailsPredicate,

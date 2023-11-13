@@ -42,7 +42,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate,
                                            val authorisedFunctions: AuthorisedFunctions,
                                            checkSessionTimeout: SessionTimeoutPredicate,
-                                           retrieveNino: NinoPredicate,
                                            val addBusinessTradeView: AddBusinessTrade,
                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,

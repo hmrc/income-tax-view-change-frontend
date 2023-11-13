@@ -92,7 +92,6 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
     authenticate = MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    retrieveNino = app.injector.instanceOf[NinoPredicate],
     addIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate],
     retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
     retrieveBtaNavBar = MockNavBarPredicate,

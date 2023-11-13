@@ -53,7 +53,6 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[DeclarePropertyCeased],
     sessionService = mockSessionService)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],

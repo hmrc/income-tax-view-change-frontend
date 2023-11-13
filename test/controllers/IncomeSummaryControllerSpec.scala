@@ -51,7 +51,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     mockCalculationService,
