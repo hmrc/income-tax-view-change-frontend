@@ -20,15 +20,13 @@ import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import forms.utils.SessionKeys.businessName
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext
 
@@ -45,7 +43,6 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
   val prefix: String = "add-business-name"
   val htmlTitle = messagesAPI("htmlTitle.agent")
-  val dateCookie: Map[String, String] = Map(businessName -> "Test Business")
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
     messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")

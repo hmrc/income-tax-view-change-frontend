@@ -29,14 +29,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateIncomeSourceConnector) {
 
   def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: String)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceError, UpdateIncomeSourceSuccess]] = {
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceResponseError, UpdateIncomeSourceSuccess]] = {
     updateIncomeSourceConnector.updateCessationDate(
       nino = nino,
       incomeSourceId = incomeSourceId,
       cessationDate = Some(LocalDate.parse(cessationDate))
     ) map {
       case _: UpdateIncomeSourceResponseModel => Right(UpdateIncomeSourceSuccess(incomeSourceId))
-      case _ => Left(UpdateIncomeSourceError("Failed to update cessationDate"))
+      case error: UpdateIncomeSourceResponseError => Left(error)
     }
   }
 

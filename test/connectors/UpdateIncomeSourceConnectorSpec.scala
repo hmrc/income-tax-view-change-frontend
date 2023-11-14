@@ -36,7 +36,6 @@ import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
 import mocks.MockHttp
 import models.updateIncomeSource.UpdateIncomeSourceResponse
-import org.mockito.Mockito.when
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
@@ -84,7 +83,7 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with Moc
       "receiving a 500+ response" in new Setup {
         setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
           UpdateIncomeSourceTestConstants.request, HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-            json = Json.toJson("Error message"), headers = Map.empty))
+            json = Json.toJson(failureResponse), headers = Map.empty))
         val result: Future[UpdateIncomeSourceResponse] = connector.updateCessationDate(testNino, incomeSourceId, Some(LocalDate.parse(cessationDate)))
         result.futureValue shouldBe failureResponse
       }
@@ -116,7 +115,7 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttp with Moc
         setupMockHttpPutWithHeaderCarrier(connector.getUpdateIncomeSourceUrl)(
           UpdateIncomeSourceTestConstants.requestTaxYearSpecific,
           HttpResponse(status = Status.INTERNAL_SERVER_ERROR,
-            json = Json.toJson("Error message"), headers = Map.empty))
+            json = Json.toJson(failureResponse), headers = Map.empty))
         val result: Future[UpdateIncomeSourceResponse] = connector.updateIncomeSourceTaxYearSpecific(
           testNino, incomeSourceId, taxYearSpecific)
         result.futureValue shouldBe failureResponse

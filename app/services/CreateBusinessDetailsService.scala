@@ -72,30 +72,29 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
                                                       ec: ExecutionContext,
                                                       user: MtdItUser[_],
                                                       hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
-    viewModel.incomeSourceType match {
-      case SelfEmployment => createBusiness(viewModel)
-      case UkProperty => createUKProperty(viewModel)
-      case ForeignProperty => createForeignProperty(viewModel)
+    viewModel match {
+      case model: CheckBusinessDetailsViewModel => createBusiness(model)
+      case model: CheckPropertyViewModel => if (model.incomeSourceType == UkProperty) createUKProperty(model) else createForeignProperty(model)
     }
   }
 
-  def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
+  def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
       CreateBusinessIncomeSourceRequest(
         List(
           BusinessDetails(
             accountingPeriodStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
-            accountingPeriodEndDate = viewModel.accountingPeriodEndDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
+            accountingPeriodEndDate = viewModel.accountingPeriodEndDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
             tradingName = viewModel.businessName.get,
             addressDetails = AddressDetails(
-              addressLine1 = viewModel.businessAddressLine1.get,
+              addressLine1 = viewModel.businessAddressLine1,
               addressLine2 = removeEmptyStrings(viewModel.businessAddressLine2),
               addressLine3 = removeEmptyStrings(viewModel.businessAddressLine3),
               addressLine4 = removeEmptyStrings(viewModel.businessAddressLine4),
               countryCode = Some("GB"), // required to be GB by API when postcode present
               postalCode = viewModel.businessPostalCode
             ),
-            typeOfBusiness = viewModel.businessTrade,
+            typeOfBusiness = Some(viewModel.businessTrade),
             tradingStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
             cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.toUpperCase,
             cessationDate = None,
@@ -106,7 +105,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }.toEither
   }
 
-  def createBusiness(viewModel: CheckDetailsViewModel)(implicit
+  def createBusiness(viewModel: CheckBusinessDetailsViewModel)(implicit
                                                        ec: ExecutionContext,
                                                        user: MtdItUser[_],
                                                        hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
@@ -119,19 +118,19 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  private def createForeignPropertyIncomeSourceRequest(viewModel: CheckDetailsViewModel): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
+  private def createForeignPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
     Try(
       CreateForeignPropertyIncomeSourceRequest(
         PropertyDetails(
-          tradingStartDate = viewModel.businessStartDate.toString,
+          tradingStartDate = viewModel.tradingStartDate.toString,
           cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.toUpperCase,
-          startDate = viewModel.businessStartDate.toString
+          startDate = viewModel.tradingStartDate.toString
         )
       )
     ).toEither
   }
 
-  def createForeignProperty(viewModel: CheckDetailsViewModel)(implicit
+  def createForeignProperty(viewModel: CheckPropertyViewModel)(implicit
                                                               ec: ExecutionContext,
                                                               user: MtdItUser[_],
                                                               hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
@@ -144,19 +143,19 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  private def createUKPropertyIncomeSourceRequest(viewModel: CheckDetailsViewModel): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
+  private def createUKPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
     Try(
       CreateUKPropertyIncomeSourceRequest(
         PropertyDetails(
-          tradingStartDate = viewModel.businessStartDate.toString,
+          tradingStartDate = viewModel.tradingStartDate.toString,
           cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.toUpperCase,
-          startDate = viewModel.businessStartDate.toString
+          startDate = viewModel.tradingStartDate.toString
         )
       )
     ).toEither
   }
 
-  def createUKProperty(viewModel: CheckDetailsViewModel)
+  def createUKProperty(viewModel: CheckPropertyViewModel)
                       (implicit
                        ec: ExecutionContext,
                        user: MtdItUser[_],

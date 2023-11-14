@@ -121,17 +121,16 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getPropertyModel(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
+  private def getPropertyModel(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
     sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
       sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).map { accMethod: Either[Throwable, Option[String]] =>
         (startDate, accMethod) match {
           case (Right(dateMaybe), Right(methodMaybe)) =>
             (dateMaybe, methodMaybe) match {
               case (Some(date), Some(method)) =>
-                Right(CheckDetailsViewModel(
-                  businessStartDate = Some(date),
+                Right(CheckPropertyViewModel(
+                  tradingStartDate = date,
                   cashOrAccrualsFlag = method,
-                  showedAccountingMethod = true,
                   incomeSourceType = incomeSourceType
                 ))
               case (_, _) =>
@@ -143,7 +142,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckDetailsViewModel]] = {
+  private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val showAccountingMethodPage: Boolean = userActiveBusinesses.isEmpty
     val errorTracePrefix = "[IncomeSourceCheckDetailsController][getBusinessModel]:"
@@ -153,15 +152,15 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           case Some(addIncomeSourceData) =>
 
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
-            Right(CheckDetailsViewModel(
+            Right(CheckBusinessDetailsViewModel(
               businessName = addIncomeSourceData.businessName,
               businessStartDate = addIncomeSourceData.dateStarted,
-              accountingPeriodEndDate = Some(addIncomeSourceData.accountingPeriodEndDate
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate"))),
-              businessTrade = Some(addIncomeSourceData.businessTrade
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade"))),
-              businessAddressLine1 = Some(address.lines.headOption
-                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1"))),
+              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
+              businessTrade = addIncomeSourceData.businessTrade
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),
+              businessAddressLine1 = address.lines.headOption
+                .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1")),
               businessAddressLine2 = address.lines.lift(1),
               businessAddressLine3 = address.lines.lift(2),
               businessAddressLine4 = address.lines.lift(3),
@@ -170,8 +169,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
               cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
-              showedAccountingMethod = showAccountingMethodPage,
-              incomeSourceType = SelfEmployment
+              showedAccountingMethod = showAccountingMethodPage
             ))
 
           case None => throw new Exception(s"$errorTracePrefix failed to retrieve addIncomeSourceData")

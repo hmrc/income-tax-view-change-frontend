@@ -24,7 +24,6 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import exceptions.MissingSessionKey
-import forms.utils.SessionKeys.ceaseBusinessIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -102,7 +101,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
           }
         case incomeSourceD@(Right(None), _) =>
           Logger("application").error(s"${if (isAgent) "[Agent]"}[BusinessCeasedObligationsController][handleRequest]: -${incomeSourceD._1}- =${incomeSourceD._2}=")
-          Future.failed(MissingSessionKey(ceaseBusinessIncomeSourceId))
+          Future.failed(MissingSessionKey(CeaseIncomeSourceData.incomeSourceIdField))
         case (Left(exception), _) => Future.failed(exception)
       }
     }

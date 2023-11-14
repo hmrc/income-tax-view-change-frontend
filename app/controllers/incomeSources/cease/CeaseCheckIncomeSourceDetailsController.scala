@@ -16,6 +16,8 @@
 
 package controllers.incomeSources.cease
 
+import audit.AuditingService
+import audit.models.CeaseIncomeSourceAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -23,7 +25,6 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
-import forms.utils.SessionKeys.{ceaseBusinessEndDate, ceaseBusinessIncomeSourceId, ceaseForeignPropertyEndDate, ceaseUKPropertyEndDate}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -32,7 +33,6 @@ import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceS
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +45,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
                                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                         val view: CeaseCheckIncomeSourceDetails,
                                                         val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                        val sessionService: SessionService)
+                                                        val sessionService: SessionService,
+                                                        val auditingService: AuditingService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,
@@ -180,10 +181,24 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
     updateIncomeSourceService.updateCessationDate(user.nino, incomeSourceId, cessationDate).flatMap {
       case Right(_) =>
+        auditingService.extendedAudit(CeaseIncomeSourceAuditModel(
+          incomeSourceType = incomeSourceType,
+          cessationDate = cessationDate,
+          incomeSourceId = incomeSourceId,
+          updateIncomeSourceErrorResponse = None))
+
         Future.successful(Redirect(redirectCall))
-      case _ =>
+
+      case Left(error) =>
         Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest]:" +
           s" Unsuccessful update response received")
+
+        auditingService.extendedAudit(CeaseIncomeSourceAuditModel(
+          incomeSourceType = incomeSourceType,
+          cessationDate = cessationDate,
+          incomeSourceId = incomeSourceId,
+          updateIncomeSourceErrorResponse = Some(error)))
+
         Future.successful {
           Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
         }

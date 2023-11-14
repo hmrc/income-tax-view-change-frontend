@@ -18,7 +18,7 @@ package connectors.helpers
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.createIncomeSource._
-import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
@@ -92,24 +92,23 @@ trait IncomeSourcesDataHelper {
     |    }
     |}""".stripMargin)
 
-  val createBusinessViewModel = CheckDetailsViewModel(
+  val createBusinessViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("someBusinessName"),
     businessStartDate = Some(LocalDate.of(2022, 11, 11)),
-    businessTrade = Some("someBusinessTrade"),
+    businessTrade = "someBusinessTrade",
     businessPostalCode = Some("SE15 4ER"),
     incomeSourcesAccountingMethod = None,
-    accountingPeriodEndDate = Some(LocalDate.of(2022, 11, 11)),
-    businessAddressLine1 = Some("businessAddressLine1"),
+    accountingPeriodEndDate = LocalDate.of(2022, 11, 11),
+    businessAddressLine1 = "businessAddressLine1",
     businessAddressLine2 = Some(""),
     businessAddressLine3 = Some(""),
     businessAddressLine4 = None,
     businessCountryCode = Some("GB"),
     cashOrAccrualsFlag = "CASH",
-    showedAccountingMethod = false,
-    incomeSourceType = SelfEmployment
+    showedAccountingMethod = false
   )
 
-  val createForeignPropertyViewModel = CheckDetailsViewModel(businessStartDate = Some(LocalDate.of(2011, 1, 1)), cashOrAccrualsFlag = "CASH", incomeSourceType = ForeignProperty)
+  val createForeignPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH", incomeSourceType = ForeignProperty)
 
-  val createUKPropertyViewModel = CheckDetailsViewModel(businessStartDate = Some(LocalDate.of(2011, 1, 1)), cashOrAccrualsFlag = "CASH", incomeSourceType = UkProperty)
+  val createUKPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = "CASH", incomeSourceType = UkProperty)
 }
