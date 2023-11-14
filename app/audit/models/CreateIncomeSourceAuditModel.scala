@@ -20,7 +20,7 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
 
@@ -34,7 +34,6 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
 
 
   private val isSuccessful = failureCategory.isEmpty
-
   override val transactionName: String = enums.TransactionName.CreateIncomeSource
   override val auditType: String = enums.AuditType.CreateIncomeSource
 
@@ -51,34 +50,39 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
 
   override val detail: JsValue = {
 
-    val seDetails = Json.obj() ++
-      ("businessName", viewModel.businessName) ++
-      ("businessDescription", viewModel.businessTrade) ++
-      ("addressLine1", viewModel.businessAddressLine1) ++
-      ("addressLine2", viewModel.businessAddressLine2) ++
-      ("addressLine3", viewModel.businessAddressLine3) ++
-      ("addressTownOrCity", viewModel.businessAddressLine4) ++
-      ("addressPostcode", viewModel.businessPostalCode) ++
-      ("addressCountry", viewModel.businessCountryCode)
-
     val baseDetails = userAuditDetails(user) ++
       Json.obj(
         "outcome" -> outcome,
         "journeyType" -> incomeSourceType.journeyType
       ) ++
-      ("addedIncomeSourceID", createIncomeSourceResponse.map(x => x.incomeSourceId)) ++
-      ("dateStarted", viewModel.businessStartDate) ++ (if (incomeSourceType == SelfEmployment) {
-      seDetails
+      ("addedIncomeSourceID", createIncomeSourceResponse.map(x => x.incomeSourceId))
 
-    } else Json.obj()) ++
-      ("accountingMethod", viewModel.incomeSourcesAccountingMethod.map {
-        case "accruals" => "Traditional accounting"
-        case "cash" => "Cash basis accounting"
-      })
+    val businessDetails = viewModel match {
+      case businessDetailsViewModel: CheckBusinessDetailsViewModel =>
+        val seDetails = Json.obj() ++
+          ("businessName", Some(businessDetailsViewModel.businessName)) ++
+          ("dateStarted", Some(businessDetailsViewModel.businessStartDate)) ++
+          Json.obj("businessTrade" -> businessDetailsViewModel.businessTrade) ++
+          Json.obj("addressLine1" -> businessDetailsViewModel.businessAddressLine1) ++
+          ("addressLine2", businessDetailsViewModel.businessAddressLine2) ++
+          ("addressLine3", businessDetailsViewModel.businessAddressLine3) ++
+          ("addressTownOrCity", businessDetailsViewModel.businessAddressLine4) ++
+          ("addressPostcode", businessDetailsViewModel.businessPostalCode) ++
+          ("addressCountry", businessDetailsViewModel.businessCountryCode) ++
+          ("accountingMethod", businessDetailsViewModel.incomeSourcesAccountingMethod.map {
+            case "accruals" => "Traditional accounting"
+            case "cash" => "Cash basis accounting"
+          })
 
-    incomeSourceType match {
-      case SelfEmployment => baseDetails ++ seDetails
-      case _ => baseDetails
+        seDetails
+
+      case propertyViewModel: CheckPropertyViewModel =>
+        val propDetails = Json.obj("dateStarted" -> propertyViewModel.tradingStartDate)
+        
+        propDetails
     }
+
+    baseDetails ++ businessDetails
+
   }
 }
