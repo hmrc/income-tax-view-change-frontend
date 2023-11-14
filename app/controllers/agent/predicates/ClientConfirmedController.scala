@@ -79,7 +79,7 @@ trait ClientConfirmedController extends BaseAgentController {
 
     val cacheKey = None
     incomeSourceDetailsService.getIncomeSourceDetails(cacheKey)(hc = hc, mtdUser = userOptionNino) map {
-      case model@IncomeSourceDetailsModel(_, nino, _, _, _) => MtdItUser(
+      case model@IncomeSourceDetailsModel(nino, _, _, _, _) => MtdItUser(
         userOptionNino.mtditid, nino, userOptionNino.userName, model, None, userOptionNino.saUtr,
         userOptionNino.credId, userOptionNino.userType, userOptionNino.arn)
       case _ =>
