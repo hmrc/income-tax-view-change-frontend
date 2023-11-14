@@ -41,7 +41,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+class   TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val authenticate: AuthenticationPredicate,
                                         val retrieveNino: NinoPredicate,
