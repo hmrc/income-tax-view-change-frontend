@@ -141,8 +141,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[DocumentDetailWithDueDate] => Future[Result])
                                    (implicit user: MtdItUser[AnyContent]): Future[Result] = {
 
-    println(s"\ntrying to get financial details for: taxYear: $taxYear, user.nino: ${user.nino}\n")
-
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
         val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
@@ -224,7 +222,6 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         val codingOutEnabled: Boolean = isEnabled(CodingOut)
         val mtdItId: String = if (isAgent) getClientMtditid else user.mtditid
         val nino: String = if (isAgent) getClientNino else user.nino
-        println(s"\ncalling calculationService.getLiabilityCalculationDetail with: mtdItId: $mtdItId, nino: ${nino}, taxYear: $taxYear \n")
         calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear).map { liabilityCalcResponse =>
           view(liabilityCalcResponse, charges, taxYear, obligationsModel, codingOutEnabled,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
