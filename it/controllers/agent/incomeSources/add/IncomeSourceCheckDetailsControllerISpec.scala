@@ -14,7 +14,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSelfEmploymentId, testSessionId}
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
@@ -226,6 +226,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew(testMtditid)(response)
+        await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
         When(s"I call ${checkBusinessDetailsSubmitUrl(incomeSourceType)}")
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)

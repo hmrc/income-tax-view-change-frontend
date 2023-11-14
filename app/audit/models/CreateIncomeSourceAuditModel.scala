@@ -18,8 +18,8 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceListResponseError, CreateIncomeSourceResponse}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
@@ -51,40 +51,34 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
 
   override val detail: JsValue = {
 
-    val ex = {
-      val seDetails = Json.obj() ++
-        ("businessName", viewModel.businessName) ++
-        ("businessDescription", viewModel.businessTrade) ++
-        ("addressLine1", viewModel.businessAddressLine1) ++
-        ("addressLine2", viewModel.businessAddressLine2) ++
-        ("addressLine3", viewModel.businessAddressLine3) ++
-        ("addressTownOrCity", viewModel.businessAddressLine4) ++
-        ("addressPostcode", viewModel.businessPostalCode) ++
-        ("addressCountry", viewModel.businessCountryCode)
+    val seDetails = Json.obj() ++
+      ("businessName", viewModel.businessName) ++
+      ("businessDescription", viewModel.businessTrade) ++
+      ("addressLine1", viewModel.businessAddressLine1) ++
+      ("addressLine2", viewModel.businessAddressLine2) ++
+      ("addressLine3", viewModel.businessAddressLine3) ++
+      ("addressTownOrCity", viewModel.businessAddressLine4) ++
+      ("addressPostcode", viewModel.businessPostalCode) ++
+      ("addressCountry", viewModel.businessCountryCode)
 
-      val baseDetails = userAuditDetails(user) ++
-        Json.obj(
-          "outcome" -> outcome,
-          "journeyType" -> incomeSourceType.journeyType
-        ) ++
-        ("addedIncomeSourceID", createIncomeSourceResponse.map(x => x.incomeSourceId)) ++
-        ("dateStarted", viewModel.businessStartDate) ++ (if (incomeSourceType == SelfEmployment) {
-        seDetails
+    val baseDetails = userAuditDetails(user) ++
+      Json.obj(
+        "outcome" -> outcome,
+        "journeyType" -> incomeSourceType.journeyType
+      ) ++
+      ("addedIncomeSourceID", createIncomeSourceResponse.map(x => x.incomeSourceId)) ++
+      ("dateStarted", viewModel.businessStartDate) ++ (if (incomeSourceType == SelfEmployment) {
+      seDetails
 
-      } else Json.obj()) ++
-        ("accountingMethod", viewModel.incomeSourcesAccountingMethod.map {
-          case "accruals" => "Traditional accounting"
-          case "cash" => "Cash basis accounting"
-        })
+    } else Json.obj()) ++
+      ("accountingMethod", viewModel.incomeSourcesAccountingMethod.map {
+        case "accruals" => "Traditional accounting"
+        case "cash" => "Cash basis accounting"
+      })
 
-
-      incomeSourceType match {
-        case SelfEmployment => baseDetails ++ seDetails
-        case _ => baseDetails
-      }
+    incomeSourceType match {
+      case SelfEmployment => baseDetails ++ seDetails
+      case _ => baseDetails
     }
-    println(ex)
-    println("LOOOOOOK")
-    ex
   }
 }

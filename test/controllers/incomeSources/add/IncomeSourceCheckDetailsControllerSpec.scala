@@ -17,26 +17,26 @@
 package controllers.incomeSources.add
 
 import audit.AuditingService
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, dateStartedField, incomeSourcesAccountingMethodField}
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.CreateBusinessDetailsService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId, testSessionId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.add.IncomeSourceCheckDetails
@@ -54,7 +54,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
   val testBusinessAddressLine1: String = "123 Main Street"
   val testBusinessPostCode: String = "AB123CD"
   val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
-  val testBusinessAccountingMethod = "Quarterly"
+  val testBusinessAccountingMethod = "cash"
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
   val testCountryCode = "GB"
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
@@ -65,7 +65,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
   val testPropertyAccountingMethod: String = "CASH"
   val accruals: String = messages("incomeSources.add.accountingMethod.accruals")
 
-  val  testUIJourneySessionDataBusiness: UIJourneySessionData = UIJourneySessionData(
+  val testUIJourneySessionDataBusiness: UIJourneySessionData = UIJourneySessionData(
     sessionId = "some-session-id",
     journeyType = JourneyType(Add, SelfEmployment).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(
@@ -198,7 +198,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
 
-            val redirectUrl = if(isAgent) controllers.routes.HomeController.showAgent.url
+            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
             else controllers.routes.HomeController.show().url
 
             status(result) shouldBe SEE_OTHER
@@ -312,7 +312,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
       }
     }
 
-    ".submit" should{
+    ".submit" should {
       "return 303" when {
         "data is correct and redirect next page" when {
           def successFullRedirectTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {

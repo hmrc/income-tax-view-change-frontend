@@ -19,10 +19,10 @@ package audit.models
 import enums.FailureCategory.ApiFailure
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.createIncomeSource.CreateIncomeSourceResponse
-import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
-import testUtils.TestSupport
 import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
+import play.api.libs.json.Json
+import testConstants.BaseTestConstants.testSelfEmploymentId
+import testUtils.TestSupport
 
 import java.time.LocalDate
 

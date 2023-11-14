@@ -36,7 +36,6 @@ import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, Sessi
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceCheckDetails
-import audit.models.CreateIncomeSourceAuditModel
 
 import java.time.LocalDate
 import javax.inject.Inject

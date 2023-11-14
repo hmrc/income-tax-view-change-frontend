@@ -14,7 +14,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSelfEmploymentId, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

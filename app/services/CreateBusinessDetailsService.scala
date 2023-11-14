@@ -58,7 +58,6 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         Future.successful(Left(new Error("Failed to create incomeSources")))
       case Left(incomeSourceError) =>
         Logger("application").error("[CreateBusinessDetailsService][handleResponse] - failed to create")
-        println(Console.GREEN + incomeSourceError + Console.WHITE)
         Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))}
   }
 
