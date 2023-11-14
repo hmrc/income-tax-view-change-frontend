@@ -103,7 +103,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
     "the sanitise method" should {
       "remove all unnecessary fields" in {
         val expected = IncomeSourceDetailsModel(
-          "nino",
+          testNino,
           "XIAT0000000000A",
           Some((LocalDate.now.getYear - 1).toString),
           List(
