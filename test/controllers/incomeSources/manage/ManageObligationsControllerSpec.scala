@@ -381,12 +381,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "return 500 INTERNAL_SERVER_ERROR" when {
         "user has no active UK properties" in {
           mockAuth(false)
-          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-            .thenReturn(
-              Left(
-                new Error("No active UK properties found.")
-              )
-            )
+          mockNoIncomeSources()
 
           val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
