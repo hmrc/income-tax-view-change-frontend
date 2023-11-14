@@ -35,7 +35,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.SessionService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testPropertyIncomeId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testPropertyIncomeId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.ManageObligations
@@ -102,7 +102,7 @@ class ManageObligationsControllerSpec extends TestSupport
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-    val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
+    val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
       testId,
       None,
       Some("Test name"),
@@ -330,7 +330,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "show page with 'Sole trader business' when business has no name" in {
         mockAuth(true)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
           testId,
           None,
           None,

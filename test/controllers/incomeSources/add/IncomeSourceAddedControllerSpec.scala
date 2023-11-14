@@ -34,12 +34,11 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{redirectLocation, status}
 import services.DateService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testPropertyIncomeId, testSelfEmploymentId}
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.defaultAwaitTimeout
-import testConstants.BaseTestConstants.testPropertyIncomeId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 
@@ -168,7 +167,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
           testSelfEmploymentId,
           None,
           Some("Test name"),
@@ -204,7 +203,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         mockSingleBusinessIncomeSourceWithDeadlines()
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
           testSelfEmploymentId,
           None,
           Some("Test name"),
@@ -239,7 +238,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
           testSelfEmploymentId,
           None,
           None,
@@ -272,7 +271,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         enable(IncomeSources)
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List(BusinessDetailsModel(
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
           testSelfEmploymentId,
           None,
           Some("test"),
@@ -379,7 +378,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           enable(IncomeSources)
           mockForeignPropertyIncomeSource()
           mockProperty()
-          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List.empty, List(PropertyDetailsModel(
+          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List.empty, List(PropertyDetailsModel(
             "123456",
             None,
             None,
@@ -418,7 +417,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           enable(IncomeSources)
           mockForeignPropertyIncomeSource()
           mockProperty()
-          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel("nino", "", Some("2022"), List.empty, List(PropertyDetailsModel(
+          val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List.empty, List(PropertyDetailsModel(
             "123",
             None,
             None,

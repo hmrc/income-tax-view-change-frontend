@@ -43,7 +43,7 @@ class ClientDetailsServiceSpec extends TestSupport
         "income source details are returned with an mtdbsa identifer" in {
 
           setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsModel(Some("James"), Some("Bond"), Some("TESTNINO123"))))
-          setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("nino", "mtdbsaId", None, List(), List())))
+          setupBusinessDetails("TESTNINO123")(Future.successful(IncomeSourceDetailsModel("TESTNINO123", "mtdbsaId", None, List(), List())))
 
           val result = TestClientDetailsService.checkClientDetails("testSaUtr").futureValue
 

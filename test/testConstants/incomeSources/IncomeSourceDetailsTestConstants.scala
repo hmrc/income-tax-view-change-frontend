@@ -21,14 +21,13 @@ import models.core.AddressModel
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 
 import java.time.LocalDate
 
 object IncomeSourceDetailsTestConstants {
-  private val testNino = "nino"
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(business1, business2), List(propertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2017"), List(business1), Nil)

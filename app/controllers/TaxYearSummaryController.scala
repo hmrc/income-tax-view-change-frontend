@@ -141,7 +141,9 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[DocumentDetailWithDueDate] => Future[Result])
                                    (implicit user: MtdItUser[AnyContent]): Future[Result] = {
 
-    financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
+    println(s"\ntrying to get financial details for: taxYear: $taxYear, user.nino: ${user.incomeSources.nino}\n")
+
+    financialDetailsService.getFinancialDetails(taxYear, user.incomeSources.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
         val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
         val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))

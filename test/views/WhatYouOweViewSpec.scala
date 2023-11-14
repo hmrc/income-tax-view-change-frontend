@@ -109,7 +109,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       mtditid = testMtditid,
       nino = testNino,
       userName = Some(testRetrievedUserName),
-      incomeSources = IncomeSourceDetailsModel("nino", "testMtdItId", Some(migrationYear.toString), List(), List()),
+      incomeSources = IncomeSourceDetailsModel(testNino, "testMtdItId", Some(migrationYear.toString), List(), List()),
       btaNavPartial = None,
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
