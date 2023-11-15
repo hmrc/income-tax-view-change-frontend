@@ -180,9 +180,10 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
             from = LocalDate.now.minusDays(1),
             to = LocalDate.now.plusDays(2)
           )(ObligationsModel(Seq(
-            NextUpdatesModel("idOne", List(previousObligation))
+            NextUpdatesModel("idOne", List(previousObligation)),
           )))
           setupMockNextUpdates(ObligationsModel(Seq(
+            NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1)))),
             NextUpdatesModel("idTwo", List(currentObligation(LocalDate.now.plusDays(1))))
           )))
 
