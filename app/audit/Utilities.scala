@@ -35,6 +35,15 @@ object Utilities {
     ("credId", user.credId) ++
     userType(user.userType)
 
+  def userAuditDetailsNino(user: MtdItUserBase[_]): JsObject = Json.obj(
+    "nino" -> user.nino,
+    "mtditid" -> user.mtditid
+  ) ++
+    ("agentReferenceNumber", user.arn) ++
+    ("saUtr", user.saUtr) ++
+    ("credId", user.credId) ++
+    userType(user.userType)
+
   def userType(userType: Option[AffinityGroup]): JsObject = userType match {
     case Some(Agent) => Json.obj("userType" -> "Agent")
     case Some(_) => Json.obj("userType" -> "Individual")

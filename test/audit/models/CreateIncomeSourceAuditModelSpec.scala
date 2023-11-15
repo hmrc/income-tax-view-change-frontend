@@ -73,7 +73,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   val detailIndividualSE = Json.parse(
     """{
-      |    "nationalInsuranceNumber": "AB123456C",
+      |    "nino": "AB123456C",
       |    "mtditid": "XAIT0000123456",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",
@@ -97,7 +97,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   val detailAgentSE = Json.parse(
     """{
-      |    "nationalInsuranceNumber": "AA111111A",
+      |    "nino": "AA111111A",
       |    "mtditid": "XAIT00000000015",
       |    "agentReferenceNumber": "XAIT0000123456",
       |    "saUtr": "1234567890",
@@ -122,7 +122,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   val detailOutcomeError = Json.parse(
     """{
-      |    "nationalInsuranceNumber": "AB123456C",
+      |    "nino": "AB123456C",
       |    "mtditid": "XAIT0000123456",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",
@@ -146,7 +146,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   val detailProperty = Json.parse(
     """{
-      |    "nationalInsuranceNumber": "AB123456C",
+      |    "nino": "AB123456C",
       |    "mtditid": "XAIT0000123456",
       |    "saUtr": "testSaUtr",
       |    "credId": "testCredId",

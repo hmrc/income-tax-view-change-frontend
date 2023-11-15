@@ -16,7 +16,7 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
+import audit.Utilities.{userAuditDetails, userAuditDetailsNino}
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -50,10 +50,10 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
 
   override val detail: JsValue = {
 
-    val baseDetails = userAuditDetails(user) ++
+    val baseDetails = userAuditDetailsNino(user) ++
       Json.obj(
         "outcome" -> outcome,
-        "journeyType" -> incomeSourceType.journeyType
+        "journeyType" -> incomeSourceType.journeyType,
       ) ++
       ("addedIncomeSourceID", createIncomeSourceResponse.map(x => x.incomeSourceId))
 
