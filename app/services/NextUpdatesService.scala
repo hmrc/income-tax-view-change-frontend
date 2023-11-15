@@ -95,7 +95,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     } yield {
       (previousObligations, openObligations) match {
         case (ObligationsModel(previous), open: ObligationsModel) =>
-          ObligationsModel((previous ++ obligationFilter(fromDate, toDate, open)).filter(_.obligations.nonEmpty))
+          ObligationsModel( (previous ++ obligationFilter(fromDate, toDate, open).distinct ).filter(_.obligations.nonEmpty))
         case (error: NextUpdatesErrorModel, open: ObligationsModel) if error.code == 404 =>
           ObligationsModel(obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty))
         case (error: NextUpdatesErrorModel, _) => error
