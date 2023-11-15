@@ -444,15 +444,33 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val jsonString: String = source.getLines().toList.mkString("")
       val json: JsValue = Json.parse(jsonString)
 
-      val expectedResponse: ObligationsModel = json.validate[ObligationsModel].fold(
+      val nextObligations: ObligationsModel = json.validate[ObligationsModel].fold(
         _ => None, valid => Some(valid)).get
 
       //val datesList = processed(expectedResponse)
 
 //      val (a, b) = datesList.partition(datesModel => datesModel.isFinalDec)
-      println(expectedResponse.toString.replace(" ", "\n"))
+      //println(expectedResponse.toString.replace(" ", "\n"))
 
-//      println(datesList.toString.replace(" ", "\n"))
+      val source2: BufferedSource = Source.fromURL(getClass.getResource("/data/1330_ObligationsV2.json"))
+      val jsonString2: String = source2.getLines().toList.mkString("")
+      val json2: JsValue = Json.parse(jsonString2)
+
+      val previousOrigin: ObligationsModel = json2.validate[ObligationsModel].fold(
+        _ => None, valid => Some(valid)).get
+
+      //println(expectedResponse2.toString.replace(" ", "\n"))
+
+      (nextObligations, previousOrigin) match {
+        case (ObligationsModel(previous), ObligationsModel(open)) =>
+          val result = ObligationsModel((previous ++  open).distinct.filter(_.obligations.nonEmpty))
+          println("Previous obligations\n")
+          println(previousOrigin.toString.replace(" ", "\n"))
+          println("End\n")
+          println(result.toString.replace(" ", "\n"))
+      }
+
+
 
 //
 //      when(mockObligationsConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
