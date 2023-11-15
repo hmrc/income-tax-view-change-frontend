@@ -53,7 +53,7 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
     val baseDetails = userAuditDetailsNino(user) ++
       Json.obj(
         "outcome" -> outcome,
-        "journeyType" -> incomeSourceType.journeyType,
+        "journeyType" -> incomeSourceType.journeyType
       ) ++
       ("addedIncomeSourceID", createIncomeSourceResponse.map(x => x.incomeSourceId))
 
