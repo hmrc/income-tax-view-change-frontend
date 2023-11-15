@@ -62,27 +62,31 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
         val seDetails = Json.obj() ++
           ("businessName", Some(businessDetailsViewModel.businessName)) ++
           ("dateStarted", Some(businessDetailsViewModel.businessStartDate)) ++
-          Json.obj("businessTrade" -> businessDetailsViewModel.businessTrade) ++
+          Json.obj("businessDescription" -> businessDetailsViewModel.businessTrade) ++
           Json.obj("addressLine1" -> businessDetailsViewModel.businessAddressLine1) ++
           ("addressLine2", businessDetailsViewModel.businessAddressLine2) ++
           ("addressLine3", businessDetailsViewModel.businessAddressLine3) ++
           ("addressTownOrCity", businessDetailsViewModel.businessAddressLine4) ++
           ("addressPostcode", businessDetailsViewModel.businessPostalCode) ++
-          ("addressCountry", businessDetailsViewModel.businessCountryCode) ++
-          ("accountingMethod", businessDetailsViewModel.incomeSourcesAccountingMethod.map {
-            case "accruals" => "Traditional accounting"
-            case "cash" => "Cash basis accounting"
-          })
+          ("addressCountry", businessDetailsViewModel.businessCountryCode)
 
         seDetails
 
       case propertyViewModel: CheckPropertyViewModel =>
         val propDetails = Json.obj("dateStarted" -> propertyViewModel.tradingStartDate)
-        
+
         propDetails
     }
 
-    baseDetails ++ businessDetails
+    val accountingMethod = if (viewModel.cashOrAccruals.toLowerCase.equals("cash")) {
+      "Cash basis accounting"
+    } else {
+      "Traditional accounting"
+    }
+
+
+    baseDetails ++ businessDetails ++ Json.obj(
+      "accountingMethod" -> accountingMethod)
 
   }
 }

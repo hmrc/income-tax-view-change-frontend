@@ -8,7 +8,7 @@ import enums.JourneyType.{Add, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
-import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.FakeRequest
@@ -61,12 +61,12 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
     await(sessionService.deleteSession(Add))
   }
 
-  val testSEViewModel: CheckDetailsViewModel = CheckDetailsViewModel(
+  val testSEViewModel: CheckDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some(testBusinessName),
     businessStartDate = Some(testBusinessStartDate),
-    accountingPeriodEndDate = None,
-    businessTrade = Some(testBusinessTrade),
-    businessAddressLine1 = Some(testBusinessAddressLine1),
+    accountingPeriodEndDate = (testAccountingPeriodEndDate),
+    businessTrade = testBusinessTrade,
+    businessAddressLine1 = testBusinessAddressLine1,
     businessAddressLine2 = None,
     businessAddressLine3 = None,
     businessAddressLine4 = None,
@@ -74,17 +74,17 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
     businessCountryCode = Some(testCountryCode),
     incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod),
     cashOrAccrualsFlag = "CASH",
-    incomeSourceType = SelfEmployment
+    showedAccountingMethod = false
   )
 
-  val testUKPropertyViewModel = CheckDetailsViewModel(
-    businessStartDate = Some(testBusinessStartDate),
+  val testUKPropertyViewModel = CheckPropertyViewModel(
+    tradingStartDate = testBusinessStartDate,
     cashOrAccrualsFlag = "CASH",
     incomeSourceType = UkProperty
   )
 
-  val testForeignPropertyViewModel = CheckDetailsViewModel(
-    businessStartDate = Some(testBusinessStartDate),
+  val testForeignPropertyViewModel = CheckPropertyViewModel(
+    tradingStartDate = testBusinessStartDate,
     cashOrAccrualsFlag = "CASH",
     incomeSourceType = ForeignProperty
   )

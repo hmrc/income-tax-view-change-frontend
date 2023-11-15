@@ -19,7 +19,7 @@ package audit.models
 import enums.FailureCategory.ApiFailure
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
@@ -35,30 +35,29 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
   val failureReason = "Failure Reason"
   val incomeSourceId = testSelfEmploymentId
 
-  val createBusinessViewModel = CheckDetailsViewModel(
+  val createBusinessViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("someBusinessName"),
     businessStartDate = Some(LocalDate.of(2022, 1, 1)),
-    businessTrade = Some("someBusinessTrade"),
+    accountingPeriodEndDate = LocalDate.of(2023, 1, 11),
+    businessTrade = "someBusinessTrade",
     businessPostalCode = Some("TE5 7TT"),
-    businessAddressLine1 = Some("2 Test Lane"),
+    businessAddressLine1 = "2 Test Lane",
     businessAddressLine2 = Some("Test Unit"),
     businessAddressLine3 = None,
     businessAddressLine4 = Some("Test City"),
     businessCountryCode = Some("GB"),
     incomeSourcesAccountingMethod = Some("cash"),
     cashOrAccrualsFlag = "CASH",
-    showedAccountingMethod = false,
-    incomeSourceType = SelfEmployment
+    showedAccountingMethod = false
   )
 
-
-  val createForeignPropertyViewModel = CheckDetailsViewModel(
-    businessStartDate = Some(LocalDate.of(2022, 1, 1)),
+  val createForeignPropertyViewModel = CheckPropertyViewModel(
+    tradingStartDate = LocalDate.of(2022, 1, 1),
     cashOrAccrualsFlag = "CASH",
     incomeSourceType = ForeignProperty)
 
-  val createUKPropertyViewModel = CheckDetailsViewModel(
-    businessStartDate = Some(LocalDate.of(2022, 1, 1)),
+  val createUKPropertyViewModel = CheckPropertyViewModel(
+    tradingStartDate = LocalDate.of(2022, 1, 1),
     cashOrAccrualsFlag = "CASH",
     incomeSourceType = UkProperty)
 
@@ -157,7 +156,8 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |    },
       |    "journeyType": "UKPROPERTY",
       |    "addedIncomeSourceID":"XA00001234",
-      |    "dateStarted": "2022-01-01"
+      |    "dateStarted": "2022-01-01",
+      |    "accountingMethod":"Cash basis accounting"
       |}""".stripMargin)
 
   "CeaseIncomeSourceAuditModel" should {
