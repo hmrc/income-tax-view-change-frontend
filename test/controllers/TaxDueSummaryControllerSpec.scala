@@ -27,7 +27,8 @@ import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testNino, testTaxYear}
+import testConstants.BusinessDetailsTestConstants.testMtdItId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
@@ -63,8 +64,8 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       lazy val document = resultIndividual.toHtmlDocument
 
       "return Status OK (200)" in {
-        mockCalculationSuccessfulNew("XAIT0000123456")
         setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
+        mockCalculationSuccessfulNew(testMtdItId)
         status(resultIndividual) shouldBe Status.OK
       }
 
@@ -103,9 +104,9 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status OK (200) with HTML" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationSuccessfulNew("XAIT00000000015", "AA111111A", testYear)
+        mockCalculationSuccessfulNew("XAIT00000000015", testNino, testYear)
 
-        lazy val result = TestTaxDueSummaryController.showTaxDueSummaryAgent(testYear)(fakeRequestConfirmedClient())
+        lazy val result = TestTaxDueSummaryController.showTaxDueSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
@@ -127,10 +128,10 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
 
     "there is a downstream error" should {
       "return Status Internal Server Error (500)" in {
-        lazy val result = TestTaxDueSummaryController.showTaxDueSummaryAgent(testYear)(fakeRequestConfirmedClient())
+        lazy val result = TestTaxDueSummaryController.showTaxDueSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(LiabilityCalculationError(500, "Some Error"))
+        setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(LiabilityCalculationError(500, "Some Error"))
         mockShowInternalServerError()
 
         setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
