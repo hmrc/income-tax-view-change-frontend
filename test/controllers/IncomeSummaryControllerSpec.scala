@@ -135,7 +135,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
         mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessful.calculation).get,
           controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYear).url, isAgent)(HtmlFormat.empty)
 
-        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient())
+        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
