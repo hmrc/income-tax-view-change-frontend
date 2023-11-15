@@ -97,7 +97,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
         case (ObligationsModel(previous), open: ObligationsModel) =>
           ObligationsModel( (previous ++ obligationFilter(fromDate, toDate, open).distinct ).filter(_.obligations.nonEmpty))
         case (error: NextUpdatesErrorModel, open: ObligationsModel) if error.code == 404 =>
-          ObligationsModel(obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty))
+          ObligationsModel( obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty).distinct )
         case (error: NextUpdatesErrorModel, _) => error
         case (_, error: NextUpdatesErrorModel) => error
         case (_, _) => NextUpdatesErrorModel(500, "[NextUpdatesService][getNextUpdates] Invalid response from connector")
