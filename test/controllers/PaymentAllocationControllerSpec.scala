@@ -35,7 +35,7 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNinoAgent}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testNino, testNinoAgent}
 import testConstants.PaymentAllocationsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
@@ -233,14 +233,14 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
-        setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModel)
+        setupMockGetPaymentAllocationSuccess(testNino, docNumber)(paymentAllocationViewModel)
 
         mockPaymentAllocationView(
           paymentAllocationViewModel,
           controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
         )(HtmlFormat.empty)
 
-        val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
+        val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe OK
       }
@@ -249,14 +249,14 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         enable(PaymentAllocation)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockSingleBusinessIncomeSource()
-        setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModelLpi)
+        setupMockGetPaymentAllocationSuccess(testNino, docNumber)(paymentAllocationViewModelLpi)
 
         mockPaymentAllocationView(
           paymentAllocationViewModelLpi,
           controllers.routes.PaymentHistoryController.showAgent.url, saUtr = None, CutOverCreditsEnabled = false, isAgent = true
         )(HtmlFormat.empty)
 
-        val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
+        val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe OK
       }
@@ -266,10 +266,10 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
         mockSingleBusinessIncomeSource()
-        setupMockGetPaymentAllocationError(testNinoAgent, docNumber)
+        setupMockGetPaymentAllocationError(testNino, docNumber)
         mockShowInternalServerError()
 
-        val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
+        val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -280,7 +280,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
           disable(CutOverCredits)
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           mockSingleBusinessIncomeSource()
-          setupMockGetPaymentAllocationSuccess(testNinoAgent, docNumber)(paymentAllocationViewModelNoPayment)
+          setupMockGetPaymentAllocationSuccess(testNino, docNumber)(paymentAllocationViewModelNoPayment)
 
           mockPaymentAllocationView(
             paymentAllocationViewModelNoPayment,
@@ -288,7 +288,7 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
             CutOverCreditsEnabled = false, isAgent = true
           )(HtmlFormat.empty)
 
-          val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient())
+          val result = controller.viewPaymentAllocationAgent(documentNumber = docNumber)(fakeRequestConfirmedClient(testNino))
           status(result) shouldBe SEE_OTHER
         }
       }

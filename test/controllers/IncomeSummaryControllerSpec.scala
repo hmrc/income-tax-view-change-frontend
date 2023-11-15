@@ -30,7 +30,7 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testNino, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
@@ -158,10 +158,10 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status Internal Server Error (500)" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationNotFoundNew(nino = "AA111111A", year = testYear)
+        mockCalculationNotFoundNew(nino = testNino, year = testYear)
         mockShowInternalServerError()
 
-        lazy val result = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient())
+        lazy val result = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -171,10 +171,10 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status Internal Server Error (500)" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationErrorNew(nino = "AA111111A", year = testYear)
+        mockCalculationErrorNew(nino = testNino, year = testYear)
         mockShowInternalServerError()
 
-        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient())
+        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }

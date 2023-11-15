@@ -106,7 +106,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status OK (200) with HTML" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationSuccessfulNew("XAIT00000000015", testNino, testYear)
+        mockCalculationSuccessfulNew(testMtdItId, testNino, testYear)
 
         lazy val result = TestTaxDueSummaryController.showTaxDueSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
 
