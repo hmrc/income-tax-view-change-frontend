@@ -27,6 +27,7 @@ import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
+import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testNino, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.testMtdItId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
@@ -64,6 +65,7 @@ class TaxDueSummaryControllerSpec extends TestSupport with MockCalculationServic
       lazy val document = resultIndividual.toHtmlDocument
 
       "return Status OK (200)" in {
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
         mockCalculationSuccessfulNew(testMtdItId)
         status(resultIndividual) shouldBe Status.OK
