@@ -32,20 +32,6 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
   object TestSessionService extends SessionService(mockUIJourneySessionDataRepository)
 
   "sessionService " when {
-    "get method " should {
-      "return the correct session value for given key" in {
-        val user = getIndividualUser(fakeRequestConfirmedClientwithBusinessName())
-        TestSessionService.get(utils.SessionKeys.businessName)(user, ec).futureValue shouldBe Right(Some("Test Name"))
-      }
-    }
-    "set method" should {
-      "set the correct session key and value" in {
-        val requestHeader = fakeRequestConfirmedClientwithBusinessName()
-        val result: Result = TestSessionService.set("key", "somevalue", Redirect("someurl"))(ec, requestHeader)
-          .futureValue.toOption.get
-        result.session.get("key") shouldBe Some("somevalue")
-      }
-    }
     "mongo" when {
       "getMongo method " should {
         "return the correct session value for given key" in {

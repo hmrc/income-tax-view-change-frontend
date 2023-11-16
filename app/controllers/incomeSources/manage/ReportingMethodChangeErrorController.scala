@@ -17,7 +17,6 @@
 package controllers.incomeSources.manage
 
 import audit.AuditingService
-import audit.models.ChangeReportingMethodNotSavedErrorAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -26,8 +25,6 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.incomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.mvc._
@@ -48,7 +45,6 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                     val auditingService: AuditingService,
                                                      val sessionService: SessionService,
                                                      val retrieveBtaNavBar: NavBarPredicate)
                                                     (implicit val ec: ExecutionContext,
@@ -65,7 +61,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
           case Right(Some(incomeSourceId)) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
-          case _ => Future.failed(MissingSessionKey(incomeSourceId))
+          case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
         }
       }
       else handleShowRequest(None, incomeSourceType, isAgent)
@@ -83,7 +79,6 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     Future.successful(
       user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
         case Some(id) =>
-          auditingService.extendedAudit(ChangeReportingMethodNotSavedErrorAuditModel(incomeSourceType))
           Ok(
             reportingMethodChangeError(
               isAgent = isAgent,

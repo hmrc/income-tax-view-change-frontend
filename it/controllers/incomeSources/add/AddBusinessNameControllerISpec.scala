@@ -20,7 +20,6 @@ import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import forms.utils.SessionKeys.businessName
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
@@ -36,14 +35,13 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val changeBusinessNameShowUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessName().url
   val changeBusinessNameSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.submitChange().url
   val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-  val checkBusinessDetailsUrl: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+  val checkBusinessDetailsUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
   val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
   val incomeSourcesUrl: String = controllers.routes.HomeController.show().url
 
 
   val prefix: String = "add-business-name"
   val htmlTitle = messagesAPI("htmlTitle")
-  val dateCookie: Map[String, String] = Map(businessName -> "Test Business")
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
     messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")

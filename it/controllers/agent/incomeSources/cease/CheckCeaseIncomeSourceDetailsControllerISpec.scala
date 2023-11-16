@@ -16,21 +16,25 @@
 
 package controllers.agent.incomeSources.cease
 
+import audit.models.CeaseIncomeSourceAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseModel}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
-import testConstants.IncomeSourceIntegrationTestConstants.{businessAndPropertyResponse, businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 
@@ -46,7 +50,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val testBusinessName = "business"
   val timestamp = "2023-01-31T09:26:17Z"
 
-  val sessionCeaseBusinessDetails = Map(forms.utils.SessionKeys.ceaseBusinessEndDate -> cessationDate, forms.utils.SessionKeys.ceaseBusinessIncomeSourceId -> testSelfEmploymentId)
   val showCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url
   val submitCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
   val formActionSE = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
@@ -62,7 +65,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val sessionCeaseUKPropertyEndDate = Map(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> cessationDate)
   val showCheckCeaseUKPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url
   val submitCheckCeaseUKPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
   val formActionUK = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
@@ -75,7 +77,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val sessionCeaseForeignPropertyEndDate = Map(forms.utils.SessionKeys.ceaseForeignPropertyEndDate -> cessationDate)
   val showCheckCeaseForeignPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
   val submitCheckCeaseForeignPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
 
@@ -94,6 +95,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-UK")))
     await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-FP")))
   }
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), None, Some(Agent), None
+  )(FakeRequest())
 
   s"calling GET ${showCheckCeaseBusinessDetailsControllerUrl}" should {
     "render the Cease Business Page" when {
@@ -147,6 +153,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(redirectUriSE),
         )
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, testSelfEmploymentId, None)(testUser, hc).detail)
       }
     }
   }
@@ -200,6 +207,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(redirectUriUK),
         )
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, testPropertyIncomeId, None)(testUser, hc).detail)
       }
     }
   }
@@ -252,6 +260,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(redirectUriFP),
         )
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, testPropertyIncomeId, None)(testUser, hc).detail)
       }
     }
   }

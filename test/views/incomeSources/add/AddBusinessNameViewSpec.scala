@@ -16,6 +16,7 @@
 
 package views.incomeSources.add
 
+import enums.IncomeSourceJourney.SelfEmployment
 import forms.incomeSources.add.BusinessNameForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -52,9 +53,9 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val backUrl: String = {
       if (isChange) {
         if (isAgent) {
-          controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
+          controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
         } else {
-          controllers.incomeSources.add.routes.CheckBusinessDetailsController.show().url
+          controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
         }
       } else {
         if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url else

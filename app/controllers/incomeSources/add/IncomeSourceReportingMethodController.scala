@@ -16,6 +16,8 @@
 
 package controllers.incomeSources.add
 
+import audit.AuditingService
+import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -49,6 +51,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
                                                       val itsaStatusService: ITSAStatusService,
                                                       val dateService: DateService,
                                                       val calculationListService: CalculationListService,
+                                                      val auditingService: AuditingService,
                                                       val view: IncomeSourceReportingMethod)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
@@ -225,6 +228,8 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     val results = newReportingMethods.foldLeft(Future.successful(Seq.empty[UpdateIncomeSourceResponse])) { (prevFutRes, taxYearSpec) =>
       prevFutRes.flatMap { prevRes =>
         updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpec).map { currRes =>
+          val isSuccessful = currRes.isInstanceOf[UpdateIncomeSourceResponseModel]
+          sendAuditEvent(isSuccessful, taxYearSpec, incomeSourceType, id)
           prevRes :+ currRes
         }
       }
@@ -234,6 +239,23 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     case ex: Exception =>
       Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: ${ex.getMessage}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType, id))
+  }
+
+  private def sendAuditEvent(isSuccessful: Boolean, newReportingMethod: TaxYearSpecific, incomeSourceType: IncomeSourceType, id: String)
+                            (implicit user: MtdItUser[_]): Unit = {
+    val businessName: String = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, Some(id)).getOrElse("Unknown")
+    val reportingMethod = if (newReportingMethod.latencyIndicator) "Annually" else "Quarterly"
+
+    auditingService.extendedAudit(
+      IncomeSourceReportingMethodAuditModel(
+        isSuccessful = isSuccessful,
+        journeyType = incomeSourceType.journeyType,
+        operationType = "ADD",
+        reportingMethodChangeTo = reportingMethod,
+        taxYear = (newReportingMethod.taxYear.toInt - 1).toString + "-" + newReportingMethod.taxYear,
+        businessName = businessName
+      )
+    )
   }
 
   private def handleUpdateResults(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String,

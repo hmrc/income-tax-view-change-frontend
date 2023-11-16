@@ -252,7 +252,13 @@
 }
 
 @groupedObligations = @{
-    obligations.allDeadlinesWithSource(previous = true).reverse.groupBy[LocalDate]{nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due}.toList.sortBy(_._1)
+    obligations.allDeadlinesWithSource(previous = true)
+    .reverse.groupBy[LocalDate]{nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due}
+    .toList
+    .collect {
+        case (due, dueObligations) => (due, dueObligations.distinct)
+    }
+    .sortBy(_._1)
 }
 
 @updatesContent = {

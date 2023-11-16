@@ -16,21 +16,26 @@
 
 package controllers.agent.incomeSources.add
 
+import audit.models.IncomeSourceReportingMethodAuditModel
+import auth.MtdItUser
 import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, LatencyDetails}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import org.scalatest.Assertion
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
+import play.api.test.FakeRequest
 import services.DateService
 import testConstants.BaseIntegrationTestConstants._
+import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -98,8 +103,9 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = currentTaxYear + 1
-  val taxYear1Range: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
-  val taxYear1FullRange: String = "20" + taxYear1Range
+  val taxYear1YYtoYY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
+  val taxYear1YYYYtoYY: String = "20" + taxYear1YYtoYY
+  val taxYearYYYYtoYYYY = s"${taxYear1 - 1}-$taxYear1"
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val latencyDetails: LatencyDetails =
     LatencyDetails(
@@ -109,6 +115,15 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       taxYear2 = taxYear2.toString,
       latencyIndicator2 = annuallyIndicator
     )
+  val businessName: IncomeSourceType => String = {
+    case UkProperty => "UK property"
+    case ForeignProperty => "Foreign property"
+    case SelfEmployment => b1TradingName
+  }
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), None, Some(Agent), None
+  )(FakeRequest())
 
 
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
@@ -130,7 +145,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
 
     And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-    ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1FullRange)
+    ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
 
     scenario match {
       case LegacyScenario(true, _) =>
@@ -143,10 +158,10 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
           .successResponseNonCrystallised.toString())
       case TaxYearSpecificScenario(true, _) =>
         And("API 1896 getCalculationList returns a success response")
-        CalculationListStub.stubGetCalculationList(testNino, taxYear1Range)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
       case TaxYearSpecificScenario(false, _) =>
         And("API 1896 getCalculationList returns a success response")
-        CalculationListStub.stubGetCalculationList(testNino, taxYear1Range)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
     }
   }
 
@@ -169,7 +184,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       stubGetITSAStatusDetailsError
     } else {
       And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "20" + taxYear1FullRange)
+      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
     }
 
     if (scenario.equals(API1404)) {
@@ -179,7 +194,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
     if (scenario.equals(API1896)) {
       And("API 1896 getCalculationList returns an error response")
-      CalculationListStub.stubGetCalculationListError(testNino, taxYear1Range)
+      CalculationListStub.stubGetCalculationListError(testNino, taxYear1YYtoYY)
     }
 
     if (scenario.equals(API1776)) {
@@ -405,6 +420,12 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("2024-01-31T09:26:17Z")))
 
     val result: WSResponse = IncomeTaxViewChangeFrontend.post(uri(incomeSourceType), clientDetailsWithConfirmation)(formData)
+
+    AuditStub.verifyAuditContainsDetail(
+      IncomeSourceReportingMethodAuditModel(isSuccessful = true, incomeSourceType.journeyType, "ADD",
+        "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(testUser).detail
+    )
+
     result should have(
       httpStatus(SEE_OTHER),
       redirectURI(redirectUrl(incomeSourceType))
@@ -438,6 +459,12 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     )
 
     val result: WSResponse = IncomeTaxViewChangeFrontend.post(uri(incomeSourceType), clientDetailsWithConfirmation)(formData)
+
+    AuditStub.verifyAuditContainsDetail(
+      IncomeSourceReportingMethodAuditModel(isSuccessful = false, incomeSourceType.journeyType, "ADD",
+        "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(testUser).detail
+    )
+
     result should have(
       httpStatus(SEE_OTHER),
       redirectURI(errorRedirectUrl(incomeSourceType))

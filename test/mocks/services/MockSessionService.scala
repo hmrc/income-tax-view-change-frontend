@@ -37,34 +37,6 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     reset(mockSessionService)
   }
 
-  def setupMockGetSession(response: Option[String]): Unit =
-    when(
-      mockSessionService.get(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(Right(response)))
-
-  def setupMockSetSession(key: String, value: String, result: Result)(implicit header: RequestHeader): Unit =
-    when(
-      mockSessionService.set(ArgumentMatchers.eq(key), ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(Right(result.addingToSession(key -> value))))
-
-
-  def mockIncomeSourcesRemovedFromSessionFailure(): Unit = {
-    when(
-      mockSessionService.remove(any(), any())(any(), any()))
-      .thenReturn(Future.successful(Left(new Exception))
-      )
-  }
-
-  def setupMockSetListSession(result: Result, keyValue: Map[String, String])(implicit header: RequestHeader): Unit =
-    when(
-      mockSessionService.setList(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(Right(result.addingToSession(keyValue.toSeq: _*)))
-      )
-
-  def setupMockSetSession(result: Result, keyValue: (String, String)*)(implicit header: RequestHeader): Unit =
-    when(
-      mockSessionService.set(ArgumentMatchers.eq(result), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-      .thenReturn(Future.successful(Right(result.addingToSession(keyValue: _*))))
 
   def setupMockCreateSession(result: Boolean): Unit =
     when(

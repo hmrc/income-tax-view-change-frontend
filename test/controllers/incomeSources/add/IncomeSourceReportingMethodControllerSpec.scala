@@ -61,6 +61,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     mockITSAStatusService,
     mockDateService,
     mockCalculationListService,
+    mockAuditingService,
     mockIncomeSourceReportingMethod
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -157,19 +158,19 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
           ArgumentMatchers.anyString(),
           ArgumentMatchers.eq(testSelfEmploymentId),
           ArgumentMatchers.eq(tySpecific1))(any, any))
-          .thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "something's broken :(")))
+          .thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR.toString, "something's broken :(")))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.anyString(),
           ArgumentMatchers.eq(testSelfEmploymentId),
           ArgumentMatchers.eq(tySpecific2))(any, any))
-          .thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "something else is broken :(")))
+          .thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR.toString, "something else is broken :(")))
       case 1 =>
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.anyString(),
           ArgumentMatchers.eq(testSelfEmploymentId),
           ArgumentMatchers.eq(tySpecific1))(any, any))
-          .thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "something's broken :(")))
+          .thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR.toString, "something's broken :(")))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.anyString(),
@@ -594,18 +595,17 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
       "completing the UK Property form and both updates fail - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, UkProperty).url
-//        setupMockUpdateIncomeSourceCall(0)
-val tySpecific1 = TaxYearSpecific("2022", false)
+        val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(testNino),
           ArgumentMatchers.eq(testSelfEmploymentId),
-          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific1))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR.toString, "")))
 
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
           ArgumentMatchers.eq(testNino),
           ArgumentMatchers.eq(testSelfEmploymentId),
-          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR, "")))
+          ArgumentMatchers.eq(tySpecific2))(any, any)).thenReturn(Future.successful(UpdateIncomeSourceResponseError(INTERNAL_SERVER_ERROR.toString, "")))
 
         checkSubmitRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
       }

@@ -16,21 +16,25 @@
 
 package controllers.incomeSources.cease
 
+import audit.models.CeaseIncomeSourceAuditModel
+import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseModel}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, businessOnlyResponseWithUnknownAddressName, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
@@ -62,7 +66,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val sessionCeaseUKPropertyEndDate = Map(forms.utils.SessionKeys.ceaseUKPropertyEndDate -> cessationDate)
   val showCheckCeaseUKPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty).url
   val formActionUK = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty).url
   val businessStopDateLabelUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.content")
@@ -74,7 +77,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val sessionCeaseForeignPropertyEndDate = Map(forms.utils.SessionKeys.ceaseForeignPropertyEndDate -> cessationDate)
   val showCheckCeaseForeignPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty).url
   val formActionFP = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty).url
   val pageTitleMsgKeyFP = messagesAPI("check-cease-foreign-property-details.heading")
@@ -84,6 +86,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
     incomeSourceID = foreignProperty.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
+
+  val testUser: MtdItUser[_] = MtdItUser(
+    testMtditid, testNino, None, multipleBusinessesAndPropertyResponse,
+    None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
+  )(FakeRequest())
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -171,6 +178,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(redirectUriSE),
         )
+
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, testSelfEmploymentId, None)(testUser, hc).detail)
       }
     }
   }
@@ -222,6 +231,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(redirectUriUK),
         )
+
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, testPropertyIncomeId, None)(testUser, hc).detail)
       }
     }
   }
@@ -272,6 +283,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(redirectUriFP),
         )
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, testPropertyIncomeId, None)(testUser, hc).detail)
       }
     }
   }

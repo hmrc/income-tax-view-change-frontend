@@ -52,7 +52,6 @@ class ReportingMethodChangeErrorControllerSpec
       retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
-      auditingService = app.injector.instanceOf[AuditingService],
       sessionService = mockSessionService,
       reportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
     )(

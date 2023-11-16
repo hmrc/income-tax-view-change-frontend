@@ -16,8 +16,6 @@
 
 package controllers.incomeSources.manage
 
-import audit.AuditingService
-import audit.models.ObligationsAuditModel
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -25,7 +23,6 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
-import forms.utils.SessionKeys
 import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
@@ -49,7 +46,6 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
-                                            val auditingService: AuditingService,
                                             val sessionService: SessionService,
                                             nextUpdatesService: NextUpdatesService)
                                            (implicit val ec: ExecutionContext,
@@ -175,13 +171,6 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               })
               case Right(value) =>
                 nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
-                  auditingService.extendedAudit(ObligationsAuditModel(
-                    incomeSourceType = mode,
-                    obligations = viewModel,
-                    businessName = addedBusinessName,
-                    changeTo,
-                    years
-                  ))
                   Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
                 }
             }

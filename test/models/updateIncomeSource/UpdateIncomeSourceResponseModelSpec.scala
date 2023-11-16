@@ -17,7 +17,6 @@
 package models.updateIncomeSource
 
 import org.scalatest.matchers.should.Matchers
-import play.api.http.Status
 import play.api.libs.json.{JsSuccess, Json}
 import testConstants.UpdateIncomeSourceTestConstants.{errorBadResponse, successResponse, successResponseJson}
 import testUtils.TestSupport
@@ -31,7 +30,7 @@ class UpdateIncomeSourceResponseModelSpec extends TestSupport with Matchers {
 
   "The UpdateIncomeSourceResponseError" should {
     "have the correct status code in the model" in {
-      errorBadResponse.status shouldBe Status.BAD_REQUEST
+      errorBadResponse.status shouldBe "BAD_REQUEST"
     }
     "have the correct Error Message" in {
       errorBadResponse.reason shouldBe "Dummy Message"

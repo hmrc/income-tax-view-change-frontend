@@ -79,6 +79,15 @@ case class IncomeSourceDetailsModel(mtdbsa: String,
     }
   }
 
+  def getIncomeSourceBusinessName(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
+    (incomeSourceType, soleTraderBusinessId) match {
+      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.tradingName.getOrElse("Unknown"))
+      case (UkProperty, _) => Some("UK property")
+      case (ForeignProperty, _) => Some("Foreign property")
+      case _ => None
+    }
+  }
+
   def getLatencyDetails(incomeSourceType: IncomeSourceType, id: String): Option[LatencyDetails] = {
     incomeSourceType match {
       case SelfEmployment => getSoleTraderBusiness(id).flatMap(_.latencyDetails)

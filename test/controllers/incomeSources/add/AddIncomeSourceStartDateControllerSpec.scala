@@ -21,7 +21,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import forms.utils.SessionKeys
 import implicits.ImplicitDateFormatter
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -74,14 +73,14 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
   def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = ((isAgent, isChange, incomeSourceType) match {
     case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
     case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
-    case (false, _, SelfEmployment) => routes.CheckBusinessDetailsController.show()
-    case (_, _, SelfEmployment) => routes.CheckBusinessDetailsController.showAgent()
+    case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+    case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     case (false, false, _) => routes.AddIncomeSourceController.show()
     case (_, false, _) => routes.AddIncomeSourceController.showAgent()
-    case (false, _, UkProperty) => routes.CheckUKPropertyDetailsController.show()
-    case (_, _, UkProperty) => routes.CheckUKPropertyDetailsController.showAgent()
-    case (false, _, _) => routes.ForeignPropertyCheckDetailsController.show()
-    case (_, _, _) => routes.ForeignPropertyCheckDetailsController.showAgent()
+    case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(UkProperty)
+    case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
+    case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
+    case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
   }).url
 
   def getRedirectUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): String = (incomeSourceType, isAgent, isChange) match {
@@ -183,8 +182,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
         val result = TestAddIncomeSourceStartDateController
-          .show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(
-            fakeRequestWithActiveSession.withSession(SessionKeys.addBusinessStartDate -> "INVALID_FORMAT"))
+          .show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -444,7 +442,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title should include(messages("incomeSources.add.foreignProperty.startDate.heading"))
-          document.getElementById("back").attr("href") shouldBe routes.ForeignPropertyCheckDetailsController.showAgent().url
+          document.getElementById("back").attr("href") shouldBe routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty).url
           status(result) shouldBe OK
         }
       }
@@ -462,7 +460,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title should include(messages("incomeSources.add.UKPropertyStartDate.heading"))
-          document.getElementById("back").attr("href") shouldBe routes.CheckUKPropertyDetailsController.showAgent().url
+          document.getElementById("back").attr("href") shouldBe routes.IncomeSourceCheckDetailsController.showAgent(UkProperty).url
           status(result) shouldBe OK
         }
       }
@@ -480,7 +478,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title should include(messages("add-business-start-date.heading"))
-          document.getElementById("back").attr("href") shouldBe routes.CheckBusinessDetailsController.showAgent().url
+          document.getElementById("back").attr("href") shouldBe routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
           status(result) shouldBe OK
         }
       }
@@ -501,7 +499,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title should include(messages("add-business-start-date.heading"))
-          document.getElementById("back").attr("href") shouldBe routes.CheckBusinessDetailsController.showAgent().url
+          document.getElementById("back").attr("href") shouldBe routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
           document.getElementById("income-source-start-date.day").attr("value") shouldBe "1"
           document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
           document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
