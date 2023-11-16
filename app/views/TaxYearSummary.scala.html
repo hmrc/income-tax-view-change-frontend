@@ -255,7 +255,9 @@
     obligations.allDeadlinesWithSource(previous = true)
     .reverse.groupBy[LocalDate]{nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due}
     .toList
-    .map(pair => (pair._1, pair._2.distinct))
+    .collect {
+        case (due, dueObligations) => (due, obligations.obligations.distinct)
+    }
     .sortBy(_._1)
 }
 
