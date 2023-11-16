@@ -1445,15 +1445,6 @@ business-ceased.obligation.previous-tax-years-heading               = Blynyddoed
 business-ceased.obligation.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
 business-ceased.obligation.to                                       = i
 
-
-incomeSources.add.foreign-property-check-details.cash-basis-accounting      = Cyfrifyddu ar sail arian parod
-incomeSources.add.foreign-property-check-details.traditional-accounting     = Cyfrifyddu traddodiadol
-incomeSources.add.foreign-property-check-details.heading                    = Y busnes eiddo tramor a nodwyd gennych
-incomeSources.add.foreign-property-check-details.title                      = Gwirio’ch manylion
-incomeSources.add.foreign-property-check-details.start-date                 = Dyddiad dechrau’r busnes eiddo tramor
-incomeSources.add.foreign-property-check-details.accounting-method          = Dull cyfrifyddu’r busnes eiddo tramor
-incomeSources.add.foreign-property-check-details.change                     = Newid
-
 # add uk property business accounting method
 incomeSources.add.UK.AccountingMethod.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes eiddo yn y DU?
 incomeSources.add.UK.AccountingMethod.example                 = Dangoswch enghraifft i mi
