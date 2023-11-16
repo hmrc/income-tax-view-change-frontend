@@ -463,11 +463,17 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       (nextObligations, previousOrigin) match {
         case (ObligationsModel(previous), ObligationsModel(open)) =>
-          val result = ObligationsModel((previous ++  open).distinct.filter(_.obligations.nonEmpty))
+          val result : ObligationsModel = ObligationsModel((previous ++  open).filter(_.obligations.nonEmpty))
           println("Previous obligations\n")
           println(previousOrigin.toString.replace(" ", "\n"))
           println("End\n")
           println(result.toString.replace(" ", "\n"))
+
+          println("Groupped\n\n\n\n")
+          val grouped = result.allDeadlinesWithSource(previous = true).reverse
+            .groupBy[LocalDate]{nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due}.toList.sortBy(_._1)
+          val groupedDistinct = grouped.map(pr => (pr._1, pr._2.distinct))
+          println(groupedDistinct.toString.replace(" ", "\n"))
       }
 
 
