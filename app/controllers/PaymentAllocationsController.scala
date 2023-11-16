@@ -47,7 +47,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              val checkSessionTimeout: SessionTimeoutPredicate,
                                              val authenticate: AuthenticationPredicate,
                                              val authorisedFunctions: AuthorisedFunctions,
-                                             val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                             val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              itvcErrorHandler: ItvcErrorHandler,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -64,7 +64,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
 
   def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         if (isEnabled(PaymentAllocation)) {
           handleRequest(

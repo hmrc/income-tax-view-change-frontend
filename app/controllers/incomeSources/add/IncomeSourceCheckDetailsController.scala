@@ -43,7 +43,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    val checkSessionTimeout: SessionTimeoutPredicate,
                                                    val authenticate: AuthenticationPredicate,
                                                    val authorisedFunctions: AuthorisedFunctions,
-                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val businessDetailsService: CreateBusinessDetailsService)
@@ -56,7 +56,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   with IncomeSourcesUtils with FeatureSwitching {
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -177,7 +177,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   }
 
   def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)
   }

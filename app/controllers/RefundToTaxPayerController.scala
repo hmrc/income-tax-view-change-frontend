@@ -42,7 +42,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                            val checkSessionTimeout: SessionTimeoutPredicate,
                                            val authenticate: AuthenticationPredicate,
                                            val repaymentHistoryConnector: RepaymentHistoryConnector,
-                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                           val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                            val authorisedFunctions: AuthorisedFunctions,
                                            retrieveBtaNavBar: NavBarPredicate,
@@ -87,7 +87,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
   }
 
   def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.PaymentHistoryController.show(origin).url,

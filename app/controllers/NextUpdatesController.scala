@@ -38,7 +38,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       nextUpdatesView: NextUpdates,
                                       checkSessionTimeout: SessionTimeoutPredicate,
                                       authenticate: AuthenticationPredicate,
-                                      retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
+                                      retrieveNinoWithIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
@@ -52,7 +52,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def getNextUpdates(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar).async {
     implicit user =>
       if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
         for {

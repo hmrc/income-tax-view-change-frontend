@@ -53,7 +53,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
       retrieveBtaNavBar = MockNavBarPredicate,
       authenticate = MockAuthenticationPredicate,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
+      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       creditService = mockCreditService,

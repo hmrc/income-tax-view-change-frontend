@@ -62,7 +62,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
+    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
     retrieveBtaNavBar = MockNavBarPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,

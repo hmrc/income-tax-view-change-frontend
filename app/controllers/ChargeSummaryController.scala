@@ -43,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                         val financialDetailsService: FinancialDetailsService,
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
@@ -62,7 +62,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with FallBackBackLinks {
 
   val action: ActionBuilder[MtdItUser, AnyContent] =
-    checkSessionTimeout andThen authenticate andThen retrieveIncomeSources andThen retrievebtaNavPartial
+    checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrievebtaNavPartial
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"

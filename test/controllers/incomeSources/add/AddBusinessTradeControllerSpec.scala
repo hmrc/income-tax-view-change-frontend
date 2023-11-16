@@ -70,7 +70,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
       authorisedFunctions = mockAuthService,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       addBusinessTradeView = app.injector.instanceOf[AddBusinessTrade],
-      retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
+      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       sessionService = mockSessionService,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,

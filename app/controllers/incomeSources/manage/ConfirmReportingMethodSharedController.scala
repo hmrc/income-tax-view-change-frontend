@@ -48,7 +48,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        val authenticate: AuthenticationPredicate,
                                                        val authorisedFunctions: AuthorisedFunctions,
                                                        val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                       val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                       val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                        val confirmReportingMethod: ConfirmReportingMethod,
                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                        val retrieveBtaNavBar: NavBarPredicate,
@@ -306,7 +306,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       }
     else
       (checkSessionTimeout andThen authenticate
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
   }

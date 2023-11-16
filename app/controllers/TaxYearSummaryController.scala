@@ -54,7 +54,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          financialDetailsService: FinancialDetailsService,
                                          itvcErrorHandler: ItvcErrorHandler,
                                          incomeSourceDetailsService: IncomeSourceDetailsService,
-                                         retrieveIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
+                                         retrieveNinoWithIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                          nextUpdatesService: NextUpdatesService,
                                          messagesApi: MessagesApi,
                                          val languageUtils: LanguageUtils,
@@ -69,7 +69,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveIncomeSourcesNoCache andThen retrieveBtaNavBar
+    retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar
 
   private def showForecast(modelOpt: Option[TaxYearSummaryViewModel]): Boolean = {
     val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)

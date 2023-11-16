@@ -43,7 +43,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val checkSessionTimeout: SessionTimeoutPredicate,
                                                     val authenticate: AuthenticationPredicate,
                                                     val authorisedFunctions: AuthorisedFunctions,
-                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                    val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -59,7 +59,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
 
   def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -86,7 +86,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -113,7 +113,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>

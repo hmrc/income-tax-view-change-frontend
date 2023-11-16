@@ -43,7 +43,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val authorisedFunctions: AuthorisedFunctions,
                                            checkSessionTimeout: SessionTimeoutPredicate,
                                            val addBusinessTradeView: AddBusinessTrade,
-                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                           val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,
                                            val sessionService: SessionService,
                                            incomeSourceDetailsService: IncomeSourceDetailsService)
@@ -90,7 +90,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       }
     } else {
       (checkSessionTimeout andThen authenticate
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
     }

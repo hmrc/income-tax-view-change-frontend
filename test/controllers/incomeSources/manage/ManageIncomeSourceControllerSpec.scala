@@ -55,7 +55,7 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
+      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       sessionService = mockSessionService

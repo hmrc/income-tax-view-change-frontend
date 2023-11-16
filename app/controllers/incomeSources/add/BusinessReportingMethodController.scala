@@ -46,7 +46,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                   val checkSessionTimeout: SessionTimeoutPredicate,
                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                   val retrieveBtaNavBar: NavBarPredicate,
-                                                  val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                  val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                   val view: BusinessReportingMethod,
                                                   val updateIncomeSourceService: UpdateIncomeSourceService,
                                                   val itsaStatusService: ITSAStatusService,
@@ -247,7 +247,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   }
 
   def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user => handleRequest(isAgent = false, id = id)
   }
 
@@ -261,7 +261,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   }
 
   def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(isAgent = false, id = id)
   }

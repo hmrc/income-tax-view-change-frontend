@@ -41,7 +41,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: AuthorisedFunctions,
                                           checkSessionTimeout: SessionTimeoutPredicate,
                                           val addBusinessView: AddBusinessName,
-                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -93,7 +93,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
 
   def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -146,7 +146,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(isAgent = false, isChange = false)
   }
@@ -161,7 +161,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   def submitChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(isAgent = false, isChange = true)
   }
@@ -213,7 +213,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         isAgent = false,

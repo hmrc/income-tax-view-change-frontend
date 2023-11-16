@@ -42,7 +42,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                         val retrieveBtaNavBar: NavBarPredicate,
-                                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                         val view: IncomeSourcesAccountingMethod,
                                                         val customNotFoundErrorView: CustomNotFoundError,
                                                         val sessionService: SessionService)
@@ -205,7 +205,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         val backUrl = incomeSourceType match {
           case SelfEmployment =>
@@ -240,7 +240,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
   }
 
   def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(isAgent = false, incomeSourceType)
   }
@@ -256,7 +256,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
 
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         val backUrl = incomeSourceType match {
           case SelfEmployment =>

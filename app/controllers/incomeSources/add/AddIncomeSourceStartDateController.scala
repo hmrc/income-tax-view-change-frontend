@@ -46,7 +46,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val authorisedFunctions: AuthorisedFunctions,
                                                    checkSessionTimeout: SessionTimeoutPredicate,
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
-                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                    incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -173,7 +173,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       }
     else
       (checkSessionTimeout andThen authenticate
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
   }

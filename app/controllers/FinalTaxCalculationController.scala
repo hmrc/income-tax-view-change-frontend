@@ -43,7 +43,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                               view: FinalTaxCalculationView,
                                               checkSessionTimeout: SessionTimeoutPredicate,
                                               authenticate: AuthenticationPredicate,
-                                              retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                              retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                               calcService: CalculationService,
                                               itvcErrorHandler: ItvcErrorHandler,
                                               val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -54,7 +54,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveIncomeSources andThen retrieveBtaNavBar
+    retrieveNinoWithIncomeSources andThen retrieveBtaNavBar
 
 
   def handleShowRequest(taxYear: Int,
@@ -78,7 +78,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
 
 
   def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,

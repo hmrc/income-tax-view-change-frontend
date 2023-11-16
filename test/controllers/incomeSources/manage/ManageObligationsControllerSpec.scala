@@ -59,7 +59,7 @@ class ManageObligationsControllerSpec extends TestSupport
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
+    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,

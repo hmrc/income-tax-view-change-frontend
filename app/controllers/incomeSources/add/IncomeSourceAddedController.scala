@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicate,
                                             val authorisedFunctions: AuthorisedFunctions,
                                             checkSessionTimeout: SessionTimeoutPredicate,
-                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -51,7 +51,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
   def show(incomeSourceId: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(isAgent = false, incomeSourceId, incomeSourceType)
   }
@@ -112,7 +112,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   }
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(isAgent = false)
   }

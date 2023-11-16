@@ -46,7 +46,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val authenticate: AuthenticationPredicate,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val repaymentService: RepaymentService,
@@ -63,7 +63,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def show(origin: Option[String] = None): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
@@ -164,7 +164,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def startRefund(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         user.userType match {
           case _ if isDisabled(CreditsRefundsRepay) =>
@@ -182,7 +182,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
 
   def refundStatus(): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         user.userType match {
           case _ if isDisabled(CreditsRefundsRepay) =>

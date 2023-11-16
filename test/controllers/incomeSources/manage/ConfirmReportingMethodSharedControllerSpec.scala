@@ -55,7 +55,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
+      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),

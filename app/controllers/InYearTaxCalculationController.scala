@@ -44,7 +44,7 @@ class InYearTaxCalculationController @Inject()(
                                                 view: InYearTaxCalculationView,
                                                 checkSessionTimeout: SessionTimeoutPredicate,
                                                 authenticate: AuthenticationPredicate,
-                                                retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 calcService: CalculationService,
                                                 dateService: DateServiceInterface,
@@ -95,7 +95,7 @@ class InYearTaxCalculationController @Inject()(
   }
 
   def show(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
       handleRequest(
