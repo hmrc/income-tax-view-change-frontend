@@ -131,7 +131,7 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status OK (200) with html content and right title" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        setupMockGetCalculationNew(testMtditid, testNino, testYear)(liabilityCalculationModelSuccessful)
+        setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(liabilityCalculationModelSuccessful)
         mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessful.calculation).get,
           controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYear).url, isAgent)(HtmlFormat.empty)
 
@@ -145,9 +145,9 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "throw an internal server exception" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
-        setupMockGetCalculationNew(testMtditid, testNino, testYear)(liabilityCalculationModelSuccessful)
+        setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(liabilityCalculationModelSuccessful)
         mockShowInternalServerError()
-        val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient()).failed.futureValue
+        val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino)).failed.futureValue
         exception shouldBe an[InternalServerException]
         exception.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
       }
