@@ -256,7 +256,7 @@
     .reverse.groupBy[LocalDate]{nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due}
     .toList
     .collect {
-        case (due, dueObligations) => (due, obligations.obligations.distinct)
+        case (due, dueObligations) => (due, dueObligations.distinct)
     }
     .sortBy(_._1)
 }
