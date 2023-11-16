@@ -16,18 +16,21 @@
 
 package controllers.incomeSources.add
 
-import config.featureswitch.IncomeSources
+import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, LatencyDetails}
+import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import org.scalatest.Assertion
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 import services.DateService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesWithBothPropertiesAndCeasedBusiness, singleBusinessResponseInLatencyPeriod, singleForeignPropertyResponseInLatencyPeriod, singleUKPropertyResponseInLatencyPeriod}
+import testConstants.IncomeSourceIntegrationTestConstants._
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -56,6 +59,8 @@ case object API1171 extends APIErrorScenario
 
 case object API1404 extends APIErrorScenario
 
+case object API1776 extends APIErrorScenario
+
 case object API1878 extends APIErrorScenario
 
 case object API1896 extends APIErrorScenario
@@ -70,38 +75,42 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
   lazy val obligationsUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
     if (isAgent) routes.IncomeSourceAddedController.showAgent(id, incomeSourceType).url else routes.IncomeSourceAddedController.show(id, incomeSourceType).url
-  lazy val uri: (IncomeSourceType) => String = {
-    case UkProperty => s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId"
-    case ForeignProperty => s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId"
-    case SelfEmployment => s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId"
-  }
-  lazy val redirectUri: (IncomeSourceType) => String = {
+  lazy val redirectUrl: IncomeSourceType => String = {
     case UkProperty => routes.IncomeSourceAddedController.show(id = testPropertyIncomeId, UkProperty).url
     case ForeignProperty => routes.IncomeSourceAddedController.show(id = testPropertyIncomeId, ForeignProperty).url
     case SelfEmployment => routes.IncomeSourceAddedController.show(id = testSelfEmploymentId, SelfEmployment).url
   }
+  lazy val errorRedirectUrl: IncomeSourceType => String = {
+    case UkProperty => routes.IncomeSourceReportingMethodNotSavedController.show(testPropertyIncomeId, UkProperty).url
+    case ForeignProperty => routes.IncomeSourceReportingMethodNotSavedController.show(testPropertyIncomeId, ForeignProperty).url
+    case SelfEmployment => routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, SelfEmployment).url
+  }
+  lazy val uri: IncomeSourceType => String = {
+    case UkProperty => s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId"
+    case ForeignProperty => s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId"
+    case SelfEmployment => s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId"
+  }
+  val quarterlyIndicator: String = "Q"
+  val annuallyIndicator: String = "A"
+  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
+  val taxYear1: Int = currentTaxYear
+  val taxYear2: Int = currentTaxYear + 1
+  val taxYear1Range: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
+  val taxYear1FullRange: String = "20" + taxYear1Range
+  val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
+  val latencyDetails: LatencyDetails =
+    LatencyDetails(
+      latencyEndDate = lastDayOfCurrentTaxYear.plusYears(2),
+      taxYear1 = taxYear1.toString,
+      latencyIndicator1 = quarterlyIndicator,
+      taxYear2 = taxYear2.toString,
+      latencyIndicator2 = annuallyIndicator
+    )
 
 
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
-    val currentTaxYear: Int = if (scenario.isLegacy) 2023 else dateService.getCurrentTaxYearEnd()
-    val lastDayOfCurrentTaxYear = LocalDate.of(currentTaxYear, APRIL, 5)
-
-    val taxYear1: Int = currentTaxYear
-    val taxYear2: Int = currentTaxYear + 1
-    val taxYear1TYS: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
-
-    val quarterlyIndicator: String = "Q"
-    val annuallyIndicator: String = "A"
-    val latencyDetails: LatencyDetails =
-      LatencyDetails(
-        latencyEndDate = lastDayOfCurrentTaxYear,
-        taxYear1 = taxYear1.toString,
-        latencyIndicator1 = quarterlyIndicator,
-        taxYear2 = taxYear2.toString,
-        latencyIndicator2 = annuallyIndicator
-      )
-
     Given("Income Sources FS is enabled")
+    disable(TimeMachineAddYear)
     enable(IncomeSources)
 
     And("API 1171 getIncomeSourceDetails returns a success response")
@@ -117,37 +126,37 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
 
     And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-    ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
+    ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1FullRange)
 
     scenario match {
       case LegacyScenario(true, _) =>
         And("API 1404 getListOfCalculationResults returns a success response")
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
+          .successResponseCrystallised.toString())
       case LegacyScenario(false, _) =>
         And("API 1404 getListOfCalculationResults returns a success response")
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
+          .successResponseNonCrystallised.toString())
       case TaxYearSpecificScenario(true, _) =>
         And("API 1896 getCalculationList returns a success response")
-        CalculationListStub.stubGetCalculationList(testNino, taxYear1TYS)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, taxYear1Range)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
       case TaxYearSpecificScenario(false, _) =>
         And("API 1896 getCalculationList returns a success response")
-        CalculationListStub.stubGetCalculationList(testNino, taxYear1TYS)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, taxYear1Range)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
     }
   }
 
-  def setupStubErrorCall(incomeSourceType: IncomeSourceType, scenario: APIErrorScenario): Unit = {
-    val currentTaxYear: Int = 2023
-    val taxYear1: Int = currentTaxYear
-//    val taxYear1TYS: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
+  def setupStubErrorCall(scenario: APIErrorScenario): Unit = {
     Given("Income Sources FS is enabled")
     enable(IncomeSources)
+    enable(TimeMachineAddYear)
 
     if (scenario.equals(API1171)) {
       And("API 1171 getIncomeSourceDetails returns an error response")
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR, IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "ISE"))
     } else {
       And("API 1171 getIncomeSourceDetails returns a success response")
-      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
+      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allBusinessesAndPropertiesInLatencyPeriod(latencyDetails))
     }
 
     if (scenario.equals(API1878)) {
@@ -155,7 +164,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       stubGetITSAStatusDetailsError
     } else {
       And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
+      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "20" + taxYear1FullRange)
     }
 
     if (scenario.equals(API1404)) {
@@ -165,7 +174,12 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
     if (scenario.equals(API1896)) {
       And("API 1896 getCalculationList returns an error response")
-      CalculationListStub.stubGetCalculationListError(testNino, taxYear1.toString)
+      CalculationListStub.stubGetCalculationListError(testNino, taxYear1Range)
+    }
+
+    if (scenario.equals(API1776)) {
+      And("API 1776 updateIncomeSource returns an error response")
+      IncomeTaxViewChangeStub.stubUpdateIncomeSourceError()
     }
   }
 
@@ -193,30 +207,23 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
   }
 
-  def checkBothTaxYears(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Assertion = {
-    Then("user is asked to select reporting method for Tax Year 1 and Tax Year 2")
+  def checkBothTaxYears(incomeSourceType: IncomeSourceType): Assertion = {
+    Then("User is asked to select reporting method for Tax Year 1 and Tax Year 2")
     val result = IncomeTaxViewChangeFrontend.get(uri(incomeSourceType))
 
     result should have(
       httpStatus(OK),
       pageTitleIndividual("incomeSources.add.incomeSourceReportingMethod.heading"))
 
-    if (scenario.isLegacy) {
-      result should have(
-        elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(3)", "legend")(s"Tax year 2022-2023"),
-        elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year 2023-2024")
-      )
-    } else {
-      val currentTaxYear = dateService.getCurrentTaxYearEnd()
-      val taxYear1: Int = currentTaxYear
-      val taxYear2: Int = currentTaxYear + 1
-      val taxYear1TYS: String = s"${taxYear1 - 1}-$taxYear1"
-      val taxYear2TYS: String = s"${taxYear2 - 1}-$taxYear2"
-      result should have(
-        elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(3)", "legend")(s"Tax year $taxYear1TYS"),
-        elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year $taxYear2TYS")
-      )
-    }
+    val currentTaxYear = dateService.getCurrentTaxYearEnd()
+    val taxYear1: Int = currentTaxYear
+    val taxYear2: Int = currentTaxYear + 1
+    val taxYear1TYS: String = s"${taxYear1 - 1}-$taxYear1"
+    val taxYear2TYS: String = s"${taxYear2 - 1}-$taxYear2"
+    result should have(
+      elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(3)", "legend")(s"Tax year $taxYear1TYS"),
+      elementTextBySelectorList("#add-uk-property-reporting-method-form", "div:nth-of-type(7)", "legend")(s"Tax year $taxYear2TYS")
+    )
   }
 
   def checkRedirect(incomeSourceType: IncomeSourceType, expectedRedirectUri: String): Assertion = {
@@ -237,7 +244,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     "200 OK - render the UK Property Reporting Method page" when {
       "user is within latency period (before 23/24) - tax year 1 not crystallised - UK Property" in {
         setupStubCalls(UkProperty, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
-        checkBothTaxYears(UkProperty, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+        checkBothTaxYears(UkProperty)
       }
       "user is within latency period (before 23/24) - tax year 1 crystallised - UK Property" in {
         setupStubCalls(UkProperty, LegacyScenario(isFirstTaxYearCrystallised = true, isWithinLatencyPeriod = true))
@@ -245,7 +252,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       }
       "user is within latency period (after 23/24) - tax year 1 not crystallised - UK Property" in {
         setupStubCalls(UkProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
-        checkBothTaxYears(UkProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+        checkBothTaxYears(UkProperty)
       }
       "user is within latency period (after 23/24) - tax year 1 crystallised - UK Property" in {
         setupStubCalls(UkProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = true, isWithinLatencyPeriod = true))
@@ -255,28 +262,28 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     "303 SEE_OTHER - redirect to the UK Property Obligations page" when {
       "user is out of latency period (before 23/24) - UK Property" in {
         setupStubCalls(UkProperty, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = false))
-        checkRedirect(UkProperty, redirectUri(UkProperty))
+        checkRedirect(UkProperty, redirectUrl(UkProperty))
       }
       "user is out of latency period (after 23/24) - UK Property" in {
         setupStubCalls(UkProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = false))
-        checkRedirect(UkProperty, redirectUri(UkProperty))
+        checkRedirect(UkProperty, redirectUrl(UkProperty))
       }
     }
     "500 INTERNAL_SERVER_ERROR" when {
       "API 1171 returns an error" in {
-        setupStubErrorCall(UkProperty, API1171)
+        setupStubErrorCall(API1171)
         checkError(UkProperty)
       }
       "API 1404 returns an error" in {
-        setupStubErrorCall(UkProperty, API1404)
+        setupStubErrorCall(API1404)
         checkError(UkProperty)
       }
       "API 1878 returns an error" in {
-        setupStubErrorCall(UkProperty, API1878)
+        setupStubErrorCall(API1878)
         checkError(UkProperty)
       }
       "API 1896 returns an error" in {
-        setupStubErrorCall(UkProperty, API1896)
+        setupStubErrorCall(API1896)
         checkError(UkProperty)
       }
     }
@@ -286,7 +293,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     "200 OK - render the Foreign Property Reporting Method page" when {
       "user is within latency period (before 23/24) - tax year 1 not crystallised - Foreign Property" in {
         setupStubCalls(ForeignProperty, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
-        checkBothTaxYears(ForeignProperty, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+        checkBothTaxYears(ForeignProperty)
       }
       "user is within latency period (before 23/24) - tax year 1 crystallised - Foreign Property" in {
         setupStubCalls(ForeignProperty, LegacyScenario(isFirstTaxYearCrystallised = true, isWithinLatencyPeriod = true))
@@ -294,7 +301,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       }
       "user is within latency period (after 23/24) - tax year 1 not crystallised - Foreign Property" in {
         setupStubCalls(ForeignProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
-        checkBothTaxYears(ForeignProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+        checkBothTaxYears(ForeignProperty)
       }
       "user is within latency period (after 23/24) - tax year 1 crystallised - Foreign Property" in {
         setupStubCalls(ForeignProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = true, isWithinLatencyPeriod = true))
@@ -304,28 +311,28 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     "303 SEE_OTHER - redirect to the Foreign Property Obligations page" when {
       "user is out of latency period (before 23/24) - Foreign Property" in {
         setupStubCalls(ForeignProperty, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = false))
-        checkRedirect(ForeignProperty, redirectUri(ForeignProperty))
+        checkRedirect(ForeignProperty, redirectUrl(ForeignProperty))
       }
       "user is out of latency period (after 23/24) - Foreign Property" in {
         setupStubCalls(ForeignProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = false))
-        checkRedirect(ForeignProperty, redirectUri(ForeignProperty))
+        checkRedirect(ForeignProperty, redirectUrl(ForeignProperty))
       }
     }
     "500 INTERNAL_SERVER_ERROR" when {
       "API 1171 returns an error" in {
-        setupStubErrorCall(ForeignProperty, API1171)
+        setupStubErrorCall(API1171)
         checkError(ForeignProperty)
       }
       "API 1404 returns an error" in {
-        setupStubErrorCall(ForeignProperty, API1404)
+        setupStubErrorCall(API1404)
         checkError(ForeignProperty)
       }
       "API 1878 returns an error" in {
-        setupStubErrorCall(ForeignProperty, API1878)
+        setupStubErrorCall(API1878)
         checkError(ForeignProperty)
       }
       "API 1896 returns an error" in {
-        setupStubErrorCall(ForeignProperty, API1896)
+        setupStubErrorCall(API1896)
         checkError(ForeignProperty)
       }
     }
@@ -335,7 +342,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     "200 OK - render the Self Employment Reporting Method page" when {
       "user is within latency period (before 23/24) - tax year 1 not crystallised - Self Employment" in {
         setupStubCalls(SelfEmployment, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
-        checkBothTaxYears(SelfEmployment, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+        checkBothTaxYears(SelfEmployment)
       }
       "user is within latency period (before 23/24) - tax year 1 crystallised - Self Employment" in {
         setupStubCalls(SelfEmployment, LegacyScenario(isFirstTaxYearCrystallised = true, isWithinLatencyPeriod = true))
@@ -343,7 +350,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       }
       "user is within latency period (after 23/24) - tax year 1 not crystallised - Self Employment" in {
         setupStubCalls(SelfEmployment, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
-        checkBothTaxYears(SelfEmployment, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+        checkBothTaxYears(SelfEmployment)
       }
       "user is within latency period (after 23/24) - tax year 1 crystallised - Self Employment" in {
         setupStubCalls(SelfEmployment, TaxYearSpecificScenario(isFirstTaxYearCrystallised = true, isWithinLatencyPeriod = true))
@@ -353,191 +360,145 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     "303 SEE_OTHER - redirect to the Self Employment Obligations page" when {
       "user is out of latency period (before 23/24) - Self Employment" in {
         setupStubCalls(SelfEmployment, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = false))
-        checkRedirect(SelfEmployment, redirectUri(SelfEmployment))
+        checkRedirect(SelfEmployment, redirectUrl(SelfEmployment))
       }
       "user is out of latency period (after 23/24) - Self Employment" in {
         setupStubCalls(SelfEmployment, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = false))
-        checkRedirect(SelfEmployment, redirectUri(SelfEmployment))
+        checkRedirect(SelfEmployment, redirectUrl(SelfEmployment))
       }
     }
     "500 INTERNAL_SERVER_ERROR" when {
       "API 1171 returns an error" in {
-        setupStubErrorCall(SelfEmployment, API1171)
+        setupStubErrorCall(API1171)
         checkError(SelfEmployment)
       }
       "API 1404 returns an error" in {
-        setupStubErrorCall(SelfEmployment, API1404)
+        setupStubErrorCall(API1404)
         checkError(SelfEmployment)
       }
       "API 1878 returns an error" in {
-        setupStubErrorCall(SelfEmployment, API1878)
+        setupStubErrorCall(API1878)
         checkError(SelfEmployment)
       }
       "API 1896 returns an error" in {
-        setupStubErrorCall(SelfEmployment, API1896)
+        setupStubErrorCall(API1896)
         checkError(SelfEmployment)
       }
     }
   }
 
-  //  "return 500 INTERNAL SERVER ERROR" when {
-  //    "API 1896 getCalculationList returns an error" in {
-  //      Given("Income Sources FS is enabled")
-  //      enable(IncomeSources)
-  //      enable(TimeMachineAddYear)
-  //
-  //      And("API 1171 getIncomeSourceDetails returns a success response")
-  //      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleSelfEmploymentResponseInLatencyPeriod(latencyDetails))
-  //
-  //      And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-  //      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-  //
-  //      And("API 1896 getCalculationList returns an error")
-  //      CalculationListStub.stubGetCalculationListError(testNino, testTaxYearRange)
-  //
-  //      val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId")
-  //
-  //      result should have(
-  //        httpStatus(INTERNAL_SERVER_ERROR)
-  //      )
-  //    }
-  //    "API 1404 getListOfCalculationResults returns an error" in {
-  //      val taxYear2023: Int = 2023
-  //      val taxYear2024: Int = 2024
-  //      val latencyPeriodEndDate: LocalDate = LocalDate.of(2025, APRIL, 5)
-  //
-  //      val latencyDetailsPreviousTaxYear: LatencyDetails = LatencyDetails(
-  //        latencyEndDate = latencyPeriodEndDate,
-  //        taxYear1 = taxYear2023.toString,
-  //        latencyIndicator1 = quarterlyIndicator,
-  //        taxYear2 = taxYear2024.toString,
-  //        latencyIndicator2 = quarterlyIndicator
-  //      )
-  //
-  //      Given("Income Sources FS is enabled")
-  //      enable(IncomeSources)
-  //
-  //      And("API 1171 getIncomeSourceDetails returns a success response")
-  //      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetailsPreviousTaxYear))
-  //
-  //      And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-  //      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-  //
-  //      And("API 1404 getListOfCalculationResults returns an error response")
-  //      CalculationListStub.stubGetLegacyCalculationListError(testNino, taxYear2023.toString)
-  //
-  //      val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId")
-  //
-  //      result should have(
-  //        httpStatus(INTERNAL_SERVER_ERROR)
-  //      )
-  //    }
-  //    "API 1878 getITSAStatusDetails returns an error" in {
-  //      Given("Income Sources FS is enabled")
-  //      enable(IncomeSources)
-  //
-  //      And("API 1171 getIncomeSourceDetails returns a success response")
-  //      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-  //
-  //      And("API 1878 getITSAStatus returns a success response with one of these statuses: Annual, No Status, Non Digital, Dormant, MTD Exempt")
-  //      ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
-  //
-  //      And("API 1896 getCalculationList returns a success response")
-  //      CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-  //
-  //      val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId")
-  //
-  //      result should have(
-  //        httpStatus(INTERNAL_SERVER_ERROR)
-  //      )
-  //    }
-  //    "API 1171 getIncomeSourceDetails returns an error" in {
-  //      Given("Income Sources FS is enabled")
-  //      enable(IncomeSources)
-  //
-  //      And("API 1171 getIncomeSourceDetails returns an error response")
-  //      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(INTERNAL_SERVER_ERROR,
-  //        IncomeSourceDetailsError(INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention."))
-  //
-  //      And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-  //      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-  //
-  //      And("API 1896 getCalculationList returns a success response")
-  //      CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-  //
-  //      val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId")
-  //
-  //      result should have(
-  //        httpStatus(INTERNAL_SERVER_ERROR)
-  //      )
-  //    }
-  //  }
-  //}
-  //
-  //s"calling POST $ukPropertyReportingMethodSubmitUrl" should {
-  //  s"redirect to $ukPropertyAddedShowUrl" when {
-  //    "user completes the form and API 1776 updateIncomeSource returns a success response" in {
-  //      val formData: Map[String, Seq[String]] = Map(
-  //        "new_tax_year_1_reporting_method" -> Seq("A"),
-  //        "new_tax_year_2_reporting_method" -> Seq("A"),
-  //        "new_tax_year_1_reporting_method_tax_year" -> Seq(taxYear1.toString),
-  //        "tax_year_1_reporting_method" -> Seq("Q"),
-  //        "new_tax_year_2_reporting_method_tax_year" -> Seq(taxYear2.toString),
-  //        "tax_year_2_reporting_method" -> Seq("Q")
-  //      )
-  //
-  //      Given("Income Sources FS is enabled")
-  //      enable(IncomeSources)
-  //
-  //      And("API 1171 getIncomeSourceDetails returns a success response")
-  //      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-  //
-  //      And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-  //      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-  //
-  //      And("API 1896 getCalculationList returns a success response")
-  //      CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-  //
-  //      And("API 1776 updateTaxYearSpecific returns a success response")
-  //      IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("")))
-  //
-  //      val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId")(formData)
-  //      result should have(
-  //        httpStatus(SEE_OTHER),
-  //        redirectURI(s"/report-quarterly/income-and-expenses/view/income-sources/add/uk-property-added?id=$testPropertyIncomeId")
-  //      )
-  //    }
-  //  }
-  //  "return 400 BAD_REQUEST" when {
-  //    "user submits an invalid form entry" in {
-  //      val formData = IncomeSourceReportingMethodForm(
-  //        newTaxYear1ReportingMethod = None,
-  //        newTaxYear2ReportingMethod = None,
-  //        taxYear1 = Some(taxYear1.toString),
-  //        taxYear1ReportingMethod = None,
-  //        taxYear2 = Some(taxYear2.toString),
-  //        taxYear2ReportingMethod = None
-  //      )
-  //      val formWithErrors = IncomeSourceReportingMethodForm.form
-  //        .fillAndValidate(formData)
-  //
-  //      Given("Income Sources FS is enabled")
-  //      enable(IncomeSources)
-  //
-  //      And("API 1171 getIncomeSourceDetails returns a success response")
-  //      IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-  //
-  //      And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
-  //      ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
-  //
-  //      And("API 1896 getCalculationList returns a success response")
-  //      CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-  //
-  //      val result = IncomeTaxViewChangeFrontend.postAddUKPropertyReportingMethod(formWithErrors.value.get)()
-  //
-  //      result should have(
-  //        httpStatus(BAD_REQUEST)
-  //      )
-  //    }
-  //  }
+  def checkSubmitRedirect(incomeSourceType: IncomeSourceType): Assertion = {
+    val formData: Map[String, Seq[String]] = Map(
+      "new_tax_year_1_reporting_method" -> Seq("A"),
+      "new_tax_year_2_reporting_method" -> Seq("A"),
+      "new_tax_year_1_reporting_method_tax_year" -> Seq(taxYear1.toString),
+      "tax_year_1_reporting_method" -> Seq("Q"),
+      "new_tax_year_2_reporting_method_tax_year" -> Seq(taxYear2.toString),
+      "tax_year_2_reporting_method" -> Seq("Q")
+    )
+    And("API 1776 updateTaxYearSpecific returns a success response")
+    IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("2024-01-31T09:26:17Z")))
+
+    val result: WSResponse = IncomeTaxViewChangeFrontend.post(uri(incomeSourceType))(formData)
+    result should have(
+      httpStatus(SEE_OTHER),
+      redirectURI(redirectUrl(incomeSourceType))
+    )
+  }
+
+  def checkSubmitBadRequest(incomeSourceType: IncomeSourceType): Assertion = {
+    val invalidFormData: Map[String, Seq[String]] = Map(
+      "new_tax_year_1_reporting_method" -> Seq(),
+      "new_tax_year_2_reporting_method" -> Seq(),
+      "new_tax_year_1_reporting_method_tax_year" -> Seq(),
+      "tax_year_1_reporting_method" -> Seq("Q"),
+      "new_tax_year_2_reporting_method_tax_year" -> Seq(),
+      "tax_year_2_reporting_method" -> Seq("Q")
+    )
+
+    val result: WSResponse = IncomeTaxViewChangeFrontend.post(uri(incomeSourceType))(invalidFormData)
+    result should have(
+      httpStatus(BAD_REQUEST)
+    )
+  }
+
+  def checkSubmitErrorRedirect(incomeSourceType: IncomeSourceType): Assertion = {
+    val formData: Map[String, Seq[String]] = Map(
+      "new_tax_year_1_reporting_method" -> Seq("A"),
+      "new_tax_year_2_reporting_method" -> Seq("A"),
+      "new_tax_year_1_reporting_method_tax_year" -> Seq(taxYear1.toString),
+      "tax_year_1_reporting_method" -> Seq("Q"),
+      "new_tax_year_2_reporting_method_tax_year" -> Seq(taxYear2.toString),
+      "tax_year_2_reporting_method" -> Seq("Q")
+    )
+
+    val result: WSResponse = IncomeTaxViewChangeFrontend.post(uri(incomeSourceType))(formData)
+    result should have(
+      httpStatus(SEE_OTHER),
+      redirectURI(errorRedirectUrl(incomeSourceType))
+    )
+  }
+
+  s"calling POST ${submitUrl(false, UkProperty, testPropertyIncomeId)}" should {
+    s"303 SEE_OTHER - redirect to ${redirectUrl(UkProperty)}" when {
+      "user completes the form and API 1776 updateIncomeSource returns a success response - UK Property" in {
+        setupStubCalls(UkProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+        checkSubmitRedirect(UkProperty)
+      }
+    }
+    s"303 SEE_OTHER - redirect to ${errorRedirectUrl(UkProperty)}" when {
+      "API 1776 updateIncomeSource returns a failure response" in {
+        setupStubErrorCall(API1776)
+        checkSubmitErrorRedirect(UkProperty)
+      }
+      "400 BAD_REQUEST" when {
+        "user does not complete the form - UK Property" in {
+          setupStubCalls(UkProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+          checkSubmitBadRequest(UkProperty)
+        }
+      }
+    }
+
+    s"calling POST ${submitUrl(false, ForeignProperty, testPropertyIncomeId)}" should {
+      s"303 SEE_OTHER - redirect to ${redirectUrl(ForeignProperty)}" when {
+        "user completes the form and API 1776 updateIncomeSource returns a success response - Foreign Property" in {
+          setupStubCalls(ForeignProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+          checkSubmitRedirect(ForeignProperty)
+        }
+      }
+      s"303 SEE_OTHER - redirect to ${errorRedirectUrl(ForeignProperty)}" when {
+        "API 1776 updateIncomeSource returns a failure response" in {
+          setupStubErrorCall(API1776)
+          checkSubmitErrorRedirect(ForeignProperty)
+        }
+      }
+      "400 BAD_REQUEST" when {
+        "user does not complete the form - Foreign Property" in {
+          setupStubCalls(ForeignProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+          checkSubmitBadRequest(ForeignProperty)
+        }
+      }
+    }
+
+    s"calling POST ${submitUrl(false, SelfEmployment, testSelfEmploymentId)}" should {
+      s"303 SEE_OTHER - redirect to ${redirectUrl(SelfEmployment)}" when {
+        "user completes the form and API 1776 updateIncomeSource returns a success response - Self Employment" in {
+          setupStubCalls(SelfEmployment, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+          checkSubmitRedirect(SelfEmployment)
+        }
+      }
+      s"303 SEE_OTHER - redirect to ${errorRedirectUrl(SelfEmployment)}" when {
+        "API 1776 updateIncomeSource returns a failure response" in {
+          setupStubErrorCall(API1776)
+          checkSubmitErrorRedirect(SelfEmployment)
+        }
+        "400 BAD_REQUEST" when {
+          "user does not complete the form - Self Employment" in {
+            setupStubCalls(SelfEmployment, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
+            checkSubmitBadRequest(SelfEmployment)
+          }
+        }
+      }
+    }
+  }
 }

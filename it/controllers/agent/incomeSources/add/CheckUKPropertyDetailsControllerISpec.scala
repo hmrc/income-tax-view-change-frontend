@@ -41,7 +41,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
     val showUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.showAgent().url
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submitAgent().url
     val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty).url
-    val successUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = false, UkProperty, "1234567890").url
+    val successUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, UkProperty, "1234567890").url
     val failureUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(UkProperty).url
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +
       messagesAPI("incomeSources.add.checkUKPropertyDetails.change") // duplicated due to visually hidden text

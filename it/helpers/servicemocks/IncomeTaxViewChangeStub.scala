@@ -207,6 +207,12 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   def stubUpdateIncomeSource(status: Int, response: JsValue): StubMapping =
     WiremockHelper.stubPut("/income-tax-view-change/update-income-source", status, response.toString())
 
+  def stubUpdateIncomeSourceError(): StubMapping = {
+    stubUpdateIncomeSource(INTERNAL_SERVER_ERROR, Json.obj("failures" -> Json.arr(
+      Json.obj("code" -> "500", "reason" -> "ETMP is broken :(")
+    )))
+  }
+
   def verifyUpdateIncomeSource(body: Option[String]): Unit = {
     WiremockHelper.verifyPut("/income-tax-view-change/update-income-source", body)
   }

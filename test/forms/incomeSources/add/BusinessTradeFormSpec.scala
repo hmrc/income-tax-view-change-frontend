@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package forms
+package forms.incomeSources.add
 
-import forms.incomeSources.add.BusinessTradeForm
-import forms.utils.SessionKeys
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
