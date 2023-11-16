@@ -44,10 +44,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val creditService: CreditService,
                                           val retrieveBtaNavBar: NavBarPredicate,
-                                          val retrieveNino: NinoPredicate,
                                           val authenticate: AuthenticationPredicate,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val repaymentService: RepaymentService,
@@ -63,8 +62,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
@@ -164,8 +163,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def startRefund(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         user.userType match {
           case _ if isDisabled(CreditsRefundsRepay) =>
@@ -182,8 +181,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
     }
 
   def refundStatus(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         user.userType match {
           case _ if isDisabled(CreditsRefundsRepay) =>

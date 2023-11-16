@@ -36,7 +36,7 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr) flatMap {
       case CitizenDetailsModel(optionalFirstName, optionalLastName, Some(nino)) =>
         businessDetailsConnector.getBusinessDetails(nino) flatMap {
-          case IncomeSourceDetailsModel(mtdbsa, _, _, _) =>
+          case IncomeSourceDetailsModel(_, mtdbsa, _, _, _) =>
             Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
           case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
           case _ =>

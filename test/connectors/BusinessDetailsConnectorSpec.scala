@@ -141,7 +141,7 @@ class BusinessDetailsConnectorSpec extends TestSupport with MockHttp with MockAu
       val result: Future[IncomeSourceDetailsResponse] = connector.getIncomeSources()
       result.futureValue shouldBe singleBusinessAndPropertyMigrat2019
 
-      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserNino, List(testSelfEmploymentId), List(testPropertyIncomeId), Some(testMigrationYear2019)))
+      verifyExtendedAudit(IncomeSourceDetailsResponseAuditModel(testMtdUserOptionNino, List(testSelfEmploymentId), List(testPropertyIncomeId), Some(testMigrationYear2019)))
     }
 
     "return IncomeSourceDetailsError in case of bad/malformed JSON response" in new Setup {

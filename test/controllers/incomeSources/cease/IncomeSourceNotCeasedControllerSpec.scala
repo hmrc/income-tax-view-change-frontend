@@ -37,7 +37,6 @@ class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthentic
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[ErrorTemplateWithLink])(appConfig, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
     app.injector.instanceOf[MessagesControllerComponents],

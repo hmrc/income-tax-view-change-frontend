@@ -18,7 +18,7 @@ package connectors
 
 import audit.AuditingService
 import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.MtdItUserWithNino
+import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.FrontendAppConfig
 import models.core.{NinoResponse, NinoResponseError, NinoResponseSuccess}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
@@ -84,7 +84,7 @@ class BusinessDetailsConnector @Inject()(val http: HttpClient,
   }
 
   def getIncomeSources()(
-    implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
+    implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUserOptionNino[_]): Future[IncomeSourceDetailsResponse] = {
 
     //Check and add test headers Gov-Test-Scenario for dynamic stub Income Sources Created Scenarios
     val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.incomeSourceOverrides())

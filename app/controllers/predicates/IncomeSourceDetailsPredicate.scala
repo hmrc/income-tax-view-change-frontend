@@ -16,15 +16,18 @@
 
 package controllers.predicates
 
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import controllers.BaseController
+import models.core.{NinoResponseError, NinoResponseSuccess}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.http.HeaderNames
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,18 +36,18 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
                                              val itvcErrorHandler: ItvcErrorHandler)
                                             (implicit val executionContext: ExecutionContext,
                                              mcc: MessagesControllerComponents) extends BaseController with
-  ActionRefiner[MtdItUserWithNino, MtdItUser] {
+  ActionRefiner[MtdItUserOptionNino, MtdItUser] {
 
-  override def refine[A](request: MtdItUserWithNino[A]): Future[Either[Result, MtdItUser[A]]] = {
+  override def refine[A](request: MtdItUserOptionNino[A]): Future[Either[Result, MtdItUser[A]]] = {
 
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    implicit val req: MtdItUserWithNino[A] = request
+    implicit val req: MtdItUserOptionNino[A] = request
+
     // no caching for now
     incomeSourceDetailsService.getIncomeSourceDetails(None) map {
-      case sources: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditid, request.nino, request.userName, sources, None, request.saUtr, request.credId, request.userType, request.arn))
+      case response: IncomeSourceDetailsModel =>
+        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, None))
       case _ => Left(itvcErrorHandler.showInternalServerError())
     }
-
   }
 }

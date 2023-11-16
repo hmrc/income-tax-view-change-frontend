@@ -65,6 +65,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
     testNino,
     Some(testRetrievedUserName),
     IncomeSourceDetailsModel(
+      testNino,
       testMtditid,
       Some(getTaxEndYear(LocalDate.now.minusYears(numYears - 1)).toString),
       businesses = (1 to numYears).toList.map { count =>
@@ -93,6 +94,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
   object TestFinancialDetailsService extends FinancialDetailsService(mockFinancialDetailsConnector, dateService)
 
   val testUserWithRecentYears: MtdItUser[_] = MtdItUser(testMtditid, testNino, None, IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     businesses = List(

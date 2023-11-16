@@ -41,8 +41,7 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
                                                 val checkSessionTimeout: SessionTimeoutPredicate,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 val retrieveBtaNavBar: NavBarPredicate,
-                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                val retrieveNino: NinoPredicate,
+                                                val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                 val view: DeclarePropertyCeased,
                                                 val sessionService: SessionService)
                                                (implicit val appConfig: FrontendAppConfig,
@@ -78,8 +77,8 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
 
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
@@ -139,8 +138,8 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(isAgent = false, incomeSourceType = incomeSourceType)
   }

@@ -23,6 +23,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.MockItvcErrorHandler
+import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import models.financialDetails.DocumentDetailWithDueDate
@@ -30,6 +31,8 @@ import models.liabilitycalculation.{Message, Messages}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdatesErrorModel, ObligationsModel}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -37,7 +40,8 @@ import play.api.i18n.Lang
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.DateService
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testTaxYear, testYearPlusOne, testYearPlusTwo}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino, testTaxYear, testYearPlusOne, testYearPlusTwo}
+import testConstants.BusinessDetailsTestConstants.testMtdItId
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForAgent, liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testUtils.TestSupport
@@ -51,7 +55,7 @@ import scala.concurrent.Future
 class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationService
   with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicateNoCache
   with MockFinancialDetailsService with FeatureSwitching with MockItvcErrorHandler
-  with MockAuditingService with MockNextUpdatesService {
+  with MockAuditingService with MockNextUpdatesService with MockIncomeTaxCalculationConnector {
 
   val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
 
@@ -64,7 +68,6 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
     app.injector.instanceOf[ItvcErrorHandler],
     mockIncomeSourceDetailsService,
     MockIncomeSourceDetailsPredicateNoCache,
-    app.injector.instanceOf[NinoPredicate],
     mockNextUpdatesService,
     messagesApi,
     languageUtils,
@@ -631,14 +634,14 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       "return technical difficulties" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(financialDetailsModel(testYearPlusTwo))
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsModel(testYearPlusTwo))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
           ObligationsModel(Nil)
         )
-        mockCalculationErrorNew(nino = "AA111111A", year = testYearPlusTwo)
+        mockCalculationErrorNew(nino = testNino, year = testYearPlusTwo)
         mockShowInternalServerError()
 
-        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         contentType(result) shouldBe Some(HTML)
@@ -648,10 +651,10 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       "return technical difficulties" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(testFinancialDetailsErrorModel)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(testFinancialDetailsErrorModel)
         mockShowInternalServerError()
 
-        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
         contentType(result) shouldBe Some(HTML)
@@ -661,7 +664,7 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       "return technical difficulties" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(financialDetailsModel(testYearPlusTwo))
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsModel(testYearPlusTwo))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
           NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR")
         )
@@ -677,12 +680,12 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       "show the tax year summary page" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationNotFoundNew(nino = "AA111111A", year = testYearPlusTwo)
-        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(financialDetailsModel(testYearPlusTwo))
+        mockCalculationNotFoundNew(year = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsModel(testYearPlusTwo))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
           ObligationsModel(Nil)
         )
-        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
@@ -694,13 +697,13 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
       "show the tax year summary page" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationSuccessfulNew(nino = "AA111111A", taxYear = testYearPlusTwo)
-        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(financialDetailsModel(testYearPlusTwo))
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetailsModel(testYearPlusTwo))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
           ObligationsModel(Nil)
         )
 
-        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
@@ -714,8 +717,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationSuccessfulNew(nino = "AA111111A", taxYear = testYearPlusTwo)
-        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, "AA111111A")(financialDetails(
+        mockCalculationSuccessfulNew(taxYear = testYearPlusTwo)
+        setupMockGetFinancialDetailsWithTaxYearAndNino(testYearPlusTwo, testNino)(financialDetails(
           documentDetails = documentDetailClass2Nic.documentDetail
         ))
         mockgetNextUpdates(fromDate = LocalDate.of(testYearPlusOne, 4, 6), toDate = LocalDate.of(testYearPlusTwo, 4, 5))(
@@ -734,7 +737,8 @@ class TaxYearSummaryControllerSpec extends TestSupport with MockCalculationServi
           codingOutEnabled = true
         ).toString
 
-        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(fakeRequestConfirmedClientWithReferer(referer = homeBackLink))
+        val result: Future[Result] = TestTaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear = testYearPlusTwo)(
+          fakeRequestConfirmedClientWithReferer(clientNino = testNino, referer = homeBackLink))
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe expectedContent

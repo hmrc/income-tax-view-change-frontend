@@ -57,7 +57,6 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[FinalTaxCalculationView],
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     mockCalculationService,
     mockErrorHandler,

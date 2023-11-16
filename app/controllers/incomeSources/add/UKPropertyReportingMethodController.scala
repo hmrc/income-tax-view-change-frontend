@@ -46,8 +46,7 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                                                     val checkSessionTimeout: SessionTimeoutPredicate,
                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                     val retrieveBtaNavBar: NavBarPredicate,
-                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                    val retrieveNino: NinoPredicate,
+                                                    val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                     val view: UKPropertyReportingMethod,
                                                     val updateIncomeSourceService: UpdateIncomeSourceService,
                                                     val itsaStatusService: ITSAStatusService,
@@ -260,8 +259,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
     }
   }
 
-  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def show(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user => handleRequest(isAgent = false, id = id)
   }
 
@@ -274,8 +273,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
         }
   }
 
-  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(isAgent = false, id = id)
   }

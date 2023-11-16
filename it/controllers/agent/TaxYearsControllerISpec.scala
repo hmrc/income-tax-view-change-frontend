@@ -41,6 +41,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
@@ -65,6 +66,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
   )
 
   val incomeSourceDetailsWithNoAccountingPeriodEndDate: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
