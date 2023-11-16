@@ -142,6 +142,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
 
 
   lazy val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
