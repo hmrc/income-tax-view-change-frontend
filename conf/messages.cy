@@ -1424,6 +1424,16 @@ business-added.income-sources-button                    = Eich ffynonellau incwm
 business-added.previous-tax-years-heading               = Blynyddoedd treth blaenorol
 business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wneud yn siŵr eich bod wedi anfon yr holl Incwm a threuliau, a datganiadau terfynol ar gyfer blynyddoedd treth cyn
 
+## You cannot go back - Your business has been added page ##
+
+cannot-go-back.heading                                  = Ni allwch fynd yn ôl
+cannot-go-back.sole-trader                              = Mae’ch busnes unig fasnachwr wedi’i ychwanegu.
+cannot-go-back.uk-property                              = Mae’ch busnes eiddo yn y DU wedi’i ychwanegu.
+cannot-go-back.foreign-property                         = Mae’ch busnes eiddo tramor wedi’i ychwanegu.
+cannot-go-back.you-can                                  = Gallwch wneud y canlynol:
+cannot-go-back.manage-link                              = bwrw golwg dros eich ffynonellau incwm a’u rheoli
+cannot-go-back.home-link                                = mynd yn ôl i’r hafan
+
 ## Income Source Creased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        = Mae
 business-ceased.obligation.heading1.se.part2                        = Busnes unig fasnachwr
