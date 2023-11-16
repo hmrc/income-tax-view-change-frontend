@@ -88,6 +88,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
 
   def handleSuccess(incomeSourceId: String, incomeSourceType: IncomeSourceType, startDate: LocalDate, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     incomeSourceType match {
+      //immediately set hasBeenAdded to true
       case SelfEmployment =>
         businessName match {
           case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>

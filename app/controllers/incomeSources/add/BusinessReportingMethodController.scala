@@ -93,6 +93,7 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   private def handleRequest(isAgent: Boolean, id: String)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
+    //add check if user has visited obligations from mongo
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
