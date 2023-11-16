@@ -16,14 +16,13 @@
 
 package audit.models
 
-import audit.Utilities.{userAuditDetails, userAuditDetailsNino}
+import audit.Utilities.userAuditDetailsNino
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.IncomeSourceType
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
-
 
 case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                         viewModel: CheckDetailsViewModel,
@@ -78,15 +77,8 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
         propDetails
     }
 
-    val accountingMethod = if (viewModel.cashOrAccruals.toLowerCase.equals("cash")) {
-      "Cash basis accounting"
-    } else {
-      "Traditional accounting"
-    }
-
-
     baseDetails ++ businessDetails ++ Json.obj(
-      "accountingMethod" -> accountingMethod)
+      "accountingMethod" -> viewModel.cashOrAccruals)
 
   }
 }

@@ -39,7 +39,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   val testBusinessAddressLine1: String = "Test Road"
   val testBusinessPostCode: String = "B32 1PQ"
   val testBusinessCountryCodeView: String = "United Kingdom"
-  val testBusinessAccountingMethod: String = "cash"
+  val testBusinessAccountingMethod: String = "CASH"
   val testBusinessAccountingMethodView: String = "Cash basis accounting"
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
   val testCountryCode = "GB"

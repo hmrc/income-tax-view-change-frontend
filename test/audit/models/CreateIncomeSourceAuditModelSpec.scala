@@ -19,7 +19,7 @@ package audit.models
 import enums.FailureCategory.ApiFailure
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
+import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
@@ -91,7 +91,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |    "addressTownOrCity": "Test City",
       |    "addressPostcode": "TE5 7TT",
       |    "addressCountry": "GB",
-      |    "accountingMethod":"Cash basis accounting"
+      |    "accountingMethod":"CASH"
       |}""".stripMargin)
 
 
@@ -116,7 +116,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |    "addressTownOrCity": "Test City",
       |    "addressPostcode": "TE5 7TT",
       |    "addressCountry": "GB",
-      |    "accountingMethod":"Cash basis accounting"
+      |    "accountingMethod":"CASH"
       |}""".stripMargin)
 
 
@@ -141,7 +141,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |    "addressTownOrCity": "Test City",
       |    "addressPostcode": "TE5 7TT",
       |    "addressCountry": "GB",
-      |    "accountingMethod":"Cash basis accounting"
+      |    "accountingMethod":"CASH"
       |}""".stripMargin)
 
   val detailProperty = Json.parse(
@@ -157,7 +157,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       |    "journeyType": "UKPROPERTY",
       |    "addedIncomeSourceID":"XA00001234",
       |    "dateStarted": "2022-01-01",
-      |    "accountingMethod":"Cash basis accounting"
+      |    "accountingMethod":"CASH"
       |}""".stripMargin)
 
   "CeaseIncomeSourceAuditModel" should {

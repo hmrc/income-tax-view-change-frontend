@@ -26,23 +26,20 @@ import utils.Utilities.JsonUtil
 
 object Utilities {
 
-  def userAuditDetails(user: MtdItUserBase[_]): JsObject = Json.obj(
-    "nationalInsuranceNumber" -> user.nino,
-    "mtditid" -> user.mtditid
-  ) ++
+
+  private def getBaseDetails(user: MtdItUserBase[_]): JsObject = Json.obj(
+    "mtditid" -> user.mtditid) ++
     ("agentReferenceNumber", user.arn) ++
     ("saUtr", user.saUtr) ++
     ("credId", user.credId) ++
     userType(user.userType)
 
-  def userAuditDetailsNino(user: MtdItUserBase[_]): JsObject = Json.obj(
-    "nino" -> user.nino,
-    "mtditid" -> user.mtditid
-  ) ++
-    ("agentReferenceNumber", user.arn) ++
-    ("saUtr", user.saUtr) ++
-    ("credId", user.credId) ++
-    userType(user.userType)
+  def userAuditDetails(user: MtdItUserBase[_]): JsObject =
+    getBaseDetails(user) ++ Json.obj("nationalInsuranceNumber" -> user.nino)
+
+  def userAuditDetailsNino(user: MtdItUserBase[_]): JsObject =
+    getBaseDetails(user) ++ Json.obj("nino" -> user.nino)
+
 
   def userType(userType: Option[AffinityGroup]): JsObject = userType match {
     case Some(Agent) => Json.obj("userType" -> "Agent")
