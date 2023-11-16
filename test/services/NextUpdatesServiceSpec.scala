@@ -440,7 +440,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 //      }
 
       // Read response from plain json file
-      val source: BufferedSource = Source.fromURL(getClass.getResource("/data/1330_ObligationsV3.json"))
+      val source: BufferedSource = Source.fromURL(getClass.getResource("/data/1330_Obligations_NextUpdate.json"))
       val jsonString: String = source.getLines().toList.mkString("")
       val json: JsValue = Json.parse(jsonString)
 
@@ -452,7 +452,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 //      val (a, b) = datesList.partition(datesModel => datesModel.isFinalDec)
       //println(expectedResponse.toString.replace(" ", "\n"))
 
-      val source2: BufferedSource = Source.fromURL(getClass.getResource("/data/1330_ObligationsV2.json"))
+      val source2: BufferedSource = Source.fromURL(getClass.getResource("/data/1330_Obligations_Previous.json"))
       val jsonString2: String = source2.getLines().toList.mkString("")
       val json2: JsValue = Json.parse(jsonString2)
 
