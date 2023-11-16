@@ -9,7 +9,6 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
-import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 import java.time.LocalDate
@@ -17,7 +16,6 @@ import java.time.LocalDate
 class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
   val incomeSourceAddedSelfEmploymentShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", SelfEmployment).url
-  val businessReportingMethodUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.show("").url
 
   val IncomeSourceAddedSubmitUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.submit().url
   val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
@@ -41,7 +39,6 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
   }
 
   val incomeSourceAddedForeignPropertyShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", ForeignProperty).url
-  val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("").url
 
   val addIncomeSourceShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
 

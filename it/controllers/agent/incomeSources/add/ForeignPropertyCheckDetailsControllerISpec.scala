@@ -3,7 +3,6 @@ package controllers.agent.incomeSources.add
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.ForeignProperty
 import enums.JourneyType.{Add, JourneyType}
-import forms.utils.SessionKeys.{addIncomeSourcesAccountingMethod, foreignPropertyStartDate}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -12,20 +11,20 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testDate, testMtditid, testSelfEmploymentId, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentId, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 import java.time.LocalDate
 import scala.collection.immutable.Seq
 
-class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
+class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val uiRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val showAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.showAgent().url
   val submitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent().url
-  val reportingMethodUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("ABC123456789").url
+  val reportingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, ForeignProperty, "ABC123456789").url
   val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(ForeignProperty).url
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
 
@@ -181,7 +180,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-check-details", clientDetailsWithConfirmation)(formData)
 
         result should have(
-          httpStatus(INTERNAL_SERVER_ERROR),
+          httpStatus(INTERNAL_SERVER_ERROR)
         )
       }
     }

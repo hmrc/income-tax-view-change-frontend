@@ -35,7 +35,6 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.IncomeSourcesUtils
-import utils.IncomeSourcesUtils.getUKPropertyDetailsFromSession
 import views.html.incomeSources.add.CheckUKPropertyDetails
 
 import java.time.LocalDate
@@ -73,8 +72,7 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
   }
 
   def getUKPropertyReportingMethodUrl(isAgent: Boolean, id: String): Call = {
-    if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(id) else
-      controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(id)
+    controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, UkProperty, id)
   }
 
   def getErrorHandler(isAgent: Boolean): FrontendErrorHandler with ShowInternalServerError = {
@@ -171,9 +169,9 @@ class CheckUKPropertyDetailsController @Inject()(val checkUKPropertyDetails: Che
             Future.successful(Redirect(getUKPropertyReportingMethodUrl(isAgent, id)))
         }.recover {
           case ex: Exception =>
-              Logger("application").error(
-                s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
-              Redirect(redirectErrorUrl)
+            Logger("application").error(
+              s"[ForeignPropertyCheckDetailsController][handleRequest] - Error: Unable to construct Future ${ex.getMessage}")
+            Redirect(redirectErrorUrl)
         }
       case Left(ex: Throwable) =>
         Logger("application").error(

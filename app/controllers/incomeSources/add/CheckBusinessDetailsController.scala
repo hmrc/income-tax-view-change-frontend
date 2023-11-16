@@ -127,24 +127,23 @@ class CheckBusinessDetailsController @Inject()(val checkBusinessDetails: CheckBu
 
 
   def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    val (redirect, errorHandler) = {
-      if (isAgent)
-        (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url)
-      else
-        (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(SelfEmployment).url)
-    }
+    val redirect = routes.IncomeSourceReportingMethodController.show(isAgent, SelfEmployment, _)
+
     getBusinessDetailsFromSession(user, ec).flatMap {
       viewModel => {
         businessDetailsService.createBusinessDetails(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
             sessionService.deleteMongoData(JourneyType(Add, SelfEmployment))
-            Future.successful(Redirect(redirect(id).url))
+            Future.successful(Redirect(redirect(id)))
 
           case Left(ex) => Future.failed(ex)
         }
       }
     }.recover {
       case ex: Exception =>
+        val errorHandler = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url
+        else routes.IncomeSourceNotAddedController.show(SelfEmployment).url
+
         Logger("application").error(s"[AddIncomeSourceController][handleRequest]${ex.getMessage}")
         Redirect(errorHandler)
     }

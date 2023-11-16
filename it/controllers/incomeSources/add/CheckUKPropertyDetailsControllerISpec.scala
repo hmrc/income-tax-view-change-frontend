@@ -29,7 +29,6 @@ import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
 
@@ -40,7 +39,7 @@ class CheckUKPropertyDetailsControllerISpec extends ComponentSpecBase {
     val showUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.show().url
     val submitUrl: String = controllers.incomeSources.add.routes.CheckUKPropertyDetailsController.submit().url
     val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty).url
-    val successUrl: String = controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show("1234567890").url
+    val successUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = false, UkProperty, "1234567890").url
     val failureUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(UkProperty).url
     val changeText: String = messagesAPI("incomeSources.add.checkUKPropertyDetails.change") + " " +
       messagesAPI("incomeSources.add.checkUKPropertyDetails.change") // duplicated due to visually hidden text

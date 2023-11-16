@@ -70,7 +70,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submitAgent() else {
       controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit()
     }
-    getDetails(user).map{
+    getDetails(user).map {
       case Right(viewModel) =>
         Ok(checkForeignPropertyDetails(
           viewModel,
@@ -182,8 +182,9 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
   }
 
   def handleSubmit(isAgent: Boolean)(implicit user: MtdItUser[AnyContent]): Future[Result] = {
-    val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(ForeignProperty)
+    lazy val redirectErrorUrl: Call = if (isAgent) routes.IncomeSourceNotAddedController.showAgent(ForeignProperty)
     else routes.IncomeSourceNotAddedController.show(ForeignProperty)
+    lazy val redirectUrl = routes.IncomeSourceReportingMethodController.show(isAgent, ForeignProperty, _)
 
     getDetails(user) flatMap {
       case Right(viewModel: CheckForeignPropertyViewModel) =>
@@ -196,8 +197,7 @@ class ForeignPropertyCheckDetailsController @Inject()(val checkForeignPropertyDe
           case Right(CreateIncomeSourceResponse(id)) =>
             sessionService.deleteMongoData(JourneyType(Add, UkProperty))
             Future.successful(
-              if (isAgent) Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(id).url)
-              else Redirect(controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(id).url)
+              Redirect(redirectUrl(id))
             ).recover {
               case _: Exception => Redirect(redirectErrorUrl)
             }

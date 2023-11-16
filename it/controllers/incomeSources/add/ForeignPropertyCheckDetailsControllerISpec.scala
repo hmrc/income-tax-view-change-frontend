@@ -24,7 +24,7 @@ class ForeignPropertyCheckDetailsControllerISpec extends ComponentSpecBase{
   val showUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.show().url
   val foreignPropertyAccountingMethodUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty).url
   val submitUrl: String = controllers.incomeSources.add.routes.ForeignPropertyCheckDetailsController.submit().url
-  val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show("ABC123456789").url
+  val foreignPropertyReportingMethodShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = false, ForeignProperty, "ABC123456789").url
   val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(ForeignProperty).url
 
   val testPropertyStartDateLong: String = "1 January 2023"

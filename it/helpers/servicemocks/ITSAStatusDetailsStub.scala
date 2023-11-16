@@ -19,7 +19,7 @@ package helpers.servicemocks
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.{ComponentSpecBase, WiremockHelper}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import testConstants.BaseIntegrationTestConstants.{testNino, testTaxYearRange}
+import testConstants.BaseIntegrationTestConstants.testNino
 
 
 object ITSAStatusDetailsStub extends ComponentSpecBase {

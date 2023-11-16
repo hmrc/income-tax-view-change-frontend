@@ -36,7 +36,7 @@ class CheckBusinessDetailsControllerISpec extends ComponentSpecBase {
 
   val checkBusinessDetailsShowUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.showAgent().url
   val checkBusinessDetailsSubmitUrlAgent: String = controllers.incomeSources.add.routes.CheckBusinessDetailsController.submitAgent().url
-  val addBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(testSelfEmploymentId).url
+  val addBusinessReportingMethodUrlAgent: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, SelfEmployment, testSelfEmploymentId).url
   val errorPageUrl: String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url
 
   val testBusinessId: String = testSelfEmploymentId

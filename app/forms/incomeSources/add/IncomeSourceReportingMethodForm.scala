@@ -20,17 +20,17 @@ import forms.validation.CustomConstraints
 import play.api.data.Form
 import play.api.data.Forms._
 
-object AddForeignPropertyReportingMethodForm extends CustomConstraints {
+object IncomeSourceReportingMethodForm extends CustomConstraints {
   val newTaxYear1ReportingMethod = "new_tax_year_1_reporting_method"
   val newTaxYear2ReportingMethod = "new_tax_year_2_reporting_method"
   val taxYear1 = s"${newTaxYear1ReportingMethod}_tax_year"
   val taxYear2 = s"${newTaxYear2ReportingMethod}_tax_year"
   val taxYear1ReportingMethod = "tax_year_1_reporting_method"
   val taxYear2ReportingMethod = "tax_year_2_reporting_method"
-  private val radioMustBeSelectedMessageKey = "incomeSources.add.foreignPropertyReportingMethod.error"
+  private val radioMustBeSelectedMessageKey = "incomeSources.add.incomeSourceReportingMethod.error"
   private val validRadioOptions = Set("A", "Q")
 
-  val form: Form[AddForeignPropertyReportingMethodForm] = Form[AddForeignPropertyReportingMethodForm](
+  val form: Form[IncomeSourceReportingMethodForm] = Form[IncomeSourceReportingMethodForm](
     mapping(
       newTaxYear1ReportingMethod -> optional(text)
         .verifying(newTaxYear1ReportingMethod, taxYearReporting1 => taxYearReporting1.isEmpty || validRadioOptions.contains(taxYearReporting1.get)),
@@ -40,11 +40,11 @@ object AddForeignPropertyReportingMethodForm extends CustomConstraints {
       taxYear1ReportingMethod -> optional(text),
       taxYear2 -> optional(text),
       taxYear2ReportingMethod -> optional(text)
-    )(AddForeignPropertyReportingMethodForm.apply)(AddForeignPropertyReportingMethodForm.unapply)
+    )(IncomeSourceReportingMethodForm.apply)(IncomeSourceReportingMethodForm.unapply)
   )
 
-  def updateErrorMessagesWithValues(form: Form[AddForeignPropertyReportingMethodForm]): Form[AddForeignPropertyReportingMethodForm] = {
-    form.errors.foldLeft[Form[AddForeignPropertyReportingMethodForm]](form.discardingErrors)((reportingMethodFormValues, formError) => {
+  def updateErrorMessagesWithValues(form: Form[IncomeSourceReportingMethodForm]): Form[IncomeSourceReportingMethodForm] = {
+    form.errors.foldLeft[Form[IncomeSourceReportingMethodForm]](form.discardingErrors)((reportingMethodFormValues, formError) => {
       reportingMethodFormValues.data.get(formError.message + "_tax_year") match {
         case Some(year) =>
           val taxYearTo = year.toInt
@@ -56,21 +56,19 @@ object AddForeignPropertyReportingMethodForm extends CustomConstraints {
   }
 }
 
-case class AddForeignPropertyReportingMethodForm(newTaxYear1ReportingMethod: Option[String],
-                                                 newTaxYear2ReportingMethod: Option[String],
-                                                 taxYear1: Option[String],
-                                                 taxYear1ReportingMethod: Option[String],
-                                                 taxYear2: Option[String],
-                                                 taxYear2ReportingMethod: Option[String]) {
-
-  def reportingMethodIsChanged: Boolean = taxYear1ReportingMethod != newTaxYear1ReportingMethod || taxYear2ReportingMethod != newTaxYear2ReportingMethod
+case class IncomeSourceReportingMethodForm(newTaxYear1ReportingMethod: Option[String],
+                                           newTaxYear2ReportingMethod: Option[String],
+                                           taxYear1: Option[String],
+                                           taxYear1ReportingMethod: Option[String],
+                                           taxYear2: Option[String],
+                                           taxYear2ReportingMethod: Option[String]) {
 
   def toFormMap: Map[String, Option[String]] = Map(
-    AddForeignPropertyReportingMethodForm.newTaxYear1ReportingMethod -> newTaxYear1ReportingMethod,
-    AddForeignPropertyReportingMethodForm.newTaxYear2ReportingMethod -> newTaxYear2ReportingMethod,
-    AddForeignPropertyReportingMethodForm.taxYear1 -> taxYear1,
-    AddForeignPropertyReportingMethodForm.taxYear2 -> taxYear2,
-    AddForeignPropertyReportingMethodForm.taxYear1ReportingMethod -> taxYear1ReportingMethod,
-    AddForeignPropertyReportingMethodForm.taxYear2ReportingMethod -> taxYear2ReportingMethod)
-}
+    IncomeSourceReportingMethodForm.newTaxYear1ReportingMethod -> newTaxYear1ReportingMethod,
+    IncomeSourceReportingMethodForm.newTaxYear2ReportingMethod -> newTaxYear2ReportingMethod,
+    IncomeSourceReportingMethodForm.taxYear1 -> taxYear1,
+    IncomeSourceReportingMethodForm.taxYear2 -> taxYear2,
+    IncomeSourceReportingMethodForm.taxYear1ReportingMethod -> taxYear1ReportingMethod,
+    IncomeSourceReportingMethodForm.taxYear2ReportingMethod -> taxYear2ReportingMethod)
 
+}
