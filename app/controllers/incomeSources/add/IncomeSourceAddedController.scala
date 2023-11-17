@@ -22,10 +22,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService}
+import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceAddedObligations
@@ -43,7 +45,8 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: IncomeSourceAddedObligations,
-                                            nextUpdatesService: NextUpdatesService)
+                                            nextUpdatesService: NextUpdatesService,
+                                            sessionService: SessionService)
                                            (implicit val appConfig: FrontendAppConfig,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             implicit override val mcc: MessagesControllerComponents,
@@ -87,22 +90,27 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   }
 
   def handleSuccess(incomeSourceId: String, incomeSourceType: IncomeSourceType, startDate: LocalDate, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    incomeSourceType match {
-      //immediately set hasBeenAdded to true
-      case SelfEmployment =>
-        businessName match {
-          case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
+    sessionService.setMongoKey(AddIncomeSourceData.hasBeenAddedField, "true", JourneyType(Add, incomeSourceType)).flatMap {
+      case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error retrieving data from session: ${ex.getMessage}, IncomeSourceType: $incomeSourceType")
+        Future.successful {if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
+        else itvcErrorHandler.showInternalServerError()}
+      case Right(_) => incomeSourceType match {
+        case SelfEmployment =>
+          businessName match {
+            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+              Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
+            }
+            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+              Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
+            }
           }
-          case None => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-            Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-          }
+        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+          Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
         }
-      case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-        Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
-      }
-      case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
-        Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
+        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+          Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
+        }
       }
     }
   }

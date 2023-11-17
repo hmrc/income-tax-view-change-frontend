@@ -22,6 +22,8 @@
 @this(
         mainTemplate: unifiedLayout,
         h1: h1,
+        h2: h2,
+        link: link,
         p: p,
         formWithCSRF: FormWithCSRF,
         continueButton: ContinueButton)
@@ -36,18 +38,34 @@
     }
 }
 
+@getManageUrl = @{
+    controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
+}
+
+@getHomeUrl = @{
+    if(isAgent) controllers.routes.HomeController.showAgent.url
+    else controllers.routes.HomeController.show().url
+}
+
 @mainTemplate(
-  pageTitle = messages("incomeSources.add.error.standardError"),
-  isAgent = isAgent,
-  backUrl = None,
-  btaNavPartial = user.btaNavPartial) {
+    pageTitle = s"${messages("cannot-go-back.heading")} - $getAddedMessage",
+    isAgent = isAgent,
+    backUrl = None,
+    btaNavPartial = user.btaNavPartial) {
 
-  @h1(msg = "cannot-go-back.title", classes = "govuk-heading-l govuk-!-margin-bottom-5")
+    @h1(msg = messages("cannot-go-back.heading"), classes = "govuk-heading-xl")
 
-  @p(id = Some("paragraph-1")){
-    @getAddedMessage
-  }
+    @h2(msg = getAddedMessage, classes = "govuk-heading-m")
 
+    <p class="govuk-body">@messages("cannot-go-back.you-can")</p>
 
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@p(classes = "govuk-!-margin-bottom-4") {
+            @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link")
+        }</li>
 
+        <li>@p(classes = "govuk-!-margin-bottom-4") {
+            @link(link = getHomeUrl, messageKey = "cannot-go-back.home-link")
+        }</li>
+    </ul>
 }
