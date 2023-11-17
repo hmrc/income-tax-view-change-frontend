@@ -51,6 +51,7 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
 
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(

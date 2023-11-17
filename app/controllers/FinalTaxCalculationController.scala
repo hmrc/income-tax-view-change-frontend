@@ -43,8 +43,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                               view: FinalTaxCalculationView,
                                               checkSessionTimeout: SessionTimeoutPredicate,
                                               authenticate: AuthenticationPredicate,
-                                              retrieveNino: NinoPredicate,
-                                              retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                              retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                               calcService: CalculationService,
                                               itvcErrorHandler: ItvcErrorHandler,
                                               val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -54,8 +53,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                               implicit val appConfig: FrontendAppConfig
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen retrieveNino andThen
-    retrieveIncomeSources andThen retrieveBtaNavBar
+  val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
+    retrieveNinoWithIncomeSources andThen retrieveBtaNavBar
 
 
   def handleShowRequest(taxYear: Int,
@@ -78,8 +77,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
 
-  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,

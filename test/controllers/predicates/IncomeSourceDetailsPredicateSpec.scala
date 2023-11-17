@@ -18,7 +18,7 @@ package controllers.predicates
 
 import testConstants.BaseTestConstants.{testMtditid, testNino, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.ItvcErrorHandler
 import mocks.services.{MockAsyncCacheApi, MockIncomeSourceDetailsService}
 import play.api.http.Status
@@ -37,7 +37,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
     ec, app.injector.instanceOf[MessagesControllerComponents]
   )
 
-  lazy val userWithNino: MtdItUserWithNino[Any] = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
+  lazy val userOptionNino: MtdItUserOptionNino[Any] = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName),
     None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
   lazy val successResponse: MtdItUser[Any] = MtdItUser(testMtditid, testNino, Some(testRetrievedUserName), singleBusinessIncome,
     None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
@@ -48,7 +48,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
 
       "return the expected MtdItUser" in {
         mockSingleBusinessIncomeSource()
-        val result = IncomeSourceDetailsPredicate.refine(userWithNino)
+        val result = IncomeSourceDetailsPredicate.refine(userOptionNino)
         result.futureValue.toOption.get shouldBe successResponse
       }
 
@@ -58,7 +58,7 @@ class IncomeSourceDetailsPredicateSpec extends TestSupport with MockIncomeSource
 
       "Return Status of 500 (ISE)" in {
         mockErrorIncomeSource()
-        val result = IncomeSourceDetailsPredicate.refine(userWithNino)
+        val result = IncomeSourceDetailsPredicate.refine(userOptionNino)
         status(Future.successful(result.futureValue.swap.toOption.value)) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }

@@ -70,7 +70,6 @@ class UKPropertyReportingMethodControllerSpec extends TestSupport with MockAuthe
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate],
     mockUKPropertyReportingMethod,
     mockUpdateIncomeSourceService,
     mockITSAStatusService,

@@ -43,7 +43,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
                                                 val checkSessionTimeout: SessionTimeoutPredicate,
                                                 val authenticate: AuthenticationPredicate,
                                                 val retrieveNino: NinoPredicate,
-                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                 val calculationService: CalculationService,
                                                 val auditingService: AuditingService,
                                                 val retrieveBtaNavBar: NavBarFromNinoPredicate,

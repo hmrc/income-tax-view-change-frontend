@@ -85,6 +85,7 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
   lazy val playSessionCookie: String = bakeSessionCookie(clientDetailsWithConfirmation)
 
   lazy val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(

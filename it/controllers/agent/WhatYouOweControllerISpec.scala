@@ -30,6 +30,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
   val testDate: LocalDate = LocalDate.parse("2022-01-01")
 
   val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
@@ -82,6 +83,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
           response = IncomeSourceDetailsModel(
+            nino = testNino,
             mtdbsa = testMtditid,
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(

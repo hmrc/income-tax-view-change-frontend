@@ -45,8 +45,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val incomeSourceEndDateForm: IncomeSourceEndDateForm,
                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                               val retrieveBtaNavBar: NavBarPredicate,
-                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                              val retrieveNino: NinoPredicate,
+                                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
                                               val sessionService: SessionService)
                                              (implicit val appConfig: FrontendAppConfig,
@@ -113,8 +112,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
@@ -139,8 +138,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   }
 
   def showChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNino
-      andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           isAgent = false,
@@ -196,8 +195,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       errorHandler.showInternalServerError()
   }
 
-  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(
         isAgent = false,
@@ -221,8 +220,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         }
   }
 
-  def submitChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def submitChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmitRequest(
         isAgent = false,

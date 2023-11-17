@@ -52,7 +52,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       mtditid = testMtditid,
       nino = testNino,
       userName = Some(Name(Some("firstName"), Some("lastName"))),
-      incomeSources = IncomeSourceDetailsModel(testMtditid, yearOfMigration, List.empty, List.empty),
+      incomeSources = IncomeSourceDetailsModel(testNino, testMtditid, yearOfMigration, List.empty, List.empty),
       btaNavPartial = None,
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),

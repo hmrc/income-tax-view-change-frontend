@@ -44,8 +44,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val authenticate: AuthenticationPredicate,
-                                        val retrieveNino: NinoPredicate,
-                                        val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                         val calculationService: CalculationService,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val itvcErrorHandler: ItvcErrorHandler,
@@ -86,7 +85,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
 
 
   def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNino andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
       implicit user =>
         handleRequest(
           origin = origin,

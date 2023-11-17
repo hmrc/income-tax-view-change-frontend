@@ -38,6 +38,7 @@ import java.time.LocalDate
 class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
   val incomeSourceDetails: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(

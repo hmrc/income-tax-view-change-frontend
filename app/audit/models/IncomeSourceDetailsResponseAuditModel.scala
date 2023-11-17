@@ -17,11 +17,11 @@
 package audit.models
 
 import audit.Utilities._
-import auth.MtdItUserWithNino
+import auth.MtdItUserOptionNino
 import play.api.libs.json.{JsValue, Json}
 import utils.Utilities._
 
-case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserWithNino[_],
+case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserOptionNino[_],
                                                  selfEmploymentIds: List[String],
                                                  propertyIncomeIds: List[String],
                                                  yearOfMigration: Option[String]) extends ExtendedAuditModel {
@@ -31,13 +31,13 @@ case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserWithNino[_]
 
   override val detail: JsValue = {
       Json.obj("mtditid" -> mtdItUser.mtditid,
-        "nationalInsuranceNumber" -> mtdItUser.nino,
         "selfEmploymentIncomeSourceIds" -> selfEmploymentIds,
         "propertyIncomeSourceIds" -> propertyIncomeIds) ++
         ("agentReferenceNumber", mtdItUser.arn) ++
         ("saUtr", mtdItUser.saUtr) ++
         userType(mtdItUser.userType) ++
         ("credId", mtdItUser.credId) ++
+        ("nationalInsuranceNumber", mtdItUser.nino) ++
         ("dateOfMigration", yearOfMigration)
   }
 }

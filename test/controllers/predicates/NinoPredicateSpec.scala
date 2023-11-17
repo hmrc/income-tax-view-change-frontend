@@ -35,12 +35,12 @@ class NinoPredicateSpec extends TestSupport with MockNinoLookupService with Eith
 
   "The NinoPredicate" when {
 
-    lazy val userNoNino = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some(Individual))(fakeRequestWithActiveSession)
-    lazy val userNinoInSession = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some(Individual))(fakeRequestWithNino)
-    lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName),
-      Some("testUtr"), Some("testCredId"), Some(Individual))(fakeRequestWithActiveSession)
+    lazy val userNoNino = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName), None,
+      Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithActiveSession)
+    lazy val userNinoInSession = MtdItUserOptionNino(testMtditid, None, Some(testRetrievedUserName), None,
+      Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithNino)
+    lazy val userWithNino = MtdItUserOptionNino(testMtditid, Some(testNino), Some(testRetrievedUserName), None,
+      Some("testUtr"), Some("testCredId"), Some(Individual), None)(fakeRequestWithActiveSession)
     lazy val successResponse = MtdItUserWithNino(testMtditid, testNino, Some(testRetrievedUserName),
       btaNavPartial = None, Some("testUtr"), Some("testCredId"), Some(Individual), None)
 

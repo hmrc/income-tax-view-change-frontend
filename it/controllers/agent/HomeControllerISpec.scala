@@ -33,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
+import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart, testMtdItId}
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -52,6 +52,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
   import implicitDateFormatter.longDate
 
   val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
@@ -559,6 +560,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
         status = INTERNAL_SERVER_ERROR,
         response = IncomeSourceDetailsModel(
+          nino = testNino,
           mtdbsa = testMtditid,
           yearOfMigration = None,
           businesses = List(BusinessDetailsModel(

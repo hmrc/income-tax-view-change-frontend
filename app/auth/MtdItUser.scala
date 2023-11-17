@@ -42,9 +42,11 @@ abstract class MtdItUserBase[A](implicit request: Request[A]) extends WrappedReq
 case class MtdItUserOptionNino[A](mtditid: String,
                                   nino: Option[String],
                                   userName: Option[Name],
+                                  btaNavPartial: Option[Html] = None,
                                   saUtr: Option[String],
                                   credId: Option[String],
-                                  userType: Option[AffinityGroup])(implicit request: Request[A]) extends WrappedRequest[A](request)
+                                  userType: Option[AffinityGroup],
+                                  arn: Option[String])(implicit request: Request[A]) extends WrappedRequest[A](request)
 
 case class MtdItUserWithNino[A](mtditid: String,
                                 nino: String,

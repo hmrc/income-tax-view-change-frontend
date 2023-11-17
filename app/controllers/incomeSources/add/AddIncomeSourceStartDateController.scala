@@ -45,9 +45,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationPredicate,
                                                    val authorisedFunctions: AuthorisedFunctions,
                                                    checkSessionTimeout: SessionTimeoutPredicate,
-                                                   retrieveNino: NinoPredicate,
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
-                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                    incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -173,8 +172,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             }
       }
     else
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+      (checkSessionTimeout andThen authenticate
+        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
   }

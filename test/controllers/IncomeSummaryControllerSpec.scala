@@ -30,7 +30,7 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testTaxYear}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testMtditid, testNino, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testUtils.TestSupport
@@ -51,7 +51,6 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     mockCalculationService,
@@ -132,11 +131,11 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status OK (200) with html content and right title" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(liabilityCalculationModelSuccessful)
+        setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(liabilityCalculationModelSuccessful)
         mockIncomeBreakdown(testYear, IncomeBreakdownViewModel(liabilityCalculationModelSuccessful.calculation).get,
           controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYear).url, isAgent)(HtmlFormat.empty)
 
-        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient())
+        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe OK
         contentType(result) shouldBe Some(HTML)
@@ -146,9 +145,9 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "throw an internal server exception" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockErrorIncomeSource()
-        setupMockGetCalculationNew("XAIT00000000015", "AA111111A", testYear)(liabilityCalculationModelSuccessful)
+        setupMockGetCalculationNew("XAIT00000000015", testNino, testYear)(liabilityCalculationModelSuccessful)
         mockShowInternalServerError()
-        val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient()).failed.futureValue
+        val exception = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino)).failed.futureValue
         exception shouldBe an[InternalServerException]
         exception.getMessage shouldBe "[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created"
       }
@@ -159,10 +158,10 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status Internal Server Error (500)" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationNotFoundNew(nino = "AA111111A", year = testYear)
+        mockCalculationNotFoundNew(nino = testNino, year = testYear)
         mockShowInternalServerError()
 
-        lazy val result = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient())
+        lazy val result = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -172,10 +171,10 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
       "return Status Internal Server Error (500)" in {
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         mockBothIncomeSources()
-        mockCalculationErrorNew(nino = "AA111111A", year = testYear)
+        mockCalculationErrorNew(nino = testNino, year = testYear)
         mockShowInternalServerError()
 
-        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient())
+        lazy val result: Future[Result] = TestIncomeSummaryController.showIncomeSummaryAgent(testYear)(fakeRequestConfirmedClient(testNino))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
