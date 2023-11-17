@@ -133,7 +133,7 @@ object TaxYearId {
   // Expect to convert LocalDate type to TaxYearId instance
   def mkTaxYear(date: LocalDate) : TaxYearId = {
     // We simply expect TaxYear to be one of these:
-    Seq( mkTaxYearId( date.getYear), mkTaxYearId( date.getYear + 1) )
+    Seq( mkTaxYearId( date.getYear), mkTaxYearId( date.getYear - 1) )
       .find(_.contains(date)).get
   }
 
