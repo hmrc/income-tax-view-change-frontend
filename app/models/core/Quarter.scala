@@ -24,15 +24,10 @@ object Quarter {
     taxYear.quarters(number)
   }.toEither
 
-  def mkQuarter(date: LocalDate) : Either[Throwable, Quarter] = {
+  def mkQuarter(date: LocalDate) : Quarter = {
     val taxYear = mkTaxYear(date)
-    taxYear.quarters.find(_.contains(date)) match {
-      case Some(quarter) => Right(quarter)
-      case None => {
-        Left(new Error(s"TaxYear: ${taxYear.firstYear}-${taxYear.secondYear} does not contain date: $date"))
-      }
-    }
-
+    // as taxYear created based on the date we should be find relevant quarter
+    taxYear.quarters.find(_.contains(date)).get
   }
 }
 
