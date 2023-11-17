@@ -16,6 +16,7 @@
 
 package models.core
 
+import models.core.Quarter.mkQuarter
 import models.core.TaxYearId.{FIFTHS_DAY_OF_MONTH, SIXTH_DAY_OF_MONTH, formatterFull, formatterShort}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear._
@@ -25,6 +26,7 @@ import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
+
 class TaxYearId private(val firstYear: Int) extends AnyVal {
   def secondYear: Int = firstYear + 1 // Always
 
@@ -32,11 +34,31 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
 
   def prev: TaxYearId = new TaxYearId(firstYear - 1)
 
+  def quarters : Seq[Quarter] = {
+    for {
+      number <- 1 to 4
+    } yield mkQuarter(number).toOption.get // Always expect Quarter to be evaluate under this range
+  }
+
   def toModel: TaxYear = mkTaxYear(this)
 
   def from: LocalDate = LocalDate.of(firstYear, Month.APRIL, SIXTH_DAY_OF_MONTH)
 
   def to: LocalDate = LocalDate.of(secondYear, Month.APRIL, FIFTHS_DAY_OF_MONTH)
+
+  def contains(date: LocalDate): Boolean = {
+    // TODO: verify this with relevant unit test as there can be edge cases
+    date.toEpochDay >= from.toEpochDay && date.toEpochDay <= to.toEpochDay
+  }
+
+  // Only quarter available within taxYear can be created
+  def mkQuater(date: LocalDate): Either[Throwable, Quarter] = {
+    if (contains(date)) {
+      Right(Quarter.mkQuarter(date))
+    } else {
+      Left(new Error(s"TaxYear: $firstYear-$secondYear does not contain date: $date"))
+    }
+  }
 
   // tax year in format: YYYY-YY
   def normalised: String = {
@@ -107,5 +129,8 @@ object TaxYearId {
         Left(new Error(s"Not valid taxYear: $internalTaxYear"))
     }
   }
+
+  // Expect to convert LocalDate type to TaxYearId instance
+  def mkTaxYear(date: LocalDate) : TaxYearId = ???
 
 }
