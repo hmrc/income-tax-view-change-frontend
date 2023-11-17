@@ -37,7 +37,7 @@ class TaxYearId private(val firstYear: Int) extends AnyVal {
   def quarters : Seq[Quarter] = {
     for {
       number <- 1 to 4
-    } yield mkQuarter(number).toOption.get // Always expect Quarter to be evaluate under this range
+    } yield mkQuarter(this, number).toOption.get // Always expect Quarter to be evaluate under this range
   }
 
   def toModel: TaxYear = mkTaxYear(this)
