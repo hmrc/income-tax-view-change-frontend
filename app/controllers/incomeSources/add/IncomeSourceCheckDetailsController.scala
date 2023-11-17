@@ -208,9 +208,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       case Right(viewModel) =>
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
-            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType)).flatMap { _ =>
-              Future.successful(Redirect(redirect(id).url))
-            }
+            Future.successful(Redirect(redirect(id).url))
           case Left(ex) => Future.failed(ex)
         }
       case Left(ex) =>

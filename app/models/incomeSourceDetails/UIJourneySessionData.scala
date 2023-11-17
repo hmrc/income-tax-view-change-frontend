@@ -72,7 +72,7 @@ case class AddIncomeSourceData(
                                 address: Option[Address] = None,
                                 countryCode: Option[String] = None,
                                 incomeSourcesAccountingMethod: Option[String] = None,
-                                hasBeenAdded: Option[String] = Some("false")
+                                hasBeenAdded: Option[Boolean] = None
 )
 
 object AddIncomeSourceData {

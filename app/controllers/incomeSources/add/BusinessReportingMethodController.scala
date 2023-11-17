@@ -24,8 +24,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.AddBusinessReportingMethodForm
-import models.incomeSourceDetails.LatencyDetails
+import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails}
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
@@ -53,7 +54,8 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
                                                   val dateService: DateService,
                                                   val calculationListService: CalculationListService,
                                                   val auditingService: AuditingService,
-                                                  val customNotFoundErrorView: CustomNotFoundError)
+                                                  val customNotFoundErrorView: CustomNotFoundError,
+                                                  val sessionService: SessionService)
                                                  (implicit val appConfig: FrontendAppConfig,
                                                   mcc: MessagesControllerComponents,
                                                   val ec: ExecutionContext,
@@ -92,28 +94,38 @@ class BusinessReportingMethodController @Inject()(val authenticate: Authenticati
   private def handleRequest(isAgent: Boolean, id: String)
                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
-    //add check if user has visited obligations from mongo
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.BusinessReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.BusinessReportingMethodController.submit(id)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, SelfEmployment) else
+    val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, SelfEmployment) else {
       controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, SelfEmployment)
+    }
+    val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(SelfEmployment) else
+      controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment)
 
     withIncomeSourcesFS {
-      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-        case true =>
-          getBusinessReportingMethodDetails(id).map {
-            case Some(viewModel) =>
-              Ok(view(
-                addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
-                businessReportingViewModel = viewModel,
-                postAction = postAction,
-                isAgent = isAgent)(user, messages))
-            case None =>
-              Redirect(redirectUrl)
-          }
+      sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, SelfEmployment)).flatMap {
+        case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
+          Future.successful(errorHandler.showInternalServerError())
+        case Right(hasBeenAdded) => hasBeenAdded match {
+          case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
+          case _ => itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+            case true =>
+              getBusinessReportingMethodDetails(id).map {
+                case Some(viewModel) =>
+                  Ok(view(
+                    addBusinessReportingMethodForm = AddBusinessReportingMethodForm.form,
+                    businessReportingViewModel = viewModel,
+                    postAction = postAction,
+                    isAgent = isAgent)(user, messages))
+                case None =>
+                  Redirect(redirectUrl)
+              }
 
-        case false => Future.successful(Redirect(redirectUrl))
+            case false => Future.successful(Redirect(redirectUrl))
+          }
+        }
       }
     }.recover {
       case ex: Exception =>

@@ -23,12 +23,13 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
@@ -73,7 +74,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
       incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          handleSuccess(incomeSourceId, incomeSourceType, startDate, businessName, showPreviousTaxYears, isAgent)
+          handleSuccess(incomeSourceId, incomeSourceType, businessName, showPreviousTaxYears, isAgent)
         case None => Logger("application").error(
           s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
           if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
@@ -88,13 +89,13 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     }
   }
 
-  def handleSuccess(incomeSourceId: String, incomeSourceType: IncomeSourceType, startDate: LocalDate, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    sessionService.setMongoKey(AddIncomeSourceData.hasBeenAddedField, "true", JourneyType(Add, incomeSourceType)).flatMap {
-      case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error retrieving data from session: ${ex.getMessage}, IncomeSourceType: $incomeSourceType")
+  def handleSuccess(incomeSourceId: String, incomeSourceType: IncomeSourceType, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    updateMongoAdded.flatMap {
+      case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
         else itvcErrorHandler.showInternalServerError()}
-      case Right(_) => incomeSourceType match {
+      case true => incomeSourceType match {
         case SelfEmployment =>
           businessName match {
             case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
@@ -111,6 +112,19 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
           Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
         }
       }
+    }
+  }
+
+  private def updateMongoAdded(implicit hc: HeaderCarrier): Future[Boolean] = {
+    sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).flatMap {
+      case Right(Some(sessionData)) =>
+        val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(hasBeenAdded = Some(true))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+
+        sessionService.setMongoData(uiJourneySessionData)
+
+      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
     }
   }
 
