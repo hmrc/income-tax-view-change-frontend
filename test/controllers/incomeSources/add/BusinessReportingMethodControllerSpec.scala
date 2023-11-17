@@ -33,7 +33,7 @@ import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
+import services.{CalculationListService, DateService, ITSAStatusService, SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.UpdateIncomeSourceTestConstants.failureResponse
@@ -74,7 +74,8 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     mockDateService,
     mockCalculationListService,
     auditingService = mockAuditingService,
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[CustomNotFoundError],
+    app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {

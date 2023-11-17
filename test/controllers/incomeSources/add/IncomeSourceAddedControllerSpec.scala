@@ -20,11 +20,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney._
+import enums.JourneyType.{Add, JourneyType}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, UIJourneySessionData}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
@@ -33,7 +34,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{redirectLocation, status}
 import services.{DateService, SessionService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testPropertyIncomeId, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -56,6 +57,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   with FeatureSwitching {
 
   val mockDateService: DateService = mock(classOf[DateService])
+  val mockSessionService: SessionService = mock(classOf[SessionService])
 
   object TestIncomeSourceAddedController extends IncomeSourceAddedController(
     MockAuthenticationPredicate,
@@ -67,7 +69,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
     mockNextUpdatesService,
-    sessionService = app.injector.instanceOf[SessionService]
+    mockSessionService
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
@@ -112,6 +114,13 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), any())(any())).thenReturn(
       None
     )
+  }
+
+  def mockMongo():Unit = {
+    when(mockSessionService.getMongo(any())(any(), any())).thenReturn(
+      Future(Right(Some(UIJourneySessionData(testSessionId, JourneyType(Add, SelfEmployment).toString,
+        addIncomeSourceData = Some(AddIncomeSourceData()))))))
+    when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
   }
 
 
@@ -193,6 +202,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
+        mockMongo()
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -304,6 +314,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
+          mockMongo()
+
           val result = TestIncomeSourceAddedController.show(testSelfEmploymentId, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
         }
@@ -342,6 +354,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
+          mockMongo()
 
           val result = TestIncomeSourceAddedController.showAgent(testSelfEmploymentId, UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
@@ -404,6 +417,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           )))
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(testObligationsModel))
+          mockMongo()
 
           val result: Future[Result] = TestIncomeSourceAddedController.show("123456", ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
@@ -443,6 +457,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           )))
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(testObligationsModel))
+          mockMongo()
 
           val result: Future[Result] = TestIncomeSourceAddedController.showAgent("123", ForeignProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
