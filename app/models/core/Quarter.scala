@@ -19,9 +19,8 @@ class Quarter private(val number: Int) extends AnyVal {
 }
 
 object Quarter {
-  def mkQuarter(number: Int, taxYearId: Int) : Either[Throwable, Quarter] = Try {
+  def mkQuarter(number: Int, taxYear: TaxYearId) : Either[Throwable, Quarter] = Try {
     require(number > 0 && number < 5, "Quarter number must be between 1 and 4")
-    val taxYear = mkTaxYearId(taxYearId)
     taxYear.quarters(number)
   }.toEither
 
