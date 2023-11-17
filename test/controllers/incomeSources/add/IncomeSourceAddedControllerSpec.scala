@@ -31,7 +31,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{redirectLocation, status}
-import services.DateService
+import services.{DateService, SessionService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testPropertyIncomeId, testSelfEmploymentId}
 import testUtils.TestSupport
@@ -66,7 +66,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
-    mockNextUpdatesService
+    mockNextUpdatesService,
+    sessionService = app.injector.instanceOf[SessionService]
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],

@@ -33,8 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class YouCannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                                val authenticate: AuthenticationPredicate,
                                                val authorisedFunctions: AuthorisedFunctions,
-                                               val retrieveNino: NinoPredicate,
-                                               val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                               val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
                                                val cannotGoBackError: YouCannotGoBackError)
@@ -50,8 +49,8 @@ class YouCannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionT
     Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType)))
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         isAgent = false,
