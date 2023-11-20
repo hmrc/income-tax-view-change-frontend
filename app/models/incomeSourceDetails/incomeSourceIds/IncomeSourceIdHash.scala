@@ -37,7 +37,7 @@ object IncomeSourceIdHash {
     new IncomeSourceIdHash(hash)
   }
 
-  def mkIncomeSourceIdHashFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {
+  def mkFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {
     new IncomeSourceIdHash(hashCodeAsString)
   }.toEither
 
