@@ -85,6 +85,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     IncomeSourceDetailsModel("", Some("2018"), List(business1.copy("", None, None, None)), List(propertyDetails.copy("", None, None))), btaNavPartial = None, Some(testSaUtr), Some(testCredId), Some(testUserTypeIndividual), None)(FakeRequest())
   val testSelfEmploymentId = "XA00001234"
   val testSelfEmploymentId2 = "XA00001235"
+  val testSelfEmploymentIdValidation = "XAIS00000000002"
   val testPropertyIncomeId = "1234"
   val testPropertyIncomeId2 = "1235"
   val testTaxCalculationId = "CALCID"
