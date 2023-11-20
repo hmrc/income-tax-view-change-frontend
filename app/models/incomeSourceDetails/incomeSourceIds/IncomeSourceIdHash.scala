@@ -38,8 +38,7 @@ object IncomeSourceIdHash {
   }
 
   def mkIncomeSourceIdHashFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {
-    val hash = hashCodeAsString.hashCode().abs.toString
-    new IncomeSourceIdHash(hash)
+    new IncomeSourceIdHash(hashCodeAsString)
   }.toEither
 
 }

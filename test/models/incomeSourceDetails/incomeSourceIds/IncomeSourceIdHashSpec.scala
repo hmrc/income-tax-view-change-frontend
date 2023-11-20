@@ -24,6 +24,8 @@ import testUtils.UnitSpec
 
 class IncomeSourceIdHashSpec extends UnitSpec {
 
+  val hashValue: String = "1487316523"
+
   "IncomeSourceIdHash class" should {
 
     "return IncomeSourceIdHash objects" when {
@@ -33,7 +35,7 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceIdHashFromIncomeSourceId: IncomeSourceIdHash = IncomeSourceIdHash.mkIncomeSourceIdHash(incomeSourceId)
 
         val incomeSourceIdHashFromQueryString: Either[Throwable, IncomeSourceIdHash] =
-          IncomeSourceIdHash.mkIncomeSourceIdHashFromQueryString(testSelfEmploymentId)
+          IncomeSourceIdHash.mkIncomeSourceIdHashFromQueryString(hashValue)
 
         incomeSourceIdHashFromQueryString match {
           case Left(error) => Failed(s"IncomeSourceIdHash.mkFromQueryString returned an Either[Left[Throwable]] with value: $error")
@@ -59,7 +61,7 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceIdHashFromIncomeSourceIdToString: String = IncomeSourceIdHash.mkIncomeSourceIdHash(incomeSourceId).toString
 
         val incomeSourceIdHashFromQueryString: Either[Throwable, IncomeSourceIdHash] =
-          IncomeSourceIdHash.mkIncomeSourceIdHashFromQueryString(testSelfEmploymentId)
+          IncomeSourceIdHash.mkIncomeSourceIdHashFromQueryString(hashValue)
 
         incomeSourceIdHashFromQueryString match {
           case Left(error) => Failed(s"IncomeSourceIdHash.mkFromQueryString returned an Either[Left[Throwable]] with value: $error")
