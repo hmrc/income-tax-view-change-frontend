@@ -16,11 +16,11 @@
 
 package models.incomeSourceDetails.incomeSourceIds
 
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkFromIncomeSourceId
+import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkIncomeSourceIdHash
 import play.api.{Logger, Logging}
 
 class IncomeSourceId private(val value: String) extends AnyVal {
-  def toHash: IncomeSourceIdHash = mkFromIncomeSourceId(this)
+  def toHash: IncomeSourceIdHash = mkIncomeSourceIdHash(this)
 
   override def toString: String = s"IncomeSourceId: $value"
 }
