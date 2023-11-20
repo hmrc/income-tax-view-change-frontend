@@ -16,11 +16,11 @@
 
 package models.incomeSourceDetails.incomeSourceIds
 
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkIncomeSourceIdHash
+import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkFromIncomeSourceId
 import play.api.{Logger, Logging}
 
 class IncomeSourceId private(val value: String) extends AnyVal {
-  def toHash: IncomeSourceIdHash = mkIncomeSourceIdHash(this)
+  def toHash: IncomeSourceIdHash = mkFromIncomeSourceId(this)
 
   override def toString: String = s"IncomeSourceId: $value"
 }
@@ -29,18 +29,12 @@ class IncomeSourceId private(val value: String) extends AnyVal {
 object IncomeSourceId {
   def mkIncomeSourceId(incomeSourceAsString: String): IncomeSourceId = {
 
-    if (validateStringAsIncomeSourceId(incomeSourceAsString = incomeSourceAsString)) {
-      new IncomeSourceId(incomeSourceAsString)
-    } else {
-      Logger("application").info(s"[IncomeSourceId][mkIncomeSourceId] incomeSourceId was not the correct length or contained special characters")
-      new IncomeSourceId(incomeSourceAsString)
-    }
+    new IncomeSourceId(incomeSourceAsString)
 
   }
 
-  def validateStringAsIncomeSourceId(incomeSourceAsString: String): Boolean = {
-    val validPattern = "^[a-zA-Z0-9]{15}$".r
+  // For future validation implementation:
+  // suggested valid pattern - val validPattern = "^[a-zA-Z0-9]{15}$".r
+  // suggested method of comparison - validPattern.unapplySeq(incomeSourceAsString).isDefined
 
-    validPattern.unapplySeq(incomeSourceAsString).isDefined
-  }
 }

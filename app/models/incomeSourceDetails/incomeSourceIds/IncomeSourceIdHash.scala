@@ -16,13 +16,30 @@
 
 package models.incomeSourceDetails.incomeSourceIds
 
+import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkFromIncomeSourceId
+
+import scala.util.Try
+
 class IncomeSourceIdHash private(val hash: String) extends AnyVal {
   override def toString: String = s"IncomeSourceIdHash: $hash"
+
+  def oneOf(ids: List[IncomeSourceId]): Option[IncomeSourceId] = {
+    ids.find(id => {
+      val hashId = mkFromIncomeSourceId(id)
+      hashId.hash == this.hash
+    })
+  }
 }
 
 object IncomeSourceIdHash {
-  def mkIncomeSourceIdHash(id: IncomeSourceId): IncomeSourceIdHash = {
+  def mkFromIncomeSourceId(id: IncomeSourceId): IncomeSourceIdHash = {
     val hash = id.value.hashCode().abs.toString
     new IncomeSourceIdHash(hash)
   }
+
+  def mkFromQueryString(id: String): Either[Throwable, IncomeSourceIdHash] = Try {
+    val hash = id.hashCode().abs.toString
+    new IncomeSourceIdHash(hash)
+  }.toEither
+
 }

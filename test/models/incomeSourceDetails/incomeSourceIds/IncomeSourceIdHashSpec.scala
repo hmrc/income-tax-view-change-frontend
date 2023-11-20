@@ -14,16 +14,34 @@
  * limitations under the License.
  */
 
-package models.incomeSourceIds
+package models.incomeSourceDetails.incomeSourceIds
 
-import models.incomeSourceDetails.incomeSourceIds.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId.mkIncomeSourceId
-import testConstants.BaseTestConstants.testSelfEmploymentId
+import models.incomeSourceDetails.incomeSourceIds.{IncomeSourceId, IncomeSourceIdHash}
+import org.scalatest.Failed
+import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
 import testUtils.UnitSpec
 
 class IncomeSourceIdHashSpec extends UnitSpec {
 
-  "IncomeSourceIdHash object" should {
+  "IncomeSourceIdHash class" should {
+
+    "return IncomeSourceIdHash objects" when {
+
+      "calling both the mkFromIncomeSourceId and mkFromQueryString methods" in {
+        val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
+        val incomeSourceIdHashFromIncomeSourceId: IncomeSourceIdHash = IncomeSourceIdHash.mkFromIncomeSourceId(incomeSourceId)
+
+        val incomeSourceIdHashFromQueryString: Either[Throwable, IncomeSourceIdHash] = IncomeSourceIdHash.mkFromQueryString(testSelfEmploymentId)
+
+        incomeSourceIdHashFromQueryString match {
+          case Left(error) => Failed("IncomeSourceIdHash.mkFromQueryString returned an Either[Left]")
+          case Right(incomeSourceIdHash) => assert(incomeSourceIdHashFromIncomeSourceId == incomeSourceIdHash)
+        }
+
+      }
+    }
+
     "return the hash of the incomeSourceId" when {
       "supplied with an incomeSourceId object" in {
         val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
@@ -42,6 +60,30 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceIdHashToString: String = s"IncomeSourceIdHash: $hashOfString"
 
         hashObjectHash.toString shouldBe incomeSourceIdHashToString
+      }
+    }
+
+    "return a matching incomeSourceId" when {
+      "given a wanted IncomeSourceId and a list of potential matching IncomeSourceIds, one of which matches" in {
+        val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
+        val incomeSourceId2: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId2)
+        val incomeSourceIdList: List[IncomeSourceId] = List(incomeSourceId, incomeSourceId2)
+
+        val incomeSourceIdMatchingList: Option[IncomeSourceId] = mkIncomeSourceId(testSelfEmploymentId).toHash.oneOf(incomeSourceIdList)
+
+        incomeSourceIdMatchingList shouldBe Option(incomeSourceId)
+      }
+    }
+
+    "return None" when {
+      "given a wanted IncomeSourceId and a list non-matching IncomeSourceIds" in {
+        val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
+        val incomeSourceId2: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId2)
+        val incomeSourceIdList: List[IncomeSourceId] = List(incomeSourceId, incomeSourceId2)
+
+        val incomeSourceIdMatchingList: Option[IncomeSourceId] = mkIncomeSourceId(testSelfEmploymentIdValidation).toHash.oneOf(incomeSourceIdList)
+
+        incomeSourceIdMatchingList shouldBe None
       }
     }
   }

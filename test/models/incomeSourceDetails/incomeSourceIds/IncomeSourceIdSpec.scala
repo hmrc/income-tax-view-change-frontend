@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package models.incomeSourceIds
+package models.incomeSourceDetails.incomeSourceIds
 
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId.{mkIncomeSourceId, validateStringAsIncomeSourceId}
-import models.incomeSourceDetails.incomeSourceIds.{IncomeSourceId, IncomeSourceIdHash}
-import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentIdValidation}
+import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId
+import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId.mkIncomeSourceId
+import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.UnitSpec
 
 class IncomeSourceIdSpec extends UnitSpec {
@@ -31,22 +31,6 @@ class IncomeSourceIdSpec extends UnitSpec {
         val incomeSourceIdToString: String = s"IncomeSourceId: $incomeSourceIdValue"
 
         incomeSourceId.toString shouldBe incomeSourceIdToString
-      }
-    }
-    "return true" when {
-      "validateStringAsIncomeSourceId method is called on a valid incomeSourceId value" in {
-        val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentIdValidation)
-        val incomeSourceIdValidation: Boolean = validateStringAsIncomeSourceId(incomeSourceId.value)
-
-        incomeSourceIdValidation shouldBe true
-      }
-    }
-    "return false" when {
-      "validateStringAsIncomeSourceId method is called on a valid incomeSourceId value" in {
-        val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
-        val incomeSourceIdValidation: Boolean = validateStringAsIncomeSourceId(incomeSourceId.value)
-
-        incomeSourceIdValidation shouldBe false
       }
     }
   }
