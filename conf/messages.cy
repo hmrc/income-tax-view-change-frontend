@@ -572,6 +572,8 @@ taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliada
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
 taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Treth sy’n ddyledus ar daliadau blwydd-daliadau
 taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy’n ddyledus ar freindaliadau
+taxCal_breakdown.table.giftAidTaxReductionWhereBasicRateDiffers     = Gostyngiad treth ar y gwahaniaeth yn y gyfradd sylfaenol
+taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers        = Tâl treth ar y gwahaniaeth yn y gyfradd sylfaenol
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Rhagolwg cyfrifiad treth

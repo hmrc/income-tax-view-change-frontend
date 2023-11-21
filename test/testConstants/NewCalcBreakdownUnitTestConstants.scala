@@ -42,7 +42,7 @@ object NewCalcBreakdownUnitTestConstants {
       periodTo = None)
   )
 
-  val liabilityCalculationModelSuccessful = LiabilityCalculationResponse(
+  val liabilityCalculationModelSuccessful: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
       taxRegime = "UK", class2VoluntaryContributions = Some(true)
     )),
@@ -100,18 +100,19 @@ object NewCalcBreakdownUnitTestConstants {
         studentLoanRepaymentAmount = Some(BigDecimal(5000.99)),
         studentLoanRepaymentAmountNetOfDeductions = Some(BigDecimal(5000.99)),
         studentLoanApportionedIncomeThreshold = Some(BigDecimal(1500)),
-        studentLoanRate = Some(BigDecimal(20)),
+        studentLoanRate = Some(BigDecimal(20))
       ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
         amountUsed = Some(5000.99)),
         ReliefsClaimed(
           `type` = "deficiencyRelief",
-          amountUsed = Some(5000.99)),
+          amountUsed = Some(5000.99))
       )),
         residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
         foreignTaxCreditRelief = Some(ForeignTaxCreditRelief(totalForeignTaxCreditRelief = 5000.99)),
-        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))))),
+        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))),
+        giftAidTaxReductionWhereBasicRateDiffers = Some(GiftAidTaxReductionWhereBasicRateDiffers(amount = Some(127.49))))),
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
         chargeableForeignSavingsAndGains = Some(12500)
       )),
@@ -185,7 +186,8 @@ object NewCalcBreakdownUnitTestConstants {
           incomeTaxDueAfterTaxReductions = Some(5000.99),
           totalPensionSavingsTaxCharges = Some(5000.99),
           statePensionLumpSumCharges = Some(5000.99),
-          payeUnderpaymentsCodedOut = Some(5000.99)
+          payeUnderpaymentsCodedOut = Some(5000.99),
+          giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99)
         ),
         nics = Some(Nics(
           class4Nics = Some(Class4Nics(nic4Bands = Seq(Nic4Bands(
@@ -375,7 +377,8 @@ object NewCalcBreakdownUnitTestConstants {
       reliefs = Some(Reliefs(reliefsClaimed = None,
         residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
         foreignTaxCreditRelief = Some(ForeignTaxCreditRelief(totalForeignTaxCreditRelief = 5000.99)),
-        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))))),
+        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))),
+        giftAidTaxReductionWhereBasicRateDiffers = None)),
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
         chargeableForeignSavingsAndGains = Some(12500)
       )),
@@ -414,7 +417,8 @@ object NewCalcBreakdownUnitTestConstants {
           incomeTaxDueAfterTaxReductions = Some(5000.99),
           totalPensionSavingsTaxCharges = Some(5000.99),
           statePensionLumpSumCharges = Some(5000.99),
-          payeUnderpaymentsCodedOut = Some(5000.99)
+          payeUnderpaymentsCodedOut = Some(5000.99),
+          giftAidTaxChargeWhereBasicRateDiffers = None
         ),
         nics = Some(Nics(
           class4Nics = Some(Class4Nics(nic4Bands = Seq())),
@@ -471,7 +475,7 @@ object NewCalcBreakdownUnitTestConstants {
         occupationalPensions = Some(5000.99),
         stateBenefits = Some(-99999999999.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
-        inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+        inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
       )))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
