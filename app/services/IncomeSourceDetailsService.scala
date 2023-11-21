@@ -159,7 +159,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
         soleTraderBusinesses = if (soleTraderBusinessesExists) {
           maybeSoleTraderBusinesses.map { business =>
             CeaseBusinessDetailsViewModel(
-              business.incomeSourceId,
+              mkIncomeSourceId(business.incomeSourceId),
               business.tradingName,
               business.tradingStartDate
             )
@@ -191,7 +191,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
 
       soleTraderBusinesses.map { business =>
         CheckCeaseIncomeSourceDetailsViewModel(
-          business.incomeSourceId,
+          mkIncomeSourceId(business.incomeSourceId),
           business.tradingName,
           business.address,
           LocalDate.parse(businessEndDate),
@@ -211,7 +211,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     Try {
       propertyBusiness.map { business =>
         CheckCeaseIncomeSourceDetailsViewModel(
-          business.incomeSourceId,
+          mkIncomeSourceId(business.incomeSourceId),
           tradingName = None,
           address = None,
           LocalDate.parse(businessEndDate),
