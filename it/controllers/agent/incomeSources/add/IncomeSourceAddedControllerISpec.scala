@@ -134,7 +134,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val incomeSourceId = testPropertyIncomeId
         val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(incomeSourceId, clientDetailsWithConfirmation)
@@ -143,7 +143,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -186,12 +186,12 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1330 getNextUpdates return a success response")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
         Then("user is shown UK property added page")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added?id=$testPropertyIncomeId", clientDetailsWithConfirmation)
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),

@@ -33,7 +33,7 @@ import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
+import services.{CalculationListService, DateService, ITSAStatusService, SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.UpdateIncomeSourceTestConstants.failureResponse
@@ -61,7 +61,7 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
   val taxYear1ReportingMethod = "tax_year_1_reporting_method"
   val taxYear2ReportingMethod = "tax_year_2_reporting_method"
 
-  object TestForeignPropertyReportingMethodController extends ForeignPropertyReportingMethodController(
+  protected object TestForeignPropertyReportingMethodController extends ForeignPropertyReportingMethodController(
     MockAuthenticationPredicate,
     mockAuthService,
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -74,7 +74,8 @@ class ForeignPropertyReportingMethodControllerSpec extends TestSupport with Mock
     mockDateService,
     mockCalculationListService,
     auditingService = mockAuditingService,
-    app.injector.instanceOf[CustomNotFoundError])(appConfig,
+    app.injector.instanceOf[CustomNotFoundError],
+    app.injector.instanceOf[SessionService])(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
