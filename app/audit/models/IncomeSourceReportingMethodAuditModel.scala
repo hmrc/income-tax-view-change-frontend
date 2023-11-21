@@ -32,12 +32,12 @@ case class IncomeSourceReportingMethodAuditModel(isSuccessful: Boolean,
 
   override val auditType: String = enums.AuditType.UpdateIncomeSource
 
-  val successOutcome: JsObject = Json.obj(
+  private val successOutcome: JsObject = Json.obj(
     "outcome" ->
       Json.obj("isSuccessful" -> isSuccessful)
   )
 
-  val failureOutcome: JsObject = Json.obj(
+  private val failureOutcome: JsObject = Json.obj(
     "outcome" ->
       Json.obj(
         "isSuccessful" -> isSuccessful,
@@ -46,10 +46,10 @@ case class IncomeSourceReportingMethodAuditModel(isSuccessful: Boolean,
       )
   )
 
-  val outCome: JsObject = if (isSuccessful) successOutcome else failureOutcome
+  val outcome: JsObject = if (isSuccessful) successOutcome else failureOutcome
 
   override val detail: JsValue =
-    Utilities.userAuditDetails(user) ++ outCome ++
+    Utilities.userAuditDetails(user) ++ outcome ++
       Json.obj(
         "journeyType" -> journeyType,
         "operationType" -> operationType,

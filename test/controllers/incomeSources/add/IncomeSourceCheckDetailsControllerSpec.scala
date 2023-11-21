@@ -325,13 +325,12 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
               .thenReturn(Future {
                 Right(CreateIncomeSourceResponse(testBusinessId))
               })
+            setupMockCreateSession(true)
             if (incomeSourceType == SelfEmployment) {
-              setupMockCreateSession(true)
               val sessionData: UIJourneySessionData = testUIJourneySessionDataBusiness
               setupMockGetMongo(Right(Some(sessionData)))
             }
             else {
-              setupMockCreateSession(true)
               setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(Some(testPropertyStartDate)))
               setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
             }
@@ -340,17 +339,11 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             val result = if (isAgent) TestCheckDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
 
-            val redirectUrl = (isAgent, incomeSourceType) match {
-              case (false, SelfEmployment) => controllers.incomeSources.add.routes.BusinessReportingMethodController.show(testBusinessId).url
-              case (true, SelfEmployment) => controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent(testBusinessId).url
-              case (false, UkProperty) => controllers.incomeSources.add.routes.UKPropertyReportingMethodController.show(testBusinessId).url
-              case (true, UkProperty) => controllers.incomeSources.add.routes.UKPropertyReportingMethodController.showAgent(testBusinessId).url
-              case (false, ForeignProperty) => controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.show(testBusinessId).url
-              case (true, ForeignProperty) => controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent(testBusinessId).url
-            }
+            val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
+              routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(redirectUrl)
+            redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType, testSelfEmploymentId))
           }
 
           "individual" when {
@@ -402,7 +395,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             val result = if (isAgent) TestCheckDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
 
-            val redirectUrl = if(isAgent) controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
             else controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType).url
 
             status(result) shouldBe SEE_OTHER
