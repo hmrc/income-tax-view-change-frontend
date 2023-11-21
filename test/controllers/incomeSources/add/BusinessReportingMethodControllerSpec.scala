@@ -19,9 +19,11 @@ package controllers.incomeSources.add
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.AddBusinessReportingMethodForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.incomeSourceDetails.viewmodels.BusinessReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
@@ -29,13 +31,14 @@ import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import org.mockito.stubbing.OngoingStubbing
 import play.api.http.Status
 import play.api.http.Status.BAD_REQUEST
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{CalculationListService, DateService, ITSAStatusService, SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
@@ -53,6 +56,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
   val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
   val mockDateService: DateService = mock(classOf[DateService])
+  val mockSessionService: SessionService = mock(classOf[SessionService])
 
   val newTaxYear1ReportingMethod = "new_tax_year_1_reporting_method"
   val newTaxYear2ReportingMethod = "new_tax_year_2_reporting_method"
@@ -75,7 +79,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     mockCalculationListService,
     auditingService = mockAuditingService,
     app.injector.instanceOf[CustomNotFoundError],
-    app.injector.instanceOf[SessionService])(appConfig,
+    mockSessionService)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
@@ -121,6 +125,16 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
   }
 
   import Scenario._
+
+  def mockMongoSuccess: OngoingStubbing[Future[Either[Throwable, Option[Boolean]]]] = {
+    when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(
+      Future(Right(None)))
+  }
+
+  def mockMongoFail: OngoingStubbing[Future[Either[Throwable, Option[Boolean]]]] = {
+    when(mockSessionService.getMongoKeyTyped[Boolean](any(),any())(any(), any())).thenReturn(
+      Future(Right(Some(true))))
+  }
 
   def mockAndBasicSetup(scenario: Scenario, isAgent: Boolean = false): Unit = {
     disableAllSwitches()
@@ -173,7 +187,7 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
       case _ =>
     }
 
-
+    mockMongoSuccess
     enable(IncomeSources)
   }
 
@@ -206,6 +220,14 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
         val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
 
         status(result) shouldBe Status.SEE_OTHER
+      }
+      "user has already visited the obligations page" in {
+        mockAndBasicSetup(CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+        mockMongoFail
+        val result: Future[Result] = TestBusinessReportingMethodController.show(TestBusinessReportingMethodController.incomeSourceId)(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.SEE_OTHER
+        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url)
       }
     }
 
