@@ -17,6 +17,7 @@
 package testConstants
 
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core._
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, PropertyDetailsModel}
@@ -289,13 +290,13 @@ object BusinessDetailsTestConstants {
   )
 
   val ceaseBusinessDetailsViewModel = CeaseBusinessDetailsViewModel(
-    incomeSourceId = "1234",
+    incomeSourceId = mkIncomeSourceId("1234"),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate)
   )
 
   val ceaseBusinessDetailsViewModel2 = CeaseBusinessDetailsViewModel(
-    incomeSourceId = "1234",
+    incomeSourceId = mkIncomeSourceId("1234"),
     tradingName = Some(testTradeName2),
     tradingStartDate = Some(testStartDate2)
   )
