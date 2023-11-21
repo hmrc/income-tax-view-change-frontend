@@ -56,10 +56,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       case Right(_) =>
         Logger("application").error("[CreateBusinessDetailsService][handleResponse] - failed to create, unexpected response")
         Future.successful(Left(new Error("Failed to create incomeSources")))
-      case Left(ex) =>
+      case Left(incomeSourceError) =>
         Logger("application").error("[CreateBusinessDetailsService][handleResponse] - failed to create")
-        Future.successful(Left(new Error(s"Failed to create incomeSources: $ex")))
-    }
+        Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))}
   }
 
   private def removeEmptyStrings(strOpt: Option[String]): Option[String] = {

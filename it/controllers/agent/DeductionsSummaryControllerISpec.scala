@@ -43,6 +43,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
   )(FakeRequest())
 
   lazy val incomeSource: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(

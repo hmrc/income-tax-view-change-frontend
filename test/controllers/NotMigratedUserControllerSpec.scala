@@ -47,7 +47,6 @@ class NotMigratedUserControllerSpec extends MockAuthenticationPredicate
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
       mockAuthService,
-      app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       app.injector.instanceOf[ItvcErrorHandler],
       mockItvcErrorHandler,

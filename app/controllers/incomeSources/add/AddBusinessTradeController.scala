@@ -42,9 +42,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate,
                                            val authorisedFunctions: AuthorisedFunctions,
                                            checkSessionTimeout: SessionTimeoutPredicate,
-                                           retrieveNino: NinoPredicate,
                                            val addBusinessTradeView: AddBusinessTrade,
-                                           val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                           val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,
                                            val sessionService: SessionService,
                                            incomeSourceDetailsService: IncomeSourceDetailsService)
@@ -90,8 +89,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
           }
       }
     } else {
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+      (checkSessionTimeout andThen authenticate
+        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
     }

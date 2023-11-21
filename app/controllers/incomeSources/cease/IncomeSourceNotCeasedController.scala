@@ -35,8 +35,7 @@ class IncomeSourceNotCeasedController @Inject()(val authenticate: Authentication
                                                 val checkSessionTimeout: SessionTimeoutPredicate,
                                                 val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 val retrieveBtaNavBar: NavBarPredicate,
-                                                val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                val retrieveNino: NinoPredicate,
+                                                val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                 val errorTemplate: ErrorTemplateWithLink)
                                                (implicit val appConfig: FrontendAppConfig,
                                                 implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -59,8 +58,8 @@ class IncomeSourceNotCeasedController @Inject()(val authenticate: Authentication
           }
       }
     } else {
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+      (checkSessionTimeout andThen authenticate
+        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
     }

@@ -25,7 +25,8 @@ sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
 }
 
-case class IncomeSourceDetailsModel(mtdbsa: String,
+case class IncomeSourceDetailsModel(nino: String,
+                                    mtdbsa: String,
                                     yearOfMigration: Option[String],
                                     businesses: List[BusinessDetailsModel],
                                     properties: List[PropertyDetailsModel]) extends IncomeSourceDetailsResponse with Logging {

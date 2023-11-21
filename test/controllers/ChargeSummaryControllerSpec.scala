@@ -72,7 +72,6 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     val controller = new ChargeSummaryController(
       MockAuthenticationPredicate,
       app.injector.instanceOf[SessionTimeoutPredicate],
-      app.injector.instanceOf[NinoPredicate],
       MockIncomeSourceDetailsPredicate,
       financialDetailsService,
       mockAuditingService,

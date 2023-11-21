@@ -76,6 +76,7 @@ object ForecastTaxSummaryAgentControllerTestConstants {
 class ForecastTaxCalcSummaryControllerISpec extends ComponentSpecBase {
 
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(

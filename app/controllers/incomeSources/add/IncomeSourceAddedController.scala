@@ -37,8 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicate,
                                             val authorisedFunctions: AuthorisedFunctions,
                                             checkSessionTimeout: SessionTimeoutPredicate,
-                                            retrieveNino: NinoPredicate,
-                                            val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                             val retrieveBtaNavBar: NavBarPredicate,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -51,8 +50,8 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(incomeSourceId: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceId: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(isAgent = false, incomeSourceId, incomeSourceType)
   }
@@ -112,8 +111,8 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     Future.successful(Redirect(redirectUrl))
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       handleSubmitRequest(isAgent = false)
   }

@@ -99,9 +99,11 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
       mtditid = enrolments.getEnrolment(appConfig.mtdItEnrolmentKey).flatMap(_.getIdentifier(appConfig.mtdItIdentifierKey)).map(_.value).get,
       nino = enrolments.getEnrolment(appConfig.ninoEnrolmentKey).flatMap(_.getIdentifier(appConfig.ninoIdentifierKey)).map(_.value),
       userName,
+      btaNavPartial = None,
       saUtr = enrolments.getEnrolment(appConfig.saEnrolmentKey).flatMap(_.getIdentifier(appConfig.saIdentifierKey)).map(_.value),
       credId = credentials.map(credential => credential.providerId),
-      userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[AffinityGroup])
+      userType = affinityGroup.map(ag => (ag.toJson \ "affinityGroup").as[AffinityGroup]),
+      arn = None
     )
   }
 

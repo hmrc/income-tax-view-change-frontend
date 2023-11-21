@@ -37,8 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                                               val authenticate: AuthenticationPredicate,
                                                               val authorisedFunctions: AuthorisedFunctions,
-                                                              val retrieveNino: NinoPredicate,
-                                                              val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                               val retrieveBtaNavBar: NavBarPredicate,
                                                               val view: IncomeSourceReportingMethodNotSaved)
@@ -65,8 +64,8 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
   }
 
 
-  def show(id: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def show(id: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         id = id,

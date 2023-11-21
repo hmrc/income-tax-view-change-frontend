@@ -68,7 +68,6 @@ class BusinessReportingMethodControllerSpec extends TestSupport with MockAuthent
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate],
     mockBusinessReportingMethod,
     mockUpdateIncomeSourceService,
     mockITSAStatusService,
