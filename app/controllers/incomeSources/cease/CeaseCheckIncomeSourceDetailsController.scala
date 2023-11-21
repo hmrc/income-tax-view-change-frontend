@@ -94,7 +94,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
     sessionDataFuture.flatMap {
       case (Right(Some(incomeSourceId)), Right(Some(cessationEndDate))) =>
-        incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(sources, incomeSourceId, cessationEndDate) match {
+        incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(sources, incomeSourceId.value, cessationEndDate) match {
           case Right(viewModel) =>
             Future.successful(Ok(view(
               viewModel = viewModel,

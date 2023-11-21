@@ -180,13 +180,14 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     }.toEither
   }
 
-  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: IncomeSourceId,
+  // TODO: convert incomeSourceId to IncomeSourceId type / some issue with Spec failing
+  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String,
                                                   businessEndDate: String)
   : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
 
     Try {
       val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-        .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
+        .find(m => mkIncomeSourceId(m.incomeSourceId) == mkIncomeSourceId(incomeSourceId))
 
       soleTraderBusinesses.map { business =>
         CheckCeaseIncomeSourceDetailsViewModel(
