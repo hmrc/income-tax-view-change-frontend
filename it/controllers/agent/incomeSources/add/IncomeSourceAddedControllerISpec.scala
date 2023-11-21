@@ -8,12 +8,12 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import testConstants.BaseIntegrationTestConstants._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, singleBusinessResponse, ukPropertyOnlyResponse}
-import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 import java.time.LocalDate
@@ -21,7 +21,6 @@ import java.time.LocalDate
 class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
   val incomeSourceAddedSelfEmploymentShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", SelfEmployment).url
-  val businessReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.BusinessReportingMethodController.showAgent("").url
 
   val incomeSourceAddedSubmitAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.agentSubmit().url
   val addIncomeSourceAgentUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
@@ -34,7 +33,6 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")))))
 
   val incomeSourceAddedForeignPropertyShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", ForeignProperty).url
-  val foreignPropertyReportingMethodAgentUrl: String = controllers.incomeSources.add.routes.ForeignPropertyReportingMethodController.showAgent("").url
 
   val incomeSourceAddedUkPropertyShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testPropertyIncomeId, UkProperty).url
   val HomeControllerShowUrl: String = controllers.routes.HomeController.showAgent.url

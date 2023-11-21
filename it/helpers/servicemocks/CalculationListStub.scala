@@ -38,14 +38,14 @@ object CalculationListStub {
     WiremockHelper.stubGet(legacyUrl(nino, taxYear), INTERNAL_SERVER_ERROR,"DES is currently experiencing problems that require live service intervention.")
   }
 
-  def stubGetCalculationListError(nino: String, taxYear: String): Unit = {
-    WiremockHelper.stubGet(url(nino, taxYear), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
+  def stubGetCalculationListError(nino: String, taxYearRange: String): Unit = {
+    WiremockHelper.stubGet(url(nino, taxYearRange), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
   }
 
   def verifyGetLegacyCalculationList(nino: String, taxYear: String): Unit =
     WiremockHelper.verifyGet(legacyUrl(nino, taxYear))
 
-  def verifyGetCalculationList(nino: String, taxYear: String): Unit =
-    WiremockHelper.verifyGet(url(nino, taxYear))
+  def verifyGetCalculationList(nino: String, taxYearRange: String): Unit =
+    WiremockHelper.verifyGet(url(nino, taxYearRange))
 }
 
