@@ -69,9 +69,11 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
         }
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  private def handleRequest(isAgent: Boolean,
+                            incomeSourceId: IncomeSourceId,
+                            incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
-      incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId.value) match {
+      incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
           handleSuccess(incomeSourceId, incomeSourceType, startDate, businessName, showPreviousTaxYears, isAgent)
@@ -89,7 +91,12 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     }
   }
 
-  def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, startDate: LocalDate, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleSuccess(incomeSourceId: IncomeSourceId,
+                    incomeSourceType: IncomeSourceType,
+                    startDate: LocalDate,
+                    businessName: Option[String],
+                    showPreviousTaxYears: Boolean,
+                    isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     incomeSourceType match {
       case SelfEmployment =>
         businessName match {

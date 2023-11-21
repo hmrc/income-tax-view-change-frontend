@@ -250,11 +250,11 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
   }
 
-  def getIncomeSourceFromUser(incomeSourceType: IncomeSourceType, incomeSourceId: String)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
+  def getIncomeSourceFromUser(incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
     incomeSourceType match {
       case SelfEmployment =>
         user.incomeSources.businesses
-          .find(_.incomeSourceId.equals(incomeSourceId))
+          .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId )
           .flatMap { addedBusiness =>
             for {
               businessName <- addedBusiness.tradingName
@@ -263,15 +263,16 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
           }
       case UkProperty =>
         for {
-          newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
-            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isUkProperty
+          newlyAddedProperty <- user.incomeSources.properties
+            .find(incomeSource =>
+              mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId  && incomeSource.isUkProperty
           )
           startDate <- newlyAddedProperty.tradingStartDate
         } yield (startDate, None)
       case ForeignProperty =>
         for {
           newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
-            incomeSource.incomeSourceId.equals(incomeSourceId) && incomeSource.isForeignProperty
+            mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isForeignProperty
           )
           startDate <- newlyAddedProperty.tradingStartDate
         } yield (startDate, None)
