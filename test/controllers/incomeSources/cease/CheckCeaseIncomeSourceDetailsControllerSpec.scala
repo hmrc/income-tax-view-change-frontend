@@ -56,7 +56,6 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
   val validCeaseDate: String = "01-01-2022"
 
   val checkDetailsHeading: String = messages("incomeSources.ceaseBusiness.checkDetails.heading")
-  val matchIncomeSourceId: IncomeSourceId = mkIncomeSourceId(any())
 
   object TestCeaseCheckIncomeSourceDetailsController extends CeaseCheckIncomeSourceDetailsController(
     MockAuthenticationPredicate,
@@ -112,7 +111,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         stage(isAgent)
         val result: Future[Result] = incomeSourceType match {
           case SelfEmployment =>
-            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(),  matchIncomeSourceId, any()))
+            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(),  mkIncomeSourceId(any()), any()))
               .thenReturn(Right(checkCeaseBusinessDetailsModel))
             if (isAgent)
               TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
