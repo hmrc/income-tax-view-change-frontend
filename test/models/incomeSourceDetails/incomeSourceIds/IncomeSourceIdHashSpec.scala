@@ -17,7 +17,7 @@
 package models.incomeSourceDetails.incomeSourceIds
 
 import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.incomeSourceIds.{IncomeSourceId, IncomeSourceIdHash}
+import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkIncomeSourceIdHash
 import org.scalatest.Failed
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
 import testUtils.UnitSpec
@@ -32,16 +32,10 @@ class IncomeSourceIdHashSpec extends UnitSpec {
 
       "calling both the mkFromIncomeSourceId and mkFromQueryString methods" in {
         val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
-        val incomeSourceIdHashFromIncomeSourceId: IncomeSourceIdHash = IncomeSourceIdHash.mkIncomeSourceIdHash(incomeSourceId)
+        val incomeSourceIdHashFromIncomeSourceId: IncomeSourceIdHash = mkIncomeSourceIdHash(incomeSourceId)
 
-        val incomeSourceIdHashFromQueryString: Either[Throwable, IncomeSourceIdHash] =
-          IncomeSourceIdHash.mkFromQueryString(hashValue)
-
-        incomeSourceIdHashFromQueryString match {
-          case Left(error) => Failed(s"IncomeSourceIdHash.mkFromQueryString returned an Either[Left[Throwable]] with value: $error")
-          case Right(incomeSourceIdHash) => assert(incomeSourceIdHashFromIncomeSourceId == incomeSourceIdHash)
-        }
-
+        val incomeSourceIdHashMaybe = IncomeSourceIdHash.mkFromQueryString(hashValue).toOption
+        incomeSourceIdHashMaybe shouldBe Some(incomeSourceIdHashFromIncomeSourceId)
       }
     }
 
@@ -58,15 +52,10 @@ class IncomeSourceIdHashSpec extends UnitSpec {
     "return the overridden toString of the incomeSourceIdHash" when {
       "created with both mkIncomeSourceIdHash and mkIncomeSourceIdHashFromQueryString methods" in {
         val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
-        val incomeSourceIdHashFromIncomeSourceIdToString: String = IncomeSourceIdHash.mkIncomeSourceIdHash(incomeSourceId).toString
+        val incomeSourceIdHash = IncomeSourceIdHash.mkIncomeSourceIdHash(incomeSourceId)
 
-        val incomeSourceIdHashFromQueryString: Either[Throwable, IncomeSourceIdHash] =
-          IncomeSourceIdHash.mkFromQueryString(hashValue)
-
-        incomeSourceIdHashFromQueryString match {
-          case Left(error) => Failed(s"IncomeSourceIdHash.mkFromQueryString returned an Either[Left[Throwable]] with value: $error")
-          case Right(incomeSourceIdHash) => assert(incomeSourceIdHashFromIncomeSourceIdToString == incomeSourceIdHash.toString)
-        }
+        val incomeSourceIdHashMaybe = IncomeSourceIdHash.mkFromQueryString(hashValue).toOption
+        incomeSourceIdHashMaybe shouldBe Some(incomeSourceIdHash)
       }
     }
 
