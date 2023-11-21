@@ -19,7 +19,7 @@ package helpers.servicemocks
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
-import models.createIncomeSource.CreateIncomeSourceResponse
+import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.nextUpdates.ObligationsModel
@@ -75,6 +75,9 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   def stubCreateBusinessDetailsErrorResponse(mtditid: String): Unit =
     WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", INTERNAL_SERVER_ERROR, "")
+
+  def stubCreateBusinessDetailsErrorResponseNew(mtditid: String)(response: List[CreateIncomeSourceErrorResponse]): Unit =
+    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", INTERNAL_SERVER_ERROR, Json.toJson(response).toString)
 
   //PreviousObligations Stubs
   def previousObligationsUrl(nino: String): String = {
@@ -206,6 +209,12 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   def stubUpdateIncomeSource(status: Int, response: JsValue): StubMapping =
     WiremockHelper.stubPut("/income-tax-view-change/update-income-source", status, response.toString())
+
+  def stubUpdateIncomeSourceError(): StubMapping = {
+    stubUpdateIncomeSource(INTERNAL_SERVER_ERROR, Json.obj("failures" -> Json.arr(
+      Json.obj("code" -> "500", "reason" -> "ETMP is broken :(")
+    )))
+  }
 
   def verifyUpdateIncomeSource(body: Option[String]): Unit = {
     WiremockHelper.verifyPut("/income-tax-view-change/update-income-source", body)
