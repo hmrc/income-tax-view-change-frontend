@@ -25,6 +25,8 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
+import models.core.IncomeSourceId
+import IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -53,10 +55,15 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  private def getSessionData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]):
-  Future[(Either[Throwable, Option[String]], Either[Throwable, Option[String]])] = {
-    val incomeSourceIdFuture: Future[Either[Throwable, Option[String]]] = if (incomeSourceType == SelfEmployment) {
-      sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
+  private def getSessionData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[(Either[Throwable, Option[IncomeSourceId]], Either[Throwable, Option[String]])] = {
+    val incomeSourceIdFuture: Future[Either[Throwable, Option[IncomeSourceId]]] = if (incomeSourceType == SelfEmployment) {
+      sessionService
+        .getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
+        .collect {
+          case Right(incomeSourceMaybeId) =>
+            Right(incomeSourceMaybeId.map(id => mkIncomeSourceId(id)))
+          case Left(ex) => Left(ex)
+        }
     } else {
       Future(Right(None))
     }
@@ -159,7 +166,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
         }
 
         val incomeSourceId = propertyIncomeSources.head.incomeSourceId
-        updateCessationDate(cessationEndDate, incomeSourceType, incomeSourceId, isAgent)
+        updateCessationDate(cessationEndDate, incomeSourceType, mkIncomeSourceId(incomeSourceId), isAgent)
 
       case (_, _) =>
         val errorMessage = s"Unable to get required data from session for $incomeSourceType"
@@ -174,11 +181,11 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
       errorHandler.showInternalServerError()
   }
 
-  def updateCessationDate(cessationDate: String, incomeSourceType: IncomeSourceType, incomeSourceId: String, isAgent: Boolean)
+  def updateCessationDate(cessationDate: String, incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId, isAgent: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     val redirectCall = getRedirectCall(isAgent, incomeSourceType)
 
-    updateIncomeSourceService.updateCessationDate(user.nino, incomeSourceId, cessationDate).flatMap {
+    updateIncomeSourceService.updateCessationDate(user.nino, incomeSourceId.value, cessationDate).flatMap {
       case Right(_) =>
         auditingService.extendedAudit(CeaseIncomeSourceAuditModel(
           incomeSourceType = incomeSourceType,

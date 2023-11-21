@@ -19,7 +19,8 @@ package services
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.core.AddressModel
+import models.core.{AddressModel, IncomeSourceId}
+import IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
@@ -179,11 +180,13 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     }.toEither
   }
 
-  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String, businessEndDate: String)
+  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: IncomeSourceId,
+                                                  businessEndDate: String)
   : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
 
     Try {
-      val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased).find(_.incomeSourceId.equals(incomeSourceId))
+      val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
+        .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
 
       soleTraderBusinesses.map { business =>
         CheckCeaseIncomeSourceDetailsViewModel(
