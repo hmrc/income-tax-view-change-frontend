@@ -53,7 +53,7 @@
     backUrl = None,
     btaNavPartial = user.btaNavPartial) {
 
-    @h1(msg = messages("cannot-go-back.heading"), classes = "govuk-heading-xl")
+    @h1(msg = messages("cannot-go-back.heading"), classes = "govuk-heading-xl", id = Some("title"))
 
     @h2(msg = getAddedMessage, classes = "govuk-heading-m", optId = Some("heading"))
 
@@ -61,11 +61,11 @@
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@p(classes = "govuk-!-margin-bottom-4") {
-            @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link")
+            @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link", id = Some("manage-link"))
         }</li>
 
         <li>@p(classes = "govuk-!-margin-bottom-4") {
-            @link(link = getHomeUrl, messageKey = "cannot-go-back.home-link")
+            @link(link = getHomeUrl, messageKey = "cannot-go-back.home-link", id = Some("home-link"))
         }</li>
     </ul>
 }
