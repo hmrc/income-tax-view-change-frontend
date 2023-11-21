@@ -41,8 +41,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val checkSessionTimeout: SessionTimeoutPredicate,
                                    val authenticate: AuthenticationPredicate,
                                    val authorisedFunctions: AuthorisedFunctions,
-                                   val retrieveNino: NinoPredicate,
-                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                    val retrieveBtaNavBar: NavBarPredicate,
                                    val feedbackView: Feedback,
                                    val feedbackThankYouView: FeedbackThankYou,
@@ -55,8 +54,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                   ) extends ClientConfirmedController with I18nSupport {
 
 
-  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit)
       request.headers.get(REFERER) match {
@@ -80,8 +79,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
@@ -132,8 +131,8 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         )
   }
 
-  def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar) {
+  def thankYou: Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar) {
     implicit request =>
       val referer = request.session.get(REFERER).getOrElse(config.baseUrl)
       Ok(feedbackThankYouView(referer)).withSession(request.session - REFERER)

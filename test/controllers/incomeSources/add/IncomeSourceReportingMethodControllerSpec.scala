@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -56,7 +56,6 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate],
     mockUpdateIncomeSourceService,
     mockITSAStatusService,
     mockDateService,

@@ -45,8 +45,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
                                                       val checkSessionTimeout: SessionTimeoutPredicate,
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val retrieveBtaNavBar: NavBarPredicate,
-                                                      val retrieveIncomeSources: IncomeSourceDetailsPredicate,
-                                                      val retrieveNino: NinoPredicate,
+                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                       val updateIncomeSourceService: UpdateIncomeSourceService,
                                                       val itsaStatusService: ITSAStatusService,
                                                       val dateService: DateService,
@@ -94,9 +93,9 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
             }
       }
     else
-      (checkSessionTimeout andThen authenticate andThen retrieveNino
-        andThen retrieveIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
+      (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+        implicit user =>
+          authenticatedCodeBlock(user)
       }
   }
 

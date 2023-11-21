@@ -60,7 +60,6 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[SessionTimeoutPredicate],
     app.injector.instanceOf[NavBarPredicate],
     MockAuthenticationPredicate,
-    app.injector.instanceOf[NinoPredicate],
     MockIncomeSourceDetailsPredicate
   )
 

@@ -42,8 +42,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                     val checkSessionTimeout: SessionTimeoutPredicate,
                                                     val authenticate: AuthenticationPredicate,
                                                     val authorisedFunctions: AuthorisedFunctions,
-                                                    val retrieveNino: NinoPredicate,
-                                                    val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                    val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
@@ -58,8 +57,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils {
 
 
-  def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -85,8 +84,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         }
   }
 
-  def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -112,8 +111,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         }
   }
 
-  def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def showSoleTraderBusiness(id: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>

@@ -16,18 +16,19 @@
 
 package testConstants
 
-import BusinessDetailsIntegrationTestConstants._
-import PaymentHistoryTestConstraints.oldBusiness1
-import PropertyDetailsIntegrationTestConstants._
 import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testMtditid}
+import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testMtditid, testNino}
+import testConstants.BusinessDetailsIntegrationTestConstants._
+import testConstants.PaymentHistoryTestConstraints.oldBusiness1
+import testConstants.PropertyDetailsIntegrationTestConstants._
 
 object IncomeSourceIntegrationTestConstants {
 
   val singleBusinessResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business1),
     properties = Nil,
@@ -35,6 +36,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val singleBusinessResponse2: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business1WithAddress2),
     properties = Nil,
@@ -42,6 +44,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val singleBusinessResponseManageYourDetailsAudit: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(businessForManageYourDetailsAudit),
     properties = Nil,
@@ -49,6 +52,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val singleUkPropertyResponseManageYourDetailsAudit: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = Nil,
     properties = List(ukPropertyAudit),
@@ -56,6 +60,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val singleForeignPropertyResponseManageYourDetailsAudit: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = Nil,
     properties = List(foreignPropertyAudit),
@@ -63,6 +68,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val singleBusinessResponseWoMigration: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business1),
     properties = Nil,
@@ -70,6 +76,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def singleBusinessResponseInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
     properties = Nil,
@@ -77,6 +84,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def singleBusinessResponseInLatencyPeriod2(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business1WithAddress2.copy(latencyDetails = Some(latencyDetails))),
     properties = Nil,
@@ -84,6 +92,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business3WithUnknowns.copy(latencyDetails = Some(latencyDetails))),
     properties = Nil,
@@ -91,6 +100,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def singleUKPropertyResponseInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtditid,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
     properties = List(ukProperty.copy(latencyDetails = Some(latencyDetails))),
@@ -98,6 +108,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtditid,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
     properties = List(ukPropertyWithUnknowns.copy(latencyDetails = Some(latencyDetails))),
@@ -105,6 +116,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def singleForeignPropertyResponseInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtditid,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
     properties = List(foreignProperty.copy(latencyDetails = Some(latencyDetails))),
@@ -112,6 +124,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtditid,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
     properties = List(foreignPropertyWithUnknowns.copy(latencyDetails = Some(latencyDetails))),
@@ -119,6 +132,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   def allBusinessesAndPropertiesInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtditid,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails)), business2.copy(latencyDetails = Some(latencyDetails))),
     properties = List(ukProperty.copy(latencyDetails = Some(latencyDetails)), foreignProperty.copy(latencyDetails = Some(latencyDetails))),
@@ -126,6 +140,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val misalignedBusinessWithPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business2),
     properties = List(property),
@@ -133,6 +148,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val multipleBusinessesResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(
       business1,
@@ -143,6 +159,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val multiplePropertiesResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = Nil,
     properties = List(
@@ -153,6 +170,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val businessAndPropertyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business1),
     properties = List(property),
@@ -160,6 +178,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val businessAndPropertyResponseWoMigration: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(business1),
     properties = List(property),
@@ -167,6 +186,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val paymentHistoryBusinessAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     businesses = List(oldBusiness1),
@@ -174,6 +194,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val multipleBusinessesAndPropertyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(
       business1,
@@ -184,6 +205,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val multipleBusinessesAndUkProperty: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(
       business1,
@@ -194,6 +216,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val multipleBusinessesWithBothPropertiesAndCeasedBusiness: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(
       business1,
@@ -205,6 +228,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val foreignPropertyAndCeasedBusiness: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(
       ceasedBusiness1
@@ -214,6 +238,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val multipleBusinessesAndPropertyResponseWoMigration: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(
       business1,
@@ -224,6 +249,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val businessOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(
       business1
@@ -233,6 +259,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val propertyOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(),
     properties = List(property),
@@ -240,6 +267,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val ukPropertyOnlyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(),
     properties = List(ukProperty),
@@ -247,6 +275,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val foreignPropertyOnlyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(),
     properties = List(foreignProperty),
@@ -254,6 +283,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val noPropertyOrBusinessResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId, None,
     List(), Nil
   )
@@ -266,6 +296,7 @@ object IncomeSourceIntegrationTestConstants {
 
   def propertyOnlyResponseWithMigrationData(year: Int,
                                             yearOfMigration: Option[String]): IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(),
     properties = List(propertyWithCurrentYear(year)),
@@ -1238,6 +1269,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   val businessOnlyResponseWithUnknownAddressName: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+    testNino,
     testMtdItId,
     businesses = List(
       businessUnknownAddressName

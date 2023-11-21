@@ -16,6 +16,8 @@
 
 package controllers.incomeSources.add
 
+import audit.AuditingService
+import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -43,11 +45,11 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    val checkSessionTimeout: SessionTimeoutPredicate,
                                                    val authenticate: AuthenticationPredicate,
                                                    val authorisedFunctions: AuthorisedFunctions,
-                                                   val retrieveNino: NinoPredicate,
-                                                   val retrieveIncomeSources: IncomeSourceDetailsPredicate,
+                                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                    val retrieveBtaNavBar: NavBarPredicate,
-                                                   val businessDetailsService: CreateBusinessDetailsService)
+                                                   val businessDetailsService: CreateBusinessDetailsService,
+                                                   val auditingService: AuditingService)
                                                   (implicit val ec: ExecutionContext,
                                                    implicit override val mcc: MessagesControllerComponents,
                                                    val appConfig: FrontendAppConfig,
@@ -56,8 +58,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with IncomeSourcesUtils with FeatureSwitching {
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -176,8 +178,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
   }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate andThen retrieveNino
-    andThen retrieveIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)
   }
@@ -209,12 +211,17 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       case Right(viewModel) =>
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
+            auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
             sessionService.deleteMongoData(JourneyType(Add, incomeSourceType)).flatMap { _ =>
               Future.successful {
                 Redirect(redirectUrl(isAgent, incomeSourceType, id))
               }
             }
-          case Left(ex) => Future.failed(ex)
+          case Left(ex) =>
+            auditingService.extendedAudit(
+              CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)
+            )
+            Future.failed(ex)
         }
       case Left(ex) =>
         Logger("application").error(
@@ -224,9 +231,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]${ex.getMessage}")
+        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: ${ex.getMessage}")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
     }
   }
-
 }

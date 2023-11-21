@@ -53,6 +53,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
           response = IncomeSourceDetailsModel(
+            nino = testNino,
             mtdbsa = testMtditid,
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
@@ -86,6 +87,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
           status = OK,
           response = IncomeSourceDetailsModel(
+            nino = testNino,
             mtdbsa = testMtditid,
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(

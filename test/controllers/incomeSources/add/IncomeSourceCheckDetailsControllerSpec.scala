@@ -16,6 +16,7 @@
 
 package controllers.incomeSources.add
 
+import audit.AuditingService
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
@@ -46,13 +47,14 @@ import scala.concurrent.Future
 class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockSessionService with FeatureSwitching {
 
+  val testBusinessId: String = testSelfEmploymentId
   val testBusinessName: String = "Test Business"
   val testBusinessStartDate: LocalDate = LocalDate.of(2023, 1, 2)
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "123 Main Street"
   val testBusinessPostCode: String = "AB123CD"
   val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
-  val testBusinessAccountingMethod = "Quarterly"
+  val testBusinessAccountingMethod = "cash"
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
   val testCountryCode = "GB"
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
@@ -70,12 +72,12 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
       businessName = Some(testBusinessName),
       businessTrade = Some(testBusinessTrade),
       dateStarted = Some(testBusinessStartDate),
-      createdIncomeSourceId = Some(testSelfEmploymentId),
       address = Some(testBusinessAddress),
       countryCode = Some(testCountryCode),
       accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
       incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
+
 
   def testUIJourneySessionDataProperty(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = "some-session-id",
@@ -90,11 +92,11 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
     authenticate = MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    retrieveNino = app.injector.instanceOf[NinoPredicate],
-    retrieveIncomeSources = MockIncomeSourceDetailsPredicate,
+    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     retrieveBtaNavBar = MockNavBarPredicate,
-    businessDetailsService = mockBusinessDetailsService
+    businessDetailsService = mockBusinessDetailsService,
+    auditingService = app.injector.instanceOf[AuditingService]
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     sessionService = mockSessionService,
@@ -139,7 +141,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
             if (incomeSourceType == SelfEmployment) {
-              val sessionData: UIJourneySessionData = if (incomeSourceType == SelfEmployment) testUIJourneySessionDataBusiness else testUIJourneySessionDataProperty(incomeSourceType)
+              val sessionData: UIJourneySessionData = testUIJourneySessionDataBusiness
               setupMockGetMongo(Right(Some(sessionData)))
             }
             else {
@@ -321,14 +323,14 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
             when(mockBusinessDetailsService.createRequest(any())(any(), any(), any()))
               .thenReturn(Future {
-                Right(CreateIncomeSourceResponse(testSelfEmploymentId))
+                Right(CreateIncomeSourceResponse(testBusinessId))
               })
+            setupMockCreateSession(true)
             if (incomeSourceType == SelfEmployment) {
               val sessionData: UIJourneySessionData = testUIJourneySessionDataBusiness
               setupMockGetMongo(Right(Some(sessionData)))
             }
             else {
-              setupMockCreateSession(true)
               setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(Some(testPropertyStartDate)))
               setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
             }

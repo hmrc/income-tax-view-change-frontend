@@ -109,7 +109,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       mtditid = testMtditid,
       nino = testNino,
       userName = Some(testRetrievedUserName),
-      incomeSources = IncomeSourceDetailsModel("testMtdItId", Some(migrationYear.toString), List(), List()),
+      incomeSources = IncomeSourceDetailsModel(testNino, "testMtdItId", Some(migrationYear.toString), List(), List()),
       btaNavPartial = None,
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
@@ -144,10 +144,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                    hasLpiWithDunningBlock: Boolean = false) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
-      mtditid = "XAIT00000000015",
       nino = "AA111111A",
+      mtditid = "XAIT00000000015",
       userName = Some(Name(Some("Test"), Some("User"))),
-      incomeSources = IncomeSourceDetailsModel("testMtdItId", Some(migrationYear.toString), List(), List()),
+      incomeSources = IncomeSourceDetailsModel("AA111111A", "testMtdItId", Some(migrationYear.toString), List(), List()),
       btaNavPartial = None,
       saUtr = Some("1234567890"),
       credId = Some(testCredId),

@@ -97,7 +97,6 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
       refundToTaxPayerView,
       app.injector.instanceOf[SessionTimeoutPredicate],
       MockAuthenticationPredicate,
-      app.injector.instanceOf[NinoPredicate],
       mockRepaymentHistoryConnector,
       MockIncomeSourceDetailsPredicate,
       mockIncomeSourceDetailsService,

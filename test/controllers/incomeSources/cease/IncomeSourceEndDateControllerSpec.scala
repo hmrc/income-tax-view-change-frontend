@@ -53,7 +53,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
     MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NinoPredicate],
     app.injector.instanceOf[IncomeSourceEndDate],
     sessionService = mockSessionService)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],

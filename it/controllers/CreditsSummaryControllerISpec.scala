@@ -3,7 +3,7 @@ package controllers
 
 import audit.models.CreditSummaryAuditing.{CreditsSummaryModel, toCreditSummaryDetailsSeq}
 import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.MtdItUserWithNino
+import auth.{MtdItUserOptionNino, MtdItUserWithNino}
 import config.featureswitch.{CutOverCredits, MFACreditsAndDebits}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, CreditsSummaryDataHelper}
@@ -22,9 +22,9 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
   implicit val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
 
-  val testUser = MtdItUserWithNino(
+  val testUser = MtdItUserOptionNino(
     mtditid = testMtditid,
-    nino = testNino,
+    nino = Some(testNino),
     userName = None,
     btaNavPartial = None,
     saUtr = None,

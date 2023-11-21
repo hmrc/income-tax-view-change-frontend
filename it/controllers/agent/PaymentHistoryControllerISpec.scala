@@ -68,6 +68,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
   val twoPreviousTaxYearEnd: Int = currentTaxYearEnd - 2
 
   val incomeSourceDetailsModel: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    nino = testNino,
     mtdbsa = testMtditid,
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(

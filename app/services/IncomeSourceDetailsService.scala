@@ -16,7 +16,7 @@
 
 package services
 
-import auth.{MtdItUser, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.AddressModel
@@ -63,7 +63,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
   }
 
   def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
-                                                              mtdUser: MtdItUserWithNino[_]): Future[IncomeSourceDetailsResponse] = {
+                                                              mtdUser: MtdItUserOptionNino[_]): Future[IncomeSourceDetailsResponse] = {
     if (cacheKey.isDefined) {
       getCachedIncomeSources(cacheKey.get).flatMap {
         case Some(sources: IncomeSourceDetailsModel) =>
