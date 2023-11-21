@@ -94,7 +94,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
 
     sessionDataFuture.flatMap {
       case (Right(Some(incomeSourceId)), Right(Some(cessationEndDate))) =>
-        incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(sources, incomeSourceId.value, cessationEndDate) match {
+        incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(sources, incomeSourceId, cessationEndDate) match {
           case Right(viewModel) =>
             Future.successful(Ok(view(
               viewModel = viewModel,
@@ -165,8 +165,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
           user.incomeSources.properties.find(propertyDetailsModel => propertyDetailsModel.isForeignProperty && !propertyDetailsModel.isCeased)
         }
 
-        val incomeSourceId = propertyIncomeSources.head.incomeSourceId
-        updateCessationDate(cessationEndDate, incomeSourceType, mkIncomeSourceId(incomeSourceId), isAgent)
+        val incomeSourceId = mkIncomeSourceId(propertyIncomeSources.head.incomeSourceId)
+        updateCessationDate(cessationEndDate, incomeSourceType, incomeSourceId, isAgent)
 
       case (_, _) =>
         val errorMessage = s"Unable to get required data from session for $incomeSourceType"

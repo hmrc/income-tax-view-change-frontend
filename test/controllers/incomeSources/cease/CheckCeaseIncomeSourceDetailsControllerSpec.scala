@@ -25,6 +25,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Cease, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
@@ -55,6 +56,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
   val validCeaseDate: String = "01-01-2022"
 
   val checkDetailsHeading: String = messages("incomeSources.ceaseBusiness.checkDetails.heading")
+  val matchIncomeSourceId: IncomeSourceId = mkIncomeSourceId(any())
 
   object TestCeaseCheckIncomeSourceDetailsController extends CeaseCheckIncomeSourceDetailsController(
     MockAuthenticationPredicate,
@@ -110,7 +112,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         stage(isAgent)
         val result: Future[Result] = incomeSourceType match {
           case SelfEmployment =>
-            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
+            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(),  matchIncomeSourceId, any()))
               .thenReturn(Right(checkCeaseBusinessDetailsModel))
             if (isAgent)
               TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())

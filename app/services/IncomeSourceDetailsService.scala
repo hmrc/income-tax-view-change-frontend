@@ -180,14 +180,12 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     }.toEither
   }
 
-  // TODO: convert incomeSourceId to IncomeSourceId type / some issue with Spec failing
-  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: String,
+  def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel,
+                                                  incomeSourceId: IncomeSourceId,
                                                   businessEndDate: String)
-  : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
-
-    Try {
+  : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = Try {
       val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-        .find(m => mkIncomeSourceId(m.incomeSourceId) == mkIncomeSourceId(incomeSourceId))
+        .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
 
       soleTraderBusinesses.map { business =>
         CheckCeaseIncomeSourceDetailsViewModel(
@@ -199,11 +197,9 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
         )
       }.get
     }.toEither
-  }
 
   def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, businessEndDate: String, incomeSourceType: IncomeSourceType)
   : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
-
     val propertyBusiness = incomeSourceType match {
       case UkProperty => sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
       case _ => sources.properties.filterNot(_.isCeased).find(_.isForeignProperty)
