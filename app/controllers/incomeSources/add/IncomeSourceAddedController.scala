@@ -90,7 +90,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   }
 
   def handleSuccess(incomeSourceId: String, incomeSourceType: IncomeSourceType, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    updateMongoAdded.flatMap {
+    updateMongoAdded(incomeSourceType).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
@@ -115,8 +115,8 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     }
   }
 
-  private def updateMongoAdded(implicit hc: HeaderCarrier): Future[Boolean] = {
-    sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).flatMap {
+  private def updateMongoAdded(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
         val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(hasBeenAdded = Some(true))

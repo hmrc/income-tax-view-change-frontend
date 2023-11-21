@@ -20,12 +20,13 @@ import audit.AuditingService
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.ForeignProperty
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.AddForeignPropertyReportingMethodForm
-import models.incomeSourceDetails.LatencyDetails
+import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails}
 import models.incomeSourceDetails.viewmodels.ForeignPropertyReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
@@ -53,7 +54,8 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                                                          val dateService: DateService,
                                                          val calculationListService: CalculationListService,
                                                          val auditingService: AuditingService,
-                                                         val customNotFoundErrorView: CustomNotFoundError)
+                                                         val customNotFoundErrorView: CustomNotFoundError,
+                                                         val sessionService: SessionService)
                                                         (implicit val appConfig: FrontendAppConfig,
                                                          override implicit val mcc: MessagesControllerComponents,
                                                          val ec: ExecutionContext,
@@ -118,33 +120,45 @@ class ForeignPropertyReportingMethodController @Inject()(val authenticate: Authe
                             postAction: Call,
                             redirectCall: Call)
                            (implicit user: MtdItUser[_]): Future[Result] = {
+    val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(ForeignProperty) else
+      controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(ForeignProperty)
+    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     withIncomeSourcesFS {
-      (for {
-        isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
-        latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
-          propertyDetails => propertyDetails.incomeSourceId.contains(id) && propertyDetails.isForeignProperty
-        ).flatMap(_.latencyDetails))
-        viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
-      } yield {
-        (isMandatoryOrVoluntary, viewModel) match {
-
-          case (_, Left(ex)) =>
-            Logger("application")
-              .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
-            Future.successful(Redirect(redirectCall))
-          case (true, Right(viewModel)) =>
-            Future.successful(Ok(foreignPropertyReportingMethodView(
-              form = AddForeignPropertyReportingMethodForm.form,
-              viewModel = viewModel,
-              postAction = postAction,
-              isAgent = isAgent
-            )))
+      sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, ForeignProperty)).flatMap {
+        case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
+          Future.successful(errorHandler.showInternalServerError())
+        case Right(hasBeenAdded) => hasBeenAdded match {
+          case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
           case _ =>
-            Logger("application")
-              .error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error")
-            Future(Ok(customNotFoundErrorView()))
+            (for {
+              isMandatoryOrVoluntary <- itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear
+              latencyDetailsMaybe <- Future(user.incomeSources.properties.find(
+                propertyDetails => propertyDetails.incomeSourceId.contains(id) && propertyDetails.isForeignProperty
+              ).flatMap(_.latencyDetails))
+              viewModel <- getForeignPropertyReportingMethodDetails(latencyDetailsMaybe)
+            } yield {
+              (isMandatoryOrVoluntary, viewModel) match {
+
+                case (_, Left(ex)) =>
+                  Logger("application")
+                    .error(s"[ForeignPropertyReportingMethodController][handleRequest]: Failed with error - $ex")
+                  Future.successful(Redirect(redirectCall))
+                case (true, Right(viewModel)) =>
+                  Future.successful(Ok(foreignPropertyReportingMethodView(
+                    form = AddForeignPropertyReportingMethodForm.form,
+                    viewModel = viewModel,
+                    postAction = postAction,
+                    isAgent = isAgent
+                  )))
+                case _ =>
+                  Logger("application")
+                    .error(s"[ForeignPropertyReportingMethodController][handleRequest]: second level not found error")
+                  Future(Ok(customNotFoundErrorView()))
+              }
+            }).flatten
         }
-      }).flatten
+      }
     }
   }
 

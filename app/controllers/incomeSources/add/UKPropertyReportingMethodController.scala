@@ -24,8 +24,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.UkProperty
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.AddUKPropertyReportingMethodForm
-import models.incomeSourceDetails.LatencyDetails
+import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails}
 import models.incomeSourceDetails.viewmodels.UKPropertyReportingMethodViewModel
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
@@ -53,7 +54,8 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
                                                     val dateService: DateService,
                                                     val calculationListService: CalculationListService,
                                                     val auditingService: AuditingService,
-                                                    val customNotFoundErrorView: CustomNotFoundError)
+                                                    val customNotFoundErrorView: CustomNotFoundError,
+                                                    val sessionService: SessionService)
                                                    (implicit val appConfig: FrontendAppConfig,
                                                     mcc: MessagesControllerComponents,
                                                     val ec: ExecutionContext,
@@ -98,31 +100,42 @@ class UKPropertyReportingMethodController @Inject()(val authenticate: Authentica
 
     val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submitAgent(id) else
       controllers.incomeSources.add.routes.UKPropertyReportingMethodController.submit(id)
+    val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(UkProperty) else
+      controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(UkProperty)
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     val redirectUrl: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id, UkProperty) else
       controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id, UkProperty)
 
     withIncomeSourcesFS {
-      itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-        case true =>
-          getUKPropertyReportingMethodDetails(id).map {
-            case Some(viewModel) =>
-              Ok(view(
-                addUKPropertyReportingMethodForm = AddUKPropertyReportingMethodForm.form,
-                ukPropertyReportingViewModel = viewModel,
-                postAction = postAction,
-                isAgent = isAgent)(user, messages))
-            case None =>
-              Redirect(redirectUrl)
-          }
+      sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, UkProperty)).flatMap {
+        case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
+          Future.successful(errorHandler.showInternalServerError())
+        case Right(hasBeenAdded) => hasBeenAdded match {
+          case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
+          case _ =>
+            itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+              case true =>
+                getUKPropertyReportingMethodDetails(id).map {
+                  case Some(viewModel) =>
+                    Ok(view(
+                      addUKPropertyReportingMethodForm = AddUKPropertyReportingMethodForm.form,
+                      ukPropertyReportingViewModel = viewModel,
+                      postAction = postAction,
+                      isAgent = isAgent)(user, messages))
+                  case None =>
+                    Redirect(redirectUrl)
+                }
 
-        case false => Future.successful(Redirect(redirectUrl))
+              case false => Future.successful(Redirect(redirectUrl))
+            }
+        }
+      }.recover {
+        case ex: Exception =>
+          Logger("application").error(
+            s"[UKPropertyReportingMethodController][handleRequest]: Error getting UKPropertyReportingMethodController page: ${ex.getMessage}")
+          errorHandler.showInternalServerError()
       }
-    }.recover {
-      case ex: Exception =>
-        Logger("application").error(
-          s"[UKPropertyReportingMethodController][handleRequest]: Error getting UKPropertyReportingMethodController page: ${ex.getMessage}")
-        errorHandler.showInternalServerError()
     }
   }
 
