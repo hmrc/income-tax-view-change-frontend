@@ -17,6 +17,7 @@
 package models.incomeSourceDetails
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId
 import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface
@@ -63,15 +64,15 @@ case class IncomeSourceDetailsModel(nino: String,
     properties.find(_.isOngoingUkProperty)
   }
 
-  def getSoleTraderBusiness(id: String): Option[BusinessDetailsModel] = {
-    businesses.find(_.isOngoingSoleTraderBusiness(id))
+  def getSoleTraderBusiness(id: IncomeSourceId): Option[BusinessDetailsModel] = {
+    businesses.find(_.isOngoingSoleTraderBusiness(id.value))
   }
 
   def getSoleTraderBusinesses: Seq[BusinessDetailsModel] = {
     businesses.filterNot(_.isCeased)
   }
 
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
+  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[IncomeSourceId] = None): Option[IncomeSourceId] = {
     (incomeSourceType, soleTraderBusinessId) match {
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.incomeSourceId)
       case (UkProperty, _) => getUKProperty.map(_.incomeSourceId)
@@ -80,7 +81,7 @@ case class IncomeSourceDetailsModel(nino: String,
     }
   }
 
-  def getIncomeSourceBusinessName(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
+  def getIncomeSourceBusinessName(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[IncomeSourceId] = None): Option[String] = {
     (incomeSourceType, soleTraderBusinessId) match {
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.tradingName.getOrElse("Unknown"))
       case (UkProperty, _) => Some("UK property")
