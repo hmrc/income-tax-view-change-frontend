@@ -26,7 +26,6 @@ import enums.JourneyType.{Add, JourneyType}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -105,17 +104,17 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
       case true => incomeSourceType match {
         case SelfEmployment =>
           businessName match {
-            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId.toString, showPreviousTaxYears) map { viewModel =>
               Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
             }
-            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId.toString, showPreviousTaxYears) map { viewModel =>
               Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
             }
           }
-        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.toString, showPreviousTaxYears) map { viewModel =>
           Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
         }
-        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears) map { viewModel =>
+        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.toString, showPreviousTaxYears) map { viewModel =>
           Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
         }
       }
