@@ -20,6 +20,7 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import implicits.ImplicitDateParser
+import models.core.IncomeSourceId
 import models.updateIncomeSource.UpdateIncomeSourceResponseError
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,7 +28,7 @@ import utils.Utilities.JsonUtil
 
 case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                        cessationDate: String,
-                                       incomeSourceId: String,
+                                       incomeSourceId: IncomeSourceId,
                                        updateIncomeSourceErrorResponse: Option[UpdateIncomeSourceResponseError])(implicit user: MtdItUser[_], hc: HeaderCarrier)
   extends ExtendedAuditModel with ImplicitDateParser {
 
@@ -49,11 +50,12 @@ case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
       Json.obj("outcome" -> outcome,
         "journeyType" -> incomeSourceType.journeyType,
         "dateBusinessStopped" -> cessationDate,
-        "incomeSourceID" -> incomeSourceId)
+        "incomeSourceID" -> incomeSourceId.value)
 
     incomeSourceType match {
       case SelfEmployment =>
-        val businessName = user.incomeSources.getSoleTraderBusiness(incomeSourceId).flatMap(_.tradingName)
+        val businessName = user.incomeSources
+          .getSoleTraderBusiness(incomeSourceId.value).flatMap(_.tradingName)
         details ++ ("businessName", businessName)
       case _ =>
         details

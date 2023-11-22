@@ -16,14 +16,14 @@
 
 package testConstants
 
-import BusinessDetailsIntegrationTestConstants._
-import PaymentHistoryTestConstraints.oldBusiness1
-import PropertyDetailsIntegrationTestConstants._
 import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testMtditid, testNino}
+import testConstants.BusinessDetailsIntegrationTestConstants._
+import testConstants.PaymentHistoryTestConstraints.oldBusiness1
+import testConstants.PropertyDetailsIntegrationTestConstants._
 
 object IncomeSourceIntegrationTestConstants {
 
@@ -128,6 +128,14 @@ object IncomeSourceIntegrationTestConstants {
     testMtditid,
     businesses = List(business1.copy(latencyDetails = Some(latencyDetails))),
     properties = List(foreignPropertyWithUnknowns.copy(latencyDetails = Some(latencyDetails))),
+    yearOfMigration = Some("2018")
+  )
+
+  def allBusinessesAndPropertiesInLatencyPeriod(latencyDetails: LatencyDetails): IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtditid,
+    businesses = List(business1.copy(latencyDetails = Some(latencyDetails)), business2.copy(latencyDetails = Some(latencyDetails))),
+    properties = List(ukProperty.copy(latencyDetails = Some(latencyDetails)), foreignProperty.copy(latencyDetails = Some(latencyDetails))),
     yearOfMigration = Some("2018")
   )
 
@@ -314,7 +322,7 @@ object IncomeSourceIntegrationTestConstants {
         "mainType" -> "SA Payment on Account 1",
         "items" -> Json.arr(
           Json.obj(
-            "dueDate" -> dueDate,
+            "dueDate" -> dueDate
           )
         )
       )
@@ -868,7 +876,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDescription" -> "ITSA- POA 1",
         "totalAmount" -> amount,
         "reversalDate" -> "2019-02-14",
-        "reversalReason" -> "Customer Request",
+        "reversalReason" -> "Customer Request"
       )
     )
   )
@@ -876,7 +884,7 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelCreditAndRefundsJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
                                                          dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                                          interestLocks: List[String] = noInterestLock,
-                                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                                                         latePaymentInterestAmount: Option[BigDecimal] = Some(100)
                                                         ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -1016,7 +1024,7 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelCreditAndRefundsJsonV2(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
                                                            dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
                                                            interestLocks: List[String] = noInterestLock,
-                                                           latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                                                           latePaymentInterestAmount: Option[BigDecimal] = Some(100)
                                                           ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -1199,7 +1207,7 @@ object IncomeSourceIntegrationTestConstants {
         "originalAmount" -> originalAmount,
         "documentDate" -> "2018-03-29",
         "effectiveDateOfPayment" -> dueDate
-      ),
+      )
     ),
     "financialDetails" -> Json.arr(
       Json.obj(
@@ -1226,7 +1234,7 @@ object IncomeSourceIntegrationTestConstants {
             "clearingDate" -> "2019-08-13",
             "dueDate" -> dueDate,
             "paymentLot" -> "081203010024",
-            "paymentLotItem" -> "000001"),
+            "paymentLotItem" -> "000001")
         )
       ),
       Json.obj(
@@ -1240,7 +1248,7 @@ object IncomeSourceIntegrationTestConstants {
             "clearingDate" -> "2019-08-13",
             "dueDate" -> dueDate,
             "paymentLot" -> "081203010024",
-            "paymentLotItem" -> "000001"),
+            "paymentLotItem" -> "000001")
         )
       ),
       Json.obj(
@@ -1254,7 +1262,7 @@ object IncomeSourceIntegrationTestConstants {
             "clearingDate" -> "2019-08-13",
             "dueDate" -> dueDate,
             "paymentLot" -> "081203010024",
-            "paymentLotItem" -> "000001"),
+            "paymentLotItem" -> "000001")
         )
       )
     )

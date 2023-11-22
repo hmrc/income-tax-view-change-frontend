@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails.incomeSourceIds
+package models.core
 
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkIncomeSourceIdHash
+import IncomeSourceIdHash.mkIncomeSourceIdHash
 
 class IncomeSourceId private(val value: String) extends AnyVal {
   def toHash: IncomeSourceIdHash = mkIncomeSourceIdHash(this)
 
   override def toString: String = s"IncomeSourceId: $value"
 }
+
 
 object IncomeSourceId {
   def mkIncomeSourceId(incomeSourceAsString: String): IncomeSourceId = {

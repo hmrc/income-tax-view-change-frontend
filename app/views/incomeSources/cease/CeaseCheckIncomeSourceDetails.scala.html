@@ -49,9 +49,9 @@ messages(s"$messagesPrefix.$key", args: _*)
 
 @getBusinessChangeHref = @{
     if(isAgent){
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(viewModel.incomeSourceId), SelfEmployment).url
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChangeAgent(Some(viewModel.incomeSourceId.value), SelfEmployment).url
     } else {
-        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(viewModel.incomeSourceId), SelfEmployment).url
+        controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(viewModel.incomeSourceId.value), SelfEmployment).url
     }
 }
 

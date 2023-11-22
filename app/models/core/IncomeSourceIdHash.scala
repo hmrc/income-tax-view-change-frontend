@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails.incomeSourceIds
+package models.core
 
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkIncomeSourceIdHash
+import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 
 import scala.util.Try
 

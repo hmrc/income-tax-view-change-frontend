@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger

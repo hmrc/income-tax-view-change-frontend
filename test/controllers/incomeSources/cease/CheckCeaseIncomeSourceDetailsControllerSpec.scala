@@ -25,6 +25,8 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Cease, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.core.IncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -109,7 +111,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         stage(isAgent)
         val result: Future[Result] = incomeSourceType match {
           case SelfEmployment =>
-            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), any(), any()))
+            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(),  mkIncomeSourceId(any()), any()))
               .thenReturn(Right(checkCeaseBusinessDetailsModel))
             if (isAgent)
               TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
@@ -254,16 +256,16 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
       (incomeSourceType, hasIncomeSourceUpdateFailed) match {
         case (SelfEmployment, false) =>
           verifyMockGetMongoKeyTypedResponse[String](2)
-          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testSelfEmploymentId, None))
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, mkIncomeSourceId(testSelfEmploymentId), None))
         case (UkProperty, false) =>
           verifyMockGetMongoKeyTypedResponse[String](1)
-          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testSelfEmploymentId, None))
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, mkIncomeSourceId(testSelfEmploymentId), None))
         case (ForeignProperty, false) =>
           verifyMockGetMongoKeyTypedResponse[String](1)
-          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testPropertyIncomeId, None))
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, mkIncomeSourceId(testPropertyIncomeId), None))
         case (SelfEmployment, true) | _ =>
           verifyMockGetMongoKeyTypedResponse[String](2)
-          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, testSelfEmploymentId, Some(failureResponse)))
+          verifyExtendedAudit(CeaseIncomeSourceAuditModel(incomeSourceType, validCeaseDate, mkIncomeSourceId(testSelfEmploymentId), Some(failureResponse)))
       }
     }
 

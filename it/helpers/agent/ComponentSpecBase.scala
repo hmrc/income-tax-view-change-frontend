@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import forms.agent.ClientsUTRForm
-import forms.incomeSources.add.{AddBusinessReportingMethodForm, AddForeignPropertyReportingMethodForm, AddIncomeSourceStartDateCheckForm, AddUKPropertyReportingMethodForm}
+import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm, IncomeSourceReportingMethodForm}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
 import helpers.servicemocks.AuditStub
 import helpers.{CustomMatchers, GenericStubMethods, WiremockHelper}
@@ -451,17 +451,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getManageIncomeSource(additionalCookies: Map[String, String]): WSResponse = get("/income-sources/manage/view-and-manage-income-sources", additionalCookies)
 
-    def postAddBusinessReportingMethod(form: AddBusinessReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    def postAddBusinessReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => k -> Seq(v.getOrElse("")) }
       post(s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId", additionalCookies = additionalCookies)(formData)
     }
 
-    def postAddUKPropertyReportingMethod(form: AddUKPropertyReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    def postAddUKPropertyReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => k -> Seq(v.getOrElse("")) }
       post(s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
 
-    def postAddForeignPropertyReportingMethod(form: AddForeignPropertyReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    def postAddForeignPropertyReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       val formData = form.toFormMap.map { case (k, v) => k -> Seq(v.getOrElse("")) }
       post(s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
     }
