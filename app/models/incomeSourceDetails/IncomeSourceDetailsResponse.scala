@@ -88,6 +88,15 @@ case class IncomeSourceDetailsModel(nino: String,
       case _ => None
     }
   }
+
+  def getLatencyDetails(incomeSourceType: IncomeSourceType, id: String): Option[LatencyDetails] = {
+    incomeSourceType match {
+      case SelfEmployment => getSoleTraderBusiness(id).flatMap(_.latencyDetails)
+      case UkProperty => getUKProperty.flatMap(_.latencyDetails)
+      case ForeignProperty => getForeignProperty.flatMap(_.latencyDetails)
+      case _ => None
+    }
+  }
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {
