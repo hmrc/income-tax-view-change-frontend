@@ -18,6 +18,7 @@ package testConstants.incomeSources
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
@@ -103,7 +104,7 @@ object IncomeSourceDetailsTestConstants {
     ceasedBusinesses = Nil)
 
   val checkCeaseBusinessDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = testSelfEmploymentId,
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     tradingName = Some(testTradeName),
     address = Some(address),
     businessEndDate = LocalDate.parse("2022-04-23"),
@@ -111,7 +112,7 @@ object IncomeSourceDetailsTestConstants {
   )
 
   val checkCeaseUkPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = testPropertyIncomeId,
+    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId),
     tradingName = None,
     address = None,
     businessEndDate = LocalDate.parse("2022-04-23"),
@@ -119,7 +120,7 @@ object IncomeSourceDetailsTestConstants {
   )
 
   val checkCeaseForeignPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = testPropertyIncomeId2,
+    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId2),
     tradingName = None,
     address = None,
     businessEndDate = LocalDate.parse("2022-04-23"),

@@ -18,6 +18,7 @@ package views.incomeSources.cease
 
 import controllers.incomeSources.cease.routes
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -34,13 +35,13 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
   val ceaseCheckIncomeSourceDetailsView: CeaseCheckIncomeSourceDetails = app.injector.instanceOf[CeaseCheckIncomeSourceDetails]
 
   val viewModelSE: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    testSelfEmploymentId, Some(testTradeName), Some(testBizAddress), testEndDate, SelfEmployment)
+    mkIncomeSourceId(testSelfEmploymentId), Some(testTradeName), Some(testBizAddress), testEndDate, SelfEmployment)
 
   val viewModelUK: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    testPropertyIncomeId, None, None, testEndDate, UkProperty)
+    mkIncomeSourceId(testPropertyIncomeId), None, None, testEndDate, UkProperty)
 
   val viewModelFP: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
-    testPropertyIncomeId, None, None, testEndDate, ForeignProperty)
+    mkIncomeSourceId(testPropertyIncomeId), None, None, testEndDate, ForeignProperty)
 
   val testBackUrl: String = routes.CeaseIncomeSourceController.show().url
   val testCeaseDateLong: String = "1 January 2023"
