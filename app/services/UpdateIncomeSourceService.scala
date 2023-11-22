@@ -41,7 +41,7 @@ class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateInc
     }
   }
 
-  def updateTaxYearSpecific(nino: String, incomeSourceId: IncomeSourceId, taxYearSpecific: TaxYearSpecific)
+  def updateTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateIncomeSourceResponse] = {
     updateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific).map {
       case res: UpdateIncomeSourceResponseModel =>

@@ -173,8 +173,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                 showError(isAgent, {
                 error.getMessage
               })
-              case Right(value) =>
-                nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+              case Right(incomeSourceId) =>
+                nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
                   Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
                 }
             }

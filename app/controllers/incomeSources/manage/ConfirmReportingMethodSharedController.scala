@@ -205,7 +205,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       updateIncomeSourceRes <- incomeSourceIdMaybe match {
         case Some(incomeSourceId) => updateIncomeSourceService.updateTaxYearSpecific(
           nino = user.nino,
-          incomeSourceId = incomeSourceId,
+          incomeSourceId = incomeSourceId.value,
           taxYearSpecific = TaxYearSpecific(taxYears.endYear.toString, reportingMethod match {
             case "annual" => true
             case "quarterly" => false

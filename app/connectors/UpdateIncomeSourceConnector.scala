@@ -65,9 +65,9 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
     }
   }
 
-  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: IncomeSourceId, taxYearSpecific: TaxYearSpecific)
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)
                                        (implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId.value, taxYearSpecific = Some(taxYearSpecific))
+    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
       getUpdateIncomeSourceUrl,

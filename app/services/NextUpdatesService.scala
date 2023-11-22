@@ -103,7 +103,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     }
   }
 
-  def getObligationDates(id: IncomeSourceId)
+  def getObligationDates(id: String)
                         (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
     getNextUpdates() map {
       case NextUpdatesErrorModel(code, message) =>
@@ -123,14 +123,14 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
             DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true, obligationType = source.obligationType)
         },
           model.obligations
-            .filter(nextUpdatesModel => mkIncomeSourceId(nextUpdatesModel.identification) == id)
+            .filter(nextUpdatesModel => mkIncomeSourceId(nextUpdatesModel.identification) == mkIncomeSourceId(id))
             .flatMap(obligation => obligation.obligations.map(nextUpdateModel =>
               DatesModel(nextUpdateModel.start, nextUpdateModel.end, nextUpdateModel.due, nextUpdateModel.periodKey, isFinalDec = false, obligationType = nextUpdateModel.obligationType)))
         ).flatten
     }
   }
 
-  def getObligationsViewModel(id: IncomeSourceId, showPreviousTaxYears: Boolean)
+  def getObligationsViewModel(id: String, showPreviousTaxYears: Boolean)
                              (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[ObligationsViewModel] = {
     val processingRes = for {
       datesList <- getObligationDates(id)
