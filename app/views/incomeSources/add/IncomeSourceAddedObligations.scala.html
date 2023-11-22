@@ -110,48 +110,49 @@
         </h2>
 
 
-        @for(x <- sources.quarterlyObligationsDates) {
+        @if(sources.quarterlyObligationsDates.nonEmpty){
             <div class="box-simple" id="quarterly">
                 <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
                 <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk">
-                            @{
-                            val head = getMessage("table.heading-1")
-                            val to = getMessage("to")
-                            val fromYear = x._2.head.inboundCorrespondenceFrom.getYear
-                            val toYear = fromYear + 1
+                @for(x <- sources.quarterlyObligationsDates) {
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header govuk">
+                                @{
+                                    val head = getMessage("table.heading-1")
+                                    val to = getMessage("to")
+                                    val fromYear = x.head.inboundCorrespondenceFrom.getYear
+                                    val toYear = fromYear + 1
 
-                            s"""$head $fromYear $to $toYear"""
-                            }
-                        </th>
-                        <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
-                    </tr>
-                    </thead>
+                                    s"""$head $fromYear $to $toYear"""
+                                }
+                            </th>
+                            <th scope="col" class="govuk-table__header govuk">@getMessage("table.heading-2")</th>
+                        </tr>
+                        </thead>
 
-                    <tbody class="govuk-table__body">
-                    @x._2.map{ z =>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">
-                            @{
-                            val fromDate = z.inboundCorrespondenceFrom.toLongDate
-                            val to = getMessage("to")
-                            val toDate = z.inboundCorrespondenceTo.toLongDate
+                        <tbody class="govuk-table__body">
+                        @x.map{ z =>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                @{
+                                val fromDate = z.inboundCorrespondenceFrom.toLongDate
+                                val to = getMessage("to")
+                                val toDate = z.inboundCorrespondenceTo.toLongDate
 
-                            s"""$fromDate $to $toDate"""
-                            }
-                        </td>
-                        <td class="govuk-table__cell">@(z.inboundCorrespondenceDue.toLongDate)</td>
-                    </tr>
-                    }
-                    </tbody>
+                                s"""$fromDate $to $toDate"""
+                                }
+                            </td>
+                            <td class="govuk-table__cell">@(z.inboundCorrespondenceDue.toLongDate)</td>
+                        </tr>
+                        }
+                        </tbody>
+                        }
                 </table>
             </div>
         }
-
 
 
         @if(sources.eopsObligationsDates.nonEmpty){

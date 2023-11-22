@@ -147,7 +147,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 ////      val quarterlyDatesYearOne = quarterlyDatesByYear._1.distinct.sortBy(_.periodKey)
 ////      val quarterlyDatesYearTwo = quarterlyDatesByYear._2.distinct.sortBy(_.periodKey)
 
-      val obligationDates = quarterlyDates.groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo))
+      val obligationDates = quarterlyDates.groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo)).map(x => x._2.distinct.sortBy(_.periodKey)).toSeq
 
       val eopsDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.periodKey.contains("EOPS")).distinct.sortBy(_.inboundCorrespondenceFrom)
 
