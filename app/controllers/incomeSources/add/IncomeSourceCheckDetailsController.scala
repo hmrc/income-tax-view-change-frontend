@@ -81,7 +81,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         }
   }
 
-  private def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  private def handleRequest(sources: IncomeSourceDetailsModel,
+                            isAgent: Boolean,
+                            incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType).url
     else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType).url
@@ -109,7 +111,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getDetails(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
+  private def getDetails(incomeSourceType: IncomeSourceType)
+                        (implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
     {
       if (incomeSourceType == SelfEmployment) getBusinessModel else getPropertyModel(incomeSourceType)
     } map {
@@ -120,25 +123,27 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getPropertyModel(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
-      sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).map { accMethod: Either[Throwable, Option[String]] =>
-        (startDate, accMethod) match {
-          case (Right(dateMaybe), Right(methodMaybe)) =>
-            (dateMaybe, methodMaybe) match {
-              case (Some(date), Some(method)) =>
-                Right(CheckPropertyViewModel(
-                  tradingStartDate = date,
-                  cashOrAccrualsFlag = method,
-                  incomeSourceType = incomeSourceType
-                ))
-              case (_, _) =>
-                Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
-            }
-          case (_, _) => Left(new Error(s"Error while retrieving date started or accounting method from session"))
+  private def getPropertyModel(incomeSourceType: IncomeSourceType)
+                              (implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
+    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType))
+      .flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
+        sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).map { accMethod: Either[Throwable, Option[String]] =>
+          (startDate, accMethod) match {
+            case (Right(dateMaybe), Right(methodMaybe)) =>
+              (dateMaybe, methodMaybe) match {
+                case (Some(date), Some(method)) =>
+                  Right(CheckPropertyViewModel(
+                    tradingStartDate = date,
+                    cashOrAccrualsFlag = method,
+                    incomeSourceType = incomeSourceType
+                  ))
+                case (_, _) =>
+                  Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
+              }
+            case (_, _) => Left(new Error(s"Error while retrieving date started or accounting method from session"))
+          }
         }
       }
-    }
   }
 
   private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
