@@ -105,9 +105,9 @@
                 <div class="page_headers govuk-heading-m"> @getMessage("quarterly-heading") </div>
                 <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
-                @for(x <- sources.quarterlyObligationsDates) {
+                @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
                         @govukTable(Table(
-                            rows = x.map { z =>
+                            rows = quarterlyPeriods.map { z =>
                                 Seq(
                                     TableRow(
                                         content = Text(s"${z.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${z.inboundCorrespondenceTo.toLongDate}")
@@ -119,7 +119,7 @@
                             },
                             head = Some(Seq(
                                 HeadCell(
-                                    content = Text(getQuarterlyTableHeading(x))
+                                    content = Text(getQuarterlyTableHeading(quarterlyPeriods))
                                 ),
                                 HeadCell(
                                     content = Text(getMessage("table.heading-2"))
