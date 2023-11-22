@@ -78,7 +78,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
                                 isAgent: Boolean
                                )(implicit user: MtdItUser[_]): Future[Result] = {
     Future.successful(
-      user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
+      user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value)) match {
         case Some(id) =>
           Ok(
             reportingMethodChangeError(

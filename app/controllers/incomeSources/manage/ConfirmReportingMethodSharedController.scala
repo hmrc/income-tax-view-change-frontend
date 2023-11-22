@@ -114,7 +114,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                 soleTraderBusinessId: Option[IncomeSourceId])
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId)
+    val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value))
 
     withIncomeSourcesFS {
       Future.successful(
@@ -151,8 +151,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[IncomeSourceId],
                                   incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId)
-    val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, maybeIncomeSourceId)
+    val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
+    val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, maybeIncomeSourceId.map(m => m.value))
     val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
 
@@ -184,7 +184,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   }
 
-  def formatReportingMethod(reportingMethod: String): String = {
+  private def formatReportingMethod(reportingMethod: String): String = {
     reportingMethod match {
       case "annual" => "Annually"
       case "quarterly" => "Quarterly"

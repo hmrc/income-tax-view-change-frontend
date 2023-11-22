@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateIncomeSourceConnector) {
 
-  def updateCessationDate(nino: String, incomeSourceId: IncomeSourceId, cessationDate: String)
+  def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: String)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceResponseError, UpdateIncomeSourceSuccess]] = {
     updateIncomeSourceConnector.updateCessationDate(
       nino = nino,
