@@ -65,15 +65,15 @@ case class IncomeSourceDetailsModel(nino: String,
     properties.find(_.isOngoingUkProperty)
   }
 
-  def getSoleTraderBusiness(id: IncomeSourceId): Option[BusinessDetailsModel] = {
-    businesses.find(_.isOngoingSoleTraderBusiness(id.value))
+  def getSoleTraderBusiness(id: String): Option[BusinessDetailsModel] = {
+    businesses.find(_.isOngoingSoleTraderBusiness(id))
   }
 
   def getSoleTraderBusinesses: Seq[BusinessDetailsModel] = {
     businesses.filterNot(_.isCeased)
   }
 
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[IncomeSourceId] = None): Option[IncomeSourceId] = {
+  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[IncomeSourceId] = {
     (incomeSourceType, soleTraderBusinessId) match {
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(m => mkIncomeSourceId(m.incomeSourceId))
       case (UkProperty, _) => getUKProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
@@ -82,7 +82,7 @@ case class IncomeSourceDetailsModel(nino: String,
     }
   }
 
-  def getIncomeSourceBusinessName(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[IncomeSourceId] = None): Option[String] = {
+  def getIncomeSourceBusinessName(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
     (incomeSourceType, soleTraderBusinessId) match {
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.tradingName.getOrElse("Unknown"))
       case (UkProperty, _) => Some("UK property")
