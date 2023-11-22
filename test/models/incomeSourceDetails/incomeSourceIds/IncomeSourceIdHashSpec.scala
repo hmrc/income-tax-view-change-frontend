@@ -16,8 +16,9 @@
 
 package models.incomeSourceDetails.incomeSourceIds
 
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceIdHash.mkIncomeSourceIdHash
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 import org.scalatest.Failed
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
 import testUtils.UnitSpec

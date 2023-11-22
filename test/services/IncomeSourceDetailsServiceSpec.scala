@@ -20,6 +20,7 @@ import audit.mocks.MockAuditingService
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants._
@@ -140,7 +141,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
         val result = TestIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome)
 
         result shouldBe Right(CeaseIncomeSourcesViewModel(
-          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate))),
+          soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(mkIncomeSourceId(testSelfEmploymentId), Some(testTradeName), Some(testStartDate))),
           ukProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
           foreignProperty = None,
           ceasedBusinesses = Nil

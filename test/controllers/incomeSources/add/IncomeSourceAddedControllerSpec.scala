@@ -26,6 +26,8 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, UIJourneySessionData}
+import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
@@ -98,19 +100,19 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   ))
 
   def mockSelfEmployment(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(),any())(any())).thenReturn(
+    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(),mkIncomeSourceId(any()) )(any())).thenReturn(
       Some((LocalDate.parse("2022-01-01"), Some("Business Name")))
     )
   }
 
   def mockProperty(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), any())(any())).thenReturn(
+    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
       Some((LocalDate.parse("2022-01-01"), None))
     )
   }
 
   def mockFailure(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), any())(any())).thenReturn(
+    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()) )(any())).thenReturn(
       None
     )
   }

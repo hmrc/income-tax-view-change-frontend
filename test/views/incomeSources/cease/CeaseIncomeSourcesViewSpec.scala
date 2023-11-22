@@ -18,6 +18,7 @@ package views.incomeSources.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import implicits.ImplicitDateFormatter
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.{CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -34,7 +35,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
   class Setup(isAgent: Boolean, missingValues: Boolean = false) {
     val viewModel = if (missingValues) {
       CeaseIncomeSourcesViewModel(
-        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, None, None)),
+        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel( mkIncomeSourceId(testSelfEmploymentId), None, None)),
         ukProperty = Some(CeasePropertyDetailsViewModel(None)),
         foreignProperty = Some(CeasePropertyDetailsViewModel(None)),
         ceasedBusinesses = List(
@@ -45,7 +46,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       )
     } else {
       CeaseIncomeSourcesViewModel(
-        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(testSelfEmploymentId, Some(testTradeName), Some(testStartDate))),
+        soleTraderBusinesses = List(CeaseBusinessDetailsViewModel(mkIncomeSourceId(testSelfEmploymentId), Some(testTradeName), Some(testStartDate))),
         ukProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         foreignProperty = Some(CeasePropertyDetailsViewModel(Some(testStartDate))),
         ceasedBusinesses = List(
