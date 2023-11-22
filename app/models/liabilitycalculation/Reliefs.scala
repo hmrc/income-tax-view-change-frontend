@@ -22,7 +22,8 @@ case class Reliefs(
                     residentialFinanceCosts: Option[ResidentialFinanceCosts],
                     reliefsClaimed: Option[Seq[ReliefsClaimed]],
                     foreignTaxCreditRelief: Option[ForeignTaxCreditRelief],
-                    topSlicingRelief: Option[TopSlicingRelief]
+                    topSlicingRelief: Option[TopSlicingRelief],
+                    giftAidTaxReductionWhereBasicRateDiffers: Option[GiftAidTaxReductionWhereBasicRateDiffers]
                   )
 
 object Reliefs {
@@ -52,4 +53,10 @@ case class TopSlicingRelief(amount: Option[BigDecimal] = None)
 
 object TopSlicingRelief {
   implicit val format: OFormat[TopSlicingRelief] = Json.format[TopSlicingRelief]
+}
+
+case class GiftAidTaxReductionWhereBasicRateDiffers(amount: Option[BigDecimal] = None)
+
+object GiftAidTaxReductionWhereBasicRateDiffers {
+  implicit val format: OFormat[GiftAidTaxReductionWhereBasicRateDiffers] = Json.format[GiftAidTaxReductionWhereBasicRateDiffers]
 }

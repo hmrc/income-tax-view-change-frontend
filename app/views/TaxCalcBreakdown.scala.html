@@ -248,6 +248,7 @@
             @tableRow("total_foreign_tax_credit_relief", viewModel.totalForeignTaxCreditRelief, isNegative = true)
             @taxReductionsTableRow("qualifyingDistributionRedemptionOfSharesAndSecurities")
             @taxReductionsTableRow("nonDeductableLoanInterest")
+            @tableRow("giftAidTaxReductionWhereBasicRateDiffers", viewModel.giftAidTaxReductionWhereBasicRateDiffers, isNegative = true)
 
             @viewModel.incomeTaxDueAfterTaxReductions.map { incomeTaxDueAfterTaxReductions =>
                 <tr class="govuk-table__row">
@@ -262,7 +263,8 @@
 
     @if(viewModel.giftAidTax.isDefined ||
     viewModel.totalPensionSavingsTaxCharges.isDefined ||
-    viewModel.statePensionLumpSumCharges.isDefined
+    viewModel.statePensionLumpSumCharges.isDefined ||
+    viewModel.giftAidTaxChargeWhereBasicRateDiffers
     ) {
         <table class="govuk-table" id="additional-charges-table">
             <caption
@@ -305,6 +307,14 @@
                     }</td>
                 </tr>
             }
+            </tbody>
+            <tbody class="govuk-table__body">
+                @viewModel.giftAidTaxChargeWhereBasicRateDiffers.map { amount =>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers")</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@amount.toCurrency</td>
+                    </tr>
+                }
             </tbody>
         </table>
     }
