@@ -19,6 +19,7 @@ package services
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import connectors.AddressLookupConnector
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel}
@@ -26,6 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
 import testUtils.TestSupport
+
 import scala.concurrent.Future
 import scala.util.Success
 
@@ -145,7 +147,7 @@ class AddressLookupServiceSpec extends TestSupport
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Left(UnexpectedGetStatusFailure(418))))
 
-        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some(""))
+        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress( Some(mkIncomeSourceId("")))
         result map {
           case Left(AddressError(value)) => value shouldBe "status: 418"
           case Right(_) => Fail("Error not returned")
@@ -175,7 +177,7 @@ class AddressLookupServiceSpec extends TestSupport
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Right(None)))
 
-        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some(""))
+        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some(mkIncomeSourceId("")))
         result map {
           case Left(AddressError(value)) => value shouldBe "Not found"
           case Right(_) => Fail("Error not returned")
@@ -190,7 +192,7 @@ class AddressLookupServiceSpec extends TestSupport
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Right(Some(testBusinessAddressModel))))
 
-        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some(""))
+        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some(mkIncomeSourceId("")))
         result map {
           case Left(_) => Fail("Error returned from connector")
           case Right(BusinessAddressModel(auditRef, address)) =>

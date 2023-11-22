@@ -16,8 +16,8 @@
 
 package models.helpers
 
-import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation._
+import models.liabilitycalculation.taxcalculation._
 
 trait LiabilityCalculationDataHelper {
 
@@ -84,7 +84,8 @@ trait LiabilityCalculationDataHelper {
       incomeTaxDueAfterTaxReductions = Some(5000.99),
       totalPensionSavingsTaxCharges = Some(5000.99),
       statePensionLumpSumCharges = Some(5000.99),
-      payeUnderpaymentsCodedOut = Some(5000.99)
+      payeUnderpaymentsCodedOut = Some(5000.99),
+      giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99)
     ),
     nics = Some(Nics(
       class4Nics = Some(Class4Nics(nic4Bands = Seq(Nic4Bands(
@@ -569,11 +570,12 @@ trait LiabilityCalculationDataHelper {
       amountUsed = Some(5000.99)),
       ReliefsClaimed(
         `type` = "vctSubscriptions2",
-        amountUsed = Some(5000.99)),
+        amountUsed = Some(5000.99))
     )),
       residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
       foreignTaxCreditRelief = Some(ForeignTaxCreditRelief(totalForeignTaxCreditRelief = 5000.99)),
-      topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))))),
+      topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))),
+      giftAidTaxReductionWhereBasicRateDiffers = Some(GiftAidTaxReductionWhereBasicRateDiffers(amount = Some(127.49))))),
     savingsAndGainsIncome = Some(SavingsAndGainsIncome(
       chargeableForeignSavingsAndGains = Some(12500)
     )),
@@ -620,7 +622,7 @@ trait LiabilityCalculationDataHelper {
       occupationalPensions = Some(5000.99),
       stateBenefits = Some(-99999999999.99),
       specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
-      inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+      inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
     )))
 
   val liabilityCalculationModelSuccessfulConversionPB = LiabilityCalculationResponse(
