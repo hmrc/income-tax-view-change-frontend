@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId
+import models.core.IncomeSourceId
 import models.updateIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK
@@ -37,7 +37,7 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
 
   def updateCessationDate(nino: String, incomeSourceId: IncomeSourceId, cessationDate: Option[LocalDate])(
     implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId,
+    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId.value,
       cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate)))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
@@ -65,8 +65,9 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
     }
   }
 
-  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: IncomeSourceId, taxYearSpecific: TaxYearSpecific)(implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: IncomeSourceId, taxYearSpecific: TaxYearSpecific)
+                                       (implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
+    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId.value, taxYearSpecific = Some(taxYearSpecific))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
       getUpdateIncomeSourceUrl,

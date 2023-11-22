@@ -17,8 +17,8 @@
 package models.incomeSourceDetails
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId.mkIncomeSourceId
+import models.core.IncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface

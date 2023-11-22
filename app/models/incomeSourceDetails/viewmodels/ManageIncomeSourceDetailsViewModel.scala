@@ -17,12 +17,12 @@
 package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
-import models.core.AddressModel
+import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.LatencyDetails
 
 import java.time.LocalDate
 
-case class ManageIncomeSourceDetailsViewModel(incomeSourceId: String,
+case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               tradingName: Option[String],
                                               tradingStartDate: Option[LocalDate],
                                               address: Option[AddressModel],

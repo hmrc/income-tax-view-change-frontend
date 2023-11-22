@@ -16,7 +16,6 @@
 
 package models.updateIncomeSource
 
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
@@ -36,7 +35,7 @@ object Cessation {
 }
 
 case class UpdateIncomeSourceRequestModel(nino: String,
-                                          incomeSourceID: IncomeSourceId,
+                                          incomeSourceID: String,
                                           cessation: Option[Cessation] = None,
                                           taxYearSpecific: Option[TaxYearSpecific] = None) extends UpdateIncomeSourceRequest
 

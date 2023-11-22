@@ -16,21 +16,18 @@
 
 package services
 
-import java.time.LocalDate
 import auth.MtdItUser
 import connectors._
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-
-import javax.inject.{Inject, Singleton}
+import models.incomeSourceDetails.viewmodels._
 import models.nextUpdates._
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import models.incomeSourceDetails.viewmodels._
-
-import scala.util.Try
 
 @Singleton
 class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
@@ -52,7 +49,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[Either[(LocalDate, Boolean), Int]] = {
     getNextUpdates().map {
 
-      case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) => {
+      case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) =>
         val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
         val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate(isTimeMachineEnabled))
         val nextDueDates = dueDates.diff(overdueDates)
@@ -63,7 +60,6 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
           case 1 => Left(overdueDates.head -> true)
           case _ => Right(overdueDatesCount)
         }
-      }
       case _ =>
         throw new InternalServerException(s"Unexpected Exception getting obligation due dates")
     }
@@ -107,7 +103,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     }
   }
 
-  def getObligationDates(id: String)
+  def getObligationDates(id: IncomeSourceId)
                         (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
     getNextUpdates() map {
       case NextUpdatesErrorModel(code, message) =>
@@ -127,14 +123,14 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
             DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true, obligationType = source.obligationType)
         },
           model.obligations
-            .filter(nextUpdatesModel => mkIncomeSourceId(nextUpdatesModel.identification) == mkIncomeSourceId(id))
+            .filter(nextUpdatesModel => mkIncomeSourceId(nextUpdatesModel.identification) == id)
             .flatMap(obligation => obligation.obligations.map(nextUpdateModel =>
               DatesModel(nextUpdateModel.start, nextUpdateModel.end, nextUpdateModel.due, nextUpdateModel.periodKey, isFinalDec = false, obligationType = nextUpdateModel.obligationType)))
         ).flatten
     }
   }
 
-  def getObligationsViewModel(id: String, showPreviousTaxYears: Boolean)
+  def getObligationsViewModel(id: IncomeSourceId, showPreviousTaxYears: Boolean)
                              (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[ObligationsViewModel] = {
     val processingRes = for {
       datesList <- getObligationDates(id)

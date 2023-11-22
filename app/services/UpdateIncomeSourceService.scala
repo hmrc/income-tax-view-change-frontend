@@ -17,7 +17,7 @@
 package services
 
 import connectors.UpdateIncomeSourceConnector
-import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId
+import models.core.IncomeSourceId
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateIncomeSourceConnector) {
 
-  def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: String)
+  def updateCessationDate(nino: String, incomeSourceId: IncomeSourceId, cessationDate: String)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[UpdateIncomeSourceResponseError, UpdateIncomeSourceSuccess]] = {
     updateIncomeSourceConnector.updateCessationDate(
       nino = nino,
