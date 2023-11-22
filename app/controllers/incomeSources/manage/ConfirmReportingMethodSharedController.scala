@@ -151,7 +151,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[IncomeSourceId],
                                   incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
 
-    val incomeSourceId: Option[String] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId)
+    val incomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, maybeIncomeSourceId)
     val incomeSourceBusinessName: Option[String] = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, maybeIncomeSourceId)
     val (backCall, successCall) = getRedirectCalls(taxYear, isAgent, changeTo, incomeSourceId, incomeSourceType)
     val errorCall = getErrorCall(incomeSourceType, isAgent)
@@ -195,12 +195,11 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                               isAgent: Boolean,
                               successCall: Call,
                               taxYears: TaxYear,
-                              incomeSourceIdMaybe: Option[String],
+                              incomeSourceIdMaybe: Option[IncomeSourceId],
                               reportingMethod: String,
                               incomeSourceBusinessName: Option[String],
                               incomeSourceType: IncomeSourceType
                              )(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
 
     val updateIncomeSourceResFuture = for {
       updateIncomeSourceRes <- incomeSourceIdMaybe match {
@@ -259,16 +258,16 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def getRedirectCalls(taxYear: String,
                                isAgent: Boolean,
                                changeTo: String,
-                               incomeSourceId: Option[String],
+                               incomeSourceId: Option[IncomeSourceId],
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {
 
     val (backCall, successCall) = (isAgent, incomeSourceType, incomeSourceId) match {
       case (false, SelfEmployment, Some(incomeSourceId)) =>
-        routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId) ->
+        routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId.value) ->
           routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
       case (_, SelfEmployment, Some(incomeSourceId)) =>
-        routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId) ->
+        routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId.value) ->
           routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
       case (false, UkProperty, _) =>
         routes.ManageIncomeSourceDetailsController.showUkProperty() ->

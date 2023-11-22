@@ -17,6 +17,7 @@
 package services
 
 import connectors.UpdateIncomeSourceConnector
+import models.incomeSourceDetails.incomeSourceIds.IncomeSourceId
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,7 +41,7 @@ class UpdateIncomeSourceService @Inject()(updateIncomeSourceConnector: UpdateInc
     }
   }
 
-  def updateTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)
+  def updateTaxYearSpecific(nino: String, incomeSourceId: IncomeSourceId, taxYearSpecific: TaxYearSpecific)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[UpdateIncomeSourceResponse] = {
     updateIncomeSourceConnector.updateIncomeSourceTaxYearSpecific(nino = nino, incomeSourceId = incomeSourceId, taxYearSpecific).map {
       case res: UpdateIncomeSourceResponseModel =>
