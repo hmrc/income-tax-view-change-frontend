@@ -99,12 +99,12 @@
                 TableRow(
                     content = HtmlContent(
                         s"""
-                                <a class="govuk-link" href='${ceaseSoleTraderBusinessURL(business.incomeSourceId.value)}'>
+                                <a class="govuk-link" href='${ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)}'>
                                     ${getMessage("cease")}
                                 </a>"""
                     ),
                     classes = "govuk-!-text-align-right",
-                    attributes = Map("id" -> s"cease-link-business-$index", "href" -> s"${ceaseSoleTraderBusinessURL(business.incomeSourceId.value)}")
+                    attributes = Map("id" -> s"cease-link-business-$index", "href" -> s"${ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)}")
                 )
             )
             },

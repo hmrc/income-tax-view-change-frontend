@@ -25,8 +25,9 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.models.DateFormElement
-import models.core.IncomeSourceId
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
@@ -204,7 +205,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+      val incomeSourceIdMaybe = id.map(mkFromQueryString).get.toOption
       handleSubmitRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType,
@@ -218,7 +219,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+            val incomeSourceIdMaybe = id.map(mkFromQueryString).get.toOption
             handleSubmitRequest(
               isAgent = true,
               incomeSourceType = incomeSourceType,
@@ -231,7 +232,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def submitChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+      val incomeSourceIdMaybe = id.map(mkFromQueryString).get.toOption
       handleSubmitRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType,
@@ -243,7 +244,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
-        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+        val incomeSourceIdMaybe = id.map(mkFromQueryString).get.toOption
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
             handleSubmitRequest(
@@ -255,12 +256,15 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         }
   }
 
-  def handleSubmitRequest(id: Option[IncomeSourceId], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
+  def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    getActions(isAgent, incomeSourceType, id, isChange).flatMap { actions =>
+    val xs = user.incomeSources.properties.map(m => mkIncomeSourceId(m.incomeSourceId)) ++ user.incomeSources.businesses.map(m => mkIncomeSourceId(m.incomeSourceId))
+    val incomeSourceId = id.flatMap(_.oneOf(xs))
+
+    getActions(isAgent, incomeSourceType, incomeSourceId, isChange).flatMap { actions =>
       val (backAction, postAction, redirectAction) = actions
-      incomeSourceEndDateForm(incomeSourceType, id.map(_.value)).bindFromRequest().fold(
+      incomeSourceEndDateForm(incomeSourceType, incomeSourceId.map(_.value)).bindFromRequest().fold(
 
         hasErrors => {
           Future.successful(BadRequest(incomeSourceEndDate(
@@ -275,14 +279,14 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         validatedInput =>
           sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
             (incomeSourceType, id) match {
-              case (SelfEmployment, Some(incomeSourceId)) =>
+              case (SelfEmployment, Some(incomeSourceIdHash)) =>
                 val result = Redirect(redirectAction)
                 sessionService.setMongoKey(
                   CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
                 ).flatMap {
                   case Right(_) =>
                     sessionService.setMongoKey(
-                      CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
+                      CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.get.value, JourneyType(Cease, incomeSourceType)
                     ).flatMap {
                       case Right(_) => Future.successful(result)
                       case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
