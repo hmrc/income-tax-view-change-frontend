@@ -97,8 +97,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         case Some(fdm: FinancialDetailsModel) if fdm.documentDetails.exists(_.transactionId == id) =>
           doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdm, payments, isAgent, origin, isMFADebit(fdm, id))
         case Some(_: FinancialDetailsModel) =>
+          Logger("application").warn(s"MISUV-6691 LOG :: TaxYear: $taxYear, Id: $id, financialResponses: $financialResponses}")
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
         case _ =>
+          Logger("application").warn(s"MISUV-6691 LOG :: TaxYear: $taxYear, Id: $id, financialResponses: $financialResponses}")
           Future.successful(onError("Invalid response from financial transactions", isAgent, showInternalServerError = true))
       }
     }
