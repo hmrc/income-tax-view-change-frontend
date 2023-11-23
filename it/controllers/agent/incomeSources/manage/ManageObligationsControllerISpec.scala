@@ -30,7 +30,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSaUtr, testSessionId}
 import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
+import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
@@ -58,23 +58,11 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val year = 2022
   val obligationsViewModel: ObligationsViewModel = ObligationsViewModel(
-    quarterlyObligationsDatesYearOne = Seq(DatesModel(
-      LocalDate.of(year, 1, 6),
-      LocalDate.of(year, 4, 5),
-      LocalDate.of(year, 5, 5),
-      "Quarterly",
-      false,
-      obligationType = "Quarterly"
-    ),
-      DatesModel(
-        LocalDate.of(year, 1, 6),
-        LocalDate.of(year, 4, 5),
-        LocalDate.of(year, 5, 5),
-        "Quarterly",
-        false,
-        obligationType = "Quarterly"
-      )),
-    Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
+    testQuarterlyObligationDates,
+    Seq.empty,
+    Seq.empty,
+    2023,
+    showPrevTaxYears = false
   )
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]

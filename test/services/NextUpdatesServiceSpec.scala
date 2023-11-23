@@ -346,9 +346,9 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         thenReturn(Future(nextModel))
 
       val expectedResult = ObligationsViewModel(
-        Seq(DatesModel(day.minusYears(1), day.minusYears(1).plusDays(1),
+        Seq(Seq(DatesModel(day.minusYears(1), day.minusYears(1).plusDays(1),
           day.minusYears(1).plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")),
-        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")),
+        Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly"))),
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
         dateService.getCurrentTaxYearEnd(),
@@ -370,7 +370,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       val expectedResult = ObligationsViewModel(
               Seq.empty,
-              Seq.empty, Seq.empty,
+              Seq.empty,
               Seq.empty,
               dateService.getCurrentTaxYearEnd(),
               showPrevTaxYears = true
@@ -390,7 +390,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
       result.futureValue shouldBe ObligationsViewModel(
-        Seq.empty, Seq.empty,
+        Seq.empty,
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
         Seq.empty,
         dateService.getCurrentTaxYearEnd(),
@@ -411,8 +411,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         .thenReturn(Future.successful(expectedResponse))
 
       val expectedResult: ObligationsViewModel = ObligationsViewModel(
-        quarterlyObligationsDatesYearOne = List.empty,
-        quarterlyObligationsDatesYearTwo = List.empty,
+        quarterlyObligationsDates = List.empty,
         eopsObligationsDates = List(),  // List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "EOPS", false)),
         finalDeclarationDates = List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "23P0", true, obligationType = "Crystallised")),
         currentTaxYear = 2024,

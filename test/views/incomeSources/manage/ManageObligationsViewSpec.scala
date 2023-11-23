@@ -22,6 +22,7 @@ import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import play.twirl.api.Html
+import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
 import testUtils.ViewSpec
 import views.html.incomeSources.manage.ManageObligations
 
@@ -49,12 +50,15 @@ class ManageObligationsViewSpec extends ViewSpec {
 
   val view: ManageObligations = app.injector.instanceOf[ManageObligations]
 
-  val day: LocalDate = LocalDate.of(2022, 1, 1)
+  val day = LocalDate.of(2022, 1, 1)
+
+  val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
+  val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
+
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
-    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")),
-    Seq(DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")),
-    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
-    Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
+    quarterlyObligationDatesFull,
+    Seq(eopsDates),
+    Seq(finalDeclarationDates),
     2023,
     showPrevTaxYears = true
   )
@@ -64,7 +68,7 @@ class ManageObligationsViewSpec extends ViewSpec {
   val quarterly = "quarterly"
   val annually = "annual"
 
-  val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
+  val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
 
   val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall)
@@ -117,15 +121,19 @@ class ManageObligationsViewSpec extends ViewSpec {
       val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")
       tableHeadings.text() should include(ManageObligationsMessages.tableHeading1 + " 2022 to 2023")
       tableHeadings.text() should include(ManageObligationsMessages.tableHeading1 + " 2023 to 2024")
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading2)
+      tableHeadings.text() should include(ManageObligationsMessages.tableHeading1 + " 2024 to 2025")
+      tableHeadings.text() should include(ManageObligationsMessages.tableHeading1 + " ")
 
 
       val tableContent: Elements = quarterlySection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("1 January 2022 to 2 January 2022")
-      tableContent.text() should include("3 January 2022")
+      tableContent.text() should include("6 January 2022 to 5 April 2022")
+      tableContent.text() should include("5 May 2022")
 
-      tableContent.text() should include("1 January 2023 to 2 January 2023")
-      tableContent.text() should include("3 January 2023")
+      tableContent.text() should include("6 January 2023 to 5 April 2023")
+      tableContent.text() should include("5 May 2023")
+
+      tableContent.text() should include("6 January 2024 to 5 April 2024")
+      tableContent.text() should include("5 May 2024")
     }
 
     "Display EOPS obligations if the user has them" in new Setup(validSECallWithName) {

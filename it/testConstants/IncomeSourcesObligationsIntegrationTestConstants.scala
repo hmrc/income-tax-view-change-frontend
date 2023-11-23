@@ -24,14 +24,17 @@ import java.time.LocalDate
 object IncomeSourcesObligationsIntegrationTestConstants {
   val taxYear: Int = 2022
 
-  val datesModel2022: DatesModel = generateDatesModel(taxYear)
-  val datesModel2023: DatesModel = generateDatesModel(taxYear + 1)
+  val datesModelSeq2022: Seq[DatesModel] = Seq(generateDatesModel(taxYear))
+  val datesModelSeq2023: Seq[DatesModel] = Seq(generateDatesModel(taxYear + 1))
+  val datesModel: DatesModel = (generateDatesModel(taxYear + 1))
+
+
+  val testQuarterlyObligationDates = Seq(datesModelSeq2022, datesModelSeq2023)
 
   val testObligationsViewModel: ObligationsViewModel = ObligationsViewModel(
-    quarterlyObligationsDatesYearOne = Seq(datesModel2022, datesModel2023),
-    quarterlyObligationsDatesYearTwo = Seq(datesModel2023),
-    eopsObligationsDates = Seq(datesModel2023),
-    finalDeclarationDates = Seq(datesModel2023),
+    quarterlyObligationsDates = testQuarterlyObligationDates,
+    eopsObligationsDates = Seq(datesModel),
+    finalDeclarationDates = Seq(datesModel),
     currentTaxYear = taxYear,
     showPrevTaxYears = false
   )

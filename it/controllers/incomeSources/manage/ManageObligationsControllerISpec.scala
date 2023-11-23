@@ -28,7 +28,7 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
+import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 
 import java.time.LocalDate
 
@@ -54,23 +54,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val year = 2022
   val obligationsViewModel: ObligationsViewModel = ObligationsViewModel(
-    quarterlyObligationsDatesYearOne = Seq(DatesModel(
-      LocalDate.of(year, 1, 6),
-      LocalDate.of(year, 4, 5),
-      LocalDate.of(year, 5, 5),
-      "Quarterly",
-      false,
-      obligationType = "Quarterly"
-    ),
-      DatesModel(
-        LocalDate.of(year, 1, 6),
-        LocalDate.of(year, 4, 5),
-        LocalDate.of(year, 5, 5),
-        "Quarterly",
-        false,
-        obligationType = "Quarterly"
-      )),
-    Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
+    testQuarterlyObligationDates, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false
   )
 
 
