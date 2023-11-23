@@ -26,14 +26,16 @@ object IncomeSourceIdSpecification extends Properties("IncomeSourceId") {
 
   val range : Seq[Char] = ( 'a' to'z').toList ++ ( 'A' to'Z') ++ ('0' to '9').toList
 
-  val incomeSourceIdGen = Gen.listOfN(10, Gen.pick(15, range) )
+  val incomeSourceIdGen = Gen.listOfN(1000, Gen.pick(15, range) )
 
-  property("startsWith") = forAll(incomeSourceIdGen) { ids =>
-    val hashSet = ids.map { i =>
-      val y = mkIncomeSourceId( i.mkString(""))
-      mkIncomeSourceIdHash(y).hash
+  property("make sure hash is unique") = forAll(incomeSourceIdGen) { ids =>
+    val hashSet: List[String] = ids.map { i =>
+      val incomeSourceId = mkIncomeSourceId( i.mkString(""))
+      mkIncomeSourceIdHash(incomeSourceId).hash
     }
-    hashSet.distinct.length == ids.length
+    ids.forall(x => x.mkString("").nonEmpty) &&
+      hashSet.forall(x => x.nonEmpty) &&
+        hashSet.distinct.length == ids.length
   }
 
 }
