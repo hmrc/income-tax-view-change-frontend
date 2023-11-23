@@ -323,13 +323,13 @@ object BusinessDetailsTestConstants {
   )
 
   val viewBusinessDetailsViewModel = ViewBusinessDetailsViewModel(
-    incomeSourceId = testSelfEmploymentId,
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     tradingName = testTradeNameOption,
     tradingStartDate = testStartDateOption
   )
 
   val viewBusinessDetailsViewModel2 = ViewBusinessDetailsViewModel(
-    incomeSourceId = testSelfEmploymentId,
+    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     tradingName = testTradeNameOption,
     tradingStartDate = testStartDateOption
   )
