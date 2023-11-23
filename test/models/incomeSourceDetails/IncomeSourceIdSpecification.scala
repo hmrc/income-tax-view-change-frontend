@@ -29,13 +29,14 @@ object IncomeSourceIdSpecification extends Properties("IncomeSourceId") {
   val incomeSourceIdGen = Gen.listOfN(1000, Gen.pick(15, range) )
 
   property("make sure hash is unique") = forAll(incomeSourceIdGen) { ids =>
-    val hashSet: List[String] = ids.map { i =>
+    val hashSet: List[String] = ids.distinct.map { i =>
       val incomeSourceId = mkIncomeSourceId( i.mkString(""))
+      //println(i.mkString(""))
       mkIncomeSourceIdHash(incomeSourceId).hash
     }
     ids.forall(x => x.mkString("").nonEmpty) &&
       hashSet.forall(x => x.nonEmpty) &&
-        hashSet.distinct.length == ids.length
+        hashSet.distinct.length == ids.distinct.length
   }
 
 }
