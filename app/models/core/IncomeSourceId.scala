@@ -24,7 +24,6 @@ class IncomeSourceId private(val value: String) extends AnyVal {
   override def toString: String = s"IncomeSourceId: $value"
 }
 
-
 object IncomeSourceId {
   def mkIncomeSourceId(incomeSourceAsString: String): IncomeSourceId = {
 
