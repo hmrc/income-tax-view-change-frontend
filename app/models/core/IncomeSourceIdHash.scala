@@ -33,8 +33,9 @@ class IncomeSourceIdHash private(val hash: String) extends AnyVal {
 
 object IncomeSourceIdHash {
   def mkIncomeSourceIdHash(id: IncomeSourceId): IncomeSourceIdHash = {
-    val hash = id.value.hashCode().abs.toString
-    new IncomeSourceIdHash(hash)
+    val hashA = id.value.hashCode().abs.toString
+    val hashB = id.value.reverse.hashCode().abs.toString
+    new IncomeSourceIdHash(s"${hashB}${hashA}")
   }
 
   def mkFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {
