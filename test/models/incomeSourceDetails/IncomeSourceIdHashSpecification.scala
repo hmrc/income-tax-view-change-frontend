@@ -21,7 +21,7 @@ import org.scalacheck.{Gen, Properties}
 import IncomeSourceIdHash._
 import models.core.IncomeSourceId._
 
-object IncomeSourceIdSpecification extends Properties("IncomeSourceId") {
+object IncomeSourceIdHashSpecification extends Properties("IncomeSourceId") {
   import org.scalacheck.Prop.forAll
 
   val range : Seq[Char] = ( 'a' to'z').toList ++ ( 'A' to'Z') ++ ('0' to '9').toList
