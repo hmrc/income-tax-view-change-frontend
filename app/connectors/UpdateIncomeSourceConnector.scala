@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.core.IncomeSourceId
 import models.updateIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK
@@ -64,7 +65,8 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
     }
   }
 
-  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)(implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
+  def updateIncomeSourceTaxYearSpecific(nino: String, incomeSourceId: String, taxYearSpecific: TaxYearSpecific)
+                                       (implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
     val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId, taxYearSpecific = Some(taxYearSpecific))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](

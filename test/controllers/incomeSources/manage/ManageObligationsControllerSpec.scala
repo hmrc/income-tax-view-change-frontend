@@ -24,6 +24,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
@@ -457,7 +458,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setUpProperty(isAgent = false, isUkProperty = true)
           val invalidTaxYear = "2345"
 
-          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = false, invalidTaxYear, changeToQ, Some(""))(individualUser, headerCarrier)
+          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = false, invalidTaxYear, changeToQ, Some(mkIncomeSourceId("")))(individualUser, headerCarrier)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
         "invalid changeTo in url" in {
@@ -465,7 +466,7 @@ class ManageObligationsControllerSpec extends TestSupport
           setUpProperty(isAgent = true, isUkProperty = true)
           val invalidChangeTo = "2345"
 
-          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = true, taxYear, invalidChangeTo, Some(""))(agentUserConfirmedClient(), headerCarrier)
+          val result: Future[Result] = TestManageObligationsController.handleRequest(UkProperty, isAgent = true, taxYear, invalidChangeTo, Some(mkIncomeSourceId("")))(agentUserConfirmedClient(), headerCarrier)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }

@@ -89,23 +89,25 @@ object NewCalcBreakdownItTestConstants {
       studentLoans = Some(Seq(
         StudentLoan(
           planType = Option("01"),
-          studentLoanRepaymentAmount = Some(BigDecimal(5000.99)),
-      ),
+          studentLoanRepaymentAmount = Some(BigDecimal(5000.99))
+        ),
         StudentLoan(
-            planType = Option("03"),
-            studentLoanRepaymentAmount = Some(BigDecimal(5000.99),
-        )
-      ))),
+          planType = Option("03"),
+          studentLoanRepaymentAmount = Some(BigDecimal(5000.99)
+          )
+        ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
         `type` = "vctSubscriptions",
         amountUsed = Some(5000.99)),
         ReliefsClaimed(
           `type` = "vctSubscriptions2",
-          amountUsed = Some(5000.99)),
+          amountUsed = Some(5000.99))
       )),
         residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
         foreignTaxCreditRelief = Some(ForeignTaxCreditRelief(totalForeignTaxCreditRelief = 5000.99)),
-        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))))),
+        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))),
+        giftAidTaxReductionWhereBasicRateDiffers = Some(GiftAidTaxReductionWhereBasicRateDiffers(amount = Some(127.49))))
+      ),
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
         chargeableForeignSavingsAndGains = Some(12500)
       )),
@@ -288,7 +290,7 @@ object NewCalcBreakdownItTestConstants {
         occupationalPensions = Some(5000.99),
         stateBenefits = Some(-99999999999.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
-        inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+        inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
       )))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
@@ -349,11 +351,11 @@ object NewCalcBreakdownItTestConstants {
       studentLoans = Some(Seq(
         StudentLoan(
           planType = Option("01"),
-          studentLoanRepaymentAmount = Some(BigDecimal(5000.99)),
+          studentLoanRepaymentAmount = Some(BigDecimal(5000.99))
         ),
         StudentLoan(
           planType = Option("03"),
-          studentLoanRepaymentAmount = Some(BigDecimal(5000.99),
+          studentLoanRepaymentAmount = Some(BigDecimal(5000.99)
           )
         ))),
       reliefs = Some(Reliefs(reliefsClaimed = Some(Seq(ReliefsClaimed(
@@ -361,11 +363,13 @@ object NewCalcBreakdownItTestConstants {
         amountUsed = Some(5000.99)),
         ReliefsClaimed(
           `type` = "vctSubscriptions2",
-          amountUsed = Some(5000.99)),
+          amountUsed = Some(5000.99))
       )),
         residentialFinanceCosts = Some(ResidentialFinanceCosts(totalResidentialFinanceCostsRelief = 5000.99)),
         foreignTaxCreditRelief = Some(ForeignTaxCreditRelief(totalForeignTaxCreditRelief = 5000.99)),
-        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))))),
+        topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))),
+        giftAidTaxReductionWhereBasicRateDiffers = Some(GiftAidTaxReductionWhereBasicRateDiffers(amount = Some(127.49))))
+      ),
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
         chargeableForeignSavingsAndGains = Some(12500)
       )),
@@ -532,7 +536,7 @@ object NewCalcBreakdownItTestConstants {
         occupationalPensions = Some(5000.99),
         stateBenefits = Some(-99999999999.99),
         specialWithholdingTaxOrUkTaxPaid = Some(5000.99),
-        inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
+        inYearAdjustmentCodedInLaterTaxYear = Some(5000.99)
       )))),
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),

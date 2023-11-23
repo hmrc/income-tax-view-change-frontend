@@ -25,6 +25,8 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
+import models.core.IncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.mvc._
@@ -59,7 +61,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
-          case Right(Some(incomeSourceId)) => handleShowRequest(Some(incomeSourceId), incomeSourceType, isAgent)
+          case Right(Some(incomeSourceId)) => handleShowRequest(Some(mkIncomeSourceId(incomeSourceId)), incomeSourceType, isAgent)
           case _ => Future.failed(MissingSessionKey(ManageIncomeSourceData.incomeSourceIdField))
         }
       }
@@ -71,12 +73,12 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
     }
   }
 
-  private def handleShowRequest(soleTraderBusinessId: Option[String],
+  private def handleShowRequest(soleTraderBusinessId: Option[IncomeSourceId],
                                 incomeSourceType: IncomeSourceType,
                                 isAgent: Boolean
                                )(implicit user: MtdItUser[_]): Future[Result] = {
     Future.successful(
-      user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId) match {
+      user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value)) match {
         case Some(id) =>
           Ok(
             reportingMethodChangeError(
@@ -96,10 +98,10 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
 
   private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
 
-  private def getManageIncomeSourceDetailsUrl(incomeSourceId: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
+  private def getManageIncomeSourceDetailsUrl(incomeSourceId: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId)
-      case (_, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId)
+      case (false, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId.value)
+      case (_, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId.value)
       case (false, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkProperty()
       case (_, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
       case (false, _) => routes.ManageIncomeSourceDetailsController.showForeignProperty()

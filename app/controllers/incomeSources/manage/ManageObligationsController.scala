@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
+import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
@@ -59,13 +60,14 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     implicit user =>
       withIncomeSourcesFS {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(incomeSourceIdMayBe) =>
+          case Right(incomeSourceIdMaybe) =>
+            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(mkIncomeSourceId)
             handleRequest(
               mode = SelfEmployment,
               isAgent = false,
               taxYear,
               changeTo,
-              incomeSourceIdMayBe
+              incomeSourceIdOption
             )
           case Left(exception) => Future.failed(exception)
         }
@@ -80,13 +82,14 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     implicit user =>
       withIncomeSourcesFS {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(incomeSourceIdMayBe) =>
+          case Right(incomeSourceIdMaybe) =>
+            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(mkIncomeSourceId)
             handleRequest(
               mode = SelfEmployment,
               isAgent = true,
               taxYear,
               changeTo,
-              incomeSourceIdMayBe
+              incomeSourceIdOption
             )
           case Left(exception) => Future.failed(exception)
         }
@@ -151,7 +154,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
       else Future.successful(Redirect(controllers.routes.HomeController.show()))
@@ -169,8 +173,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                 showError(isAgent, {
                 error.getMessage
               })
-              case Right(value) =>
-                nextUpdatesService.getObligationsViewModel(value, showPreviousTaxYears = false) map { viewModel =>
+              case Right(incomeSourceId) =>
+                nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
                   Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
                 }
             }
@@ -190,11 +194,11 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     else Future.successful(itvcErrorHandler.showInternalServerError())
   }
 
-  def getBusinessName(mode: IncomeSourceType, incomeSourceId: Option[String])(implicit user: MtdItUser[_]): String = {
+  def getBusinessName(mode: IncomeSourceType, incomeSourceId: Option[IncomeSourceId])(implicit user: MtdItUser[_]): String = {
     (mode, incomeSourceId) match {
       case (SelfEmployment, Some(incomeSourceId)) =>
         val businessDetailsParams = for {
-          addedBusiness <- user.incomeSources.businesses.find(businessDetailsModel => businessDetailsModel.incomeSourceId.contains(incomeSourceId))
+          addedBusiness <- user.incomeSources.businesses.find(businessDetailsModel => businessDetailsModel.incomeSourceId.contains(incomeSourceId.value))
           businessName <- addedBusiness.tradingName
         } yield (addedBusiness, businessName)
         businessDetailsParams match {
@@ -207,7 +211,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     }
   }
 
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: Option[String], isAgent: Boolean)(implicit user: MtdItUser[_]): Either[Throwable, String] = {
+  def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: Option[IncomeSourceId], isAgent: Boolean)
+                       (implicit user: MtdItUser[_]): Either[Throwable, IncomeSourceId] = {
     (incomeSourceType, id) match {
       case (SelfEmployment, Some(id)) => Right(id)
       case _ =>
@@ -215,7 +220,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           .map(_ => incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(incomeSourceType == UkProperty))
           .getOrElse(Left(new Error("No id supplied for Self Employment business")))
         match {
-          case Right(property: PropertyDetailsModel) => Right(property.incomeSourceId)
+          case Right(property: PropertyDetailsModel) => Right(mkIncomeSourceId(property.incomeSourceId))
           case Left(error: Error) => Left(error)
           case _ => Left(new Error(s"Unknown error. IncomeSourceType: $incomeSourceType"))
         }
