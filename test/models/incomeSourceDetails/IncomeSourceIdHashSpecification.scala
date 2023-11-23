@@ -40,6 +40,3 @@ object IncomeSourceIdHashSpecification extends Properties("IncomeSourceId") {
   }
 
 }
-
-// 458G97M2iCklmno
-// 47829VOJ5Tklmn6
