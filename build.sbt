@@ -1,18 +1,17 @@
 
-import sbt._
-import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-import uk.gov.hmrc.versioning.SbtGitVersioning
-import uk.gov.hmrc.SbtAutoBuildPlugin
 import play.core.PlayVersion
-import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 import play.sbt.routes.RoutesKeys
+import sbt.*
+import uk.gov.hmrc.DefaultBuildSettings.*
+import uk.gov.hmrc.SbtAutoBuildPlugin
+import uk.gov.hmrc.versioning.SbtGitVersioning
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "income-tax-view-change-frontend"
 
 val bootstrapPlayVersion = "5.21.0" // "7.11.0" in the next iteration / this causing number of unit tests to fail
 val playPartialsVersion = "8.3.0-play-28"
-val playFrontendHMRCVersion = "5.0.0-play-28"
+val playFrontendHMRCVersion = "7.0.0-play-28"
 val playLanguageVersion = "5.2.0-play-28"
 val catsVersion = "2.8.0"
 
