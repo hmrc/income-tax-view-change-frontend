@@ -14,9 +14,25 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails.viewmodels
+package models.incomeSourceDetails
 
-case class UKPropertyReportingMethodViewModel(taxYear1: Option[String] = None,
-                                              latencyIndicator1: Option[String] = None,
-                                              taxYear2: Option[String] = None,
-                                              latencyIndicator2: Option[String] = None)
+object LatencyYear {
+  def apply(taxYear: String, reportingMethod: String): LatencyYear = {
+    reportingMethod match {
+      case "A" => AnnualReporting(taxYear)
+      case "Q" => QuarterlyReporting(taxYear)
+    }
+  }
+}
+
+sealed trait LatencyYear {
+  val taxYear: String
+
+  def isQuarterlyReporting: Boolean = this.isInstanceOf[QuarterlyReporting]
+
+  def isAnnualReporting: Boolean = this.isInstanceOf[AnnualReporting]
+}
+
+final case class AnnualReporting(taxYear: String) extends LatencyYear
+
+final case class QuarterlyReporting(taxYear: String) extends LatencyYear

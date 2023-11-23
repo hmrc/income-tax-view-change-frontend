@@ -24,6 +24,8 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import exceptions.MissingSessionKey
+import models.core.IncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -53,9 +55,9 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
                                                         dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
 
-  private def getBusinessName(incomeSourceId: String)(implicit user: MtdItUser[_]): Option[String] = {
+  private def getBusinessName(incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[String] = {
     user.incomeSources.businesses
-      .find(_.incomeSourceId.equals(incomeSourceId))
+      .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
       .flatMap(_.tradingName)
   }
 
@@ -89,9 +91,10 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
       }
 
       incomeSourceDetails.flatMap {
-        case (Right(Some(incomeSourceId)), incomeSourceType) =>
+        case (Right(Some(incomeSourceIdStr)), incomeSourceType) =>
+          val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
           val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(incomeSourceId) else None
-          nextUpdatesService.getObligationsViewModel(incomeSourceId, showPreviousTaxYears = false).map { viewModel =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
               sources = viewModel,
               businessName = businessName,

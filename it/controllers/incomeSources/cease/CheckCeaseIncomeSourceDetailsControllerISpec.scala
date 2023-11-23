@@ -22,6 +22,7 @@ import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.{Cessation, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseModel}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -179,7 +180,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           redirectURI(redirectUriSE),
         )
 
-        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, testSelfEmploymentId, None)(testUser, hc).detail)
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)(testUser, hc).detail)
       }
     }
   }
@@ -232,7 +233,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           redirectURI(redirectUriUK),
         )
 
-        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, testPropertyIncomeId, None)(testUser, hc).detail)
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser, hc).detail)
       }
     }
   }
@@ -283,7 +284,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           httpStatus(SEE_OTHER),
           redirectURI(redirectUriFP),
         )
-        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, testPropertyIncomeId, None)(testUser, hc).detail)
+        AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)(testUser, hc).detail)
       }
     }
   }

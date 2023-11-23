@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -81,7 +81,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         }
   }
 
-  private def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  private def handleRequest(sources: IncomeSourceDetailsModel,
+                            isAgent: Boolean,
+                            incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType).url
     else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType).url
@@ -109,7 +111,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getDetails(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
+  private def getDetails(incomeSourceType: IncomeSourceType)
+                        (implicit user: MtdItUser[_]): Future[Either[Throwable, CheckDetailsViewModel]] = {
     {
       if (incomeSourceType == SelfEmployment) getBusinessModel else getPropertyModel(incomeSourceType)
     } map {
@@ -120,25 +123,27 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     }
   }
 
-  private def getPropertyModel(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType)).flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
-      sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).map { accMethod: Either[Throwable, Option[String]] =>
-        (startDate, accMethod) match {
-          case (Right(dateMaybe), Right(methodMaybe)) =>
-            (dateMaybe, methodMaybe) match {
-              case (Some(date), Some(method)) =>
-                Right(CheckPropertyViewModel(
-                  tradingStartDate = date,
-                  cashOrAccrualsFlag = method,
-                  incomeSourceType = incomeSourceType
-                ))
-              case (_, _) =>
-                Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
-            }
-          case (_, _) => Left(new Error(s"Error while retrieving date started or accounting method from session"))
+  private def getPropertyModel(incomeSourceType: IncomeSourceType)
+                              (implicit user: MtdItUser[_]): Future[Either[Throwable, CheckPropertyViewModel]] = {
+    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType))
+      .flatMap { startDate: Either[Throwable, Option[LocalDate]] =>
+        sessionService.getMongoKeyTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).map { accMethod: Either[Throwable, Option[String]] =>
+          (startDate, accMethod) match {
+            case (Right(dateMaybe), Right(methodMaybe)) =>
+              (dateMaybe, methodMaybe) match {
+                case (Some(date), Some(method)) =>
+                  Right(CheckPropertyViewModel(
+                    tradingStartDate = date,
+                    cashOrAccrualsFlag = method,
+                    incomeSourceType = incomeSourceType
+                  ))
+                case (_, _) =>
+                  Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
+              }
+            case (_, _) => Left(new Error(s"Error while retrieving date started or accounting method from session"))
+          }
         }
       }
-    }
   }
 
   private def getBusinessModel(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, CheckBusinessDetailsViewModel]] = {
@@ -194,14 +199,14 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    val (redirect, errorRedirect) = (isAgent, incomeSourceType) match {
-      case (true, SelfEmployment) => (routes.BusinessReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(SelfEmployment).url)
-      case (false, SelfEmployment) => (routes.BusinessReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(SelfEmployment).url)
-      case (true, UkProperty) => (routes.UKPropertyReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(UkProperty).url)
-      case (false, UkProperty) => (routes.UKPropertyReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(UkProperty).url)
-      case (true, ForeignProperty) => (routes.ForeignPropertyReportingMethodController.showAgent _, routes.IncomeSourceNotAddedController.showAgent(ForeignProperty).url)
-      case (false, ForeignProperty) => (routes.ForeignPropertyReportingMethodController.show _, routes.IncomeSourceNotAddedController.show(ForeignProperty).url)
-    }
+
+    val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
+      routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
+
+    val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+      if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
+      else routes.IncomeSourceNotAddedController.show(incomeSourceType).url
+
     {
       incomeSourceType match {
         case SelfEmployment => getBusinessModel
@@ -212,23 +217,27 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
-            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType))
-            Future.successful(Redirect(redirect(id).url))
-
+            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType)).flatMap { _ =>
+              Future.successful {
+                Redirect(redirectUrl(isAgent, incomeSourceType, id))
+              }
+            }
           case Left(ex) =>
-            auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None))
+            auditingService.extendedAudit(
+              CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)
+            )
             Future.failed(ex)
-
         }
       case Left(ex) =>
         Logger("application").error(
           s"[IncomeSourceCheckDetailsController][handleSubmit] - Error: ${ex.getMessage}")
-        Future.successful(Redirect(errorRedirect))
+        Future.successful {
+          Redirect(errorRedirectUrl(isAgent, incomeSourceType))
+        }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]${ex.getMessage}")
-        Redirect(errorRedirect)
+        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: ${ex.getMessage}")
+        Redirect(errorRedirectUrl(isAgent, incomeSourceType))
     }
   }
-
 }

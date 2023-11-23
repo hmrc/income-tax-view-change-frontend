@@ -20,9 +20,9 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import connectors.ITSAStatusConnector
-import models.itsaStatus.ITSAStatusResponse
+import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,12 +41,12 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
       taxYear = s"$yearStart-$yearEnd",
       futureYears = false,
       history = false).flatMap {
-      case Right(itsaStatus) =>
+      case Right(itsaStatus: List[ITSAStatusResponseModel]) =>
         val isMandatedOrVoluntary = itsaStatus.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
         Future.successful(isMandatedOrVoluntary)
-      case Left(x: ITSAStatusResponse) =>
-        Logger("application").error(s"[ITSAStatusService][hasEligibleITSAStatusCurrentYear] $x")
-        Future.failed(new InternalServerException("[ITSAStatusService][hasEligibleITSAStatusCurrentYear] - Failed to retrieve ITSAStatus"))
+      case Left(error) =>
+        Logger("application").error(s"[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] $error")
+        Future.failed(new Exception("[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] - Failed to retrieve ITSAStatus"))
     }
   }
 

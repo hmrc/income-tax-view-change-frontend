@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.liabilitycalculation.taxcalculation.{CapitalGainsTax, Nic4Bands, TaxBands}
+import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel.getTaxDue
 import models.liabilitycalculation.{LiabilityCalculationResponse, Messages, ReliefsClaimed, StudentLoan}
 
@@ -33,6 +33,7 @@ case class TaxDueSummaryViewModel(
                                    totalResidentialFinanceCostsRelief: Option[BigDecimal] = None,
                                    totalForeignTaxCreditRelief: Option[BigDecimal] = None,
                                    topSlicingReliefAmount: Option[BigDecimal] = None,
+                                   giftAidTaxReductionWhereBasicRateDiffers: Option[BigDecimal] = None,
                                    totalTaxableIncome: Option[BigDecimal] = None,
                                    payPensionsProfitBands: Option[Seq[TaxBands]] = None,
                                    savingsAndGainsBands: Option[Seq[TaxBands]] = None,
@@ -53,7 +54,8 @@ case class TaxDueSummaryViewModel(
                                    totalTaxDeducted: Option[BigDecimal] = None,
                                    taxDeductedAtSource: TaxDeductedAtSourceViewModel = TaxDeductedAtSourceViewModel(),
                                    totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
-                                   totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None
+                                   totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
+                                   giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -98,6 +100,7 @@ object TaxDueSummaryViewModel {
         totalResidentialFinanceCostsRelief = calc.reliefs.flatMap(r => r.residentialFinanceCosts.map(rfc => rfc.totalResidentialFinanceCostsRelief)),
         totalForeignTaxCreditRelief = calc.reliefs.flatMap(r => r.foreignTaxCreditRelief.map(rfc => rfc.totalForeignTaxCreditRelief)),
         topSlicingReliefAmount = calc.reliefs.flatMap(r => r.topSlicingRelief.flatMap(tsr => tsr.amount)),
+        giftAidTaxReductionWhereBasicRateDiffers = calc.reliefs.flatMap(r => r.giftAidTaxReductionWhereBasicRateDiffers.flatMap(gatr => gatr.amount)),
         totalTaxableIncome = calc.taxCalculation.map(tc => BigDecimal(tc.incomeTax.totalTaxableIncome)),
         payPensionsProfitBands = calc.taxCalculation.flatMap(tc => tc.incomeTax.payPensionsProfit.map(ppp => ppp.taxBands.getOrElse(Seq()))),
         savingsAndGainsBands = calc.taxCalculation.flatMap(tc => tc.incomeTax.savingsAndGains.map(ppp => ppp.taxBands.getOrElse(Seq()))),
@@ -118,7 +121,8 @@ object TaxDueSummaryViewModel {
         totalTaxDeducted = calc.taxCalculation.flatMap(tc => tc.totalTaxDeducted),
         taxDeductedAtSource = TaxDeductedAtSourceViewModel(calc.taxDeductedAtSource),
         totalAnnuityPaymentsTaxCharged = calc.taxCalculation.flatMap(tc => tc.totalAnnuityPaymentsTaxCharged),
-        totalRoyaltyPaymentsTaxCharged = calc.taxCalculation.flatMap(tc => tc.totalRoyaltyPaymentsTaxCharged)
+        totalRoyaltyPaymentsTaxCharged = calc.taxCalculation.flatMap(tc => tc.totalRoyaltyPaymentsTaxCharged),
+        giftAidTaxChargeWhereBasicRateDiffers = calc.taxCalculation.flatMap(tc => tc.incomeTax.giftAidTaxChargeWhereBasicRateDiffers)
       )
       case None => TaxDueSummaryViewModel()
     }

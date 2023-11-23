@@ -19,6 +19,8 @@ package services
 import java.time.LocalDate
 import auth.MtdItUser
 import connectors._
+import models.core.IncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 
 import javax.inject.{Inject, Singleton}
 import models.nextUpdates._
@@ -125,7 +127,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
             DatesModel(source.start, source.end, source.due, source.periodKey, isFinalDec = true, obligationType = source.obligationType)
         },
           model.obligations
-            .filter(nextUpdatesModel => nextUpdatesModel.identification == id)
+            .filter(nextUpdatesModel => mkIncomeSourceId(nextUpdatesModel.identification) == mkIncomeSourceId(id))
             .flatMap(obligation => obligation.obligations.map(nextUpdateModel =>
               DatesModel(nextUpdateModel.start, nextUpdateModel.end, nextUpdateModel.due, nextUpdateModel.periodKey, isFinalDec = false, obligationType = nextUpdateModel.obligationType)))
         ).flatten
