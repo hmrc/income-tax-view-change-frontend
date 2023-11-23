@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails.incomeSourceIds
+package models.incomeSourceDetails
 
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
-import org.scalatest.Failed
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
 import testUtils.UnitSpec
 
