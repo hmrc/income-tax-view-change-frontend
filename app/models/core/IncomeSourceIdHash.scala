@@ -16,6 +16,7 @@
 
 package models.core
 
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 
 import scala.util.Try
@@ -40,5 +41,12 @@ object IncomeSourceIdHash {
   def mkFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {
     new IncomeSourceIdHash(hashCodeAsString)
   }.toEither
+
+  def mkIncomeSourceHashMaybe(id: Option[String], incomeSourceType: IncomeSourceType): Option[IncomeSourceIdHash] = {
+    incomeSourceType match {
+      case SelfEmployment => id.map(mkFromQueryString).get.toOption
+      case _ => None
+    }
+  }
 
 }

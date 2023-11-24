@@ -23,6 +23,8 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -75,6 +77,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     }
 
     def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], isChange: Boolean): (Call, Call, Call) = {
+      println("XXXXXXXX" + id)
       (incomeSourceType, isAgent, isChange) match {
         case (UkProperty, true, false) =>
           (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
@@ -158,11 +161,13 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           id = id,
           isChange = isChange)
 
+        println("RRRRRRRR" + id)
+
         status(result) shouldBe OK
         document.title shouldBe TestIncomeSourceEndDateController.title(incomeSourceType, isAgent = isAgent)
         document.select("h1").text shouldBe TestIncomeSourceEndDateController.heading(incomeSourceType)
         document.getElementById("back").attr("href") shouldBe backAction.url
-        document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
+        document.getElementById("income-source-end-date-form").attr("action") shouldBe "postAction.url"
 
         if (isChange) {
           document.getElementById("income-source-end-date.day").`val`() shouldBe "27"
@@ -174,7 +179,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
       "navigating to the page with FS Enabled with income source type as Self Employment" when {
         val incomeSourceType = SelfEmployment
-        val id = Some(testSelfEmploymentId)
+        val id = Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
 
         "called .show" when {
           "user is an Individual" in {
@@ -398,20 +403,21 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
       "Self Employment - form is completed successfully" when {
         val incomeSourceType = SelfEmployment
+        val id = Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
         "called .submit" when {
           "user is an Individual" in {
-            testSubmitResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = false, isChange = false)
+            testSubmitResponse(id = id, incomeSourceType, isAgent = false, isChange = false)
           }
           "user is an Agent" in {
-            testSubmitResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = true, isChange = false)
+            testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = false)
           }
         }
         "called .submitChange" when {
           "user is an Individual" in {
-            testSubmitResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = false, isChange = true)
+            testSubmitResponse(id = id, incomeSourceType, isAgent = false, isChange = true)
           }
           "user is an Agent" in {
-            testSubmitResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = true, isChange = true)
+            testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = true)
           }
         }
 
@@ -464,7 +470,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
             .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
               "income-source-end-date.year" -> "2022")
         }
-        val id = Some(testSelfEmploymentId)
+        val id = Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
         val incomeSourceType = SelfEmployment
         if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())

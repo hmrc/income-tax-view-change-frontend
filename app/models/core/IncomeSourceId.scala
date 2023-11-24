@@ -17,6 +17,7 @@
 package models.core
 
 import IncomeSourceIdHash.mkIncomeSourceIdHash
+import auth.MtdItUser
 
 class IncomeSourceId private(val value: String) extends AnyVal {
   def toHash: IncomeSourceIdHash = mkIncomeSourceIdHash(this)
@@ -29,6 +30,17 @@ object IncomeSourceId {
 
     new IncomeSourceId(incomeSourceAsString)
 
+  }
+
+  def compare(id: Option[IncomeSourceIdHash])(implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
+    println("QQQQQQQQQ" + id.toString)
+    val xs = user.incomeSources.properties
+      .map(m => mkIncomeSourceId(m.incomeSourceId)) ++ user.incomeSources.businesses.map(m => mkIncomeSourceId(m.incomeSourceId))
+
+    println("LLLLLLLLL" + xs.toString)
+    val a = id.flatMap(_.oneOf(xs))
+    println("PPPPPPP" + a.toString)
+    a
   }
 
   // For future validation implementation:
