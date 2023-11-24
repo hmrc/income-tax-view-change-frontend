@@ -26,7 +26,7 @@ object IncomeSourceIdHashSpecification extends Properties("IncomeSourceId") {
 
   val range : Seq[Char] = ( 'a' to'z').toList ++ ( 'A' to'Z') ++ ('0' to '9').toList
 
-  val incomeSourceIdGen = Gen.listOfN(1000, Gen.pick(15, range) )
+  val incomeSourceIdGen = Gen.listOfN(7000, Gen.pick(15, range) )
 
   property("make sure hash is unique") = forAll(incomeSourceIdGen) { ids =>
     val hashSet: List[String] = ids.distinct.map { i =>

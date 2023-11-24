@@ -17,14 +17,14 @@
 package models.incomeSourceDetails
 
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
+import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
 import testUtils.UnitSpec
 
 class IncomeSourceIdHashSpec extends UnitSpec {
 
-  val hashValue: String = "1487316523"
+  val hashValue: String = "4154473711487316523"
 
   "IncomeSourceIdHash class" should {
 
@@ -43,7 +43,7 @@ class IncomeSourceIdHashSpec extends UnitSpec {
       "supplied with an incomeSourceId object" in {
         val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
         val hashObjectHash: IncomeSourceIdHash = incomeSourceId.toHash
-        val hashOfString = testSelfEmploymentId.hashCode().abs.toString
+        val hashOfString = "4154473711487316523"
 
         hashObjectHash.hash shouldBe hashOfString
       }
@@ -80,6 +80,14 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceIdMatchingList: Option[IncomeSourceId] = mkIncomeSourceId(testSelfEmploymentIdValidation).toHash.oneOf(incomeSourceIdList)
 
         incomeSourceIdMatchingList shouldBe None
+      }
+    }
+
+    "return true" when {
+      "automated testing findings: two ids returning same hash" in {
+        val idA = mkIncomeSourceId("458G97M2iCklmno")
+        val idB = mkIncomeSourceId("47829VOJ5Tklmn6")
+        idA.toHash.hash should not be idB.toHash.hash
       }
     }
   }
