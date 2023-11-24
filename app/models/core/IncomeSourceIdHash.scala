@@ -44,9 +44,10 @@ object IncomeSourceIdHash {
   }.toEither
 
   def mkIncomeSourceHashMaybe(id: Option[String], incomeSourceType: IncomeSourceType): Option[IncomeSourceIdHash] = {
-    incomeSourceType match {
-      case SelfEmployment => id.map(mkFromQueryString).get.toOption
-      case _ => None
+    println("EEEEEEEEE" + incomeSourceType + "\n" + id)
+    id match {
+      case Some(_) => id.map(mkFromQueryString).get.toOption
+      case None => None
     }
   }
 

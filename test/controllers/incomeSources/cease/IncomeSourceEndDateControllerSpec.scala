@@ -143,6 +143,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBothPropertyBothBusiness()
         setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
+        println("IIIIIIIIII" + id)
+
         val result: Future[Result] = (isAgent, isChange) match {
           case (true, true) =>
             TestIncomeSourceEndDateController.showChangeAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
@@ -161,13 +163,13 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           id = id,
           isChange = isChange)
 
-        println("RRRRRRRR" + id)
+        println("RRRRRRRR" + postAction)
 
         status(result) shouldBe OK
         document.title shouldBe TestIncomeSourceEndDateController.title(incomeSourceType, isAgent = isAgent)
         document.select("h1").text shouldBe TestIncomeSourceEndDateController.heading(incomeSourceType)
         document.getElementById("back").attr("href") shouldBe backAction.url
-        document.getElementById("income-source-end-date-form").attr("action") shouldBe "postAction.url"
+        document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
         if (isChange) {
           document.getElementById("income-source-end-date.day").`val`() shouldBe "27"
@@ -411,6 +413,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           "user is an Agent" in {
             testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = false)
           }
+          /////////
         }
         "called .submitChange" when {
           "user is an Individual" in {
