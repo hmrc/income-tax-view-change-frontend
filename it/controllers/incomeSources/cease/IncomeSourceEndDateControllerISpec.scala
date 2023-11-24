@@ -98,7 +98,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentId")(formData)
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed")(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -116,7 +116,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentId")(formData)
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed")(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),
@@ -142,7 +142,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
 
         When(s"I call GET $dateBusinessShowChangeUrl")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentId")
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentIdHashed")
 
         result should have(
           httpStatus(OK),
@@ -166,7 +166,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentId")(formData)
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=${testSelfEmploymentIdHashed}")(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -184,7 +184,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentId")(formData)
+        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentIdHashed")(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),

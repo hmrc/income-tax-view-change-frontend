@@ -40,7 +40,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -286,7 +286,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     )
 
-    def getBusinessEndDate: WSResponse = get(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentId")
+    def getBusinessEndDate: WSResponse = get(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed")
 
     def getUKPropertyEndDate: WSResponse = get("/income-sources/cease/uk-property-end-date")
 
