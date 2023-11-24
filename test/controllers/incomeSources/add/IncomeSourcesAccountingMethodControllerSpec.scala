@@ -218,10 +218,8 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyType, Right(None))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
-        val expectedContent: String = TestIncomeSourcesAccountingMethodController.customNotFoundErrorView().toString()
 
-        status(result) shouldBe Status.OK
-        contentAsString(result) shouldBe expectedContent
+        status(result) shouldBe Status.SEE_OTHER
       }
       "called with an unauthenticated user for " + incomeSourceType in {
         if (isAgent)
