@@ -81,8 +81,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
       retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       view = view,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      sessionService = app.injector.instanceOf[SessionService]
+      incomeSourceDetailsService = mockIncomeSourceDetailsService
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],

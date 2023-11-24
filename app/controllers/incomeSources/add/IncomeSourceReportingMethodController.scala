@@ -119,7 +119,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
         case _ =>
           itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
             case true =>
-              getViewModel(incomeSourceType, id.value).map {
+              getViewModel(incomeSourceType, id).map {
                 case Some(viewModel) =>
                   Ok(view(
                     incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
