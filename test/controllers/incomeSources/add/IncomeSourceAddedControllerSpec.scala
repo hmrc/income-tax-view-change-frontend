@@ -27,6 +27,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService}
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, UIJourneySessionData}
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.AddIncomeSourceData.hasBeenAddedField
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -122,6 +123,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
       Future(Right(Some(UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
         addIncomeSourceData = Some(AddIncomeSourceData()))))))
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
+    when(mockSessionService.getMongoKeyTyped[Boolean](any(),any())(any(),any())).thenReturn(Future(Right(None)))
   }
 
 

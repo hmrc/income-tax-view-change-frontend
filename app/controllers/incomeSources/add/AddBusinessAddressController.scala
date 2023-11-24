@@ -70,7 +70,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, SelfEmployment)) {
+    withIncomeSourcesFS {
       addressLookupService.initialiseAddressJourney(
         isAgent = isAgent,
         isChange = isChange

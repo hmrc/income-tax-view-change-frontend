@@ -38,8 +38,7 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
                                                val businessDetailsService: CreateBusinessDetailsService,
                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val retrieveBtaNavBar: NavBarPredicate,
-                                               val incomeSourceNotAddedError: IncomeSourceNotAddedError,
-                                               val sessionService: SessionService)
+                                               val incomeSourceNotAddedError: IncomeSourceNotAddedError)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,

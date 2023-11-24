@@ -87,6 +87,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
 
@@ -162,6 +163,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
           val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameEmpty
@@ -180,6 +182,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
           val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameLength
@@ -198,6 +201,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockCreateSession(true)
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
+          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
           val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameEmpty
@@ -219,6 +223,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
         status(result) mustBe OK
@@ -256,6 +261,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
         setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val redirectUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(
           incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
@@ -279,6 +285,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
       setupMockCreateSession(true)
       setupMockGetSessionKeyMongoTyped[String](Right(None))
+      setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
       val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameEmpty
@@ -427,6 +434,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
         status(result) mustBe OK
@@ -462,6 +470,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
         setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 

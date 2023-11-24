@@ -140,6 +140,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             mockNoIncomeSources()
             if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+            when(mockSessionService.getMongoKeyTyped[Boolean](any(),any())(any(),any())).thenReturn(Future(Right(None)))
             if (incomeSourceType == SelfEmployment) {
               val sessionData: UIJourneySessionData = testUIJourneySessionDataBusiness
               setupMockGetMongo(Right(Some(sessionData)))
@@ -193,6 +194,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             disable(IncomeSources)
             mockSingleBusinessIncomeSource()
             if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+            when(mockSessionService.getMongoKeyTyped[Boolean](any(),any())(any(),any())).thenReturn(Future(Right(None)))
 
             val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
@@ -270,6 +272,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             mockNoIncomeSources()
             if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+            when(mockSessionService.getMongoKeyTyped[Boolean](any(),any())(any(),any())).thenReturn(Future(Right(None)))
             if (incomeSourceType == SelfEmployment) {
               setupMockGetMongo(Right(None))
             }
