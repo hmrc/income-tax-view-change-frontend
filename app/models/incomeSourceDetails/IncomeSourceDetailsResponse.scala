@@ -17,6 +17,8 @@
 package models.incomeSourceDetails
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.core.IncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
 import services.DateServiceInterface
@@ -71,11 +73,11 @@ case class IncomeSourceDetailsModel(nino: String,
     businesses.filterNot(_.isCeased)
   }
 
-  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[String] = {
+  def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[IncomeSourceId] = {
     (incomeSourceType, soleTraderBusinessId) match {
-      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(_.incomeSourceId)
-      case (UkProperty, _) => getUKProperty.map(_.incomeSourceId)
-      case (ForeignProperty, _) => getForeignProperty.map(_.incomeSourceId)
+      case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(m => mkIncomeSourceId(m.incomeSourceId))
+      case (UkProperty, _) => getUKProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
+      case (ForeignProperty, _) => getForeignProperty.map(m => mkIncomeSourceId(m.incomeSourceId))
       case _ => None
     }
   }

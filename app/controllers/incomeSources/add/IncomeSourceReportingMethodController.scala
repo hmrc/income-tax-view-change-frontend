@@ -26,6 +26,8 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
+import models.core.IncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -82,10 +84,12 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
-      handleRequest(isAgent = isAgent, incomeSourceType, id = id)
+      val incomeSourceId = mkIncomeSourceId(id)
+      handleRequest(isAgent = isAgent, incomeSourceType, id = incomeSourceId)
   }
 
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+  private def authenticatedAction(isAgent: Boolean)
+                                 (authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     if (isAgent)
       Authenticated.async {
         implicit request =>
@@ -101,7 +105,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
       }
   }
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String)
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, incomeSourceType)) {
     val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType) else
       controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
@@ -115,19 +119,19 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
         case _ =>
           itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
             case true =>
-              getViewModel(incomeSourceType, id).map {
+              getViewModel(incomeSourceType, id.value).map {
                 case Some(viewModel) =>
                   Ok(view(
                     incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
                     incomeSourceReportingViewModel = viewModel,
-                    postAction = submitUrl(isAgent, incomeSourceType, id),
+                    postAction = submitUrl(isAgent, incomeSourceType, id.value),
                     isAgent = isAgent))
                 case None =>
-                  Redirect(redirectUrl(isAgent, incomeSourceType, id))
+                  Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
               }
             case false =>
               Future.successful {
-                Redirect(redirectUrl(isAgent, incomeSourceType, id))
+                Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
               }
           }
       }
@@ -146,10 +150,10 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     user.incomeSources.getLatencyDetails(incomeSourceType, incomeSourceId)
   }
 
-  private def getViewModel(incomeSourceType: IncomeSourceType, incomeSourceId: String)
+  private def getViewModel(incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId)
                           (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[IncomeSourceReportingMethodViewModel]] = {
     val currentTaxYear = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-    val latencyDetails = getLatencyDetails(incomeSourceType, incomeSourceId)
+    val latencyDetails = getLatencyDetails(incomeSourceType, incomeSourceId.value)
 
 
     latencyDetails match {
@@ -175,10 +179,11 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
 
   def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
-      handleSubmit(isAgent, incomeSourceType, id)
+      val incomeSourceId = mkIncomeSourceId(id)
+      handleSubmit(isAgent, incomeSourceType, incomeSourceId)
   }
 
-  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String)
+  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
                           (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
@@ -193,7 +198,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     }
   }
 
-  private def handleInvalidForm(form: Form[IncomeSourceReportingMethodForm], incomeSourceType: IncomeSourceType, id: String, isAgent: Boolean)
+  private def handleInvalidForm(form: Form[IncomeSourceReportingMethodForm], incomeSourceType: IncomeSourceType, id: IncomeSourceId, isAgent: Boolean)
                                (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     val updatedForm = IncomeSourceReportingMethodForm.updateErrorMessagesWithValues(form)
@@ -203,17 +208,17 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
         BadRequest(view(
           incomeSourceReportingMethodForm = updatedForm,
           incomeSourceReportingViewModel = viewModel,
-          postAction = submitUrl(isAgent, incomeSourceType, id),
+          postAction = submitUrl(isAgent, incomeSourceType, id.value),
           isAgent = isAgent))
       case None =>
-        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id))
+        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id.value))
     }
   }
 
-  private def handleValidForm(form: IncomeSourceReportingMethodForm, incomeSourceType: IncomeSourceType, id: String, isAgent: Boolean)
+  private def handleValidForm(form: IncomeSourceReportingMethodForm, incomeSourceType: IncomeSourceType, id: IncomeSourceId, isAgent: Boolean)
                              (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val latencyDetails = getLatencyDetails(incomeSourceType, id)
+    val latencyDetails = getLatencyDetails(incomeSourceType, id.value)
     val isAnnual: String => Boolean = (reportingMethod: String) => reportingMethod.equals("A")
 
     val latencyIndicators =
@@ -236,13 +241,13 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     updateReportingMethod(isAgent, id, incomeSourceType, filteredIndicators)
   }
 
-  private def updateReportingMethod(isAgent: Boolean, id: String, incomeSourceType: IncomeSourceType, newReportingMethods: Seq[TaxYearSpecific])
+  private def updateReportingMethod(isAgent: Boolean, id: IncomeSourceId, incomeSourceType: IncomeSourceType, newReportingMethods: Seq[TaxYearSpecific])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
     val results = newReportingMethods.foldLeft(Future.successful(Seq.empty[UpdateIncomeSourceResponse])) { (prevFutRes, taxYearSpec) =>
       prevFutRes.flatMap { prevRes =>
-        updateIncomeSourceService.updateTaxYearSpecific(user.nino, id, taxYearSpec).map { currRes =>
+        updateIncomeSourceService.updateTaxYearSpecific(user.nino, id.value, taxYearSpec).map { currRes =>
           val isSuccessful = currRes.isInstanceOf[UpdateIncomeSourceResponseModel]
-          sendAuditEvent(isSuccessful, taxYearSpec, incomeSourceType, id)
+          sendAuditEvent(isSuccessful, taxYearSpec, incomeSourceType, id.value)
           prevRes :+ currRes
         }
       }
@@ -251,7 +256,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }.recover {
     case ex: Exception =>
       Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: ${ex.getMessage}")
-      Redirect(errorRedirectUrl(isAgent, incomeSourceType, id))
+      Redirect(errorRedirectUrl(isAgent, incomeSourceType, id.value))
   }
 
   private def sendAuditEvent(isSuccessful: Boolean, newReportingMethod: TaxYearSpecific, incomeSourceType: IncomeSourceType, id: String)
@@ -271,7 +276,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     )
   }
 
-  private def handleUpdateResults(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String,
+  private def handleUpdateResults(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId,
                                   updateResults: Future[Seq[UpdateIncomeSourceResponse]]): Future[Result] = {
 
     updateResults.map { results =>
@@ -281,13 +286,13 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
 
       if (successCount == results.length) {
         Logger("application").info(prefix + s"Successfully updated all new selected reporting methods for $incomeSourceType")
-        Redirect(redirectUrl(isAgent, incomeSourceType, id))
+        Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
       } else if (errorCount == results.length) {
         Logger("application").info(prefix + s"Unable to update all new selected reporting methods for $incomeSourceType")
-        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id))
+        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id.value))
       } else {
         Logger("application").info(prefix + s"Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
-        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id))
+        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id.value))
       }
     }
   }

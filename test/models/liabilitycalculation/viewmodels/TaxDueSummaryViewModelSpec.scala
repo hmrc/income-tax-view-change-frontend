@@ -16,8 +16,8 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.liabilitycalculation.{Message, Messages, ReliefsClaimed, StudentLoan}
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
+import models.liabilitycalculation.{Message, Messages, ReliefsClaimed, StudentLoan}
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
@@ -63,12 +63,13 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           grossGiftAidPayments = Some(12500),
           giftAidTax = Some(5000.99),
           marriageAllowanceTransferredInAmount = Some(5000.99),
-          studentLoans = Some(List(StudentLoan(Some("01"),Some(5000.99),Some(5000.99),Some(5000.99),Some(5000.99),Some(1500),Some(20)))),
+          studentLoans = Some(List(StudentLoan(Some("01"), Some(5000.99), Some(5000.99), Some(5000.99), Some(5000.99), Some(1500), Some(20)))),
           reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),
             ReliefsClaimed("deficiencyRelief", Some(5000.99)))),
           totalResidentialFinanceCostsRelief = Some(5000.99),
           totalForeignTaxCreditRelief = Some(5000.99),
           topSlicingReliefAmount = Some(5000.99),
+          giftAidTaxReductionWhereBasicRateDiffers = Some(127.49),
           totalTaxableIncome = Some(12500),
           payPensionsProfitBands = Some(List(TaxBands("BRT", 20, 12500, 12500, 12500, 5000.99))),
           savingsAndGainsBands = Some(List(TaxBands("ZRT", 0, 12500, 12500, 12500, 0))),
@@ -110,7 +111,8 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             savings = Some(5000.99),
             inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
             taxTakenOffTradingIncome = Some(563.12)
-          )
+          ),
+          giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99)
         )
 
         TaxDueSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxDueSummaryViewModel
@@ -136,6 +138,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
           totalResidentialFinanceCostsRelief = Some(5000.99),
           totalForeignTaxCreditRelief = Some(5000.99),
           topSlicingReliefAmount = Some(5000.99),
+          giftAidTaxReductionWhereBasicRateDiffers = Some(127.49),
           totalTaxableIncome = Some(12500),
           payPensionsProfitBands = Some(List(TaxBands("BRT", 20, 12500, 12500, 12500, 5000.99))),
           savingsAndGainsBands = Some(List(TaxBands("ZRT", 0, 12500, 12500, 12500, 0))),
@@ -177,7 +180,8 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             savings = Some(5000.99),
             inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
             taxTakenOffTradingIncome = Some(563.12)
-          )
+          ),
+          giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99)
         )
 
         val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(

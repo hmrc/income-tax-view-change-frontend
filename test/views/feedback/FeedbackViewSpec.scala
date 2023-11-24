@@ -22,7 +22,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import testUtils.{TestSupport, ViewSpec}
+import testUtils.ViewSpec
 import views.html.feedback.Feedback
 
 class FeedbackViewSpec extends ViewSpec {
@@ -71,7 +71,7 @@ class FeedbackViewSpec extends ViewSpec {
       }
 
       "have an input for Comments" in new TestSetup() {
-        document.select(".hmrc-character-count label").text shouldBe msgs("feedback.comments")
+        document.select(".govuk-character-count label").text shouldBe msgs("feedback.comments")
         document.select("#feedback-comments-hint").text shouldBe msgs("feedback.comments.hint")
       }
 

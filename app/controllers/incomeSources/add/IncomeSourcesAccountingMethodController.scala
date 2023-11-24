@@ -54,7 +54,10 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean, errorHandler: ShowInternalServerError, incomeSourceType: IncomeSourceType, cashOrAccrualsFlag: Option[String])
+  def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean,
+                                               errorHandler: ShowInternalServerError,
+                                               incomeSourceType: IncomeSourceType,
+                                               cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
 
@@ -98,8 +101,13 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       errorHandler.showInternalServerError()
   }
 
-  private def loadIncomeSourceAccountingMethod(isAgent: Boolean, incomeSourceType: IncomeSourceType, cashOrAccrualsFlag: Option[String])
-                                              (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
+  private def loadIncomeSourceAccountingMethod(isAgent: Boolean,
+                                               incomeSourceType: IncomeSourceType,
+                                               cashOrAccrualsFlag: Option[String])
+                                              (implicit user: MtdItUser[_],
+                                               backUrl: String,
+                                               postAction: Call,
+                                               messages: Messages): Future[Result] = {
     Future.successful(Ok(view(
       cashOrAccrualsFlag = cashOrAccrualsFlag,
       incomeSourcesType = incomeSourceType,
@@ -111,7 +119,10 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     )(user, messages)))
   }
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, cashOrAccrualsFlag: Option[String] = None, backUrl: String)
+  def handleRequest(isAgent: Boolean,
+                    incomeSourceType: IncomeSourceType,
+                    cashOrAccrualsFlag: Option[String] = None,
+                    backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, incomeSourceType)) {
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

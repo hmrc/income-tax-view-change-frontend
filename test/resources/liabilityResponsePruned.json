@@ -67,6 +67,9 @@
       },
       "topSlicingRelief": {
         "amount": 5000.99
+      },
+      "giftAidTaxReductionWhereBasicRateDiffers": {
+        "amount": 127.49
       }
     },
     "taxDeductedAtSource": {
@@ -213,7 +216,8 @@
         "incomeTaxDueAfterTaxReductions": 5000.99,
         "totalPensionSavingsTaxCharges": 5000.99,
         "statePensionLumpSumCharges": 5000.99,
-        "payeUnderpaymentsCodedOut": 5000.99
+        "payeUnderpaymentsCodedOut": 5000.99,
+        "giftAidTaxChargeWhereBasicRateDiffers": 6565.99
       },
       "nics": {
         "class2Nics": {

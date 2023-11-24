@@ -24,6 +24,8 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
+import models.core.IncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -116,8 +118,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
   }
 
 
-  def handleSubmitRequest(isAgent: Boolean, id: Option[String], isChange: Boolean)(implicit user: MtdItUser[_],
-                                                                                   ec: ExecutionContext, request: Request[_]): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], isChange: Boolean)(implicit user: MtdItUser[_],
+                                                                                           ec: ExecutionContext, request: Request[_]): Future[Result] = {
     val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
     val redirect = Redirect(redirectUrl)
 
@@ -136,7 +138,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
   def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleSubmitRequest(isAgent = false, id, isChange = isChange)
+      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+      handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)
   }
 
   def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = Authenticated.async {
@@ -144,7 +147,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
           implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, id, isChange = isChange)
+            val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+            handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)
         }
 
   }
