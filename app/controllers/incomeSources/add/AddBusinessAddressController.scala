@@ -30,6 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import utils.IncomeSourcesUtils
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +51,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                              mcc: MessagesControllerComponents,
                                              val sessionService: SessionService
                                             )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils{
 
   def show(isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
@@ -69,9 +70,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    if (isDisabled(IncomeSources)) {
-      Future.successful(if (isAgent) Redirect(controllers.routes.HomeController.showAgent) else Redirect(controllers.routes.HomeController.show()))
-    } else {
+    withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, SelfEmployment)) {
       addressLookupService.initialiseAddressJourney(
         isAgent = isAgent,
         isChange = isChange

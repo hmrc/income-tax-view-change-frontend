@@ -18,13 +18,19 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import enums.IncomeSourceJourney.IncomeSourceType
+import enums.JourneyType.{Add, JourneyType}
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching {
+
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       user.userType match {
@@ -33,6 +39,29 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       }
     } else {
       codeBlock
+    }
+  }
+  def withIncomeSourcesFSWithSessionCheck(sessionService: SessionService, journeyType: JourneyType)(codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+    if (isDisabled(IncomeSources)) {
+      user.userType match {
+        case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent))
+        case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+      }
+    } else {
+      journeyChecker(sessionService, journeyType).flatMap{
+        case true => user.userType match {
+          case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
+          case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
+        }
+        case false => codeBlock
+      }
+    }
+  }
+
+  def journeyChecker(sessionService: SessionService, journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, journeyType).flatMap {
+      case Right(Some(true)) => Future(true)
+      case _ => Future(false)
     }
   }
 }

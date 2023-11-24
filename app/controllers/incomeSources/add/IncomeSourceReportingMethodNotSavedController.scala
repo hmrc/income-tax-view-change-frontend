@@ -22,8 +22,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -40,7 +41,8 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
                                                               val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                               val retrieveBtaNavBar: NavBarPredicate,
-                                                              val view: IncomeSourceReportingMethodNotSaved)
+                                                              val view: IncomeSourceReportingMethodNotSaved,
+                                                              val sessionService: SessionService)
                                                              (implicit val ec: ExecutionContext,
                                                               implicit override val mcc: MessagesControllerComponents,
                                                               implicit val itvcAgentErrorHandler: AgentItvcErrorHandler,
