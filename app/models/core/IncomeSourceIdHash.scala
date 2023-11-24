@@ -16,7 +16,6 @@
 
 package models.core
 
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 
 import scala.util.Try

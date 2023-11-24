@@ -18,13 +18,12 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -332,10 +331,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBothPropertyBothBusiness()
 
 
-
         val result: Future[Result] = if (isChange && !isAgent) {
           TestIncomeSourceEndDateController.showChange(None, incomeSourceType)(fakeRequestWithActiveSession)
-        }else if (isAgent){
+        } else if (isAgent) {
           TestIncomeSourceEndDateController.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
         } else {
           TestIncomeSourceEndDateController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
@@ -355,7 +353,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       s"failed to get session data - ${CeaseIncomeSourceData.dateCeasedField}" when {
         "called .showChange" in {
           setupMockGetSessionKeyMongoTyped(Left(new Exception()))
-          testInternalServerErrors(isAgent = false,incomeSourceType = ForeignProperty, isChange = true)
+          testInternalServerErrors(isAgent = false, incomeSourceType = ForeignProperty, isChange = true)
         }
       }
     }

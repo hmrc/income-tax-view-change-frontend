@@ -23,11 +23,11 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceHashMaybe, mkIncomeSourceIdHash}
-import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import models.core.IncomeSourceIdHash.mkFromQueryString
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails._
+import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import play.api.Logger
 import play.api.mvc._
 import services._

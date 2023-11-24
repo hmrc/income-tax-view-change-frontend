@@ -154,9 +154,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleAgent("incomeSources.cease.endDate.selfEmployment.heading"),
           elementTextByID("income-source-end-date-hint")(hintText),
-          elementAttributeBySelector("input[id=income-source-end-date.day]","value")(testChangeDay),
-          elementAttributeBySelector("input[id=income-source-end-date.month]","value")(testChangeMonth),
-          elementAttributeBySelector("input[id=income-source-end-date.year]","value")(testChangeYear),
+          elementAttributeBySelector("input[id=income-source-end-date.day]", "value")(testChangeDay),
+          elementAttributeBySelector("input[id=income-source-end-date.month]", "value")(testChangeMonth),
+          elementAttributeBySelector("input[id=income-source-end-date.year]", "value")(testChangeYear),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
