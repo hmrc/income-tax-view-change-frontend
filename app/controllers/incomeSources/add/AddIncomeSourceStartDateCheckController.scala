@@ -33,7 +33,7 @@ import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
 
 import java.time.LocalDate
@@ -56,7 +56,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils with JourneyChecker{
 
   def show(isAgent: Boolean,
            isChange: Boolean,

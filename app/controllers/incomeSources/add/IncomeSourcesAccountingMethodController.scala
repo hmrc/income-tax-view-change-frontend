@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.IncomeSourcesAccountingMethod
 
@@ -52,7 +52,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker{
 
   def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean,
                                                errorHandler: ShowInternalServerError,

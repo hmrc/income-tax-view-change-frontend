@@ -37,7 +37,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceReportingMethod
 
 import javax.inject.Inject
@@ -61,7 +61,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
                                                       val ec: ExecutionContext,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+                                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker{
 
   lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     (isAgent, incomeSourceType.equals(SelfEmployment)) match {
