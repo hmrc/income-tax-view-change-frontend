@@ -52,11 +52,11 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
     val incomeSourceRedirect: Call = if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent() else
       controllers.incomeSources.add.routes.AddIncomeSourceController.show()
 
-      Future.successful(Ok(incomeSourceNotAddedError(
-        isAgent,
-        incomeSourceType = incomeSourceType,
-        continueAction = incomeSourceRedirect
-      )))
+    Future.successful(Ok(incomeSourceNotAddedError(
+      isAgent,
+      incomeSourceType = incomeSourceType,
+      continueAction = incomeSourceRedirect
+    )))
   }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate

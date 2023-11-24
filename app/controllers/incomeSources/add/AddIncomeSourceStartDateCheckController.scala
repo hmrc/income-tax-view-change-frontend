@@ -56,7 +56,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils with JourneyChecker{
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils with JourneyChecker {
 
   def show(isAgent: Boolean,
            isChange: Boolean,
@@ -87,7 +87,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                 isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
-    withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, incomeSourceType)) {
+    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
       getStartDate(incomeSourceType).flatMap {
         case Some(startDate) =>
           Future.successful {

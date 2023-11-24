@@ -52,7 +52,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker{
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean,
                                                errorHandler: ShowInternalServerError,
@@ -123,7 +123,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                     incomeSourceType: IncomeSourceType,
                     cashOrAccrualsFlag: Option[String] = None,
                     backUrl: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, incomeSourceType)) {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 

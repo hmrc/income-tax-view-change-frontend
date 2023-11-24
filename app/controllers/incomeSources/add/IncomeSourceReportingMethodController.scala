@@ -61,7 +61,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
                                                       val ec: ExecutionContext,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker{
+                                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     (isAgent, incomeSourceType.equals(SelfEmployment)) match {
@@ -106,7 +106,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, incomeSourceType)) {
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
     val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType) else
       controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -135,15 +135,15 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
               }
           }
       }
-      }.recover {
-        case ex: Exception =>
-          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(
-            s"[UKPropertyReportingMethodController][handleRequest]:" +
-              s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage}")
-          errorHandler.showInternalServerError()
-      }
+    }.recover {
+      case ex: Exception =>
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(
+          s"[UKPropertyReportingMethodController][handleRequest]:" +
+            s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
+        errorHandler.showInternalServerError()
     }
+  }
 
 
   private def getLatencyDetails(incomeSourceType: IncomeSourceType, incomeSourceId: String)(implicit user: MtdItUser[_]): Option[LatencyDetails] = {

@@ -28,9 +28,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 trait JourneyChecker extends IncomeSourcesUtils {
-  def withIncomeSourcesFSWithSessionCheck(sessionService: SessionService, journeyType: JourneyType)(codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+  self =>
+  implicit val ec: ExecutionContext
+
+  val sessionService: SessionService
+  def withIncomeSourcesFSWithSessionCheck(journeyType: JourneyType)(codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
-      journeyChecker(sessionService, journeyType).flatMap {
+      journeyChecker(journeyType).flatMap {
         case true => user.userType match {
           case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
           case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
@@ -40,7 +44,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
     }
   }
 
-  def journeyChecker(sessionService: SessionService, journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  private def journeyChecker(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, journeyType).flatMap {
       case Right(Some(true)) => Future(true)
       case _ => Future(false)

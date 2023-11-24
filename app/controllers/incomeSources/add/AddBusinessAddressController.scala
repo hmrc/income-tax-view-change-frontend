@@ -53,7 +53,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                              mcc: MessagesControllerComponents,
                                              val sessionService: SessionService
                                             )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils{
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
   def show(isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {

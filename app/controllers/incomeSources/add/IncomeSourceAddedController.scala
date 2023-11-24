@@ -47,14 +47,14 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: IncomeSourceAddedObligations,
-                                            nextUpdatesService: NextUpdatesService,
-                                            sessionService: SessionService)
+                                            nextUpdatesService: NextUpdatesService)
                                            (implicit val appConfig: FrontendAppConfig,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             implicit override val mcc: MessagesControllerComponents,
+                                            implicit val sessionService: SessionService,
                                             val ec: ExecutionContext,
                                             dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker{
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
   def show(incomeSourceIdStr: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
@@ -76,7 +76,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   private def handleRequest(isAgent: Boolean,
                             incomeSourceId: IncomeSourceId,
                             incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, incomeSourceType)) {
+    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
       incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
@@ -99,8 +99,10 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     updateMongoAdded(incomeSourceType).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
-        Future.successful {if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-        else itvcErrorHandler.showInternalServerError()}
+        Future.successful {
+          if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
+          else itvcErrorHandler.showInternalServerError()
+        }
       case true => incomeSourceType match {
         case SelfEmployment =>
           businessName match {

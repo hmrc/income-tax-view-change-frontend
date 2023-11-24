@@ -71,12 +71,12 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
-    mockNextUpdatesService,
-    mockSessionService
+    mockNextUpdatesService
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     mcc = app.injector.instanceOf[MessagesControllerComponents],
+    mockSessionService,
     ec = ec,
     mockDateService
   )
@@ -102,7 +102,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   ))
 
   def mockSelfEmployment(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(),mkIncomeSourceId(any()) )(any())).thenReturn(
+    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
       Some((LocalDate.parse("2022-01-01"), Some("Business Name")))
     )
   }
@@ -114,17 +114,17 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   }
 
   def mockFailure(): Unit = {
-    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()) )(any())).thenReturn(
+    when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
       None
     )
   }
 
-  def mockMongo(incomeSourceType: IncomeSourceType):Unit = {
+  def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
     when(mockSessionService.getMongo(any())(any(), any())).thenReturn(
       Future(Right(Some(UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
         addIncomeSourceData = Some(AddIncomeSourceData()))))))
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
-    when(mockSessionService.getMongoKeyTyped[Boolean](any(),any())(any(),any())).thenReturn(Future(Right(None)))
+    when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
   }
 
 

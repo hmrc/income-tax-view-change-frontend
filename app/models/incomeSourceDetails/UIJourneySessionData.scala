@@ -73,7 +73,7 @@ case class AddIncomeSourceData(
                                 countryCode: Option[String] = None,
                                 incomeSourcesAccountingMethod: Option[String] = None,
                                 hasBeenAdded: Option[Boolean] = None
-)
+                              )
 
 object AddIncomeSourceData {
   val businessNameField = "businessName"

@@ -56,7 +56,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    implicit val sessionService: SessionService,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
-  with IncomeSourcesUtils with FeatureSwitching with JourneyChecker{
+  with IncomeSourcesUtils with FeatureSwitching with JourneyChecker {
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
@@ -84,7 +84,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleRequest(sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, incomeSourceType)) {
+                           (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType).url
     else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType).url
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -217,9 +217,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
-              Future.successful {
-                Redirect(redirectUrl(isAgent, incomeSourceType, id))
-              }
+            Future.successful {
+              Redirect(redirectUrl(isAgent, incomeSourceType, id))
+            }
           case Left(ex) =>
             auditingService.extendedAudit(
               CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)

@@ -58,7 +58,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    implicit val dateService: DateService,
                                                    implicit override val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker{
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
   def show(isAgent: Boolean,
            isChange: Boolean,
@@ -91,7 +91,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withIncomeSourcesFSWithSessionCheck(sessionService, JourneyType(Add, incomeSourceType)) {
+    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
         sessionService.createSession(journeyType.toString).flatMap {
