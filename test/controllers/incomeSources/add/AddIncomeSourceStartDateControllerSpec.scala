@@ -30,7 +30,7 @@ import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, hasBeen
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.DateService
 import testConstants.BaseTestConstants
@@ -40,6 +40,7 @@ import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDate
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 
 class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessionService
@@ -170,6 +171,23 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
           document.getElementById("income-source-start-date.year").attr("value") shouldBe "2022"
           status(result) shouldBe OK
+        }
+      }
+    }
+    for (incomeSourceType <- incomeSourceTypes) yield {
+      s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+        s"user has already completed the journey (${incomeSourceType.key})" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, incomeSourceType), Right(Some(true)))
+
+          val result: Future[Result] = TestAddIncomeSourceStartDateController.show(false, isChange = false, incomeSourceType)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType).url
+          redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }
     }

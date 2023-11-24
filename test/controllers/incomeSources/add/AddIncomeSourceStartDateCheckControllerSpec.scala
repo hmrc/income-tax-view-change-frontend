@@ -149,6 +149,23 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
       }
     }
+    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      "user has already completed the journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyTypeSE, Right(Some(true)))
+
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+
+      }
+    }
+
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
       s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
         disableAllSwitches()
@@ -657,6 +674,22 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
+      }
+    }
+    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      "user has already completed the journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyTypeSE, Right(Some(true)))
+
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+
       }
     }
     s"return ${Status.INTERNAL_SERVER_ERROR}" when {
