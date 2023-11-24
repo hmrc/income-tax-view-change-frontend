@@ -39,14 +39,13 @@ object IncomeSourceIdHash {
     new IncomeSourceIdHash(s"${hashB}${hashA}")
   }
 
-  def mkFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {
+  def mkFromQueryString(hashCodeAsString: String): Option[IncomeSourceIdHash] = Try {
     new IncomeSourceIdHash(hashCodeAsString)
-  }.toEither
+  }.toOption
 
-  def mkIncomeSourceHashMaybe(id: Option[String], incomeSourceType: IncomeSourceType): Option[IncomeSourceIdHash] = {
-    println("EEEEEEEEE" + incomeSourceType + "\n" + id)
+  def mkIncomeSourceHashMaybe(id: Option[String]): Option[IncomeSourceIdHash] = {
     id match {
-      case Some(_) => id.map(mkFromQueryString).get.toOption
+      case Some(_) => id.flatMap(mkFromQueryString)
       case None => None
     }
   }

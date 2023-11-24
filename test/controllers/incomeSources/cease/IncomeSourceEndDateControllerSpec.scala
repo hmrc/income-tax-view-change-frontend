@@ -77,7 +77,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     }
 
     def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String], isChange: Boolean): (Call, Call, Call) = {
-      println("XXXXXXXX" + id)
       (incomeSourceType, isAgent, isChange) match {
         case (UkProperty, true, false) =>
           (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
@@ -143,8 +142,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBothPropertyBothBusiness()
         setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
-        println("IIIIIIIIII" + id)
-
         val result: Future[Result] = (isAgent, isChange) match {
           case (true, true) =>
             TestIncomeSourceEndDateController.showChangeAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
@@ -162,8 +159,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           incomeSourceType = incomeSourceType,
           id = id,
           isChange = isChange)
-
-        println("RRRRRRRR" + postAction)
 
         status(result) shouldBe OK
         document.title shouldBe TestIncomeSourceEndDateController.title(incomeSourceType, isAgent = isAgent)

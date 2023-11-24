@@ -23,6 +23,7 @@ import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import models.core.AddressModel
+import models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -48,6 +49,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
   val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
   val mockSessionService: SessionService = mock(classOf[SessionService])
+  val incomeSourceIdHash: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -161,7 +163,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
 
-        val result = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
+        val result = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
 
         status(result) shouldBe Status.SEE_OTHER
 
@@ -176,7 +178,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
-        val result = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
       }
@@ -188,7 +190,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "FS is enabled and the .show(id) method is called with a valid id parameter and no latency information" in {
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -204,7 +206,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -225,7 +227,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED)
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -246,7 +248,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "FS is enabled and the .show(id) method is called with a valid id parameter, but non eligable itsa status" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS)
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -280,7 +282,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter and no latency information" in {
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -297,7 +299,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -318,7 +320,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED, isAgent = true)
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -339,7 +341,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, but non eligable itsa status" in {
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -647,7 +649,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "User has no income source of the called type" in {
         mockAndBasicSetup(ERROR_TESTING)
         mockUKPropertyIncomeSource()
-        val resultSE: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId)(fakeRequestWithNino)
+        val resultSE: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
         status(resultSE) shouldBe Status.INTERNAL_SERVER_ERROR
 
         mockAndBasicSetup(ERROR_TESTING)

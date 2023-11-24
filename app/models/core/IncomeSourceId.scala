@@ -32,15 +32,11 @@ object IncomeSourceId {
 
   }
 
-  def compare(id: Option[IncomeSourceIdHash])(implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
-    println("QQQQQQQQQ" + id.toString)
+  def compare(incomeSourceIdHash: Option[IncomeSourceIdHash])(implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
     val xs = user.incomeSources.properties
       .map(m => mkIncomeSourceId(m.incomeSourceId)) ++ user.incomeSources.businesses.map(m => mkIncomeSourceId(m.incomeSourceId))
 
-    println("LLLLLLLLL" + xs.toString)
-    val a = id.flatMap(_.oneOf(xs))
-    println("PPPPPPP" + a.toString)
-    a
+    incomeSourceIdHash.flatMap(_.oneOf(xs))
   }
 
   // For future validation implementation:

@@ -23,8 +23,9 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
-import models.core.IncomeSourceId
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceHashMaybe, mkIncomeSourceIdHash}
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import models.incomeSourceDetails._
 import play.api.Logger
@@ -64,7 +65,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
-        id = None,
+        maybeIncomeSourceIdHash = None,
         backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
         incomeSourceType = UkProperty
       )
@@ -91,7 +92,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
-        id = None,
+        maybeIncomeSourceIdHash = None,
         backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
         incomeSourceType = ForeignProperty
       )
@@ -116,14 +117,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
+        val incomeSourceIdHash: Option[IncomeSourceIdHash] = mkFromQueryString(id)
+        val incomeSourceId: IncomeSourceId = IncomeSourceId.compare(incomeSourceIdHash = incomeSourceIdHash).getOrElse(mkIncomeSourceId(""))
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
           sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
             case Right(_) => handleRequest(
               sources = user.incomeSources,
               isAgent = false,
               backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-              id = Some(incomeSourceId),
+              maybeIncomeSourceIdHash = incomeSourceIdHash,
               incomeSourceType = SelfEmployment
             )
             case Left(exception) => Future.failed(exception)
@@ -141,15 +143,17 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
+            val incomeSourceIdHash: Option[IncomeSourceIdHash] = mkFromQueryString(id)
             withIncomeSourcesFS {
               val result = handleRequest(
                 sources = mtdItUser.incomeSources,
                 isAgent = true,
                 backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-                id = Some(incomeSourceId),
+                maybeIncomeSourceIdHash = incomeSourceIdHash,
                 incomeSourceType = SelfEmployment
               )
+
+              val incomeSourceId: IncomeSourceId = IncomeSourceId.compare(incomeSourceIdHash = incomeSourceIdHash).getOrElse(mkIncomeSourceId(""))
 
               sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
                 case true =>
@@ -306,13 +310,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, id: Option[IncomeSourceId], incomeSourceType: IncomeSourceType)
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, maybeIncomeSourceIdHash: Option[IncomeSourceIdHash], incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+
+    val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.compare(incomeSourceIdHash = maybeIncomeSourceIdHash)
 
     withIncomeSourcesFS {
       for {
         value <- if (incomeSourceType == SelfEmployment) {
-          getManageIncomeSourceViewModel(sources = sources, incomeSourceId = id.get, isAgent = isAgent)
+          getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe.getOrElse(mkIncomeSourceId("")), isAgent = isAgent)
         } else {
           getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
         }
