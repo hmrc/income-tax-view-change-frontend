@@ -43,8 +43,11 @@
 }
 
 @getQuarterlyTableHeading(quarterly: Seq[DatesModel]) = @{
-    s"${getMessage("table.heading-1")} ${quarterly.head.inboundCorrespondenceFrom.getYear} ${getMessage("to")} ${quarterly.head.inboundCorrespondenceFrom.getYear + 1}"
+    val startYear = (quarterly.head.inboundCorrespondenceFrom.getYear)
+    val endYear = (quarterly.head.inboundCorrespondenceFrom.getYear + 1)
+    s"${getMessage("table.heading-1")} $startYear ${getMessage("to")} $endYear"
 }
+
 
 @getPageTitle = @{
 
@@ -96,7 +99,6 @@
 }
 
 
-
 @import implicitDateFormatter.longDate
 @mainTemplate(pageTitle = getPageTitle,
   isAgent = isAgent,
@@ -122,13 +124,13 @@
 
                 @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
                     @govukTable(Table(
-                        rows = quarterlyPeriods.map { z =>
+                        rows = quarterlyPeriods.map { quarterlyPeriod =>
                             Seq(
                                 TableRow(
-                                    content = Text(s"${z.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${z.inboundCorrespondenceTo.toLongDate}")
+                                    content = Text(s"${quarterlyPeriod.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${quarterlyPeriod.inboundCorrespondenceTo.toLongDate}")
                                 ),
                                 TableRow(
-                                    content = Text(z.inboundCorrespondenceDue.toLongDate)
+                                    content = Text(quarterlyPeriod.inboundCorrespondenceDue.toLongDate)
                                 )
                             )
                         },
@@ -147,37 +149,35 @@
             </div>
         }
 
+        @if(sources.eopsObligationsDates.nonEmpty) {
+            <div class="box-simple" id="eops">
+                <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
+                <p class="govuk-body"> @getMessage("eops-p1") </p>
 
-            @if(sources.eopsObligationsDates.nonEmpty) {
-                <div class="box-simple" id="eops">
-                    <div class="page_headers govuk-heading-m"> @getMessage("eops-heading") </div>
-                    <p class="govuk-body"> @getMessage("eops-p1") </p>
-
-                    @govukTable(Table(
-                        rows = sources.eopsObligationsDates.map { x =>
-                            Seq(
-                                TableRow(
-                                    content = Text(s"${x.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${x.inboundCorrespondenceTo.getYear.toString}")
-                                ),
-                                TableRow(
-                                    content = Text(x.inboundCorrespondenceDue.toLongDate)
-                                )
-                            )
-                        },
-                        head = Some(Seq(
-                            HeadCell(
-                                content = Text(getMessage("table.heading-1"))
+                @govukTable(Table(
+                    rows = sources.eopsObligationsDates.map { eopsDate =>
+                        Seq(
+                            TableRow(
+                                content = Text(s"${eopsDate.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${eopsDate.inboundCorrespondenceTo.getYear.toString}")
                             ),
-                            HeadCell(
-                                content = Text(getMessage("table.heading-2"))
+                            TableRow(
+                                content = Text(eopsDate.inboundCorrespondenceDue.toLongDate)
                             )
-                        )),
-                        caption = None,
-                        firstCellIsHeader = false
-                        ))
-                </div>
-            }
-
+                        )
+                    },
+                    head = Some(Seq(
+                        HeadCell(
+                            content = Text(getMessage("table.heading-1"))
+                        ),
+                        HeadCell(
+                            content = Text(getMessage("table.heading-2"))
+                        )
+                    )),
+                    caption = None,
+                    firstCellIsHeader = false
+                    ))
+            </div>
+        }
 
         @if(sources.finalDeclarationDates.nonEmpty) {
             <div class="box-simple" id="finalDeclaration">
@@ -185,13 +185,13 @@
                 <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
                 @govukTable(Table(
-                    rows = sources.finalDeclarationDates.map { x =>
+                    rows = sources.finalDeclarationDates.map { finalDecDate =>
                         Seq(
                             TableRow(
-                                content = Text(s"${x.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${x.inboundCorrespondenceTo.getYear.toString}")
+                                content = Text(s"${finalDecDate.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${finalDecDate.inboundCorrespondenceTo.getYear.toString}")
                             ),
                             TableRow(
-                                content = Text(x.inboundCorrespondenceDue.toLongDate)
+                                content = Text(finalDecDate.inboundCorrespondenceDue.toLongDate)
                             )
                         )
                     },

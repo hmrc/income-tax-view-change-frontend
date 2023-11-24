@@ -83,10 +83,10 @@
 
         <div class="govuk-panel govuk-panel--confirmation" id="banner">
             <div class="govuk-panel__body govuk-!-margin-bottom-3">
-            @getMessage("heading1.se.part1")
+                @getMessage("heading1.se.part1")
             </div>
             <h1 class="govuk-panel__title">
-            @getBusinessName(name = businessName, incomeSourceType = incomeSourceType)
+                @getBusinessName(name = businessName, incomeSourceType = incomeSourceType)
             </h1>
             <div class="govuk-panel__body">
                 @getMessage("heading1.base")
@@ -95,10 +95,9 @@
 
         <h2 class="govuk-label-wrapper">
             <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-            @getMessage("heading2.text")
+                @getMessage("heading2.text")
             </label>
         </h2>
-
 
         @if(sources.quarterlyObligationsDates.nonEmpty) {
             <div class="box-simple" id="quarterly">
@@ -106,28 +105,28 @@
                 <p class="govuk-body"> @getMessage("quarterly-p1") </p>
 
                 @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
-                        @govukTable(Table(
-                            rows = quarterlyPeriods.map { z =>
-                                Seq(
-                                    TableRow(
-                                        content = Text(s"${z.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${z.inboundCorrespondenceTo.toLongDate}")
-                                    ),
-                                    TableRow(
-                                        content = Text(z.inboundCorrespondenceDue.toLongDate)
-                                    )
-                                )
-                            },
-                            head = Some(Seq(
-                                HeadCell(
-                                    content = Text(getQuarterlyTableHeading(quarterlyPeriods))
+                    @govukTable(Table(
+                        rows = quarterlyPeriods.map { quarterlyPeriod =>
+                            Seq(
+                                TableRow(
+                                    content = Text(s"${quarterlyPeriod.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${quarterlyPeriod.inboundCorrespondenceTo.toLongDate}")
                                 ),
-                                HeadCell(
-                                    content = Text(getMessage("table.heading-2"))
+                                TableRow(
+                                    content = Text(quarterlyPeriod.inboundCorrespondenceDue.toLongDate)
                                 )
-                            )),
-                            caption = None,
-                            firstCellIsHeader = false
-                        ))
+                            )
+                        },
+                        head = Some(Seq(
+                            HeadCell(
+                                content = Text(getQuarterlyTableHeading(quarterlyPeriods))
+                            ),
+                            HeadCell(
+                                content = Text(getMessage("table.heading-2"))
+                            )
+                        )),
+                        caption = None,
+                        firstCellIsHeader = false
+                    ))
                 }
             </div>
         }
@@ -138,13 +137,13 @@
                 <p class="govuk-body"> @getMessage("eops-p1") </p>
 
                 @govukTable(Table(
-                    rows = sources.eopsObligationsDates.map { x =>
+                    rows = sources.eopsObligationsDates.map { eopsDate =>
                         Seq(
                             TableRow(
-                                content = Text(s"${x.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${x.inboundCorrespondenceTo.toLongDate}")
+                                content = Text(s"${eopsDate.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${eopsDate.inboundCorrespondenceTo.toLongDate}")
                             ),
                             TableRow(
-                                content = Text(x.inboundCorrespondenceDue.toLongDate)
+                                content = Text(eopsDate.inboundCorrespondenceDue.toLongDate)
                             )
                         )
                     },
@@ -162,19 +161,18 @@
             </div>
         }
 
-
         <div class="box-simple" id="finalDeclaration">
             <div class="page_headers govuk-heading-m"> @getMessage("final-declaration-heading") </div>
             <p class="govuk-body"> @getMessage("final-declaration-text") </p>
 
             @govukTable(Table(
-                rows = sources.finalDeclarationDates.map { x =>
+                rows = sources.finalDeclarationDates.map { finalDecDate =>
                     Seq(
                         TableRow(
-                            content = Text(s"${x.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${x.inboundCorrespondenceTo.toLongDate}")
+                            content = Text(s"${finalDecDate.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${finalDecDate.inboundCorrespondenceTo.toLongDate}")
                         ),
                         TableRow(
-                            content = Text(x.inboundCorrespondenceDue.toLongDate)
+                            content = Text(finalDecDate.inboundCorrespondenceDue.toLongDate)
                         )
                     )
                 },
@@ -197,5 +195,4 @@
             Some(getMessage("income-sources-button"))
         )
     }
-
 }
