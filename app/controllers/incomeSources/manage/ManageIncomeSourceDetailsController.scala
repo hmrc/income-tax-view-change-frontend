@@ -20,7 +20,6 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.helpers.IncomeSourceIdHelper
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
@@ -34,7 +33,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourceIdUtils, IncomeSourcesUtils}
 import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
@@ -57,7 +56,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with IncomeSourceIdHelper {
+  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with IncomeSourceIdUtils {
 
 
   def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate

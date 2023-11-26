@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.helpers
+package utils
 
 import auth.MtdItUser
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 
-trait IncomeSourceIdHelper {
+trait IncomeSourceIdUtils {
 
   def mkIncomeSourceHashMaybe(id: Option[String]): Option[IncomeSourceIdHash] = {
     id match {

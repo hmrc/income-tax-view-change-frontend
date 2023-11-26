@@ -23,11 +23,12 @@ import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{dualBusinessIncome, noIncomeDetails, singleBusinessIncome, singleBusinessIncome2023}
 import testUtils.TestSupport
+import utils.IncomeSourceIdUtils
 
 class IncomeSourceIdHelperSpec extends TestSupport with FeatureSwitching {
 
 
-  val incomeSourceIdHelper: IncomeSourceIdHelper = new IncomeSourceIdHelper {}
+  val incomeSourceIdHelper: IncomeSourceIdUtils = new IncomeSourceIdUtils {}
 
   val testQueryString: String = mkIncomeSourceId("XA00001234").toHash.hash
   val testSelfEmploymentIdHash: Option[IncomeSourceIdHash] = mkFromQueryString(testQueryString)
