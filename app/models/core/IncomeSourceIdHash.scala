@@ -42,11 +42,4 @@ object IncomeSourceIdHash {
     new IncomeSourceIdHash(hashCodeAsString)
   }.toOption
 
-  def mkIncomeSourceHashMaybe(id: Option[String]): Option[IncomeSourceIdHash] = {
-    id match {
-      case Some(_) => id.flatMap(mkFromQueryString)
-      case None => None
-    }
-  }
-
 }

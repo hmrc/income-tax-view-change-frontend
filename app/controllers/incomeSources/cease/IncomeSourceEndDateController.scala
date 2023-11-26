@@ -20,12 +20,12 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.helpers.IncomeSourceIdHelper
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.models.DateFormElement
-import models.core.IncomeSourceIdHash.mkIncomeSourceHashMaybe
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
@@ -55,7 +55,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val ec: ExecutionContext,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with IncomeSourceIdHelper {
 
   private def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, maybeIncomeSourceId: Option[IncomeSourceId], isChange: Boolean): Future[(Call, Call, Call)] = {
 
@@ -173,7 +173,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.compare(incomeSourceIdHash = id)
+    val incomeSourceIdMaybe: Option[IncomeSourceId] = compare(incomeSourceIdHash = id)
 
     getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
       actions =>
@@ -261,7 +261,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.compare(incomeSourceIdHash = id)
+    val incomeSourceIdMaybe: Option[IncomeSourceId] = compare(incomeSourceIdHash = id)
 
     getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap { actions =>
       val (backAction, postAction, redirectAction) = actions

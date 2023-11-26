@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.helpers.IncomeSourceIdHelper
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
@@ -56,7 +57,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with IncomeSourceIdHelper {
 
 
   def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
@@ -118,7 +119,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     implicit user =>
       withIncomeSourcesFS {
         val incomeSourceIdHash: Option[IncomeSourceIdHash] = mkFromQueryString(id)
-        val incomeSourceId: IncomeSourceId = IncomeSourceId.compare(incomeSourceIdHash = incomeSourceIdHash).getOrElse(mkIncomeSourceId(""))
+        val incomeSourceId: IncomeSourceId = compare(incomeSourceIdHash = incomeSourceIdHash).getOrElse(mkIncomeSourceId(""))
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
           sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
             case Right(_) => handleRequest(
@@ -153,7 +154,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                 incomeSourceType = SelfEmployment
               )
 
-              val incomeSourceId: IncomeSourceId = IncomeSourceId.compare(incomeSourceIdHash = incomeSourceIdHash).getOrElse(mkIncomeSourceId(""))
+              val incomeSourceId: IncomeSourceId = compare(incomeSourceIdHash = incomeSourceIdHash).getOrElse(mkIncomeSourceId(""))
 
               sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
                 case true =>
@@ -310,10 +311,10 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, maybeIncomeSourceIdHash: Option[IncomeSourceIdHash], incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, maybeIncomeSourceIdHash: Option[IncomeSourceIdHash],
+                    incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.compare(incomeSourceIdHash = maybeIncomeSourceIdHash)
+    val incomeSourceIdMaybe: Option[IncomeSourceId] = compare(incomeSourceIdHash = maybeIncomeSourceIdHash)
 
     withIncomeSourcesFS {
       for {
