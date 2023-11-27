@@ -323,7 +323,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
-      def testInternalServerErrors(isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean = false): Unit = {
+      def testInternalServerErrors(isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean = false, id: Option[String] = None): Unit = {
         if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         disableAllSwitches()
@@ -332,11 +332,11 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
 
         val result: Future[Result] = if (isChange && !isAgent) {
-          TestIncomeSourceEndDateController.showChange(None, incomeSourceType)(fakeRequestWithActiveSession)
+          TestIncomeSourceEndDateController.showChange(id, incomeSourceType)(fakeRequestWithActiveSession)
         } else if (isAgent) {
-          TestIncomeSourceEndDateController.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
+          TestIncomeSourceEndDateController.showAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
         } else {
-          TestIncomeSourceEndDateController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
+          TestIncomeSourceEndDateController.show(id, incomeSourceType)(fakeRequestWithActiveSession)
         }
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -354,6 +354,14 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         "called .showChange" in {
           setupMockGetSessionKeyMongoTyped(Left(new Exception()))
           testInternalServerErrors(isAgent = false, incomeSourceType = ForeignProperty, isChange = true)
+        }
+      }
+      "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" when {
+        "called .show" in {
+          testInternalServerErrors(isAgent = true, SelfEmployment, id = Some("12345"))
+        }
+        "called .showAgent" in {
+          testInternalServerErrors(isAgent = true, SelfEmployment, id = Some("12345"))
         }
       }
     }
