@@ -38,8 +38,8 @@ object IncomeSourceIdHash {
     new IncomeSourceIdHash(s"${hashB}${hashA}")
   }
 
-  def mkFromQueryString(hashCodeAsString: String): Option[IncomeSourceIdHash] = Try {
+  def mkFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {
     new IncomeSourceIdHash(hashCodeAsString)
-  }.toOption
+  }.toEither
 
 }

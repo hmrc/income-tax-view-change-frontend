@@ -97,10 +97,10 @@ case class IncomeSourceDetailsModel(nino: String,
     }
   }
 
-  def compareHashToQueryString(incomeSourceIdHash: Option[IncomeSourceIdHash])(implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
+  def compareHashToQueryString(incomeSourceIdHash: IncomeSourceIdHash)(implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
     val xs = user.incomeSources.businesses.map(m => mkIncomeSourceId(m.incomeSourceId))
 
-    incomeSourceIdHash.flatMap(_.oneOf(xs))
+    incomeSourceIdHash.oneOf(xs)
   }
 }
 
