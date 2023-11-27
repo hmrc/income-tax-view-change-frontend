@@ -358,7 +358,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       }
       "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" when {
         "called .show" in {
-          testInternalServerErrors(isAgent = true, SelfEmployment, id = Some("12345"))
+          testInternalServerErrors(isAgent = false, SelfEmployment, id = Some("12345"))
         }
         "called .showAgent" in {
           testInternalServerErrors(isAgent = true, SelfEmployment, id = Some("12345"))
