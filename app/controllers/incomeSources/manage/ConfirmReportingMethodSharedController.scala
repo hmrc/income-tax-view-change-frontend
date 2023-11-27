@@ -145,7 +145,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
     Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
-    (if (isAgent) itvcErrorHandler else itvcErrorHandlerAgent).showInternalServerError()
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 
   private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[IncomeSourceId],
