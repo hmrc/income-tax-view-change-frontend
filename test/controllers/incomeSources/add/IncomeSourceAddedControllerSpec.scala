@@ -184,8 +184,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
-          dates,
-          dates,
+          Seq(dates),
           dates,
           dates,
           2023,
@@ -219,8 +218,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 12, 1))
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
-          dates,
-          dates,
+          Seq(dates),
           dates,
           dates,
           2023,
@@ -395,8 +393,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
           setupMockGetIncomeSourceDetails()(sources)
           when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
-            dates,
-            dates,
+            Seq(dates),
             dates,
             dates,
             2023,
@@ -434,8 +431,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
           setupMockGetIncomeSourceDetails()(sources)
           when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
-            dates,
-            dates,
+            Seq(dates),
             dates,
             dates,
             2023,

@@ -21,6 +21,7 @@ import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import play.twirl.api.Html
+import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
 import testUtils.ViewSpec
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
@@ -51,18 +52,16 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val testId: String = "XAIS00000000005"
 
   val view: IncomeSourceCeasedObligations = app.injector.instanceOf[IncomeSourceCeasedObligations]
-  val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
+  val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
   val day = LocalDate.of(2022, 1, 1)
 
-  val quarterlyDatesYearOne = DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")
-  val quarterlyDatesYearTwo = DatesModel(day.plusYears(1), day.plusYears(1).plusDays(1), day.plusYears(1).plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")
+
   val eopsDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")
   val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
-    Seq(quarterlyDatesYearOne),
-    Seq(quarterlyDatesYearTwo),
+    quarterlyObligationDatesFull,
     Seq(eopsDates),
     Seq(finalDeclarationDates),
     2023,
@@ -163,15 +162,20 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")
       tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2022 to 2023")
       tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2023 to 2024")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2024 to 2025")
+
       tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
 
 
       val tableContent: Elements = quarterlySection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("1 January 2022 to 2 January 2022")
-      tableContent.text() should include("3 January 2022")
+      tableContent.text() should include("6 January 2022 to 5 April 2022")
+      tableContent.text() should include("5 May 2022")
 
-      tableContent.text() should include("1 January 2023 to 2 January 2023")
-      tableContent.text() should include("3 January 2023")
+      tableContent.text() should include("6 January 2023 to 5 April 2023")
+      tableContent.text() should include("5 May 2023")
+
+      tableContent.text() should include("6 January 2024 to 5 April 2024")
+      tableContent.text() should include("5 May 2024")
     }
 
     "Display EOPS obligations if the user has them" in new Setup(validCallWithData) {
@@ -184,7 +188,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
 
       val tableContent: Elements = eopsSection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("1 January 2022 to 2 January 2022 3 January 2022")
+      tableContent.text() should include("1 January 2022 to 2 January 2022")
       tableContent.text() should include("3 January 2022")
     }
 
@@ -198,7 +202,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
 
       val tableContent: Elements = finalDecSection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("1 January 2022 to 2 January 2022 3 January 2022")
+      tableContent.text() should include("1 January 2022 to 2 January 2022")
       tableContent.text() should include("3 January 2022")
     }
 
@@ -289,15 +293,19 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")
       tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2022 to 2023")
       tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2023 to 2024")
+      tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading1 + " 2024 to 2025")
       tableHeadings.text() should include(IncomeSourceCeasedMessages.tableHeading2)
 
 
       val tableContent: Elements = quarterlySection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("1 January 2022 to 2 January 2022")
-      tableContent.text() should include("3 January 2022")
+      tableContent.text() should include("6 January 2022 to 5 April 2022")
+      tableContent.text() should include("5 May 2022")
 
-      tableContent.text() should include("1 January 2023 to 2 January 2023")
-      tableContent.text() should include("3 January 2023")
+      tableContent.text() should include("6 January 2023 to 5 April 2023")
+      tableContent.text() should include("5 May 2023")
+
+      tableContent.text() should include("6 January 2024 to 5 April 2024")
+      tableContent.text() should include("5 May 2024")
     }
 
     "Display EOPS obligations if the user has them" in new Setup(validCallWithData) {
