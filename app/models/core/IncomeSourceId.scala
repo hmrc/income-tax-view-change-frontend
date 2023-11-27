@@ -16,7 +16,7 @@
 
 package models.core
 
-import IncomeSourceIdHash.mkIncomeSourceIdHash
+import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 
 class IncomeSourceId private(val value: String) extends AnyVal {
   def toHash: IncomeSourceIdHash = mkIncomeSourceIdHash(this)

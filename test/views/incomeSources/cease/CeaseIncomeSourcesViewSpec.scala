@@ -94,6 +94,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
   }
 
   "ceaseIncomeSources - Individual" should {
+
+    val id = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
+
     "render heading" in new Setup(false) {
       document.getElementById("heading").text() shouldBe getMessage("heading")
     }
@@ -104,7 +107,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
         table.getElementById("table-row-trading-name-0").text() shouldBe testTradeName
         table.getElementById("table-row-trading-start-date-0").text() shouldBe testStartDate.toLongDate
-        table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(testSelfEmploymentId)
+        table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(id)
       }
 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
@@ -113,7 +116,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
         table.getElementById("table-row-trading-name-0").text() shouldBe getMessage("unknown")
         table.getElementById("table-row-trading-start-date-0").text() shouldBe getMessage("unknown")
-        table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(testSelfEmploymentId)
+        table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(id)
       }
 
     }
@@ -210,6 +213,9 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
   }
 
   "ceaseIncomeSources - Agent" should {
+
+    val id = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
+
     "render heading" in new Setup(true) {
       document.getElementById("heading").text() shouldBe getMessage("heading")
     }
@@ -220,7 +226,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
         table.getElementById("table-row-trading-name-0").text() shouldBe testTradeName
         table.getElementById("table-row-trading-start-date-0").text() shouldBe testStartDate.toLongDate
-        table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(testSelfEmploymentId)
+        table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(id)
       }
 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
@@ -229,7 +235,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
         document.getElementById("self-employment-h1").text() shouldBe getMessage("self-employment.h1")
         table.getElementById("table-row-trading-name-0").text() shouldBe getMessage("unknown")
         table.getElementById("table-row-trading-start-date-0").text() shouldBe getMessage("unknown")
-        table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(testSelfEmploymentId)
+        table.getElementById("cease-link-business-0").attr("href") shouldBe getCeaseSoleTraderBusinessURL(id)
       }
 
     }

@@ -16,8 +16,9 @@
 
 package models.incomeSourceDetails
 
+import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.core.IncomeSourceId
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import play.api.Logging
 import play.api.libs.json.{Format, JsValue, Json}
@@ -69,10 +70,6 @@ case class IncomeSourceDetailsModel(nino: String,
     businesses.find(_.isOngoingSoleTraderBusiness(id))
   }
 
-  def getSoleTraderBusinesses: Seq[BusinessDetailsModel] = {
-    businesses.filterNot(_.isCeased)
-  }
-
   def getIncomeSourceId(incomeSourceType: IncomeSourceType, soleTraderBusinessId: Option[String] = None): Option[IncomeSourceId] = {
     (incomeSourceType, soleTraderBusinessId) match {
       case (SelfEmployment, Some(id)) => getSoleTraderBusiness(id).map(m => mkIncomeSourceId(m.incomeSourceId))
@@ -98,6 +95,12 @@ case class IncomeSourceDetailsModel(nino: String,
       case ForeignProperty => getForeignProperty.flatMap(_.latencyDetails)
       case _ => None
     }
+  }
+
+  def compareHashToQueryString(incomeSourceIdHash: IncomeSourceIdHash)(implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
+    val xs = user.incomeSources.businesses.map(m => mkIncomeSourceId(m.incomeSourceId))
+
+    incomeSourceIdHash.oneOf(xs)
   }
 }
 
