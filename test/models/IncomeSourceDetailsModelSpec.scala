@@ -16,6 +16,11 @@
 
 package models
 
+import auth.MtdItUser
+import forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
+import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.scalatest.matchers.should.Matchers
 import testConstants.BaseTestConstants._
@@ -27,6 +32,11 @@ import testUtils.UnitSpec
 import java.time.LocalDate
 
 class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
+
+  val testQueryString: String = mkIncomeSourceId("XA00001234").toHash.hash
+  val testSelfEmploymentIdHash: Option[IncomeSourceIdHash] = mkFromQueryString(testQueryString)
+  val testSelfEmploymentIdMaybe: Option[IncomeSourceId] = Option(mkIncomeSourceId("XA00001234"))
+  val testSelfEmploymentIdHashValueMaybe: Option[String] = Option(testQueryString)
 
   "The IncomeSourceDetailsModel" when {
 
@@ -138,6 +148,45 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
           )
           ))
         preSanitised.sanitise shouldBe expected
+      }
+    }
+  }
+
+  ".compareHashToQueryString method" when {
+    "user has income incomeSourceIdHashes matching the url incomeSourceIdHash" should {
+      "return the matching incomeSourceId inside an Option" in {
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessIncome)
+
+        val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash)
+
+        result shouldBe testSelfEmploymentIdMaybe
+      }
+    }
+    "user has multiple incomeSourceIdHashes matching the url incomeSourceIdHash" should {
+      "return the matching incomeSourceId inside an Option" in {
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, dualBusinessIncome)
+
+        val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash)
+
+        result shouldBe testSelfEmploymentIdMaybe
+      }
+    }
+    "user has no incomeSourceIdHashes matching the url incomeSourceIdHash" should {
+      "return None" in {
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessIncome2023)
+
+        val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = None)
+
+        result shouldBe None
+      }
+    }
+    "user has no incomeSources" should {
+      "return None" in {
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
+
+        val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash)
+
+        result shouldBe None
       }
     }
   }
