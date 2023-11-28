@@ -27,7 +27,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
+class SessionService @Inject()(
+                                encryptionService: EncryptionService,
+                                uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
 
   def getMongo(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
@@ -42,16 +44,30 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
   }
 
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {
+
+    println(s"\nobjectOpt = ${objectOpt}\n")
+    println(s"\nkey = ${key}\n")
+
     objectOpt match {
       case Some(obj) =>
+        println(s"\nsome(obj)\n")
+
         val field = obj.getClass.getDeclaredField(key)
         field.setAccessible(true)
         try {
+
+          println(s"\nGET KEY FROM OBJ: ${Right(field.get(obj).asInstanceOf[Option[A]])}\n")
+
           Right(field.get(obj).asInstanceOf[Option[A]])
         } catch {
-          case err: ClassCastException => Left(err)
+          case err: ClassCastException =>
+            println(s"\nCOULD NOT GET KEY FROM OBJ\n")
+
+            Left(err)
         }
-      case None => Right(None)
+      case None =>
+        println(s"\nNone (obj)\n")
+        Right(None)
     }
   }
 
@@ -60,7 +76,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
-          case Add => getKeyFromObject[String](data.addIncomeSourceData, key)
+          case Add => getKeyFromObject[String](data.addIncomeSourceData, key).map(_.map(encryptionService.decryptSessionValue))
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
         }
@@ -94,7 +110,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
     }
-    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
+    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, encryptionService.encryptSessionValue(value)).map(
       result => result.wasAcknowledged() match {
         case true => Right(true)
         case false => Left(new Exception("Mongo Save data operation was not acknowledged"))

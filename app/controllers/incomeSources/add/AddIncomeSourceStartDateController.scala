@@ -31,7 +31,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, SessionService}
+import services.{DateService, EncryptionService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
@@ -50,6 +50,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                    incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                   encryptionService: EncryptionService,
                                                    val sessionService: SessionService)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -152,7 +153,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def handleValidFormData(formData: DateFormElement, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.setMongoKey(dateStartedField, formData.date.toString, journeyType).flatMap {
+    sessionService.setMongoKey(dateStartedField, encryptionService.encryptSessionValue(formData.date.toString), journeyType).flatMap {
       case Right(result) if result => Future.successful {
         val successUrl = getSuccessUrl(incomeSourceType, isAgent, isChange)
         Redirect(successUrl)
@@ -199,8 +200,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt)
+    sessionService.getMongoKey(dateStartedField, journeyType).flatMap {
+      case Right(dateOpt) => Future.successful(dateOpt.map(LocalDate.parse))
       case Left(ex) => Future.failed(ex)
     }
   }

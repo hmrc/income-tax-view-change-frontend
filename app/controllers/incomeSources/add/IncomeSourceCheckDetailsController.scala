@@ -32,7 +32,7 @@ import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, Che
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
+import services.{CreateBusinessDetailsService, EncryptionService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceCheckDetails
@@ -48,6 +48,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                    val retrieveBtaNavBar: NavBarPredicate,
+                                                   encryptionService: EncryptionService,
                                                    val businessDetailsService: CreateBusinessDetailsService,
                                                    val auditingService: AuditingService)
                                                   (implicit val ec: ExecutionContext,
@@ -158,8 +159,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
             Right(CheckBusinessDetailsViewModel(
               businessName = addIncomeSourceData.businessName,
-              businessStartDate = addIncomeSourceData.dateStarted,
-              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate
+              businessStartDate = addIncomeSourceData.dateStarted.map(LocalDate.parse),
+              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate.map(LocalDate.parse)
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
               businessTrade = addIncomeSourceData.businessTrade
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),

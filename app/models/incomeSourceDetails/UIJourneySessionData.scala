@@ -65,9 +65,9 @@ object UIJourneySessionData {
 case class AddIncomeSourceData(
                                 businessName: Option[String] = None,
                                 businessTrade: Option[String] = None,
-                                dateStarted: Option[LocalDate] = None,
-                                accountingPeriodStartDate: Option[LocalDate] = None,
-                                accountingPeriodEndDate: Option[LocalDate] = None,
+                                dateStarted: Option[String] = None,
+                                accountingPeriodStartDate: Option[String] = None,
+                                accountingPeriodEndDate: Option[String] = None,
                                 createdIncomeSourceId: Option[String] = None,
                                 address: Option[Address] = None,
                                 countryCode: Option[String] = None,

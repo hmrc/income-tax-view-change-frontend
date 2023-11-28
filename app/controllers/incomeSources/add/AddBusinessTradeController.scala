@@ -29,7 +29,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.{EncryptionService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessTrade
@@ -45,6 +45,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val addBusinessTradeView: AddBusinessTrade,
                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,
+                                           encryptionService: EncryptionService,
                                            val sessionService: SessionService,
                                            incomeSourceDetailsService: IncomeSourceDetailsService)
                                           (implicit val appConfig: FrontendAppConfig,
@@ -105,9 +106,9 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                               (implicit user: MtdItUser[_]): Future[Option[String]] = {
 
     if (isChange) {
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
+      sessionService.getMongoKey(AddIncomeSourceData.businessTradeField, journeyType).flatMap {
         case Right(tradeOpt) =>
-          Future.successful(tradeOpt)
+          Future.successful(tradeOpt.map(encryptionService.decryptSessionValue))
         case Left(err) => Future.failed(err)
       }
     } else {
@@ -145,9 +146,9 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     withIncomeSourcesFS {
       val journeyType = JourneyType(Add, SelfEmployment)
 
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
+      sessionService.getMongoKey(AddIncomeSourceData.businessNameField, journeyType).flatMap {
         case Right(businessName) =>
-          BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessName).fold(
+          BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessName.map(encryptionService.decryptSessionValue)).fold(
             formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
             formData => handleSuccess(formData.trade, isAgent, isChange, journeyType)
           )
@@ -173,7 +174,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
   def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean, journeyType: JourneyType)(implicit user: MtdItUser[_]): Future[Result] = {
     val successURL = Redirect(getSuccessURL(isAgent, isChange))
 
-    sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, businessTrade, journeyType).flatMap {
+    sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, encryptionService.encryptSessionValue(businessTrade), journeyType).flatMap {
       case Right(result) if result => Future.successful(successURL)
       case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
       case Left(exception) => Future.failed(exception)

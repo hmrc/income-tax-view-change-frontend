@@ -30,7 +30,7 @@ import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, SessionService}
+import services.{DateService, EncryptionService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.IncomeSourcesUtils
@@ -49,6 +49,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                         val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
                                                         val languageUtils: LanguageUtils,
+                                                        encryptionService: EncryptionService,
                                                         val sessionService: SessionService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         implicit val dateService: DateService,
@@ -228,8 +229,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           case None => throw new Exception("addIncomeSourceData field not found in session data")
         }
         val accountingPeriodEndDate = dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
-        val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate),
-          accountingPeriodEndDate = Some(accountingPeriodEndDate))
+        val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate.toString),
+          accountingPeriodEndDate = Some(accountingPeriodEndDate.toString))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
         sessionService.setMongoData(uiJourneySessionData).flatMap {
@@ -243,8 +244,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
 
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt)
+    sessionService.getMongoKey(dateStartedField, journeyType).flatMap {
+      case Right(dateOpt) => Future.successful(dateOpt.map(LocalDate.parse))
       case Left(ex) => Future.failed(ex)
     }
   }

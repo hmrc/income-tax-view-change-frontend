@@ -28,7 +28,7 @@ import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.{EncryptionService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessName
@@ -73,7 +73,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessName(isChange: Boolean)
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
+      sessionService.getMongoKey(AddIncomeSourceData.businessNameField, journeyType).flatMap {
         case Right(nameOpt) => Future.successful(nameOpt)
         case Left(ex) => Future.failed(ex)
       }
@@ -85,7 +85,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
+    sessionService.getMongoKey(AddIncomeSourceData.businessTradeField, journeyType).flatMap {
       case Right(nameOpt) => Future.successful(nameOpt)
       case Left(ex) => Future.failed(ex)
     }
