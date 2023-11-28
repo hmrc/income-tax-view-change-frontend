@@ -27,11 +27,12 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, hasBeenAddedField}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.IncomeSourceDetailsService
@@ -113,6 +114,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -125,6 +127,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = true, isChange = false)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -389,6 +392,21 @@ class AddBusinessTradeControllerSpec extends TestSupport
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.HomeController.show().url)
 
+    }
+    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      "user has already completed the journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+
+        val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
     }
   }
 }

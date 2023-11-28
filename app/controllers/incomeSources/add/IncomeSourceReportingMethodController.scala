@@ -24,11 +24,12 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
-import models.incomeSourceDetails.{LatencyDetails, LatencyYear}
+import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
@@ -36,7 +37,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceReportingMethod
 
 import javax.inject.Inject
@@ -53,13 +54,14 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
                                                       val dateService: DateService,
                                                       val calculationListService: CalculationListService,
                                                       val auditingService: AuditingService,
-                                                      val view: IncomeSourceReportingMethod)
+                                                      val view: IncomeSourceReportingMethod,
+                                                      val sessionService: SessionService)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+                                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     (isAgent, incomeSourceType.equals(SelfEmployment)) match {
@@ -104,31 +106,43 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-      case true =>
-        getViewModel(incomeSourceType, id).map {
-          case Some(viewModel) =>
-            Ok(view(
-              incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
-              incomeSourceReportingViewModel = viewModel,
-              postAction = submitUrl(isAgent, incomeSourceType, id.value),
-              isAgent = isAgent))
-          case None =>
-            Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
-        }
-      case false =>
-        Future.successful {
-          Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
-        }
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+    val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType) else
+      controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, incomeSourceType)).flatMap {
+      case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
+        Future.successful(errorHandler.showInternalServerError())
+      case Right(hasBeenAdded) => hasBeenAdded match {
+        case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
+        case _ =>
+          itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+            case true =>
+              getViewModel(incomeSourceType, id).map {
+                case Some(viewModel) =>
+                  Ok(view(
+                    incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
+                    incomeSourceReportingViewModel = viewModel,
+                    postAction = submitUrl(isAgent, incomeSourceType, id.value),
+                    isAgent = isAgent))
+                case None =>
+                  Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
+              }
+            case false =>
+              Future.successful {
+                Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
+              }
+          }
+      }
+    }.recover {
+      case ex: Exception =>
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(
+          s"[UKPropertyReportingMethodController][handleRequest]:" +
+            s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
+        errorHandler.showInternalServerError()
     }
-  }.recover {
-    case ex: Exception =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(
-        s"[UKPropertyReportingMethodController][handleRequest]:" +
-          s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage}")
-      errorHandler.showInternalServerError()
   }
 
 

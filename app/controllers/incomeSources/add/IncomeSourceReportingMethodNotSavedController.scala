@@ -24,8 +24,9 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
+import enums.JourneyType.{Add, JourneyType}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils

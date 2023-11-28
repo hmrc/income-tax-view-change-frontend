@@ -1457,6 +1457,17 @@ business-added.income-sources-button                    = Your income sources
 business-added.previous-tax-years-heading               = Previous tax years
 business-added.previous-tax-years-t1                    = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
 
+
+## You cannot go back - Your business has been added page ##
+
+cannot-go-back.heading                                  = You cannot go back
+cannot-go-back.sole-trader                              = Your sole trader business has been added
+cannot-go-back.uk-property                              = Your UK property business has been added
+cannot-go-back.foreign-property                         = Your foreign property business has been added
+cannot-go-back.you-can                                  = You can:
+cannot-go-back.manage-link                              = view and manage your income sources
+cannot-go-back.home-link                                = go back to the homepage
+
 ## Income Source Ceased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        =
 business-ceased.obligation.heading1.se.part2                        = Sole trader business

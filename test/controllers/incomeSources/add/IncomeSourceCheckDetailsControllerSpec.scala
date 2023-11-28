@@ -25,14 +25,15 @@ import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, hasBeenAddedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.CreateBusinessDetailsService
 import testConstants.BaseTestConstants
@@ -140,6 +141,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             mockNoIncomeSources()
             if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+            when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
             if (incomeSourceType == SelfEmployment) {
               val sessionData: UIJourneySessionData = testUIJourneySessionDataBusiness
               setupMockGetMongo(Right(Some(sessionData)))
@@ -193,6 +195,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             disable(IncomeSources)
             mockSingleBusinessIncomeSource()
             if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+            when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
 
             val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
@@ -261,6 +264,22 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
         }
       }
 
+      s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+        s"user has already completed the journey" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+
+          val result: Future[Result] = TestCheckDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+          redirectLocation(result) shouldBe Some(redirectUrl)
+        }
+      }
+
       "return 500 INTERNAL_SERVER_ERROR" when {
         "there is session data missing" when {
           def missingSessionDataTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
@@ -270,6 +289,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             mockNoIncomeSources()
             if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
             setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+            when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
             if (incomeSourceType == SelfEmployment) {
               setupMockGetMongo(Right(None))
             }

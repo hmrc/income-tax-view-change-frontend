@@ -27,11 +27,12 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, hasBeenAddedField}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
 import org.scalatest.matchers.must.Matchers._
+import play.api.http.Status
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
@@ -87,6 +88,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
 
@@ -127,6 +129,21 @@ class AddBusinessNameControllerSpec extends TestSupport
         redirectLocation(result) mustBe Some(routes.HomeController.show().url)
       }
     }
+    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      "user has already completed the journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+
+        val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
+    }
   }
 
   "Individual - ADD - AddBusinessNameController.submit" should {
@@ -162,6 +179,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
           val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameEmpty
@@ -180,6 +198,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
           val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameLength
@@ -198,6 +217,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockCreateSession(true)
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
+          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
           val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameEmpty
@@ -219,6 +239,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
         status(result) mustBe OK
@@ -242,6 +263,21 @@ class AddBusinessNameControllerSpec extends TestSupport
         redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
       }
     }
+    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      "user has already completed the journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+
+        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
+    }
   }
 
   "Agent - Add - AddBusinessNameController.submit" should {
@@ -256,6 +292,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
         setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val redirectUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(
           incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
@@ -279,6 +316,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
       setupMockCreateSession(true)
       setupMockGetSessionKeyMongoTyped[String](Right(None))
+      setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
       val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameEmpty
@@ -319,6 +357,21 @@ class AddBusinessNameControllerSpec extends TestSupport
       val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.HomeController.show().url)
+    }
+    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      "user has already completed the journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+
+        val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
     }
   }
 
@@ -427,6 +480,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
         setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
         status(result) mustBe OK
@@ -450,6 +504,21 @@ class AddBusinessNameControllerSpec extends TestSupport
         redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
       }
     }
+    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      "user has already completed the journey" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+
+        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
+    }
   }
 
   "Agent - Change - AddBusinessNameController.submitChangeAgent" should {
@@ -462,6 +531,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
         setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
         val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 

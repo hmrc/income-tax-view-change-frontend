@@ -1,12 +1,16 @@
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
@@ -38,9 +42,21 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
       s"${messagesAPI("business-added.uk-property.base")}"
   }
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession(Add))
+  }
+
   val incomeSourceAddedForeignPropertyShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", ForeignProperty).url
 
   val addIncomeSourceShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = JourneyType(Add, incomeSourceType).toString,
+    addIncomeSourceData = Some(AddIncomeSourceData()))
 
   s"calling GET $incomeSourceAddedSelfEmploymentShowUrl" should {
     "render the Business Added page" when {
@@ -56,6 +72,8 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+
         val incomeSourceId = testSelfEmploymentId
         val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations(incomeSourceId)
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -66,6 +84,9 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         else {
           business1.tradingName.getOrElse("") + " " + messagesAPI("business-added.sole-trader.base")
         }
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -105,8 +126,14 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1330 getNextUpdates return a success response")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
         Then("user is shown UK property added page")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added?id=$testPropertyIncomeId")
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
+
         result should have(
           httpStatus(OK),
           pageTitleCustom(pageTitle),
@@ -168,9 +195,14 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
         val incomeSourceId = testPropertyIncomeId
         val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations(incomeSourceId)
         verifyIncomeSourceDetailsCall(testMtditid)
+
+        And("Mongo storage is successfully set")
+        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
 

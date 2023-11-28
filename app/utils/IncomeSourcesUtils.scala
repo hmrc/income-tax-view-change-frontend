@@ -18,13 +18,19 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import enums.IncomeSourceJourney.IncomeSourceType
+import enums.JourneyType.{Add, JourneyType}
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching {
+
   def withIncomeSourcesFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (isDisabled(IncomeSources)) {
       user.userType match {
