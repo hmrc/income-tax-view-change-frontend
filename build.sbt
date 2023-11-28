@@ -10,7 +10,7 @@ import play.sbt.routes.RoutesKeys
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion = "5.21.0" // "7.11.0" in the next iteration / this causing number of unit tests to fail
+val bootstrapPlayVersion = "7.0.0" // "7.11.0" in the next iteration / this causing number of unit tests to fail
 val playPartialsVersion = "8.3.0-play-28"
 val playFrontendHMRCVersion = "5.0.0-play-28"
 val playLanguageVersion = "5.2.0-play-28"
@@ -40,7 +40,7 @@ val compile = Seq(
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
-
+  "uk.gov.hmrc" %% "crypto-json-play-28" % "7.6.0",
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
@@ -122,5 +122,6 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions += "-Wconf:cat=unused-imports:s,cat=unused-params:s"
   )
   .settings(resolvers ++= Seq(
-    Resolver.jcenterRepo
+    Resolver.jcenterRepo,
+    MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
   ))

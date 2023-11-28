@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
-import models.incomeSourceDetails.UIJourneySessionData
+import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -199,7 +199,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     val backUrl = getBackUrl(incomeSourceType, isAgent, isChange)
     val journeyType = JourneyType(Add, incomeSourceType)
 
-    sessionService.getMongo(journeyType.toString).flatMap {
+    sessionService.getMongoSensitive(journeyType).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceData = sessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) => addIncomeSourceData
@@ -209,7 +209,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(dateStarted = None, accountingPeriodStartDate = None, accountingPeriodEndDate = None)
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
-        sessionService.setMongoData(uiJourneySessionData).flatMap {
+        sessionService.setMongoDataSensitive(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(backUrl))
           case false => Future.failed(new Exception("Unable to delete start date"))
         }
@@ -221,18 +221,18 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                          (implicit request: Request[_]): Future[Result] = {
     val journeyType = JourneyType(Add, SelfEmployment)
 
-    sessionService.getMongo(journeyType.toString).flatMap {
+    sessionService.getMongoSensitive(journeyType).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceData = sessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) => addIncomeSourceData
           case None => throw new Exception("addIncomeSourceData field not found in session data")
         }
         val accountingPeriodEndDate = dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
-        val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate),
-          accountingPeriodEndDate = Some(accountingPeriodEndDate))
+        val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate.toString),
+          accountingPeriodEndDate = Some(accountingPeriodEndDate.toString))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
-        sessionService.setMongoData(uiJourneySessionData).flatMap {
+        sessionService.setMongoDataSensitive(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(successUrl))
           case false => Future.failed(new Exception("Unable to update accounting period"))
         }
@@ -242,9 +242,15 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt)
+    sessionService.getMongoSensitive(journeyType).flatMap {
+      case Right(Some(data)) =>
+        Future.successful(
+          data.addIncomeSourceData
+            .flatMap(
+              _.dateStarted
+            )
+        )
+      case Right(_) => throw new Exception(s"empty field: dateStarted")
       case Left(ex) => Future.failed(ex)
     }
   }

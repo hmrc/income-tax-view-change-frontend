@@ -16,77 +16,82 @@
 
 package models.incomeSourceDetails
 
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{Instant, LocalDate}
+import java.time.Instant
 
 case class UIJourneySessionData(
-                                 sessionId: String,
-                                 journeyType: String,
-                                 addIncomeSourceData: Option[AddIncomeSourceData] = None,
-                                 manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
-                                 ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
-                                 lastUpdated: Instant = Instant.now)
+                                 sessionId:               String,
+                                 journeyType:             String,
+                                 addIncomeSourceData:     Option[AddIncomeSourceData] = None,
+                                 manageIncomeSourceData:  Option[ManageIncomeSourceData] = None,
+                                 ceaseIncomeSourceData:   Option[CeaseIncomeSourceData] = None,
+                                 lastUpdated:             Instant = Instant.now
+                               ) {
+
+  def encrypted: SensitiveUIJourneySessionData =
+    SensitiveUIJourneySessionData(
+      sessionId,
+      journeyType,
+      addIncomeSourceData.map(_.encrypted),
+      manageIncomeSourceData,
+      ceaseIncomeSourceData,
+      lastUpdated
+    )
+}
 
 object UIJourneySessionData {
 
-  val reads: Reads[UIJourneySessionData] = {
+  implicit val format: OFormat[UIJourneySessionData] = {
 
-    import play.api.libs.functional.syntax._
-
-    (
-      (__ \ "sessionId").read[String] and
-        (__ \ "journeyType").read[String] and
-        (__ \ "addIncomeSourceData").readNullable[AddIncomeSourceData] and
-        (__ \ "manageIncomeSourceData").readNullable[ManageIncomeSourceData] and
-        (__ \ "ceaseIncomeSourceData").readNullable[CeaseIncomeSourceData] and
-        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-      )(UIJourneySessionData.apply _)
+      ( (__ \ "sessionId"             ).format[String]
+      ~ (__ \ "journeyType"           ).format[String]
+      ~ (__ \ "addIncomeSourceData"   ).formatNullable[AddIncomeSourceData]
+      ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
+      ~ (__ \ "ceaseIncomeSourceData" ).formatNullable[CeaseIncomeSourceData]
+      ~ (__ \ "lastUpdated"           ).format(MongoJavatimeFormats.instantFormat)
+      )(
+        UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
+      )
   }
-
-  val writes: OWrites[UIJourneySessionData] = {
-
-    import play.api.libs.functional.syntax._
-
-    (
-      (__ \ "sessionId").write[String] and
-        (__ \ "journeyType").write[String] and
-        (__ \ "addIncomeSourceData").writeNullable[AddIncomeSourceData] and
-        (__ \ "manageIncomeSourceData").writeNullable[ManageIncomeSourceData] and
-        (__ \ "ceaseIncomeSourceData").writeNullable[CeaseIncomeSourceData] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-      )(unlift(UIJourneySessionData.unapply))
-  }
-
-  implicit val format: OFormat[UIJourneySessionData] = OFormat(reads, writes)
 }
 
-case class AddIncomeSourceData(
-                                businessName: Option[String] = None,
-                                businessTrade: Option[String] = None,
-                                dateStarted: Option[LocalDate] = None,
-                                accountingPeriodStartDate: Option[LocalDate] = None,
-                                accountingPeriodEndDate: Option[LocalDate] = None,
-                                createdIncomeSourceId: Option[String] = None,
-                                address: Option[Address] = None,
-                                countryCode: Option[String] = None,
-                                incomeSourcesAccountingMethod: Option[String] = None)
+case class SensitiveUIJourneySessionData(
+                                          sessionId: String,
+                                          journeyType: String,
+                                          addIncomeSourceData: Option[SensitiveAddIncomeSourceData] = None,
+                                          manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
+                                          ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
+                                          lastUpdated: Instant = Instant.now
+                                        ) {
+  def decrypted: UIJourneySessionData =
+    UIJourneySessionData(
+      sessionId,
+      journeyType,
+      addIncomeSourceData.map(_.decrypted),
+      manageIncomeSourceData,
+      ceaseIncomeSourceData,
+      lastUpdated
+    )
+}
 
-object AddIncomeSourceData {
-  val businessNameField = "businessName"
-  val businessTradeField = "businessTrade"
-  val dateStartedField = "dateStarted"
-  val accountingPeriodStartDateField = "accountingPeriodStartDate"
-  val accountingPeriodEndDateField = "accountingPeriodEndDate"
-  val createdIncomeSourceIdField: String = "createdIncomeSourceId"
-  val addressField: String = "address"
-  val countryCodeField: String = "countryCode"
-  val incomeSourcesAccountingMethodField: String = "incomeSourcesAccountingMethod"
+object SensitiveUIJourneySessionData {
 
-  def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
+  implicit def format(implicit crypto: Encrypter with Decrypter): OFormat[SensitiveUIJourneySessionData] = {
 
-  implicit val format: OFormat[AddIncomeSourceData] = Json.format[AddIncomeSourceData]
+      ( (__ \ "sessionId"             ).format[String]
+      ~ (__ \ "journeyType"           ).format[String]
+      ~ (__ \ "addIncomeSourceData"   ).formatNullable[SensitiveAddIncomeSourceData]
+      ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
+      ~ (__ \ "ceaseIncomeSourceData" ).formatNullable[CeaseIncomeSourceData]
+      ~ (__ \ "lastUpdated"           ).format(MongoJavatimeFormats.instantFormat)
+      )(
+        SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
+      )
+  }
 }
 
 case class ManageIncomeSourceData(

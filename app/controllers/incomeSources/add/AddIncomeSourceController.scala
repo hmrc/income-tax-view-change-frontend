@@ -88,7 +88,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
     } else {
       incomeSourceDetailsService.getAddIncomeSourceViewModel(sources) match {
         case Success(viewModel) =>
-          sessionService.deleteSession(Add).map { _ =>
+          sessionService.deleteSessionSensitive(Add).map { _ =>
             Ok(addIncomeSources(
               sources = viewModel,
               isAgent = isAgent,

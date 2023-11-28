@@ -104,13 +104,13 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
     addressLookUpResult match {
       case Right(value) =>
         val journeyType = JourneyType(Add, SelfEmployment)
-        sessionService.getMongo(journeyType.toString).flatMap {
+        sessionService.getMongoSensitive(journeyType).flatMap {
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
             val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
             val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
-            sessionService.setMongoData(uiJourneySessionData)
+            sessionService.setMongoDataSensitive(uiJourneySessionData)
 
           case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
         }

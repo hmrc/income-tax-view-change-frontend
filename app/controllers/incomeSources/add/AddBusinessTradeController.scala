@@ -24,7 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -34,6 +34,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessTrade
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -105,9 +106,15 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                               (implicit user: MtdItUser[_]): Future[Option[String]] = {
 
     if (isChange) {
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-        case Right(tradeOpt) =>
-          Future.successful(tradeOpt)
+      sessionService.getMongoSensitive(journeyType).flatMap {
+        case Right(Some(data)) =>
+          Future.successful(
+            data.addIncomeSourceData
+              .flatMap(
+                _.businessTrade
+              )
+          )
+        case Right(_) => throw new Exception(s"empty field: businessTrade")
         case Left(err) => Future.failed(err)
       }
     } else {
@@ -145,12 +152,16 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     withIncomeSourcesFS {
       val journeyType = JourneyType(Add, SelfEmployment)
 
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
-        case Right(businessName) =>
-          BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessName).fold(
-            formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
-            formData => handleSuccess(formData.trade, isAgent, isChange, journeyType)
-          )
+      sessionService.getMongoSensitive(journeyType).flatMap {
+        case Right(Some(data)) =>
+            BusinessTradeForm.checkBusinessTradeWithBusinessName(
+              BusinessTradeForm.form.bindFromRequest(),
+              data.addIncomeSourceData.map(_.businessName).get
+            ).fold(
+              formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
+              formData => handleSuccess(formData.trade, data, isAgent, isChange)
+            )
+        case Right(_) => throw new Exception("No data retrieved from Mongo")
         case Left(exception) => Future.failed(exception)
       }
     }.recover {
@@ -170,13 +181,22 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     }
   }
 
-  def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean, journeyType: JourneyType)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleSuccess(businessTrade: String, data: UIJourneySessionData, isAgent: Boolean, isChange: Boolean)
+                   (implicit user: MtdItUser[_]): Future[Result] = {
     val successURL = Redirect(getSuccessURL(isAgent, isChange))
 
-    sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, businessTrade, journeyType).flatMap {
-      case Right(result) if result => Future.successful(successURL)
-      case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-      case Left(exception) => Future.failed(exception)
+    sessionService.setMongoDataSensitive(
+      data.copy(
+        addIncomeSourceData =
+          data.addIncomeSourceData.map(
+            _.copy(
+              businessTrade = Some(businessTrade)
+            )
+          )
+      )
+    ).flatMap {
+      case true => Future.successful(successURL)
+      case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
     }
   }
 

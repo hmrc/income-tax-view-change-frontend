@@ -24,7 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -33,6 +33,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessName
 
+import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -73,20 +74,34 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessName(isChange: Boolean)
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
-        case Right(nameOpt) => Future.successful(nameOpt)
+      sessionService.getMongoSensitive(journeyType).flatMap {
+        case Right(Some(data)) =>
+          Future.successful(
+            data.addIncomeSourceData
+              .flatMap(
+                _.businessName
+              )
+          )
+        case Right(_) => throw new Exception("No data retrieved from Mongo")
         case Left(ex) => Future.failed(ex)
       }
     else
-      sessionService.createSession(journeyType.toString).flatMap {
+      sessionService.createSessionSensitive(journeyType).flatMap {
         case true => Future.successful(None)
         case false => Future.failed(new Exception("Unable to create session"))
       }
   }
 
   private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-      case Right(nameOpt) => Future.successful(nameOpt)
+    sessionService.getMongoSensitive(journeyType).flatMap {
+      case Right(Some(data)) =>
+        Future.successful(
+          data.addIncomeSourceData
+            .flatMap(
+              _.businessTrade
+            )
+        )
+      case Right(_) => throw new Exception("No data retrieved from Mongo")
       case Left(ex) => Future.failed(ex)
     }
   }
@@ -195,11 +210,23 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                   useFallbackLink = true))
               },
             formData => {
-              val redirect = Redirect(redirectLocal)
-              sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
-                case Right(result) if result => Future.successful(redirect)
-                case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-                case Left(exception) => Future.failed(exception)
+              sessionService.getMongoSensitive(journeyType).flatMap {
+                case Right(Some(data)) =>
+                  sessionService.setMongoDataSensitive(
+                    data.copy(
+                      addIncomeSourceData =
+                        Some(
+                          AddIncomeSourceData(
+                            businessName = Some(formData.name)
+                          )
+                        )
+                    )
+                  ).flatMap {
+                    case true => Future.successful(Redirect(redirectLocal))
+                    case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+                  }
+                case Right(_) => throw new Exception("No data retrieved from Mongo")
+                case Left(ex) => Future.failed(ex)
               }
             }
           )
