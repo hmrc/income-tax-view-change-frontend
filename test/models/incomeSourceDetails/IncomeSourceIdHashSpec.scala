@@ -34,8 +34,8 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
         val incomeSourceIdHashFromIncomeSourceId: IncomeSourceIdHash = mkIncomeSourceIdHash(incomeSourceId)
 
-        val incomeSourceIdHashMaybe = IncomeSourceIdHash.mkFromQueryString(hashValue).toOption
-        incomeSourceIdHashMaybe shouldBe Some(incomeSourceIdHashFromIncomeSourceId)
+        val incomeSourceIdHashMaybe = IncomeSourceIdHash.mkFromQueryString(hashValue)
+        incomeSourceIdHashMaybe shouldBe Right(incomeSourceIdHashFromIncomeSourceId)
       }
     }
 
@@ -54,8 +54,8 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
         val incomeSourceIdHash = IncomeSourceIdHash.mkIncomeSourceIdHash(incomeSourceId)
 
-        val incomeSourceIdHashMaybe = IncomeSourceIdHash.mkFromQueryString(hashValue).toOption
-        incomeSourceIdHashMaybe shouldBe Some(incomeSourceIdHash)
+        val incomeSourceIdHashMaybe = IncomeSourceIdHash.mkFromQueryString(hashValue)
+        incomeSourceIdHashMaybe shouldBe Right(incomeSourceIdHash)
       }
     }
 

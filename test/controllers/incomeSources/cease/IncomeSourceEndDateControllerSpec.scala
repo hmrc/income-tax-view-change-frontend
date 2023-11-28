@@ -18,11 +18,12 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -174,7 +175,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
       "navigating to the page with FS Enabled with income source type as Self Employment" when {
         val incomeSourceType = SelfEmployment
-        val id = Some(testSelfEmploymentId)
+        val id = Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
 
         "called .show" when {
           "user is an Individual" in {
@@ -322,7 +323,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       }
     }
     "return 500 INTERNAL SERVER ERROR to internal server page" when {
-      def testInternalServerErrors(isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean = false): Unit = {
+      def testInternalServerErrors(isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean = false, id: Option[String] = None): Unit = {
         if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
         disableAllSwitches()
@@ -330,13 +331,12 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         mockBothPropertyBothBusiness()
 
 
-
         val result: Future[Result] = if (isChange && !isAgent) {
-          TestIncomeSourceEndDateController.showChange(None, incomeSourceType)(fakeRequestWithActiveSession)
-        }else if (isAgent){
-          TestIncomeSourceEndDateController.showAgent(None, incomeSourceType)(fakeRequestConfirmedClient())
+          TestIncomeSourceEndDateController.showChange(id, incomeSourceType)(fakeRequestWithActiveSession)
+        } else if (isAgent) {
+          TestIncomeSourceEndDateController.showAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
         } else {
-          TestIncomeSourceEndDateController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
+          TestIncomeSourceEndDateController.show(id, incomeSourceType)(fakeRequestWithActiveSession)
         }
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -353,7 +353,15 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       s"failed to get session data - ${CeaseIncomeSourceData.dateCeasedField}" when {
         "called .showChange" in {
           setupMockGetSessionKeyMongoTyped(Left(new Exception()))
-          testInternalServerErrors(isAgent = false,incomeSourceType = ForeignProperty, isChange = true)
+          testInternalServerErrors(isAgent = false, incomeSourceType = ForeignProperty, isChange = true)
+        }
+      }
+      "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" when {
+        "called .show" in {
+          testInternalServerErrors(isAgent = true, SelfEmployment, id = Some("12345"))
+        }
+        "called .showAgent" in {
+          testInternalServerErrors(isAgent = true, SelfEmployment, id = Some("12345"))
         }
       }
     }
@@ -398,20 +406,22 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
 
       "Self Employment - form is completed successfully" when {
         val incomeSourceType = SelfEmployment
+        val id = Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
         "called .submit" when {
           "user is an Individual" in {
-            testSubmitResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = false, isChange = false)
+            testSubmitResponse(id = id, incomeSourceType, isAgent = false, isChange = false)
           }
           "user is an Agent" in {
-            testSubmitResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = true, isChange = false)
+            testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = false)
           }
+          /////////
         }
         "called .submitChange" when {
           "user is an Individual" in {
-            testSubmitResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = false, isChange = true)
+            testSubmitResponse(id = id, incomeSourceType, isAgent = false, isChange = true)
           }
           "user is an Agent" in {
-            testSubmitResponse(id = Some(testSelfEmploymentId), incomeSourceType, isAgent = true, isChange = true)
+            testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = true)
           }
         }
 
@@ -464,7 +474,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
             .withFormUrlEncodedBody("income-source-end-date.day" -> "", "income-source-end-date.month" -> "8",
               "income-source-end-date.year" -> "2022")
         }
-        val id = Some(testSelfEmploymentId)
+        val id = Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
         val incomeSourceType = SelfEmployment
         if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())

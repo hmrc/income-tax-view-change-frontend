@@ -38,6 +38,7 @@ import services.SessionService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testPropertyIncomeId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
+import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import testUtils.TestSupport
 import views.html.incomeSources.manage.ManageObligations
 
@@ -118,8 +119,7 @@ class ManageObligationsControllerSpec extends TestSupport
       DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
-      dates,
-      dates,
+      quarterlyObligationDatesSimple,
       dates,
       dates,
       2023,
@@ -174,8 +174,7 @@ class ManageObligationsControllerSpec extends TestSupport
       DatesModel(day, day, day, "EOPS", isFinalDec = false, obligationType = "EOPS")
     )
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
-      dates,
-      dates,
+      quarterlyObligationDatesSimple,
       dates,
       dates,
       2023,
@@ -347,8 +346,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())).thenReturn(Future(ObligationsViewModel(
-          dates,
-          dates,
+          quarterlyObligationDatesSimple,
           dates,
           dates,
           2023,

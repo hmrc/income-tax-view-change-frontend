@@ -45,16 +45,16 @@
     messages(s"view-income-sources.$key", args: _*)
 }
 
-@viewSelfEmploymentDetailsURL(id: String) = @{
-    if(isAgent){
-        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id).url
+@viewSelfEmploymentDetailsURL(incomeSourceIdHash: String) = @{
+    if(isAgent) {
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash).url
     } else {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(id).url
+        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash).url
     }
 }
 
 @viewUKPropertyDetailsURL = @{
-    if(isAgent){
+    if(isAgent) {
         controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
     } else {
         controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
@@ -62,16 +62,22 @@
 }
 
 @viewForeignPropertyDetailsURL = @{
-    if(isAgent){
+    if(isAgent) {
         controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
     } else {
         controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
     }
 }
 
-@ukProperty = @{ sources.viewUkProperty }
-@foreignProperty = @{ sources.viewForeignProperty }
-@soleTraderBusinesses = @{ sources.viewSoleTraderBusinesses }
+@ukProperty = @{
+    sources.viewUkProperty
+}
+@foreignProperty = @{
+    sources.viewForeignProperty
+}
+@soleTraderBusinesses = @{
+    sources.viewSoleTraderBusinesses
+}
 
 
 @mainTemplate(pageTitle = getMessage("heading"),
@@ -81,7 +87,6 @@
 
     @h1(msg = getMessage("heading"),
         id = Some("incomeSources.add.addIncomeSources-h1"))
-
 
     @if(soleTraderBusinesses.nonEmpty) {
         @h2(msg = getMessage("self-employed-h2"),
@@ -98,10 +103,16 @@
             <tbody>
             @for((business, index) <- soleTraderBusinesses.zipWithIndex) {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-name-$index"}">@business.tradingName.getOrElse(getMessage("unknown-field"))</td>
-                    <td class="govuk-table__cell" id="@{s"table-row-trading-start-date-$index"}">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
+                    <td class="govuk-table__cell" id="@{
+                        s"table-row-trading-name-$index"
+                    }">@business.tradingName.getOrElse(getMessage("unknown-field"))</td>
+                    <td class="govuk-table__cell" id="@{
+                        s"table-row-trading-start-date-$index"
+                    }">@business.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="@{s"view-link-business-$index"}" href=@viewSelfEmploymentDetailsURL(business.incomeSourceId.value)>
+                        <a class="govuk-link" id="@{
+                            s"view-link-business-$index"
+                        }" href=@viewSelfEmploymentDetailsURL(business.incomeSourceId.toHash.hash)>
                         @getMessage("choose")
                         </a>
                     </td>
@@ -113,7 +124,6 @@
         <br>
 
     }
-
 
     @if(ukProperty.nonEmpty) {
         @h2(msg = getMessage("uk-property-h2"),

@@ -145,7 +145,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
     Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
-    (if (isAgent) itvcErrorHandler else itvcErrorHandlerAgent).showInternalServerError()
+    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 
   private def handleSubmitRequest(taxYear: String, changeTo: String, isAgent: Boolean, maybeIncomeSourceId: Option[IncomeSourceId],
@@ -264,10 +264,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     val (backCall, successCall) = (isAgent, incomeSourceType, incomeSourceId) match {
       case (false, SelfEmployment, Some(incomeSourceId)) =>
-        routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId.value) ->
+        routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId.toHash.hash) ->
           routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
       case (_, SelfEmployment, Some(incomeSourceId)) =>
-        routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId.value) ->
+        routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId.toHash.hash) ->
           routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
       case (false, UkProperty, _) =>
         routes.ManageIncomeSourceDetailsController.showUkProperty() ->

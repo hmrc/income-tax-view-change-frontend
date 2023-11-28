@@ -45,9 +45,9 @@
     messages(s"cease-income-sources.$key", args: _*)
 }
 
-@ceaseSoleTraderBusinessURL(incomeSourceId: String) = @{
-    if(isAgent) controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(incomeSourceId), SelfEmployment).url
-    else controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceId), SelfEmployment).url
+@ceaseSoleTraderBusinessURL(incomeSourceIdHash: String) = @{
+    if(isAgent) controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(Some(incomeSourceIdHash), SelfEmployment).url
+    else controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(incomeSourceIdHash), SelfEmployment).url
 }
 
 @ceaseUkPropertyURL = @{
@@ -99,12 +99,12 @@
                 TableRow(
                     content = HtmlContent(
                         s"""
-                                <a class="govuk-link" href='${ceaseSoleTraderBusinessURL(business.incomeSourceId.value)}'>
+                                <a class="govuk-link" href='${ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)}'>
                                     ${getMessage("cease")}
                                 </a>"""
                     ),
                     classes = "govuk-!-text-align-right",
-                    attributes = Map("id" -> s"cease-link-business-$index", "href" -> s"${ceaseSoleTraderBusinessURL(business.incomeSourceId.value)}")
+                    attributes = Map("id" -> s"cease-link-business-$index", "href" -> s"${ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)}")
                 )
             )
             },
