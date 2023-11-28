@@ -148,7 +148,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
       sessionService.getMongoKey(AddIncomeSourceData.businessNameField, journeyType).flatMap {
         case Right(businessName) =>
-          BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessName.map(encryptionService.decryptSessionValue)).fold(
+          BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessName).fold(
             formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
             formData => handleSuccess(formData.trade, isAgent, isChange, journeyType)
           )

@@ -245,7 +245,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     val journeyType = JourneyType(Add, incomeSourceType)
 
     sessionService.getMongoKey(dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt.map(LocalDate.parse))
+      case Right(dateOpt) => Future.successful(dateOpt.map(x => LocalDate.parse(encryptionService.decryptSessionValue(x))))
       case Left(ex) => Future.failed(ex)
     }
   }
