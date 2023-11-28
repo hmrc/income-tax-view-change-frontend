@@ -44,29 +44,17 @@ class SessionService @Inject()(
   }
 
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {
-
-    println(s"\nobjectOpt = ${objectOpt}\n")
-    println(s"\nkey = ${key}\n")
-
     objectOpt match {
       case Some(obj) =>
-        println(s"\nsome(obj)\n")
-
         val field = obj.getClass.getDeclaredField(key)
         field.setAccessible(true)
         try {
-
-          println(s"\nGET KEY FROM OBJ: ${Right(field.get(obj).asInstanceOf[Option[A]])}\n")
-
           Right(field.get(obj).asInstanceOf[Option[A]])
         } catch {
           case err: ClassCastException =>
-            println(s"\nCOULD NOT GET KEY FROM OBJ\n")
-
             Left(err)
         }
       case None =>
-        println(s"\nNone (obj)\n")
         Right(None)
     }
   }
@@ -76,7 +64,7 @@ class SessionService @Inject()(
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
-          case Add => getKeyFromObject[String](data.addIncomeSourceData, key).map(_.map(encryptionService.decryptSessionValue))
+          case Add => getKeyFromObject[String](data.addIncomeSourceData, key).map(_.map(encryptionService.decryptSessionValue))   // DECRYPT VALUE
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
         }
@@ -110,8 +98,12 @@ class SessionService @Inject()(
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
     }
-    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, encryptionService.encryptSessionValue(value)).map(
-      result => result.wasAcknowledged() match {
+    uiJourneySessionDataRepository.updateData(
+      uiJourneySessionData,
+      jsonAccessorPath,
+      encryptionService.encryptSessionValue(value)  // ENCRYPT VALUE
+    ).map(
+      _.wasAcknowledged() match {
         case true => Right(true)
         case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
       }

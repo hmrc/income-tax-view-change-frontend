@@ -153,7 +153,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def handleValidFormData(formData: DateFormElement, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.setMongoKey(dateStartedField, encryptionService.encryptSessionValue(formData.date.toString), journeyType).flatMap {
+    sessionService.setMongoKey(dateStartedField, formData.date.toString, journeyType).flatMap {
       case Right(result) if result => Future.successful {
         val successUrl = getSuccessUrl(incomeSourceType, isAgent, isChange)
         Redirect(successUrl)

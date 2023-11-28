@@ -155,14 +155,13 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       case Right(Some(uiJourneySessionData)) =>
         uiJourneySessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) =>
-
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
             Right(CheckBusinessDetailsViewModel(
-              businessName = addIncomeSourceData.businessName,
-              businessStartDate = addIncomeSourceData.dateStarted.map(x => LocalDate.parse(encryptionService.decryptSessionValue(x))),
-              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate.map(x => LocalDate.parse(encryptionService.decryptSessionValue(x)))
+              businessName = addIncomeSourceData.businessName.map(encryptionService.decryptSessionValue),
+              businessStartDate = addIncomeSourceData.dateStarted.map(encryptionService.decryptSessionValue).map(LocalDate.parse),
+              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate.map(LocalDate.parse)
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
-              businessTrade = addIncomeSourceData.businessTrade
+              businessTrade = addIncomeSourceData.businessTrade.map(encryptionService.decryptSessionValue)
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),
               businessAddressLine1 = address.lines.headOption
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1")),
@@ -171,8 +170,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               businessAddressLine4 = address.lines.lift(3),
               businessPostalCode = address.postcode,
               businessCountryCode = addIncomeSourceData.countryCode,
-              incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
-              cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
+              incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod.map(encryptionService.decryptSessionValue),
+              cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod.map(encryptionService.decryptSessionValue)
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
               showedAccountingMethod = showAccountingMethodPage
             ))
