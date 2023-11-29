@@ -29,7 +29,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{EncryptionService, IncomeSourceDetailsService, SessionService}
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessTrade
@@ -45,7 +45,6 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val addBusinessTradeView: AddBusinessTrade,
                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,
-                                           encryptionService: EncryptionService,
                                            val sessionService: SessionService,
                                            incomeSourceDetailsService: IncomeSourceDetailsService)
                                           (implicit val appConfig: FrontendAppConfig,
@@ -108,7 +107,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     if (isChange) {
       sessionService.getMongoKey(AddIncomeSourceData.businessTradeField, journeyType).flatMap {
         case Right(tradeOpt) =>
-          Future.successful(tradeOpt.map(encryptionService.decryptSessionValue))
+          Future.successful(tradeOpt)
         case Left(err) => Future.failed(err)
       }
     } else {

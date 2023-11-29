@@ -31,7 +31,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, EncryptionService, IncomeSourceDetailsService, SessionService}
+import services.{DateService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.errorPages.CustomNotFoundError
@@ -50,7 +50,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
                                                    incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                   encryptionService: EncryptionService,
                                                    val sessionService: SessionService)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
