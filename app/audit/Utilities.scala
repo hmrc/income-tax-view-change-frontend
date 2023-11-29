@@ -35,7 +35,7 @@ object Utilities {
     userType(user.userType)
 
   def userAuditDetails(user: MtdItUserBase[_]): JsObject =
-    getBaseDetails(user) ++ Json.obj("nationalInsuranceNumber" -> user.nino)
+    getBaseDetails(user) ++ Json.obj("nino" -> user.nino)
 
   def userAuditDetailsNino(user: MtdItUserBase[_]): JsObject =
     getBaseDetails(user) ++ Json.obj("nino" -> user.nino)

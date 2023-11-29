@@ -26,7 +26,7 @@ case class InitiatePayNowAuditModel(mtditid: String, nino: Option[String],
   override val transactionName: String = enums.TransactionName.InitiatePayNow
   override val auditType: String = enums.AuditType.InitiatePayNow
 
-  private case class AuditDetail(mtditid: String, nationalInsuranceNumber: Option[String],
+  private case class AuditDetail(mtditid: String, nino: Option[String],
                                  saUtr: Option[String], credId: Option[String],
                                  userType: Option[String])
 

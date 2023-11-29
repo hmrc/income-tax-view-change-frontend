@@ -71,7 +71,7 @@ object CreditSummaryAuditing {
 
     override val detail: JsValue =
       Json.obj("saUtr" -> saUTR,
-        "nationalInsuranceNumber" -> nino,
+        "nino" -> nino,
         "userType" -> userType,
         "credId" -> credId,
         "mtditid" -> mtdRef,

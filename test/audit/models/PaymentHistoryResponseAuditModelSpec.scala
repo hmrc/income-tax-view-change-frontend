@@ -113,7 +113,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
 
     Json.obj(
       "mtditid" -> testMtditid,
-      "nationalInsuranceNumber" -> testNino,
+      "nino" -> testNino,
       "saUtr" -> testSaUtr,
       "credId" -> testCredId,
       "userType" -> "Individual",
@@ -158,7 +158,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
         "the audit is empty" in {
           paymentHistoryAuditMin.detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
-            "nationalInsuranceNumber" -> testNino,
+            "nino" -> testNino,
             "paymentHistory" -> Json.arr()
           )
         }

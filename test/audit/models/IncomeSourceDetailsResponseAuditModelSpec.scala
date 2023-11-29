@@ -55,7 +55,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
             propertyIdsKey -> Json.toJson(List(testPropertyIncomeId, testPropertyIncomeId2)),
             "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
+            "nino" -> testMtdItUser.nino,
             "userType" -> testUserType,
             "dateOfMigration" -> testMigrationYear2019,
             "credId" -> testCredId,
@@ -96,7 +96,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
             propertyIdsKey -> Json.toJson(List(testPropertyIncomeId, testPropertyIncomeId2)),
             "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testNino,
+            "nino" -> testNino,
             "agentReferenceNumber" -> "arn",
             "userType" -> "Agent",
             "dateOfMigration" -> testMigrationYear2019,
@@ -129,7 +129,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
             propertyIdsKey -> Json.toJson(List(testPropertyIncomeId)),
             "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
+            "nino" -> testMtdItUser.nino,
             "userType" -> testUserType,
             "dateOfMigration" -> testMigrationYear2019,
             "credId" -> testCredId,
@@ -161,7 +161,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
           testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
             propertyIdsKey -> Json.toJson(List(testPropertyIncomeId)),
             "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
+            "nino" -> testMtdItUser.nino,
             "userType" -> testUserType,
             "dateOfMigration" -> testMigrationYear2019,
             "credId" -> testCredId,
@@ -191,7 +191,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         "Have the correct details for the audit event" in {
           testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
             "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
+            "nino" -> testMtdItUser.nino,
             "userType" -> testUserType,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
@@ -221,7 +221,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         "Have the correct details for the audit event" in {
           testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
             "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
+            "nino" -> testMtdItUser.nino,
             "userType" -> testUserType,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List(testSelfEmploymentId)),
@@ -251,7 +251,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         "Have the correct details for the audit event" in {
           testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
             "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
+            "nino" -> testMtdItUser.nino,
             "userType" -> testUserType,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List.empty[String]),
@@ -281,7 +281,7 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
         "Have the correct details for the audit event" in {
           testIncomeSourceDetailsResponseAuditModel.detail shouldBe Json.obj(
             "saUtr" -> testSaUtr,
-            "nationalInsuranceNumber" -> testMtdItUser.nino,
+            "nino" -> testMtdItUser.nino,
             "userType" -> testUserType,
             "credId" -> testCredId,
             seIdsKey -> Json.toJson(List.empty[String]),

@@ -62,7 +62,7 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
   )
 
   val refundToTaxPayerAuditModelIndividualJsonFull = Json.obj(
-    "nationalInsuranceNumber" -> "AB123456C",
+    "nino" -> "AB123456C",
     "mtditid" -> "XAIT0000123456",
     "saUtr" -> "testSaUtr",
     "credId" -> "testCredId",
@@ -77,7 +77,7 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
     "interestAmount" -> 9.67,
     "interestDescription" -> "31 July 2021 to 30 November 2021 at 1.76%")
 
-  val refundToTaxPayerAuditModelAgentJsonFull = Json.obj("nationalInsuranceNumber" -> "AA111111A",
+  val refundToTaxPayerAuditModelAgentJsonFull = Json.obj("nino" -> "AA111111A",
     "mtditid" -> "XAIT00000000015",
     "agentReferenceNumber" -> "XAIT0000123456",
     "saUtr" -> "1234567890",
