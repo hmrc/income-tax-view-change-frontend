@@ -27,6 +27,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, UIJourneySessionData}
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.incomeSourceDetails.AddIncomeSourceData.hasBeenAddedField
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
@@ -127,6 +128,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
   }
 
+  val testSelfEmploymentIdHash: String = mkFromQueryString(testSelfEmploymentId).toOption.get.hash
+  val testPropertyIdHash: String = mkFromQueryString(testPropertyIncomeId).toOption.get.hash
 
   "IncomeSourceAddedController" should {
     "redirect a user back to the custom error page" when {
@@ -223,7 +226,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           thenReturn(Future(testObligationsModel))
         mockMongo(SelfEmployment)
 
-        val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentIdHash, SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
@@ -258,7 +261,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           thenReturn(Future(testObligationsModel))
         mockMongo(SelfEmployment)
 
-        val result: Future[Result] = TestIncomeSourceAddedController.showAgent(testSelfEmploymentId, SelfEmployment)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceAddedController.showAgent(testSelfEmploymentIdHash, SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       //common code edge/error cases:
@@ -279,7 +282,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         mockProperty()
-        val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentIdHash, SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "throw an error when no id is supplied" in {
@@ -312,7 +315,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
-        val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentIdHash, SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
@@ -336,7 +339,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           mockMongo(UkProperty)
 
-          val result = TestIncomeSourceAddedController.show(testSelfEmploymentId, UkProperty)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceAddedController.show(testSelfEmploymentIdHash, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
         }
       }
@@ -346,7 +349,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockUKPropertyIncomeSource()
 
-          val result = TestIncomeSourceAddedController.show(testPropertyIncomeId, UkProperty)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceAddedController.show("123", UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         }
@@ -376,7 +379,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
           mockMongo(UkProperty)
 
-          val result = TestIncomeSourceAddedController.showAgent(testSelfEmploymentId, UkProperty)(fakeRequestConfirmedClient())
+          val result = TestIncomeSourceAddedController.showAgent(testSelfEmploymentIdHash, UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
         }
       }
@@ -386,7 +389,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           disable(IncomeSources)
           mockUKPropertyIncomeSource()
 
-          val result = TestIncomeSourceAddedController.showAgent(testPropertyIncomeId, UkProperty)(fakeRequestConfirmedClient())
+          val result = TestIncomeSourceAddedController.showAgent("123", UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
@@ -413,7 +416,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           mockForeignPropertyIncomeSource()
           mockProperty()
           val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List.empty, List(PropertyDetailsModel(
-            "123456",
+            testPropertyIncomeId,
             None,
             None,
             Some("foreign-property"),
@@ -439,7 +442,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             thenReturn(Future(testObligationsModel))
           mockMongo(ForeignProperty)
 
-          val result: Future[Result] = TestIncomeSourceAddedController.show("123456", ForeignProperty)(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestIncomeSourceAddedController.show(testPropertyIdHash, ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
 
         }
@@ -452,7 +455,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           mockForeignPropertyIncomeSource()
           mockProperty()
           val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List.empty, List(PropertyDetailsModel(
-            "123",
+            testPropertyIncomeId,
             None,
             None,
             Some("foreign-property"),
@@ -478,7 +481,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             thenReturn(Future(testObligationsModel))
           mockMongo(ForeignProperty)
 
-          val result: Future[Result] = TestIncomeSourceAddedController.showAgent("123", ForeignProperty)(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestIncomeSourceAddedController.showAgent(testPropertyIdHash, ForeignProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
 
         }
