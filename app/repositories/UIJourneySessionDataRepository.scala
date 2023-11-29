@@ -31,8 +31,7 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UIJourneySessionDataRepository @Inject()(
@@ -77,9 +76,7 @@ class UIJourneySessionDataRepository @Inject()(
       .map(_ => true)
 
   def get(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
-
     val data = UIJourneySessionData(sessionId, journeyType)
-
     keepAlive(data).flatMap {
       _ =>
         collection

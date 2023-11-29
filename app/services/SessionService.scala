@@ -51,11 +51,9 @@ class SessionService @Inject()(
         try {
           Right(field.get(obj).asInstanceOf[Option[A]])
         } catch {
-          case err: ClassCastException =>
-            Left(err)
+          case err: ClassCastException => Left(err)
         }
-      case None =>
-        Right(None)
+      case None => Right(None)
     }
   }
 
