@@ -78,7 +78,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       testWhatYouOweResponseAuditModel(Some(Individual)).detail shouldBe Json.obj(
         "userType" -> "Individual",
         "saUtr" -> testSaUtr,
-        "nationalInsuranceNumber" -> testNino,
+        "nino" -> testNino,
         "credId" -> testCredId,
         "mtditid" -> testMtditid,
         "balanceDetails" -> Json.obj(

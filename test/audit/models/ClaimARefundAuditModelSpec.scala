@@ -59,7 +59,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     }
     s"return a full audit event correctly with MFA Credits, Cutover Credits, Payments and Refunds, Balancing Charge Credit" in {
       claimARefundAuditFull().detail shouldBe Json.obj(
-        "nationalInsuranceNumber" -> testMtdItUser.nino,
+        "nino" -> testMtdItUser.nino,
         "mtditid" -> testMtdItUser.mtditid,
         "saUtr" -> testMtdItUser.saUtr,
         "credId" -> testMtdItUser.credId,
@@ -83,7 +83,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     }
     "return a minimal audit event correctly" in {
       claimARefundAuditMin().detail shouldBe Json.obj(
-        "nationalInsuranceNumber" -> testMtdItUser.nino,
+        "nino" -> testMtdItUser.nino,
         "mtditid" -> testMtdItUser.mtditid,
         "saUtr" -> testMtdItUser.saUtr,
         "credId" -> testMtdItUser.credId,
@@ -96,7 +96,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     }
     s"return a full audit event for an agent user correctly with MFA Credits, Cutover Credits, Payments and Refunds" in {
       claimARefundAuditFull(testMtdItAgentUser).detail shouldBe Json.obj(
-        "nationalInsuranceNumber" -> testMtdItAgentUser.nino,
+        "nino" -> testMtdItAgentUser.nino,
         "mtditid" -> testMtdItAgentUser.mtditid,
         "userType" -> testMtdItAgentUser.userType,
         "agentReferenceNumber" -> testMtdItAgentUser.arn,
@@ -121,7 +121,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     }
     "return a minimal audit event for an agent user correctly" in {
       claimARefundAuditMin(testMtdItAgentUser).detail shouldBe Json.obj(
-        "nationalInsuranceNumber" -> testMtdItAgentUser.nino,
+        "nino" -> testMtdItAgentUser.nino,
         "mtditid" -> testMtdItAgentUser.mtditid,
         "userType" -> testMtdItAgentUser.userType,
         "agentReferenceNumber" -> testMtdItAgentUser.arn,

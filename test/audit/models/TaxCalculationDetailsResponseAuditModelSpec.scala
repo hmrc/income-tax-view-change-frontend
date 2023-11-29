@@ -72,7 +72,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
   val taxCalcDetailsResponseAuditModelDetailJsonMinimalIndividual: JsObject = Json.obj(
     "userType" -> "Individual",
     "saUtr" -> "saUtr",
-    "nationalInsuranceNumber" -> "nino",
+    "nino" -> "nino",
     "credId" -> "credId",
     "mtditid" -> testMtditid,
     "selfAssessmentTaxAmount" -> 0
@@ -81,7 +81,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
   val taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent: JsObject = Json.obj(
     "userType" -> "Agent",
     "saUtr" -> "saUtr",
-    "nationalInsuranceNumber" -> "nino",
+    "nino" -> "nino",
     "credId" -> "credId",
     "mtditid" -> testMtditid,
     "agentReferenceNumber" -> "1",
@@ -91,7 +91,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
   val taxCalcDetailsResponseAuditModelDetailJsonFull: JsObject = Json.obj(
     "userType" -> "Individual",
     "saUtr" -> "saUtr",
-    "nationalInsuranceNumber" -> "nino",
+    "nino" -> "nino",
     "credId" -> "credId",
     "mtditid" -> testMtditid,
     "calculationOnTaxableIncome" -> 12500,

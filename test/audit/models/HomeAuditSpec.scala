@@ -92,7 +92,7 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             nextUpdateOrOverdue = Right(2)
           ).detail mustBe Json.obj(
             "agentReferenceNumber" -> "agentReferenceNumber",
-            "nationalInsuranceNumber" -> "nino",
+            "nino" -> "nino",
             "saUtr" -> "saUtr",
             "userType" -> "Agent",
             "credId" -> "credId",
@@ -109,7 +109,7 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             nextUpdateOrOverdue = Left(LocalDate.now -> false)
           ).detail mustBe Json.obj(
             "agentReferenceNumber" -> "agentReferenceNumber",
-            "nationalInsuranceNumber" -> "nino",
+            "nino" -> "nino",
             "saUtr" -> "saUtr",
             "userType" -> "Individual",
             "credId" -> "credId",
@@ -122,7 +122,7 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
       }
       "the home audit has minimal details" in {
         homeAuditMin.detail mustBe Json.obj(
-          "nationalInsuranceNumber" -> "nino",
+          "nino" -> "nino",
           "mtditid" -> "mtditid",
           "overdueUpdates" -> 2
         )

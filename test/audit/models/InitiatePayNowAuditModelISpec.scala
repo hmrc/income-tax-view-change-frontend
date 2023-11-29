@@ -41,7 +41,7 @@ class InitiatePayNowAuditModelISpec extends TestSupport {
     "Have the correct details for the audit event" in {
       testInitiatePayNowAuditModel.detail shouldBe Json.obj(
         "mtditid" -> testMtditid,
-        "nationalInsuranceNumber" -> testNino,
+        "nino" -> testNino,
         "saUtr" -> testSaUtr,
         "credId" -> testCredId,
         "userType" -> testUserType

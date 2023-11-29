@@ -125,7 +125,7 @@ class CreditSummaryAuditingSpec extends TestSupport {
 
       testCreditSummaryModel.detail shouldBe Json.obj(
         "saUtr" -> testSaUtr,
-          "nationalInsuranceNumber" -> testNino,
+          "nino" -> testNino,
           "userType" -> testUserTypeIndividual.toString,
           "credId" -> testCredId,
           "mtditid" -> testMtditid,

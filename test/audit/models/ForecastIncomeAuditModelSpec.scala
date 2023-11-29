@@ -222,7 +222,7 @@ class ForecastIncomeAuditModelSpec extends TestSupport {
       testForecastIncomeAuditModelIndividual().detail shouldBe Json.obj(
         "userType" -> "Individual",
         "saUtr" -> testSaUtr,
-        "nationalInsuranceNumber" -> testNino,
+        "nino" -> testNino,
         "credId" -> testCredId,
         "mtditid" -> testMtditid,
         "profitFrom" -> Json.arr(

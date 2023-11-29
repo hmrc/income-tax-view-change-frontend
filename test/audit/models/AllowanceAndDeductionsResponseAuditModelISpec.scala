@@ -55,7 +55,7 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
       "information for the audit is complete" in {
         testAllowanceAndDeductionsResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nationalInsuranceNumber" -> testNino,
+          "nino" -> testNino,
           "saUtr" -> testSaUtr,
           "credId" -> testCredId,
           "userType" -> testUserTypeAgent.toString,
@@ -75,7 +75,7 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
       "information for the audit has minimal details" in {
         AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductionsViewModel()).detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nationalInsuranceNumber" -> testNino
+          "nino" -> testNino
         )
       }
     }

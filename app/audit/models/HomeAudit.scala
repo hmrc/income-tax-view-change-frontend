@@ -42,7 +42,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
 
   override val detail: JsValue = Json.obj(
     "mtditid" -> mtdItUser.mtditid,
-    "nationalInsuranceNumber" -> mtdItUser.nino
+    "nino" -> mtdItUser.nino
   ) ++ userType(mtdItUser.userType) ++ paymentsInformation ++ updatesInformation ++
     ("saUtr", mtdItUser.saUtr) ++
     ("credId", mtdItUser.credId) ++

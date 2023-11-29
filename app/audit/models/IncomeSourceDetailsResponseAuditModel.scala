@@ -37,7 +37,7 @@ case class IncomeSourceDetailsResponseAuditModel(mtdItUser: MtdItUserOptionNino[
         ("saUtr", mtdItUser.saUtr) ++
         userType(mtdItUser.userType) ++
         ("credId", mtdItUser.credId) ++
-        ("nationalInsuranceNumber", mtdItUser.nino) ++
+        ("nino", mtdItUser.nino) ++
         ("dateOfMigration", yearOfMigration)
   }
 }

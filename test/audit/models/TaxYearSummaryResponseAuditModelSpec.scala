@@ -154,7 +154,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   ))))
 
   val jsonAuditAgentResponse = Json.obj(
-    "nationalInsuranceNumber" -> "nino",
+    "nino" -> "nino",
     "mtditid" -> "mtditid",
     "saUtr" -> "saUtr",
     "credId" -> "credId",
@@ -200,7 +200,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   )
 
   val jsonAuditIndividualResponse = Json.obj(
-    "nationalInsuranceNumber" -> "nino",
+    "nino" -> "nino",
     "mtditid" -> "mtditid",
     "saUtr" -> "saUtr",
     "credId" -> "credId",
