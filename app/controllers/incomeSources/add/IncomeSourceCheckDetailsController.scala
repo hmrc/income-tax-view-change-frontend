@@ -217,6 +217,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
+
+            // add set mongo key here
+
             Future.successful {
               Redirect(redirectUrl(isAgent, incomeSourceType, id))
             }
