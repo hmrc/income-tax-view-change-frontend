@@ -74,26 +74,26 @@ case object API1896 extends APIErrorScenario
 class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
 
-  lazy val showUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-    routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
-  lazy val submitUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-    routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
-  lazy val obligationsUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-    if (isAgent) routes.IncomeSourceAddedController.showAgent(id, incomeSourceType).url else routes.IncomeSourceAddedController.show(id, incomeSourceType).url
+  lazy val showUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+    routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+  lazy val submitUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+    routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+  lazy val obligationsUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+    if (isAgent) routes.IncomeSourceAddedController.showAgent(incomeSourceType).url else routes.IncomeSourceAddedController.show(incomeSourceType).url
   lazy val redirectUrl: IncomeSourceType => String = {
-    case UkProperty => routes.IncomeSourceAddedController.show(id = testPropertyIncomeId, UkProperty).url
-    case ForeignProperty => routes.IncomeSourceAddedController.show(id = testPropertyIncomeId, ForeignProperty).url
-    case SelfEmployment => routes.IncomeSourceAddedController.show(id = testSelfEmploymentId, SelfEmployment).url
+    case UkProperty => routes.IncomeSourceAddedController.show(UkProperty).url
+    case ForeignProperty => routes.IncomeSourceAddedController.show(ForeignProperty).url
+    case SelfEmployment => routes.IncomeSourceAddedController.show(SelfEmployment).url
   }
   lazy val errorRedirectUrl: IncomeSourceType => String = {
-    case UkProperty => routes.IncomeSourceReportingMethodNotSavedController.show(testPropertyIncomeId, UkProperty).url
-    case ForeignProperty => routes.IncomeSourceReportingMethodNotSavedController.show(testPropertyIncomeId, ForeignProperty).url
-    case SelfEmployment => routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, SelfEmployment).url
+    case UkProperty => routes.IncomeSourceReportingMethodNotSavedController.show(UkProperty).url
+    case ForeignProperty => routes.IncomeSourceReportingMethodNotSavedController.show(ForeignProperty).url
+    case SelfEmployment => routes.IncomeSourceReportingMethodNotSavedController.show(SelfEmployment).url
   }
   lazy val uri: IncomeSourceType => String = {
-    case UkProperty => s"/income-sources/add/uk-property-reporting-method?id=$testPropertyIncomeId"
-    case ForeignProperty => s"/income-sources/add/foreign-property-reporting-method?id=$testPropertyIncomeId"
-    case SelfEmployment => s"/income-sources/add/business-reporting-method?id=$testSelfEmploymentId"
+    case UkProperty => s"/income-sources/add/uk-property-reporting-method"
+    case ForeignProperty => s"/income-sources/add/foreign-property-reporting-method"
+    case SelfEmployment => s"/income-sources/add/business-reporting-method"
   }
   val quarterlyIndicator: String = "Q"
   val annuallyIndicator: String = "A"
@@ -255,7 +255,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     result should have(httpStatus(INTERNAL_SERVER_ERROR))
   }
 
-  s"calling GET ${showUrl(false, UkProperty, testPropertyIncomeId)}" should {
+  s"calling GET ${showUrl(false, UkProperty)}" should {
     "200 OK - render the UK Property Reporting Method page" when {
       "user is within latency period (before 23/24) - tax year 1 not crystallised - UK Property" in {
         setupStubCalls(UkProperty, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
@@ -304,7 +304,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling GET ${showUrl(false, ForeignProperty, testPropertyIncomeId)}" should {
+  s"calling GET ${showUrl(false, ForeignProperty)}" should {
     "200 OK - render the Foreign Property Reporting Method page" when {
       "user is within latency period (before 23/24) - tax year 1 not crystallised - Foreign Property" in {
         setupStubCalls(ForeignProperty, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
@@ -353,7 +353,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling GET ${showUrl(false, SelfEmployment, testSelfEmploymentId)}" should {
+  s"calling GET ${showUrl(false, SelfEmployment)}" should {
     "200 OK - render the Self Employment Reporting Method page" when {
       "user is within latency period (before 23/24) - tax year 1 not crystallised - Self Employment" in {
         setupStubCalls(SelfEmployment, LegacyScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
@@ -466,7 +466,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     )
   }
 
-  s"calling POST ${submitUrl(false, UkProperty, testPropertyIncomeId)}" should {
+  s"calling POST ${submitUrl(false, UkProperty)}" should {
     s"303 SEE_OTHER - redirect to ${redirectUrl(UkProperty)}" when {
       "user completes the form and API 1776 updateIncomeSource returns a success response - UK Property" in {
         setupStubCalls(UkProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
@@ -486,7 +486,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       }
     }
 
-    s"calling POST ${submitUrl(false, ForeignProperty, testPropertyIncomeId)}" should {
+    s"calling POST ${submitUrl(false, ForeignProperty)}" should {
       s"303 SEE_OTHER - redirect to ${redirectUrl(ForeignProperty)}" when {
         "user completes the form and API 1776 updateIncomeSource returns a success response - Foreign Property" in {
           setupStubCalls(ForeignProperty, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
@@ -507,7 +507,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       }
     }
 
-    s"calling POST ${submitUrl(false, SelfEmployment, testSelfEmploymentId)}" should {
+    s"calling POST ${submitUrl(false, SelfEmployment)}" should {
       s"303 SEE_OTHER - redirect to ${redirectUrl(SelfEmployment)}" when {
         "user completes the form and API 1776 updateIncomeSource returns a success response - Self Employment" in {
           setupStubCalls(SelfEmployment, TaxYearSpecificScenario(isFirstTaxYearCrystallised = false, isWithinLatencyPeriod = true))
