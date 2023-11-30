@@ -16,11 +16,13 @@
 
 package services
 
-import models.incomeSourceDetails.{AddIncomeSourceData}
+import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData}
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import uk.gov.hmrc.crypto.{Crypted, PlainText, SymmetricCryptoFactory}
+import play.api.libs.json.Json
+import uk.gov.hmrc.crypto.json.JsonEncryption
+import uk.gov.hmrc.crypto.{Crypted, Decrypter, Encrypter, PlainText, SymmetricCryptoFactory}
 
 @Singleton
 class EncryptionService @Inject()(config: Configuration) {
@@ -34,6 +36,28 @@ class EncryptionService @Inject()(config: Configuration) {
     crypto.decrypt(Crypted(encrypted)).value
   }
 
+  def encryptAddIncomeSourceData(data: AddIncomeSourceData): String = {
 
+    implicit val crypto: Encrypter with Decrypter = SymmetricCryptoFactory.aesGcmCrypto("QmFyMTIzNDVCYXIxMjM0NQ==")
+
+    val encrypter = JsonEncryption.sensitiveEncrypter[AddIncomeSourceData, SensitiveAddIncomeSourceData[AddIncomeSourceData]]
+
+    val jsonDataEnc: String = encrypter.writes(SensitiveAddIncomeSourceData(data)).toString()
+
+    jsonDataEnc
+
+  }
+
+
+  def decryptAddIncomeSourceData(data: String): AddIncomeSourceData = {
+
+    implicit val crypto: Encrypter with Decrypter = SymmetricCryptoFactory.aesGcmCrypto("QmFyMTIzNDVCYXIxMjM0NQ==")
+
+    val decrypter = JsonEncryption.sensitiveDecrypter[AddIncomeSourceData, SensitiveAddIncomeSourceData[AddIncomeSourceData]](SensitiveAddIncomeSourceData.apply)
+
+    val optValue: Option[AddIncomeSourceData] = decrypter.reads(Json.toJson(data)).asOpt.map(_.decryptedValue)
+
+    optValue.get
+  }
 
 }

@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
+import models.incomeSourceDetails
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
@@ -56,6 +57,20 @@ class SessionService @Inject()(
       case None => Right(None)
     }
   }
+//
+//  private def setValueByKey[A](objectOpt: Option[Any], key: String, value: String): Either[Throwable, Option[A]] = {
+//    objectOpt match {
+//      case Some(obj) =>
+//        val field = obj.getClass.getDeclaredField(key)
+//        field.setAccessible(true)
+//        try {
+//          Right(field.set(obj, value).asInstanceOf[Option[A]])
+//        } catch {
+//          case err: ClassCastException => Left(err)
+//        }
+//      case None => Right(None)
+//    }
+//  }
 
   def getMongoKey(key: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
@@ -96,16 +111,45 @@ class SessionService @Inject()(
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
     }
-    uiJourneySessionDataRepository.updateData(
-      uiJourneySessionData,
-      jsonAccessorPath,
-      encryptionService.encryptSessionValue(value)  // ENCRYPT VALUE
-    ).map(
-      _.wasAcknowledged() match {
-        case true => Right(true)
-        case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+
+    (for {
+      userSessionData <- uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString)
+    } yield {
+      journeyType.operation match {
+        case Add =>
+          val encryptedField: Option[String] = userSessionData.flatMap(y => y.addIncomeSourceData)
+          val addIncomeSourceData: AddIncomeSourceData = encryptedField.map(encryptionService.decryptAddIncomeSourceData).getOrElse(AddIncomeSourceData())
+
+//          val z: AddIncomeSourceData = setValueByKey(Some(addIncomeSourceData), key, value).toOption.get.asInstanceOf[AddIncomeSourceData]
+
+          val z = key match {
+            case "businessName" => addIncomeSourceData.copy(businessName = Some(value))
+            case x => throw new Exception(s"cant find key: $x")
+          }
+
+          uiJourneySessionDataRepository.set(
+            userSessionData.map(
+              _.copy(
+                addIncomeSourceData = Some(encryptionService.encryptAddIncomeSourceData(z))
+              )
+            ).get
+          ).map {
+            case true => Right(true)
+            case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+          }
+        case _ =>
+          uiJourneySessionDataRepository.updateData(
+            uiJourneySessionData,
+            jsonAccessorPath,
+            value
+          ).map(
+            _.wasAcknowledged() match {
+              case true => Right(true)
+              case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+            }
+          )
       }
-    )
+    }).flatten
   }
 
   def deleteMongoData(journeyType: JourneyType)

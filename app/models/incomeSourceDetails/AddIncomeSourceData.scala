@@ -79,7 +79,7 @@ object AddIncomeSourceData {
 
 }
 
-case class SensitiveAddIncomeSourceData[AddIncomeSourceData](override val decryptedValue: AddIncomeSourceData) extends Sensitive[AddIncomeSourceData]
+case class SensitiveAddIncomeSourceData[AddIncomeSourceDataT](override val decryptedValue: AddIncomeSourceDataT) extends Sensitive[AddIncomeSourceDataT]
 
 
 object AddIncomeSourceDataEncDec {

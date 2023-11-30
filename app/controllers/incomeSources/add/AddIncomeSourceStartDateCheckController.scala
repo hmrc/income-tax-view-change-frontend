@@ -30,7 +30,7 @@ import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, SessionService}
+import services.{DateService, EncryptionService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.IncomeSourcesUtils
@@ -47,6 +47,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                                         val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                         val retrieveBtaNavBar: NavBarPredicate,
                                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                        encryptionService: EncryptionService,
                                                         val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
                                                         val languageUtils: LanguageUtils,
                                                         val sessionService: SessionService)
@@ -206,8 +207,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           case None => throw new Exception("addIncomeSourceData field not found in session data")
         }
 
-        val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(dateStarted = None, accountingPeriodStartDate = None, accountingPeriodEndDate = None)
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
+        val updatedAddIncomeSourceData = encryptionService.decryptAddIncomeSourceData(oldAddIncomeSourceData).copy(dateStarted = None, accountingPeriodStartDate = None, accountingPeriodEndDate = None)
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(encryptionService.encryptAddIncomeSourceData(updatedAddIncomeSourceData)))
 
         sessionService.setMongoData(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(backUrl))
@@ -228,9 +229,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           case None => throw new Exception("addIncomeSourceData field not found in session data")
         }
         val accountingPeriodEndDate = dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
-        val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate.toString),
+        val updatedAddIncomeSourceData = encryptionService.decryptAddIncomeSourceData(oldAddIncomeSourceData).copy(accountingPeriodStartDate = Some(incomeSourceStartDate.toString),
           accountingPeriodEndDate = Some(accountingPeriodEndDate.toString))
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(encryptionService.encryptAddIncomeSourceData((updatedAddIncomeSourceData))))
 
         sessionService.setMongoData(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(successUrl))

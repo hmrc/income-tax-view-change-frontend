@@ -30,7 +30,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UI
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
-import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
+import services.{AddressLookupService, EncryptionService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 import javax.inject.Inject
@@ -43,6 +43,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                              val retrieveBtaNavBar: NavBarPredicate,
                                              val itvcErrorHandler: ItvcErrorHandler,
+                                             encryptionService: EncryptionService,
                                              incomeSourceDetailsService: IncomeSourceDetailsService,
                                              addressLookupService: AddressLookupService)
                                             (implicit
@@ -106,9 +107,9 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
         val journeyType = JourneyType(Add, SelfEmployment)
         sessionService.getMongo(journeyType.toString).flatMap {
           case Right(Some(sessionData)) =>
-            val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-            val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
-            val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+            val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse("")
+            val updatedAddIncomeSourceSessionData = encryptionService.decryptAddIncomeSourceData(oldAddIncomeSourceSessionData).copy(address = Some(value.address), countryCode = Some("GB"))
+            val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(encryptionService.encryptAddIncomeSourceData(updatedAddIncomeSourceSessionData)))
 
             sessionService.setMongoData(uiJourneySessionData)
 

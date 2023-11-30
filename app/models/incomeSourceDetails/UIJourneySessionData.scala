@@ -33,7 +33,7 @@ import java.util.Base64
 case class UIJourneySessionData(
                                  sessionId: String,
                                  journeyType: String,
-                                 addIncomeSourceData: Option[AddIncomeSourceData] = None,
+                                 addIncomeSourceData: Option[String] = None,
                                  manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                  ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                  lastUpdated: Instant = Instant.now)
@@ -47,7 +47,7 @@ object UIJourneySessionData {
     (
       (__ \ "sessionId").read[String] and
         (__ \ "journeyType").read[String] and
-        (__ \ "addIncomeSourceData").readNullable[AddIncomeSourceData](AddIncomeSourceData.format) and
+        (__ \ "addIncomeSourceData").readNullable[String] and
         (__ \ "manageIncomeSourceData").readNullable[ManageIncomeSourceData] and
         (__ \ "ceaseIncomeSourceData").readNullable[CeaseIncomeSourceData] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
@@ -61,7 +61,7 @@ object UIJourneySessionData {
     (
       (__ \ "sessionId").write[String] and
         (__ \ "journeyType").write[String] and
-        (__ \ "addIncomeSourceData").writeNullable[AddIncomeSourceData] and
+        (__ \ "addIncomeSourceData").writeNullable[String] and
         (__ \ "manageIncomeSourceData").writeNullable[ManageIncomeSourceData] and
         (__ \ "ceaseIncomeSourceData").writeNullable[CeaseIncomeSourceData] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
