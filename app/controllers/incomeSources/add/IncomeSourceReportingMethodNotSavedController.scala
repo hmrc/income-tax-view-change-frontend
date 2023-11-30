@@ -51,8 +51,10 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
                                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def handleRequest(id: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
+
+    // get id from mongo
 
     val action: Call = (incomeSourceType, isAgent) match {
       case (UkProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id.value, UkProperty)
@@ -67,25 +69,23 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
   }
 
 
-  def show(id: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       val incomeSourceId = mkIncomeSourceId(id)
       handleRequest(
-        id = incomeSourceId,
         isAgent = false,
         incomeSourceType = incomeSourceType
       )
   }
 
-  def showAgent(id: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             val incomeSourceId = mkIncomeSourceId(id)
             handleRequest(
-              id = incomeSourceId,
               isAgent = true,
               incomeSourceType = incomeSourceType
             )

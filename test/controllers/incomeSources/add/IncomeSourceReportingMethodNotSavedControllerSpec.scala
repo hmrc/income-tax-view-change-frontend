@@ -24,7 +24,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.MockClientDetailsService
+import mocks.services.{MockClientDetailsService, MockSessionService}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers._
@@ -32,7 +32,7 @@ import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.SessionService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
@@ -47,7 +47,8 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
   with MockItvcErrorHandler
   with MockNavBarEnumFsPredicate
   with MockClientDetailsService
-  with FeatureSwitching {
+  with FeatureSwitching
+  with MockSessionService {
 
   val view: IncomeSourceReportingMethodNotSaved = app.injector.instanceOf[IncomeSourceReportingMethodNotSaved]
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
@@ -64,13 +65,13 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
     val paragraphTextUkProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukProperty)
     val paragraphTextForeignProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignProperty)
 
-    val selfEmploymentAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", SelfEmployment).url
-    val ukPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", UkProperty).url
-    val foreignPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", ForeignProperty).url
+    val selfEmploymentAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
+    val ukPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
+    val foreignPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
 
-    val selfEmploymentAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", SelfEmployment).url
-    val ukPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", UkProperty).url
-    val foreignPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent("", ForeignProperty).url
+    val selfEmploymentAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
+    val ukPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
+    val foreignPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
   }
 
   object TestIncomeSourceReportingMethodNotSavedController
@@ -97,7 +98,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show("", SelfEmployment)(fakeRequestWithActiveSession)
+        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+
+        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleIndividual
@@ -110,7 +113,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show("", UkProperty)(fakeRequestWithActiveSession)
+        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+
+        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show(UkProperty)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleIndividual
@@ -123,7 +128,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show("", ForeignProperty)(fakeRequestWithActiveSession)
+        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+
+        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show(ForeignProperty)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleIndividual
@@ -135,7 +142,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
     "return 303 and redirect to the sign in" when {
       "the user is not authenticated" in {
         setupMockAuthorisationException()
-        val result = TestIncomeSourceReportingMethodNotSavedController.show("", ForeignProperty)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceReportingMethodNotSavedController.show(ForeignProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
@@ -143,7 +150,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
     "redirect to the session timeout page" when {
       "the user has timed out" in {
         setupMockAuthorisationException()
-        val result = TestIncomeSourceReportingMethodNotSavedController.show("", ForeignProperty)(fakeRequestWithTimeoutSession)
+        val result = TestIncomeSourceReportingMethodNotSavedController.show(ForeignProperty)(fakeRequestWithTimeoutSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
       }
@@ -156,7 +163,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show("", ForeignProperty)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show(ForeignProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.HomeController.show().url)
       }
@@ -170,7 +177,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent("", SelfEmployment)(fakeRequestConfirmedClient())
+        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+
+        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleAgent
@@ -183,7 +192,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent("", UkProperty)(fakeRequestConfirmedClient())
+        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+
+        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleAgent
@@ -196,7 +207,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent("", ForeignProperty)(fakeRequestConfirmedClient())
+        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+
+        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
         status(result) mustBe OK
         document.title shouldBe TestConstants.titleAgent
@@ -207,7 +220,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
     "return 303 and redirect to the sign in" when {
       "the user is not authenticated" in {
         setupMockAgentAuthorisationException()
-        val result = TestIncomeSourceReportingMethodNotSavedController.showAgent("", ForeignProperty)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
       }
@@ -218,7 +231,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent("", ForeignProperty)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
       }
