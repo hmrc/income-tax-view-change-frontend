@@ -16,10 +16,19 @@
 
 package models.incomeSourceDetails
 
+import controllers.crypto
+import controllers.crypto.CryptoFormat
+import play.api.Configuration
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter, SymmetricCryptoFactory}
+import uk.gov.hmrc.crypto.Sensitive.SensitiveString
+import uk.gov.hmrc.crypto.json.JsonEncryption
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
+import java.security.SecureRandom
 import java.time.{Instant, LocalDate}
+import java.util.Base64
 
 case class UIJourneySessionData(
                                  sessionId: String,
@@ -38,7 +47,7 @@ object UIJourneySessionData {
     (
       (__ \ "sessionId").read[String] and
         (__ \ "journeyType").read[String] and
-        (__ \ "addIncomeSourceData").readNullable[AddIncomeSourceData] and
+        (__ \ "addIncomeSourceData").readNullable[AddIncomeSourceData](AddIncomeSourceData.format) and
         (__ \ "manageIncomeSourceData").readNullable[ManageIncomeSourceData] and
         (__ \ "ceaseIncomeSourceData").readNullable[CeaseIncomeSourceData] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
@@ -60,33 +69,6 @@ object UIJourneySessionData {
   }
 
   implicit val format: OFormat[UIJourneySessionData] = OFormat(reads, writes)
-}
-
-case class AddIncomeSourceData(
-                                businessName: Option[String] = None,
-                                businessTrade: Option[String] = None,
-                                dateStarted: Option[String] = None,
-                                accountingPeriodStartDate: Option[String] = None,
-                                accountingPeriodEndDate: Option[String] = None,
-                                createdIncomeSourceId: Option[String] = None,
-                                address: Option[Address] = None,
-                                countryCode: Option[String] = None,
-                                incomeSourcesAccountingMethod: Option[String] = None)
-
-object AddIncomeSourceData {
-  val businessNameField = "businessName"
-  val businessTradeField = "businessTrade"
-  val dateStartedField = "dateStarted"
-  val accountingPeriodStartDateField = "accountingPeriodStartDate"
-  val accountingPeriodEndDateField = "accountingPeriodEndDate"
-  val createdIncomeSourceIdField: String = "createdIncomeSourceId"
-  val addressField: String = "address"
-  val countryCodeField: String = "countryCode"
-  val incomeSourcesAccountingMethodField: String = "incomeSourcesAccountingMethod"
-
-  def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
-
-  implicit val format: OFormat[AddIncomeSourceData] = Json.format[AddIncomeSourceData]
 }
 
 case class ManageIncomeSourceData(
