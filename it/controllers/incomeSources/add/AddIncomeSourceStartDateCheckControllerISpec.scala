@@ -81,13 +81,13 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
       AddIncomeSourceData(
         businessName = Some(testBusinessName),
         businessTrade = Some(testBusinessTrade),
-        dateStarted = Some(testBusinessStartDate)
+        dateStarted = Some(testBusinessStartDate.toString)
       )
     } else {
       AddIncomeSourceData(
         businessName = None,
         businessTrade = None,
-        dateStarted = Some(testBusinessStartDate)
+        dateStarted = Some(testBusinessStartDate.toString)
       )
     }
 

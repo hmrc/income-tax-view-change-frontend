@@ -20,8 +20,9 @@ import play.api.Configuration
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, Reads, Writes, __}
 import uk.gov.hmrc.crypto.Sensitive.SensitiveString
-import uk.gov.hmrc.crypto.{Decrypter, Encrypter, SymmetricCryptoFactory}
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter, Sensitive, SymmetricCryptoFactory}
 import uk.gov.hmrc.crypto.json.JsonEncryption
+
 
 case class AddIncomeSourceData(
                                 businessName: Option[String] = None,
@@ -75,6 +76,14 @@ object AddIncomeSourceData {
 
   implicit val format: Format[AddIncomeSourceData] = Format(reads, writes)
 
+
+}
+
+case class SensitiveAddIncomeSourceData[AddIncomeSourceData](override val decryptedValue: AddIncomeSourceData) extends Sensitive[AddIncomeSourceData]
+
+
+object AddIncomeSourceDataEncDec {
+  import AddIncomeSourceData.reads
   def encryptedFormat(implicit crypto: Encrypter with Decrypter): Format[AddIncomeSourceData] = {
 
     implicit val sensitiveFormat: Format[SensitiveString] =
@@ -141,5 +150,8 @@ object AddIncomeSourceData {
       }
 
     Format(encryptedReads orElse reads, encryptedWrites)
+  //
   }
+
+
 }

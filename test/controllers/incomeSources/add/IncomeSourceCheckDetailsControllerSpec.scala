@@ -71,10 +71,10 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     addIncomeSourceData = Some(AddIncomeSourceData(
       businessName = Some(testBusinessName),
       businessTrade = Some(testBusinessTrade),
-      dateStarted = Some(testBusinessStartDate),
+      dateStarted = Some(testBusinessStartDate.toString),
       address = Some(testBusinessAddress),
       countryCode = Some(testCountryCode),
-      accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
+      accountingPeriodEndDate = Some(testAccountingPeriodEndDate.toString),
       incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
 
@@ -83,7 +83,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     sessionId = "some-session-id",
     journeyType = JourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(
-      dateStarted = Some(testBusinessStartDate),
+      dateStarted = Some(testBusinessStartDate.toString),
       incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
 

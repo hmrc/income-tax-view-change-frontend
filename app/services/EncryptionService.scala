@@ -16,6 +16,8 @@
 
 package services
 
+import models.incomeSourceDetails.{AddIncomeSourceData}
+
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.crypto.{Crypted, PlainText, SymmetricCryptoFactory}
@@ -31,4 +33,7 @@ class EncryptionService @Inject()(config: Configuration) {
   def decryptSessionValue(encrypted: String): String ={
     crypto.decrypt(Crypted(encrypted)).value
   }
+
+
+
 }

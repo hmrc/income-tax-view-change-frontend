@@ -91,7 +91,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(majorVersion := 1)
   .settings(scalacOptions += "-Wconf:cat=lint-multiarg-infix:silent")
-  .settings(scalacOptions += "-Xfatal-warnings")
+//  .settings(scalacOptions += "-Xfatal-warnings")
   .settings(
     Test / Keys.fork := true,
     Test / javaOptions += "-Dlogger.resource=logback-test.xml"

@@ -93,7 +93,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
     addIncomeSourceData = Some(testAddIncomeSourceData(incomeSourceType)))
 
   val testAddIncomeSourceDataWithStartDate: IncomeSourceType => AddIncomeSourceData = (incomeSourceType: IncomeSourceType) =>
-    testAddIncomeSourceData(incomeSourceType).copy(dateStarted = Some(testBusinessStartDate))
+    testAddIncomeSourceData(incomeSourceType).copy(dateStarted = Some(testBusinessStartDate.toString))
 
   def testUIJourneySessionDataWithStartDate(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,

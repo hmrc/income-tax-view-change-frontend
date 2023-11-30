@@ -17,10 +17,12 @@ package repositories
 
 
 import helpers.ComponentSpecBase
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceDataEncDec.encryptedFormat
+import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, UIJourneySessionData}
 import org.mongodb.scala.bson.BsonDocument
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import java.time.Instant
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter, SymmetricCryptoFactory}
+import uk.gov.hmrc.crypto.json.JsonEncryption
 
 class UIJourneySessionDataISpec extends ComponentSpecBase {
   private val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
@@ -35,7 +37,24 @@ class UIJourneySessionDataISpec extends ComponentSpecBase {
       acknowledged shouldBe true
     }
     "get some data" in {
-      await(repository.set(UIJourneySessionData("session-12345", "ADD-UKPROP", Some(AddIncomeSourceData(Some("business1"))))))
+      val data = AddIncomeSourceData(Some("business1"))
+
+
+
+      // TODO: tidy up this part
+      val encKey = "QmFyMTIzNDVCYXIxMjM0NQ=="
+      implicit val crypto: Encrypter with Decrypter = SymmetricCryptoFactory.aesGcmCrypto(encKey)
+      val encrypter = JsonEncryption.sensitiveEncrypter[AddIncomeSourceData, SensitiveAddIncomeSourceData[AddIncomeSourceData]]
+      val jsonDataEnc = encrypter.writes(SensitiveAddIncomeSourceData(data))
+
+      println(s"Encrypted Model: $jsonDataEnc")
+
+      val decrypter = JsonEncryption.sensitiveDecrypter[AddIncomeSourceData, SensitiveAddIncomeSourceData[AddIncomeSourceData]](SensitiveAddIncomeSourceData.apply)
+      val optValue: Option[AddIncomeSourceData] = decrypter.reads(jsonDataEnc).asOpt.map(_.decryptedValue)
+
+      println(s"Decrypted Model: $optValue")
+
+      await(repository.set(UIJourneySessionData("session-12345", "ADD-UKPROP", Some(data))))
       val sessionData = await(repository.get("session-12345", "ADD-UKPROP")).get
       sessionData.addIncomeSourceData.get shouldBe AddIncomeSourceData(Some("business1"), None, None)
     }

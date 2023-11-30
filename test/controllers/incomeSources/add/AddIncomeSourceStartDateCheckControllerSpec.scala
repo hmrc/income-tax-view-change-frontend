@@ -74,9 +74,9 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   val journeyTypeFP = JourneyType(Add, ForeignProperty)
 
   val addIncomeSourceDataEmpty = AddIncomeSourceData()
-  val addIncomeSourceDataProperty = AddIncomeSourceData(dateStarted = Some(testStartDate))
-  val addIncomeSourceDataSE = AddIncomeSourceData(dateStarted = Some(testStartDate), accountingPeriodStartDate = Some(testBusinessAccountingPeriodStartDate),
-    accountingPeriodEndDate = Some(testBusinessAccountingPeriodEndDate))
+  val addIncomeSourceDataProperty = AddIncomeSourceData(dateStarted = Some(testStartDate.toString))
+  val addIncomeSourceDataSE = AddIncomeSourceData(dateStarted = Some(testStartDate.toString), accountingPeriodStartDate = Some(testBusinessAccountingPeriodStartDate.toString),
+    accountingPeriodEndDate = Some(testBusinessAccountingPeriodEndDate.toString))
 
   val uiJourneySessionDataSE: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(addIncomeSourceDataSE))
   val uiJourneySessionDataUK: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-UK", Some(addIncomeSourceDataProperty))

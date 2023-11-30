@@ -111,11 +111,11 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   val testAddBusinessData: AddIncomeSourceData = AddIncomeSourceData(
     businessName = Some(testBusinessName),
     businessTrade = Some(testBusinessTrade),
-    dateStarted = Some(testBusinessStartDate),
+    dateStarted = Some(testBusinessStartDate.toString),
     createdIncomeSourceId = Some(testBusinessId),
     address = Some(testBusinessAddress),
     countryCode = Some(testCountryCode),
-    accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
+    accountingPeriodEndDate = Some(testAccountingPeriodEndDate.toString),
     incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
   )
 
@@ -126,12 +126,12 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
     createdIncomeSourceId = Some(testBusinessId),
     address = Some(testBusinessAddress),
     countryCode = Some(testCountryCode),
-    accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
+    accountingPeriodEndDate = Some(testAccountingPeriodEndDate.toString),
     incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
   )
 
   val testAddPropertyData: AddIncomeSourceData = AddIncomeSourceData(
-    dateStarted = Some(testBusinessStartDate),
+    dateStarted = Some(testBusinessStartDate.toString),
     incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
   )
 
