@@ -485,37 +485,37 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
       "user has already visited the obligations page - SE - Individual" in {
         setupMockCalls(isAgent = false, SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         mockMongoFail
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
         checkRedirect(false, SelfEmployment, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - Uk - Individual" in {
         setupMockCalls(isAgent = false, UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         mockMongoFail
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(UkProperty).url
+        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(UkProperty).url
         checkRedirect(false, UkProperty, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - FP - Individual" in {
         setupMockCalls(isAgent = false, ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         mockMongoFail
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(ForeignProperty).url
+        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(ForeignProperty).url
         checkRedirect(false, ForeignProperty, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - SE - Agent" in {
         setupMockCalls(isAgent = true, SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         mockMongoFail
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(SelfEmployment).url
+        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
         checkRedirect(true, SelfEmployment, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - Uk - Agent" in {
         setupMockCalls(isAgent = true, UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         mockMongoFail
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(UkProperty).url
+        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(UkProperty).url
         checkRedirect(true, UkProperty, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - FP - Agent" in {
         setupMockCalls(isAgent = true, ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         mockMongoFail
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(ForeignProperty).url
+        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(ForeignProperty).url
         checkRedirect(true, ForeignProperty, expectedBackErrorRedirectUrl)
       }
     }

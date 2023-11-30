@@ -29,7 +29,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.add.YouCannotGoBackError
+import views.html.incomeSources.add.ReportingMethodSetBackError
 
 import scala.concurrent.Future
 
@@ -43,7 +43,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
-    app.injector.instanceOf[YouCannotGoBackError]
+    app.injector.instanceOf[ReportingMethodSetBackError]
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
@@ -67,7 +67,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
     }
   }
 
-  "YouCannotGoBackErrorController" should {
+  "ReportingMethodSetBackErrorController" should {
     "redirect a user back to the custom error page" when {
       "the user is not authenticated" should {
         "redirect them to sign in" in {

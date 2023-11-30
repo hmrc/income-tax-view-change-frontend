@@ -275,7 +275,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
 
           val result: Future[Result] = TestCheckDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+          val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }

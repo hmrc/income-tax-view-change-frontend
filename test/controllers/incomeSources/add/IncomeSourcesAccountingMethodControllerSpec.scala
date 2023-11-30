@@ -242,8 +242,8 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
         status(result) shouldBe SEE_OTHER
-        val expectedUrl = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType)
-        else controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
+        val expectedUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
+        else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
         redirectLocation(result) shouldBe Some(expectedUrl.url)
       }
     }

@@ -184,7 +184,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
         val result: Future[Result] = TestIncomeSourceAddedController.show("123", SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }

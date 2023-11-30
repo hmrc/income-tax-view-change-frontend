@@ -140,7 +140,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }
@@ -274,7 +274,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(SelfEmployment).url
+        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }
@@ -369,7 +369,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }
@@ -515,7 +515,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(SelfEmployment).url
+        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }

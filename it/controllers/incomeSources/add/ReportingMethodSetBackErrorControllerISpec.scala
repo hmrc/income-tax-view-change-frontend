@@ -10,7 +10,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
 
-  private lazy val backErrorController = controllers.incomeSources.add.routes.YouCannotGoBackErrorController
+  private lazy val backErrorController = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController
 
   val selfEmploymentBackErrorUrl: String = backErrorController.show(SelfEmployment).url
   val ukPropertyBackErrorUrl: String = backErrorController.show(UkProperty).url

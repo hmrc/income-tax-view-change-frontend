@@ -186,7 +186,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
           val result: Future[Result] = TestAddIncomeSourceStartDateController.show(false, isChange = false, incomeSourceType)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
-          val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType).url
+          val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }

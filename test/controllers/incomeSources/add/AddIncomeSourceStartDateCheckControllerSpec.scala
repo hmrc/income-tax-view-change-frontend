@@ -160,7 +160,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
 
       }
@@ -687,7 +687,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(SelfEmployment).url
+        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
 
       }

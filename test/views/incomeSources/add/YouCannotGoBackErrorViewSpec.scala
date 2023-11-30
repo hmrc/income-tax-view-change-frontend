@@ -22,11 +22,11 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.incomeSources.add.YouCannotGoBackError
+import views.html.incomeSources.add.ReportingMethodSetBackError
 
-class YouCannotGoBackErrorViewSpec extends TestSupport{
+class ReportingMethodSetBackErrorViewSpec extends TestSupport{
 
-  val errorView: YouCannotGoBackError = app.injector.instanceOf[YouCannotGoBackError]
+  val errorView: ReportingMethodSetBackError = app.injector.instanceOf[ReportingMethodSetBackError]
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
 
@@ -34,7 +34,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport{
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
-  "YouCannotGoBackError - Individual" should {
+  "ReportingMethodSetBackError - Individual" should {
     "render self employment error page" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
       document.getElementById("heading").text() shouldBe messages("cannot-go-back.sole-trader")
@@ -64,7 +64,7 @@ class YouCannotGoBackErrorViewSpec extends TestSupport{
     }
   }
 
-  "YouCannotGoBackError - Agent" should {
+  "ReportingMethodSetBackError - Agent" should {
     "render self employment error page" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
       document.getElementById("heading").text() shouldBe messages("cannot-go-back.sole-trader")
