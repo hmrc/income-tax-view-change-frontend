@@ -29,7 +29,7 @@ import exceptions.MissingSessionKey
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
@@ -200,8 +200,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
-    val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-      routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
+    val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+      routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
 
     val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
       if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
@@ -218,10 +218,17 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           case Right(CreateIncomeSourceResponse(id)) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
 
-            // add set mongo key here
+            sessionService.setMongoKey(AddIncomeSourceData.createdIncomeSourceIdField, id, JourneyType(Add, incomeSourceType)).flatMap {
+              case Right(result) if result =>
+                Future.successful {
+                  Redirect(redirectUrl(isAgent, incomeSourceType))
+                }
+              case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
+              case Left(exception) => Future.failed(exception)
+            }
 
             Future.successful {
-              Redirect(redirectUrl(isAgent, incomeSourceType, id))
+              Redirect(redirectUrl(isAgent, incomeSourceType))
             }
           case Left(ex) =>
             auditingService.extendedAudit(

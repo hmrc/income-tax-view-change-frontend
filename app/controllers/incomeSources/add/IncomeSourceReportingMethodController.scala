@@ -182,23 +182,26 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
 
   def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
-      val incomeSourceId = mkIncomeSourceId(id)
-      handleSubmit(isAgent, incomeSourceType, incomeSourceId)
+      handleSubmit(isAgent, incomeSourceType)
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                           (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-
-    IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
-      invalid => handleInvalidForm(invalid, incomeSourceType, id, isAgent),
-      valid => handleValidForm(valid, incomeSourceType, id, isAgent)
-    ).recover {
+    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
+      case Right(Some(id)) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
+        invalid => handleInvalidForm(invalid, incomeSourceType, mkIncomeSourceId(id), isAgent),
+        valid => handleValidForm(valid, incomeSourceType, mkIncomeSourceId(id), isAgent)
+      )
+      case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
+      case Left(ex) => Future.failed(ex)
+    }.recover {
       case ex: Exception =>
         val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(s"[IncomeSourceReportingMethodController][handleSubmit]:" +
           s"Unable to handle IncomeSourceReportingMethodController submit request for $incomeSourceType: ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
+
   }
 
   private def handleInvalidForm(form: Form[IncomeSourceReportingMethodForm], incomeSourceType: IncomeSourceType, id: IncomeSourceId, isAgent: Boolean)

@@ -98,7 +98,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -113,7 +112,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show(UkProperty)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -128,7 +126,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.show(ForeignProperty)(fakeRequestWithActiveSession)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -177,7 +174,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -192,7 +188,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -207,7 +202,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         enable(IncomeSources)
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))

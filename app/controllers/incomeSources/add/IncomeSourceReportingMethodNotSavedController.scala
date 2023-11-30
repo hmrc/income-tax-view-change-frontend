@@ -54,15 +54,13 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
-    // get id from mongo
-
     val action: Call = (incomeSourceType, isAgent) match {
-      case (UkProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id.value, UkProperty)
-      case (UkProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id.value, UkProperty)
-      case (ForeignProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id.value, ForeignProperty)
-      case (ForeignProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id.value, ForeignProperty)
-      case (SelfEmployment, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id.value, SelfEmployment)
-      case (SelfEmployment, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id.value, SelfEmployment)
+      case (UkProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty)
+      case (UkProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty)
+      case (ForeignProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty)
+      case (ForeignProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty)
+      case (SelfEmployment, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment)
+      case (SelfEmployment, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment)
     }
 
     Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
@@ -72,7 +70,6 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val incomeSourceId = mkIncomeSourceId(id)
       handleRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType
@@ -84,7 +81,6 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            val incomeSourceId = mkIncomeSourceId(id)
             handleRequest(
               isAgent = true,
               incomeSourceType = incomeSourceType
