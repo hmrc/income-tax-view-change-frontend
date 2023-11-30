@@ -10,9 +10,9 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBase {
 
-  val selfEmploymentReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", SelfEmployment).url
-  val ukPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", UkProperty).url
-  val foreignPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent("", ForeignProperty).url
+  val selfEmploymentReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment).url
+  val ukPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(UkProperty).url
+  val foreignPropertyReportingMethodNotSavedShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty).url
 
   object TestConstants {
     val selfEmployment: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.se")
@@ -39,8 +39,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         And("API 1771 returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val incomeSourceId = testSelfEmploymentId
-        val result = IncomeTaxViewChangeFrontend.getSEReportingMethodNotSaved(incomeSourceId, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getSEReportingMethodNotSaved(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
@@ -65,8 +64,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         And("API 1771 returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        val incomeSourceId = testSelfEmploymentId
-        val result = IncomeTaxViewChangeFrontend.getUkPropertyReportingMethodNotSaved(incomeSourceId, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getUkPropertyReportingMethodNotSaved(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
@@ -91,8 +89,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         And("API 1771 returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-        val incomeSourceId = testSelfEmploymentId
-        val result = IncomeTaxViewChangeFrontend.getForeignPropertyReportingMethodNotSaved(incomeSourceId, clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getForeignPropertyReportingMethodNotSaved(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
