@@ -82,10 +82,10 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType, id)
 
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String): Action[AnyContent] = authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
       val incomeSourceId = mkIncomeSourceId(id)
-      handleRequest(isAgent = isAgent, incomeSourceType, id = incomeSourceId)
+      handleRequest(isAgent = isAgent, incomeSourceType)
   }
 
   private def authenticatedAction(isAgent: Boolean)
@@ -105,11 +105,14 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
       }
   }
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
     val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType) else
       controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+    // get mongo income source id here
+
     sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, incomeSourceType)).flatMap {
       case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
@@ -177,13 +180,13 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     }
   }
 
-  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String): Action[AnyContent] = authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
       val incomeSourceId = mkIncomeSourceId(id)
       handleSubmit(isAgent, incomeSourceType, incomeSourceId)
   }
 
-  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
+  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                           (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     IncomeSourceReportingMethodForm.form.bindFromRequest().fold(

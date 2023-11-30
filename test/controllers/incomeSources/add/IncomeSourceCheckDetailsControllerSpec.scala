@@ -135,7 +135,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     ".show" should {
       "return 200 OK" when {
         "the session contains full business details and FS enabled" when {
-          def runSuccessTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+          def runSuccessTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
             disableAllSwitches()
             enable(IncomeSources)
 

@@ -22,6 +22,7 @@ import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockSessionService
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,14 +42,13 @@ import views.html.incomeSources.add.IncomeSourceReportingMethod
 import scala.concurrent.Future
 
 class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching {
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
 
   val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
   val mockIncomeSourceReportingMethod: IncomeSourceReportingMethod = app.injector.instanceOf[IncomeSourceReportingMethod]
   val mockDateService: DateService = mock(classOf[DateService])
-  val mockSessionService: SessionService = mock(classOf[SessionService])
 
   object TestIncomeSourceReportingMethodController extends IncomeSourceReportingMethodController(
     MockAuthenticationPredicate,
@@ -212,12 +212,13 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     setupMockITSAStatusCall(scenario)
     setupMockIsTaxYearCrystallisedCall(scenario)
     mockMongoSuccess
+    setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
   }
 
   "IncomeSourceReportingMethodController.show" should {
     def checkContent(isAgent: Boolean, incomeSourceType: IncomeSourceType, scenario: Scenario): Assertion = {
-      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestConfirmedClient())
-      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestWithActiveSession)
+      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
       val document: Document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe OK
@@ -251,16 +252,16 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     }
 
     def checkRedirect(isAgent: Boolean, incomeSourceType: IncomeSourceType, expectedRedirectUrl: String): Assertion = {
-      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestConfirmedClient())
-      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestWithActiveSession)
+      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(expectedRedirectUrl)
     }
 
     def checkISE(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestConfirmedClient())
-      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestWithActiveSession)
+      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
     }
@@ -350,96 +351,96 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     "return 303 SEE_OTHER and redirect to Obligations page" when {
       "navigating to the UK Property page with expired latency period and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = UkProperty, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
         checkRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "navigating to the UK Property page with expired latency period and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = UkProperty, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
         checkRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "navigating to the Foreign Property page with expired latency period and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
         checkRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "navigating to the Foreign Property page with expired latency period and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
         checkRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "navigating to the Self Employment page with expired latency period and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
         checkRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
       "navigating to the Self Employment page with expired latency period and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
         checkRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
 
 
       "navigating to the UK Property page with no latency period and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = UkProperty, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
         checkRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "navigating to the UK Property page with no latency period and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = UkProperty, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
         checkRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "navigating to the Foreign Property page with no latency period and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
         checkRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "navigating to the Foreign Property page with no latency period and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
         checkRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "navigating to the Self Employment page with no latency period and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
         checkRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
       "navigating to the Self Employment page with no latency period and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
         checkRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
 
 
       "navigating to the UK Property page with non-mandated/voluntary ITSA status and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = UkProperty, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
         checkRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "navigating to the UK Property page with non-mandated/voluntary ITSA status and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = UkProperty, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
         checkRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "navigating to the Foreign Property page with non-mandated/voluntary ITSA status and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
         checkRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "navigating to the Foreign Property page with non-mandated/voluntary ITSA status and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
         checkRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "navigating to the Self Employment page with non-mandated/voluntary ITSA status and FS enabled - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
         checkRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
       "navigating to the Self Employment page with non-mandated/voluntary ITSA status and FS enabled - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
         checkRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
     }
@@ -553,10 +554,10 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     def checkSubmitRedirect(isAgent: Boolean, incomeSourceType: IncomeSourceType, expectedRedirectUrl: String): Assertion = {
       val result = {
         if (isAgent) {
-          TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestConfirmedClient()
+          TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakeRequestConfirmedClient()
             .withFormUrlEncodedBody(formData.toSeq: _*))
         } else {
-          TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestWithActiveSession
+          TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakeRequestWithActiveSession
             .withFormUrlEncodedBody(formData.toSeq: _*))
         }
       }
@@ -568,37 +569,37 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     "return 303 SEE_OTHER and redirect to Obligations page" when {
       "completing the UK Property form and updates send successfully - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
         setupMockUpdateIncomeSourceCall(2)
         checkSubmitRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "completing the UK Property form and updates send successfully - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
         setupMockUpdateIncomeSourceCall(2)
         checkSubmitRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "completing the Foreign Property form and updates send successfully - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
         setupMockUpdateIncomeSourceCall(2)
         checkSubmitRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "completing the Foreign Property form and updates send successfully - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
         setupMockUpdateIncomeSourceCall(2)
         checkSubmitRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "completing the Self Employment form and updates send successfully - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
         setupMockUpdateIncomeSourceCall(2)
         checkSubmitRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
       "completing the Self Employment form and updates send successfully - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
         setupMockUpdateIncomeSourceCall(2)
         checkSubmitRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
@@ -608,36 +609,36 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
       "completing the UK Property form and one update fails - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
         setupMockUpdateIncomeSourceCall(1)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(UkProperty).url
         checkSubmitRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "completing the UK Property form and one update fails - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(UkProperty).url
         setupMockUpdateIncomeSourceCall(1)
         checkSubmitRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "completing the Foreign Property form and one update fails - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(ForeignProperty).url
         setupMockUpdateIncomeSourceCall(1)
         checkSubmitRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "completing the Foreign Property form and one update fails - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty).url
         setupMockUpdateIncomeSourceCall(1)
         checkSubmitRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "completing the Self Employment form and one update fails - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(SelfEmployment).url
         setupMockUpdateIncomeSourceCall(1)
         checkSubmitRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
       "completing the Self Employment form and one update fails - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment).url
         setupMockUpdateIncomeSourceCall(1)
         checkSubmitRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
@@ -645,7 +646,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
 
       "completing the UK Property form and both updates fail - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(UkProperty).url
         val tySpecific1 = TaxYearSpecific("2022", false)
         val tySpecific2 = TaxYearSpecific("2023", true)
         when(mockUpdateIncomeSourceService.updateTaxYearSpecific(
@@ -662,31 +663,31 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
       }
       "completing the UK Property form and both updates fail - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(testSelfEmploymentId, UkProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(UkProperty).url
         setupMockUpdateIncomeSourceCall(0)
         checkSubmitRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
       }
       "completing the Foreign Property form and both updates fail - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(ForeignProperty).url
         setupMockUpdateIncomeSourceCall(0)
         checkSubmitRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "completing the Foreign Property form and both updates fail - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(testSelfEmploymentId, ForeignProperty).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty).url
         setupMockUpdateIncomeSourceCall(0)
         checkSubmitRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
       }
       "completing the Self Employment form and both updates fail - Individual" in {
         setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(SelfEmployment).url
         setupMockUpdateIncomeSourceCall(0)
         checkSubmitRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
       "completing the Self Employment form and both updates fail - Agent" in {
         setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(testSelfEmploymentId, SelfEmployment).url
+        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment).url
         setupMockUpdateIncomeSourceCall(0)
         checkSubmitRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
       }
@@ -743,10 +744,10 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
 
         val result = {
           if (isAgent) {
-            TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestConfirmedClient()
+            TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakeRequestConfirmedClient()
               .withFormUrlEncodedBody(invalidFormData.toSeq: _*))
           } else {
-            TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType, testSelfEmploymentId)(fakeRequestWithActiveSession
+            TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakeRequestWithActiveSession
               .withFormUrlEncodedBody(invalidFormData.toSeq: _*))
           }
         }
