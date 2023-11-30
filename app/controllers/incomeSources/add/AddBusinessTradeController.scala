@@ -116,7 +116,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
   }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, SelfEmployment)) {
+    withCustomSession(JourneyType(Add, SelfEmployment)) {
 
       val journeyType = JourneyType(Add, SelfEmployment)
       getBusinessTrade(journeyType, isChange).flatMap {

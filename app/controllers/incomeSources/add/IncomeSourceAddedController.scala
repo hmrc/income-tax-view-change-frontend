@@ -76,7 +76,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   private def handleRequest(isAgent: Boolean,
                             incomeSourceId: IncomeSourceId,
                             incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+    withCustomSession(JourneyType(Add, incomeSourceType)) {
       incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
@@ -96,7 +96,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   }
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    updateMongoAdded(incomeSourceType).flatMap {
+    startCustomSession(incomeSourceType).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {
@@ -122,20 +122,6 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
       }
     }
   }
-
-  private def updateMongoAdded(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
-      case Right(Some(sessionData)) =>
-        val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(hasBeenAdded = Some(true))
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
-
-        sessionService.setMongoData(uiJourneySessionData)
-
-      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
-    }
-  }
-
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
