@@ -36,8 +36,8 @@ trait JourneyChecker extends IncomeSourcesUtils {
     withIncomeSourcesFS {
       journeyChecker(journeyType).flatMap {
         case true => user.userType match {
-          case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
-          case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
+          case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(journeyType.businessType)))
+          case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(journeyType.businessType)))
         }
         case false => codeBlock
       }
@@ -45,7 +45,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
   }
 
   private def journeyChecker(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, journeyType).flatMap {
+    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.reportingMethodSetField, journeyType).flatMap {
       case Right(Some(true)) => Future(true)
       case _ => Future(false)
     }

@@ -127,7 +127,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(hasBeenAdded = Some(true))
+        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(reportingMethodSet = Some(true))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
         sessionService.setMongoData(uiJourneySessionData)

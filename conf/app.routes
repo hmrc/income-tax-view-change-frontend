@@ -298,12 +298,12 @@ GET          /agents/income-sources/add/error-uk-property-reporting-method-not-s
 GET          /income-sources/add/error-foreign-property-reporting-method-not-saved             controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.show(id: String, incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/income-sources/add/error-foreign-property-reporting-method-not-saved      controllers.incomeSources.add.IncomeSourceReportingMethodNotSavedController.showAgent(id: String, incomeSourceType: IncomeSourceType = ForeignProperty)
 
-GET          /income-sources/add/add-business-cannot-go-back                                   controllers.incomeSources.add.YouCannotGoBackErrorController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
-GET          /agents/income-sources/add/add-business-cannot-go-back                            controllers.incomeSources.add.YouCannotGoBackErrorController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
-GET          /income-sources/add/add-uk-property-cannot-go-back                                controllers.incomeSources.add.YouCannotGoBackErrorController.show(incomeSourceType: IncomeSourceType = UkProperty)
-GET          /agents/income-sources/add/add-uk-property-cannot-go-back                         controllers.incomeSources.add.YouCannotGoBackErrorController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
-GET          /income-sources/add/add-foreign-property-cannot-go-back                           controllers.incomeSources.add.YouCannotGoBackErrorController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
-GET          /agents/income-sources/add/add-foreign-property-cannot-go-back                    controllers.incomeSources.add.YouCannotGoBackErrorController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /income-sources/add/add-business-cannot-go-back                                   controllers.incomeSources.add.ReportingMethodSetBackErrorController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /agents/income-sources/add/add-business-cannot-go-back                            controllers.incomeSources.add.ReportingMethodSetBackErrorController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /income-sources/add/add-uk-property-cannot-go-back                                controllers.incomeSources.add.ReportingMethodSetBackErrorController.show(incomeSourceType: IncomeSourceType = UkProperty)
+GET          /agents/income-sources/add/add-uk-property-cannot-go-back                         controllers.incomeSources.add.ReportingMethodSetBackErrorController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
+GET          /income-sources/add/add-foreign-property-cannot-go-back                           controllers.incomeSources.add.ReportingMethodSetBackErrorController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /agents/income-sources/add/add-foreign-property-cannot-go-back                    controllers.incomeSources.add.ReportingMethodSetBackErrorController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
 
 

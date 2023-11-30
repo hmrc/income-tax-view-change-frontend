@@ -21,24 +21,23 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.IncomeSourceType
-import enums.JourneyType.{Add, JourneyType}
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.add.{IncomeSourceNotAddedError, YouCannotGoBackError}
+import views.html.incomeSources.add.ReportingMethodSetBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class YouCannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val authenticate: AuthenticationPredicate,
-                                               val authorisedFunctions: AuthorisedFunctions,
-                                               val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val retrieveBtaNavBar: NavBarPredicate,
-                                               val cannotGoBackError: YouCannotGoBackError)
-                                              (implicit val appConfig: FrontendAppConfig,
+class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                                                      val authenticate: AuthenticationPredicate,
+                                                      val authorisedFunctions: AuthorisedFunctions,
+                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                      val retrieveBtaNavBar: NavBarPredicate,
+                                                      val cannotGoBackError: ReportingMethodSetBackError)
+                                                     (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
                                                val itvcErrorHandler: ItvcErrorHandler,

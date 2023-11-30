@@ -33,10 +33,10 @@ import views.html.incomeSources.add.YouCannotGoBackError
 
 import scala.concurrent.Future
 
-class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate
+class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with FeatureSwitching {
 
-  object TestYouCannotGoBackController extends YouCannotGoBackErrorController(
+  object TestReportingMethodSetBackController$ extends ReportingMethodSetBackErrorController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     mockAuthService,
@@ -72,7 +72,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
       "the user is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
-          val result = TestYouCannotGoBackController.show(SelfEmployment)(fakeRequestWithActiveSession)
+          val result = TestReportingMethodSetBackController$.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -86,7 +86,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestYouCannotGoBackController.show(UkProperty)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestReportingMethodSetBackController$.show(UkProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -96,7 +96,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestYouCannotGoBackController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestReportingMethodSetBackController$.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -110,12 +110,12 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result = TestYouCannotGoBackController.show(SelfEmployment)(fakeRequestWithActiveSession)
+        val result = TestReportingMethodSetBackController$.show(SelfEmployment)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(SelfEmployment, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageSE
+        document.title shouldBe TestReportingMethodSetBackController$.getTitle(SelfEmployment, isAgent = false)
+        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageSE
       }
       "Display the you cannot go back error page (Individual, UkProperty)" in {
         disableAllSwitches()
@@ -124,12 +124,12 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result = TestYouCannotGoBackController.show(UkProperty)(fakeRequestWithActiveSession)
+        val result = TestReportingMethodSetBackController$.show(UkProperty)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(UkProperty, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageUK
+        document.title shouldBe TestReportingMethodSetBackController$.getTitle(UkProperty, isAgent = false)
+        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageUK
       }
       "Display the you cannot go back error page (Individual, ForeignProperty)" in {
         disableAllSwitches()
@@ -138,12 +138,12 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result = TestYouCannotGoBackController.show(ForeignProperty)(fakeRequestWithActiveSession)
+        val result = TestReportingMethodSetBackController$.show(ForeignProperty)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(ForeignProperty, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageFP
+        document.title shouldBe TestReportingMethodSetBackController$.getTitle(ForeignProperty, isAgent = false)
+        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageFP
       }
 
       "Display the you cannot go back error page (Agent, SelfEmployment)" in {
@@ -153,12 +153,12 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result = TestYouCannotGoBackController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
+        val result = TestReportingMethodSetBackController$.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(SelfEmployment, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageSE
+        document.title shouldBe TestReportingMethodSetBackController$.getTitle(SelfEmployment, isAgent = true)
+        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageSE
       }
       "Display the you cannot go back error page (Agent, UkProperty)" in {
         disableAllSwitches()
@@ -167,12 +167,12 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result = TestYouCannotGoBackController.showAgent(UkProperty)(fakeRequestConfirmedClient())
+        val result = TestReportingMethodSetBackController$.showAgent(UkProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(UkProperty, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageUK
+        document.title shouldBe TestReportingMethodSetBackController$.getTitle(UkProperty, isAgent = true)
+        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageUK
       }
       "Display the you cannot go back error page (Agent, ForeignProperty)" in {
         disableAllSwitches()
@@ -181,12 +181,12 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result = TestYouCannotGoBackController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+        val result = TestReportingMethodSetBackController$.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(ForeignProperty, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageFP
+        document.title shouldBe TestReportingMethodSetBackController$.getTitle(ForeignProperty, isAgent = true)
+        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageFP
       }
     }
   }

@@ -8,7 +8,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
+class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
 
   private lazy val backErrorController = controllers.incomeSources.add.routes.YouCannotGoBackErrorController
 

@@ -86,7 +86,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         }
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.reportingMethodSetField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -132,7 +132,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added?id=$testPropertyIncomeId")
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.reportingMethodSetField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -202,7 +202,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         verifyIncomeSourceDetailsCall(testMtditid)
 
         And("Mongo storage is successfully set")
-        sessionService.getMongoKey(AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
+        sessionService.getMongoKey(AddIncomeSourceData.reportingMethodSetField, JourneyType(Add, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         val expectedText: String = messagesAPI("business-added.foreign-property.h1") + " " + messagesAPI("business-added.foreign-property.base")
 
