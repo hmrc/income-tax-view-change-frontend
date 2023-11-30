@@ -300,9 +300,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getForeignPropertyEndDate: WSResponse = get("/income-sources/cease/foreign-property-end-date")
 
-    def getForeignPropertyAddedObligations(id: String): WSResponse = {
+    def getForeignPropertyAddedObligations: WSResponse = {
       get(
-        uri = s"/income-sources/add/foreign-property-added/?id=$id"
+        uri = s"/income-sources/add/foreign-property-added"
       )
     }
 
@@ -424,9 +424,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     }
 
-    def getAddBusinessObligations(id: String): WSResponse = {
+    def getAddBusinessObligations: WSResponse = {
       get(
-        uri = s"/income-sources/add/business-added/?id=$id"
+        uri = s"/income-sources/add/business-added"
       )
     }
 
