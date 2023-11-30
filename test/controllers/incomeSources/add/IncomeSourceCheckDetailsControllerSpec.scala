@@ -362,7 +362,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
 
             val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-              routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
+              routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType, testSelfEmploymentId))

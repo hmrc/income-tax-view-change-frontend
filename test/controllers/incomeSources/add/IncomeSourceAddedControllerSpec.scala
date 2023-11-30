@@ -222,7 +222,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         mockMongo(SelfEmployment)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -258,7 +258,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         mockMongo(SelfEmployment)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -281,7 +281,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         mockProperty()
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -296,7 +296,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           thenReturn(Future(testObligationsModel))
         mockFailure()
         mockMongo(SelfEmployment)
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -316,7 +316,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         mockFailure()
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
-        setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -342,7 +342,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           mockMongo(UkProperty)
 
-          setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, UkProperty), result = Right(Some(testSelfEmploymentId)))
 
           val result = TestIncomeSourceAddedController.show(UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
@@ -384,7 +384,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
           mockMongo(UkProperty)
 
-          setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some(testSelfEmploymentId)))
+          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, UkProperty), result = Right(Some(testSelfEmploymentId)))
 
           val result = TestIncomeSourceAddedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
@@ -448,7 +448,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(testObligationsModel))
           mockMongo(ForeignProperty)
-          setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some("123456")))
+          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, ForeignProperty), result = Right(Some("123456")))
 
           val result: Future[Result] = TestIncomeSourceAddedController.show(ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
@@ -489,7 +489,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             thenReturn(Future(testObligationsModel))
           mockMongo(ForeignProperty)
 
-          setupMockGetSessionKeyMongoTyped[String](key = "", journeyType = "", result = Right(Some("123")))
+          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, ForeignProperty), result = Right(Some("123")))
 
           val result: Future[Result] = TestIncomeSourceAddedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
