@@ -35,7 +35,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -74,7 +73,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
-      case Right(Some(id)) => {
+      case Right(Some(id)) =>
         withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
 
           val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
@@ -89,7 +88,6 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
               else Future(itvcErrorHandler.showInternalServerError())
           }
         }
-      }
       case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
       case Left(ex) => Future.failed(ex)
     }.recover {

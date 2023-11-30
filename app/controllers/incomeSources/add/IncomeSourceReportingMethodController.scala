@@ -70,21 +70,20 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
       case (_, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, incomeSourceType).url
     }
 
-  lazy val errorRedirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-    if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(id, incomeSourceType).url
-    else routes.IncomeSourceReportingMethodNotSavedController.show(id, incomeSourceType).url
+  lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+    if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
+    else routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
 
-  lazy val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-    if (isAgent) routes.IncomeSourceAddedController.showAgent(id, incomeSourceType).url
-    else routes.IncomeSourceAddedController.show(id, incomeSourceType).url
+  lazy val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+    if (isAgent) routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
+    else routes.IncomeSourceAddedController.show(incomeSourceType).url
 
-  lazy val submitUrl: (Boolean, IncomeSourceType, String) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-    routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType, id)
+  lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+    routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
 
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
-      val incomeSourceId = mkIncomeSourceId(id)
       handleRequest(isAgent = isAgent, incomeSourceType)
   }
 
@@ -112,32 +111,37 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     // get mongo income source id here
-
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, incomeSourceType)).flatMap {
-      case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
-        Future.successful(errorHandler.showInternalServerError())
-      case Right(hasBeenAdded) => hasBeenAdded match {
-        case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
-        case _ =>
-          itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-            case true =>
-              getViewModel(incomeSourceType, id).map {
-                case Some(viewModel) =>
-                  Ok(view(
-                    incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
-                    incomeSourceReportingViewModel = viewModel,
-                    postAction = submitUrl(isAgent, incomeSourceType, id.value),
-                    isAgent = isAgent))
-                case None =>
-                  Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
-              }
-            case false =>
-              Future.successful {
-                Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
+    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
+      case Right(Some(id)) =>
+        val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
+        sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, incomeSourceType)).flatMap {
+          case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+            s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
+            Future.successful(errorHandler.showInternalServerError())
+          case Right(hasBeenAdded) => hasBeenAdded match {
+            case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
+            case _ =>
+              itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+                case true =>
+                  getViewModel(incomeSourceType, incomeSourceId).map {
+                    case Some(viewModel) =>
+                      Ok(view(
+                        incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
+                        incomeSourceReportingViewModel = viewModel,
+                        postAction = submitUrl(isAgent, incomeSourceType),
+                        isAgent = isAgent))
+                    case None =>
+                      Redirect(redirectUrl(isAgent, incomeSourceType))
+                  }
+                case false =>
+                  Future.successful {
+                    Redirect(redirectUrl(isAgent, incomeSourceType))
+                  }
               }
           }
-      }
+        }
+      case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
+      case Left(ex) => Future.failed(ex)
     }.recover {
       case ex: Exception =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -214,10 +218,10 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
         BadRequest(view(
           incomeSourceReportingMethodForm = updatedForm,
           incomeSourceReportingViewModel = viewModel,
-          postAction = submitUrl(isAgent, incomeSourceType, id.value),
+          postAction = submitUrl(isAgent, incomeSourceType),
           isAgent = isAgent))
       case None =>
-        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id.value))
+        Redirect(errorRedirectUrl(isAgent, incomeSourceType))
     }
   }
 
@@ -262,7 +266,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }.recover {
     case ex: Exception =>
       Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: ${ex.getMessage}")
-      Redirect(errorRedirectUrl(isAgent, incomeSourceType, id.value))
+      Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
 
   private def sendAuditEvent(isSuccessful: Boolean, newReportingMethod: TaxYearSpecific, incomeSourceType: IncomeSourceType, id: String)
@@ -292,13 +296,13 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
 
       if (successCount == results.length) {
         Logger("application").info(prefix + s"Successfully updated all new selected reporting methods for $incomeSourceType")
-        Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
+        Redirect(redirectUrl(isAgent, incomeSourceType))
       } else if (errorCount == results.length) {
         Logger("application").info(prefix + s"Unable to update all new selected reporting methods for $incomeSourceType")
-        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id.value))
+        Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       } else {
         Logger("application").info(prefix + s"Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
-        Redirect(errorRedirectUrl(isAgent, incomeSourceType, id.value))
+        Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       }
     }
   }
