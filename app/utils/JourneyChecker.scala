@@ -22,7 +22,7 @@ import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.SessionService
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, jsonFormat}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,22 +32,39 @@ trait JourneyChecker extends IncomeSourcesUtils {
   implicit val ec: ExecutionContext
 
   val sessionService: SessionService
-  def withIncomeSourcesFSWithSessionCheck(journeyType: JourneyType)(codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+
+  def withIncomeSourcesFSWithSessionCheck(journeyType: JourneyType, checkAdded: Boolean = true)(codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
-      journeyChecker(journeyType).flatMap {
-        case true => user.userType match {
-          case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(journeyType.businessType)))
-          case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(journeyType.businessType)))
-        }
-        case false => codeBlock
-      }
+      journeyChecker(journeyType, checkAdded, codeBlock)
     }
   }
 
-  private def journeyChecker(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.reportingMethodSetField, journeyType).flatMap {
-      case Right(Some(true)) => Future(true)
-      case _ => Future(false)
+  private def journeyChecker(journeyType: JourneyType, checkAdded: Boolean, codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.incomeSourceAddedField, journeyType).flatMap {
+      added: Either[Throwable, Option[Boolean]] =>
+        sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.reportingMethodSetField, journeyType).flatMap {
+          reportingSet: Either[Throwable, Option[Boolean]] =>
+            val addedValue = if (checkAdded) added else Right(Some(false))
+            (addedValue, reportingSet) match {
+              case (_, Right(Some(true))) => reportingMethodSetBack(journeyType)
+              case (Right(Some(true)), _) => incomeSourceAddedSetBack(journeyType)
+              case _ => codeBlock
+            }
+        }
+    }
+  }
+
+  private def reportingMethodSetBack(journeyType: JourneyType)(implicit user: MtdItUser[_]) = {
+    user.userType match {
+      case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(journeyType.businessType)))
+      case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(journeyType.businessType)))
+    }
+  }
+
+  private def incomeSourceAddedSetBack(journeyType: JourneyType)(implicit user: MtdItUser[_]) = {
+    user.userType match {
+      case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(journeyType.businessType)))
+      case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(journeyType.businessType)))
     }
   }
 

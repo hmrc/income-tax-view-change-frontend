@@ -26,7 +26,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, reportingMethodSetField}
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceAddedField, reportingMethodSetField}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
@@ -158,6 +158,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           val journeyType = JourneyType(Add, incomeSourceType)
           setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testStartDate)))
           setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyType, Right(None))
+          setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyType, Right(None))
 
           val result = TestAddIncomeSourceStartDateController
             .show(incomeSourceType = incomeSourceType, isAgent = false, isChange = true)(
@@ -183,6 +184,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, JourneyType(Add, incomeSourceType), Right(Some(true)))
+          setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, incomeSourceType), Right(None))
 
           val result: Future[Result] = TestAddIncomeSourceStartDateController.show(false, isChange = false, incomeSourceType)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
@@ -199,6 +201,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, JourneyType(Add, SelfEmployment), Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, SelfEmployment), Right(None))
 
         val result = TestAddIncomeSourceStartDateController
           .show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(fakeRequestWithActiveSession)
@@ -461,7 +465,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           val journeyType = JourneyType(Add, ForeignProperty)
           setupMockGetSessionKeyMongoTyped[LocalDate](Right(Some(testStartDate)))
           setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyType, Right(None))
-
+          setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyType, Right(None))
 
           val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -481,6 +485,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           val journeyType = JourneyType(Add, UkProperty)
           setupMockGetSessionKeyMongoTyped[LocalDate](Right(Some(testStartDate)))
           setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyType, Right(None))
+          setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyType, Right(None))
 
           val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
 
@@ -501,6 +506,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           val journeyType = JourneyType(Add, SelfEmployment)
           setupMockGetSessionKeyMongoTyped[LocalDate](Right(Some(testStartDate)))
           setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyType, Right(None))
+          setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyType, Right(None))
 
           val result = TestAddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(fakeRequestConfirmedClient())
 
@@ -521,6 +527,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           val journeyType = JourneyType(Add, SelfEmployment)
           setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType, Right(Some(testStartDate)))
           setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyType, Right(None))
+          setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyType, Right(None))
 
           val result = TestAddIncomeSourceStartDateController
             .show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(

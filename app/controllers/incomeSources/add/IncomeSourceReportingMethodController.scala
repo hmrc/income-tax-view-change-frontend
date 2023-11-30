@@ -29,7 +29,7 @@ import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
-import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear}
+import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear, UIJourneySessionData}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.data.Form
@@ -106,34 +106,39 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType), checkAdded = false) {
     val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType) else
       controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.reportingMethodSetField, JourneyType(Add, incomeSourceType)).flatMap {
-      case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
-        Future.successful(errorHandler.showInternalServerError())
-      case Right(hasBeenAdded) => hasBeenAdded match {
-        case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
-        case _ =>
-          itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-            case true =>
-              getViewModel(incomeSourceType, id).map {
-                case Some(viewModel) =>
-                  Ok(view(
-                    incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
-                    incomeSourceReportingViewModel = viewModel,
-                    postAction = submitUrl(isAgent, incomeSourceType, id.value),
-                    isAgent = isAgent))
-                case None =>
+    updateMongoAdded(incomeSourceType).flatMap{
+      case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"[ReportingMethodController][handleRequest] Error retrieving data from session, IncomeSourceType: $incomeSourceType")
+        Future.successful {errorHandler.showInternalServerError()}
+      case true => sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.reportingMethodSetField, JourneyType(Add, incomeSourceType)).flatMap {
+        case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
+          Future.successful(errorHandler.showInternalServerError())
+        case Right(hasBeenAdded) => hasBeenAdded match {
+          case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
+          case _ =>
+            itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+              case true =>
+                getViewModel(incomeSourceType, id).map {
+                  case Some(viewModel) =>
+                    Ok(view(
+                      incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
+                      incomeSourceReportingViewModel = viewModel,
+                      postAction = submitUrl(isAgent, incomeSourceType, id.value),
+                      isAgent = isAgent))
+                  case None =>
+                    Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
+                }
+              case false =>
+                Future.successful {
                   Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
-              }
-            case false =>
-              Future.successful {
-                Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
-              }
-          }
+                }
+            }
+        }
       }
     }.recover {
       case ex: Exception =>
@@ -142,6 +147,19 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
           s"[UKPropertyReportingMethodController][handleRequest]:" +
             s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
         errorHandler.showInternalServerError()
+    }
+  }
+
+  private def updateMongoAdded(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
+      case Right(Some(sessionData)) =>
+        val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(incomeSourceAdded = Some(true))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+
+        sessionService.setMongoData(uiJourneySessionData)
+
+      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
     }
   }
 

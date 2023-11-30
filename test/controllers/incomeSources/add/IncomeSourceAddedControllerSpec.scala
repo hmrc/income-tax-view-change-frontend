@@ -27,7 +27,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, UIJourneySessionData}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.reportingMethodSetField
+import models.incomeSourceDetails.AddIncomeSourceData.{incomeSourceAddedField, reportingMethodSetField}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -120,11 +120,12 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   }
 
   def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
+    setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, JourneyType(Add, incomeSourceType), Right(None))
+    setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, incomeSourceType), Right(None))
     when(mockSessionService.getMongo(any())(any(), any())).thenReturn(
       Future(Right(Some(UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
         addIncomeSourceData = Some(AddIncomeSourceData()))))))
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
-    when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
   }
 
 
@@ -181,6 +182,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, SelfEmployment), Right(None))
+
 
         val result: Future[Result] = TestIncomeSourceAddedController.show("123", SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
@@ -279,6 +282,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         mockProperty()
+        mockMongo(SelfEmployment)
         val result: Future[Result] = TestIncomeSourceAddedController.show(testSelfEmploymentId, SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -309,6 +313,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         mockFailure()
+        mockMongo(SelfEmployment)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
 
@@ -357,6 +362,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockUKPropertyIncomeSource()
           mockFailure()
+          mockMongo(UkProperty)
           val result = TestIncomeSourceAddedController.show("", UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }

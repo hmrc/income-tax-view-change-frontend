@@ -72,6 +72,7 @@ case class AddIncomeSourceData(
                                 address: Option[Address] = None,
                                 countryCode: Option[String] = None,
                                 incomeSourcesAccountingMethod: Option[String] = None,
+                                incomeSourceAdded: Option[Boolean] = None,
                                 reportingMethodSet: Option[Boolean] = None
                               )
 
@@ -86,6 +87,7 @@ object AddIncomeSourceData {
   val countryCodeField: String = "countryCode"
   val incomeSourcesAccountingMethodField: String = "incomeSourcesAccountingMethod"
   val reportingMethodSetField: String = "reportingMethodSet"
+  val incomeSourceAddedField: String = "incomeSourceAdded"
 
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 

@@ -27,7 +27,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, reportingMethodSetField}
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceAddedField, reportingMethodSetField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -157,6 +157,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeSE, Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeSE, Right(None))
 
         val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
@@ -173,6 +174,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeSE, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeSE, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
 
@@ -186,6 +189,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeUK, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeUK, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
 
@@ -199,8 +204,10 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeFP, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeFP, Right(None))
 
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
+        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
@@ -214,6 +221,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeSE, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeSE, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(
           fakeRequestWithActiveSession
@@ -234,6 +242,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeFP, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeFP, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false)(
           fakeRequestWithActiveSession
@@ -254,6 +263,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeUK, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeUK, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false)(
           fakeRequestWithActiveSession
@@ -274,6 +284,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeSE, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeSE, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(
           fakeRequestWithActiveSession
@@ -294,6 +305,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeFP, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeFP, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true)(
           fakeRequestWithActiveSession
@@ -314,6 +326,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeUK, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeUK, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true)(
           fakeRequestWithActiveSession
@@ -684,6 +697,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeSE, Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeSE, Right(None))
 
         val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
@@ -700,7 +714,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(None))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeSE, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeSE, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
 
@@ -715,7 +730,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(None))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeUK, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeUK, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
 
@@ -730,7 +746,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(None))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeFP, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeFP, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false)(
           fakeRequestConfirmedClient()
@@ -748,6 +765,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeSE, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeSE, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(
           fakeRequestConfirmedClient()
@@ -768,6 +786,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeUK, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeUK, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false)(
           fakeRequestConfirmedClient())
@@ -787,6 +806,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeFP, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeFP, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false)(
           fakeRequestConfirmedClient()
@@ -807,6 +827,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeSE, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeSE, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(
           fakeRequestConfirmedClient()
@@ -827,6 +848,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeFP, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeFP, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(
           fakeRequestConfirmedClient()
@@ -847,6 +869,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
         setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, journeyTypeUK, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, journeyTypeUK, Right(None))
 
         val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true)(
           fakeRequestConfirmedClient()

@@ -20,8 +20,10 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm._
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -34,7 +36,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{CalculationListService, DateService, ITSAStatusService, SessionService, UpdateIncomeSourceService}
-import testConstants.BaseTestConstants.{testNino, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testNino, testSelfEmploymentId, testSessionId}
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceReportingMethod
 
@@ -117,6 +119,16 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
   def mockMongoFail: OngoingStubbing[Future[Either[Throwable, Option[Boolean]]]] = {
     when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(
       Future(Right(Some(true))))
+  }
+
+  def mockMongoSet(incomeSourceType: IncomeSourceType): OngoingStubbing[Future[Boolean]] = {
+    when(mockSessionService.getMongo(any())(any(),any())).thenReturn(
+      Future(Right(Some(UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
+        addIncomeSourceData = Some(AddIncomeSourceData())))))
+    )
+    when(mockSessionService.setMongoData(any())(any(),any())).thenReturn(
+      Future(true)
+    )
   }
 
   def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[Int] = scenario match {
@@ -212,6 +224,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     setupMockITSAStatusCall(scenario)
     setupMockIsTaxYearCrystallisedCall(scenario)
     mockMongoSuccess
+    mockMongoSet(incomeSourceType)
   }
 
   "IncomeSourceReportingMethodController.show" should {
