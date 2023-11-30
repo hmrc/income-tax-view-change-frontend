@@ -18,6 +18,9 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.WarningText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 
 @this(
         mainTemplate: unifiedLayout,
@@ -26,7 +29,8 @@
         link: link,
         p: p,
         formWithCSRF: FormWithCSRF,
-        continueButton: ContinueButton)
+        continueButton: ContinueButton,
+        govukWarningText : GovukWarningText)
 
 @(isAgent: Boolean = false, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
 
@@ -42,30 +46,29 @@
     controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
 }
 
-@getHomeUrl = @{
-    if(isAgent) controllers.routes.HomeController.showAgent.url
-    else controllers.routes.HomeController.show().url
-}
-
 @mainTemplate(
-    pageTitle = s"${messages("cannot-go-back.heading")} - $getAddedMessage",
+    pageTitle = s"${messages("cannot-go-back.heading")}",
     isAgent = isAgent,
     backUrl = None,
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = messages("cannot-go-back.heading"), classes = "govuk-heading-xl", id = Some("title"))
 
-    @h2(msg = getAddedMessage, classes = "govuk-heading-m", optId = Some("heading"))
+    @govukWarningText(WarningText(
+        iconFallbackText = "Warning",
+        content = Text(messages("cannot-go-back.warning-message"))
+    ))
 
-    <p class="govuk-body">@messages("cannot-go-back.you-can")</p>
+    @p(classes = "govuk-body") {
+        @{getAddedMessage + "."}
+        @messages("cannot-go-back.has-been-added-1")
+        @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link", id = Some("manage-link"))
+        @messages("cannot-go-back.has-been-added-2")
+    }
 
-    <ul class="govuk-list govuk-list--bullet">
-        <li>@p(classes = "govuk-!-margin-bottom-4") {
-            @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link", id = Some("manage-link"))
-        }</li>
+    @p(classes = "govuk-body") {
+        @messages("cannot-go-back.need-to-choose")
+    }
 
-        <li>@p(classes = "govuk-!-margin-bottom-4") {
-            @link(link = getHomeUrl, messageKey = "cannot-go-back.home-link", id = Some("home-link"))
-        }</li>
-    </ul>
+    @continueButton()
 }
