@@ -56,14 +56,14 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  def show(incomeSourceIdStr: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
       handleRequest(isAgent = false, incomeSourceId, incomeSourceType)
   }
 
-  def showAgent(incomeSourceIdStr: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
@@ -73,9 +73,10 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
         }
   }
 
-  private def handleRequest(isAgent: Boolean,
-                            incomeSourceId: IncomeSourceId,
-                            incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    // get id from mongo
+
     withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
       incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
