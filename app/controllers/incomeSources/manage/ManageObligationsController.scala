@@ -155,6 +155,11 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
+  private lazy val successPostUrl =  (isAgent: Boolean) => {
+    if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit()
+    else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
+  }
+
   def handleRequest(incomeSourceType: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
@@ -163,12 +168,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           getIncomeSourceId(incomeSourceType, incomeSourceId, isAgent = isAgent) match {
             case Right(incomeSourceId) =>
               val addedBusinessName: String = getBusinessName(incomeSourceType, Some(incomeSourceId))
-              val postUrl: Call = {
-                if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit()
-                else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
-              }
               nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
-                Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
+                Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, successPostUrl(isAgent)))
               }
             case Left(error) => showError(isAgent, error.getMessage )
           }
