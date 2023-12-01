@@ -34,25 +34,29 @@ trait JourneyChecker extends IncomeSourcesUtils {
 
   val sessionService: SessionService
 
-  def withCustomSession(journeyType: JourneyType)(codeBlock: => Future[Result])
+  def withCustomSession(journeyType: JourneyType)(codeBlock: Option[UIJourneySessionData] => Future[Result])
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
-      customSessionStarted(journeyType).flatMap { state =>
-        (state, user.userType) match {
-          case (true, Some(Agent)) =>
-            Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
-          case (true, Some(Individual)) =>
-            Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
-          case (_, _) => codeBlock
-        }
+      sessionService.getMongo(journeyType.toString).flatMap{
+        case Right(Some(sessionData)) =>
+          customSessionStarted(sessionData).flatMap { state =>
+            (state, user.userType) match {
+              case (true, Some(Agent)) =>
+                Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
+              case (true, Some(Individual)) =>
+                Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
+              case (_, _) => codeBlock(Some(sessionData))
+            }
+          }
+        case _ =>
+          codeBlock(None)
       }
     }
   }
 
-  // TODO: if we can use type of String for field => hasBeenAddedField as we can re-use it ? and maybe worth to rename it if re-use it in other pages
-  private def customSessionStarted(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, journeyType).flatMap {
-      case Right(Some(true)) => Future(true)
+  private def customSessionStarted(sessionData: UIJourneySessionData): Future[Boolean] = {
+    sessionData.addIncomeSourceData match {
+      case Some(value) if value.hasBeenAdded.contains(true) => Future(true)
       case _ => Future(false)
     }
   }
@@ -69,7 +73,6 @@ trait JourneyChecker extends IncomeSourcesUtils {
         sessionService.setMongoData(uiJourneySessionData)
 
       case _ =>
-         // TODO: this is not reachable case: true will be always returned
         Future.failed(new Exception(s"failed to retrieve session data"))
     }
   }

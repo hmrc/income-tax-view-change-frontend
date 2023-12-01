@@ -24,7 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -70,12 +70,15 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
-  private def getBusinessName(isChange: Boolean)
+  private def getBusinessName(isChange: Boolean, sessionData: Option[UIJourneySessionData])
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
-        case Right(nameOpt) => Future.successful(nameOpt)
-        case Left(ex) => Future.failed(ex)
+      sessionData match {
+        case Some(session) => session.addIncomeSourceData match {
+          case Some(data) => Future.successful(data.businessName)
+          case None => Future.failed(new Error("No session data found"))
+        }
+        case None => Future.failed(new Error("No session data found"))
       }
     else
       sessionService.createSession(journeyType.toString).flatMap {
@@ -117,8 +120,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withCustomSession(JourneyType(Add, SelfEmployment)) {
-      getBusinessName(isChange).flatMap {
+    withCustomSession(JourneyType(Add, SelfEmployment)) { sessionData =>
+      getBusinessName(isChange, sessionData).flatMap {
         nameOpt =>
           val filledForm = nameOpt.fold(BusinessNameForm.form)(name =>
             BusinessNameForm.form.fill(BusinessNameForm(name)))

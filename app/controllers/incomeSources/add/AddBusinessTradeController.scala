@@ -24,7 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -101,14 +101,13 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       handleRequest(isAgent, isChange)
   }
 
-  private def getBusinessTrade(journeyType: JourneyType, isChange: Boolean)
+  private def getBusinessTrade(isChange: Boolean, sessionData: UIJourneySessionData)
                               (implicit user: MtdItUser[_]): Future[Option[String]] = {
 
     if (isChange) {
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-        case Right(tradeOpt) =>
-          Future.successful(tradeOpt)
-        case Left(err) => Future.failed(err)
+      sessionData.addIncomeSourceData match {
+        case Some(data) => Future.successful(data.businessTrade)
+        case None => Future.failed(new Error("No session data found"))
       }
     } else {
       Future(None)
@@ -117,17 +116,17 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withCustomSession(JourneyType(Add, SelfEmployment)) {
+      case None => Future.failed(new Error("Unable to find session"))
+      case Some(sessionData) =>
+        getBusinessTrade( isChange, sessionData).flatMap {
+          tradeOpt =>
+            val filledForm = tradeOpt.fold(BusinessTradeForm.form)(trade =>
+              BusinessTradeForm.form.fill(BusinessTradeForm(trade)))
 
-      val journeyType = JourneyType(Add, SelfEmployment)
-      getBusinessTrade(journeyType, isChange).flatMap {
-        tradeOpt =>
-          val filledForm = tradeOpt.fold(BusinessTradeForm.form)(trade =>
-            BusinessTradeForm.form.fill(BusinessTradeForm(trade)))
-
-          val backURL = getBackURL(isAgent, isChange)
-          val postAction = controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
-          Future.successful(Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL)))
-      }
+            val backURL = getBackURL(isAgent, isChange)
+            val postAction = controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
+            Future.successful(Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL)))
+        }
     }
   }.recover {
     case error =>

@@ -49,6 +49,8 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(true)
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+          addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
         When(s"I call GET $addBusinessTradeControllerShowUrl")
         val res = IncomeTaxViewChangeFrontend.getAddBusinessTrade(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)

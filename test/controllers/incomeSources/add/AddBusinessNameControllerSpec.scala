@@ -28,6 +28,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, hasBeenAddedField}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
@@ -36,7 +37,7 @@ import play.api.http.Status
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.AddBusinessName
@@ -79,6 +80,9 @@ class AddBusinessNameControllerSpec extends TestSupport
   val validBusinessName: String = "Test Business Name"
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
+  val sessionDataCompletedJourney: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(hasBeenAdded = Some(true))))
+  val sessionDataNameTrade: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(businessName = Some("testBusinessName"), businessTrade = Some("testBusinessTrade"))))
+
   "Individual - ADD - AddBusinessNameController.show" should {
     "return 200 OK" when {
       "the individual is authenticated" in {
@@ -87,8 +91,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        setupMockGetMongo(Right(None))
 
         val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
 
@@ -122,7 +125,6 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
 
         val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
@@ -136,7 +138,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
 
         val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
@@ -238,8 +240,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        setupMockGetMongo(Right(None))
 
         val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
         status(result) mustBe OK
@@ -270,7 +271,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
 
         val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
@@ -365,7 +366,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
@@ -479,8 +480,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        setupMockGetMongo(Right(Some(sessionDataNameTrade)))
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
         status(result) mustBe OK
@@ -511,7 +511,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER

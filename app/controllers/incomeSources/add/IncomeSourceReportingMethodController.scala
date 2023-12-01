@@ -106,35 +106,23 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
-                   (implicit user: MtdItUser[_]): Future[Result] = withCustomSession(JourneyType(Add, incomeSourceType)) {
-    val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType) else
-      controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, incomeSourceType)).flatMap {
-      case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
-        Future.successful(errorHandler.showInternalServerError())
-      case Right(hasBeenAdded) => hasBeenAdded match {
-        case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
-        case _ =>
-          itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-            case true =>
-              getViewModel(incomeSourceType, id).map {
-                case Some(viewModel) =>
-                  Ok(view(
-                    incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
-                    incomeSourceReportingViewModel = viewModel,
-                    postAction = submitUrl(isAgent, incomeSourceType, id.value),
-                    isAgent = isAgent))
-                case None =>
-                  Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
-              }
-            case false =>
-              Future.successful {
-                Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
-              }
-          }
-      }
+                   (implicit user: MtdItUser[_]): Future[Result] = withCustomSession(JourneyType(Add, incomeSourceType)) { _ =>
+    itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+      case true =>
+        getViewModel(incomeSourceType, id).map {
+          case Some(viewModel) =>
+            Ok(view(
+              incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
+              incomeSourceReportingViewModel = viewModel,
+              postAction = submitUrl(isAgent, incomeSourceType, id.value),
+              isAgent = isAgent))
+          case None =>
+            Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
+        }
+      case false =>
+        Future.successful {
+          Redirect(redirectUrl(isAgent, incomeSourceType, id.value))
+        }
     }.recover {
       case ex: Exception =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
