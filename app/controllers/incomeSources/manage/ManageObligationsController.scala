@@ -174,9 +174,9 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             case Left(error) => showError(isAgent, error.getMessage )
           }
         case (Some(_), _) =>
-          showError (isAgent, s"invalid changeTo mode provided: -$changeTo-")
+          showError (isAgent, s"Invalid changeTo mode provided: -$changeTo-")
         case (None, _) =>
-          showError(isAgent, "invalid tax year provided")
+          showError(isAgent, "Invalid tax year provided")
       }
     }
   }
