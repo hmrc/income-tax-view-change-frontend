@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import models.core.IncomeSourceId
@@ -158,7 +159,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       (getTaxYearModel(taxYear), changeTo) match {
-        case (Some(years), "annual" | "quarterly") =>
+        case (Some(years), AnnualReportingMethod.name | QuarterlyReportingMethod.name) =>
           getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
             case Left(error) =>
               showError(isAgent, {
@@ -175,7 +176,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               }
           }
         case (Some(_), _) =>
-          showError (isAgent, "invalid changeTo mode provided")
+          showError (isAgent, s"invalid changeTo mode provided: -$changeTo-")
         case (None, _) =>
           showError(isAgent, "invalid tax year provided")
       }
