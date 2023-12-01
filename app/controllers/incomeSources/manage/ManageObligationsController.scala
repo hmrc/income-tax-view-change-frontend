@@ -64,7 +64,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           case Right(incomeSourceIdMaybe) =>
             val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(mkIncomeSourceId)
             handleRequest(
-              mode = SelfEmployment,
+              incomeSourceType = SelfEmployment,
               isAgent = false,
               taxYear,
               changeTo,
@@ -86,7 +86,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           case Right(incomeSourceIdMaybe) =>
             val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(mkIncomeSourceId)
             handleRequest(
-              mode = SelfEmployment,
+              incomeSourceType = SelfEmployment,
               isAgent = true,
               taxYear,
               changeTo,
@@ -105,7 +105,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        mode = UkProperty,
+        incomeSourceType = UkProperty,
         isAgent = false,
         taxYear,
         changeTo,
@@ -119,7 +119,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              mode = UkProperty,
+              incomeSourceType = UkProperty,
               isAgent = true,
               taxYear,
               changeTo,
@@ -132,7 +132,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        mode = ForeignProperty,
+        incomeSourceType = ForeignProperty,
         isAgent = false,
         taxYear,
         changeTo,
@@ -146,7 +146,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              mode = ForeignProperty,
+              incomeSourceType = ForeignProperty,
               isAgent = true,
               taxYear,
               changeTo,
@@ -155,18 +155,14 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
+  def handleRequest(incomeSourceType: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       (getTaxYearModel(taxYear), changeTo) match {
         case (Some(years), AnnualReportingMethod.name | QuarterlyReportingMethod.name) =>
-          getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
-            case Left(error) =>
-              showError(isAgent, {
-                error.getMessage
-              })
+          getIncomeSourceId(incomeSourceType, incomeSourceId, isAgent = isAgent) match {
             case Right(incomeSourceId) =>
-              val addedBusinessName: String = getBusinessName(mode, Some(incomeSourceId))
+              val addedBusinessName: String = getBusinessName(incomeSourceType, Some(incomeSourceId))
               val postUrl: Call = {
                 if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit()
                 else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
@@ -174,6 +170,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
                 Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
               }
+            case Left(error) => showError(isAgent, error.getMessage )
           }
         case (Some(_), _) =>
           showError (isAgent, s"invalid changeTo mode provided: -$changeTo-")
