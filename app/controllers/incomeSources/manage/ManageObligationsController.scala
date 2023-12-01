@@ -17,17 +17,17 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
+import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
+import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
