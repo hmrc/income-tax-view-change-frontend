@@ -41,6 +41,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val dateStarted = messages("incomeSources.manage.business-manage-details.date-started")
   val businessAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
   val ukAccountingMethod = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
+  val quarterlyPeriodType = messages("incomeSources.manage.quarterly-period")
   val foreignAccountingMethod = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
   val reportingMethod1 = messages("incomeSources.manage.business-manage-details.reporting-method", "2022", "2023")
   val reportingMethod2 = messages("incomeSources.manage.business-manage-details.reporting-method", "2023", "2024")
@@ -48,11 +49,22 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val quarterly = messages("incomeSources.manage.business-manage-details.quarterly")
   val annually = messages("incomeSources.manage.business-manage-details.annually")
   val cash = messages("incomeSources.manage.business-manage-details.cash-accounting")
+  val standard = messages("incomeSources.manage.quarterly-period.standard")
+  val calendar = messages("incomeSources.manage.quarterly-period.calendar")
   val traditional = messages("incomeSources.manage.business-manage-details.traditional-accounting")
   val expectedAddress: Option[AddressModel] = Some(AddressModel("Line 1", Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), "NI"))
   val expectedViewAddressString1: String = "Line 1 Line 2 Line 3 Line 4 LN12 2NL United Kingdom"
   val expectedBusinessName: String = "nextUpdates.business"
   val expectedBusinessStartDate: String = "1 January 2022"
+  val expandableInfoStandardSummary = messages("incomeSources.manage.quarterly-period.standard.summary")
+  val expandableInfoCalendarSummary = messages("incomeSources.manage.quarterly-period.calendar.summary")
+  val expandableInfoStandardContentP1 = messages("incomeSources.manage.quarterly-period.standard.content.p1")
+  val expandableInfoStandardContentP2 = messages("incomeSources.manage.quarterly-period.standard.content.p2")
+  val expandableInfoCalendarContentP1 = messages("incomeSources.manage.quarterly-period.calendar.content.p1")
+  val expandableInfoCalendarContentP2 = messages("incomeSources.manage.quarterly-period.calendar.content.p2")
+  val expandableInfoContentP3 = messages("incomeSources.manage.quarterly-period.content.p3")
+  val expandableMoreInfoLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
+  val opensInNewTabText = messages("pagehelp.opensInNewTabText")
 
   val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
@@ -64,7 +76,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = SelfEmployment
+    incomeSourceType = SelfEmployment,
+    quarterReportingType = Some(true)
   )
 
   val viewModel2: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -77,7 +90,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
     latencyDetails = None,
-    incomeSourceType = SelfEmployment
+    incomeSourceType = SelfEmployment,
+    quarterReportingType = None
   )
 
   val ukViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -90,7 +104,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = UkProperty
+    incomeSourceType = UkProperty,
+    quarterReportingType = Some(false)
   )
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -103,7 +118,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
     latencyDetails = None,
-    incomeSourceType = UkProperty
+    incomeSourceType = UkProperty,
+    quarterReportingType = None
   )
 
   val foreignViewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -116,7 +132,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = ForeignProperty
+    incomeSourceType = ForeignProperty,
+    quarterReportingType = Some(false)
   )
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -129,7 +146,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
     latencyDetails = None,
-    incomeSourceType = ForeignProperty
+    incomeSourceType = ForeignProperty,
+    quarterReportingType = None
   )
 
   def backUrl(isAgent: Boolean): String =
@@ -250,8 +268,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe quarterlyPeriodType
+      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
@@ -262,8 +281,16 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe expectedViewAddressString1
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe cash
-      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe standard
+      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe quarterly
+
+      val expandableInfo = document.getElementById("expandable-info")
+      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
+      expandableInfo.getElementById("expandable-info-p1").text() shouldBe expandableInfoStandardContentP1
+      expandableInfo.getElementById("expandable-info-p2").text() shouldBe expandableInfoStandardContentP2
+      expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
+      expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
 
     }
     "render the whole page with unknowns and no change links" in new Setup2(false) {
@@ -293,8 +320,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe quarterlyPeriodType
+      document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
@@ -305,8 +333,16 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe expectedViewAddressString1
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe cash
-      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe standard
+      document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(6).text() shouldBe quarterly
+
+      val expandableInfo = document.getElementById("expandable-info")
+      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
+      expandableInfo.getElementById("expandable-info-p1").text() shouldBe expandableInfoStandardContentP1
+      expandableInfo.getElementById("expandable-info-p2").text() shouldBe expandableInfoStandardContentP2
+      expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
+      expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
   }
 
@@ -322,8 +358,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe quarterlyPeriodType
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
@@ -332,8 +369,16 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
-      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe calendar
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterly
+
+      val expandableInfo = document.getElementById("expandable-info")
+      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoCalendarSummary
+      expandableInfo.getElementById("expandable-info-p1").text() shouldBe expandableInfoCalendarContentP1
+      expandableInfo.getElementById("expandable-info-p2").text() shouldBe expandableInfoCalendarContentP2
+      expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
+      expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(false) {
 
@@ -356,8 +401,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe quarterlyPeriodType
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
@@ -366,8 +412,16 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
-      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe calendar
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterly
+
+      val expandableInfo = document.getElementById("expandable-info")
+      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoCalendarSummary
+      expandableInfo.getElementById("expandable-info-p1").text() shouldBe expandableInfoCalendarContentP1
+      expandableInfo.getElementById("expandable-info-p2").text() shouldBe expandableInfoCalendarContentP2
+      expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
+      expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new ukSetupUnknowns(true) {
 
@@ -391,8 +445,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe quarterlyPeriodType
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
@@ -401,8 +456,16 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
-      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe calendar
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterly
+
+      val expandableInfo = document.getElementById("expandable-info")
+      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoCalendarSummary
+      expandableInfo.getElementById("expandable-info-p1").text() shouldBe expandableInfoCalendarContentP1
+      expandableInfo.getElementById("expandable-info-p2").text() shouldBe expandableInfoCalendarContentP2
+      expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
+      expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(false) {
 
@@ -425,8 +488,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
 
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe dateStarted
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
-      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe reportingMethod1
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod2
+      document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe quarterlyPeriodType
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe reportingMethod1
+      document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe reportingMethod2
 
       document.getElementById("change-link-1").text() shouldBe change
       document.getElementById("change-link-2").text() shouldBe change
@@ -435,8 +499,16 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementById("change-link-2").attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe expectedBusinessStartDate
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cash
-      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe annually
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe quarterly
+      document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe calendar
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe annually
+      document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe quarterly
+
+      val expandableInfo = document.getElementById("expandable-info")
+      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoCalendarSummary
+      expandableInfo.getElementById("expandable-info-p1").text() shouldBe expandableInfoCalendarContentP1
+      expandableInfo.getElementById("expandable-info-p2").text() shouldBe expandableInfoCalendarContentP2
+      expandableInfo.getElementById("expandable-more-info-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
+      expandableInfo.getElementById("expandable-more-info-link").attr("href") shouldBe expandableMoreInfoLink
     }
     "render the whole page with unknowns and no change links" in new foreignSetupUnknowns(true) {
 

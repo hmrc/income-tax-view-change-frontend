@@ -175,6 +175,19 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         }
   }
 
+  private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection]): Option[Boolean] = {
+    quarterTypeElection.flatMap(quarterTypeElection => {
+      latencyDetails.flatMap(latencyDetails => {
+        val quarterIndicator = "Q"
+        val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString
+        val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
+        val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
+        val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2
+        if (showQuarterReportingType) quarterTypeElection.isQuarterReportingTypeStandard else None
+      })
+    })
+  }
+
   private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
                                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[List[Boolean]]] = {
     latencyDetails match {
@@ -202,7 +215,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
-      incomeSourceType = SelfEmployment
+      incomeSourceType = SelfEmployment,
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
     )
   }
 
@@ -218,12 +232,14 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
-      incomeSourceType = incomeSourceType
+      incomeSourceType = incomeSourceType,
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
     )
   }
 
+
   private def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: IncomeSourceId, isAgent: Boolean)
-                                            (implicit user: MtdItUser[_],hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+                                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
