@@ -23,14 +23,16 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.{IncomeSourceDetailsError, LatencyDetails}
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceDetailsError, LatencyDetails, UIJourneySessionData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import org.scalatest.Assertion
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-import services.DateService
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
+import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.CalculationListIntegrationTestConstants
@@ -74,11 +76,11 @@ case object API1896 extends APIErrorScenario
 class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
 
-  lazy val showUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+  lazy val showUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
-  lazy val submitUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+  lazy val submitUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
-  lazy val obligationsUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+  lazy val obligationsUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
     else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
   lazy val redirectUrl: IncomeSourceType => String = {
@@ -125,12 +127,30 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     None, Some("1234567890"), None, Some(Agent), None
   )(FakeRequest())
 
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "ADD-SE")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "ADD-UK")))
+    await(repository.deleteOne(UIJourneySessionData(testSessionId, "ADD-FP")))
+  }
 
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
     Given("Income Sources FS is enabled")
     disable(TimeMachineAddYear)
     enable(IncomeSources)
     stubAuthorisedAgentUser(authorised = true)
+
+    incomeSourceType match {
+      case SelfEmployment => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
+      case UkProperty => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
+      case ForeignProperty => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
+        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
+    }
 
     And("API 1171 getIncomeSourceDetails returns a success response")
     (incomeSourceType, scenario.isWithinLatencyPeriod) match {
@@ -457,6 +477,15 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       "new_tax_year_2_reporting_method_tax_year" -> Seq(taxYear2.toString),
       "tax_year_2_reporting_method" -> Seq("Q")
     )
+
+    incomeSourceType match {
+      case SelfEmployment => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
+      case UkProperty => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
+      case ForeignProperty => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
+        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
+    }
 
     val result: WSResponse = IncomeTaxViewChangeFrontend.post(uri(incomeSourceType), clientDetailsWithConfirmation)(formData)
 

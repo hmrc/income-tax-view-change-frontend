@@ -22,11 +22,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
-import enums.JourneyType.{Add, JourneyType}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import services.{IncomeSourceDetailsService, SessionService}
+import play.api.mvc._
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -34,7 +31,6 @@ import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
 
 @Singleton
 class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,

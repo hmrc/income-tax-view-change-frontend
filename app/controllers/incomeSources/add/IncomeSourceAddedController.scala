@@ -72,25 +72,27 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
-      case Right(Some(id)) =>
+
         withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
 
-          val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
+          sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
+            case Right(Some(id)) =>
 
-          incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
-            case Some((startDate, businessName)) =>
-              val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-              handleSuccess(incomeSourceId, incomeSourceType, businessName, showPreviousTaxYears, isAgent)
-            case None => Logger("application").error(
-              s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
-              if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-              else Future(itvcErrorHandler.showInternalServerError())
-          }
-        }
-      case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
-      case Left(ex) => Future.failed(ex)
-    }.recover {
+              val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
+
+              incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
+                case Some((startDate, businessName)) =>
+                  val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+                  handleSuccess(incomeSourceId, incomeSourceType, businessName, showPreviousTaxYears, isAgent)
+                case None => Logger("application").error(
+                  s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
+                  if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+                  else Future(itvcErrorHandler.showInternalServerError())
+              }
+
+            case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
+            case Left(ex) => Future.failed(ex)
+    }}.recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
           s"Error getting IncomeSourceAdded page: ${ex.getMessage}, IncomeSourceType: $incomeSourceType")

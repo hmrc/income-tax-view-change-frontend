@@ -9,8 +9,9 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
@@ -19,7 +20,7 @@ import java.time.LocalDate
 
 class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
-  val incomeSourceAddedSelfEmploymentShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show("", SelfEmployment).url
+  val incomeSourceAddedSelfEmploymentShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
 
   val IncomeSourceAddedSubmitUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.submit().url
   val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
@@ -52,6 +53,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
   val addIncomeSourceShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
@@ -72,7 +74,8 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+          addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
 
         val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -125,7 +128,8 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1330 getNextUpdates return a success response")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
-        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+          addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testPropertyIncomeId))))))
 
         Then("user is shown UK property added page")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added")
@@ -194,7 +198,8 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
-        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
+          addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testPropertyIncomeId))))))
 
         val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations
         verifyIncomeSourceDetailsCall(testMtditid)
