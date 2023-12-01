@@ -20,6 +20,7 @@ import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.Add
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -132,9 +133,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "ADD-SE")))
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "ADD-UK")))
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "ADD-FP")))
+    await(sessionService.deleteSession(Add))
   }
 
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
