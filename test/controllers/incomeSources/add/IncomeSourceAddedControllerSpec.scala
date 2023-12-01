@@ -127,6 +127,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
   }
 
+  def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(hasBeenAdded = Some(true))))
+
 
   "IncomeSourceAddedController" should {
     "redirect a user back to the custom error page" when {
@@ -180,8 +182,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
-
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, SelfEmployment)))))
         val result: Future[Result] = TestIncomeSourceAddedController.show("123", SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url

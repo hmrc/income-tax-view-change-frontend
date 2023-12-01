@@ -170,7 +170,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           showedAccountingMethod = showAccountingMethodPage
         )))
 
-      case None => throw new Exception(s"$errorTracePrefix failed to retrieve addIncomeSourceData")
+      case None => Future(Left(new Exception(s"$errorTracePrefix failed to retrieve addIncomeSourceData")))
     }
 
   }
