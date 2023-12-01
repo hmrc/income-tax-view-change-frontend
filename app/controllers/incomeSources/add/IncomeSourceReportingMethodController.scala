@@ -106,7 +106,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
     val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType) else
       controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

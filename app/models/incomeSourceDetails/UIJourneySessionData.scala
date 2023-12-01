@@ -72,7 +72,7 @@ case class AddIncomeSourceData(
                                 address: Option[Address] = None,
                                 countryCode: Option[String] = None,
                                 incomeSourcesAccountingMethod: Option[String] = None,
-                                hasBeenAdded: Option[Boolean] = None
+                                journeyIsComplete: Option[Boolean] = None
                               )
 
 object AddIncomeSourceData {
@@ -92,13 +92,13 @@ object AddIncomeSourceData {
   implicit val format: OFormat[AddIncomeSourceData] = Json.format[AddIncomeSourceData]
 }
 
-case class ManageIncomeSourceData(
-                                   incomeSourceId: Option[String] = None
-                                 )
+case class ManageIncomeSourceData(incomeSourceId: Option[String] = None,
+                                   journeyIsComplete: Option[Boolean] = None)
 
 object ManageIncomeSourceData {
 
   val incomeSourceIdField = "incomeSourceId"
+  val journeyIsCompleteField: String = "journeyIsComplete"
 
   def getJSONKeyPath(name: String): String = s"manageIncomeSourceData.$name"
 
@@ -108,7 +108,8 @@ object ManageIncomeSourceData {
 case class CeaseIncomeSourceData(
                                   incomeSourceId: Option[String],
                                   endDate: Option[String],
-                                  ceasePropertyDeclare: Option[String]
+                                  ceasePropertyDeclare: Option[String],
+                                  journeyIsComplete: Option[Boolean]
                                 )
 
 object CeaseIncomeSourceData {

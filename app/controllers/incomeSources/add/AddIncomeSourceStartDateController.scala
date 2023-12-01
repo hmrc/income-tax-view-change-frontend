@@ -17,7 +17,7 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -91,7 +91,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
         sessionService.createSession(journeyType.toString).flatMap {
