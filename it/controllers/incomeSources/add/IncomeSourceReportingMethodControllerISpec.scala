@@ -126,7 +126,6 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   )(FakeRequest())
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

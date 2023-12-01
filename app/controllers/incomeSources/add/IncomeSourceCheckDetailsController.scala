@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
 import models.createIncomeSource.CreateIncomeSourceResponse

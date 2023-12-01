@@ -36,7 +36,7 @@ import org.scalatest.Assertion
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CalculationListService, DateService, ITSAStatusService, SessionService, UpdateIncomeSourceService}
+import services.{CalculationListService, DateService, ITSAStatusService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.{testNino, testSelfEmploymentId}
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceReportingMethod

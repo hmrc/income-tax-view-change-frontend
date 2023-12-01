@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
@@ -9,9 +25,8 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.UIJourneySessionDataRepository
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
+import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
@@ -53,7 +68,6 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
   val addIncomeSourceShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,

@@ -32,7 +32,6 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.UIJourneySessionDataRepository
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
@@ -129,7 +128,6 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   )(FakeRequest())
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

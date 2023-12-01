@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.SessionTimeoutPredicate
 import controllers.routes
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.MockItvcErrorHandler
@@ -30,15 +30,13 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers._
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.SessionService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
 import scala.concurrent.Future
-
 
 class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions

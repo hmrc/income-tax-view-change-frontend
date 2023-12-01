@@ -34,9 +34,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   val testBusinessTrade: String = "Test Business Trade"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
-
 
   override def beforeEach(): Unit = {
     super.beforeEach()

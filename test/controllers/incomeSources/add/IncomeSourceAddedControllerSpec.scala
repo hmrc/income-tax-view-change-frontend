@@ -16,37 +16,35 @@
 
 package controllers.incomeSources.add
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
-import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, UIJourneySessionData}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.AddIncomeSourceData.hasBeenAddedField
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import models.incomeSourceDetails._
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, SessionService}
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
-import testUtils.TestSupport
-import views.html.incomeSources.add.IncomeSourceAddedObligations
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateService
+import testConstants.BaseTestConstants
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testSelfEmploymentId, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
+import testUtils.TestSupport
+import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import java.time.LocalDate
-import scala.collection.immutable.List
 import scala.concurrent.Future
 
 class IncomeSourceAddedControllerSpec extends TestSupport
