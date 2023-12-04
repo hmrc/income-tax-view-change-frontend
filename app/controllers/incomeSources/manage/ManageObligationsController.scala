@@ -17,16 +17,17 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
+import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
+import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
@@ -63,7 +64,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           case Right(incomeSourceIdMaybe) =>
             val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(mkIncomeSourceId)
             handleRequest(
-              mode = SelfEmployment,
+              incomeSourceType = SelfEmployment,
               isAgent = false,
               taxYear,
               changeTo,
@@ -85,7 +86,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           case Right(incomeSourceIdMaybe) =>
             val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(mkIncomeSourceId)
             handleRequest(
-              mode = SelfEmployment,
+              incomeSourceType = SelfEmployment,
               isAgent = true,
               taxYear,
               changeTo,
@@ -104,7 +105,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        mode = UkProperty,
+        incomeSourceType = UkProperty,
         isAgent = false,
         taxYear,
         changeTo,
@@ -118,7 +119,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              mode = UkProperty,
+              incomeSourceType = UkProperty,
               isAgent = true,
               taxYear,
               changeTo,
@@ -131,7 +132,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       handleRequest(
-        mode = ForeignProperty,
+        incomeSourceType = ForeignProperty,
         isAgent = false,
         taxYear,
         changeTo,
@@ -145,7 +146,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             handleRequest(
-              mode = ForeignProperty,
+              incomeSourceType = ForeignProperty,
               isAgent = true,
               taxYear,
               changeTo,
@@ -154,35 +155,28 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  def handleRequest(mode: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
+  private lazy val successPostUrl =  (isAgent: Boolean) => {
+    if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit()
+    else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
+  }
+
+  def handleRequest(incomeSourceType: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    if (isDisabled(IncomeSources)) {
-      if (isAgent) Future.successful(Redirect(controllers.routes.HomeController.showAgent))
-      else Future.successful(Redirect(controllers.routes.HomeController.show()))
-    }
-    else {
-      val postUrl: Call = if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit() else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
-
-      val addedBusinessName: String = getBusinessName(mode, incomeSourceId)
-
-      getTaxYearModel(taxYear) match {
-        case Some(years) =>
-          if (changeTo == "annual" || changeTo == "quarterly") {
-            getIncomeSourceId(mode, incomeSourceId, isAgent = isAgent) match {
-              case Left(error) =>
-                showError(isAgent, {
-                error.getMessage
-              })
-              case Right(incomeSourceId) =>
-                nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
-                  Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, postUrl))
-                }
-            }
+    withIncomeSourcesFS {
+      (getTaxYearModel(taxYear), changeTo) match {
+        case (Some(years), AnnualReportingMethod.name | QuarterlyReportingMethod.name) =>
+          getIncomeSourceId(incomeSourceType, incomeSourceId, isAgent = isAgent) match {
+            case Right(incomeSourceId) =>
+              val addedBusinessName: String = getBusinessName(incomeSourceType, Some(incomeSourceId))
+              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
+                Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, successPostUrl(isAgent)))
+              }
+            case Left(error) => showError(isAgent, error.getMessage )
           }
-          else {
-            showError(isAgent, "invalid changeTo mode provided")
-          }
-        case None => showError(isAgent, "invalid tax year provided")
+        case (Some(_), _) =>
+          showError (isAgent, s"Invalid changeTo mode provided: -$changeTo-")
+        case (None, _) =>
+          showError(isAgent, "Invalid tax year provided")
       }
     }
   }
