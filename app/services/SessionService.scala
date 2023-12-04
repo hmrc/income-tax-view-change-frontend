@@ -17,8 +17,10 @@
 package services
 
 import auth.MtdItUser
+import directdebit.corjourney.crypto.Crypto
 import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
+import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,7 +29,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
+class SessionService @Inject()(
+                                uiJourneySessionDataRepository: UIJourneySessionDataRepository,
+                                crypto: Crypto
+                              ) {
 
   def getMongo(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
@@ -94,12 +99,34 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
     }
-    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
-      result => result.wasAcknowledged() match {
-        case true => Right(true)
-        case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
-      }
-    )
+
+    if (key == AddIncomeSourceData.businessNameField)
+      uiJourneySessionDataRepository
+        .set(
+          uiJourneySessionData.copy(
+            addIncomeSourceData = Some(
+              Json.toJson(
+                AddIncomeSourceData(
+                  businessName = Some(value)
+                ).encryptedFormat(crypto)
+              )
+
+            )
+          )
+
+      ).map(
+        result => result.wasAcknowledged() match {
+          case true => Right(true)
+          case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+        }
+      )
+    else
+      uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
+        result => result.wasAcknowledged() match {
+          case true => Right(true)
+          case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+        }
+      )
   }
 
   def deleteMongoData(journeyType: JourneyType)
