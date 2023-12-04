@@ -224,13 +224,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     sessionService.getMongo(journeyType.toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceData = sessionData.addIncomeSourceData match {
-          case Some(addIncomeSourceData) => addIncomeSourceData.decrypted
+          case Some(addIncomeSourceData) => addIncomeSourceData
           case None => throw new Exception("addIncomeSourceData field not found in session data")
         }
         val accountingPeriodEndDate = dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
         val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate.toString),
           accountingPeriodEndDate = Some(accountingPeriodEndDate.toString))
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(SensitiveAddIncomeSourceData.encrypt(updatedAddIncomeSourceData)))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
         sessionService.setMongoData(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(successUrl))
@@ -242,8 +242,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongo(journeyType.toString).flatMap {
-      case Right(Some(data)) => Future.successful(data.addIncomeSourceData.map(_.decrypted).flatMap(_.dateStarted).map(LocalDate.parse))
+    sessionService.getMongoKey(dateStartedField, journeyType).flatMap {
+      case Right(dateOpt) => Future.successful(dateOpt.map(LocalDate.parse))
       case Left(ex) => Future.failed(ex)
     }
   }

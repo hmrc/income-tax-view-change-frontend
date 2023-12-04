@@ -18,7 +18,7 @@ package repositories
 
 import config.FrontendAppConfig
 import enums.JourneyType.Operation
-import models.incomeSourceDetails.UIJourneySessionData
+import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
@@ -32,7 +32,8 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class UIJourneySessionDataRepository @Inject()(
@@ -41,10 +42,10 @@ class UIJourneySessionDataRepository @Inject()(
                                                 encryptionService: EncryptionService,
                                                 clock: Clock
                                               )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[UIJourneySessionData](
+  extends PlayMongoRepository[SensitiveUIJourneySessionData](
     collectionName = "ui-journey-session-data",
     mongoComponent = mongoComponent,
-    domainFormat = UIJourneySessionData.format(encryptionService.crypto),
+    domainFormat = SensitiveUIJourneySessionData.format(encryptionService.crypto),
     indexes = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),
@@ -63,6 +64,11 @@ class UIJourneySessionDataRepository @Inject()(
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
   }
 
+  private def dataFilterSensitive(data: SensitiveUIJourneySessionData): Bson = {
+    import Filters._
+    and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
+  }
+
   private def sessionFilter(sessionId: String, operation: Operation): Bson = {
     import Filters._
     and(equal("sessionId", sessionId), regex("journeyType", operation.operationType))
@@ -72,6 +78,15 @@ class UIJourneySessionDataRepository @Inject()(
     collection
       .updateOne(
         filter = dataFilter(data),
+        update = Updates.set("lastUpdated", Instant.now(clock))
+      )
+      .toFuture()
+      .map(_ => true)
+
+  def keepAliveSensitive(data: SensitiveUIJourneySessionData): Future[Boolean] =
+    collection
+      .updateOne(
+        filter = dataFilterSensitive(data),
         update = Updates.set("lastUpdated", Instant.now(clock))
       )
       .toFuture()
@@ -87,14 +102,45 @@ class UIJourneySessionDataRepository @Inject()(
     }
   }
 
+  def getSensitive(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
+
+    val data = SensitiveUIJourneySessionData(sessionId, journeyType)
+
+    keepAliveSensitive(data).flatMap {
+      _ =>
+        val x =
+          collection
+            .find(
+              dataFilterSensitive(data)
+            )
+            .headOption()
+            .map(
+              _.map(
+                SensitiveUIJourneySessionData.decrypt
+              )
+            )
+        println(s"\ngot back: ${Await.result(x, 1000.milli)}\n")
+        x
+    }
+  }
+
   def set(data: UIJourneySessionData): Future[Boolean] = {
+
+    println(s"\nset req: $data\n")
 
     val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
 
     collection
       .replaceOne(
         filter = dataFilter(data),
-        replacement = updatedAnswers,
+        replacement = SensitiveUIJourneySessionData.apply(
+          sessionId = updatedAnswers.sessionId,
+          journeyType = updatedAnswers.journeyType,
+          addIncomeSourceData = Some(SensitiveAddIncomeSourceData.encrypt(updatedAnswers.addIncomeSourceData.get)),
+          manageIncomeSourceData = updatedAnswers.manageIncomeSourceData,
+          ceaseIncomeSourceData = updatedAnswers.ceaseIncomeSourceData,
+          lastUpdated = updatedAnswers.lastUpdated
+        ),
         options = ReplaceOptions().upsert(true)
       )
       .toFuture()
