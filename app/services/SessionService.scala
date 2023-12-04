@@ -19,6 +19,7 @@ package services
 import auth.MtdItUser
 import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
 import models.incomeSourceDetails
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, dateStartedField}
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
@@ -116,23 +117,24 @@ class SessionService @Inject()(
       userSessionData <- uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString)
     } yield {
       journeyType.operation match {
-        case Add =>
-          val encryptedField: Option[String] = userSessionData.flatMap(y => y.addIncomeSourceData)
-          val addIncomeSourceData: AddIncomeSourceData = encryptedField.map(encryptionService.decryptAddIncomeSourceData).getOrElse(AddIncomeSourceData())
+        case Add if key == businessNameField || key == dateStartedField =>
 
-//          val z: AddIncomeSourceData = setValueByKey(Some(addIncomeSourceData), key, value).toOption.get.asInstanceOf[AddIncomeSourceData]
-
-          val z = key match {
-            case "businessName" => addIncomeSourceData.copy(businessName = Some(value))
-            case x => throw new Exception(s"cant find key: $x")
-          }
+          val addIncomeSourceData =
+            userSessionData
+              .flatMap(_.addIncomeSourceData)
+              .map(encryptionService.decryptAddIncomeSourceData)
+              .getOrElse(throw new Exception(s"Failed to get AddIncomeSourceData"))
 
           uiJourneySessionDataRepository.set(
             userSessionData.map(
               _.copy(
-                addIncomeSourceData = Some(encryptionService.encryptAddIncomeSourceData(z))
+                addIncomeSourceData = Some(
+                  encryptionService.encryptAddIncomeSourceData(
+                    addIncomeSourceData
+                  )
+                )
               )
-            ).get
+            ).getOrElse(throw new Exception(s"Failed to get userSessionData"))
           ).map {
             case true => Right(true)
             case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
