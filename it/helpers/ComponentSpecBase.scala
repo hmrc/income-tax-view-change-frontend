@@ -300,9 +300,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getForeignPropertyEndDate: WSResponse = get("/income-sources/cease/foreign-property-end-date")
 
-    def getForeignPropertyAddedObligations(id: String): WSResponse = {
+    def getForeignPropertyAddedObligations: WSResponse = {
       get(
-        uri = s"/income-sources/add/foreign-property-added/?id=$id"
+        uri = s"/income-sources/add/foreign-property-added"
       )
     }
 
@@ -424,9 +424,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       )
     }
 
-    def getAddBusinessObligations(id: String): WSResponse = {
+    def getAddBusinessObligations: WSResponse = {
       get(
-        uri = s"/income-sources/add/business-added/?id=$id"
+        uri = s"/income-sources/add/business-added"
       )
     }
 
@@ -522,11 +522,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessAddress: WSResponse =
       get("/income-sources/add/business-address")
 
-    def getSEReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-business-reporting-method-not-saved?id=$id", session)
+    def getSEReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-business-reporting-method-not-saved", session)
 
-    def getUkPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved?id=$id", session)
+    def getUkPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved", session)
 
-    def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
+    def getForeignPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved", session)
 
     def getAddIncomeSource(): WSResponse = get(uri = s"/income-sources/add/new-income-sources")
   }

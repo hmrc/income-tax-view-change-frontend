@@ -1,3 +1,19 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
@@ -5,14 +21,14 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId}
+import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBase {
 
-  val selfEmploymentReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show("", SelfEmployment).url
-  val ukPropertyReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show("", UkProperty).url
-  val foreignPropertyReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show("", ForeignProperty).url
+  val selfEmploymentReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(SelfEmployment).url
+  val ukPropertyReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(UkProperty).url
+  val foreignPropertyReportingMethodNotSavedShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(ForeignProperty).url
 
   object TestConstants {
     val selfEmployment: String = messagesAPI("incomeSources.add.error.reportingMethodNotSaved.se")
@@ -39,8 +55,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         And("API 1771 returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val incomeSourceId = testSelfEmploymentId
-        val result = IncomeTaxViewChangeFrontend.getSEReportingMethodNotSaved(incomeSourceId, Map.empty)
+        val result = IncomeTaxViewChangeFrontend.getSEReportingMethodNotSaved(Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
@@ -65,8 +80,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         And("API 1771 returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        val incomeSourceId = testSelfEmploymentId
-        val result = IncomeTaxViewChangeFrontend.getUkPropertyReportingMethodNotSaved(incomeSourceId, Map.empty)
+        val result = IncomeTaxViewChangeFrontend.getUkPropertyReportingMethodNotSaved(Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("incomeSources.add.error.standardError")
@@ -91,8 +105,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ComponentSpecBa
         And("API 1771 returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
-        val incomeSourceId = testSelfEmploymentId
-        val result = IncomeTaxViewChangeFrontend.getForeignPropertyReportingMethodNotSaved(incomeSourceId, Map.empty)
+        val result = IncomeTaxViewChangeFrontend.getForeignPropertyReportingMethodNotSaved(Map.empty)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("incomeSources.add.error.standardError")

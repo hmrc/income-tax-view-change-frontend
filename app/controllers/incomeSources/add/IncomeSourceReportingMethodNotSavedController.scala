@@ -22,11 +22,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
-import enums.JourneyType.{Add, JourneyType}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
-import services.{IncomeSourceDetailsService, SessionService}
+import play.api.mvc._
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
@@ -34,7 +31,6 @@ import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
 
 @Singleton
 class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -51,41 +47,37 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
                                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def handleRequest(id: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
     val action: Call = (incomeSourceType, isAgent) match {
-      case (UkProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id.value, UkProperty)
-      case (UkProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id.value, UkProperty)
-      case (ForeignProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id.value, ForeignProperty)
-      case (ForeignProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id.value, ForeignProperty)
-      case (SelfEmployment, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(id.value, SelfEmployment)
-      case (SelfEmployment, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(id.value, SelfEmployment)
+      case (UkProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty)
+      case (UkProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty)
+      case (ForeignProperty, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty)
+      case (ForeignProperty, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty)
+      case (SelfEmployment, true) => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment)
+      case (SelfEmployment, false) => controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment)
     }
 
     Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
   }
 
 
-  def show(id: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val incomeSourceId = mkIncomeSourceId(id)
       handleRequest(
-        id = incomeSourceId,
         isAgent = false,
         incomeSourceType = incomeSourceType
       )
   }
 
-  def showAgent(id: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            val incomeSourceId = mkIncomeSourceId(id)
             handleRequest(
-              id = incomeSourceId,
               isAgent = true,
               incomeSourceType = incomeSourceType
             )

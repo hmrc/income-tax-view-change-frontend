@@ -38,13 +38,13 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
     val action: Call = incomeSourceType match {
       case UkProperty =>
         val controller = controllers.incomeSources.add.routes.IncomeSourceAddedController
-        if (isAgent) controller.show(id, UkProperty) else controller.showAgent(id, UkProperty)
+        if (isAgent) controller.show(UkProperty) else controller.showAgent(UkProperty)
       case ForeignProperty =>
         val controller = controllers.incomeSources.add.routes.IncomeSourceAddedController
-        if (isAgent) controller.show(id, ForeignProperty) else controller.showAgent(id, ForeignProperty)
+        if (isAgent) controller.show(ForeignProperty) else controller.showAgent(ForeignProperty)
       case SelfEmployment =>
         val controller = controllers.incomeSources.add.routes.IncomeSourceAddedController
-        if (isAgent) controller.show(id, SelfEmployment) else controller.showAgent(id, SelfEmployment)
+        if (isAgent) controller.show(SelfEmployment) else controller.showAgent(SelfEmployment)
     }
     lazy val view: HtmlFormat.Appendable = incomeSourceReportingMethodNotSaved(isAgent = isAgent, incomeSourceType = incomeSourceType, continueAction = action)
     lazy val document: Document = Jsoup.parse(contentAsString(view))
