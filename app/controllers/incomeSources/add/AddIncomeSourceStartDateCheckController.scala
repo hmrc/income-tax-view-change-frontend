@@ -242,8 +242,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongo(journeyType.toString).flatMap {
-      case Right(Some(data)) => Future.successful(data.addIncomeSourceData.map(_.decrypted).flatMap(_.dateStarted).map(LocalDate.parse))
+    sessionService.getMongoKey(dateStartedField, journeyType).flatMap {
+      case Right(dateOpt) => Future.successful(dateOpt.map(LocalDate.parse))
       case Left(ex) => Future.failed(ex)
     }
   }

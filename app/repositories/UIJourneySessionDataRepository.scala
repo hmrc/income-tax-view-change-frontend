@@ -18,7 +18,7 @@ package repositories
 
 import config.FrontendAppConfig
 import enums.JourneyType.Operation
-import models.incomeSourceDetails.UIJourneySessionData
+import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, UIJourneySessionData}
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
@@ -26,7 +26,7 @@ import org.mongodb.scala.result.UpdateResult
 import play.api.libs.json.Format
 import services.EncryptionService
 import uk.gov.hmrc.mongo.MongoComponent
-import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.{Clock, Instant}
@@ -53,7 +53,10 @@ class UIJourneySessionDataRepository @Inject()(
           .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
       )
     ),
-    replaceIndexes = true
+    replaceIndexes = true,
+    extraCodecs      = Seq(
+      Codecs.playFormatCodec(SensitiveAddIncomeSourceData.sensitiveStringFormat(encryptionService.crypto))
+    )
   ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat

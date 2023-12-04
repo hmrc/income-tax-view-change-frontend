@@ -47,7 +47,7 @@ object UIJourneySessionData {
     (
       (__ \ "sessionId").read[String] and
         (__ \ "journeyType").read[String] and
-        (__ \ "addIncomeSourceData").readNullable[SensitiveAddIncomeSourceData](SensitiveAddIncomeSourceData.format(crypto)) and
+        (__ \ "addIncomeSourceData").readNullable[SensitiveAddIncomeSourceData] and
         (__ \ "manageIncomeSourceData").readNullable[ManageIncomeSourceData] and
         (__ \ "ceaseIncomeSourceData").readNullable[CeaseIncomeSourceData] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)

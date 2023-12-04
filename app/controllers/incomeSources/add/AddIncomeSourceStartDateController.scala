@@ -39,7 +39,8 @@ import views.html.incomeSources.add.AddIncomeSourceStartDate
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationPredicate,
@@ -101,6 +102,14 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       }
 
       getFilledForm(form(messagesPrefix), incomeSourceType, isChange).map { filledForm =>
+
+        print(s"\ngets here\n")
+
+        println(s"\n ${Await.result(sessionService.getMongo(JourneyType(Add, incomeSourceType).toString), 1000.milli)} \n")
+
+        print(s"\nnot here\n")
+
+
         Ok(
           addIncomeSourceStartDate(
             form = filledForm,
@@ -114,6 +123,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     }.recover {
       case ex =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        println(s"\nERROR: ${ex}\n")
         Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest][${incomeSourceType.key}] ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
