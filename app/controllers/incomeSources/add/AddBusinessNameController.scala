@@ -73,13 +73,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessName(isChange: Boolean, sessionData: Option[UIJourneySessionData])
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionData match {
-        case Some(session) => session.addIncomeSourceData match {
-          case Some(data) => Future.successful(data.businessName)
-          case None => Future.failed(new Error("No session data found"))
-        }
-        case None => Future.failed(new Error("No session data found"))
-      }
+      Future.successful(sessionData.get.addIncomeSourceData.get.businessName)
     else
       sessionService.createSession(journeyType.toString).flatMap {
         case true => Future.successful(None)

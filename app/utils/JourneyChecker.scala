@@ -37,16 +37,14 @@ trait JourneyChecker extends IncomeSourcesUtils {
   def withCustomSession(journeyType: JourneyType)(codeBlock: Option[UIJourneySessionData] => Future[Result])
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
-      sessionService.getMongo(journeyType.toString).flatMap{
+      sessionService.getMongo(journeyType.toString).flatMap {
         case Right(Some(sessionData)) =>
-          customSessionStarted(sessionData).flatMap { state =>
-            (state, user.userType) match {
-              case (true, Some(Agent)) =>
-                Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
-              case (true, Some(Individual)) =>
-                Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
-              case (_, _) => codeBlock(Some(sessionData))
-            }
+          (customSessionStarted(sessionData), user.userType) match {
+            case (true, Some(Agent)) =>
+              Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
+            case (true, Some(Individual)) =>
+              Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
+            case (_, _) => codeBlock(Some(sessionData))
           }
         case _ =>
           codeBlock(None)
@@ -54,17 +52,17 @@ trait JourneyChecker extends IncomeSourcesUtils {
     }
   }
 
-  private def customSessionStarted(sessionData: UIJourneySessionData): Future[Boolean] = {
+  private def customSessionStarted(sessionData: UIJourneySessionData): Boolean = {
     sessionData.addIncomeSourceData match {
-      case Some(value) if value.hasBeenAdded.contains(true) => Future(true)
-      case _ => Future(false)
+      case Some(value) if value.hasBeenAdded.contains(true) => true
+      case _ => false
     }
   }
 
   // TODO: extend this method to support: Add / Manage and Ceased journey
   def startCustomSession(incomeSourceType: IncomeSourceType)
                         (implicit hc: HeaderCarrier): Future[Boolean] = {
-    sessionService.getMongo( JourneyType(Add, incomeSourceType).toString ).flatMap {
+    sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
         val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(hasBeenAdded = Some(true))
