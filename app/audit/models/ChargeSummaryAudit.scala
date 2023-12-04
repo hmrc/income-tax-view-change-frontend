@@ -164,7 +164,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_], docDateDetail: DocumentDe
 
   override val transactionName: String = enums.TransactionName.ChargeSummary
   override val detail: JsValue = {
-    Json.obj("nationalInsuranceNumber" -> mtdItUser.nino,
+    Json.obj("nino" -> mtdItUser.nino,
       "mtditid" -> mtdItUser.mtditid) ++
       userType ++
       ("agentReferenceNumber", mtdItUser.arn) ++

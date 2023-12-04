@@ -233,7 +233,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
               "overdue" -> docDateDetail.isOverdue
             ),
             "saUtr" -> "saUtr",
-            "nationalInsuranceNumber" -> "nino",
+            "nino" -> "nino",
             "paymentBreakdown" -> Json.arr(
               Json.obj(
                 "breakdownType" -> messages("chargeSummary.paymentBreakdown.incomeTax"),
@@ -308,7 +308,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
               "overdue" -> docDateDetailWithCodingOutAccepted.isOverdue
             ),
             "saUtr" -> "saUtr",
-            "nationalInsuranceNumber" -> "nino",
+            "nino" -> "nino",
             "paymentBreakdown" -> Json.arr(
               Json.obj(
                 "breakdownType" -> messages("chargeSummary.paymentBreakdown.incomeTax"),
@@ -383,7 +383,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
               "overdue" -> docDateDetailWithCodingOutRejected.isOverdue
             ),
             "saUtr" -> "saUtr",
-            "nationalInsuranceNumber" -> "nino",
+            "nino" -> "nino",
             "paymentBreakdown" -> Json.arr(
               Json.obj(
                 "breakdownType" -> messages("chargeSummary.paymentBreakdown.incomeTax"),
@@ -460,7 +460,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
               "overdue" -> docDateDetail.isOverdue
             ),
             "saUtr" -> "saUtr",
-            "nationalInsuranceNumber" -> "nino",
+            "nino" -> "nino",
             "paymentBreakdown" -> Json.arr(),
             "paymentAllocationsChargeHistory" -> Json.arr(),
             "agentReferenceNumber" -> "agentReferenceNumber",
@@ -481,7 +481,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
               "chargeType" -> getChargeType(latePayment = false, docDetail),
               "endTaxYear" -> taxYear,
               "overdue" -> docDateDetail.isOverdue),
-            "nationalInsuranceNumber" -> "nino",
+            "nino" -> "nino",
             "paymentBreakdown" -> Json.arr(),
             "paymentAllocationsChargeHistory" -> Json.arr(),
             "chargeHistory" -> Json.arr(),

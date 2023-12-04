@@ -51,7 +51,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nationalInsuranceNumber" -> testNino,
+          "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
           "saUtr" -> testSaUtr,
           "credId" -> testCredId,
@@ -103,7 +103,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nationalInsuranceNumber" -> testNino,
+          "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
           "saUtr" -> testSaUtr,
           "credId" -> testCredId,
@@ -141,7 +141,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
       "Have the correct details for the audit event" in {
         testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
           "mtditid" -> testMtditid,
-          "nationalInsuranceNumber" -> testNino,
+          "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
           "reportDeadlines" -> Json.arr()
         )

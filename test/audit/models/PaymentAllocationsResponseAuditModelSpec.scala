@@ -131,7 +131,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         "the user is an individual" in {
           paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
-            "nationalInsuranceNumber" -> testNino,
+            "nino" -> testNino,
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Individual",
@@ -152,7 +152,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         "the user is an agent" in {
           paymentAllocationsAuditFullCredit(userType = Some(Agent)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
-            "nationalInsuranceNumber" -> testNino,
+            "nino" -> testNino,
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Agent",
@@ -190,7 +190,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         "the user is an individual" in {
           paymentAllocationsAuditFull(userType = Some(Individual)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
-            "nationalInsuranceNumber" -> testNino,
+            "nino" -> testNino,
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Individual",
@@ -211,7 +211,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         "the user is an agent" in {
           paymentAllocationsAuditFull(userType = Some(Agent)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
-            "nationalInsuranceNumber" -> testNino,
+            "nino" -> testNino,
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Agent",
@@ -249,7 +249,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         "the user is an individual" in {
           paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
-            "nationalInsuranceNumber" -> testNino,
+            "nino" -> testNino,
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Individual",
@@ -270,7 +270,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
         "the user is an agent" in {
           paymentAllocationsAuditFullCredit(userType = Some(Agent)).detail shouldBe Json.obj(
             "mtditid" -> testMtditid,
-            "nationalInsuranceNumber" -> testNino,
+            "nino" -> testNino,
             "saUtr" -> testSaUtr,
             "credId" -> testCredId,
             "userType" -> "Agent",
