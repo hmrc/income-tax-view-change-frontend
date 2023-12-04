@@ -21,8 +21,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.IncomeSourceType
+import enums.JourneyType.{Add, JourneyType}
+import models.incomeSourceDetails.AddIncomeSourceData
+import play.api.Logger
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.IncomeSourceAddedBackError
@@ -31,17 +34,18 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                                      val authenticate: AuthenticationPredicate,
-                                                      val authorisedFunctions: AuthorisedFunctions,
-                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                      val retrieveBtaNavBar: NavBarPredicate,
-                                                      val cannotGoBackError: IncomeSourceAddedBackError)
-                                                     (implicit val appConfig: FrontendAppConfig,
-                                                      mcc: MessagesControllerComponents,
-                                                      val ec: ExecutionContext,
-                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
+                                                     val authenticate: AuthenticationPredicate,
+                                                     val authorisedFunctions: AuthorisedFunctions,
+                                                     val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                     val retrieveBtaNavBar: NavBarPredicate,
+                                                     val cannotGoBackError: IncomeSourceAddedBackError,
+                                                     val sessionService: SessionService)
+                                                    (implicit val appConfig: FrontendAppConfig,
+                                                     mcc: MessagesControllerComponents,
+                                                     val ec: ExecutionContext,
+                                                     val itvcErrorHandler: ItvcErrorHandler,
+                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -68,6 +72,32 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
               incomeSourceType = incomeSourceType
             )
         }
+  }
+
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+    implicit user =>
+      println("AAAAAAA")
+      handleSubmit(isAgent = false, incomeSourceType)
+  }
+
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
+    implicit request =>
+      implicit user =>
+        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+          implicit mtdItUser =>
+            handleSubmit(isAgent = true, incomeSourceType)
+        }
+  }
+
+  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)) map {
+      case Right(Some(id)) => Redirect(controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id))
+      case _ => Logger("application").error(
+        s"[IncomeSourceAddedBackErrorController][handleSubmit] - Error: Unable to find id in session")
+        if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
+        else itvcErrorHandler.showInternalServerError()
+    }
   }
 }
 

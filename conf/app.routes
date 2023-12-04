@@ -311,6 +311,12 @@ GET          /income-sources/add/cannot-go-back-uk-property-reporting-method    
 GET          /agents/income-sources/add/cannot-go-back-uk-property-reporting-method            controllers.incomeSources.add.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
 GET          /income-sources/add/cannot-go-back-foreign-property-reporting-method              controllers.incomeSources.add.IncomeSourceAddedBackErrorController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/income-sources/add/cannot-go-back-foreign-property-reporting-method       controllers.incomeSources.add.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /income-sources/add/cannot-go-back-business-reporting-method                      controllers.incomeSources.add.IncomeSourceAddedBackErrorController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /agents/income-sources/add/cannot-go-back-business-reporting-method               controllers.incomeSources.add.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /income-sources/add/cannot-go-back-uk-property-reporting-method                   controllers.incomeSources.add.IncomeSourceAddedBackErrorController.submit(incomeSourceType: IncomeSourceType = UkProperty)
+POST         /agents/income-sources/add/cannot-go-back-uk-property-reporting-method            controllers.incomeSources.add.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType: IncomeSourceType = UkProperty)
+POST         /income-sources/add/cannot-go-back-foreign-property-reporting-method              controllers.incomeSources.add.IncomeSourceAddedBackErrorController.submit(incomeSourceType: IncomeSourceType = ForeignProperty)
+POST         /agents/income-sources/add/cannot-go-back-foreign-property-reporting-method       controllers.incomeSources.add.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
 
 # Income Sources - Cease
