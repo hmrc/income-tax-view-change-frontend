@@ -24,7 +24,8 @@ import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class SessionService @Inject()(
@@ -44,6 +45,7 @@ class SessionService @Inject()(
   }
 
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {
+    val x =
     objectOpt match {
       case Some(obj) =>
         val field = obj.getClass.getDeclaredField(key)
@@ -55,10 +57,15 @@ class SessionService @Inject()(
         }
       case None => Right(None)
     }
+    println(s"\ngot: $x\n")
+    x
   }
 
   def getMongoKey(key: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
+
+    println(s"\nuiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) = ${uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString)}\n")
+
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {

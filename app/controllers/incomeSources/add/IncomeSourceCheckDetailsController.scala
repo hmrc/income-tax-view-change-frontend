@@ -159,11 +159,11 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
             Right(CheckBusinessDetailsViewModel(
-              businessName = addIncomeSourceData.businessName,
-              businessStartDate = addIncomeSourceData.dateStarted.map(LocalDate.parse),
-              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate.map(LocalDate.parse)
+              businessName = addIncomeSourceData.businessName.map(_.decryptedValue),
+              businessStartDate = addIncomeSourceData.dateStarted.map(_.decryptedValue).map(LocalDate.parse),
+              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate.map(_.decryptedValue).map(LocalDate.parse)
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
-              businessTrade = addIncomeSourceData.businessTrade
+              businessTrade = addIncomeSourceData.businessTrade.map(_.decryptedValue)
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),
               businessAddressLine1 = address.lines.headOption
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1")),
@@ -171,9 +171,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               businessAddressLine3 = address.lines.lift(2),
               businessAddressLine4 = address.lines.lift(3),
               businessPostalCode = address.postcode,
-              businessCountryCode = addIncomeSourceData.countryCode,
-              incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
-              cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
+              businessCountryCode = addIncomeSourceData.countryCode.map(_.decryptedValue),
+              incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod.map(_.decryptedValue),
+              cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod.map(_.decryptedValue)
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
               showedAccountingMethod = showAccountingMethodPage
             ))

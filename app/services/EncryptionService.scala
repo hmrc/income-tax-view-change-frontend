@@ -18,11 +18,11 @@ package services
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import uk.gov.hmrc.crypto.{Crypted, PlainText, SymmetricCryptoFactory}
+import uk.gov.hmrc.crypto.{Crypted, Decrypter, Encrypter, PlainText, SymmetricCryptoFactory}
 
 @Singleton
 class EncryptionService @Inject()(config: Configuration) {
-  lazy val crypto = SymmetricCryptoFactory.aesCryptoFromConfig("encryption", config.underlying)
+  lazy val crypto: Encrypter with Decrypter = SymmetricCryptoFactory.aesCryptoFromConfig("encryption", config.underlying)
 
   def encryptSessionValue(value: String): String = {
     crypto.encrypt(PlainText(value)).value

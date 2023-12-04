@@ -33,42 +33,42 @@ import java.util.Base64
 case class UIJourneySessionData(
                                  sessionId: String,
                                  journeyType: String,
-                                 addIncomeSourceData: Option[AddIncomeSourceData] = None,
+                                 addIncomeSourceData: Option[SensitiveAddIncomeSourceData] = None,
                                  manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                  ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                  lastUpdated: Instant = Instant.now)
 
 object UIJourneySessionData {
 
-  val reads: Reads[UIJourneySessionData] = {
+  def reads(implicit crypto: Encrypter with Decrypter): Reads[UIJourneySessionData] = {
 
     import play.api.libs.functional.syntax._
 
     (
       (__ \ "sessionId").read[String] and
         (__ \ "journeyType").read[String] and
-        (__ \ "addIncomeSourceData").readNullable[AddIncomeSourceData](AddIncomeSourceData.format) and
+        (__ \ "addIncomeSourceData").readNullable[SensitiveAddIncomeSourceData](SensitiveAddIncomeSourceData.format(crypto)) and
         (__ \ "manageIncomeSourceData").readNullable[ManageIncomeSourceData] and
         (__ \ "ceaseIncomeSourceData").readNullable[CeaseIncomeSourceData] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
       )(UIJourneySessionData.apply _)
   }
 
-  val writes: OWrites[UIJourneySessionData] = {
+  def writes(implicit crypto: Encrypter with Decrypter): OWrites[UIJourneySessionData] = {
 
     import play.api.libs.functional.syntax._
 
     (
       (__ \ "sessionId").write[String] and
         (__ \ "journeyType").write[String] and
-        (__ \ "addIncomeSourceData").writeNullable[AddIncomeSourceData] and
+        (__ \ "addIncomeSourceData").writeNullable[SensitiveAddIncomeSourceData](SensitiveAddIncomeSourceData.format(crypto)) and
         (__ \ "manageIncomeSourceData").writeNullable[ManageIncomeSourceData] and
         (__ \ "ceaseIncomeSourceData").writeNullable[CeaseIncomeSourceData] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
       )(unlift(UIJourneySessionData.unapply))
   }
 
-  implicit val format: OFormat[UIJourneySessionData] = OFormat(reads, writes)
+  def format(implicit crypto: Encrypter with Decrypter): OFormat[UIJourneySessionData] = OFormat(reads, writes)
 }
 
 case class ManageIncomeSourceData(

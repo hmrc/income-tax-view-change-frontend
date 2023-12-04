@@ -18,7 +18,7 @@ package models.incomeSourceDetails
 
 import play.api.Configuration
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{Format, Reads, Writes, __}
+import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
 import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter, SymmetricCryptoFactory}
 import uk.gov.hmrc.crypto.json.JsonEncryption
@@ -142,4 +142,76 @@ object AddIncomeSourceData {
 
     Format(encryptedReads orElse reads, encryptedWrites)
   }
+}
+
+case class SensitiveAddIncomeSourceData(
+                                         businessName: Option[SensitiveString] = None,
+                                         businessTrade: Option[SensitiveString] = None,
+                                         dateStarted: Option[SensitiveString] = None,
+                                         accountingPeriodStartDate: Option[SensitiveString] = None,
+                                         accountingPeriodEndDate: Option[SensitiveString] = None,
+                                         createdIncomeSourceId: Option[SensitiveString] = None,
+                                         address: Option[Address] = None,
+                                         countryCode: Option[SensitiveString] = None,
+                                         incomeSourcesAccountingMethod: Option[SensitiveString] = None
+                                       ) {
+
+  def decrypted: AddIncomeSourceData = AddIncomeSourceData(
+    businessName.map(_.decryptedValue),
+    businessTrade.map(_.decryptedValue),
+    dateStarted.map(_.decryptedValue),
+    accountingPeriodStartDate.map(_.decryptedValue),
+    accountingPeriodEndDate.map(_.decryptedValue),
+    createdIncomeSourceId.map(_.decryptedValue),
+    address,
+    countryCode.map(_.decryptedValue),
+    incomeSourcesAccountingMethod.map(_.decryptedValue)
+  )
+}
+
+object SensitiveAddIncomeSourceData {
+  implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddIncomeSourceData] = {
+
+    implicit val sensitiveString: Format[SensitiveString] = JsonEncryption.sensitiveEncrypterDecrypter(SensitiveString.apply)
+
+    val reads: Reads[SensitiveAddIncomeSourceData] =
+      (
+        (__ \ "businessName").readNullable[SensitiveString] and
+          (__ \ "businessTrade").readNullable[SensitiveString] and
+          (__ \ "dateStarted").readNullable[SensitiveString] and
+          (__ \ "accountingPeriodStartDate").readNullable[SensitiveString] and
+          (__ \ "accountingPeriodEndDate").readNullable[SensitiveString] and
+          (__ \ "createdIncomeSourceId").readNullable[SensitiveString] and
+          (__ \ "address").readNullable[Address] and
+          (__ \ "countryCode").readNullable[SensitiveString] and
+          (__ \ "incomeSourcesAccountingMethod").readNullable[SensitiveString]
+        )(SensitiveAddIncomeSourceData.apply _)
+
+    val writes: Writes[SensitiveAddIncomeSourceData] =
+      (
+        (__ \ "businessName").writeNullable[SensitiveString] and
+          (__ \ "businessTrade").writeNullable[SensitiveString] and
+          (__ \ "dateStarted").writeNullable[SensitiveString] and
+          (__ \ "accountingPeriodStartDate").writeNullable[SensitiveString] and
+          (__ \ "accountingPeriodEndDate").writeNullable[SensitiveString] and
+          (__ \ "createdIncomeSourceId").writeNullable[SensitiveString] and
+          (__ \ "address").writeNullable[Address] and
+          (__ \ "countryCode").writeNullable[SensitiveString] and
+          (__ \ "incomeSourcesAccountingMethod").writeNullable[SensitiveString]
+        )(unlift(SensitiveAddIncomeSourceData.unapply))
+
+    Json.format[SensitiveAddIncomeSourceData]
+  }
+
+  def encrypt(addIncomeSourceData: AddIncomeSourceData): SensitiveAddIncomeSourceData = SensitiveAddIncomeSourceData(
+    addIncomeSourceData.businessName.map(SensitiveString),
+    addIncomeSourceData.businessTrade.map(SensitiveString),
+    addIncomeSourceData.dateStarted.map(SensitiveString),
+    addIncomeSourceData.accountingPeriodStartDate.map(SensitiveString),
+    addIncomeSourceData.accountingPeriodEndDate.map(SensitiveString),
+    addIncomeSourceData.createdIncomeSourceId.map(SensitiveString),
+    addIncomeSourceData.address,
+    addIncomeSourceData.countryCode.map(SensitiveString),
+    addIncomeSourceData.incomeSourcesAccountingMethod.map(SensitiveString)
+  )
 }

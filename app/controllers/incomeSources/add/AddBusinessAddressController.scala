@@ -26,7 +26,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, SensitiveAddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
@@ -106,9 +106,9 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
         val journeyType = JourneyType(Add, SelfEmployment)
         sessionService.getMongo(journeyType.toString).flatMap {
           case Right(Some(sessionData)) =>
-            val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-            val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
-            val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
+            val oldAddIncomeSourceSessionData: SensitiveAddIncomeSourceData = sessionData.addIncomeSourceData.getOrElse(SensitiveAddIncomeSourceData())
+            val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.decrypted.copy(address = Some(value.address), countryCode = Some("GB"))
+            val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(SensitiveAddIncomeSourceData.encrypt(updatedAddIncomeSourceSessionData)))
 
             sessionService.setMongoData(uiJourneySessionData)
 

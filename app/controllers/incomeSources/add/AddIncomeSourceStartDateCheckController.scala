@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
-import models.incomeSourceDetails.UIJourneySessionData
+import models.incomeSourceDetails.{SensitiveAddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -224,13 +224,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     sessionService.getMongo(journeyType.toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceData = sessionData.addIncomeSourceData match {
-          case Some(addIncomeSourceData) => addIncomeSourceData
+          case Some(addIncomeSourceData) => addIncomeSourceData.decrypted
           case None => throw new Exception("addIncomeSourceData field not found in session data")
         }
         val accountingPeriodEndDate = dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
         val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate.toString),
           accountingPeriodEndDate = Some(accountingPeriodEndDate.toString))
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(SensitiveAddIncomeSourceData.encrypt(updatedAddIncomeSourceData)))
 
         sessionService.setMongoData(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(successUrl))
@@ -242,9 +242,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-
-    sessionService.getMongoKey(dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt.map(LocalDate.parse))
+    sessionService.getMongo(journeyType.toString).flatMap {
+      case Right(Some(data)) => Future.successful(data.addIncomeSourceData.map(_.decrypted).flatMap(_.dateStarted).map(LocalDate.parse))
       case Left(ex) => Future.failed(ex)
     }
   }
