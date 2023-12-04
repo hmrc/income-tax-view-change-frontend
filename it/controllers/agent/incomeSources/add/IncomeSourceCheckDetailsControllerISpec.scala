@@ -117,7 +117,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
     businessName = Some(testBusinessName),
     businessTrade = Some(testBusinessTrade),
     dateStarted = Some(testBusinessStartDate),
-    createdIncomeSourceId = Some(testBusinessId),
+    incomeSourceId = Some(testBusinessId),
     address = Some(testBusinessAddress),
     countryCode = Some(testCountryCode),
     accountingPeriodEndDate = Some(testAccountingPeriodEndDate),

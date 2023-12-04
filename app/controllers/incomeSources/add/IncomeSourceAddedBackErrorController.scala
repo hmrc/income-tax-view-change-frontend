@@ -50,7 +50,9 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType)))
+    val postAction = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
+    else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
+    Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
   }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
@@ -77,7 +79,6 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
   def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      println("AAAAAAA")
       handleSubmit(isAgent = false, incomeSourceType)
   }
 
@@ -91,8 +92,9 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)) map {
-      case Right(Some(id)) => Redirect(controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id))
+    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)) map {
+      case Right(Some(id)) =>
+        Redirect(controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id))
       case _ => Logger("application").error(
         s"[IncomeSourceAddedBackErrorController][handleSubmit] - Error: Unable to find id in session")
         if (isAgent) itvcErrorHandlerAgent.showInternalServerError()

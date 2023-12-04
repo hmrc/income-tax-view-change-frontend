@@ -32,7 +32,7 @@
         continueButton: ContinueButton,
         govukWarningText : GovukWarningText)
 
-@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getAddedMessage = @{
     incomeSourceType match {
@@ -51,24 +51,28 @@
     isAgent = isAgent,
     backUrl = None,
     btaNavPartial = user.btaNavPartial) {
+    @formWithCSRF(action = postAction) {
 
-    @h1(msg = messages("cannot-go-back.heading"), classes = "govuk-heading-xl", id = Some("title"))
+        @h1(msg = messages("cannot-go-back.heading"), classes = "govuk-heading-xl", id = Some("title"))
 
-    @govukWarningText(WarningText(
-        iconFallbackText = "Warning",
-        content = Text(messages("cannot-go-back.warning-message"))
-    ))
+        @govukWarningText(WarningText(
+            iconFallbackText = "Warning",
+            content = Text(messages("cannot-go-back.warning-message"))
+        ))
 
-    @p(classes = "govuk-body") {
-        @{getAddedMessage + "."}
-        @messages("cannot-go-back.has-been-added-1")
-        @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link", id = Some("manage-link"))
-        @messages("cannot-go-back.has-been-added-2")
+        @p(classes = "govuk-body") {
+            @{
+                getAddedMessage + "."
+            }
+            @messages("cannot-go-back.has-been-added-1")
+            @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link", id = Some("manage-link"))
+            @messages("cannot-go-back.has-been-added-2")
+        }
+
+        @p(classes = "govuk-body") {
+            @messages("cannot-go-back.need-to-choose")
+        }
+
+        @continueButton()
     }
-
-    @p(classes = "govuk-body") {
-        @messages("cannot-go-back.need-to-choose")
-    }
-
-    @continueButton()
 }

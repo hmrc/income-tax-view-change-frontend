@@ -68,7 +68,7 @@ case class AddIncomeSourceData(
                                 dateStarted: Option[LocalDate] = None,
                                 accountingPeriodStartDate: Option[LocalDate] = None,
                                 accountingPeriodEndDate: Option[LocalDate] = None,
-                                createdIncomeSourceId: Option[String] = None,
+                                incomeSourceId: Option[String] = None,
                                 address: Option[Address] = None,
                                 countryCode: Option[String] = None,
                                 incomeSourcesAccountingMethod: Option[String] = None,
@@ -82,7 +82,7 @@ object AddIncomeSourceData {
   val dateStartedField = "dateStarted"
   val accountingPeriodStartDateField = "accountingPeriodStartDate"
   val accountingPeriodEndDateField = "accountingPeriodEndDate"
-  val createdIncomeSourceIdField: String = "createdIncomeSourceId"
+  val incomeSourceIdField: String = "incomeSourceId"
   val addressField: String = "address"
   val countryCodeField: String = "countryCode"
   val incomeSourcesAccountingMethodField: String = "incomeSourcesAccountingMethod"

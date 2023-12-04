@@ -27,9 +27,9 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceIdField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
@@ -216,9 +216,12 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       case Right(viewModel) =>
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
-            auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
-            Future.successful {
-              Redirect(redirectUrl(isAgent, incomeSourceType, id))
+            sessionService.setMongoKey(AddIncomeSourceData.incomeSourceIdField, id, JourneyType(Add, incomeSourceType)).flatMap{
+              case Right(true) => auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
+                Future.successful {
+                  Redirect(redirectUrl(isAgent, incomeSourceType, id))
+                }
+              case _ => Future.failed(new Error("Failed to add id to session"))
             }
           case Left(ex) =>
             auditingService.extendedAudit(
