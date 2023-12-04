@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedBackError
 
 import javax.inject.Inject
@@ -45,11 +45,11 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
                                                      mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext,
                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
+                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker{
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType), checkAdded = false) {
     val postAction = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
     else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
     Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
