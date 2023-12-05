@@ -71,11 +71,23 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       case Some(cashOrAccrualsFieldMaybe) =>
         if (cashOrAccrualsFieldMaybe.isDefined) {
           val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) "accruals" else "cash"
-          sessionService.setMongoKey(
-            AddIncomeSourceData.incomeSourcesAccountingMethodField,
-            accountingMethodIsAccruals,
-            JourneyType(Add, incomeSourceType)).flatMap {
-            case Right(_) => Future.successful(Redirect(successRedirectUrl))
+          sessionService.getMongoSensitive(JourneyType(Add, SelfEmployment)) flatMap {
+            case Right(Some(data)) =>
+              sessionService.setMongoDataSensitive(
+                data.copy(
+                  addIncomeSourceData =
+                    data.addIncomeSourceData.map(
+                      _.copy(
+                        incomeSourcesAccountingMethod =
+                          Some(accountingMethodIsAccruals)
+                      )
+                    )
+                )
+              ) flatMap {
+                  case true => Future.successful(Redirect(successRedirectUrl))
+                  case false => throw new Exception("Failed to set mongo data")
+                }
+            case Right(_) => throw new Exception("No data retrieved from Mongo")
             case Left(ex) => Future.failed(ex)
           }
         } else {
