@@ -19,6 +19,7 @@ package services
 import auth.MtdItUser
 import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
+import play.api.Logger
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -70,6 +71,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   def getMongoKeyTyped[A](key: String, journeyType: JourneyType)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[A]]] = {
+    Logger("application").debug(s"[SessionService][getMongoKeyTyped]: incomeSourceId: ${key} - ${journeyType}")
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
