@@ -75,9 +75,20 @@ object Message {
 case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Message]] = None, errors: Option[Seq[Message]] = None) {
   // When updating the accepted messages also update the audit for the TaxCalculationDetailsResponseAuditModel
   private val acceptedMessages: Seq[String] = Seq("C22202", "C22203", "C22206", "C22207", "C22210", "C22211",
-    "C22212", "C22213", "C22214", "C22215", "C22216", "C22217", "C22218", "C22223", "C22224")
+    "C22212", "C22213", "C22214", "C22215", "C22216", "C22217", "C22218", "C22223", "C22224", "C22225", "C22226", "C22225_Scottish", "C22226_Scottish")
+
+  def formatMessagesScottishWelshTaxRegime(info: Seq[Message]): Seq[Message] = {
+    val taxRegimeScottish: String = "Scottish Basic Rate"
+    val taxRegimeScottishIds: Seq[String] = Seq("C22225", "C22226")
+
+    info.map {
+      case message if taxRegimeScottishIds.contains(message.id) && message.text.contains(taxRegimeScottish) => message.copy(id = message.id + "_Scottish")
+      case otherMessage => otherMessage
+    }
+  }
+
   val allMessages: Seq[Message] = {
-    info.getOrElse(Seq.empty) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
+    formatMessagesScottishWelshTaxRegime(info.getOrElse(Seq.empty)) ++ warnings.getOrElse(Seq.empty) ++ errors.getOrElse(Seq.empty)
   }
   val errorMessages: Seq[Message] = errors.getOrElse(Seq.empty)
 
