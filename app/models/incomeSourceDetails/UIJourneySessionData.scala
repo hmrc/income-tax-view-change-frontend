@@ -16,19 +16,12 @@
 
 package models.incomeSourceDetails
 
-import controllers.crypto
-import controllers.crypto.CryptoFormat
-import play.api.Configuration
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
-import uk.gov.hmrc.crypto.{Decrypter, Encrypter, SymmetricCryptoFactory}
-import uk.gov.hmrc.crypto.Sensitive.SensitiveString
-import uk.gov.hmrc.crypto.json.JsonEncryption
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.security.SecureRandom
-import java.time.{Instant, LocalDate}
-import java.util.Base64
+import java.time.Instant
 
 case class UIJourneySessionData(
                                  sessionId:               String,
