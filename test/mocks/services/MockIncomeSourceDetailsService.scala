@@ -39,7 +39,7 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
 
   def setupMockGetIncomeSourceDetails()(sources: IncomeSourceDetailsResponse): Unit = {
     when(
-      mockIncomeSourceDetailsService.getIncomeSourceDetails(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(sources))
   }
 

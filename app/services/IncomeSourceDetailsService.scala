@@ -16,15 +16,13 @@
 
 package services
 
-import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserOptionNino}
 import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
-import IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import play.api.Logger
-import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import services.helpers.ActivePropertyBusinessesHelper
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,13 +30,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.util.Try
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
-                                           val cache: AsyncCacheApi) extends ActivePropertyBusinessesHelper {
-  implicit val ec = ExecutionContext.global
+class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector)
+  extends ActivePropertyBusinessesHelper {
+  implicit val ec: ExecutionContextExecutor = ExecutionContext.global
   val cacheExpiry: Duration = Duration(1, "day")
   val emptyAddress = AddressModel(
     addressLine1 = "",
@@ -49,40 +47,9 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     countryCode = ""
   )
 
-  def getCachedIncomeSources(cacheKey: String): Future[Option[IncomeSourceDetailsModel]] = {
-    cache.get(cacheKey).map((incomeSources: Option[JsValue]) => {
-      incomeSources match {
-        case Some(jsonSources) =>
-          Json.fromJson[IncomeSourceDetailsModel](jsonSources) match {
-            case JsSuccess(sources: IncomeSourceDetailsModel, _: JsPath) =>
-              Some(sources)
-            case _ => None
-          }
-        case None => None
-      }
-    })
-  }
-
-  def getIncomeSourceDetails(cacheKey: Option[String] = None)(implicit hc: HeaderCarrier,
-                                                              mtdUser: MtdItUserOptionNino[_]): Future[IncomeSourceDetailsResponse] = {
-    if (cacheKey.isDefined) {
-      getCachedIncomeSources(cacheKey.get).flatMap {
-        case Some(sources: IncomeSourceDetailsModel) =>
-          Logger("application").info(s"incomeSourceDetails cache HIT with ${cacheKey.get}")
-          Future.successful(sources)
-        case None =>
-          Logger("application").info(s"incomeSourceDetails cache MISS with ${cacheKey.get}")
-          businessDetailsConnector.getIncomeSources().flatMap {
-            case incomeSourceDetailsModel: IncomeSourceDetailsModel =>
-              cache.set(cacheKey.get, incomeSourceDetailsModel.sanitise.toJson, cacheExpiry).map(
-                _ => incomeSourceDetailsModel
-              )
-            case error: IncomeSourceDetailsResponse => Future.successful(error)
-          }
-      }
-    } else {
-      businessDetailsConnector.getIncomeSources()
-    }
+  def getIncomeSourceDetails()(implicit hc: HeaderCarrier,
+                               mtdUser: MtdItUserOptionNino[_]): Future[IncomeSourceDetailsResponse] = {
+    businessDetailsConnector.getIncomeSources()
   }
 
   def getAddIncomeSourceViewModel(sources: IncomeSourceDetailsModel): Try[AddIncomeSourcesViewModel] = Try {
@@ -184,19 +151,19 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
                                                   incomeSourceId: IncomeSourceId,
                                                   businessEndDate: String)
   : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = Try {
-      val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
-        .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
+    val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
+      .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
 
-      soleTraderBusinesses.map { business =>
-        CheckCeaseIncomeSourceDetailsViewModel(
-          mkIncomeSourceId(business.incomeSourceId),
-          business.tradingName,
-          business.address,
-          LocalDate.parse(businessEndDate),
-          incomeSourceType = SelfEmployment
-        )
-      }.get
-    }.toEither
+    soleTraderBusinesses.map { business =>
+      CheckCeaseIncomeSourceDetailsViewModel(
+        mkIncomeSourceId(business.incomeSourceId),
+        business.tradingName,
+        business.address,
+        LocalDate.parse(businessEndDate),
+        incomeSourceType = SelfEmployment
+      )
+    }.get
+  }.toEither
 
   def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, businessEndDate: String, incomeSourceType: IncomeSourceType)
   : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
@@ -254,7 +221,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     incomeSourceType match {
       case SelfEmployment =>
         user.incomeSources.businesses
-          .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId )
+          .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
           .flatMap { addedBusiness =>
             for {
               businessName <- addedBusiness.tradingName
@@ -265,8 +232,8 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
         for {
           newlyAddedProperty <- user.incomeSources.properties
             .find(incomeSource =>
-              mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId  && incomeSource.isUkProperty
-          )
+              mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isUkProperty
+            )
           startDate <- newlyAddedProperty.tradingStartDate
         } yield (startDate, None)
       case ForeignProperty =>
