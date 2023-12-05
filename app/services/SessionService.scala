@@ -142,4 +142,8 @@ class SessionService @Inject()(
   def deleteSession(operation: Operation)(implicit hc: HeaderCarrier): Future[Boolean] = {
     uiJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
   }
+
+  def deleteSessionSensitive(operation: Operation)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    uIJourneySensitiveSessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
+  }
 }

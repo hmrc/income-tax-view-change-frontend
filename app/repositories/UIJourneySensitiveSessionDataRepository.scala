@@ -102,4 +102,15 @@ class UIJourneySensitiveSessionDataRepository @Inject()(
       .deleteOne(dataFilter(data))
       .toFuture()
       .map(_ => true)
+
+  def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
+    collection
+      .deleteOne(sessionFilter(sessionId, operation))
+      .toFuture()
+      .map(_ => true)
+
+  private def sessionFilter(sessionId: String, operation: Operation): Bson = {
+    import Filters._
+    and(equal("sessionId", sessionId), regex("journeyType", operation.operationType))
+  }
 }
