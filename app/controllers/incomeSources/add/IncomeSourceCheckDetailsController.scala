@@ -155,8 +155,6 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         uiJourneySessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) =>
 
-            println(s"\naddIncomeSourceData = ${addIncomeSourceData}\n")
-
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
             Right(CheckBusinessDetailsViewModel(
               businessName = addIncomeSourceData.businessName,
