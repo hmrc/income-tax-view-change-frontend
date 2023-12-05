@@ -96,4 +96,10 @@ class UIJourneySensitiveSessionDataRepository @Inject()(
       .toFuture()
       .map(_ => true)
   }
+
+  def deleteOne(data: SensitiveUIJourneySessionData): Future[Boolean] =
+    collection
+      .deleteOne(dataFilter(data))
+      .toFuture()
+      .map(_ => true)
 }

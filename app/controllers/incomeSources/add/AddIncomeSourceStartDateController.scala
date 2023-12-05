@@ -96,21 +96,13 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     withIncomeSourcesFS {
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType.toString).flatMap {
+        sessionService.createSessionSensitive(journeyType.toString).flatMap {
           case true => Future.successful(None)
           case false => throw new Exception("Unable to create session")
         }
       }
 
       getFilledForm(form(messagesPrefix), incomeSourceType, isChange).map { filledForm =>
-
-        print(s"\ngets here\n")
-
-//        println(s"\n ${Await.result(sessionService.getMongo(JourneyType(Add, incomeSourceType).toString), 1000.milli)} \n")
-
-        print(s"\nnot here\n")
-
-
         Ok(
           addIncomeSourceStartDate(
             maybeDecryptedAddIncomeSourceData = None,
@@ -165,13 +157,21 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def handleValidFormData(formData: DateFormElement, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.setMongoKey(dateStartedField, formData.date.toString, journeyType).flatMap {
-      case Right(result) if result => Future.successful {
-        val successUrl = getSuccessUrl(incomeSourceType, isAgent, isChange)
-        Redirect(successUrl)
-      }
-      case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-      case Left(exception) => Future.failed(exception)
+
+    sessionService.setMongoDataSensitive(
+      UIJourneySessionData(
+        addIncomeSourceData =
+          Some(
+            AddIncomeSourceData(
+              dateStarted = Some(formData.date.toString)
+            )
+          ),
+        journeyType = journeyType.toString,
+        sessionId = hc.sessionId.get.value
+      )
+    ) flatMap {
+      case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
+      case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
     }
   }
 
@@ -212,9 +212,17 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongoKey(dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt.map(LocalDate.parse))
-      case Left(ex) => Future.failed(ex)
+    sessionService.getMongoSensitive(journeyType)
+      .flatMap {
+        case Right(Some(UIJourneySessionData(
+          _,
+          _,
+          Some(AddIncomeSourceData(_, _, dateStarted, _, _, _, _, _, _)),
+          _,
+          _,
+          _))) => Future.successful(dateStarted.map(LocalDate.parse))
+        case Right(_) => throw new Exception(s"empty field: dateStarted")
+        case Left(ex) => Future.failed(ex)
     }
   }
 

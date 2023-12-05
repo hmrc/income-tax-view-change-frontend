@@ -150,7 +150,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val showAccountingMethodPage: Boolean = userActiveBusinesses.isEmpty
     val errorTracePrefix = "[IncomeSourceCheckDetailsController][getBusinessModel]:"
-    sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).map {
+    sessionService.getMongoSensitive(JourneyType(Add, SelfEmployment)).map {
       case Right(Some(uiJourneySessionData)) =>
         uiJourneySessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) =>
@@ -159,11 +159,11 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
             Right(CheckBusinessDetailsViewModel(
-              businessName = addIncomeSourceData.businessName.map(_.decryptedValue),
-              businessStartDate = addIncomeSourceData.dateStarted.map(_.decryptedValue).map(LocalDate.parse),
-              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate.map(_.decryptedValue).map(LocalDate.parse)
+              businessName = addIncomeSourceData.businessName,
+              businessStartDate = addIncomeSourceData.dateStarted.map(LocalDate.parse),
+              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate.map(LocalDate.parse)
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
-              businessTrade = addIncomeSourceData.businessTrade.map(_.decryptedValue)
+              businessTrade = addIncomeSourceData.businessTrade
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),
               businessAddressLine1 = address.lines.headOption
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessAddressLine1")),
@@ -171,9 +171,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               businessAddressLine3 = address.lines.lift(2),
               businessAddressLine4 = address.lines.lift(3),
               businessPostalCode = address.postcode,
-              businessCountryCode = addIncomeSourceData.countryCode.map(_.decryptedValue),
-              incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod.map(_.decryptedValue),
-              cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod.map(_.decryptedValue)
+              businessCountryCode = addIncomeSourceData.countryCode,
+              incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
+              cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix incomeSourcesAccountingMethod")),
               showedAccountingMethod = showAccountingMethodPage
             ))
@@ -219,7 +219,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
-            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType)).flatMap { _ =>
+            sessionService.deleteMongoDataSensitive(JourneyType(Add, incomeSourceType)).flatMap { _ =>
               Future.successful {
                 Redirect(redirectUrl(isAgent, incomeSourceType, id))
               }

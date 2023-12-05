@@ -42,8 +42,8 @@ class SessionService @Inject()(
     }
   }
 
-  def getMongoSensitive(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
-    uIJourneySensitiveSessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+  def getMongoSensitive(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
+    uIJourneySensitiveSessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: SensitiveUIJourneySessionData) =>
         Right(Some(data.decrypted))
       case None => Right(None)
@@ -54,27 +54,26 @@ class SessionService @Inject()(
     setMongoData(UIJourneySessionData(hc.sessionId.get.value, journeyType, None))
   }
 
+  def createSessionSensitive(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    setMongoDataSensitive(UIJourneySessionData(hc.sessionId.get.value, journeyType, None))
+  }
+
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {
-    val x =
-      objectOpt match {
-        case Some(obj) =>
-          val field = obj.getClass.getDeclaredField(key)
-          field.setAccessible(true)
-          try {
-            Right(field.get(obj).asInstanceOf[Option[A]])
-          } catch {
-            case err: ClassCastException => Left(err)
-          }
-        case None => Right(None)
-      }
-    println(s"\ngot: $x\n")
-    x
+    objectOpt match {
+      case Some(obj) =>
+        val field = obj.getClass.getDeclaredField(key)
+        field.setAccessible(true)
+        try {
+          Right(field.get(obj).asInstanceOf[Option[A]])
+        } catch {
+          case err: ClassCastException => Left(err)
+        }
+      case None => Right(None)
+    }
   }
 
   def getMongoKey(key: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
-
-    println(s"\nuiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) = ${uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString)}\n")
 
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
@@ -105,7 +104,7 @@ class SessionService @Inject()(
     uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
-  def setMongoSensitiveData(uiJourneySessionData: UIJourneySessionData)
+  def setMongoDataSensitive(uiJourneySessionData: UIJourneySessionData)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     uIJourneySensitiveSessionDataRepository.set(uiJourneySessionData.encrypted)
   }
@@ -133,6 +132,11 @@ class SessionService @Inject()(
   def deleteMongoData(journeyType: JourneyType)
                      (implicit hc: HeaderCarrier): Future[Boolean] = {
     uiJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
+  }
+
+  def deleteMongoDataSensitive(journeyType: JourneyType)
+                              (implicit hc: HeaderCarrier): Future[Boolean] = {
+    uIJourneySensitiveSessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString).encrypted)
   }
 
   def deleteSession(operation: Operation)(implicit hc: HeaderCarrier): Future[Boolean] = {

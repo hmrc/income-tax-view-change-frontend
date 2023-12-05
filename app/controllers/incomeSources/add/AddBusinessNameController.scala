@@ -73,20 +73,22 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessName(isChange: Boolean)
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoKey(AddIncomeSourceData.businessNameField, journeyType).flatMap {
-        case Right(nameOpt) => Future.successful(nameOpt)
+      sessionService.getMongoSensitive(journeyType).flatMap {
+        case Right(Some(data)) => Future.successful(data.addIncomeSourceData.flatMap(_.businessName))
+        case Right(_) => throw new Exception("No data retrieved from Mongo")
         case Left(ex) => Future.failed(ex)
       }
     else
-      sessionService.createSession(journeyType.toString).flatMap {
+      sessionService.createSessionSensitive(journeyType.toString).flatMap {
         case true => Future.successful(None)
         case false => Future.failed(new Exception("Unable to create session"))
       }
   }
 
   private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
-    sessionService.getMongoKey(AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-      case Right(nameOpt) => Future.successful(nameOpt)
+    sessionService.getMongoSensitive(journeyType).flatMap {
+      case Right(Some(data)) => Future.successful(data.addIncomeSourceData.flatMap(_.businessTrade))
+      case Right(_) => throw new Exception("No data retrieved from Mongo")
       case Left(ex) => Future.failed(ex)
     }
   }
@@ -195,16 +197,24 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                   useFallbackLink = true))
               },
             formData => {
-              sessionService.setMongoSensitiveData(
-                UIJourneySessionData(
-                  addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(formData.name))),
-                  journeyType = journeyType.toString,
-                  sessionId = hc.sessionId.get.value
-                )
-              ).flatMap {
-                  case true => Future.successful(Redirect(redirectLocal))
-                  case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
-                }
+              sessionService.getMongoSensitive(journeyType).flatMap {
+                case Right(Some(data)) =>
+                  sessionService.setMongoDataSensitive(
+                    data.copy(
+                      addIncomeSourceData =
+                        data.addIncomeSourceData.map(
+                          _.copy(
+                            businessName = Some(formData.name)
+                          )
+                        )
+                    )
+                  ).flatMap {
+                    case true => Future.successful(Redirect(redirectLocal))
+                    case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+                  }
+                case Right(_) => throw new Exception("No data retrieved from Mongo")
+                case Left(ex) => Future.failed(ex)
+              }
             }
           )
       }
