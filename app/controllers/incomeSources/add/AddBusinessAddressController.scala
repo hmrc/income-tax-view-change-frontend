@@ -108,7 +108,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData: SensitiveAddIncomeSourceData = sessionData.addIncomeSourceData.getOrElse(SensitiveAddIncomeSourceData())
             val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.decrypted.copy(address = Some(value.address), countryCode = Some("GB"))
-            val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(SensitiveAddIncomeSourceData.encrypt(updatedAddIncomeSourceSessionData)))
+            val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData.encrypted))
 
             sessionService.setMongoData(uiJourneySessionData)
 

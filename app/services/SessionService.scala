@@ -18,9 +18,9 @@ package services
 
 import auth.MtdItUser
 import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
-import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
 import play.api.mvc.{RequestHeader, Result}
-import repositories.UIJourneySessionDataRepository
+import repositories.{UIJourneySensitiveSessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -30,12 +30,22 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 @Singleton
 class SessionService @Inject()(
                                 encryptionService: EncryptionService,
-                                uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
+                                uiJourneySessionDataRepository: UIJourneySessionDataRepository,
+                                uIJourneySensitiveSessionDataRepository: UIJourneySensitiveSessionDataRepository
+                              ) {
 
   def getMongo(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
       case Some(data: UIJourneySessionData) =>
         Right(Some(data))
+      case None => Right(None)
+    }
+  }
+
+  def getMongoSensitive(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
+    uIJourneySensitiveSessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+      case Some(data: SensitiveUIJourneySessionData) =>
+        Right(Some(data.decrypted))
       case None => Right(None)
     }
   }
@@ -46,17 +56,17 @@ class SessionService @Inject()(
 
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {
     val x =
-    objectOpt match {
-      case Some(obj) =>
-        val field = obj.getClass.getDeclaredField(key)
-        field.setAccessible(true)
-        try {
-          Right(field.get(obj).asInstanceOf[Option[A]])
-        } catch {
-          case err: ClassCastException => Left(err)
-        }
-      case None => Right(None)
-    }
+      objectOpt match {
+        case Some(obj) =>
+          val field = obj.getClass.getDeclaredField(key)
+          field.setAccessible(true)
+          try {
+            Right(field.get(obj).asInstanceOf[Option[A]])
+          } catch {
+            case err: ClassCastException => Left(err)
+          }
+        case None => Right(None)
+      }
     println(s"\ngot: $x\n")
     x
   }
@@ -69,7 +79,7 @@ class SessionService @Inject()(
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
-          case Add => getKeyFromObject[String](data.addIncomeSourceData, key).map(_.map(encryptionService.decryptSessionValue))   // DECRYPT VALUE
+          case Add => getKeyFromObject[String](data.addIncomeSourceData, key).map(_.map(encryptionService.decryptSessionValue)) // DECRYPT VALUE
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
         }
@@ -95,6 +105,11 @@ class SessionService @Inject()(
     uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
+  def setMongoSensitiveData(uiJourneySessionData: UIJourneySessionData)
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    uIJourneySensitiveSessionDataRepository.set(uiJourneySessionData.encrypted)
+  }
+
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
@@ -106,7 +121,7 @@ class SessionService @Inject()(
     uiJourneySessionDataRepository.updateData(
       uiJourneySessionData,
       jsonAccessorPath,
-      encryptionService.encryptSessionValue(value)  // ENCRYPT VALUE
+      encryptionService.encryptSessionValue(value) // ENCRYPT VALUE
     ).map(
       _.wasAcknowledged() match {
         case true => Right(true)

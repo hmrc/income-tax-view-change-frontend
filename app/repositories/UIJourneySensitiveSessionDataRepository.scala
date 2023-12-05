@@ -18,16 +18,16 @@ package repositories
 
 import config.FrontendAppConfig
 import enums.JourneyType.Operation
-import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
+import models.incomeSourceDetails.{SensitiveAddIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.libs.json.Format
+import services.EncryptionService
 import uk.gov.hmrc.mongo.MongoComponent
-import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
-import Filters._
+import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
@@ -35,15 +35,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UIJourneySessionDataRepository @Inject()(
+class UIJourneySensitiveSessionDataRepository @Inject()(
                                                 mongoComponent: MongoComponent,
                                                 appConfig: FrontendAppConfig,
+                                                encryptionService: EncryptionService,
                                                 clock: Clock
                                               )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[UIJourneySessionData](
-    collectionName = "ui-journey-session-data",
+  extends PlayMongoRepository[SensitiveUIJourneySessionData](
+    collectionName = "ui-journey-sensitive-session-data",
     mongoComponent = mongoComponent,
-    domainFormat = UIJourneySessionData.format,
+    domainFormat = SensitiveUIJourneySessionData.format(encryptionService.crypto),
     indexes = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),
@@ -52,22 +53,20 @@ class UIJourneySessionDataRepository @Inject()(
           .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
       )
     ),
-    replaceIndexes = true
+    replaceIndexes = true,
+    extraCodecs      = Seq(
+      Codecs.playFormatCodec(SensitiveAddIncomeSourceData.sensitiveStringFormat(encryptionService.crypto))
+    )
   ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
-  private def dataFilter(data: UIJourneySessionData): Bson = {
+  private def dataFilter(data: SensitiveUIJourneySessionData): Bson = {
     import Filters._
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
   }
 
-  private def sessionFilter(sessionId: String, operation: Operation): Bson = {
-    import Filters._
-    and(equal("sessionId", sessionId), regex("journeyType", operation.operationType))
-  }
-
-  def keepAlive(data: UIJourneySessionData): Future[Boolean] =
+  def keepAlive(data: SensitiveUIJourneySessionData): Future[Boolean] =
     collection
       .updateOne(
         filter = dataFilter(data),
@@ -76,8 +75,8 @@ class UIJourneySessionDataRepository @Inject()(
       .toFuture()
       .map(_ => true)
 
-  def get(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
-    val data = UIJourneySessionData(sessionId, journeyType)
+  def get(sessionId: String, journeyType: String): Future[Option[SensitiveUIJourneySessionData]] = {
+    val data = SensitiveUIJourneySessionData(sessionId, journeyType)
     keepAlive(data).flatMap {
       _ =>
         collection
@@ -86,7 +85,7 @@ class UIJourneySessionDataRepository @Inject()(
     }
   }
 
-  def set(data: UIJourneySessionData): Future[Boolean] = {
+  def set(data: SensitiveUIJourneySessionData): Future[Boolean] = {
     val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
     collection
       .replaceOne(
@@ -97,23 +96,4 @@ class UIJourneySessionDataRepository @Inject()(
       .toFuture()
       .map(_ => true)
   }
-
-  def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
-    collection.updateOne(
-      filter = dataFilter(data),
-      update = Document("$set" -> Document(key -> value))
-    ).toFuture()
-  }
-
-  def deleteOne(data: UIJourneySessionData): Future[Boolean] =
-    collection
-      .deleteOne(dataFilter(data))
-      .toFuture()
-      .map(_ => true)
-
-  def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
-    collection
-      .deleteOne(sessionFilter(sessionId, operation))
-      .toFuture()
-      .map(_ => true)
 }

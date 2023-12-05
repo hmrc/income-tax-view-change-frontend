@@ -27,6 +27,7 @@ import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
+import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -105,13 +106,14 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
         print(s"\ngets here\n")
 
-        println(s"\n ${Await.result(sessionService.getMongo(JourneyType(Add, incomeSourceType).toString), 1000.milli)} \n")
+//        println(s"\n ${Await.result(sessionService.getMongo(JourneyType(Add, incomeSourceType).toString), 1000.milli)} \n")
 
         print(s"\nnot here\n")
 
 
         Ok(
           addIncomeSourceStartDate(
+            maybeDecryptedAddIncomeSourceData = None,
             form = filledForm,
             isAgent = isAgent,
             messagesPrefix = messagesPrefix,
@@ -142,6 +144,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         formWithErrors =>
           Future.successful(BadRequest(
             addIncomeSourceStartDate(
+              maybeDecryptedAddIncomeSourceData = None,
               isAgent = isAgent,
               form = formWithErrors,
               backUrl = getBackUrl(incomeSourceType, isAgent, isChange),

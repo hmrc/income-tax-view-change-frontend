@@ -31,44 +31,74 @@ import java.time.{Instant, LocalDate}
 import java.util.Base64
 
 case class UIJourneySessionData(
-                                 sessionId: String,
-                                 journeyType: String,
-                                 addIncomeSourceData: Option[SensitiveAddIncomeSourceData] = None,
-                                 manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
-                                 ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
-                                 lastUpdated: Instant = Instant.now)
+                                 sessionId:               String,
+                                 journeyType:             String,
+                                 addIncomeSourceData:     Option[AddIncomeSourceData] = None,
+                                 manageIncomeSourceData:  Option[ManageIncomeSourceData] = None,
+                                 ceaseIncomeSourceData:   Option[CeaseIncomeSourceData] = None,
+                                 lastUpdated:             Instant = Instant.now
+                               ) {
+
+  def encrypted: SensitiveUIJourneySessionData =
+    SensitiveUIJourneySessionData(
+      sessionId,
+      journeyType,
+      addIncomeSourceData.map(_.encrypted),
+      manageIncomeSourceData,
+      ceaseIncomeSourceData,
+      lastUpdated
+    )
+}
 
 object UIJourneySessionData {
 
-  def reads(implicit crypto: Encrypter with Decrypter): Reads[UIJourneySessionData] = {
+  implicit val format: OFormat[UIJourneySessionData] = {
 
-    import play.api.libs.functional.syntax._
-
-    (
-      (__ \ "sessionId").read[String] and
-        (__ \ "journeyType").read[String] and
-        (__ \ "addIncomeSourceData").readNullable[SensitiveAddIncomeSourceData] and
-        (__ \ "manageIncomeSourceData").readNullable[ManageIncomeSourceData] and
-        (__ \ "ceaseIncomeSourceData").readNullable[CeaseIncomeSourceData] and
-        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-      )(UIJourneySessionData.apply _)
+      ( (__ \ "sessionId"             ).format[String]
+      ~ (__ \ "journeyType"           ).format[String]
+      ~ (__ \ "addIncomeSourceData"   ).formatNullable[AddIncomeSourceData]
+      ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
+      ~ (__ \ "ceaseIncomeSourceData" ).formatNullable[CeaseIncomeSourceData]
+      ~ (__ \ "lastUpdated"           ).format(MongoJavatimeFormats.instantFormat)
+      )(
+        UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
+      )
   }
+}
 
-  def writes(implicit crypto: Encrypter with Decrypter): OWrites[UIJourneySessionData] = {
+case class SensitiveUIJourneySessionData(
+                                          sessionId: String,
+                                          journeyType: String,
+                                          addIncomeSourceData: Option[SensitiveAddIncomeSourceData] = None,
+                                          manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
+                                          ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
+                                          lastUpdated: Instant = Instant.now
+                                        ) {
+  def decrypted: UIJourneySessionData =
+    UIJourneySessionData(
+      sessionId,
+      journeyType,
+      addIncomeSourceData.map(_.decrypted),
+      manageIncomeSourceData,
+      ceaseIncomeSourceData,
+      lastUpdated
+    )
+}
 
-    import play.api.libs.functional.syntax._
+object SensitiveUIJourneySessionData {
 
-    (
-      (__ \ "sessionId").write[String] and
-        (__ \ "journeyType").write[String] and
-        (__ \ "addIncomeSourceData").writeNullable[SensitiveAddIncomeSourceData](SensitiveAddIncomeSourceData.format(crypto)) and
-        (__ \ "manageIncomeSourceData").writeNullable[ManageIncomeSourceData] and
-        (__ \ "ceaseIncomeSourceData").writeNullable[CeaseIncomeSourceData] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-      )(unlift(UIJourneySessionData.unapply))
+  implicit def format(implicit crypto: Encrypter with Decrypter): OFormat[SensitiveUIJourneySessionData] = {
+
+      ( (__ \ "sessionId"             ).format[String]
+      ~ (__ \ "journeyType"           ).format[String]
+      ~ (__ \ "addIncomeSourceData"   ).formatNullable[SensitiveAddIncomeSourceData]
+      ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
+      ~ (__ \ "ceaseIncomeSourceData" ).formatNullable[CeaseIncomeSourceData]
+      ~ (__ \ "lastUpdated"           ).format(MongoJavatimeFormats.instantFormat)
+      )(
+        SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
+      )
   }
-
-  def format(implicit crypto: Encrypter with Decrypter): OFormat[UIJourneySessionData] = OFormat(reads, writes)
 }
 
 case class ManageIncomeSourceData(

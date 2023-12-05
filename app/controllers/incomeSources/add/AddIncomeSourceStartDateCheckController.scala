@@ -230,7 +230,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         val accountingPeriodEndDate = dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
         val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate.toString),
           accountingPeriodEndDate = Some(accountingPeriodEndDate.toString))
-        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(SensitiveAddIncomeSourceData.encrypt(updatedAddIncomeSourceData)))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData.encrypted))
 
         sessionService.setMongoData(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(successUrl))
@@ -242,8 +242,18 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongoKey(dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt.map(LocalDate.parse))
+    sessionService.getMongo(journeyType.toString).flatMap {
+      case Right(dateOpt) =>
+        Future.successful(
+          dateOpt.flatMap(
+            _.addIncomeSourceData
+              .flatMap(
+                _.decrypted
+                  .dateStarted
+                  .map(LocalDate.parse)
+              )
+          )
+        )
       case Left(ex) => Future.failed(ex)
     }
   }

@@ -24,7 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -195,12 +195,16 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                   useFallbackLink = true))
               },
             formData => {
-              val redirect = Redirect(redirectLocal)
-              sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
-                case Right(result) if result => Future.successful(redirect)
-                case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-                case Left(exception) => Future.failed(exception)
-              }
+              sessionService.setMongoSensitiveData(
+                UIJourneySessionData(
+                  addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(formData.name))),
+                  journeyType = journeyType.toString,
+                  sessionId = hc.sessionId.get.value
+                )
+              ).flatMap {
+                  case true => Future.successful(Redirect(redirectLocal))
+                  case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+                }
             }
           )
       }
