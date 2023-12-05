@@ -150,7 +150,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val showAccountingMethodPage: Boolean = userActiveBusinesses.isEmpty
     val errorTracePrefix = "[IncomeSourceCheckDetailsController][getBusinessModel]:"
-    sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).map {
+    sessionService.getMongoSensitive(JourneyType(Add, SelfEmployment).toString).map {
       case Right(Some(uiJourneySessionData)) =>
         uiJourneySessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) =>

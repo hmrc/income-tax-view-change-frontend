@@ -110,10 +110,10 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
         print(s"\nnot here\n")
 
-
         Ok(
           addIncomeSourceStartDate(
-            maybeDecryptedAddIncomeSourceData = None,
+            maybeEncryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(incomeSourceType),
+            maybeDecryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(incomeSourceType).map(_.decrypted),
             form = filledForm,
             isAgent = isAgent,
             messagesPrefix = messagesPrefix,
@@ -144,7 +144,8 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         formWithErrors =>
           Future.successful(BadRequest(
             addIncomeSourceStartDate(
-              maybeDecryptedAddIncomeSourceData = None,
+              maybeEncryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(incomeSourceType),
+              maybeDecryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(incomeSourceType).map(_.decrypted),
               isAgent = isAgent,
               form = formWithErrors,
               backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
@@ -243,4 +244,21 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
     }).url
   }
+
+
+  def maybeEncryptedAddIncomeSourceData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[SensitiveAddIncomeSourceData] =
+    Await.result(
+      sessionService
+        .getMongo(JourneyType(Add, incomeSourceType).toString)
+        .map(_.toOption)
+        .map(
+          _.map(
+            _.map(
+              _.addIncomeSourceData
+                .map(_.encrypted)
+            )
+          )
+        ),
+      1000.milli
+    ).flatten.flatten
 }

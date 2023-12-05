@@ -18,6 +18,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
+@import models.incomeSourceDetails.AddIncomeSourceData
+@import models.incomeSourceDetails.SensitiveAddIncomeSourceData
 
 @this(
         mainTemplate: unifiedLayout,
@@ -28,6 +30,8 @@
 )
 
 @(
+        maybeEncryptedAddIncomeSourceData: Option[SensitiveAddIncomeSourceData],
+        maybeDecryptedAddIncomeSourceData: Option[AddIncomeSourceData],
         form: Form[_],
         postAction: Call,
         backUrl: String,
@@ -43,6 +47,9 @@
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
+
+    <a>maybeEncryptedAddIncomeSourceData: @maybeEncryptedAddIncomeSourceData</a>
+    <a>maybeDecryptedAddIncomeSourceData: @maybeDecryptedAddIncomeSourceData</a>
 
     @formWithCSRF(action = postAction, Symbol("id") -> "add-income-source-start-date-check-form") {
 

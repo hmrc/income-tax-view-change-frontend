@@ -20,6 +20,7 @@
 @import forms.models.DateFormElement
 @import views.html.helpers.injected.ErrorSummary
 @import models.incomeSourceDetails.AddIncomeSourceData
+@import models.incomeSourceDetails.SensitiveAddIncomeSourceData
 
 @this(
         mainTemplate: unifiedLayout,
@@ -30,6 +31,7 @@
 )
 
 @(
+        maybeEncryptedAddIncomeSourceData: Option[SensitiveAddIncomeSourceData],
         maybeDecryptedAddIncomeSourceData: Option[AddIncomeSourceData],
         form: Form[DateFormElement],
         postAction: Call,
@@ -51,6 +53,7 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
+    <a>maybeEncryptedAddIncomeSourceData: @maybeEncryptedAddIncomeSourceData</a>
     <a>maybeDecryptedAddIncomeSourceData: @maybeDecryptedAddIncomeSourceData</a>
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {

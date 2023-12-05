@@ -24,6 +24,8 @@
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.InputHelper
 @import play.twirl.api.HtmlFormat
+@import models.incomeSourceDetails.SensitiveAddIncomeSourceData
+@import models.incomeSourceDetails.AddIncomeSourceData
 
 @this(
     mainTemplate: unifiedLayout,
@@ -40,7 +42,9 @@
     govukInput : GovukInput
 )
 
-@(businessNameForm: Form[BusinessNameForm],
+@(
+    maybeEncryptedAddIncomeSourceData: Option[SensitiveAddIncomeSourceData],
+    maybeDecryptedAddIncomeSourceData: Option[AddIncomeSourceData],    businessNameForm: Form[BusinessNameForm],
     isAgent: Boolean,
     postAction: Call,
     backUrl: String,
@@ -65,6 +69,9 @@ isAgent = isAgent,
 useFallbackBackLink = useFallbackLink,
 backUrl = Some(backUrl),
 btaNavPartial = user.btaNavPartial) {
+
+    <a>maybeEncryptedAddIncomeSourceData: @maybeEncryptedAddIncomeSourceData</a>
+    <a>maybeDecryptedAddIncomeSourceData: @maybeDecryptedAddIncomeSourceData</a>
 
     @errorSummary(
         form = businessNameForm

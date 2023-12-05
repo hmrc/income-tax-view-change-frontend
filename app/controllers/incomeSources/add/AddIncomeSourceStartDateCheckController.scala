@@ -38,7 +38,8 @@ import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class AddIncomeSourceStartDateCheckController @Inject()(authenticate: AuthenticationPredicate,
@@ -93,6 +94,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           Future.successful {
             Ok(
               addIncomeSourceStartDateCheckView(
+                maybeEncryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(incomeSourceType),
+                maybeDecryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(incomeSourceType).map(_.decrypted),
                 isAgent = isAgent,
                 backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
                 form = form(incomeSourceType.addStartDateCheckMessagesPrefix),
@@ -128,6 +131,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
               Future.successful {
                 BadRequest(
                   addIncomeSourceStartDateCheckView(
+                    maybeEncryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(incomeSourceType),
+                    maybeDecryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(incomeSourceType).map(_.decrypted),
                     isAgent = isAgent,
                     form = formWithErrors,
                     incomeSourceStartDate = longDate(startDate).toLongDate,
@@ -272,4 +277,20 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
     }).url
   }
+
+  def maybeEncryptedAddIncomeSourceData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[SensitiveAddIncomeSourceData] =
+    Await.result(
+      sessionService
+        .getMongo(JourneyType(Add, incomeSourceType).toString)
+        .map(_.toOption)
+        .map(
+          _.map(
+            _.map(
+              _.addIncomeSourceData
+                .map(_.encrypted)
+            )
+          )
+        ),
+      1000.milli
+    ).flatten.flatten
 }

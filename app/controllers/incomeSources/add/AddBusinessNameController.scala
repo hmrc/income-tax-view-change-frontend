@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, UIJourneySessionData}
@@ -34,7 +34,8 @@ import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
@@ -125,7 +126,10 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
           val submitAction = getSubmitAction(isAgent, isChange)
 
           Future.successful {
-            Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
+            Ok(addBusinessView(
+              maybeEncryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(SelfEmployment),
+              maybeDecryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(SelfEmployment).map(_.decrypted),
+              filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
           }
       }.recover {
         case ex =>
@@ -188,23 +192,22 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
           BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeOpt).fold(
             formWithErrors =>
               Future.successful {
-                BadRequest(addBusinessView(formWithErrors,
+                BadRequest(addBusinessView(
+                  maybeEncryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(SelfEmployment),
+                  maybeDecryptedAddIncomeSourceData = maybeEncryptedAddIncomeSourceData(SelfEmployment).map(_.decrypted),
+                  formWithErrors,
                   isAgent,
                   submitActionLocal,
                   backUrlLocal,
                   useFallbackLink = true))
               },
             formData => {
-              sessionService.setMongoSensitiveData(
-                UIJourneySessionData(
-                  addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(formData.name))),
-                  journeyType = journeyType.toString,
-                  sessionId = hc.sessionId.get.value
-                )
-              ).flatMap {
-                  case true => Future.successful(Redirect(redirectLocal))
-                  case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
-                }
+              val redirect = Redirect(redirectLocal)
+              sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
+                case Right(result) if result => Future.successful(redirect)
+                case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
+                case Left(exception) => Future.failed(exception)
+              }
             }
           )
       }
@@ -239,4 +242,20 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
               )
           }
     }
+
+  def maybeEncryptedAddIncomeSourceData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[SensitiveAddIncomeSourceData] =
+    Await.result(
+      sessionService
+        .getMongo(JourneyType(Add, incomeSourceType).toString)
+        .map(_.toOption)
+        .map(
+          _.map(
+            _.map(
+              _.addIncomeSourceData
+                .map(_.encrypted)
+            )
+          )
+        ),
+      1000.milli
+    ).flatten.flatten
 }
