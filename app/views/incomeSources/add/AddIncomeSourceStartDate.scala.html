@@ -19,7 +19,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import forms.models.DateFormElement
 @import views.html.helpers.injected.ErrorSummary
-@import models.incomeSourceDetails.AddIncomeSourceData
 
 @this(
         mainTemplate: unifiedLayout,
@@ -30,7 +29,6 @@
 )
 
 @(
-        maybeDecryptedAddIncomeSourceData: Option[AddIncomeSourceData],
         form: Form[DateFormElement],
         postAction: Call,
         backUrl: String,
@@ -50,8 +48,6 @@
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
-
-    <a>maybeDecryptedAddIncomeSourceData: @maybeDecryptedAddIncomeSourceData</a>
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
 

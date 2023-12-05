@@ -18,7 +18,7 @@ package repositories
 
 import config.FrontendAppConfig
 import enums.JourneyType.Operation
-import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
+import models.incomeSourceDetails.UIJourneySessionData
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
@@ -27,7 +27,6 @@ import play.api.libs.json.Format
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
-import Filters._
 
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
@@ -87,7 +86,9 @@ class UIJourneySessionDataRepository @Inject()(
   }
 
   def set(data: UIJourneySessionData): Future[Boolean] = {
+
     val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
+
     collection
       .replaceOne(
         filter = dataFilter(data),

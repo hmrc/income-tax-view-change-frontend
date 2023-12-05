@@ -16,16 +16,13 @@
 
 package services
 
-import auth.MtdItUser
 import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
-import play.api.mvc.{RequestHeader, Result}
 import repositories.{UIJourneySensitiveSessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SessionService @Inject()(

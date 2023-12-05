@@ -17,7 +17,7 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.{FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -26,8 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
-import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
-import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -40,8 +39,7 @@ import views.html.incomeSources.add.AddIncomeSourceStartDate
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationPredicate,
@@ -105,7 +103,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       getFilledForm(form(messagesPrefix), incomeSourceType, isChange).map { filledForm =>
         Ok(
           addIncomeSourceStartDate(
-            maybeDecryptedAddIncomeSourceData = None,
             form = filledForm,
             isAgent = isAgent,
             messagesPrefix = messagesPrefix,
@@ -117,7 +114,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     }.recover {
       case ex =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        println(s"\nERROR: ${ex}\n")
         Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest][${incomeSourceType.key}] ${ex.getMessage}")
         errorHandler.showInternalServerError()
     }
@@ -136,7 +132,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         formWithErrors =>
           Future.successful(BadRequest(
             addIncomeSourceStartDate(
-              maybeDecryptedAddIncomeSourceData = None,
               isAgent = isAgent,
               form = formWithErrors,
               backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
