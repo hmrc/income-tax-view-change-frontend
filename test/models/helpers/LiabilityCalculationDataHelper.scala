@@ -720,6 +720,15 @@ trait LiabilityCalculationDataHelper {
     Message("C55009", "updates cannot include gaps.")
   ))
 
+  val InfoMessagesScottishTaxRegime = Some(List(
+    Message("C22225", "Your tax has been reduced because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."),
+    Message("C22226", "Your tax has increased because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."),
+  ))
+
+  val InfoMessagesWelshTaxRegime = Some(List(
+    Message("C22225", "Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."),
+    Message("C22226", "Your tax has increased because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."),
+  ))
 
 }
 

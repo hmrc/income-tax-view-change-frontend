@@ -175,5 +175,19 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         Message("C55009", "")
       )
     }
+
+    "Scottish tax regime info messages" in {
+      Messages(info = InfoMessagesScottishTaxRegime).formatMessagesScottishWelshTaxRegime(InfoMessagesScottishTaxRegime.get.toSeq) shouldBe Seq(
+        Message("C22225_Scottish", "Your tax has been reduced because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."),
+        Message("C22226_Scottish", "Your tax has increased because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."),
+      )
+    }
+
+    "Welsh tax regime info messages" in {
+      Messages(info = InfoMessagesWelshTaxRegime).formatMessagesScottishWelshTaxRegime(InfoMessagesWelshTaxRegime.get.toSeq) shouldBe Seq(
+        Message("C22225", "Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."),
+        Message("C22226", "Your tax has increased because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."),
+      )
+    }
   }
 }
