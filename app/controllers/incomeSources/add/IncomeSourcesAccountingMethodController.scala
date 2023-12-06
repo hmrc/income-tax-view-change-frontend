@@ -59,19 +59,22 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                incomeSourceType: IncomeSourceType,
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
-    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
+    val cashOrAccrualsFieldMaybe = user.incomeSources.businesses.filterNot(_.isCeased).map(_.cashOrAccruals).headOption.flatten
 
-    if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting business cashOrAccruals Field")
+//    if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
+//      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+//        s"Error getting business cashOrAccruals Field")
+//    }
+
+    val successRedirectUrl = {
+      if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+      else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
     }
+    Logger("application").info(s"[AddBusinessAddressController][handleUserActiveBusinessesCashOrAccruals] - ${successRedirectUrl} - ${cashOrAccrualsFieldMaybe}")
 
-    val successRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-
-    userActiveBusinesses.map(_.cashOrAccruals).headOption match {
+    cashOrAccrualsFieldMaybe match {
       case Some(cashOrAccrualsFieldMaybe) =>
-        if (cashOrAccrualsFieldMaybe.isDefined) {
-          val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) "accruals" else "cash"
+          val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe) "accruals" else "cash"
           sessionService.setMongoKey(
             AddIncomeSourceData.incomeSourcesAccountingMethodField,
             accountingMethodIsAccruals,
@@ -79,11 +82,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             case Right(_) => Future.successful(Redirect(successRedirectUrl))
             case Left(ex) => Future.failed(ex)
           }
-        } else {
-          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-            s"Error getting business cashOrAccruals field")
-          Future.successful(errorHandler.showInternalServerError())
-        }
       case None =>
         Future.successful(Ok(view(
           cashOrAccrualsFlag = cashOrAccrualsFlag,
@@ -222,6 +220,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           case _ =>
             routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, incomeSourceType).url
         }
+        Logger("application").info(s"[AddBusinessAddressController][show]2 - ${backUrl}")
+
         handleRequest(
           isAgent = false,
           incomeSourceType = incomeSourceType,
