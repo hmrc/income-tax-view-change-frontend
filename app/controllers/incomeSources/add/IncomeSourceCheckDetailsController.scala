@@ -158,8 +158,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
             val address = addIncomeSourceData.address.getOrElse(throw MissingSessionKey(s"$errorTracePrefix address"))
             Right(CheckBusinessDetailsViewModel(
               businessName = addIncomeSourceData.businessName,
-              businessStartDate = addIncomeSourceData.dateStarted.map(LocalDate.parse),
-              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate.map(LocalDate.parse)
+              businessStartDate = addIncomeSourceData.dateStarted,
+              accountingPeriodEndDate = addIncomeSourceData.accountingPeriodEndDate
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix accountingPeriodEndDate")),
               businessTrade = addIncomeSourceData.businessTrade
                 .getOrElse(throw MissingSessionKey(s"$errorTracePrefix businessTrade")),

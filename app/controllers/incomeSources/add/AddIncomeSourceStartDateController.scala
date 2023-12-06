@@ -160,7 +160,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
             addIncomeSourceData =
               data.addIncomeSourceData.map(
                 _.copy(
-                  dateStarted = Some(formData.date.toString)
+                  dateStarted = Some(formData.date)
                 )
               )
           )
@@ -212,13 +212,13 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     val journeyType = JourneyType(Add, incomeSourceType)
     sessionService.getMongoSensitive(journeyType)
       .flatMap {
-        case Right(Some(UIJourneySessionData(
-          _,
-          _,
-          Some(AddIncomeSourceData(_, _, dateStarted, _, _, _, _, _, _)),
-          _,
-          _,
-          _))) => Future.successful(dateStarted.map(LocalDate.parse))
+        case Right(Some(data)) =>
+          Future.successful(
+            data.addIncomeSourceData
+              .flatMap(
+                _.dateStarted
+            )
+          )
         case Right(_) => throw new Exception(s"empty field: dateStarted")
         case Left(ex) => Future.failed(ex)
     }

@@ -16,31 +16,33 @@
 
 package models.incomeSourceDetails
 
-import uk.gov.hmrc.crypto.Sensitive.SensitiveString
+import uk.gov.hmrc.crypto.Sensitive.{SensitiveInstant, SensitiveString}
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.crypto.json.JsonEncryption
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+import java.time.{LocalDate, ZoneOffset}
+
 case class AddIncomeSourceData(
-                                businessName:                   Option[String]  = None,
-                                businessTrade:                  Option[String]  = None,
-                                dateStarted:                    Option[String]  = None,
-                                accountingPeriodStartDate:      Option[String]  = None,
-                                accountingPeriodEndDate:        Option[String]  = None,
-                                createdIncomeSourceId:          Option[String]  = None,
-                                address:                        Option[Address] = None,
-                                countryCode:                    Option[String]  = None,
-                                incomeSourcesAccountingMethod:  Option[String]  = None
+                                businessName:                   Option[String]     = None,
+                                businessTrade:                  Option[String]     = None,
+                                dateStarted:                    Option[LocalDate]  = None,
+                                accountingPeriodStartDate:      Option[LocalDate]  = None,
+                                accountingPeriodEndDate:        Option[LocalDate]  = None,
+                                createdIncomeSourceId:          Option[String]     = None,
+                                address:                        Option[Address]    = None,
+                                countryCode:                    Option[String]     = None,
+                                incomeSourcesAccountingMethod:  Option[String]     = None
                               ) {
 
   def encrypted: SensitiveAddIncomeSourceData =
     SensitiveAddIncomeSourceData(
       businessName                  .map(SensitiveString),
       businessTrade                 .map(SensitiveString),
-      dateStarted                   .map(SensitiveString),
-      accountingPeriodStartDate     .map(SensitiveString),
-      accountingPeriodEndDate       .map(SensitiveString),
+      dateStarted                   .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
+      accountingPeriodStartDate     .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
+      accountingPeriodEndDate       .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
       createdIncomeSourceId         .map(SensitiveString),
       address,
       countryCode                   .map(SensitiveString),
@@ -64,9 +66,9 @@ object AddIncomeSourceData {
   implicit val format: Format[AddIncomeSourceData] =
     ( (__ \ "businessName"                 ).formatNullable[String]
     ~ (__ \ "businessTrade"                ).formatNullable[String]
-    ~ (__ \ "dateStarted"                  ).formatNullable[String]
-    ~ (__ \ "accountingPeriodStartDate"    ).formatNullable[String]
-    ~ (__ \ "accountingPeriodEndDate"      ).formatNullable[String]
+    ~ (__ \ "dateStarted"                  ).formatNullable[LocalDate]
+    ~ (__ \ "accountingPeriodStartDate"    ).formatNullable[LocalDate]
+    ~ (__ \ "accountingPeriodEndDate"      ).formatNullable[LocalDate]
     ~ (__ \ "createdIncomeSourceId"        ).formatNullable[String]
     ~ (__ \ "address"                      ).formatNullable[Address]
     ~ (__ \ "countryCode"                  ).formatNullable[String]
@@ -79,9 +81,9 @@ object AddIncomeSourceData {
 case class SensitiveAddIncomeSourceData(
                                          businessName:                  Option[SensitiveString] = None,
                                          businessTrade:                 Option[SensitiveString] = None,
-                                         dateStarted:                   Option[SensitiveString] = None,
-                                         accountingPeriodStartDate:     Option[SensitiveString] = None,
-                                         accountingPeriodEndDate:       Option[SensitiveString] = None,
+                                         dateStarted:                   Option[SensitiveInstant] = None,
+                                         accountingPeriodStartDate:     Option[SensitiveInstant] = None,
+                                         accountingPeriodEndDate:       Option[SensitiveInstant] = None,
                                          createdIncomeSourceId:         Option[SensitiveString] = None,
                                          address:                       Option[Address]         = None,
                                          countryCode:                   Option[SensitiveString] = None,
@@ -92,9 +94,9 @@ case class SensitiveAddIncomeSourceData(
     AddIncomeSourceData(
       businessName                  .map(_.decryptedValue),
       businessTrade                 .map(_.decryptedValue),
-      dateStarted                   .map(_.decryptedValue),
-      accountingPeriodStartDate     .map(_.decryptedValue),
-      accountingPeriodEndDate       .map(_.decryptedValue),
+      dateStarted                   .map(_.decryptedValue.atZone(ZoneOffset.UTC).toLocalDate()),
+      accountingPeriodStartDate     .map(_.decryptedValue.atZone(ZoneOffset.UTC).toLocalDate()),
+      accountingPeriodEndDate       .map(_.decryptedValue.atZone(ZoneOffset.UTC).toLocalDate()),
       createdIncomeSourceId         .map(_.decryptedValue),
       address,
       countryCode                   .map(_.decryptedValue),
@@ -107,13 +109,16 @@ object SensitiveAddIncomeSourceData {
   implicit def sensitiveStringFormat(implicit crypto: Encrypter with Decrypter): Format[SensitiveString] =
     JsonEncryption.sensitiveEncrypterDecrypter(SensitiveString.apply)
 
+  implicit def sensitiveInstantFormat(implicit crypto: Encrypter with Decrypter): Format[SensitiveInstant] =
+    JsonEncryption.sensitiveEncrypterDecrypter(SensitiveInstant.apply)
+
   implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddIncomeSourceData] = {
 
       ( (__ \ "businessName"                 ).formatNullable[SensitiveString]
       ~ (__ \ "businessTrade"                ).formatNullable[SensitiveString]
-      ~ (__ \ "dateStarted"                  ).formatNullable[SensitiveString]
-      ~ (__ \ "accountingPeriodStartDate"    ).formatNullable[SensitiveString]
-      ~ (__ \ "accountingPeriodEndDate"      ).formatNullable[SensitiveString]
+      ~ (__ \ "dateStarted"                  ).formatNullable[SensitiveInstant]
+      ~ (__ \ "accountingPeriodStartDate"    ).formatNullable[SensitiveInstant]
+      ~ (__ \ "accountingPeriodEndDate"      ).formatNullable[SensitiveInstant]
       ~ (__ \ "createdIncomeSourceId"        ).formatNullable[SensitiveString]
       ~ (__ \ "address"                      ).formatNullable[Address]
       ~ (__ \ "countryCode"                  ).formatNullable[SensitiveString]

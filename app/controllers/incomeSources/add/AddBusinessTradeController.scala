@@ -107,13 +107,13 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
     if (isChange) {
       sessionService.getMongoSensitive(journeyType).flatMap {
-        case Right(Some(UIJourneySessionData(
-          _,
-          _,
-          Some(AddIncomeSourceData(_, businessTrade, _, _, _, _, _, _, _)),
-          _,
-          _,
-          _))) => Future.successful(businessTrade)
+        case Right(Some(data)) =>
+          Future.successful(
+            data.addIncomeSourceData
+              .flatMap(
+                _.businessTrade
+              )
+          )
         case Right(_) => throw new Exception(s"empty field: businessTrade")
         case Left(err) => Future.failed(err)
       }
