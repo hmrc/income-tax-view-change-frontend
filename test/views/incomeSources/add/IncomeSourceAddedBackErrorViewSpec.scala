@@ -48,6 +48,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
+      document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
       document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
@@ -59,6 +60,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
+      document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
       document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
@@ -70,6 +72,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
+      document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
   }
 
@@ -84,6 +87,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
+      document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
       document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
@@ -95,6 +99,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
+      document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
       document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
@@ -106,6 +111,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
+      document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
   }
 }
