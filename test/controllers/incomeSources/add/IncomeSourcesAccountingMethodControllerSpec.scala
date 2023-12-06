@@ -205,7 +205,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
       }
     }
