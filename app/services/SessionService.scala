@@ -19,7 +19,6 @@ package services
 import auth.MtdItUser
 import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
-import play.api.Logger
 import play.api.mvc.{RequestHeader, Result}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
