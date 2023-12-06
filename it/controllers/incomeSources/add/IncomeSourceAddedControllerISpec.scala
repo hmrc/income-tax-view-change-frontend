@@ -89,7 +89,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId))))))
 
         val result = IncomeTaxViewChangeFrontend.getAddBusinessObligations
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -143,7 +143,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-          addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testPropertyIncomeId))))))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         Then("user is shown UK property added page")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added")
@@ -213,7 +213,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-          addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testPropertyIncomeId))))))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         val result = IncomeTaxViewChangeFrontend.getForeignPropertyAddedObligations
         verifyIncomeSourceDetailsCall(testMtditid)

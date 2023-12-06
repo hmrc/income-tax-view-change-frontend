@@ -94,7 +94,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)) map {
       case Right(Some(id)) =>
-        Redirect(controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id))
+        Redirect(controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))
       case _ => Logger("application").error(
         s"[IncomeSourceAddedBackErrorController][handleSubmit] - Error: Unable to find id in session")
         if (isAgent) itvcErrorHandlerAgent.showInternalServerError()

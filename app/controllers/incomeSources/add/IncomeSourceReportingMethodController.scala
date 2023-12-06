@@ -105,7 +105,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType), checkAdded = false) {
 
     sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(id)) =>
@@ -124,10 +124,8 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
 
 
   private def handleIncomeSourceIdRetrievalSuccess(incomeSourceType: IncomeSourceType, id: String, isAgent: Boolean)
-                                                  (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType), checkAdded = false) {
+                                                  (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType) else
-      controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
@@ -138,31 +136,22 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
           errorHandler.showInternalServerError()
         }
       case true =>
-        sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
-          case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-            s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
-            Future.successful(errorHandler.showInternalServerError())
-          case Right(hasBeenAdded) => hasBeenAdded match {
-            case Some(true) => Future.successful(Redirect(cannotGoBackRedirect))
-            case _ =>
-              itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
-                case true =>
-                  getViewModel(incomeSourceType, incomeSourceId).map {
-                    case Some(viewModel) =>
-                      Ok(view(
-                        incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
-                        incomeSourceReportingViewModel = viewModel,
-                        postAction = submitUrl(isAgent, incomeSourceType),
-                        isAgent = isAgent))
-                    case None =>
-                      Redirect(redirectUrl(isAgent, incomeSourceType))
-                  }
-                case false =>
-                  Future.successful {
-                    Redirect(redirectUrl(isAgent, incomeSourceType))
-                  }
-              }
-          }
+        itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
+          case true =>
+            getViewModel(incomeSourceType, incomeSourceId).map {
+              case Some(viewModel) =>
+                Ok(view(
+                  incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
+                  incomeSourceReportingViewModel = viewModel,
+                  postAction = submitUrl(isAgent, incomeSourceType),
+                  isAgent = isAgent))
+              case None =>
+                Redirect(redirectUrl(isAgent, incomeSourceType))
+            }
+          case false =>
+            Future.successful {
+              Redirect(redirectUrl(isAgent, incomeSourceType))
+            }
         }
     }
   }
