@@ -21,6 +21,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
@@ -58,33 +59,28 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                errorHandler: ShowInternalServerError,
                                                incomeSourceType: IncomeSourceType,
                                                cashOrAccrualsFlag: Option[String])
-                                              (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
-    val cashOrAccrualsFieldMaybe = user.incomeSources.businesses
-      .filterNot(_.isCeased)
-      .map(_.cashOrAccruals)
-      .headOption
-      .flatten
-
-    if (user.incomeSources.businesses.filterNot(_.isCeased).map(_.cashOrAccruals).distinct.size > 1) {
+                                              (implicit user: MtdItUser[_],
+                                               backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
+    val cashOrAccrualsRecords = user.incomeSources.getCashOrAccruals()
+    if (cashOrAccrualsRecords.distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error getting business cashOrAccruals Field")
     }
-
-    cashOrAccrualsFieldMaybe match {
-      case Some(cashOrAccrualsFieldMaybe) =>
-          val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe) "accruals" else "cash"
-          sessionService.setMongoKey(
-            AddIncomeSourceData.incomeSourcesAccountingMethodField,
-            accountingMethodIsAccruals,
-            JourneyType(Add, incomeSourceType)).flatMap {
+    cashOrAccrualsRecords.headOption.flatten match {
+      case Some(cashOrAccrualsField) =>
+        sessionService.setMongoKey(
+          key = AddIncomeSourceData.incomeSourcesAccountingMethodField,
+          value = fromApiField(cashOrAccrualsField).name,
+          journeyType = JourneyType(Add, incomeSourceType)).flatMap {
             case Right(_) =>
               val successRedirectUrl = {
                 if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
                 else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
               }
-              Future.successful(Redirect(successRedirectUrl))
-            case Left(ex) => Future.failed(ex)
-          }
+            Future.successful(Redirect(successRedirectUrl))
+          case Left(ex) =>
+            Future.failed(ex)
+        }
       case None =>
         Future.successful(
           Ok(view(
@@ -95,7 +91,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             isAgent = isAgent,
             backUrl = backUrl,
             btaNavPartial = user.btaNavPartial
-        )(user, messages)))
+          )(user, messages)))
     }
   }.recover {
     case exception =>
@@ -280,7 +276,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         }
 
         sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
-
           case Right(cashOrAccrualsFlag) =>
             handleRequest(
               isAgent = false,
@@ -288,9 +283,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
               cashOrAccrualsFlag = cashOrAccrualsFlag,
               backUrl = backUrl
             )
-
           case Left(exception) => Future.failed(exception)
-
         }.recover {
           case exception =>
             Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethod] ${exception.getMessage}")
