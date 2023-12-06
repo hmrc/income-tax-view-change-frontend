@@ -59,18 +59,16 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                incomeSourceType: IncomeSourceType,
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
-    val cashOrAccrualsFieldMaybe = user.incomeSources.businesses.filterNot(_.isCeased).map(_.cashOrAccruals).headOption.flatten
+    val cashOrAccrualsFieldMaybe = user.incomeSources.businesses
+      .filterNot(_.isCeased)
+      .map(_.cashOrAccruals)
+      .headOption
+      .flatten
 
-//    if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
-//      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-//        s"Error getting business cashOrAccruals Field")
-//    }
-
-    val successRedirectUrl = {
-      if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-      else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+    if (user.incomeSources.businesses.filterNot(_.isCeased).map(_.cashOrAccruals).distinct.size > 1) {
+      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error getting business cashOrAccruals Field")
     }
-    Logger("application").info(s"[AddBusinessAddressController][handleUserActiveBusinessesCashOrAccruals] - ${successRedirectUrl} - ${cashOrAccrualsFieldMaybe}")
 
     cashOrAccrualsFieldMaybe match {
       case Some(cashOrAccrualsFieldMaybe) =>
@@ -79,18 +77,24 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             AddIncomeSourceData.incomeSourcesAccountingMethodField,
             accountingMethodIsAccruals,
             JourneyType(Add, incomeSourceType)).flatMap {
-            case Right(_) => Future.successful(Redirect(successRedirectUrl))
+            case Right(_) =>
+              val successRedirectUrl = {
+                if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+                else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+              }
+              Future.successful(Redirect(successRedirectUrl))
             case Left(ex) => Future.failed(ex)
           }
       case None =>
-        Future.successful(Ok(view(
-          cashOrAccrualsFlag = cashOrAccrualsFlag,
-          incomeSourcesType = incomeSourceType,
-          form = IncomeSourcesAccountingMethodForm(incomeSourceType),
-          postAction = postAction,
-          isAgent = isAgent,
-          backUrl = backUrl,
-          btaNavPartial = user.btaNavPartial
+        Future.successful(
+          Ok(view(
+            cashOrAccrualsFlag = cashOrAccrualsFlag,
+            incomeSourcesType = incomeSourceType,
+            form = IncomeSourcesAccountingMethodForm(incomeSourceType),
+            postAction = postAction,
+            isAgent = isAgent,
+            backUrl = backUrl,
+            btaNavPartial = user.btaNavPartial
         )(user, messages)))
     }
   }.recover {
@@ -220,7 +224,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           case _ =>
             routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, incomeSourceType).url
         }
-        Logger("application").info(s"[AddBusinessAddressController][show]2 - ${backUrl}")
 
         handleRequest(
           isAgent = false,

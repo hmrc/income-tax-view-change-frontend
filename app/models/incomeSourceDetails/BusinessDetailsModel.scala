@@ -34,10 +34,7 @@ case class BusinessDetailsModel(incomeSourceId: String,
 
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 
-  def isOngoingSoleTraderBusiness(id: String): Boolean = {
-    Logger("application").info(s"[IncomeSourceReportingMethodController][BusinessDetailsModel] - ${this}")
-    !isCeased && id == incomeSourceId
-  }
+  def isOngoingSoleTraderBusiness(id: String): Boolean = !isCeased && id == incomeSourceId
 }
 
 object BusinessDetailsModel {
