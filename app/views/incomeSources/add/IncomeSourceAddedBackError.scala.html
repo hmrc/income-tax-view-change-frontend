@@ -57,10 +57,11 @@
 
         @govukWarningText(WarningText(
             iconFallbackText = "Warning",
-            content = Text(messages("cannot-go-back.warning-message"))
+            content = Text(messages("cannot-go-back.warning-message")),
+            attributes = Map("id" -> "warning-message")
         ))
 
-        @p(classes = "govuk-body") {
+        @p(classes = "govuk-body", id = Some("manage-message")) {
             @{
                 getAddedMessage + "."
             }
@@ -69,7 +70,7 @@
             @messages("cannot-go-back.has-been-added-2")
         }
 
-        @p(classes = "govuk-body") {
+        @p(classes = "govuk-body", id = Some("choose-message")) {
             @messages("cannot-go-back.need-to-choose")
         }
 
