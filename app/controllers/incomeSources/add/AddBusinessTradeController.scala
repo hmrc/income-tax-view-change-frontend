@@ -156,7 +156,10 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
         case Right(Some(data)) =>
             BusinessTradeForm.checkBusinessTradeWithBusinessName(
               BusinessTradeForm.form.bindFromRequest(),
-              data.addIncomeSourceData.map(_.businessName).get
+              data.addIncomeSourceData
+                .flatMap(
+                  _.businessName
+                )
             ).fold(
               formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
               formData => handleSuccess(formData.trade, data, isAgent, isChange)
