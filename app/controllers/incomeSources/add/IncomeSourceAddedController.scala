@@ -35,7 +35,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,35 +55,42 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  def show(incomeSourceIdStr: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
-      handleRequest(isAgent = false, incomeSourceId, incomeSourceType)
+      handleRequest(isAgent = false, incomeSourceType)
   }
 
-  def showAgent(incomeSourceIdStr: String, incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
     implicit request =>
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
-            handleRequest(isAgent = true, incomeSourceId, incomeSourceType)
+            handleRequest(isAgent = true, incomeSourceType)
         }
   }
 
-  private def handleRequest(isAgent: Boolean,
-                            incomeSourceId: IncomeSourceId,
-                            incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType), checkAdded = false) {
-      incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
-        case Some((startDate, businessName)) =>
-          val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-          handleSuccess(incomeSourceId, incomeSourceType, businessName, showPreviousTaxYears, isAgent)
-        case None => Logger("application").error(
-          s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
-          if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-          else Future(itvcErrorHandler.showInternalServerError())
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+
+      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
+        case Right(Some(id)) =>
+
+          val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
+
+          incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
+            case Some((startDate, businessName)) =>
+              val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
+              handleSuccess(incomeSourceId, incomeSourceType, businessName, showPreviousTaxYears, isAgent)
+            case None => Logger("application").error(
+              s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
+              if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
+              else Future(itvcErrorHandler.showInternalServerError())
+          }
+
+        case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
+        case Left(ex) => Future.failed(ex)
       }
     }.recover {
       case ex: Exception =>
@@ -106,17 +112,17 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
       case true => incomeSourceType match {
         case SelfEmployment =>
           businessName match {
-            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId.toString, showPreviousTaxYears) map { viewModel =>
+            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
               Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
             }
-            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId.toString, showPreviousTaxYears) map { viewModel =>
+            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
               Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
             }
           }
-        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.toString, showPreviousTaxYears) map { viewModel =>
+        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
           Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
         }
-        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.toString, showPreviousTaxYears) map { viewModel =>
+        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
           Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
         }
       }
@@ -127,7 +133,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(reportingMethodSet = Some(true))
+        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(hasBeenAdded = Some(true))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
         sessionService.setMongoData(uiJourneySessionData)

@@ -657,6 +657,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           Message("C22218", "message18"),
           Message("C22219", "message19"),
           Message("C22220", "message20"),
+          Message("C22225", "Your tax has been reduced because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."),
+          Message("C22226", "Your tax has increased because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."),
           Message("C22223", "message23"),
           Message("C22224", "message24"),
         ))))
@@ -664,7 +666,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 17
+      document.select(messageContentSelector).size shouldBe 19
       document.select(messageContentSelector).get(0).text shouldBe  messages("taxCal_breakdown.message.static1")
       document.select(messageContentSelector).get(1).text shouldBe  messages("taxCal_breakdown.message.C22202")
       document.select(messageContentSelector).get(2).text shouldBe  messages("taxCal_breakdown.message.C22203")
@@ -681,7 +683,9 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.C22218")
       document.select(messageContentSelector).get(14).text shouldBe messages("taxCal_breakdown.message.C22223")
       document.select(messageContentSelector).get(15).text shouldBe messages("taxCal_breakdown.message.C22224")
-      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.C22220")
+      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.C22225_Scottish")
+      document.select(messageContentSelector).get(17).text shouldBe messages("taxCal_breakdown.message.C22226_Scottish")
+      document.select(messageContentSelector).get(18).text shouldBe messages("taxCal_breakdown.message.C22220")
     }
 
     "provided with message C22201" in {
@@ -936,6 +940,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           Message("C22218", "message18"),
           Message("C22219", "message19"),
           Message("C22220", "message20"),
+          Message("C22225", "Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief."),
+          Message("C22226", "Your tax has increased because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is lower than the rate at which charities have obtained relief."),
           Message("C22223", "message23"),
           Message("C22224", "message24"),
         ))))
@@ -943,7 +949,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val document: Document = Jsoup.parse(view.body)
 
-      document.select(messageContentSelector).size shouldBe 17
+      document.select(messageContentSelector).size shouldBe 19
       document.select(messageContentSelector).get(0).text shouldBe  messages("taxCal_breakdown.message.agent.static1")
       document.select(messageContentSelector).get(1).text shouldBe  messages("taxCal_breakdown.message.agent.C22202")
       document.select(messageContentSelector).get(2).text shouldBe  messages("taxCal_breakdown.message.agent.C22203")
@@ -960,7 +966,9 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       document.select(messageContentSelector).get(13).text shouldBe messages("taxCal_breakdown.message.agent.C22218")
       document.select(messageContentSelector).get(14).text shouldBe messages("taxCal_breakdown.message.agent.C22223")
       document.select(messageContentSelector).get(15).text shouldBe messages("taxCal_breakdown.message.agent.C22224")
-      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.agent.C22220")
+      document.select(messageContentSelector).get(16).text shouldBe messages("taxCal_breakdown.message.agent.C22225")
+      document.select(messageContentSelector).get(17).text shouldBe messages("taxCal_breakdown.message.agent.C22226")
+      document.select(messageContentSelector).get(18).text shouldBe messages("taxCal_breakdown.message.agent.C22220")
     }
 
     "provided with message C22201" in {

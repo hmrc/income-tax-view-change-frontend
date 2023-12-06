@@ -287,9 +287,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getForeignPropertyEndDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       getWithClientDetailsInSession("/agents/income-sources/cease/foreign-property-end-date", additionalCookies)
 
-    def getForeignPropertyAddedObligations(id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    def getForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = s"/income-sources/add/foreign-property-added/?id=$id",
+        uri = s"/income-sources/add/foreign-property-added",
         additionalCookies
       )
     }
@@ -425,9 +425,9 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessStartDate(additionalCookies: Map[String, String] = Map.empty): WSResponse =
       get("/income-sources/add/business-start-date", additionalCookies)
 
-    def getAddBusinessObligations(id: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+    def getAddBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = s"/income-sources/add/business-added/?id=$id",
+        uri = s"/income-sources/add/business-added",
         additionalCookies
       )
     }
@@ -524,11 +524,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessAddress: WSResponse =
       get("/income-sources/add/business-address")
 
-    def getSEReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-business-reporting-method-not-saved?id=$id", session)
+    def getSEReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-business-reporting-method-not-saved", session)
 
-    def getUkPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved?id=$id", session)
+    def getUkPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-uk-property-reporting-method-not-saved", session)
 
-    def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
+    def getForeignPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved", session)
 
     def getBusinessEndDate(session: Map[String, String]): WSResponse = get(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed", session)
 

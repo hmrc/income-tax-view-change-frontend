@@ -33,7 +33,6 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(testPropertyIncomeId), SelfEmployment).url
   val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(Some(testPropertyIncomeId), SelfEmployment).url
@@ -64,9 +63,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-SE")))
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-UK")))
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-FP")))
+    await(sessionService.deleteSession(Cease))
   }
 
   s"calling GET $dateBusinessShowUrl" should {

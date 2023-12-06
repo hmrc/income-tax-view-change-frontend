@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -200,8 +200,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
-    val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-      routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
+    val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+      routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
 
     val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
       if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
@@ -216,12 +216,19 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       case Right(viewModel) =>
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
+            auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
+
             sessionService.setMongoKey(AddIncomeSourceData.incomeSourceIdField, id, JourneyType(Add, incomeSourceType)).flatMap {
-              case Right(true) => auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
+              case Right(result) if result =>
                 Future.successful {
-                  Redirect(redirectUrl(isAgent, incomeSourceType, id))
+                  Redirect(redirectUrl(isAgent, incomeSourceType))
                 }
-              case _ => Future.failed(new Error("Failed to add id to session"))
+              case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
+              case Left(exception) => Future.failed(exception)
+            }
+
+            Future.successful {
+              Redirect(redirectUrl(isAgent, incomeSourceType))
             }
           case Left(ex) =>
             auditingService.extendedAudit(
