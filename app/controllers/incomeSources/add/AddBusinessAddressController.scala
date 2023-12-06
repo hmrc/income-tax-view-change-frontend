@@ -106,7 +106,7 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
         val journeyType = JourneyType(Add, SelfEmployment)
         sessionService.getMongoSensitive(journeyType).flatMap {
           case Right(Some(sessionData)) =>
-            val oldAddIncomeSourceSessionData: AddIncomeSourceData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
+            val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
             val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
             val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 

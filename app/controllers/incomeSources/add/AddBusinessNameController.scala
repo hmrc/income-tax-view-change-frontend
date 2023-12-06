@@ -75,7 +75,13 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
       sessionService.getMongoSensitive(journeyType).flatMap {
-        case Right(Some(data)) => Future.successful(data.addIncomeSourceData.flatMap(_.businessName))
+        case Right(Some(data)) =>
+          Future.successful(
+            data.addIncomeSourceData
+              .flatMap(
+                _.businessName
+              )
+          )
         case Right(_) => throw new Exception("No data retrieved from Mongo")
         case Left(ex) => Future.failed(ex)
       }
@@ -88,7 +94,13 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
     sessionService.getMongoSensitive(journeyType).flatMap {
-      case Right(Some(data)) => Future.successful(data.addIncomeSourceData.flatMap(_.businessTrade))
+      case Right(Some(data)) =>
+        Future.successful(
+          data.addIncomeSourceData
+            .flatMap(
+              _.businessTrade
+            )
+        )
       case Right(_) => throw new Exception("No data retrieved from Mongo")
       case Left(ex) => Future.failed(ex)
     }

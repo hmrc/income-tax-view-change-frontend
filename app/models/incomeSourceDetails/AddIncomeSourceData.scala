@@ -79,15 +79,15 @@ object AddIncomeSourceData {
 }
 
 case class SensitiveAddIncomeSourceData(
-                                         businessName:                  Option[SensitiveString] = None,
-                                         businessTrade:                 Option[SensitiveString] = None,
+                                         businessName:                  Option[SensitiveString]  = None,
+                                         businessTrade:                 Option[SensitiveString]  = None,
                                          dateStarted:                   Option[SensitiveInstant] = None,
                                          accountingPeriodStartDate:     Option[SensitiveInstant] = None,
                                          accountingPeriodEndDate:       Option[SensitiveInstant] = None,
-                                         createdIncomeSourceId:         Option[SensitiveString] = None,
-                                         address:                       Option[Address]         = None,
-                                         countryCode:                   Option[SensitiveString] = None,
-                                         incomeSourcesAccountingMethod: Option[SensitiveString] = None
+                                         createdIncomeSourceId:         Option[SensitiveString]  = None,
+                                         address:                       Option[Address]          = None,
+                                         countryCode:                   Option[SensitiveString]  = None,
+                                         incomeSourcesAccountingMethod: Option[SensitiveString]  = None
                                        ) {
 
   def decrypted: AddIncomeSourceData =

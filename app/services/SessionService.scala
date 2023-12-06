@@ -75,7 +75,7 @@ class SessionService @Inject()(
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
-          case Add => getKeyFromObject[String](data.addIncomeSourceData, key).map(_.map(encryptionService.decryptSessionValue)) // DECRYPT VALUE
+          case Add => getKeyFromObject[String](data.addIncomeSourceData, key)
           case Manage => getKeyFromObject[String](data.manageIncomeSourceData, key)
           case Cease => getKeyFromObject[String](data.ceaseIncomeSourceData, key)
         }
@@ -114,12 +114,8 @@ class SessionService @Inject()(
       case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
       case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
     }
-    uiJourneySessionDataRepository.updateData(
-      uiJourneySessionData,
-      jsonAccessorPath,
-      encryptionService.encryptSessionValue(value) // ENCRYPT VALUE
-    ).map(
-      _.wasAcknowledged() match {
+    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
+      result => result.wasAcknowledged() match {
         case true => Right(true)
         case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
       }
