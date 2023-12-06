@@ -45,7 +45,7 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MaterializerSupport with Injecting with FeatureSwitching {
+trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with Injecting with FeatureSwitching {
   this: Suite =>
 
   import org.scalactic.Equality

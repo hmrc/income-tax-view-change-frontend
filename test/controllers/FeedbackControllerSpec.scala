@@ -118,7 +118,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
 
         when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
 
-        lazy val result = TestFeedbackController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(fields.toSeq: _*))
+        lazy val result = TestFeedbackController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(fields.toSeq: _*))
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYou.url)

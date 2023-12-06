@@ -159,7 +159,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
 
-        val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
           BusinessNameForm.businessName -> validBusinessName
         ))
 
@@ -181,7 +181,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
           setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameEmpty
           ))
 
@@ -200,7 +200,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
           setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameLength
           ))
 
@@ -219,7 +219,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
           setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameEmpty
           ))
 
@@ -410,7 +410,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockCreateSession(true)
       setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameEmpty
       ))
 
@@ -427,7 +427,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameLength
       ))
 
@@ -444,7 +444,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameEmpty
       ))
 
@@ -462,7 +462,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
       setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
         BusinessNameForm.businessName -> businessName
       ))
 

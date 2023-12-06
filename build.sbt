@@ -1,9 +1,9 @@
 
 import play.core.PlayVersion
 import play.sbt.routes.RoutesKeys
-import sbt.*
+import sbt._
 import sbt.Keys.libraryDependencySchemes
-import uk.gov.hmrc.DefaultBuildSettings.*
+import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
@@ -17,7 +17,7 @@ val catsVersion = "2.8.0"
 
 val scalaTestPlusVersion = "5.0.0"
 val pegdownVersion = "1.6.0"
-val jsoupVersion = "1.11.3"
+val jsoupVersion = "1.15.4"
 val mockitoVersion = "3.12.4"
 val scalaMockVersion = "5.2.0"
 val wiremockVersion = "2.26.3"
@@ -42,8 +42,8 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
 
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.mockito" % "mockito-core" % mockitoVersion % scope,
+//  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+//  "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-30" % hmrcMongoVersion % scope,
   "org.scalacheck" %% "scalacheck" % "1.17.0" % scope,
@@ -57,8 +57,8 @@ def it(scope: String = "it"): Seq[ModuleID] = Seq(
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.mockito" % "mockito-core" % mockitoVersion % scope,
+//  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+//  "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-30" % hmrcMongoVersion % scope,
   caffeine
