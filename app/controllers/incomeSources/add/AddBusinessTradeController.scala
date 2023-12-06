@@ -183,8 +183,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     }
   }
 
-  def handleSuccess(businessTrade: String, data: UIJourneySessionData, isAgent: Boolean, isChange: Boolean)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
+  def handleSuccess(businessTrade: String, data: UIJourneySessionData, isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val successURL = Redirect(getSuccessURL(isAgent, isChange))
 
     sessionService.setMongoData(
