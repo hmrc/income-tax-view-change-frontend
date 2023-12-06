@@ -94,7 +94,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     withIncomeSourcesFS {
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
-        sessionService.createSessionSensitive(journeyType.toString).flatMap {
+        sessionService.createSessionSensitive(journeyType).flatMap {
           case true => Future.successful(None)
           case false => throw new Exception("Unable to create session")
         }
@@ -153,20 +153,23 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                          (implicit user: MtdItUser[_]): Future[Result] = {
     val journeyType = JourneyType(Add, incomeSourceType)
 
-    sessionService.setMongoDataSensitive(
-      UIJourneySessionData(
-        addIncomeSourceData =
-          Some(
-            AddIncomeSourceData(
-              dateStarted = Some(formData.date.toString)
-            )
-          ),
-        journeyType = journeyType.toString,
-        sessionId = hc.sessionId.get.value
-      )
-    ) flatMap {
-      case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
-      case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+    sessionService.getMongoSensitive(journeyType).flatMap {
+      case Right(Some(data)) =>
+        sessionService.setMongoDataSensitive(
+          data.copy(
+            addIncomeSourceData =
+              data.addIncomeSourceData.map(
+                _.copy(
+                  dateStarted = Some(formData.date.toString)
+                )
+              )
+          )
+        ).flatMap {
+          case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
+          case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+        }
+      case Right(_) => throw new Exception("No data retrieved from Mongo")
+      case Left(ex) => Future.failed(ex)
     }
   }
 

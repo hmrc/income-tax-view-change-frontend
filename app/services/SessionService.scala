@@ -51,8 +51,8 @@ class SessionService @Inject()(
     setMongoData(UIJourneySessionData(hc.sessionId.get.value, journeyType, None))
   }
 
-  def createSessionSensitive(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    setMongoDataSensitive(UIJourneySessionData(hc.sessionId.get.value, journeyType, None))
+  def createSessionSensitive(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    setMongoDataSensitive(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
   }
 
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {

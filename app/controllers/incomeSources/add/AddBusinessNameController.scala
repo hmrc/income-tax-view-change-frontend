@@ -24,6 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -32,6 +33,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.add.AddBusinessName
 
+import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -78,7 +80,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         case Left(ex) => Future.failed(ex)
       }
     else
-      sessionService.createSessionSensitive(journeyType.toString).flatMap {
+      sessionService.createSessionSensitive(journeyType).flatMap {
         case true => Future.successful(None)
         case false => Future.failed(new Exception("Unable to create session"))
       }
@@ -201,8 +203,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                   sessionService.setMongoDataSensitive(
                     data.copy(
                       addIncomeSourceData =
-                        data.addIncomeSourceData.map(
-                          _.copy(
+                        Some(
+                          AddIncomeSourceData(
                             businessName = Some(formData.name)
                           )
                         )
