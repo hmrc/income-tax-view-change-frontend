@@ -71,9 +71,9 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       case Some(cashOrAccrualsFieldMaybe) =>
         if (cashOrAccrualsFieldMaybe.isDefined) {
           val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) "accruals" else "cash"
-          sessionService.getMongoSensitive(JourneyType(Add, SelfEmployment)) flatMap {
+          sessionService.getMongo(JourneyType(Add, SelfEmployment).toString) flatMap {
             case Right(Some(data)) =>
-              sessionService.setMongoDataSensitive(
+              sessionService.setMongoData(
                 data.copy(
                   addIncomeSourceData =
                     data.addIncomeSourceData.map(

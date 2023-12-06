@@ -150,7 +150,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
     val showAccountingMethodPage: Boolean = userActiveBusinesses.isEmpty
     val errorTracePrefix = "[IncomeSourceCheckDetailsController][getBusinessModel]:"
-    sessionService.getMongoSensitive(JourneyType(Add, SelfEmployment)).map {
+    sessionService.getMongo(JourneyType(Add, SelfEmployment).toString).map {
       case Right(Some(uiJourneySessionData)) =>
         uiJourneySessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) =>
@@ -217,7 +217,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessDetailsService.createRequest(viewModel).flatMap {
           case Right(CreateIncomeSourceResponse(id)) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
-            sessionService.deleteMongoDataSensitive(JourneyType(Add, incomeSourceType)).flatMap { _ =>
+            sessionService.deleteMongoData(JourneyType(Add, incomeSourceType)).flatMap { _ =>
               Future.successful {
                 Redirect(redirectUrl(isAgent, incomeSourceType, id))
               }

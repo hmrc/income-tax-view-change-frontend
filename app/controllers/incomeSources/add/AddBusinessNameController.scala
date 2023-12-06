@@ -74,7 +74,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessName(isChange: Boolean)
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoSensitive(journeyType).flatMap {
+      sessionService.getMongo(journeyType.toString).flatMap {
         case Right(Some(data)) =>
           Future.successful(
             data.addIncomeSourceData
@@ -86,14 +86,14 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         case Left(ex) => Future.failed(ex)
       }
     else
-      sessionService.createSessionSensitive(journeyType).flatMap {
+      sessionService.createSession(journeyType.toString).flatMap {
         case true => Future.successful(None)
         case false => Future.failed(new Exception("Unable to create session"))
       }
   }
 
   private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
-    sessionService.getMongoSensitive(journeyType).flatMap {
+    sessionService.getMongo(journeyType.toString).flatMap {
       case Right(Some(data)) =>
         Future.successful(
           data.addIncomeSourceData
@@ -210,9 +210,9 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                   useFallbackLink = true))
               },
             formData => {
-              sessionService.getMongoSensitive(journeyType).flatMap {
+              sessionService.getMongo(journeyType.toString).flatMap {
                 case Right(Some(data)) =>
-                  sessionService.setMongoDataSensitive(
+                  sessionService.setMongoData(
                     data.copy(
                       addIncomeSourceData =
                         Some(

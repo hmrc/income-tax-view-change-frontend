@@ -94,7 +94,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     withIncomeSourcesFS {
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
-        sessionService.createSessionSensitive(journeyType).flatMap {
+        sessionService.createSession(journeyType.toString).flatMap {
           case true => Future.successful(None)
           case false => throw new Exception("Unable to create session")
         }
@@ -153,9 +153,9 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                          (implicit user: MtdItUser[_]): Future[Result] = {
     val journeyType = JourneyType(Add, incomeSourceType)
 
-    sessionService.getMongoSensitive(journeyType).flatMap {
+    sessionService.getMongo(journeyType.toString).flatMap {
       case Right(Some(data)) =>
-        sessionService.setMongoDataSensitive(
+        sessionService.setMongoData(
           data.copy(
             addIncomeSourceData =
               data.addIncomeSourceData.map(
@@ -210,7 +210,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongoSensitive(journeyType)
+    sessionService.getMongo(journeyType.toString)
       .flatMap {
         case Right(Some(data)) =>
           Future.successful(

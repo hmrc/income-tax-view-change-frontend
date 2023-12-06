@@ -199,7 +199,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     val backUrl = getBackUrl(incomeSourceType, isAgent, isChange)
     val journeyType = JourneyType(Add, incomeSourceType)
 
-    sessionService.getMongoSensitive(journeyType).flatMap {
+    sessionService.getMongo(journeyType.toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceData = sessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) => addIncomeSourceData
@@ -209,7 +209,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
         val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(dateStarted = None, accountingPeriodStartDate = None, accountingPeriodEndDate = None)
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
-        sessionService.setMongoDataSensitive(uiJourneySessionData).flatMap {
+        sessionService.setMongoData(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(backUrl))
           case false => Future.failed(new Exception("Unable to delete start date"))
         }
@@ -221,7 +221,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                          (implicit request: Request[_]): Future[Result] = {
     val journeyType = JourneyType(Add, SelfEmployment)
 
-    sessionService.getMongoSensitive(journeyType).flatMap {
+    sessionService.getMongo(journeyType.toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceData = sessionData.addIncomeSourceData match {
           case Some(addIncomeSourceData) => addIncomeSourceData
@@ -232,7 +232,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           accountingPeriodEndDate = Some(accountingPeriodEndDate.toString))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
-        sessionService.setMongoDataSensitive(uiJourneySessionData).flatMap {
+        sessionService.setMongoData(uiJourneySessionData).flatMap {
           case true => Future.successful(Redirect(successUrl))
           case false => Future.failed(new Exception("Unable to update accounting period"))
         }
@@ -242,7 +242,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
 
   private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
     val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongoSensitive(journeyType).flatMap {
+    sessionService.getMongo(journeyType.toString).flatMap {
       case Right(Some(data)) =>
         Future.successful(
           data.addIncomeSourceData

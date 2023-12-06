@@ -106,7 +106,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                               (implicit user: MtdItUser[_]): Future[Option[String]] = {
 
     if (isChange) {
-      sessionService.getMongoSensitive(journeyType).flatMap {
+      sessionService.getMongo(journeyType.toString).flatMap {
         case Right(Some(data)) =>
           Future.successful(
             data.addIncomeSourceData
@@ -152,7 +152,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     withIncomeSourcesFS {
       val journeyType = JourneyType(Add, SelfEmployment)
 
-      sessionService.getMongoSensitive(journeyType).flatMap {
+      sessionService.getMongo(journeyType.toString).flatMap {
         case Right(Some(data)) =>
             BusinessTradeForm.checkBusinessTradeWithBusinessName(
               BusinessTradeForm.form.bindFromRequest(),
@@ -188,7 +188,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                    (implicit user: MtdItUser[_]): Future[Result] = {
     val successURL = Redirect(getSuccessURL(isAgent, isChange))
 
-    sessionService.setMongoDataSensitive(
+    sessionService.setMongoData(
       data.copy(
         addIncomeSourceData =
           data.addIncomeSourceData.map(
