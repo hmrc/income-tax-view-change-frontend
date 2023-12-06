@@ -250,7 +250,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
               _.dateStarted
             )
         )
-      case Right(_) => throw new Exception(s"empty field: dateStarted")
+      case Right(_) => throw new Exception("No data retrieved from Mongo")
       case Left(ex) => Future.failed(ex)
     }
   }

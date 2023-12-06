@@ -113,7 +113,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                 _.businessTrade
               )
           )
-        case Right(_) => throw new Exception(s"empty field: businessTrade")
+        case Right(_) => throw new Exception("No data retrieved from Mongo")
         case Left(err) => Future.failed(err)
       }
     } else {
