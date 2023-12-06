@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
-import models.incomeSourceDetails.{AddIncomeSourceData, SensitiveAddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -228,8 +228,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           case None => throw new Exception("addIncomeSourceData field not found in session data")
         }
         val accountingPeriodEndDate = dateService.getAccountingPeriodEndDate(incomeSourceStartDate)
-        val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate.toString),
-          accountingPeriodEndDate = Some(accountingPeriodEndDate.toString))
+        val updatedAddIncomeSourceData = oldAddIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate),
+          accountingPeriodEndDate = Some(accountingPeriodEndDate))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
         sessionService.setMongoData(uiJourneySessionData).flatMap {

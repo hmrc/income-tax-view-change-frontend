@@ -17,7 +17,7 @@
 package controllers.incomeSources.add
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
