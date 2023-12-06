@@ -71,7 +71,6 @@ class SessionService @Inject()(
 
   def getMongoKey(key: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[String]]] = {
-
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         journeyType.operation match {
