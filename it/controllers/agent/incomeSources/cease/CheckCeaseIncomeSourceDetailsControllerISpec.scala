@@ -20,6 +20,7 @@ import audit.models.CeaseIncomeSourceAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.JourneyType.Cease
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -92,9 +93,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-SE")))
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-UK")))
-    await(repository.deleteOne(UIJourneySessionData(testSessionId, "CEASE-FP")))
+    await(sessionService.deleteSession(Cease))
   }
 
   val testUser: MtdItUser[_] = MtdItUser(

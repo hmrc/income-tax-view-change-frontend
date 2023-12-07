@@ -75,8 +75,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
-    journeyType = JourneyType(Manage, incomeSourceType).toString,
-    manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(thisTestSelfEmploymentId))))
+    journeyType = JourneyType(Manage, incomeSourceType).toString)
 
   s"calling GET $manageSelfEmploymentShowUrl" should {
     "render the Manage Self Employment business page" when {

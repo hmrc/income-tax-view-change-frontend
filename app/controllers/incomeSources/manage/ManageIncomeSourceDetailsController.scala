@@ -314,29 +314,31 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     val incomeSourceIdMaybe: Option[IncomeSourceId] = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
     withIncomeSourcesFS {
-      sessionService.createSession(JourneyType(Manage, incomeSourceType).toString).flatMap { _ =>
-        for {
-          value <- if (incomeSourceType == SelfEmployment) {
-            getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe
-              .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [${incomeSourceIdHashMaybe.map(x => x.hash)}]")), isAgent = isAgent)
-          } else {
-            getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
-          }
-        } yield {
-          value match {
-            case Right(viewModel) =>
-              Ok(view(viewModel = viewModel,
-                isAgent = isAgent,
-                backUrl = backUrl
-              ))
-            case Left(error) =>
-              Logger("application").error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source: $error. isAgent = $isAgent")
-              if (isAgent) {
-                itvcErrorHandlerAgent.showInternalServerError()
-              } else {
-                itvcErrorHandler.showInternalServerError()
-              }
-          }
+      sessionService.createSession(JourneyType(Manage, incomeSourceType).toString).flatMap {
+        case true => Future.successful(None)
+        case false => Future.failed(throw new Exception("Unable to create session"))
+      }
+      for {
+        value <- if (incomeSourceType == SelfEmployment) {
+          getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe
+            .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [${incomeSourceIdHashMaybe.map(x => x.hash)}]")), isAgent = isAgent)
+        } else {
+          getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
+        }
+      } yield {
+        value match {
+          case Right(viewModel) =>
+            Ok(view(viewModel = viewModel,
+              isAgent = isAgent,
+              backUrl = backUrl
+            ))
+          case Left(error) =>
+            Logger("application").error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source: $error. isAgent = $isAgent")
+            if (isAgent) {
+              itvcErrorHandlerAgent.showInternalServerError()
+            } else {
+              itvcErrorHandler.showInternalServerError()
+            }
         }
       }
     }

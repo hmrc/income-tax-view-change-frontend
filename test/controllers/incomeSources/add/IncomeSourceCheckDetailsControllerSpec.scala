@@ -31,6 +31,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import org.scalatest.Assertion
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
@@ -134,7 +135,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     ".show" should {
       "return 200 OK" when {
         "the session contains full business details and FS enabled" when {
-          def runSuccessTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+          def runSuccessTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
             disableAllSwitches()
             enable(IncomeSources)
 
@@ -334,7 +335,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     ".submit" should {
       "return 303" when {
         "data is correct and redirect next page" when {
-          def successFullRedirectTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+          def successFullRedirectTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
             disableAllSwitches()
             enable(IncomeSources)
 
@@ -346,6 +347,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
                 Right(CreateIncomeSourceResponse(testBusinessId))
               })
             setupMockCreateSession(true)
+            setupMockSetSessionKeyMongo(Right(true))
             if (incomeSourceType == SelfEmployment) {
               val sessionData: UIJourneySessionData = testUIJourneySessionDataBusiness
               setupMockGetMongo(Right(Some(sessionData)))
@@ -360,7 +362,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
 
             val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-              routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType, id).url
+              routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType, testSelfEmploymentId))
@@ -390,7 +392,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
           }
         }
         "redirect to custom error page when unable to create business" when {
-          def businessCreateFailTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+          def businessCreateFailTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
             disableAllSwitches()
             enable(IncomeSources)
 

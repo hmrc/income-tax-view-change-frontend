@@ -519,6 +519,10 @@ taxCal_breakdown.message.C22218                                 = Dim ond yn y c
 taxCal_breakdown.message.C22220                                 = Os yw’ch elw trethadwy rhwng £6,725 ac £11,908 ni fydd angen i chi dalu Yswiriant Gwladol Dosbarth 2. Bydd eich hawl i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff eich cyfraniadau eu trin fel rhai sydd wedi’u talu.
 taxCal_breakdown.message.C22223                                 = Nid yw Yswiriant Gwladol Dosbarth 2 yn berthnasol am eich bod o dan 16 oed.
 taxCal_breakdown.message.C22224                                 = Nid yw Yswiriant Gwladol Dosbarth 2 yn berthnasol am eich bod dros oedran Pensiwn y Wladwriaeth.
+taxCal_breakdown.message.C22225                                 = Mae eich treth wedi’i lleihau oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol Cymru o Dreth Incwm yn uwch na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
+taxCal_breakdown.message.C22226                                 = Mae eich treth wedi cynyddu oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol Cymru o Dreth Incwm yn is na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
+taxCal_breakdown.message.C22225_Scottish                        = Mae eich treth wedi’i lleihau oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol yr Alban o Dreth Incwm yn uwch na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
+taxCal_breakdown.message.C22226_Scottish                        = Mae eich treth wedi cynyddu oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol yr Alban o Dreth Incwm yn is na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
 taxCal_breakdown.message.agent.static1                          = Mae’r cyfrifiad hwn ond yn seiliedig ar yr wybodaeth y mae CThEF wedi’i chael am incwm a threuliau eich cleient hyd yma. Gallai hyn newid wrth i ni gael rhagor o wybodaeth am eich cleient yn ystod y flwyddyn dreth.
 taxCal_breakdown.message.agent.C22220                           = Os yw elw trethadwy eich cleient rhwng £6,725 ac £11,908, ni fydd angen i’ch cleient dalu Yswiriant Gwladol Dosbarth 2. Bydd hawl eich cleient i Bensiwn y Wladwriaeth, ac i rai budd-daliadau penodol, yn dal i fod yn gymwys. Caiff cyfraniadau eich cleient eu trin fel rhai sydd wedi’u talu.
 taxCal_breakdown.message.agent.C22201                           = Mae terfyn Cyfradd Sylfaenol eich cleient wedi’i gynyddu gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
@@ -540,6 +544,10 @@ taxCal_breakdown.message.agent.C22217                           = Mae un neu fwy
 taxCal_breakdown.message.agent.C22218                           = Dim ond yn y cyfrifiad o’r rhwymedigaeth flynyddol amcangyfrifedig y mae Treth Enillion Cyfalaf wedi’i chynnwys. Bydd swm gwirioneddol y Dreth Enillion Cyfalaf wedi’i gynnwys yng nghyfrifiad y datganiad terfynol.
 taxCal_breakdown.message.agent.C22223                           = Nid yw Yswiriant Gwladol Dosbarth 2 yn berthnasol am fod eich cleient o dan 16 oed.
 taxCal_breakdown.message.agent.C22224                           = Nid yw Yswiriant Gwladol Dosbarth 2 yn berthnasol am fod eich cleient dros oedran Pensiwn y Wladwriaeth.
+taxCal_breakdown.message.agent.C22225                           = Mae eich treth wedi’i lleihau oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol Cymru o Dreth Incwm yn uwch na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
+taxCal_breakdown.message.agent.C22226                           = Mae eich treth wedi cynyddu oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol Cymru o Dreth Incwm yn is na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
+taxCal_breakdown.message.agent.C22225_Scottish                  = Mae eich treth wedi’i lleihau oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol yr Alban o Dreth Incwm yn uwch na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
+taxCal_breakdown.message.agent.C22226_Scottish                  = Mae eich treth wedi cynyddu oherwydd cyfraniadau elusennol Rhodd Cymorth - mae Cyfradd Sylfaenol yr Alban o Dreth Incwm yn is na’r gyfradd y mae elusennau wedi cael rhyddhad arni.
 
 
 taxCal_breakdown.table.head.rate_band                           = Haen cyfradd

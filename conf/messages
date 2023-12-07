@@ -564,6 +564,10 @@ taxCal_breakdown.message.C22218                                 = The Capital Ga
 taxCal_breakdown.message.C22220                                 = If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid.
 taxCal_breakdown.message.C22223                                 = Class 2 National Insurance does not apply because you are under 16.
 taxCal_breakdown.message.C22224                                 = Class 2 National Insurance does not apply because you are over State Pension age.
+taxCal_breakdown.message.C22225                                 = Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief.
+taxCal_breakdown.message.C22226                                 = Your tax has increased because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is lower than the rate at which charities have obtained relief.
+taxCal_breakdown.message.C22225_Scottish                        = Your tax has been reduced because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is higher than the rate at which charities have obtained relief.
+taxCal_breakdown.message.C22226_Scottish                        = Your tax has increased because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is lower than the rate at which charities have obtained relief.
 taxCal_breakdown.message.agent.static1                          = This calculation is only based on information HMRC have received about your client’s income and expenses to date. This may change as we receive further information about your client during the tax year.
 taxCal_breakdown.message.agent.C22220                           = If your client’s taxable profits are between £6,725 and £11,908 your client will not need to pay Class 2 National Insurance. Your client’s entitlements to the State Pension, and certain benefits, will still apply. Your client’s contributions are treated as having been paid.
 taxCal_breakdown.message.agent.C22201                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
@@ -585,6 +589,10 @@ taxCal_breakdown.message.agent.C22217                           = There are one 
 taxCal_breakdown.message.agent.C22218                           = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the Final declaration calculation.
 taxCal_breakdown.message.agent.C22223                           = Class 2 National Insurance does not apply because your client is under 16.
 taxCal_breakdown.message.agent.C22224                           = Class 2 National Insurance does not apply because your client is over State Pension age.
+taxCal_breakdown.message.agent.C22225                           = Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief.
+taxCal_breakdown.message.agent.C22226                           = Your tax has increased because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is lower than the rate at which charities have obtained relief.
+taxCal_breakdown.message.agent.C22225_Scottish                  = Your tax has been reduced because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is higher than the rate at which charities have obtained relief.
+taxCal_breakdown.message.agent.C22226_Scottish                  = Your tax has increased because of Gift Aid charity donations - the Scottish Basic Rate of Income Tax is lower than the rate at which charities have obtained relief.
 
 ## Forecast Tax Calc Summary ##
 forecast_taxCalc.heading                                        = Forecast tax calculation
