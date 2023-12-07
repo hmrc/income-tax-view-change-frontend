@@ -58,6 +58,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit request =>
       val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit)
+      println("\nrequest.headers.get(REFERER)\n")
       request.headers.get(REFERER) match {
         case Some(ref) => Future.successful(Ok(feedback).withSession(request.session + (REFERER -> ref)))
         case _ => Future.successful(Ok(feedback))

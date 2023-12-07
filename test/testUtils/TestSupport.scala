@@ -26,8 +26,8 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
-import org.scalatest.{BeforeAndAfterEach, Suite}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalactic.Equality
+import org.scalatest._
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, Result}
@@ -41,6 +41,7 @@ import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
+import org.scalatestplus.play.guice._
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +49,6 @@ import scala.concurrent.{ExecutionContext, Future}
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with Injecting with FeatureSwitching {
   this: Suite =>
 
-  import org.scalactic.Equality
   import play.twirl.api.Html
 
   implicit val htmlEq =
@@ -199,7 +199,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
     )
 
   def fakeRequestConfirmedClientwithBusinessName(clientNino: String = "AA111111A"): FakeRequest[AnyContentAsEmpty.type] =
-    fakeRequestWithActiveSession.withSession(
+    fakeRequestWithActiveSession.withMethod("POST").withSession(
       utils.SessionKeys.clientFirstName -> "Test",
       utils.SessionKeys.clientLastName -> "User",
       utils.SessionKeys.clientUTR -> "1234567890",
@@ -255,8 +255,11 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   lazy val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino)
 
-  def fakeRequestWithNinoAndOrigin(origin: String): FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession("nino" -> testNino,
-    "origin" -> origin)
+  def fakeRequestWithNinoAndOrigin(origin: String): FakeRequest[AnyContentAsEmpty.type] =
+    fakeRequestWithActiveSession.withSession("nino" -> testNino, "origin" -> origin)
+
+  def fakePostRequestWithNinoAndOrigin(origin: String): FakeRequest[AnyContentAsEmpty.type] =
+    fakePostRequestWithActiveSession.withSession("nino" -> testNino, "origin" -> origin)
 
   lazy val fakeRequestWithNinoAndCalc: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     forms.utils.SessionKeys.calculationId -> "1234567890",
@@ -268,9 +271,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   lazy val fakeRequestWithTestSession: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
     "Gov-Test-Scenario" -> "data"
   )
-
-
-
 
   implicit class FakeRequestUtil[C](fakeRequest: FakeRequest[C]) {
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {

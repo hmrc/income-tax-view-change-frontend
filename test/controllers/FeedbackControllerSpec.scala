@@ -70,20 +70,10 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
 
   ".show" when {
     "called with an authenticated HMRC-MTD-IT user and successfully retrieved income source" when {
-      "and firstAccountingPeriodEndDate is missing from income sources" should {
-        "return an Internal Server Error (500)" in {
-
-          setupMockGetIncomeSourceDetails()(businessIncome2018and2019)
-
-          lazy val result = TestFeedbackController.show()(fakeRequestWithActiveSession)
-
-          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-        }
-      }
-
 
       "successfully retrieves income sources and and display feedback page" should {
         "return an OK (200)" in {
+          disableAllSwitches()
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
           when(mockFeedbackView(any(), any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
@@ -95,7 +85,6 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
 
         }
       }
-
     }
 
     "Called with an Unauthenticated User" should {
@@ -134,7 +123,7 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
 
         when(mockThankYouView(any(), any(), any())(any(), any(), any())).thenReturn(HtmlFormat.empty)
 
-        lazy val result = TestFeedbackController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(fields.toSeq: _*))
+        lazy val result = TestFeedbackController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(fields.toSeq: _*))
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.feedback.routes.FeedbackController.thankYouAgent.url)

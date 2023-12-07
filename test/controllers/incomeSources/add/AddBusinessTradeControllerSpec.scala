@@ -255,7 +255,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeChar)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeChar
             ))
 
@@ -294,7 +294,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeEmpty)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
@@ -333,7 +333,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeShort)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeShort
             ))
 
@@ -372,7 +372,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeLong)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeLong
             ))
 
