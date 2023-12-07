@@ -139,7 +139,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
             val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
               .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
-            println(Console.MAGENTA + incomeSourceId + Console.WHITE)
             sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
               case Right(_) => handleRequest(
                 sources = user.incomeSources,
