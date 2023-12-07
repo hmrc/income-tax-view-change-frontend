@@ -117,7 +117,7 @@ lazy val microservice = Project(appName, file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
     ),
-    RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._"),
+    RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._", "models.incomeSourceDetails.LatencyYear._"),
     scalacOptions += "-Wconf:cat=unused-imports:s,cat=unused-params:s"
   )
   .settings(resolvers ++= Seq(

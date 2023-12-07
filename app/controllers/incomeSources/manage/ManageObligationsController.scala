@@ -25,8 +25,8 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
+import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}

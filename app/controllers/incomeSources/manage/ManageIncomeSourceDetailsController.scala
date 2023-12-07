@@ -122,17 +122,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
           .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
 
-        sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
-          sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-            case Right(_) => handleRequest(
-              sources = user.incomeSources,
-              isAgent = false,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-              incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
-              incomeSourceType = SelfEmployment
-            )
-            case Left(exception) => Future.failed(exception)
-          }
+        sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+          case Right(_) => handleRequest(
+            sources = user.incomeSources,
+            isAgent = false,
+            backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+            incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
+            incomeSourceType = SelfEmployment
+          )
+          case Left(exception) => Future.failed(exception)
         }
       }.recover {
         case exception =>
@@ -159,13 +157,9 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => mtdItUser.incomeSources.compareHashToQueryString(x))
                 .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
 
-              sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
-                case true =>
-                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-                    case Right(_) => result
-                    case Left(exception) => Future.failed(exception)
-                  }
-                case false => Future.failed(new Error("Failed to create mongo session"))
+              sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+                case Right(_) => result
+                case Left(exception) => Future.failed(exception)
               }
             }.recover {
               case exception =>
@@ -223,7 +217,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   }
 
   private def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: IncomeSourceId, isAgent: Boolean)
-                                            (implicit user: MtdItUser[_],hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
+                                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
 
     val desiredIncomeSourceMaybe: Option[BusinessDetailsModel] = sources.businesses
       .filterNot(_.isCeased)
@@ -320,27 +314,29 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     val incomeSourceIdMaybe: Option[IncomeSourceId] = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
     withIncomeSourcesFS {
-      for {
-        value <- if (incomeSourceType == SelfEmployment) {
-          getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe
-            .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [${incomeSourceIdHashMaybe.map(x => x.hash)}]")), isAgent = isAgent)
-        } else {
-          getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
-        }
-      } yield {
-        value match {
-          case Right(viewModel) =>
-            Ok(view(viewModel = viewModel,
-              isAgent = isAgent,
-              backUrl = backUrl
-            ))
-          case Left(error) =>
-            Logger("application").error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source: $error. isAgent = $isAgent")
-            if (isAgent) {
-              itvcErrorHandlerAgent.showInternalServerError()
-            } else {
-              itvcErrorHandler.showInternalServerError()
-            }
+      sessionService.createSession(JourneyType(Manage, incomeSourceType).toString).flatMap { _ =>
+        for {
+          value <- if (incomeSourceType == SelfEmployment) {
+            getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe
+              .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [${incomeSourceIdHashMaybe.map(x => x.hash)}]")), isAgent = isAgent)
+          } else {
+            getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
+          }
+        } yield {
+          value match {
+            case Right(viewModel) =>
+              Ok(view(viewModel = viewModel,
+                isAgent = isAgent,
+                backUrl = backUrl
+              ))
+            case Left(error) =>
+              Logger("application").error(s"[ManageIncomeSourceDetailsController][extractIncomeSource] unable to find income source: $error. isAgent = $isAgent")
+              if (isAgent) {
+                itvcErrorHandlerAgent.showInternalServerError()
+              } else {
+                itvcErrorHandler.showInternalServerError()
+              }
+          }
         }
       }
     }

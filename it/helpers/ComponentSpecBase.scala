@@ -529,6 +529,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getForeignPropertyReportingMethodNotSaved(id: String, session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/error-foreign-property-reporting-method-not-saved?id=$id", session)
 
     def getAddIncomeSource(): WSResponse = get(uri = s"/income-sources/add/new-income-sources")
+
+    def getManageSECannotGoBack: WSResponse = get("/income-sources/manage/manage-business-cannot-go-back")
+
+    def getManageUKPropertyCannotGoBack: WSResponse = get("/income-sources/manage/manage-uk-property-cannot-go-back")
+
+    def getManageForeignPropertyCannotGoBack: WSResponse = get("/income-sources/manage/manage-foreign-property-cannot-go-back")
   }
 
   def unauthorisedTest(uri: String): Unit = {

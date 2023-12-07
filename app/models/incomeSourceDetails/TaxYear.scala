@@ -16,9 +16,14 @@
 
 package models.incomeSourceDetails
 
+import play.api.libs.json.{JsString, Writes}
+import play.api.mvc.JavascriptLiteral
+
 import scala.util.Try
 
-case class TaxYear(startYear: Int, endYear: Int)
+case class TaxYear(startYear: Int, endYear: Int) {
+  override def toString: String = s"$startYear-$endYear"
+}
 
 object TaxYear {
 
@@ -27,14 +32,14 @@ object TaxYear {
     def isValidYear(year: String): Boolean =
       year.length == 4 &&
         year.forall(_.isDigit) &&
-          Try(year.toInt).toOption.isDefined
+        Try(year.toInt).toOption.isDefined
 
     def differenceIsOne(yearOne: String, yearTwo: String): Boolean =
       yearOne.toInt + 1 == yearTwo.toInt
 
     isValidYear(yearOne) &&
       isValidYear(yearTwo) &&
-        differenceIsOne(yearOne, yearTwo)
+      differenceIsOne(yearOne, yearTwo)
   }
 
   def getTaxYearModel(years: String): Option[TaxYear] = {
@@ -47,4 +52,11 @@ object TaxYear {
       case _ => None
     }
   }
+
+  implicit val journeyTypeJSLBinder: JavascriptLiteral[TaxYear] = (value: TaxYear) => s"""'${value.toString}'"""
+
+  implicit def writes[T <: TaxYear]: Writes[T] = Writes {
+    taxYear => JsString(taxYear.toString)
+  }
 }
+

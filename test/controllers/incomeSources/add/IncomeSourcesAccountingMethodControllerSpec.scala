@@ -18,23 +18,22 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.AddIncomeSourceData
-import models.incomeSourceDetails.AddIncomeSourceData.hasBeenAddedField
+import models.incomeSourceDetails.AddIncomeSourceData.journeyIsCompleteField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, isA}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, contentType, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
@@ -138,7 +137,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         enable(IncomeSources)
         mockNoIncomeSources()
         val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, journeyType, Right(None))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -157,7 +156,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         reset(mockSessionService)
         setupMockSetSessionKeyMongo(Right(true))
         val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, journeyType, Right(None))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
 
@@ -172,7 +171,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         mockBusinessIncomeSource()
         setupMockSetSessionKeyMongo(Right(true))
         val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, journeyType, Right(None))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
 
@@ -187,7 +186,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         mockBusinessIncomeSourceWithCashAndAccruals()
         setupMockSetSessionKeyMongo(Right(true))
         val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, journeyType, Right(None))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
 
@@ -202,7 +201,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         enable(IncomeSources)
         mockBusinessIncomeSourceMissingCashOrAccrualsField()
         val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, journeyType, Right(None))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
 
@@ -216,7 +215,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         disable(IncomeSources)
         mockBusinessIncomeSource()
         val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, journeyType, Right(None))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
 
@@ -238,7 +237,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         mockBusinessIncomeSource()
         setupMockAuth(isAgent)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, incomeSourceType), Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, incomeSourceType), Right(Some(true)))
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
         status(result) shouldBe SEE_OTHER
@@ -317,7 +316,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         setupMockGetSessionKeyMongoTyped[String](Right(cashOrAccrualsFlag))
         val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, journeyType, Right(None))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, journeyType, Right(None))
 
         val result: Future[Result] = changeResult(incomeSourceType, isAgent, cashOrAccrualsFlag)
         val document: Document = Jsoup.parse(contentAsString(result))

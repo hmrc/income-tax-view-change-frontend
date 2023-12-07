@@ -17,14 +17,15 @@
 package controllers.incomeSources.manage
 
 import config.featureswitch.{IncomeSources, TimeMachineAddYear}
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.LatencyDetails
+import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import play.api.http.Status.OK
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
@@ -71,6 +72,12 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
+
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = JourneyType(Manage, incomeSourceType).toString,
+    manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(thisTestSelfEmploymentId))))
+
   s"calling GET $manageSelfEmploymentShowUrl" should {
     "render the Manage Self Employment business page" when {
       "URL contains a valid income source ID and authorised user has no latency information" in {
@@ -82,6 +89,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
@@ -194,6 +203,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+
         And("Mongo storage is successfully set")
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
@@ -224,6 +235,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property")
 
@@ -330,6 +343,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property")
 

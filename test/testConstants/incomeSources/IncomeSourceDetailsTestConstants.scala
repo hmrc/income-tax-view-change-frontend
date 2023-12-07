@@ -17,12 +17,12 @@
 package testConstants.incomeSources
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.JourneyType.JourneyType
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
-import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId}
+import models.incomeSourceDetails._
+import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testHashedIncomeSourceId, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 
@@ -131,5 +131,82 @@ object IncomeSourceDetailsTestConstants {
   def getCurrentTaxEndYear(currentDate: LocalDate): Int = {
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) currentDate.getYear
     else currentDate.getYear + 1
+  }
+
+  val emptyUIJourneySessionData: JourneyType => UIJourneySessionData = journeyType => {
+    journeyType.operation.operationType match {
+      case "ADD" =>
+        UIJourneySessionData(
+          sessionId = testSessionId,
+          journeyType = journeyType.toString,
+          addIncomeSourceData = Some(AddIncomeSourceData())
+        )
+      case "MANAGE" =>
+        UIJourneySessionData(
+          sessionId = testSessionId,
+          journeyType = journeyType.toString,
+          manageIncomeSourceData = Some(ManageIncomeSourceData())
+        )
+      case "CEASE" =>
+        UIJourneySessionData(
+          sessionId = testSessionId,
+          journeyType = journeyType.toString,
+          ceaseIncomeSourceData = Some(CeaseIncomeSourceData())
+        )
+    }
+  }
+
+  val notCompletedUIJourneySessionData: JourneyType => UIJourneySessionData = journeyType => {
+    journeyType.operation.operationType match {
+      case "ADD" =>
+        UIJourneySessionData(
+          sessionId = testSessionId,
+          journeyType = journeyType.toString,
+          addIncomeSourceData = Some(AddIncomeSourceData(
+            businessName = Some("A Business Name"),
+            businessTrade = Some("A Trade"),
+            dateStarted = Some(LocalDate.of(2022, 1, 1)),
+            accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
+            accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
+            createdIncomeSourceId = Some(testHashedIncomeSourceId),
+            address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
+            countryCode = Some("A Country"),
+            incomeSourcesAccountingMethod = Some("cash"),
+            journeyIsComplete = None
+          ))
+        )
+      case "MANAGE" =>
+        UIJourneySessionData(
+          sessionId = testSessionId,
+          journeyType = journeyType.toString,
+          manageIncomeSourceData = Some(ManageIncomeSourceData(
+            incomeSourceId = Some(testHashedIncomeSourceId),
+            journeyIsComplete = None
+          ))
+        )
+      case "CEASE" =>
+        UIJourneySessionData(
+          sessionId = testSessionId,
+          journeyType = journeyType.toString,
+          ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
+            incomeSourceId = Some(testHashedIncomeSourceId),
+            endDate = Some(LocalDate.now().toString),
+            ceasePropertyDeclare = Some("true"),
+            journeyIsComplete = None
+          ))
+        )
+    }
+  }
+
+  val completedUIJourneySessionData: JourneyType => UIJourneySessionData = (journeyType: JourneyType) => {
+    journeyType.operation.operationType match {
+      case "ADD" => UIJourneySessionData(testSessionId, journeyType.toString,
+        addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+      case "MANAGE" => UIJourneySessionData(testSessionId, journeyType.toString,
+        manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testHashedIncomeSourceId),
+          taxYear = Some("2022-2023"), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))
+      case "CEASE" => UIJourneySessionData(testSessionId, journeyType.toString,
+        ceaseIncomeSourceData = Some(CeaseIncomeSourceData(journeyIsComplete = Some(true))))
+    }
   }
 }

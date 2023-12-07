@@ -91,7 +91,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
         sessionService.createSession(journeyType.toString).flatMap {

@@ -87,7 +87,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                 isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
-    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
       getStartDate(incomeSourceType).flatMap {
         case Some(startDate) =>
           Future.successful {

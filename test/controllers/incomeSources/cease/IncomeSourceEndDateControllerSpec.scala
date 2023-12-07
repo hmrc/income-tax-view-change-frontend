@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
@@ -34,6 +35,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.cease.IncomeSourceEndDate
@@ -381,6 +383,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
         setupMockSetSessionKeyMongo(Right(true))
 
         val result: Future[Result] = (isAgent, isChange) match {
@@ -566,6 +569,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       s"SelfEmployment - unable to set session data ${CeaseIncomeSourceData.dateCeasedField}" when {
         "called .submit" in {
           setupMockCreateSession(true)
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
           setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
           testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
         }
@@ -573,6 +577,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       s"SelfEmployment - unable to set session data ${CeaseIncomeSourceData.incomeSourceIdField}" when {
         "called .submit" in {
           setupMockCreateSession(true)
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
           setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Right(true))
           setupMockSetSessionKeyMongo(CeaseIncomeSourceData.incomeSourceIdField)(Left(new Exception()))
           testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
@@ -581,6 +586,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       s"Property - unable to set session data ${CeaseIncomeSourceData.dateCeasedField}" when {
         "called .submit" in {
           setupMockCreateSession(true)
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
           setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
           testInternalServerErrors(isAgent = false, isChange = false, id = None, incomeSourceType = ForeignProperty)
         }

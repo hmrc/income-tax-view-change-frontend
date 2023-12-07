@@ -75,7 +75,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   private def handleRequest(isAgent: Boolean,
                             incomeSourceId: IncomeSourceId,
                             incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
       incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
         case Some((startDate, businessName)) =>
           val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())

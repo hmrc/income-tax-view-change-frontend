@@ -17,8 +17,9 @@
 package utils
 
 import auth.MtdItUser
+import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
-import models.incomeSourceDetails.UIJourneySessionData
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -34,40 +35,91 @@ trait JourneyChecker extends IncomeSourcesUtils {
 
   implicit val ec: ExecutionContext
 
+  private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType match {
+    case Some(Agent) =>
+      true
+    case _ =>
+      false
+  }
+
+  private lazy val redirectUrl: (JourneyType, Option[String], Option[String], Option[String]) => MtdItUser[_] => Future[Result] =
+    (journeyType: JourneyType, reportingMethod: Option[String], taxYear: Option[String], incomeSourceId: Option[String]) => user => {
+      (journeyType.operation, isAgent(user)) match {
+        case (Add, true) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType))
+          }
+        case (Add, false) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType))
+          }
+        case (Manage, _) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent(user),
+              journeyType.businessType, reportingMethod.get, taxYear.get, incomeSourceId))
+          }
+        case (Cease, _) =>
+          Future.successful {
+            Redirect(controllers.routes.HomeController.show()) //TODO: fix
+          }
+      }
+    }
+
+  /** *****************************TODO: remove in MISUV-6724 or MISUV-6734********************************************* */
+  def withIncomeSourcesFSWithSessionCheck(journeyType: JourneyType)(codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    withIncomeSourcesFS {
+      journeyChecker(journeyType).flatMap {
+        case true => user.userType match {
+          case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
+          case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
+        }
+        case false => codeBlock
+      }
+    }
+  }
+
+  private def journeyChecker(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.journeyIsCompleteField, journeyType).flatMap {
+      case Right(Some(true)) => Future(true)
+      case _ => Future(false)
+    }
+  }
+
+  /** ***************************************************************************************************************** */
+
   def withSessionData(journeyType: JourneyType)(codeBlock: UIJourneySessionData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       sessionService.getMongo(journeyType.toString).flatMap {
         case Right(Some(data: UIJourneySessionData)) =>
           if (isJourneyComplete(data, journeyType)) {
-            redirectUrl(journeyType)
+            val reportingMethod = data.manageIncomeSourceData.flatMap(manageData => manageData.reportingMethod)
+            val taxYear = data.manageIncomeSourceData.flatMap(manageData => manageData.taxYear)
+            val incomeSourceId = if (journeyType.businessType == SelfEmployment) {
+              data.manageIncomeSourceData.flatMap(manageData => manageData.incomeSourceId)
+            } else {
+              None
+            }
+            redirectUrl(journeyType, reportingMethod, taxYear, incomeSourceId)(user)
           } else {
             codeBlock(data)
           }
-        case Right(None) =>
+        case _ =>
           Logger("application").warn(s"No data found for journey type ${journeyType.toString}")
-          redirectUrl(journeyType)
-        case Left(ex) =>
-          Logger("application").error(s"Error accessing Mongo for journey type ${journeyType.toString}. Exception: ${ex.getMessage}", ex)
-          Future.failed(ex)
+          Future.failed(new Exception(s"Unable to retrieve Mongo data for journey type ${journeyType.toString}"))
       }
     }
   }
 
   private def isJourneyComplete(data: UIJourneySessionData, journeyType: JourneyType): Boolean = {
     journeyType.operation match {
-      case Add => data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case Manage => data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case Cease => data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
+      case Add =>
+        data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
+      case Manage =>
+        data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
+      case Cease =>
+        data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case _ => false
     }
   }
-
-  private def redirectUrl(journeyType: JourneyType)(implicit user: MtdItUser[_]): Future[Result] =
-    user.userType match {
-      case Some(Agent) =>
-        Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
-      case _ =>
-        Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
-    }
 }

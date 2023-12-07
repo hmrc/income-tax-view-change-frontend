@@ -106,11 +106,11 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
     val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType) else
       controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, incomeSourceType)).flatMap {
+    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, incomeSourceType)).flatMap {
       case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
         Future.successful(errorHandler.showInternalServerError())

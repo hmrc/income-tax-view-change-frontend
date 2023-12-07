@@ -16,10 +16,10 @@ class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
   val ukPropertyBackErrorUrl: String = backErrorController.show(UkProperty).url
   val foreignPropertyBackErrorUrl: String = backErrorController.show(ForeignProperty).url
 
-  val title = messagesAPI("cannot-go-back.heading")
-  val headingSE = messagesAPI("cannot-go-back.sole-trader")
-  val headingUk = messagesAPI("cannot-go-back.uk-property")
-  val headingFP = messagesAPI("cannot-go-back.foreign-property")
+  val title = messagesAPI("cannotGoBack.heading")
+  val headingSE = messagesAPI("cannotGoBack.soleTraderAdded")
+  val headingUk = messagesAPI("cannotGoBack.ukPropertyAdded")
+  val headingFP = messagesAPI("cannotGoBack.foreignPropertyAdded")
 
   s"calling GET $selfEmploymentBackErrorUrl" should {
     "render the self employment business not added error page" when {
@@ -36,7 +36,7 @@ class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(s"$title - $headingSE")
+          pageTitleIndividual(s"$title")
         )
       }
     }
@@ -73,7 +73,7 @@ class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(s"$title - $headingUk")
+          pageTitleIndividual(s"$title")
         )
       }
     }
@@ -110,7 +110,7 @@ class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(s"$title - $headingFP")
+          pageTitleIndividual(s"$title")
         )
       }
     }

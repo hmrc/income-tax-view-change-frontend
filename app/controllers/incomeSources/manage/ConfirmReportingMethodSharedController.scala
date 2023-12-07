@@ -68,8 +68,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            isAgent: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-
-    withIncomeSourcesFS {
+    withSessionData(JourneyType(Manage, incomeSourceType)) { _ =>
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
           case Right(Some(incomeSourceId)) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, Some(mkIncomeSourceId(incomeSourceId)))
@@ -194,7 +193,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def handleValidForm(errorCall: Call,
                               isAgent: Boolean,
                               successCall: Call,
-                              taxYears: TaxYear,
+                              taxYear: TaxYear,
                               incomeSourceIdMaybe: Option[IncomeSourceId],
                               reportingMethod: String,
                               incomeSourceBusinessName: Option[String],
@@ -206,7 +205,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         case Some(incomeSourceId) => updateIncomeSourceService.updateTaxYearSpecific(
           nino = user.nino,
           incomeSourceId = incomeSourceId.value,
-          taxYearSpecific = TaxYearSpecific(taxYears.endYear.toString, reportingMethod match {
+          taxYearSpecific = TaxYearSpecific(taxYear.endYear.toString, reportingMethod match {
             case "annual" => true
             case "quarterly" => false
           })
@@ -225,7 +224,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               journeyType = incomeSourceType.journeyType,
               operationType = "MANAGE",
               reportingMethodChangeTo = formatReportingMethod(reportingMethod),
-              taxYear = taxYears.startYear.toString + "-" + taxYears.endYear.toString,
+              taxYear = taxYear.startYear.toString + "-" + taxYear.endYear.toString,
               businessName = incomeSourceBusinessName.getOrElse("Unknown")
             )
           )
@@ -233,29 +232,32 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       case res: UpdateIncomeSourceResponseModel =>
         withSessionData(JourneyType(Manage, incomeSourceType)) {
           uiJourneySessionData =>
-            val newUIJourneySessionData = uiJourneySessionData.copy(manageIncomeSourceData = Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.toString), Some(true))))
+            val newUIJourneySessionData = {
+              uiJourneySessionData.copy(manageIncomeSourceData =
+                Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.toString), Some(reportingMethod), Some(taxYear.startYear.toString + "-" + taxYear.endYear.toString), Some(true))))
+            }
             sessionService.setMongoData(newUIJourneySessionData).flatMap {
               case true => Future.successful(Redirect(successCall))
               case false => Future.successful(logAndShowError(isAgent, "Unable to update mongo journey as complete"))
             }
+            Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")
+            auditingService
+              .extendedAudit(
+                IncomeSourceReportingMethodAuditModel(
+                  isSuccessful = true,
+                  journeyType = incomeSourceType.journeyType,
+                  operationType = "MANAGE",
+                  reportingMethodChangeTo = formatReportingMethod(reportingMethod),
+                  taxYear = taxYear.startYear.toString + "-" + taxYear.endYear.toString,
+                  businessName = incomeSourceBusinessName.getOrElse("Unknown")
+                )
+              )
+            Future.successful(Redirect(successCall))
         }
     }
-    Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")
-    auditingService
-      .extendedAudit(
-        IncomeSourceReportingMethodAuditModel(
-          isSuccessful = true,
-          journeyType = incomeSourceType.journeyType,
-          operationType = "MANAGE",
-          reportingMethodChangeTo = formatReportingMethod(reportingMethod),
-          taxYear = taxYears.startYear.toString + "-" + taxYears.endYear.toString,
-          businessName = incomeSourceBusinessName.getOrElse("Unknown")
-        )
-      )
-    Future.successful(Redirect(successCall))
   } recover {
     case ex: Exception =>
-      logAndShowError(isAgent, s"[handleUpdateSuccess]: Error updating reporting method: ${ex.getMessage}")
+      logAndShowError(isAgent, s"[handleValidForm]: Error updating reporting method: ${ex.getMessage}")
   }
 
   private def getReportingMethod(reportingMethod: String): Option[String] = {
