@@ -19,7 +19,8 @@ package controllers.incomeSources.manage
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
@@ -82,6 +83,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
   )(FakeRequest())
 
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = JourneyType(Manage, incomeSourceType).toString,
+    manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(taxYear))))
+
   s"calling GET $confirmReportingMethodShowUKPropertyUrl" should {
     "render the Confirm Reporting Method page" when {
       "all query parameters are valid" in {
@@ -96,6 +102,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
         val result = IncomeTaxViewChangeFrontend.getConfirmUKPropertyReportingMethod(taxYear, annual)
 
@@ -124,6 +132,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val result = IncomeTaxViewChangeFrontend.getConfirmForeignPropertyReportingMethod(taxYear, annual)
         verifyIncomeSourceDetailsCall(testMtditid)
@@ -204,6 +214,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+
         val result = IncomeTaxViewChangeFrontend.postConfirmUKPropertyReportingMethod(taxYear, annual)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
         )
@@ -230,6 +242,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend.postConfirmForeignPropertyReportingMethod(taxYear, annual)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))
@@ -260,6 +274,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         And("API 1776 updateTaxYearSpecific returns a success response")
         IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend.postConfirmSoleTraderBusinessReportingMethod(taxYear, annual)(
           Map(ConfirmReportingMethodForm.confirmReportingMethod -> Seq("true"))

@@ -19,6 +19,7 @@ package utils
 import auth.MtdItUser
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.mvc.Result
@@ -91,19 +92,22 @@ trait JourneyChecker extends IncomeSourcesUtils {
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       sessionService.getMongo(journeyType.toString).flatMap {
-        case Right(Some(data: UIJourneySessionData)) =>
-          if (isJourneyComplete(data, journeyType)) {
-            val reportingMethod = data.manageIncomeSourceData.flatMap(manageData => manageData.reportingMethod)
-            val taxYear = data.manageIncomeSourceData.flatMap(manageData => manageData.taxYear)
-            val incomeSourceId = if (journeyType.businessType == SelfEmployment) {
-              data.manageIncomeSourceData.flatMap(manageData => manageData.incomeSourceId)
-            } else {
-              None
-            }
-            redirectUrl(journeyType, reportingMethod, taxYear, incomeSourceId)(user)
-          } else {
-            codeBlock(data)
+        case Right(Some(data: UIJourneySessionData)) if isJourneyComplete(data, journeyType) =>
+          val manageData = data.manageIncomeSourceData
+          val reportingMethod = manageData.flatMap(_.reportingMethod)
+          val taxYear = manageData.flatMap(_.taxYear)
+          val incomeSourceId = journeyType.businessType match {
+            case SelfEmployment =>
+              manageData.flatMap(_.incomeSourceId).map { unhashedString =>
+                val unhashedIncomeSourceId = IncomeSourceId(unhashedString)
+                val hashedIncomeSourceId = IncomeSourceIdHash(unhashedIncomeSourceId)
+                hashedIncomeSourceId.hash
+              }
+            case _ => None
           }
+          redirectUrl(journeyType, reportingMethod, taxYear, incomeSourceId)(user)
+        case Right(Some(data: UIJourneySessionData)) =>
+          codeBlock(data)
         case _ =>
           Logger("application").warn(s"No data found for journey type ${journeyType.toString}")
           Future.failed(new Exception(s"Unable to retrieve Mongo data for journey type ${journeyType.toString}"))

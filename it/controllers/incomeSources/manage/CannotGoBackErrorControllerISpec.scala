@@ -17,16 +17,12 @@ package controllers.incomeSources.manage
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import org.scalatest.Assertion
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSelfEmploymentIdHashed}
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
@@ -42,19 +38,14 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
       routes.CannotGoBackErrorController.show(isAgent = false, incomeSourceType, annualReporting, taxYear, None).url
     }
 
-  val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
     enable(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-    await(sessionService.setMongoData(UIJourneySessionData(testSessionId, JourneyType(Manage, incomeSourceType).toString,
-      manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
     val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontend.getManageSECannotGoBack
-      case UkProperty => IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack
-      case ForeignProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
+      case SelfEmployment => IncomeTaxViewChangeFrontend.getManageSECannotGoBack(annualReporting, taxYear, testSelfEmploymentIdHashed)
+      case UkProperty => IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack(annualReporting, taxYear)
+      case ForeignProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack(annualReporting, taxYear)
     }
 
     result should have(
@@ -68,14 +59,16 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
     val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontend.getManageSECannotGoBack
-      case UkProperty => IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack
-      case ForeignProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
+      case SelfEmployment => IncomeTaxViewChangeFrontend.getManageSECannotGoBack(annualReporting, taxYear, testSelfEmploymentIdHashed)
+      case UkProperty => IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack(annualReporting, taxYear)
+      case ForeignProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack(annualReporting, taxYear)
     }
+
+    val expectedRedirect: String = controllers.routes.HomeController.show().url
 
     result should have(
       httpStatus(SEE_OTHER),
-      pageTitleIndividual("cannotGoBack.heading")
+      redirectURI(expectedRedirect)
     )
   }
 

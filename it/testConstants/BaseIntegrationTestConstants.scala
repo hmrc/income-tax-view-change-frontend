@@ -19,7 +19,7 @@ package testConstants
 import controllers.agent.utils.SessionKeys
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.btaNavBar.{NavContent, NavLinks}
-import models.core.AddressModel
+import models.core.{AddressModel, IncomeSourceId}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
@@ -135,7 +135,7 @@ object BaseIntegrationTestConstants {
   }
 
   val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testDate),
     address = expectedAddress,
@@ -148,7 +148,7 @@ object BaseIntegrationTestConstants {
   )
 
   val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId),
+    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
     tradingName = None,
     tradingStartDate = propertyTradingStartDate,
     address = None,
@@ -161,7 +161,7 @@ object BaseIntegrationTestConstants {
   )
 
   val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId),
+    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
     tradingName = None,
     tradingStartDate = propertyTradingStartDate,
     address = None,

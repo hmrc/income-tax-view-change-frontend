@@ -97,7 +97,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+      sessionService.createSession(JourneyType(Manage, ForeignProperty).toString).flatMap {
         case true =>
           handleRequest(
             sources = user.incomeSources,
@@ -115,7 +115,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+            sessionService.createSession(JourneyType(Manage, ForeignProperty).toString).flatMap {
               case true =>
                 handleRequest(
                   sources = mtdItUser.incomeSources,
@@ -133,13 +133,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+        sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
           case true =>
             val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
 
             val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
               .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
-
+            println(Console.MAGENTA + incomeSourceId + Console.WHITE)
             sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
               case Right(_) => handleRequest(
                 sources = user.incomeSources,
@@ -165,7 +165,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             withIncomeSourcesFS {
-              sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+              sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
                 case true =>
                   val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
                   val result = handleRequest(

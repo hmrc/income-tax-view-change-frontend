@@ -21,8 +21,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.IncomeSourceType
-import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -47,13 +45,11 @@ class CannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTime
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, reportingMethod: String, taxYear: String, id: Option[String]): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
       handleRequest(
         isAgent = isAgent,
         incomeSourceType = incomeSourceType,
         reportingMethod = reportingMethod,
-        taxYear = taxYear,
-        id = incomeSourceIdMaybe
+        taxYear = taxYear
       )
   }
 
@@ -74,7 +70,7 @@ class CannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTime
   }
 
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, reportingMethod: String, taxYear: String, id: Option[IncomeSourceId])
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, reportingMethod: String, taxYear: String)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val subheadingContent = getSubheadingContent(incomeSourceType, reportingMethod, taxYear)
     Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))

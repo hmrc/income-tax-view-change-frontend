@@ -39,7 +39,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
@@ -534,11 +534,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddIncomeSource(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/new-income-sources", session)
 
-    def getManageSECannotGoBack: WSResponse = get("/income-sources/manage/manage-business-cannot-go-back")
+    def getManageSECannotGoBack(reportingMethod: String, taxYear: String, id: String): WSResponse = get(s"/income-sources/manage/manage-business-cannot-go-back?reportingMethod=$reportingMethod&taxYear=$taxYear&id=$id", clientDetailsWithConfirmation)
 
-    def getManageUKPropertyCannotGoBack: WSResponse = get("/income-sources/manage/manage-uk-property-cannot-go-back")
+    def getManageUKPropertyCannotGoBack(reportingMethod: String, taxYear: String): WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back?reportingMethod=$reportingMethod&taxYear=$taxYear", clientDetailsWithConfirmation)
 
-    def getManageForeignPropertyCannotGoBack: WSResponse = get("/income-sources/manage/manage-foreign-property-cannot-go-back")
+    def getManageForeignPropertyCannotGoBack(reportingMethod: String, taxYear: String): WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back?reportingMethod=$reportingMethod&taxYear=$taxYear", clientDetailsWithConfirmation)
   }
 
   def unauthorisedTest(uri: String): Unit = {

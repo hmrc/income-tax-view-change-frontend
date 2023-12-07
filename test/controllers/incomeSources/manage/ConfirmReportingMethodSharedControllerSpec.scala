@@ -35,7 +35,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.UpdateIncomeSourceService
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testHashedIncomeSourceId, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testHashedSelfEmploymentId, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
@@ -137,11 +137,8 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         else TestConfirmReportingMethodSharedController
           .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
-
-
-
         val expectedRedirectUrl = if (incomeSourceType == SelfEmployment) {
-          routes.CannotGoBackErrorController.show(isAgent = isAgent, incomeSourceType, testChangeToAnnual, "2022-2023", Some(testHashedIncomeSourceId)).url
+          routes.CannotGoBackErrorController.show(isAgent = isAgent, incomeSourceType, testChangeToAnnual, "2022-2023", Some(testHashedSelfEmploymentId)).url
         } else {
           routes.CannotGoBackErrorController.show(isAgent = isAgent, incomeSourceType, testChangeToAnnual, "2022-2023", None).url
         }

@@ -88,7 +88,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testSelfEmploymentIdValidation = "XAIS00000000002"
   val testPropertyIncomeId = "1234"
   val testPropertyIncomeId2 = "1235"
-  val testHashedIncomeSourceId = "39884389383"
+  val testHashedSelfEmploymentId: String = "4154473711487316523"
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
   val testYear2017 = 2017

@@ -530,11 +530,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddIncomeSource(): WSResponse = get(uri = s"/income-sources/add/new-income-sources")
 
-    def getManageSECannotGoBack: WSResponse = get("/income-sources/manage/manage-business-cannot-go-back")
+    def getManageSECannotGoBack(reportingMethod: String, taxYear: String, id: String): WSResponse = get(s"/income-sources/manage/manage-business-cannot-go-back?reportingMethod=$reportingMethod&taxYear=$taxYear&id=$id")
 
-    def getManageUKPropertyCannotGoBack: WSResponse = get("/income-sources/manage/manage-uk-property-cannot-go-back")
+    def getManageUKPropertyCannotGoBack(reportingMethod: String, taxYear: String): WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back?reportingMethod=$reportingMethod&taxYear=$taxYear")
 
-    def getManageForeignPropertyCannotGoBack: WSResponse = get("/income-sources/manage/manage-foreign-property-cannot-go-back")
+    def getManageForeignPropertyCannotGoBack(reportingMethod: String, taxYear: String): WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back?reportingMethod=$reportingMethod&taxYear=$taxYear")
   }
 
   def unauthorisedTest(uri: String): Unit = {
