@@ -22,8 +22,8 @@ import enums.JourneyType.{JourneyType, Manage}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
+import models.incomeSourceDetails.{LatencyDetails, UIJourneySessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -200,9 +200,9 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
 
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
-
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
+
+        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
@@ -316,6 +316,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property")
 

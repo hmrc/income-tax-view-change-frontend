@@ -62,13 +62,17 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        incomeSourceIdHashMaybe = None,
-        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-        incomeSourceType = UkProperty
-      )
+      sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+        case true =>
+          handleRequest(
+            sources = user.incomeSources,
+            isAgent = false,
+            incomeSourceIdHashMaybe = None,
+            backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+            incomeSourceType = UkProperty
+          )
+        case false => Future.failed(throw new Exception("Unable to create mongo session"))
+      }
   }
 
   def showUkPropertyAgent: Action[AnyContent] = Authenticated.async {
@@ -76,26 +80,34 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-              None,
-              incomeSourceType = UkProperty
-            )
+            sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+              case true =>
+                handleRequest(
+                  sources = mtdItUser.incomeSources,
+                  isAgent = true,
+                  backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
+                  None,
+                  incomeSourceType = UkProperty
+                )
+              case false => Future.failed(throw new Exception("Unable to create mongo session"))
+            }
         }
   }
 
   def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        incomeSourceIdHashMaybe = None,
-        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-        incomeSourceType = ForeignProperty
-      )
+      sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+        case true =>
+          handleRequest(
+            sources = user.incomeSources,
+            isAgent = false,
+            incomeSourceIdHashMaybe = None,
+            backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+            incomeSourceType = ForeignProperty
+          )
+        case false => Future.failed(throw new Exception("Unable to create mongo session"))
+      }
   }
 
   def showForeignPropertyAgent: Action[AnyContent] = Authenticated.async {
@@ -103,13 +115,17 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-              None,
-              incomeSourceType = ForeignProperty
-            )
+            sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+              case true =>
+                handleRequest(
+                  sources = mtdItUser.incomeSources,
+                  isAgent = true,
+                  backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
+                  None,
+                  incomeSourceType = ForeignProperty
+                )
+              case false => Future.failed(throw new Exception("Unable to create mongo session"))
+            }
         }
   }
 
@@ -117,20 +133,24 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
       withIncomeSourcesFS {
-        val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
+        sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+          case true =>
+            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
 
-        val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
-          .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
+            val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
+              .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
 
-        sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(_) => handleRequest(
-            sources = user.incomeSources,
-            isAgent = false,
-            backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-            incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
-            incomeSourceType = SelfEmployment
-          )
-          case Left(exception) => Future.failed(exception)
+            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+              case Right(_) => handleRequest(
+                sources = user.incomeSources,
+                isAgent = false,
+                backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+                incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
+                incomeSourceType = SelfEmployment
+              )
+              case Left(exception) => Future.failed(exception)
+            }
+          case false => Future.failed(throw new Exception("Unable to create mongo session"))
         }
       }.recover {
         case exception =>
@@ -144,27 +164,27 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
             withIncomeSourcesFS {
-              val result = handleRequest(
-                sources = mtdItUser.incomeSources,
-                isAgent = true,
-                backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-                incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
-                incomeSourceType = SelfEmployment
-              )
+              sessionService.createSession(JourneyType(Manage, UkProperty).toString).flatMap {
+                case true =>
+                  val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
+                  val result = handleRequest(
+                    sources = mtdItUser.incomeSources,
+                    isAgent = true,
+                    backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
+                    incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
+                    incomeSourceType = SelfEmployment
+                  )
 
-              val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => mtdItUser.incomeSources.compareHashToQueryString(x))
-                .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
+                  val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => mtdItUser.incomeSources.compareHashToQueryString(x))
+                    .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
 
-              sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-                case Right(_) => result
-                case Left(exception) => Future.failed(exception)
+                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+                    case Right(_) => result
+                    case Left(exception) => Future.failed(exception)
+                  }
+                case false => Future.failed(throw new Exception("Unable to create mongo session"))
               }
-            }.recover {
-              case exception =>
-                Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusinessAgent] ${exception.getMessage}")
-                itvcErrorHandlerAgent.showInternalServerError()
             }
         }
   }
@@ -314,10 +334,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     val incomeSourceIdMaybe: Option[IncomeSourceId] = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
     withIncomeSourcesFS {
-      sessionService.createSession(JourneyType(Manage, incomeSourceType).toString).flatMap {
-        case true => Future.successful(None)
-        case false => Future.failed(throw new Exception("Unable to create session"))
-      }
       for {
         value <- if (incomeSourceType == SelfEmployment) {
           getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe
