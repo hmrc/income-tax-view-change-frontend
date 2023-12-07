@@ -21,6 +21,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
+import enums.{AccrualsAsAccountingMethod, CashAsAccountingMethod}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -151,7 +152,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
     }
     "return 303 SEE_OTHER" when {
       "navigating to the page with FS Enabled and one  " + incomeSourceType + "  businesses, with the cashOrAccruals field set to the string accruals" in {
-        val accountingMethod: String = "accruals"
+        val accountingMethod: String =  AccrualsAsAccountingMethod
         setupMockAuth(isAgent)
         enable(IncomeSources)
         mockBusinessIncomeSourceWithAccruals()
@@ -168,7 +169,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         verifySetMongoKey(AddIncomeSourceData.incomeSourcesAccountingMethodField, accountingMethod, JourneyType(Add, incomeSourceType))
       }
       "navigating to the page with FS Enabled and one  " + incomeSourceType + "  businesses, with the cashOrAccruals field set to the string cash" in {
-        val accountingMethod: String = "cash"
+        val accountingMethod: String = CashAsAccountingMethod
         setupMockAuth(isAgent)
         enable(IncomeSources)
         mockBusinessIncomeSource()
@@ -184,7 +185,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         verifySetMongoKey(AddIncomeSourceData.incomeSourcesAccountingMethodField, accountingMethod, JourneyType(Add, incomeSourceType))
       }
       "navigating to the page with FS Enabled and two SE businesses, one cash, one accruals (should be impossible, but in this case, we use head of list) for " + incomeSourceType in {
-        val accountingMethod: String = "cash"
+        val accountingMethod: String = CashAsAccountingMethod
         setupMockAuth(isAgent)
         enable(IncomeSources)
         mockBusinessIncomeSourceWithCashAndAccruals()
@@ -211,7 +212,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
 
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        status(result) shouldBe Status.OK
         contentType(result) shouldBe Some("text/html")
       }
     }
@@ -259,7 +260,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   def submitIncomeSourcesAccountingMethodTest(incomeSourceType: IncomeSourceType, isAgent: Boolean = false): Unit = {
     s"return 303 SEE_OTHER and redirect to ${getRedirectUrl(isAgent)}" when {
       "form is completed successfully with cash radio button selected for " + incomeSourceType in {
-        val accountingMethod: String = "cash"
+        val accountingMethod: String = CashAsAccountingMethod
         setupMockAuth(isAgent)
         enable(IncomeSources)
         mockNoIncomeSources()
@@ -346,9 +347,9 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
     submitIncomeSourcesAccountingMethodTest(SelfEmployment)
   }
   "Individual - IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod()" should {
-    changeIncomeSourcesAccountingMethodTest(SelfEmployment, isAgent = false, Some("cash"))
-    changeIncomeSourcesAccountingMethodTest(UkProperty, isAgent = false, Some("accruals"))
-    changeIncomeSourcesAccountingMethodTest(ForeignProperty, isAgent = false, Some("cash"))
+    changeIncomeSourcesAccountingMethodTest(SelfEmployment, isAgent = false, Some(CashAsAccountingMethod))
+    changeIncomeSourcesAccountingMethodTest(UkProperty, isAgent = false, Some(AccrualsAsAccountingMethod))
+    changeIncomeSourcesAccountingMethodTest(ForeignProperty, isAgent = false, Some(CashAsAccountingMethod))
   }
 
   "Agent - IncomeSourcesAccountingMethodController.showAgent()" should {
@@ -358,9 +359,9 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
     submitIncomeSourcesAccountingMethodTest(SelfEmployment, isAgent = true)
   }
   "Agent - IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod()" should {
-    changeIncomeSourcesAccountingMethodTest(SelfEmployment, isAgent = true, Some("cash"))
-    changeIncomeSourcesAccountingMethodTest(UkProperty, isAgent = true, Some("cash"))
-    changeIncomeSourcesAccountingMethodTest(ForeignProperty, isAgent = true, Some("accruals"))
+    changeIncomeSourcesAccountingMethodTest(SelfEmployment, isAgent = true, Some(CashAsAccountingMethod))
+    changeIncomeSourcesAccountingMethodTest(UkProperty, isAgent = true, Some(CashAsAccountingMethod))
+    changeIncomeSourcesAccountingMethodTest(ForeignProperty, isAgent = true, Some(AccrualsAsAccountingMethod))
   }
 
 }

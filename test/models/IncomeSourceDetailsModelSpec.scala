@@ -17,7 +17,7 @@
 package models
 
 import auth.MtdItUser
-import forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
+import forms.IncomeSourcesFormsSpec.{fakeRequestConfirmedClientwithFullBusinessDetails, fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceIdHash.mkFromQueryString
@@ -190,5 +190,18 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
         result shouldBe None
       }
     }
+  }
+
+  "getCashOrAccruals method" when {
+    "return list of cashOrAccrual flags from all active businesses" should {
+      "return " in {
+        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, ukPropertyAndSoleTraderBusinessIncomeNoTradingName)
+
+        val result = user.incomeSources.getCashOrAccruals()
+
+        result shouldBe List(None)
+      }
+    }
+
   }
 }
