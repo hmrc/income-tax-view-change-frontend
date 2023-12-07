@@ -217,7 +217,7 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
       response.status match {
         case OK =>
-          Logger("application").info(s"[IncomeTaxViewChangeConnector][getPayments] - Status: ${response.status}, json: ${response.json}")
+          Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPayments] - Status: ${response.status}, json: ${response.json}")
           response.json.validate[Seq[Payment]].fold(
             invalid => {
               Logger("application").error(s"[IncomeTaxViewChangeConnector][getPayments] - Json validation error: $invalid")
@@ -229,7 +229,7 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
           if (status >= 500) {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][getPayments] - Status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").info(s"[IncomeTaxViewChangeConnector][getPayments] - Status ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPayments] - Status ${response.status}, body: ${response.body}")
           }
           PaymentsError(status, response.body)
       }
