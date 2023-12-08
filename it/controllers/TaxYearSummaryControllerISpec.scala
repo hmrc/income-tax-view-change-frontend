@@ -18,8 +18,8 @@ package controllers
 
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import auth.MtdItUser
-import enums.CodingOutType._
 import config.featureswitch._
+import enums.CodingOutType._
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import helpers.servicemocks._
@@ -33,7 +33,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelErrorMessages, liabilityCalculationModelErrorMessagesFormatted, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulExpected, liabilityCalculationModelSuccessfulNotCrystallised}
+import testConstants.NewCalcBreakdownItTestConstants._
 import testConstants.messages.TaxYearSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
@@ -612,7 +612,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
 
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, calculationTaxYear)(
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
           body = liabilityCalculationModelSuccessful
         )
@@ -670,7 +670,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, calculationTaxYear)(
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
           body = liabilityCalculationModelSuccessful
         )
@@ -729,7 +729,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
         And(s"A non crystallised calculation for $calculationTaxYear is returned")
-        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, calculationTaxYear)(
+        IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
           status = OK,
           body = liabilityCalculationModelSuccessful
         )
@@ -876,9 +876,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
-        And("A calculation call for 2017-18 responds with http status 404:NOT_FOUND")
+        And("A calculation call for 2017-18 responds with http status 404:NO_CONTENT")
         IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino,
-          "2018")(NOT_FOUND, LiabilityCalculationError(NOT_FOUND, "error"))
+          "2018")(NO_CONTENT, LiabilityCalculationError(NO_CONTENT, "error"))
 
         And("previous obligations returns a success")
         IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,

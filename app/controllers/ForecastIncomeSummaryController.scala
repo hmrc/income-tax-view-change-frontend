@@ -28,7 +28,6 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.twirl.api.Html
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -83,7 +82,7 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
             case _ =>
               onError(s"No income data could be retrieved. Not found", isAgent, taxYear)
           }
-        case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+        case error: LiabilityCalculationError if error.status == NO_CONTENT =>
           onError(s"No income data found.", isAgent, taxYear)
         case _: LiabilityCalculationError =>
           onError(s"No new calc income data error found. Downstream error", isAgent, taxYear)
