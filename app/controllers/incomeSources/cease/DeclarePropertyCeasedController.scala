@@ -53,21 +53,20 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] =  withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
 
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType) else
       controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
 
-    sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
       Future.successful(Ok(view(
         declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),
         incomeSourceType = incomeSourceType,
         postAction = postAction,
         isAgent = isAgent,
         backUrl = backUrl)(user, messages)))
-    }
+
   } recover {
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

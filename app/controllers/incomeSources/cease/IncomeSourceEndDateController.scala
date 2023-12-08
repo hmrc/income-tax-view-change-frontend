@@ -170,11 +170,14 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] =  withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
 
     val incomeSourceIdMaybe: Option[IncomeSourceId] = id.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
-    sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
+    if(incomeSourceType == SelfEmployment) {
+      sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
+    }
+
       getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
         actions =>
           val (backAction: Call, postAction: Call, _) = actions
@@ -196,7 +199,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
               }
           }
       }
-    }
   } recover {
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
