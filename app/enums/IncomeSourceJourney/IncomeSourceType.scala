@@ -16,14 +16,14 @@
 
 package enums.IncomeSourceJourney
 
-import enums.{BusinessTypeName, ForeignPropertyBusinessName,
+import enums.{IncomeSourceTypeName, ForeignPropertyBusinessName,
   SelfEmploymentBusinessName, UkPropertyBusinessName}
 import play.api.libs.json.{JsObject, JsString, Json, Writes}
 import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {
   val key: String
-  val journeyType: BusinessTypeName
+  val journeyType: IncomeSourceTypeName
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
   val endDateMessagePrefix: String
@@ -34,7 +34,7 @@ sealed trait IncomeSourceType {
 
 case object SelfEmployment extends IncomeSourceType {
   override val key = "SE"
-  override val journeyType: BusinessTypeName = SelfEmploymentBusinessName
+  override val journeyType: IncomeSourceTypeName = SelfEmploymentBusinessName
   override val startDateMessagesPrefix: String = "add-business-start-date"
   override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
@@ -44,7 +44,7 @@ case object SelfEmployment extends IncomeSourceType {
 
 case object UkProperty extends IncomeSourceType {
   override val key = "UK"
-  override val journeyType: BusinessTypeName = UkPropertyBusinessName
+  override val journeyType: IncomeSourceTypeName = UkPropertyBusinessName
   override val startDateMessagesPrefix: String = "incomeSources.add.UKPropertyStartDate"
   override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
@@ -55,7 +55,7 @@ case object UkProperty extends IncomeSourceType {
 
 case object ForeignProperty extends IncomeSourceType {
   override val key = "FP"
-  override val journeyType: BusinessTypeName = ForeignPropertyBusinessName
+  override val journeyType: IncomeSourceTypeName = ForeignPropertyBusinessName
   override val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
   override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
   override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"

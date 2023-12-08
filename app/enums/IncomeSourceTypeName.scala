@@ -18,24 +18,24 @@ package enums
 
 import scala.language.implicitConversions
 
-sealed trait BusinessTypeName {
+sealed trait IncomeSourceTypeName {
   val name: String
 }
 
-case object UkPropertyBusinessName extends BusinessTypeName {
+case object UkPropertyBusinessName extends IncomeSourceTypeName {
   override val name: String = "UKPROPERTY"
 }
 
-case object ForeignPropertyBusinessName extends BusinessTypeName {
+case object ForeignPropertyBusinessName extends IncomeSourceTypeName {
   override val name: String = "FOREIGNPROPERTY"
 }
 
-case object SelfEmploymentBusinessName extends BusinessTypeName {
+case object SelfEmploymentBusinessName extends IncomeSourceTypeName {
   override val name: String = "SE"
 }
 
-object BusinessTypeName {
-  implicit def businessTypeToString(in : BusinessTypeName) : String = in match {
+object IncomeSourceTypeName {
+  implicit def businessTypeToString(in : IncomeSourceTypeName) : String = in match {
     case UkPropertyBusinessName =>
       UkPropertyBusinessName.name
     case ForeignPropertyBusinessName =>
