@@ -174,26 +174,28 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
     val incomeSourceIdMaybe: Option[IncomeSourceId] = id.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
-    getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
-      actions =>
-        val (backAction: Call, postAction: Call, _) = actions
-        (incomeSourceType, id) match {
-          case (SelfEmployment, None) =>
-            Future.failed(new Exception(s"Missing income source ID"))
-          case _ =>
-            getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
-              form: Form[DateFormElement] =>
-                Future.successful(Ok(
-                  incomeSourceEndDate(
-                    incomeSourceEndDateForm = form,
-                    postAction = postAction,
-                    isAgent = isAgent,
-                    backUrl = backAction.url,
-                    incomeSourceType = incomeSourceType
-                  )(user, messages))
-                )
-            }
-        }
+    sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
+      getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
+        actions =>
+          val (backAction: Call, postAction: Call, _) = actions
+          (incomeSourceType, id) match {
+            case (SelfEmployment, None) =>
+              Future.failed(new Exception(s"Missing income source ID"))
+            case _ =>
+              getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
+                form: Form[DateFormElement] =>
+                  Future.successful(Ok(
+                    incomeSourceEndDate(
+                      incomeSourceEndDateForm = form,
+                      postAction = postAction,
+                      isAgent = isAgent,
+                      backUrl = backAction.url,
+                      incomeSourceType = incomeSourceType
+                    )(user, messages))
+                  )
+              }
+          }
+      }
     }
   } recover {
     case ex: Exception =>
@@ -277,7 +279,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         },
 
         validatedInput =>
-          sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
             (incomeSourceType, incomeSourceIdMaybe) match {
               case (SelfEmployment, Some(incomeSourceId)) =>
                 val result = Redirect(redirectAction)
@@ -302,7 +303,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                   case Right(_) => Future.successful(result)
                   case Left(exception) => Future.failed(exception)
                 }
-            }
           }
       )
     }

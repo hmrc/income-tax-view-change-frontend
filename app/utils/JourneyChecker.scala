@@ -60,11 +60,11 @@ trait JourneyChecker extends IncomeSourcesUtils {
           }
         case (Cease, true) =>
           Future.successful {
-            Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(journeyType.businessType)) //TODO: fix
+            Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(journeyType.businessType))
           }
         case (Cease, false) =>
           Future.successful {
-            Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(journeyType.businessType)) //TODO: fix
+            Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(journeyType.businessType))
           }
       }
     }

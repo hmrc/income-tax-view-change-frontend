@@ -60,13 +60,14 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
     val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType) else
       controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
 
-    Future.successful(Ok(view(
-      declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),
-      incomeSourceType = incomeSourceType,
-      postAction = postAction,
-      isAgent = isAgent,
-      backUrl = backUrl)(user, messages)))
-
+    sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
+      Future.successful(Ok(view(
+        declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),
+        incomeSourceType = incomeSourceType,
+        postAction = postAction,
+        isAgent = isAgent,
+        backUrl = backUrl)(user, messages)))
+    }
   } recover {
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
