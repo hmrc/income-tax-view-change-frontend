@@ -16,14 +16,15 @@
 
 package enums.IncomeSourceJourney
 
-import enums.{IncomeSourceTypeName, ForeignPropertyBusinessName,
-  SelfEmploymentBusinessName, UkPropertyBusinessName}
+import enums.{ForeignPropertyBusinessName, ForeignPropertyKey, IncomeSourceTypeKey, IncomeSourceTypeName, SelfEmploymentBusinessName, SelfEmploymentKey, UkPropertyBusinessName, UkPropertyKey}
 import play.api.libs.json.{JsObject, JsString, Json, Writes}
 import play.api.mvc.JavascriptLiteral
 
 sealed trait IncomeSourceType {
-  val key: String
+  val key: IncomeSourceTypeKey
   val journeyType: IncomeSourceTypeName
+
+  // TODO: remove language specific fields
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
   val endDateMessagePrefix: String
@@ -33,7 +34,8 @@ sealed trait IncomeSourceType {
 
 
 case object SelfEmployment extends IncomeSourceType {
-  override val key = "SE"
+  override val key: IncomeSourceTypeKey = SelfEmploymentKey
+
   override val journeyType: IncomeSourceTypeName = SelfEmploymentBusinessName
   override val startDateMessagesPrefix: String = "add-business-start-date"
   override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
@@ -43,7 +45,7 @@ case object SelfEmployment extends IncomeSourceType {
 }
 
 case object UkProperty extends IncomeSourceType {
-  override val key = "UK"
+  override val key: IncomeSourceTypeKey= UkPropertyKey
   override val journeyType: IncomeSourceTypeName = UkPropertyBusinessName
   override val startDateMessagesPrefix: String = "incomeSources.add.UKPropertyStartDate"
   override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
@@ -54,7 +56,7 @@ case object UkProperty extends IncomeSourceType {
 }
 
 case object ForeignProperty extends IncomeSourceType {
-  override val key = "FP"
+  override val key: IncomeSourceTypeKey = ForeignPropertyKey
   override val journeyType: IncomeSourceTypeName = ForeignPropertyBusinessName
   override val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
   override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
