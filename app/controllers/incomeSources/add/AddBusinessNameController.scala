@@ -90,11 +90,12 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
     sessionService.getMongoKeyTyped[AddBusinessTradeResponse]().flatMap {
-      case Right(Some(AddBusinessTradeResponse(name))) => Future.successful(Some(name))
-      case Right(x) =>
-        Future.failed(new Exception(s"Unable to create session 2: ${x}"))
+      case Right(Some(AddBusinessTradeResponse(name))) =>
+        Future.successful(Some(name))
       case Left(ex) =>
         Future.failed(new Exception(s"Unable to create session 3: ${ex}"))
+      case Right(Some(_)) | Right(None) =>
+        Future.successful(None)
     }
   }
 
