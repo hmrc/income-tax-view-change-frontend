@@ -20,6 +20,7 @@ import enums._
 import play.api.libs.json.{JsObject, JsString, Json, Writes}
 import play.api.mvc.JavascriptLiteral
 
+// TODO: consider using case class here instead
 sealed trait IncomeSourceTypeLang {
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
