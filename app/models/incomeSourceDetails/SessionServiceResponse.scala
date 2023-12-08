@@ -16,6 +16,8 @@
 
 package models.incomeSourceDetails
 
+import java.time.LocalDate
+
 trait JourneyPath
 
 trait AddJourneyPath extends JourneyPath
@@ -25,3 +27,4 @@ trait CeasedJourneyPath extends JourneyPath
 
 case class AddBusinessNameResponse(name: String) extends AddJourneyPath
 case class AddBusinessTradeResponse(name: String) extends AddJourneyPath
+case class AddDateStartedResponse(date: LocalDate) extends AddJourneyPath

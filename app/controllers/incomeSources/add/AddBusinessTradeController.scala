@@ -24,7 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddBusinessTradeResponse, AddIncomeSourceData}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -105,9 +105,11 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                               (implicit user: MtdItUser[_]): Future[Option[String]] = {
 
     if (isChange) {
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-        case Right(tradeOpt) =>
-          Future.successful(tradeOpt)
+      sessionService.getMongoKeyTyped[AddBusinessTradeResponse]().flatMap {
+        case Right(Some(AddBusinessTradeResponse(tradeName))) =>
+          Future.successful(Some(tradeName))
+        case Right(Some(_)) | Right(None) =>
+          Future.failed(throw new Error("Not valid scenario"))
         case Left(err) => Future.failed(err)
       }
     } else {

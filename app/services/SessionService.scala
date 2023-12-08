@@ -22,6 +22,7 @@ import models.incomeSourceDetails._
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.runtime.universe.typeOf
@@ -88,23 +89,29 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
         JourneyType(Add, SelfEmployment)
       case x if x == typeOf[AddBusinessTradeResponse] =>
         JourneyType(Add, SelfEmployment)
+      case x if x == typeOf[AddDateStartedResponse] =>
+        JourneyType(Add, SelfEmployment)
       case x =>
         throw new Error(s"Unable to resolve journey by type provided: ${x} - ${x == typeOf[AddBusinessNameResponse]}")
     }
   }
 
-
   private def mongoObjectToAddResponse[T: TypeTag](obj: UIJourneySessionData): Option[AddJourneyPath] = {
-    if (typeOf[T] == typeOf[AddBusinessNameResponse]) {
-      obj.addIncomeSourceData
-        .flatMap(add => add.businessName)
-        .map(x => AddBusinessNameResponse(name = x))
-    } else if (typeOf[T] == typeOf[AddBusinessTradeResponse]) {
-      obj.addIncomeSourceData
-        .flatMap(add => add.businessTrade)
-        .map(x => AddBusinessTradeResponse(name = x))
-    } else {
-      throw new Error(s"Mapping not supported for type:")
+    typeOf[T] match {
+      case x if x == typeOf[AddBusinessNameResponse] =>
+        obj.addIncomeSourceData
+          .flatMap(add => add.businessName)
+          .map(x => AddBusinessNameResponse(name = x))
+      case x if x == typeOf[AddBusinessTradeResponse] =>
+        obj.addIncomeSourceData
+          .flatMap(add => add.businessTrade)
+          .map(x => AddBusinessTradeResponse(name = x))
+      case x if x == typeOf[AddDateStartedResponse] =>
+        obj.addIncomeSourceData
+          .flatMap(add => add.dateStarted)
+          .map(x => AddDateStartedResponse(date = x))
+      case _ =>
+        throw new Error(s"Mapping not supported for type:")
     }
   }
 
@@ -116,12 +123,9 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
   def getMongoKeyTyped[A]()(implicit hc: HeaderCarrier,
                             ec: ExecutionContext, tag: TypeTag[A]): Future[Either[Throwable, Option[_]]] = {
     val journeyType = resolveJourneyType[A]
-    println(s"Here is journey type: ${journeyType}")
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
-      case Some(data: UIJourneySessionData)  =>
-        println(s"Data ${data.addIncomeSourceData}")
-        val x = mongoObjectToAddResponse[A](data)
-        Right(x)
+      case Some(data: UIJourneySessionData) =>
+        Right(mongoObjectToAddResponse[A](data))
       //      case Some(data: UIJourneySessionData) if (journeyType.operation == Manage) =>
       //        Right(mongoObjectToManageResponse[A](data))
       //      case Some(data: UIJourneySessionData) if (journeyType.operation == Cease) =>

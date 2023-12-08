@@ -88,14 +88,16 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       }
   }
 
-  private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
+  private def getBusinessTrade()
+                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     sessionService.getMongoKeyTyped[AddBusinessTradeResponse]().flatMap {
       case Right(Some(AddBusinessTradeResponse(name))) =>
         Future.successful(Some(name))
+      case Right(Some(_)) | Right(None) =>
+        // TODO: do we need to raise an Error if some other value returned?
+        Future.successful(None)
       case Left(ex) =>
         Future.failed(new Exception(s"Unable to create session 3: ${ex}"))
-      case Right(Some(_)) | Right(None) =>
-        Future.successful(None)
     }
   }
 
@@ -191,7 +193,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         case (false, true) => (checkDetailsBackUrl, submitChangeAction, checkDetailsRedirect)
         case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
       }
-      getBusinessTrade.flatMap {
+      getBusinessTrade().flatMap {
         businessTradeOpt =>
           BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeOpt).fold(
             formWithErrors =>
