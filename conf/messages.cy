@@ -1444,6 +1444,10 @@ cannot-go-back.you-can                                  = Gallwch wneud y canlyn
 cannot-go-back.manage-link                              = bwrw golwg dros eich ffynonellau incwm a’u rheoli
 cannot-go-back.home-link                                = mynd yn ôl i’r hafan
 
+cannot-go-back.sole-trader-ceased                       = Mae’ch busnes unig fasnachwr wedi dod i ben.
+cannot-go-back.uk-property-ceased                       = Mae’ch busnes eiddo yn y DU wedi dod i ben.
+cannot-go-back.foreign-property-ceased                  = Mae’ch busnes eiddo tramor wedi dod i ben.
+
 ## Income Source Creased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        = Mae
 business-ceased.obligation.heading1.se.part2                        = Busnes unig fasnachwr

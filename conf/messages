@@ -1476,6 +1476,13 @@ cannot-go-back.you-can                                  = You can:
 cannot-go-back.manage-link                              = view and manage your income sources
 cannot-go-back.home-link                                = go back to the homepage
 
+cannot-go-back.sole-trader-ceased                       = Your sole trader business has ceased.
+cannot-go-back.uk-property-ceased                       = Your UK property business has ceased.
+cannot-go-back.foreign-property-ceased                  = Your foreign property business has ceased.
+
+
+
+
 ## Income Source Ceased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        =
 business-ceased.obligation.heading1.se.part2                        = Sole trader business
