@@ -24,7 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddBusinessTrade, AddIncomeSourceData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -73,9 +73,17 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessName(isChange: Boolean)
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
-        case Right(nameOpt) => Future.successful(nameOpt)
-        case Left(ex) => Future.failed(ex)
+      sessionService.getMongoKeyTyped[AddBusinessTrade]()
+        .flatMap {
+        case Right(Some(journeyResponse)) =>
+          val x: Option[String] =
+            journeyResponse.asInstanceOf[Option[AddBusinessTrade]]
+              .map(_.name)
+          Future.successful(x)
+        case Right(None) =>
+          Future.failed(new Exception("Unable to extract AddBusinessTrade"))
+        case Left(ex) =>
+          Future.failed(ex)
       }
     else
       sessionService.createSession(journeyType.toString).flatMap {

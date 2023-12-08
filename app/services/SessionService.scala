@@ -16,15 +16,15 @@
 
 package services
 
-import auth.MtdItUser
-import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
-import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
-import play.api.mvc.{RequestHeader, Result}
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType._
+import models.incomeSourceDetails._
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 @Singleton
 class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
@@ -78,6 +78,44 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
           case Cease => getKeyFromObject[A](data.ceaseIncomeSourceData, key)
         }
       case None => Right(None)
+    }
+  }
+
+  private def resolveJourneyType[T <: JourneyPath]()
+                                                  (implicit tag: ClassTag[T]): JourneyType = {
+    tag match {
+      case _: AddJourneyPath =>
+        JourneyType(Add, SelfEmployment)
+      case _: ManageJourneyPath =>
+        JourneyType(Manage, SelfEmployment)
+      case _: CeasedJourneyPath =>
+        JourneyType(Cease, SelfEmployment)
+      case _ =>
+        throw new Error(s"Unable to resolve journey by type provided: ${tag.toString()}")
+    }
+  }
+
+  private def mongoObjectToResponse[T <: JourneyPath](obj: UIJourneySessionData)
+                                                                (implicit tag: ClassTag[T]): Option[JourneyPath] = {
+    tag match {
+      case _: AddBusinessTrade =>
+        obj.addIncomeSourceData
+          .flatMap(add => add.businessTrade)
+          .map(x => AddBusinessTrade(name = x))
+      case _ =>
+        throw new Error(s"Mapping not supported for type: ${tag.toString()}")
+    }
+  }
+
+  def getMongoKeyTyped[A <: JourneyPath]()(implicit hc: HeaderCarrier,
+                                            ec: ExecutionContext,
+                                           tag: ClassTag[A]): Future[Either[Throwable, Option[JourneyPath]]] = {
+    val journeyType = resolveJourneyType[A]()
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
+      case Some(data: UIJourneySessionData) =>
+        Right(mongoObjectToResponse[A](data))
+      case None =>
+        Right(None)
     }
   }
 
