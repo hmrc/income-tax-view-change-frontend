@@ -33,7 +33,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceEndDate
 
 import java.time.LocalDate
@@ -55,7 +55,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val ec: ExecutionContext,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   private def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, maybeIncomeSourceId: Option[IncomeSourceId], isChange: Boolean): Future[(Call, Call, Call)] = {
 

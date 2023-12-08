@@ -46,19 +46,18 @@ trait JourneyChecker extends IncomeSourcesUtils {
   private lazy val redirectUrl: (JourneyType, Option[String], Option[String], Option[String]) => MtdItUser[_] => Future[Result] =
     (journeyType: JourneyType, reportingMethod: Option[String], taxYear: Option[String], incomeSourceId: Option[String]) => user => {
       (journeyType.operation, isAgent(user)) match {
-//        case (Add, true) =>
-//          Future.successful {
-//            //Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType))
-//          }
-//        case (Add, false) =>
-//          Future.successful {
-//            Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType))
-//          }
-//        case (Manage, _) =>
-//          Future.successful {
-//            Redirect(controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent(user),
-//              journeyType.businessType, reportingMethod.get, taxYear.get, incomeSourceId))
-//          }
+        case (Add, true) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType))
+          }
+        case (Add, false) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType))
+          }
+        case (Manage, _) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType))
+          }
         case (Cease, true) =>
           Future.successful {
             Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(journeyType.businessType)) //TODO: fix
@@ -97,25 +96,18 @@ trait JourneyChecker extends IncomeSourcesUtils {
     }
   }
 
-//  def withSessionData(journeyType: JourneyType)(codeBlock: UIJourneySessionData => Future[Result])
-//                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-//    withIncomeSourcesFS {
-//      sessionService.getMongo(journeyType.toString).flatMap {
-//        case Right(Some(data: UIJourneySessionData)) =>
-//          if (isJourneyComplete(data, journeyType)) {
-//            redirectUrl(journeyType)
-//          } else {
-//            codeBlock(data)
-//          }
-//        case Right(None) =>
-//          Logger("application").warn(s"No data found for journey type ${journeyType.toString}")
-//          redirectUrl(journeyType)
-//        case Left(ex) =>
-//          Logger("application").error(s"Error accessing Mongo for journey type ${journeyType.toString}. Exception: ${ex.getMessage}", ex)
-//          Future.failed(ex)
-//      }
-//    }
-//  }
+  /** *****************************TODO: remove in MISUV-6724 or MISUV-6734********************************************* */
+  def withIncomeSourcesFSWithSessionCheck(journeyType: JourneyType)(codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    withIncomeSourcesFS {
+      journeyChecker(journeyType).flatMap {
+        case true => user.userType match {
+          case Some(Agent) => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType)))
+          case _ => Future.successful(Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType)))
+        }
+        case false => codeBlock
+      }
+    }
+  }
 
   private def journeyChecker(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
       sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.journeyIsCompleteField, journeyType).flatMap {
@@ -123,6 +115,8 @@ trait JourneyChecker extends IncomeSourcesUtils {
         case _ => Future(false)
       }
     }
+
+    /** ***************************************************************************************************************** */
 
   private def isJourneyComplete(data: UIJourneySessionData, journeyType: JourneyType): Boolean = {
     journeyType.operation match {

@@ -130,7 +130,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, incomeSourceType)).flatMap {
+    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, incomeSourceType)).flatMap {
       case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
         Future.successful(errorHandler.showInternalServerError())

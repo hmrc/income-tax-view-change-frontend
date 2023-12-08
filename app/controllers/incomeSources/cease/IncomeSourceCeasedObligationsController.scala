@@ -34,7 +34,7 @@ import play.twirl.api.TemplateMagic.anyToDefault
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import javax.inject.Inject
@@ -55,7 +55,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
                                                         implicit override val mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,
                                                         dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker{
 
   private def getBusinessName(incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[String] = {
     user.incomeSources.businesses
@@ -64,7 +64,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFS {
+    withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
       updateMongoCeased(incomeSourceType)
       val incomeSourceDetails : Future[( Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
         case SelfEmployment =>
