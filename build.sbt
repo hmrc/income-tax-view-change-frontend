@@ -20,7 +20,7 @@ val pegdownVersion = "1.6.0"
 val jsoupVersion = "1.15.4"
 val mockitoVersion = "5.8.0"
 val scalaMockVersion = "5.2.0"
-val wiremockVersion = "2.26.3"
+val wiremockVersion = "3.0.0-beta-7"
 val hmrcMongoVersion = "1.6.0"
 val currentScalaVersion = "2.13.12"
 val playVersion = "play-30"
@@ -45,7 +45,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
 //  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
-  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
+//  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope,
   "org.scalacheck" %% "scalacheck" % "1.17.0" % scope,
   "uk.gov.hmrc" %% s"bootstrap-test-$playVersion"  % bootstrapPlayVersion % "test",
@@ -59,8 +59,8 @@ def it(scope: String = "it"): Seq[ModuleID] = Seq(
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
 //  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-//  "org.mockito" % "mockito-core" % mockitoVersion % scope,
-  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
+  "org.mockito" % "mockito-core" % mockitoVersion % scope,
+  "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope,
   caffeine
 )

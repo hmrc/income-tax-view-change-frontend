@@ -16,6 +16,7 @@
 
 package helpers.agent
 
+import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -40,7 +41,8 @@ import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -96,7 +98,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
   }
 
-  def config: Map[String, String] = Map(
+  def config: Map[String, Object] = Map(
+    "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
@@ -185,9 +188,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
-      buildClient("/agents" + uri)
+      buildClient("/agents" + uri).withMethod("POST")
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
-          "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
+          "Csrf-Token" -> "nocheck",
+          "X-Session-ID" -> testSessionId,
+          "X-Session-Id" -> testSessionId,
+          "sessionId-qqq" -> testSessionId)
         .post(body).futureValue
     }
 
