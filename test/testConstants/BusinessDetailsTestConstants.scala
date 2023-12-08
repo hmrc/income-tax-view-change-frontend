@@ -239,7 +239,8 @@ object BusinessDetailsTestConstants {
     cessation = None,
     cashOrAccruals = Some(false),
     latencyDetails = None,
-    address = Some(address)
+    address = Some(address),
+    quarterTypeElection = Some(quarterTypeElectionCalendar)
   )
 
   val soleTraderBusiness2 = BusinessDetailsModel(

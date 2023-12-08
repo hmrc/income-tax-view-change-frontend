@@ -177,14 +177,16 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
   private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection]): Option[Boolean] = {
     quarterTypeElection.flatMap(quarterTypeElection => {
-      latencyDetails.flatMap(latencyDetails => {
-        val quarterIndicator = "Q"
-        val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString
-        val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
-        val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
-        val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2
-        if (showQuarterReportingType) quarterTypeElection.isQuarterReportingTypeStandard else None
-      })
+      latencyDetails match {
+        case Some(latencyDetails: LatencyDetails) =>
+          val quarterIndicator = "Q"
+          val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString
+          val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
+          val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
+          val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2
+          if (showQuarterReportingType) quarterTypeElection.isQuarterReportingTypeStandard else None
+        case None => quarterTypeElection.isQuarterReportingTypeStandard
+      }
     })
   }
 
