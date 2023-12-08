@@ -44,7 +44,7 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService) extends Cu
 
   def apply(incomeSourceType: IncomeSourceType, id: Option[String] = None)(implicit user: MtdItUser[_]): Form[DateFormElement] = {
     val currentDate: LocalDate = dateService.getCurrentDate()
-    val messagePrefix = incomeSourceType.endDateMessagePrefix
+    val messagePrefix = incomeSourceType.lang.endDateMessagePrefix
     val dateConstraints: List[Constraint[LocalDate]] = {
 
       val minimumDateConstraints = incomeSourceType match {

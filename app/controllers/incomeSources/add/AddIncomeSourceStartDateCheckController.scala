@@ -95,7 +95,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
               addIncomeSourceStartDateCheckView(
                 isAgent = isAgent,
                 backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-                form = form(incomeSourceType.addStartDateCheckMessagesPrefix),
+                form = form(incomeSourceType.lang.addStartDateCheckMessagesPrefix),
                 postAction = getPostAction(incomeSourceType, isAgent, isChange),
                 incomeSourceStartDate = longDate(startDate).toLongDate
               )
@@ -119,7 +119,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                   isChange: Boolean)
                                  (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = incomeSourceType.addStartDateCheckMessagesPrefix
+    val messagesPrefix = incomeSourceType.lang.addStartDateCheckMessagesPrefix
     withIncomeSourcesFS {
       getStartDate(incomeSourceType).flatMap {
         case Some(startDate) =>

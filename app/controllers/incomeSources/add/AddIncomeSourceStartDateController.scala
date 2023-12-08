@@ -89,7 +89,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                 isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = incomeSourceType.startDateMessagesPrefix
+    val messagesPrefix = incomeSourceType.lang.startDateMessagesPrefix
 
     withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
@@ -125,7 +125,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
                                   isChange: Boolean)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val messagesPrefix = incomeSourceType.startDateMessagesPrefix
+    val messagesPrefix = incomeSourceType.lang.startDateMessagesPrefix
 
     withIncomeSourcesFS {
       form(messagesPrefix).bindFromRequest().fold(

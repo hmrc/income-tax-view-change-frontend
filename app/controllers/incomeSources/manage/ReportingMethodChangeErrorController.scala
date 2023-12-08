@@ -85,7 +85,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
               isAgent = isAgent,
               manageIncomeSourcesUrl = getManageIncomeSourcesUrl(isAgent),
               manageIncomeSourceDetailsUrl = getManageIncomeSourceDetailsUrl(id, isAgent, incomeSourceType),
-              messagesPrefix = incomeSourceType.reportingMethodChangeErrorPrefix
+              messagesPrefix = incomeSourceType.lang.reportingMethodChangeErrorPrefix
             )
           )
         case None =>
