@@ -47,7 +47,7 @@ class YouCannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionT
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     val subheadingContent = getSubheadingContent(incomeSourceType)
-    Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent))) //TODO: fix this
+    Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))
   }
 
   def getSubheadingContent(incomeSourceType: IncomeSourceType)(implicit request: Request[_]): String = {
