@@ -18,9 +18,10 @@ package models.incomeSourceDetails
 
 trait JourneyPath
 
-sealed trait AddJourneyPath extends JourneyPath
-sealed trait ManageJourneyPath extends JourneyPath
-sealed trait CeasedJourneyPath extends JourneyPath
+trait AddJourneyPath extends JourneyPath
+trait ManageJourneyPath extends JourneyPath
+trait CeasedJourneyPath extends JourneyPath
 
 
-case class AddBusinessTrade(name: String) extends AddJourneyPath
+case class AddBusinessNameResponse(name: String) extends AddJourneyPath
+case class AddBusinessTradeResponse(name: String) extends AddJourneyPath

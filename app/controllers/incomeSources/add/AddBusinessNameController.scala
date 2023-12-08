@@ -24,7 +24,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.{AddBusinessTrade, AddIncomeSourceData}
+import models.incomeSourceDetails.{AddBusinessNameResponse, AddBusinessTradeResponse, AddIncomeSourceData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -73,23 +73,28 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessName(isChange: Boolean)
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoKeyTyped[AddBusinessTrade]().flatMap {
-        case Right(Some(AddBusinessTrade(name))) =>
+      sessionService.getMongoKeyTyped[AddBusinessNameResponse]().flatMap {
+        case Right(Some(AddBusinessNameResponse(name))) =>
           Future.successful(Some(name))
-        case Right(_) | Left(_) => // Suppress underlying error details?
-          Future.failed(new Exception("Unable to extract AddBusinessTrade"))
+        case Right(_) =>
+          Future.failed(new Exception("Unable to extract AddBusinessTrade:"))
+        case Left(ex) =>
+          Future.failed(new Exception(s"Unable to extract AddBusinessTrade: ${ex}"))
       }
     else
       sessionService.createSession(journeyType.toString).flatMap {
         case true => Future.successful(None)
-        case false => Future.failed(new Exception("Unable to create session"))
+        case false => Future.failed(new Exception("Unable to create session 1"))
       }
   }
 
   private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-      case Right(nameOpt) => Future.successful(nameOpt)
-      case Left(ex) => Future.failed(ex)
+    sessionService.getMongoKeyTyped[AddBusinessTradeResponse]().flatMap {
+      case Right(Some(AddBusinessTradeResponse(name))) => Future.successful(Some(name))
+      case Right(x) =>
+        Future.failed(new Exception(s"Unable to create session 2: ${x}"))
+      case Left(ex) =>
+        Future.failed(new Exception(s"Unable to create session 3: ${ex}"))
     }
   }
 
@@ -210,7 +215,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }.recover {
     case exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage}")
+      Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage} - ${exception.getCause}")
       errorHandler.showInternalServerError()
   }
 
