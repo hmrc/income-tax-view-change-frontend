@@ -73,17 +73,11 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessName(isChange: Boolean)
                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoKeyTyped[AddBusinessTrade]()
-        .flatMap {
-        case Right(Some(journeyResponse)) =>
-          val x: Option[String] =
-            journeyResponse.asInstanceOf[Option[AddBusinessTrade]]
-              .map(_.name)
-          Future.successful(x)
-        case Right(None) =>
+      sessionService.getMongoKeyTyped[AddBusinessTrade]().flatMap {
+        case Right(Some(AddBusinessTrade(name))) =>
+          Future.successful(Some(name))
+        case Right(_) | Left(_) => // Suppress underlying error details?
           Future.failed(new Exception("Unable to extract AddBusinessTrade"))
-        case Left(ex) =>
-          Future.failed(ex)
       }
     else
       sessionService.createSession(journeyType.toString).flatMap {

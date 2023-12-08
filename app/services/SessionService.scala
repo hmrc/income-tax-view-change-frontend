@@ -81,7 +81,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
-  private def resolveJourneyType[T <: JourneyPath]()
+  private def resolveJourneyType[T]()
                                                   (implicit tag: ClassTag[T]): JourneyType = {
     tag match {
       case _: AddJourneyPath =>
@@ -95,8 +95,8 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
-  private def mongoObjectToResponse[T <: JourneyPath](obj: UIJourneySessionData)
-                                                                (implicit tag: ClassTag[T]): Option[JourneyPath] = {
+  private def mongoObjectToAddResponse[T](obj: UIJourneySessionData)
+                                                                (implicit tag: ClassTag[T]): Option[AddJourneyPath] = {
     tag match {
       case _: AddBusinessTrade =>
         obj.addIncomeSourceData
@@ -107,14 +107,24 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
-  def getMongoKeyTyped[A <: JourneyPath]()(implicit hc: HeaderCarrier,
+  private def mongoObjectToManageResponse[T](obj: UIJourneySessionData)
+                                         (implicit tag: ClassTag[T]): Option[ManageJourneyPath] = ???
+
+  private def mongoObjectToCeaseResponse[T](obj: UIJourneySessionData)
+                                            (implicit tag: ClassTag[T]): Option[ManageJourneyPath] = ???
+
+  def getMongoKeyTyped[A]()(implicit hc: HeaderCarrier,
                                             ec: ExecutionContext,
-                                           tag: ClassTag[A]): Future[Either[Throwable, Option[JourneyPath]]] = {
+                                           tag: ClassTag[A]): Future[Either[Throwable, Option[_]]] = {
     val journeyType = resolveJourneyType[A]()
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
-      case Some(data: UIJourneySessionData) =>
-        Right(mongoObjectToResponse[A](data))
-      case None =>
+      case Some(data: UIJourneySessionData) if (journeyType.operation == Add) =>
+        Right(mongoObjectToAddResponse[A](data))
+      case Some(data: UIJourneySessionData) if (journeyType.operation == Manage) =>
+        Right(mongoObjectToManageResponse[A](data))
+      case Some(data: UIJourneySessionData) if (journeyType.operation == Cease) =>
+        Right(mongoObjectToCeaseResponse[A](data))
+      case _ => // TODO: raise error
         Right(None)
     }
   }
