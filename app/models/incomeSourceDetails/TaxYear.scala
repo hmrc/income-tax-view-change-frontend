@@ -16,9 +16,6 @@
 
 package models.incomeSourceDetails
 
-import play.api.libs.json.{JsString, Writes}
-import play.api.mvc.JavascriptLiteral
-
 import scala.util.Try
 
 case class TaxYear(startYear: Int, endYear: Int) {
@@ -51,12 +48,6 @@ object TaxYear {
         )
       case _ => None
     }
-  }
-
-  implicit val journeyTypeJSLBinder: JavascriptLiteral[TaxYear] = (value: TaxYear) => s"""'${value.toString}'"""
-
-  implicit def writes[T <: TaxYear]: Writes[T] = Writes {
-    taxYear => JsString(taxYear.toString)
   }
 }
 

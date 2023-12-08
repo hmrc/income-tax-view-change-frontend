@@ -47,7 +47,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-28" % hmrcMongoVersion % scope,
   "org.scalacheck" %% "scalacheck" % "1.17.0" % scope,
-  "uk.gov.hmrc" %% "bootstrap-test-play-28"  % bootstrapPlayVersion % "test",
+  "uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrapPlayVersion % "test",
   caffeine
 )
 
@@ -109,7 +109,7 @@ lazy val microservice = Project(appName, file("."))
   .configs(IntegrationTest)
   .settings(
     IntegrationTest / Keys.fork := false,
-    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
+    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
     IntegrationTest / parallelExecution := false,
     TwirlKeys.templateImports ++= Seq(
@@ -117,7 +117,7 @@ lazy val microservice = Project(appName, file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
     ),
-    RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._", "models.incomeSourceDetails.LatencyYear._"),
+    RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._"),
     scalacOptions += "-Wconf:cat=unused-imports:s,cat=unused-params:s"
   )
   .settings(resolvers ++= Seq(

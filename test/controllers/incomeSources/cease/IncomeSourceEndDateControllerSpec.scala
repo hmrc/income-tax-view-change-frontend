@@ -569,7 +569,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       s"SelfEmployment - unable to set session data ${CeaseIncomeSourceData.dateCeasedField}" when {
         "called .submit" in {
           setupMockCreateSession(true)
-          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
           setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
           testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
         }
@@ -577,7 +576,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       s"SelfEmployment - unable to set session data ${CeaseIncomeSourceData.incomeSourceIdField}" when {
         "called .submit" in {
           setupMockCreateSession(true)
-          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
           setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Right(true))
           setupMockSetSessionKeyMongo(CeaseIncomeSourceData.incomeSourceIdField)(Left(new Exception()))
           testInternalServerErrors(isAgent = false, isChange = false, id = Some(testSelfEmploymentId))
@@ -586,7 +584,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
       s"Property - unable to set session data ${CeaseIncomeSourceData.dateCeasedField}" when {
         "called .submit" in {
           setupMockCreateSession(true)
-          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
           setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))
           testInternalServerErrors(isAgent = false, isChange = false, id = None, incomeSourceType = ForeignProperty)
         }

@@ -236,10 +236,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
               uiJourneySessionData.copy(manageIncomeSourceData =
                 Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.toString), Some(reportingMethod), Some(taxYear.startYear.toString + "-" + taxYear.endYear.toString), Some(true))))
             }
-            sessionService.setMongoData(newUIJourneySessionData).flatMap {
-              case true => Future.successful(Redirect(successCall))
-              case false => Future.successful(logAndShowError(isAgent, "Unable to update mongo journey as complete"))
-            }
+            sessionService.setMongoData(newUIJourneySessionData)
             Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")
             auditingService
               .extendedAudit(
