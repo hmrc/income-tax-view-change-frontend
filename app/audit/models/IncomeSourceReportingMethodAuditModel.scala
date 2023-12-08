@@ -18,10 +18,11 @@ package audit.models
 
 import audit.Utilities
 import auth.MtdItUser
+import enums.IncomeSourceTypeName
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class IncomeSourceReportingMethodAuditModel(isSuccessful: Boolean,
-                                                 journeyType: String,
+                                                 journeyType: IncomeSourceTypeName,
                                                  operationType: String,
                                                  reportingMethodChangeTo: String,
                                                  taxYear: String,

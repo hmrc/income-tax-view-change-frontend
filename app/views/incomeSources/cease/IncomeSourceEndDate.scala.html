@@ -28,7 +28,7 @@
 @(incomeSourceType: IncomeSourceType, incomeSourceEndDateForm: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"${incomeSourceType.endDateMessagePrefix}.$key", args: _*)
+    messages(s"${incomeSourceType.lang.endDateMessagePrefix}.$key", args: _*)
 }
 
 @getHintContent = {

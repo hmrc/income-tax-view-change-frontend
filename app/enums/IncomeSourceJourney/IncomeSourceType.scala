@@ -16,12 +16,12 @@
 
 package enums.IncomeSourceJourney
 
+import enums._
 import play.api.libs.json.{JsObject, JsString, Json, Writes}
 import play.api.mvc.JavascriptLiteral
 
-sealed trait IncomeSourceType {
-  val key: String
-  val journeyType: String
+// TODO: consider using case class here instead
+sealed trait IncomeSourceTypeLang {
   val startDateMessagesPrefix: String
   val addStartDateCheckMessagesPrefix: String
   val endDateMessagePrefix: String
@@ -29,35 +29,63 @@ sealed trait IncomeSourceType {
   val ceaseCheckDetailsPrefix: String
 }
 
+sealed trait IncomeSourceType {
+  val key: IncomeSourceTypeKey
+  val journeyType: IncomeSourceTypeName
+  val lang: IncomeSourceTypeLang
+}
+
+
 case object SelfEmployment extends IncomeSourceType {
-  override val key = "SE"
-  override val journeyType: String = "SE"
-  override val startDateMessagesPrefix: String = "add-business-start-date"
-  override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
-  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
-  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
-  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
+  override val key: IncomeSourceTypeKey = SelfEmploymentKey
+  override val journeyType: IncomeSourceTypeName = SelfEmploymentBusinessName
+  override val lang : IncomeSourceTypeLang = new IncomeSourceTypeLang {
+     val startDateMessagesPrefix: String = "add-business-start-date"
+     val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
+     val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
+     val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
+     val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
+  }
+//  override val startDateMessagesPrefix: String = "add-business-start-date"
+//  override val addStartDateCheckMessagesPrefix: String = "add-business-start-date-check"
+//  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.selfEmployment"
+//  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.businessReportingMethodError"
+//  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
 }
 
 case object UkProperty extends IncomeSourceType {
-  override val key = "UK"
-  override val journeyType: String = "UKPROPERTY"
-  override val startDateMessagesPrefix: String = "incomeSources.add.UKPropertyStartDate"
-  override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
-  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
-  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
-  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseUKProperty.checkDetails"
+  override val key: IncomeSourceTypeKey= UkPropertyKey
+  override val journeyType: IncomeSourceTypeName = UkPropertyBusinessName
+  override val lang: IncomeSourceTypeLang = new IncomeSourceTypeLang {
+    val startDateMessagesPrefix: String =  "incomeSources.add.UKPropertyStartDate"
+    val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
+    val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
+    val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
+    val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseBusiness.checkDetails"
+  }
+//  override val startDateMessagesPrefix: String = "incomeSources.add.UKPropertyStartDate"
+//  override val addStartDateCheckMessagesPrefix: String = "add-uk-property-start-date-check"
+//  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.ukProperty"
+//  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.uKPropertyReportingMethodError"
+//  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseUKProperty.checkDetails"
 
 }
 
 case object ForeignProperty extends IncomeSourceType {
-  override val key = "FP"
-  override val journeyType: String = "FOREIGNPROPERTY"
-  override val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
-  override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
-  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
-  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
-  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
+  override val key: IncomeSourceTypeKey = ForeignPropertyKey
+  override val journeyType: IncomeSourceTypeName = ForeignPropertyBusinessName
+  override val lang: IncomeSourceTypeLang = new IncomeSourceTypeLang {
+    val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
+    val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
+    val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
+    val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
+    val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
+  }
+//  override val startDateMessagesPrefix: String = "incomeSources.add.foreignProperty.startDate"
+//  override val addStartDateCheckMessagesPrefix: String = "add-foreign-property-start-date-check"
+//  override val endDateMessagePrefix: String = "incomeSources.cease.endDate.foreignProperty"
+//  override val reportingMethodChangeErrorPrefix: String = "incomeSources.manage.foreignPropertyReportingMethodError"
+//  override val ceaseCheckDetailsPrefix: String = "incomeSources.ceaseForeignProperty.checkDetails"
 }
 
 object IncomeSourceType {
