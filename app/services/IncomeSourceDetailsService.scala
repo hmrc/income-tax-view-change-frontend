@@ -19,7 +19,7 @@ package services
 import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.core.{AddressModel, IncomeSourceId}
+import models.core.{AddressModel, IncomeSourceId, IncomeSourceT}
 import IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
@@ -250,11 +250,11 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
     viewModelsForCeasedSEBusinesses ++ viewModelsForCeasedPropertyBusinesses
   }
 
-  def getIncomeSourceFromUser(incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
-    incomeSourceType match {
+  def getIncomeSourceFromUser(iss: IncomeSourceT)(implicit user: MtdItUser[_]): Option[(LocalDate, Option[String])] = {
+    iss.incomeSourceType match {
       case SelfEmployment =>
         user.incomeSources.businesses
-          .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId )
+          .find(m => mkIncomeSourceId(m.incomeSourceId) == iss.id )
           .flatMap { addedBusiness =>
             for {
               businessName <- addedBusiness.tradingName
@@ -265,14 +265,14 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
         for {
           newlyAddedProperty <- user.incomeSources.properties
             .find(incomeSource =>
-              mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId  && incomeSource.isUkProperty
+              mkIncomeSourceId(incomeSource.incomeSourceId) == iss.id   && incomeSource.isUkProperty
           )
           startDate <- newlyAddedProperty.tradingStartDate
         } yield (startDate, None)
       case ForeignProperty =>
         for {
           newlyAddedProperty <- user.incomeSources.properties.find(incomeSource =>
-            mkIncomeSourceId(incomeSource.incomeSourceId) == incomeSourceId && incomeSource.isForeignProperty
+            mkIncomeSourceId(incomeSource.incomeSourceId) == iss.id && incomeSource.isForeignProperty
           )
           startDate <- newlyAddedProperty.tradingStartDate
         } yield (startDate, None)

@@ -23,9 +23,9 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.IncomeSourceT
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -34,7 +34,6 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedObligations
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -70,21 +69,19 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
         }
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-
+  private def handleRequest(isAgent: Boolean,
+                            incomeSourceType: IncomeSourceType)
+                           (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
-
       sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
         case Right(Some(id)) =>
-
-          val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
-
-          incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
+          val iss = IncomeSourceT( mkIncomeSourceId(id), incomeSourceType )
+          incomeSourceDetailsService.getIncomeSourceFromUser( iss ) match {
             case Some((startDate, businessName)) =>
               val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-              handleSuccess(incomeSourceId, incomeSourceType, businessName, showPreviousTaxYears, isAgent)
+              handleSuccess(iss, businessName, showPreviousTaxYears, isAgent)
             case None => Logger("application").error(
-              s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
+              s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: ${iss.id}, IncomeSourceType: $incomeSourceType")
               if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
               else Future(itvcErrorHandler.showInternalServerError())
           }
@@ -101,28 +98,31 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     }
   }
 
-  def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    updateMongoAdded(incomeSourceType).flatMap {
+  def handleSuccess(incomeSource: IncomeSourceT,
+                    businessName: Option[String],
+                    showPreviousTaxYears: Boolean,
+                    isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    updateMongoAdded(incomeSource.incomeSourceType).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
+        s"Error retrieving data from session, IncomeSourceType: $incomeSource.incomeSourceType")
         Future.successful {
           if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
           else itvcErrorHandler.showInternalServerError()
         }
-      case true => incomeSourceType match {
+      case true => incomeSource.incomeSourceType match {
         case SelfEmployment =>
           businessName match {
-            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSource.id.value, showPreviousTaxYears) map { viewModel =>
               Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
             }
-            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            case None => nextUpdatesService.getObligationsViewModel(incomeSource.id.value, showPreviousTaxYears) map { viewModel =>
               Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
             }
           }
-        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSource.id.value, showPreviousTaxYears) map { viewModel =>
           Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
         }
-        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSource.id.value, showPreviousTaxYears) map { viewModel =>
           Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
         }
       }

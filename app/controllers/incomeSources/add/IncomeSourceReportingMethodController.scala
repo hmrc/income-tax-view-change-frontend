@@ -26,7 +26,7 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
-import models.core.IncomeSourceId
+import models.core.{IncomeSourceId, IncomeSourceT}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, LatencyDetails, LatencyYear}
@@ -109,7 +109,8 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
 
     sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(id)) =>
-        handleIncomeSourceIdRetrievalSuccess(incomeSourceType = incomeSourceType, id = id, isAgent = isAgent)
+        val iss : IncomeSourceT = IncomeSourceT(mkIncomeSourceId(id), incomeSourceType)
+        handleIncomeSourceIdRetrievalSuccess(iss, isAgent = isAgent)
       case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
       case Left(ex) => Future.failed(ex)
     }.recover {
@@ -123,14 +124,14 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
 
-  private def handleIncomeSourceIdRetrievalSuccess(incomeSourceType: IncomeSourceType, id: String, isAgent: Boolean)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  private def handleIncomeSourceIdRetrievalSuccess(iss: IncomeSourceT, isAgent: Boolean)
+                                                  (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(incomeSourceType) else
-      controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(incomeSourceType)
+    val cannotGoBackRedirect = if (isAgent) controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(iss.incomeSourceType) else
+      controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(iss.incomeSourceType)
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
-    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, incomeSourceType)).flatMap {
+    sessionService.getMongoKeyTyped[Boolean](AddIncomeSourceData.hasBeenAddedField, JourneyType(Add, iss.incomeSourceType)).flatMap {
       case Left(ex) => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error getting hasBeenAdded field from session: ${ex.getMessage}")
         Future.successful(errorHandler.showInternalServerError())
@@ -139,19 +140,19 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
         case _ =>
           itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
             case true =>
-              getViewModel(incomeSourceType, incomeSourceId).map {
+              getViewModel(iss).map {
                 case Some(viewModel) =>
                   Ok(view(
                     incomeSourceReportingMethodForm = IncomeSourceReportingMethodForm.form,
                     incomeSourceReportingViewModel = viewModel,
-                    postAction = submitUrl(isAgent, incomeSourceType),
+                    postAction = submitUrl(isAgent, iss.incomeSourceType),
                     isAgent = isAgent))
                 case None =>
-                  Redirect(redirectUrl(isAgent, incomeSourceType))
+                  Redirect(redirectUrl(isAgent, iss.incomeSourceType))
               }
             case false =>
               Future.successful {
-                Redirect(redirectUrl(isAgent, incomeSourceType))
+                Redirect(redirectUrl(isAgent, iss.incomeSourceType))
               }
           }
       }
@@ -162,10 +163,10 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     user.incomeSources.getLatencyDetails(incomeSourceType, incomeSourceId)
   }
 
-  private def getViewModel(incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId)
+  private def getViewModel(iss: IncomeSourceT)
                           (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[IncomeSourceReportingMethodViewModel]] = {
     val currentTaxYear = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-    val latencyDetails = getLatencyDetails(incomeSourceType, incomeSourceId.value)
+    val latencyDetails = getLatencyDetails(iss.incomeSourceType, iss.id.value)
 
 
     latencyDetails match {
@@ -216,8 +217,8 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
                                (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     val updatedForm = IncomeSourceReportingMethodForm.updateErrorMessagesWithValues(form)
-
-    getViewModel(incomeSourceType, id).map {
+    val iss: IncomeSourceT = IncomeSourceT( id, incomeSourceType)
+    getViewModel(iss).map {
       case Some(viewModel) =>
         BadRequest(view(
           incomeSourceReportingMethodForm = updatedForm,
