@@ -175,7 +175,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         }
   }
 
-  private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection]): Option[Boolean] = {
+  private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection]): Option[QuarterReportingType] = {
     quarterTypeElection.flatMap(quarterTypeElection => {
       latencyDetails match {
         case Some(latencyDetails: LatencyDetails) =>
@@ -184,8 +184,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
           val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
           val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2
-          if (showQuarterReportingType) quarterTypeElection.isQuarterReportingTypeStandard else None
-        case None => quarterTypeElection.isQuarterReportingTypeStandard
+          if (showQuarterReportingType) quarterTypeElection.isStandardQuarterlyReporting else None
+        case None => quarterTypeElection.isStandardQuarterlyReporting
       }
     })
   }

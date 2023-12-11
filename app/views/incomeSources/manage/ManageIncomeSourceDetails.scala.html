@@ -178,7 +178,6 @@
 }
 
 @getQuarterlyType = @{
-    val STANDARD = true
     viewModel.quarterReportingType match {
         case Some(quarterType) =>
             Seq(
@@ -187,7 +186,7 @@
                         content = Text(messages("incomeSources.manage.quarterly-period"))
                     ),
                     value = Value(
-                        content = Text(messages(s"incomeSources.manage.quarterly-period.${if ( quarterType == STANDARD ) "standard" else "calendar" }"))
+                        content = Text(messages(s"incomeSources.manage.quarterly-period.${quarterType.value}"))
                     )
                 )
             )
@@ -196,25 +195,21 @@
 }
 
 @quarterlyTypeInfoMessage = @{
-    val STANDARD = true
     val messagePrefix = "incomeSources.manage.quarterly-period"
     val externalRefLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
 
-    viewModel.quarterReportingType match {
-        case Some(quarterType) =>
-            val quarterTypeMessageKey = if ( quarterType == STANDARD ) "standard" else "calendar"
-            val p1 = p(id = Some("expandable-info-p1"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p1")))
-            val p2 = p(id = Some("expandable-info-p2"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p2")))
-            val anchor = link( id = Some("expandable-more-info-link"), target = Some("_blank"), link = externalRefLink, messageKey = s"$messagePrefix.content.p3" )
-            val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
+    viewModel.quarterReportingType map { quarterType =>
+        val quarterTypeMessageKey = quarterType.value
+        val p1 = p(id = Some("expandable-info-p1"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p1")))
+        val p2 = p(id = Some("expandable-info-p2"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p2")))
+        val anchor = link( id = Some("expandable-more-info-link"), target = Some("_blank"), link = externalRefLink, messageKey = s"$messagePrefix.content.p3" )
+        val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
 
-            govukDetails(Details(id = Some("expandable-info"),
-                                summary = Text(messages(s"incomeSources.manage.quarterly-period.$quarterTypeMessageKey.summary")),
-                                content = content))
-        case _ =>
+        govukDetails(Details(id = Some("expandable-info"),
+                            summary = Text(messages(s"incomeSources.manage.quarterly-period.$quarterTypeMessageKey.summary")),
+                            content = content))
+
     }
-
-
 }
 
 @mainTemplate(

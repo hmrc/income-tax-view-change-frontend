@@ -18,11 +18,23 @@ package models.incomeSourceDetails
 
 import play.api.libs.json.{Format, Json}
 
+trait QuarterReportingType {
+  val value: String
+}
+
+object Standard extends QuarterReportingType {
+  val value: String = "standard"
+}
+
+object Calendar extends QuarterReportingType {
+  val value: String = "calendar"
+}
+
 case class QuarterTypeElection(quarterReportingType: String, taxYearofElection: String) {
-  val isQuarterReportingTypeStandard: Option[Boolean] = {
+  val isStandardQuarterlyReporting: Option[QuarterReportingType] = {
     quarterReportingType match {
-      case "STANDARD" => Some(true)
-      case "CALENDAR" => Some(false)
+      case "STANDARD" => Some(Standard)
+      case "CALENDAR" => Some(Calendar)
       case _ => None
     }
   }
