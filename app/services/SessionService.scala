@@ -96,7 +96,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
-  private def mongoObjectToAddResponse[T: TypeTag](obj: UIJourneySessionData): Option[JourneyPath] = {
+  private def mongoObjectToAddResponse[T: TypeTag](obj: UIJourneySessionData): Option[AddJourneyPath] = {
     typeOf[T] match {
       case x if x == typeOf[AddBusinessNameResponse] =>
         obj.addIncomeSourceData
@@ -119,23 +119,24 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
-  //  private def mongoObjectToManageResponse[T](obj: UIJourneySessionData)
-  //                                         (implicit tag: ClassTag[T]): Option[ManageJourneyPath] = ???
+  private def mongoObjectToManageResponse[T](obj: UIJourneySessionData)
+                                           (implicit tag: TypeTag[T]): Option[ManageJourneyPath] = ???
 
-  //  private def mongoObjectToCeaseResponse[T](obj: UIJourneySessionData): Option[ManageJourneyPath] = ???
+  private def mongoObjectToCeaseResponse[T](obj: UIJourneySessionData)
+                                           (implicit tag: TypeTag[T]): Option[ManageJourneyPath] = ???
 
   def getMongoKeyTyped[A]()(implicit hc: HeaderCarrier, incomeSourceType: IncomeSourceType,
                             ec: ExecutionContext, tag: TypeTag[A]): Future[Either[Error, Option[A]]] = {
     val journeyType = resolveJourneyType[A]
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
-      case Some(data: UIJourneySessionData) =>
+      case Some(data: UIJourneySessionData) if (typeOf[A] <:< typeOf[AddJourneyPath]) =>
         Right(mongoObjectToAddResponse[A](data).asInstanceOf[Option[A]])
-      //      case Some(data: UIJourneySessionData) if (journeyType.operation == Manage) =>
-      //        Right(mongoObjectToManageResponse[A](data))
-      //      case Some(data: UIJourneySessionData) if (journeyType.operation == Cease) =>
-      //        Right(mongoObjectToCeaseResponse[A](data))
-      case _ => // TODO: raise error
-        Left(new Error("Specify failure here"))
+      case Some(data: UIJourneySessionData) if (typeOf[A] <:< typeOf[ManageJourneyPath]) =>
+        Right(mongoObjectToManageResponse[A](data).asInstanceOf[Option[A]])
+      case Some(data: UIJourneySessionData) if (journeyType.operation == Cease) =>
+        Right(mongoObjectToCeaseResponse[A](data).asInstanceOf[Option[A]])
+      case _ =>
+        Left(new Error(s"Type is not supported => ${tag.tpe}"))
     }
   }
 
