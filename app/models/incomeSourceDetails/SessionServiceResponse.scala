@@ -16,6 +16,8 @@
 
 package models.incomeSourceDetails
 
+import enums.IncomeSourceJourney.IncomeSourceType
+
 import java.time.LocalDate
 
 trait JourneyPath

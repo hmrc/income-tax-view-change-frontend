@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import models.incomeSourceDetails.{AddBusinessNameResponse, AddBusinessTradeResponse, AddIncomeSourceData}
@@ -71,7 +71,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
   private def getBusinessName(isChange: Boolean)
-                             (implicit user: MtdItUser[_]): Future[Option[String]] = {
+                             (implicit user: MtdItUser[_], incomeSourceType: IncomeSourceType): Future[Option[String]] = {
     if (isChange)
       sessionService.getMongoKeyTyped[AddBusinessNameResponse]().flatMap {
         case Right(Some(AddBusinessNameResponse(name))) =>
@@ -89,7 +89,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   private def getBusinessTrade()
-                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
+                              (implicit user: MtdItUser[_],
+                               incomeSourceType: IncomeSourceType = SelfEmployment): Future[Option[String]] = {
     sessionService.getMongoKeyTyped[AddBusinessTradeResponse]().flatMap {
       case Right(Some(AddBusinessTradeResponse(name))) =>
         Future.successful(Some(name))
@@ -126,7 +127,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
           }
     }
 
-  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, incomeSourceType: IncomeSourceType = SelfEmployment): Future[Result] = {
     withIncomeSourcesFSWithSessionCheck(JourneyType(Add, SelfEmployment)) {
       getBusinessName(isChange).flatMap {
         nameOpt =>
@@ -185,7 +187,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)
+                         (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
       val (backUrlLocal, submitActionLocal, redirectLocal) = (isAgent, isChange) match {
         case (false, false) => (backUrl, submitAction, redirect)

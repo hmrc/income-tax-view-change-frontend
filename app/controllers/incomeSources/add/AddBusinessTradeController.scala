@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
 import models.incomeSourceDetails.{AddBusinessTradeResponse, AddIncomeSourceData}
@@ -101,8 +101,8 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       handleRequest(isAgent, isChange)
   }
 
-  private def getBusinessTrade(journeyType: JourneyType, isChange: Boolean)
-                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
+  private def getBusinessTrade(isChange: Boolean)
+                              (implicit user: MtdItUser[_], incomeSourceType: IncomeSourceType): Future[Option[String]] = {
 
     if (isChange) {
       sessionService.getMongoKeyTyped[AddBusinessTradeResponse]().flatMap {
@@ -117,11 +117,10 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     }
   }
 
-  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, isChange: Boolean)
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, incomeSourceType: IncomeSourceType = SelfEmployment): Future[Result] = {
     withIncomeSourcesFSWithSessionCheck(JourneyType(Add, SelfEmployment)) {
-
-      val journeyType = JourneyType(Add, SelfEmployment)
-      getBusinessTrade(journeyType, isChange).flatMap {
+      getBusinessTrade(isChange).flatMap {
         tradeOpt =>
           val filledForm = tradeOpt.fold(BusinessTradeForm.form)(trade =>
             BusinessTradeForm.form.fill(BusinessTradeForm(trade)))

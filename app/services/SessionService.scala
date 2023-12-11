@@ -16,7 +16,7 @@
 
 package services
 
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType._
 import models.incomeSourceDetails._
 import repositories.UIJourneySessionDataRepository
@@ -83,14 +83,15 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
-  private def resolveJourneyType[T](implicit tag: TypeTag[T]): JourneyType = {
+  private def resolveJourneyType[T](implicit tag: TypeTag[T],
+                                    incomeSourceType: IncomeSourceType): JourneyType = {
     typeOf[T] match {
       case x if x == typeOf[AddBusinessNameResponse] =>
-        JourneyType(Add, SelfEmployment)
+        JourneyType(Add, incomeSourceType)
       case x if x == typeOf[AddBusinessTradeResponse] =>
-        JourneyType(Add, SelfEmployment)
+        JourneyType(Add, incomeSourceType)
       case x if x == typeOf[AddDateStartedResponse] =>
-        JourneyType(Add, SelfEmployment)
+        JourneyType(Add, incomeSourceType)
       case x =>
         throw new Error(s"Unable to resolve journey by type provided: ${x} - ${x == typeOf[AddBusinessNameResponse]}")
     }
@@ -120,7 +121,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   //  private def mongoObjectToCeaseResponse[T](obj: UIJourneySessionData): Option[ManageJourneyPath] = ???
 
-  def getMongoKeyTyped[A]()(implicit hc: HeaderCarrier,
+  def getMongoKeyTyped[A]()(implicit hc: HeaderCarrier, incomeSourceType: IncomeSourceType,
                             ec: ExecutionContext, tag: TypeTag[A]): Future[Either[Throwable, Option[_]]] = {
     val journeyType = resolveJourneyType[A]
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
