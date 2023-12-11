@@ -72,7 +72,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
         val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage),
           isAgent, liabilityCalc.metadata.crystallised.getOrElse(false), taxYear, origin)
         Ok(taxCalcBreakdown(viewModel, taxYear, backUrl = fallbackBackUrl, isAgent = isAgent, btaNavPartial = user.btaNavPartial))
-      case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
+      case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("[TaxDueController][showTaxDueSummary] No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
