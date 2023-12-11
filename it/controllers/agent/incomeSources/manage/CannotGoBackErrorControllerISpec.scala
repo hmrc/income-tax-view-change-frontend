@@ -80,7 +80,16 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   s"calling GET ${url(UkProperty)}" should {
     "return 200 OK" when {
       "FS enabled - UK Property" in {
-        runOKTest(UkProperty)
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+        await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, UkProperty))))
+
+        val result = IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
+
+        result should have(
+          httpStatus(OK)
+        )
       }
     }
     "return 303 SEE_OTHER" when {
@@ -92,7 +101,16 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   s"calling GET ${url(ForeignProperty)}" should {
     "return 200 OK" when {
       "FS enabled - Foreign Property" in {
-        runOKTest(ForeignProperty)
+        stubAuthorisedAgentUser(authorised = true)
+        enable(IncomeSources)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+        await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, ForeignProperty))))
+
+        val result = IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack
+
+        result should have(
+          httpStatus(OK)
+        )
       }
     }
     "return 303 SEE_OTHER" when {

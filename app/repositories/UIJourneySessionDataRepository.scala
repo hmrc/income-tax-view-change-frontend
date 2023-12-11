@@ -31,8 +31,7 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.duration.{Duration, SECONDS}
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UIJourneySessionDataRepository @Inject()(
@@ -89,8 +88,6 @@ class UIJourneySessionDataRepository @Inject()(
   def set(data: UIJourneySessionData): Future[Boolean] = {
 
     val updatedAnswers = data copy (lastUpdated = Instant.now(clock))
-    val test = Await.result(collection.find(filter = dataFilter(updatedAnswers)).toFuture(), Duration(5, SECONDS))
-    println(Console.MAGENTA + test + Console.WHITE)
 
     collection
       .replaceOne(

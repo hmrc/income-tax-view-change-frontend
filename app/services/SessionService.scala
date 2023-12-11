@@ -81,7 +81,6 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   def setMongoData(uiJourneySessionData: UIJourneySessionData)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    println(Console.MAGENTA + uiJourneySessionData + Console.WHITE)
     uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 

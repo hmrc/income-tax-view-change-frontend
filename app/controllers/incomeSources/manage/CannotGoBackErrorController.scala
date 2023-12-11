@@ -94,10 +94,7 @@ class CannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTime
     val journeyType = JourneyType(Manage, incomeSourceType).toString
     sessionService.getMongo(journeyType).map {
       case Right(Some(data: UIJourneySessionData)) =>
-        println(Console.MAGENTA + s"Successfully retrieved $data" + Console.WHITE)
         data.manageIncomeSourceData
-      case Right(None) => println(Console.MAGENTA + s"Successfully retrieved None" + Console.WHITE)
-      None
       case _ => None
     }
   }
