@@ -1517,7 +1517,7 @@ incomeSources.add.manageObligations.heading                           =   Yr hyn
 # manage journey manage income source
 incomeSources.manage.quarterly-period                                 =   Cyfnod chwarterol
 incomeSources.manage.quarterly-period.standard                        =   Safonol
-incomeSources.manage.quarterly-period.calender                        =   Calendr
+incomeSources.manage.quarterly-period.calendar                        =   Calendr
 incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
 incomeSources.manage.quarterly-period.calender.summary                =   Beth yw cyfnod chwarterol calendr?
 incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r ffynhonnell incwm hon yn adrodd o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
