@@ -23,13 +23,13 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceAddedBackError
@@ -61,10 +61,10 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
       if (isAgent )messages("htmlTitle.agent", s"$title") else messages("htmlTitle", s"$title")
     }
   }
+  def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"))))
 
-  def mockMongo(): Unit = {
-    setupMockGetSessionKeyMongoTyped[String](Right(Some("1234")))
-    setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+  def mockMongo(journeyType: JourneyType): Unit = {
+    setupMockGetMongo(Right(Some(sessionData(journeyType))))
   }
 
   "ReportingMethodSetBackErrorController" should {
@@ -109,7 +109,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo()
+        mockMongo(JourneyType(Add, SelfEmployment))
 
         val result = TestIncomeSourceAddedBackErrorController.show(SelfEmployment)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
@@ -124,7 +124,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo()
+        mockMongo(JourneyType(Add, UkProperty))
 
         val result = TestIncomeSourceAddedBackErrorController.show(UkProperty)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
@@ -139,7 +139,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo()
+        mockMongo(JourneyType(Add, ForeignProperty))
 
         val result = TestIncomeSourceAddedBackErrorController.show(ForeignProperty)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
@@ -155,7 +155,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo()
+        mockMongo(JourneyType(Add, SelfEmployment))
 
         val result = TestIncomeSourceAddedBackErrorController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
@@ -170,7 +170,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo()
+        mockMongo(JourneyType(Add, UkProperty))
 
         val result = TestIncomeSourceAddedBackErrorController.showAgent(UkProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
@@ -185,7 +185,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo()
+        mockMongo(JourneyType(Add, ForeignProperty))
 
         val result = TestIncomeSourceAddedBackErrorController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
