@@ -84,7 +84,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleRequest(sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+                           (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType).url
     else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType).url
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

@@ -26,7 +26,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.{incomeSourceAddedField, reportingMethodSetField}
+import models.incomeSourceDetails.AddIncomeSourceData.{incomeSourceAddedField, journeyIsCompleteField}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails._
@@ -119,7 +119,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   }
 
   def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
-    setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, JourneyType(Add, incomeSourceType), Right(None))
+    setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, incomeSourceType), Right(None))
     setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, incomeSourceType), Right(None))
     when(mockSessionService.getMongo(any())(any(), any())).thenReturn(
       Future(Right(Some(UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
@@ -127,6 +127,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
   }
 
+  def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
 
   "IncomeSourceAddedController" should {
     "redirect a user back to the custom error page" when {
@@ -180,9 +181,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, JourneyType(Add, SelfEmployment), Right(Some(true)))
-        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, SelfEmployment), Right(None))
-
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, SelfEmployment)))))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER

@@ -111,14 +111,17 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
 
   import Scenario._
 
-  def mockMongoSuccess: OngoingStubbing[Future[Either[Throwable, Option[Boolean]]]] = {
-    when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(
-      Future(Right(None)))
+  def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, None)
+  def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+
+  def mockMongoSuccess(incomeSourceType: IncomeSourceType) = {
+    when(mockSessionService.getMongo(any())(any(), any())).thenReturn(
+      Future(Right(Some(sessionData(JourneyType(Add,incomeSourceType))))))
   }
 
-  def mockMongoFail: OngoingStubbing[Future[Either[Throwable, Option[Boolean]]]] = {
-    when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(
-      Future(Right(Some(true))))
+  def mockMongoFail(incomeSourceType: IncomeSourceType) = {
+    when(mockSessionService.getMongo(any())(any(), any())).thenReturn(
+      Future(Right(Some(sessionDataCompletedJourney(JourneyType(Add, incomeSourceType))))))
   }
 
   def mockMongoSet(incomeSourceType: IncomeSourceType): OngoingStubbing[Future[Boolean]] = {
@@ -223,7 +226,7 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     setupMockDateServiceCall(scenario)
     setupMockITSAStatusCall(scenario)
     setupMockIsTaxYearCrystallisedCall(scenario)
-    mockMongoSuccess
+    mockMongoSuccess(incomeSourceType)
     mockMongoSet(incomeSourceType)
     setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
   }
@@ -498,37 +501,37 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     "return 303 SEE_OTHER and redirect to the You Cannot Go Back Page" when {
       "user has already visited the obligations page - SE - Individual" in {
         setupMockCalls(isAgent = false, SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        mockMongoFail
+        mockMongoFail(SelfEmployment)
         val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
         checkRedirect(false, SelfEmployment, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - Uk - Individual" in {
         setupMockCalls(isAgent = false, UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        mockMongoFail
+        mockMongoFail(UkProperty)
         val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(UkProperty).url
         checkRedirect(false, UkProperty, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - FP - Individual" in {
         setupMockCalls(isAgent = false, ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        mockMongoFail
+        mockMongoFail(ForeignProperty)
         val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(ForeignProperty).url
         checkRedirect(false, ForeignProperty, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - SE - Agent" in {
         setupMockCalls(isAgent = true, SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        mockMongoFail
+        mockMongoFail(SelfEmployment)
         val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
         checkRedirect(true, SelfEmployment, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - Uk - Agent" in {
         setupMockCalls(isAgent = true, UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        mockMongoFail
+        mockMongoFail(UkProperty)
         val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(UkProperty).url
         checkRedirect(true, UkProperty, expectedBackErrorRedirectUrl)
       }
       "user has already visited the obligations page - FP - Agent" in {
         setupMockCalls(isAgent = true, ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        mockMongoFail
+        mockMongoFail(ForeignProperty)
         val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(ForeignProperty).url
         checkRedirect(true, ForeignProperty, expectedBackErrorRedirectUrl)
       }

@@ -41,7 +41,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), reportingMethodSet = None)))))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
         val result = IncomeTaxViewChangeFrontend
           .get("/income-sources/add/cannot-go-back-business-reporting-method")
@@ -81,7 +81,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), reportingMethodSet = None)))))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
         val result = IncomeTaxViewChangeFrontend
           .get("/income-sources/add/cannot-go-back-uk-property-reporting-method")
@@ -121,7 +121,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), reportingMethodSet = None)))))
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
         val result = IncomeTaxViewChangeFrontend
           .get(s"/income-sources/add/cannot-go-back-foreign-property-reporting-method")

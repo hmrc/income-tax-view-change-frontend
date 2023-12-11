@@ -105,7 +105,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType), checkAdded = false) {
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
 
     sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(id)) =>

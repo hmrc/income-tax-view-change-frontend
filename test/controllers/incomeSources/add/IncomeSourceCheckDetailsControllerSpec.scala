@@ -25,7 +25,7 @@ import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.MockSessionService
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceAddedField, incomeSourcesAccountingMethodField, reportingMethodSetField}
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceAddedField, incomeSourcesAccountingMethodField, journeyIsCompleteField}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -38,7 +38,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.CreateBusinessDetailsService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfEmploymentId, testSessionId}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.add.IncomeSourceCheckDetails
@@ -88,6 +88,10 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
       dateStarted = Some(testBusinessStartDate),
       incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
+
+  def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+
+  def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, None)
 
   object TestCheckDetailsController extends IncomeSourceCheckDetailsController(
     checkDetailsView = app.injector.instanceOf[IncomeSourceCheckDetails],
@@ -149,6 +153,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             }
             else {
               setupMockCreateSession(true)
+              setupMockGetMongo(Right(None))
               setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(Some(testPropertyStartDate)))
               setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
             }
@@ -272,8 +277,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
 
           mockNoIncomeSources()
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, JourneyType(Add, SelfEmployment), Right(Some(true)))
-          setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, SelfEmployment), Right(None))
+          setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, SelfEmployment)))))
 
           val result: Future[Result] = TestCheckDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
@@ -294,9 +298,11 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
             if (incomeSourceType == SelfEmployment) {
               setupMockGetMongo(Right(None))
+              setupMockCreateSession(true)
             }
             else {
               setupMockCreateSession(true)
+              setupMockGetMongo(Right(None))
               setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(None))
               setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
             }

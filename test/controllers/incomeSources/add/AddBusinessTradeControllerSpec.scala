@@ -27,7 +27,8 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, incomeSourceAddedField, reportingMethodSetField}
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, incomeSourceAddedField, journeyIsCompleteField}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
@@ -37,7 +38,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.AddBusinessTrade
@@ -64,6 +65,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
   val validBusinessTrade: String = "Test Business Trade"
   val validBusinessName: String = "Test Business Name"
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  val sessionDataCompletedJourney: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  val sessionDataName: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(businessName = Some("testBusinessName"))))
 
   object TestAddBusinessTradeController
     extends AddBusinessTradeController(
@@ -113,8 +116,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        setupMockGetMongo(Right(Some(sessionDataName)))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -125,9 +127,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockCreateSession(true)
-        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        setupMockGetMongo(Right(Some(sessionDataName)))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = true, isChange = false)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -400,8 +400,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](reportingMethodSetField, JourneyType(Add, SelfEmployment), Right(Some(true)))
-        setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, SelfEmployment), Right(None))
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER

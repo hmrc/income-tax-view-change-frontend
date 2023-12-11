@@ -121,7 +121,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                     incomeSourceType: IncomeSourceType,
                     cashOrAccrualsFlag: Option[String] = None,
                     backUrl: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
