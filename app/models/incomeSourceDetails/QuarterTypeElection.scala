@@ -18,7 +18,7 @@ package models.incomeSourceDetails
 
 import play.api.libs.json.{Format, Json}
 
-trait QuarterReportingType {
+sealed trait QuarterReportingType {
   val value: String
 }
 
