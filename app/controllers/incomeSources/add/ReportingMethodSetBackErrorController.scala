@@ -20,12 +20,12 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.add.ReportingMethodSetBackError
+import views.html.incomeSources.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +36,7 @@ class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: S
                                                       val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                       val retrieveBtaNavBar: NavBarPredicate,
-                                                      val cannotGoBackError: ReportingMethodSetBackError)
+                                                      val cannotGoBackError: YouCannotGoBackError)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
@@ -46,7 +46,16 @@ class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: S
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType)))
+    val subheadingContent = getSubheadingContent(incomeSourceType)
+    Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))
+  }
+
+  def getSubheadingContent(incomeSourceType: IncomeSourceType)(implicit request: Request[_]): String = {
+    incomeSourceType match {
+      case SelfEmployment => messagesApi.preferred(request)("cannotGoBack.soleTraderAdded")
+      case UkProperty => messagesApi.preferred(request)("cannotGoBack.ukPropertyAdded")
+      case ForeignProperty => messagesApi.preferred(request)("cannotGoBack.foreignPropertyAdded")
+    }
   }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate

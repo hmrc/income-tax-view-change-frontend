@@ -29,8 +29,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.add.ReportingMethodSetBackError
-
+import views.html.incomeSources.YouCannotGoBackError
 import scala.concurrent.Future
 
 class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate
@@ -43,26 +42,26 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
-    app.injector.instanceOf[ReportingMethodSetBackError]
+    app.injector.instanceOf[YouCannotGoBackError]
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
-    val title: String = messages("cannot-go-back.heading")
-    val messageSE: String = messages("cannot-go-back.sole-trader")
-    val messageUK: String = messages("cannot-go-back.uk-property")
-    val messageFP: String = messages("cannot-go-back.foreign-property")
+    val title: String = messages("cannotGoBack.heading")
+    val messageSE: String = messages("cannotGoBack.soleTraderAdded")
+    val messageUK: String = messages("cannotGoBack.ukPropertyAdded")
+    val messageFP: String = messages("cannotGoBack.foreignPropertyAdded")
 
     def getTitle(incomeSourceType: IncomeSourceType, isAgent: Boolean): String = {
       (isAgent, incomeSourceType) match {
-        case (false, SelfEmployment) => messages("htmlTitle", s"$title - $messageSE")
-        case (false, UkProperty) => messages("htmlTitle", s"$title - $messageUK")
-        case (false, ForeignProperty) => messages("htmlTitle", s"$title - $messageFP")
-        case (true, SelfEmployment) => messages("htmlTitle.agent", s"$title - $messageSE")
-        case (true, UkProperty) => messages("htmlTitle.agent", s"$title - $messageUK")
-        case (true, ForeignProperty) => messages("htmlTitle.agent", s"$title - $messageFP")
+        case (false, SelfEmployment) => messages("htmlTitle", s"$title")
+        case (false, UkProperty) => messages("htmlTitle", s"$title")
+        case (false, ForeignProperty) => messages("htmlTitle", s"$title")
+        case (true, SelfEmployment) => messages("htmlTitle.agent", s"$title")
+        case (true, UkProperty) => messages("htmlTitle.agent", s"$title")
+        case (true, ForeignProperty) => messages("htmlTitle.agent", s"$title")
       }
     }
   }
@@ -115,7 +114,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
         status(result) shouldBe OK
         document.title shouldBe TestReportingMethodSetBackController$.getTitle(SelfEmployment, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageSE
+        document.getElementById("subheading").text() shouldBe TestReportingMethodSetBackController$.messageSE
       }
       "Display the you cannot go back error page (Individual, UkProperty)" in {
         disableAllSwitches()
@@ -129,7 +128,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
         status(result) shouldBe OK
         document.title shouldBe TestReportingMethodSetBackController$.getTitle(UkProperty, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageUK
+        document.getElementById("subheading").text() shouldBe TestReportingMethodSetBackController$.messageUK
       }
       "Display the you cannot go back error page (Individual, ForeignProperty)" in {
         disableAllSwitches()
@@ -143,7 +142,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
         status(result) shouldBe OK
         document.title shouldBe TestReportingMethodSetBackController$.getTitle(ForeignProperty, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageFP
+        document.getElementById("subheading").text() shouldBe TestReportingMethodSetBackController$.messageFP
       }
 
       "Display the you cannot go back error page (Agent, SelfEmployment)" in {
@@ -158,7 +157,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
         status(result) shouldBe OK
         document.title shouldBe TestReportingMethodSetBackController$.getTitle(SelfEmployment, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageSE
+        document.getElementById("subheading").text() shouldBe TestReportingMethodSetBackController$.messageSE
       }
       "Display the you cannot go back error page (Agent, UkProperty)" in {
         disableAllSwitches()
@@ -172,7 +171,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
         status(result) shouldBe OK
         document.title shouldBe TestReportingMethodSetBackController$.getTitle(UkProperty, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageUK
+        document.getElementById("subheading").text() shouldBe TestReportingMethodSetBackController$.messageUK
       }
       "Display the you cannot go back error page (Agent, ForeignProperty)" in {
         disableAllSwitches()
@@ -186,7 +185,7 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
         status(result) shouldBe OK
         document.title shouldBe TestReportingMethodSetBackController$.getTitle(ForeignProperty, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestReportingMethodSetBackController$.messageFP
+        document.getElementById("subheading").text() shouldBe TestReportingMethodSetBackController$.messageFP
       }
     }
   }

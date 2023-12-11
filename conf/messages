@@ -1468,18 +1468,21 @@ business-added.previous-tax-years-t1                    = You must make sure tha
 
 ## You cannot go back - Your business has been added page ##
 
-cannot-go-back.heading                                  = You cannot go back
-cannot-go-back.sole-trader                              = Your sole trader business has been added
-cannot-go-back.uk-property                              = Your UK property business has been added
-cannot-go-back.foreign-property                         = Your foreign property business has been added
-cannot-go-back.you-can                                  = You can:
-cannot-go-back.manage-link                              = view and manage your income sources
-cannot-go-back.home-link                                = go back to the homepage
+cannotGoBack.heading                                      = You cannot go back
+cannotGoBack.soleTraderAdded                              = Your sole trader business has been added
+cannotGoBack.ukPropertyAdded                              = Your UK property business has been added
+cannotGoBack.foreignPropertyAdded                         = Your foreign property business has been added
 
-cannot-go-back.warning-message                          = You still need to choose a reporting method. If you leave this page, you will be set to report annually for up to two tax years.
-cannot-go-back.has-been-added-1                         = You can manage it from the
-cannot-go-back.has-been-added-2                         = page.
-cannot-go-back.need-to-choose                           = You now need to choose how often you want to send income and expense updates to HMRC for this income source.
+cannotGoBack.manage.UK                                    = Your reporting method for your UK property business for tax year {0} to {1}
+cannotGoBack.manage.FP                                    = Your reporting method for your foreign property business for tax year {0} to {1}
+cannotGoBack.manage.SE                                    = Your reporting method for your sole trader business for tax year {0} to {1}
+cannotGoBack.manage.reportingMethod                       = has changed to {0} reporting.
+cannotGoBack.manage.annual                                = annual
+cannotGoBack.manage.quarterly                             = quarterly
+
+cannotGoBack.youCan                                       = You can:
+cannotGoBack.manageLink                                   = view and manage your income sources
+cannotGoBack.homeLink                                     = go back to the homepage
 
 ## Income Source Ceased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        =
