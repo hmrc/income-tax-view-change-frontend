@@ -204,7 +204,7 @@ object IncomeSourceDetailsTestConstants {
         addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
       case "MANAGE" => UIJourneySessionData(testSessionId, journeyType.toString,
         manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId),
-          taxYear = Some("2022-2023"), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))
+          taxYear = Some(2023), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))
       case "CEASE" => UIJourneySessionData(testSessionId, journeyType.toString,
         ceaseIncomeSourceData = Some(CeaseIncomeSourceData(journeyIsComplete = Some(true))))
     }

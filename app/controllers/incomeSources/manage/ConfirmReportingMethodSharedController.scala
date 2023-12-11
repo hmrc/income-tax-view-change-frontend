@@ -234,7 +234,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           uiJourneySessionData =>
             val newUIJourneySessionData = {
               uiJourneySessionData.copy(manageIncomeSourceData =
-                Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.toString), Some(reportingMethod), Some(taxYear.startYear.toString + "-" + taxYear.endYear.toString), Some(true))))
+                Some(ManageIncomeSourceData(Some(incomeSourceIdMaybe.get.value), Some(reportingMethod), Some(taxYear.endYear), Some(true))))
             }
             sessionService.setMongoData(newUIJourneySessionData)
             Logger("application").debug("[ConfirmReportingMethodSharedController][handleValidForm] Updated tax year specific reporting method")

@@ -86,7 +86,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
     journeyType = JourneyType(Manage, incomeSourceType).toString,
-    manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(taxYear))))
+    manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), reportingMethod = Some(annual), taxYear = Some(2024))))
 
   s"calling GET $confirmReportingMethodShowUKPropertyUrl" should {
     "render the Confirm Reporting Method page" when {

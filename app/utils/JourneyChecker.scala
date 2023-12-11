@@ -17,9 +17,7 @@
 package utils
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.mvc.Result
@@ -43,28 +41,26 @@ trait JourneyChecker extends IncomeSourcesUtils {
       false
   }
 
-  private lazy val redirectUrl: (JourneyType, Option[String], Option[String], Option[String]) => MtdItUser[_] => Future[Result] =
-    (journeyType: JourneyType, reportingMethod: Option[String], taxYear: Option[String], incomeSourceId: Option[String]) => user => {
-      (journeyType.operation, isAgent(user)) match {
-        case (Add, true) =>
-          Future.successful {
-            Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType))
-          }
-        case (Add, false) =>
-          Future.successful {
-            Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType))
-          }
-        case (Manage, _) =>
-          Future.successful {
-            Redirect(controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent(user),
-              journeyType.businessType, reportingMethod.get, taxYear.get, incomeSourceId))
-          }
-        case (Cease, _) =>
-          Future.successful {
-            Redirect(controllers.routes.HomeController.show()) //TODO: fix
-          }
-      }
+  private lazy val redirectUrl: JourneyType => MtdItUser[_] => Future[Result] = (journeyType: JourneyType) => user => {
+    (journeyType.operation, isAgent(user)) match {
+      case (Add, true) =>
+        Future.successful {
+          Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.showAgent(journeyType.businessType))
+        }
+      case (Add, false) =>
+        Future.successful {
+          Redirect(controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(journeyType.businessType))
+        }
+      case (Manage, _) =>
+        Future.successful {
+          Redirect(controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent(user), journeyType.businessType))
+        }
+      case (Cease, _) =>
+        Future.successful {
+          Redirect(controllers.routes.HomeController.show()) //TODO: fix
+        }
     }
+  }
 
   /** *****************************TODO: remove in MISUV-6724 or MISUV-6734********************************************* */
   def withIncomeSourcesFSWithSessionCheck(journeyType: JourneyType)(codeBlock: => Future[Result])(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
@@ -93,19 +89,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
     withIncomeSourcesFS {
       sessionService.getMongo(journeyType.toString).flatMap {
         case Right(Some(data: UIJourneySessionData)) if isJourneyComplete(data, journeyType) =>
-          val manageData = data.manageIncomeSourceData
-          val reportingMethod = manageData.flatMap(_.reportingMethod)
-          val taxYear = manageData.flatMap(_.taxYear)
-          val incomeSourceId = journeyType.businessType match {
-            case SelfEmployment =>
-              manageData.flatMap(_.incomeSourceId).map { unhashedString =>
-                val unhashedIncomeSourceId = IncomeSourceId(unhashedString)
-                val hashedIncomeSourceId = IncomeSourceIdHash(unhashedIncomeSourceId)
-                hashedIncomeSourceId.hash
-              }
-            case _ => None
-          }
-          redirectUrl(journeyType, reportingMethod, taxYear, incomeSourceId)(user)
+          redirectUrl(journeyType)(user)
         case Right(Some(data: UIJourneySessionData)) =>
           codeBlock(data)
         case Right(None) =>

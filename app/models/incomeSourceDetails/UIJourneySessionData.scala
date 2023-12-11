@@ -94,7 +94,7 @@ object AddIncomeSourceData {
 
 case class ManageIncomeSourceData(incomeSourceId: Option[String] = None,
                                   reportingMethod: Option[String] = None,
-                                  taxYear: Option[String] = None,
+                                  taxYear: Option[Int] = None,
                                   journeyIsComplete: Option[Boolean] = None)
 
 object ManageIncomeSourceData {
