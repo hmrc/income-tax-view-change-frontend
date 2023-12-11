@@ -21,10 +21,10 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddBusinessNameResponse, AddBusinessTradeResponse, AddIncomeSourceData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -71,24 +71,35 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
   private def getBusinessName(isChange: Boolean)
-                             (implicit user: MtdItUser[_]): Future[Option[String]] = {
+                             (implicit user: MtdItUser[_], incomeSourceType: IncomeSourceType): Future[Option[String]] = {
     if (isChange)
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessNameField, journeyType).flatMap {
-        case Right(nameOpt) => Future.successful(nameOpt)
-        case Left(ex) => Future.failed(ex)
+      sessionService.getMongoKeyTyped[AddBusinessNameResponse]().flatMap {
+        case Right(Some(AddBusinessNameResponse(name))) =>
+          Future.successful(Some(name))
+        case Right(_) =>
+          Future.failed(new Exception("Unable to extract AddBusinessTrade:"))
+        case Left(ex) =>
+          Future.failed(new Exception(s"Unable to extract AddBusinessTrade: ${ex}"))
       }
     else
       sessionService.createSession(journeyType.toString).flatMap {
         case true => Future.successful(None)
-        case false => Future.failed(new Exception("Unable to create session"))
+        case false => Future.failed(new Exception("Unable to create session 1"))
       }
   }
 
-  private def getBusinessTrade(implicit user: MtdItUser[_]): Future[Option[String]] = {
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-      case Right(nameOpt) => Future.successful(nameOpt)
-      case Left(ex) => Future.failed(ex)
-    }
+  private def getBusinessTrade()
+                              (implicit user: MtdItUser[_],
+                               incomeSourceType: IncomeSourceType = SelfEmployment): Future[Option[String]] = {
+    sessionService.getMongoKeyTyped[AddBusinessTradeResponse]()
+      .flatMap {
+        case Right(Some(AddBusinessTradeResponse(name))) =>
+          Future.successful(Some(name))
+        case Right(None) =>
+          Future.successful(None)
+        case Left(ex) =>
+          Future.failed(new Exception(s"Unable to create session 3: ${ex}"))
+      }
   }
 
 
@@ -116,7 +127,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
           }
     }
 
-  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, incomeSourceType: IncomeSourceType = SelfEmployment): Future[Result] = {
     withIncomeSourcesFSWithSessionCheck(JourneyType(Add, SelfEmployment)) {
       getBusinessName(isChange).flatMap {
         nameOpt =>
@@ -175,7 +187,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)
+                         (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
       val (backUrlLocal, submitActionLocal, redirectLocal) = (isAgent, isChange) match {
         case (false, false) => (backUrl, submitAction, redirect)
@@ -183,7 +196,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         case (false, true) => (checkDetailsBackUrl, submitChangeAction, checkDetailsRedirect)
         case (true, true) => (checkDetailsBackUrlAgent, submitChangeActionAgent, checkDetailsRedirectAgent)
       }
-      getBusinessTrade.flatMap {
+      getBusinessTrade().flatMap {
         businessTradeOpt =>
           BusinessNameForm.checkBusinessNameWithTradeName(BusinessNameForm.form.bindFromRequest(), businessTradeOpt).fold(
             formWithErrors =>
@@ -208,7 +221,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }.recover {
     case exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage}")
+      Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage} - ${exception.getCause}")
       errorHandler.showInternalServerError()
   }
 

@@ -21,10 +21,10 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.{AddBusinessTradeResponse, AddIncomeSourceData}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -101,13 +101,15 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       handleRequest(isAgent, isChange)
   }
 
-  private def getBusinessTrade(journeyType: JourneyType, isChange: Boolean)
-                              (implicit user: MtdItUser[_]): Future[Option[String]] = {
+  private def getBusinessTrade(isChange: Boolean)
+                              (implicit user: MtdItUser[_], incomeSourceType: IncomeSourceType): Future[Option[String]] = {
 
     if (isChange) {
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.businessTradeField, journeyType).flatMap {
-        case Right(tradeOpt) =>
-          Future.successful(tradeOpt)
+      sessionService.getMongoKeyTyped[AddBusinessTradeResponse]().flatMap {
+        case Right(Some(AddBusinessTradeResponse(tradeName))) =>
+          Future.successful(Some(tradeName))
+        case Right(Some(_)) | Right(None) =>
+          Future.failed(throw new Error("Not valid scenario"))
         case Left(err) => Future.failed(err)
       }
     } else {
@@ -115,11 +117,10 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     }
   }
 
-  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, isChange: Boolean)
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, incomeSourceType: IncomeSourceType = SelfEmployment): Future[Result] = {
     withIncomeSourcesFSWithSessionCheck(JourneyType(Add, SelfEmployment)) {
-
-      val journeyType = JourneyType(Add, SelfEmployment)
-      getBusinessTrade(journeyType, isChange).flatMap {
+      getBusinessTrade(isChange).flatMap {
         tradeOpt =>
           val filledForm = tradeOpt.fold(BusinessTradeForm.form)(trade =>
             BusinessTradeForm.form.fill(BusinessTradeForm(trade)))

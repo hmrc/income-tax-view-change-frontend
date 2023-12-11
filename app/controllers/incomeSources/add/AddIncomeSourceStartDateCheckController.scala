@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
-import models.incomeSourceDetails.UIJourneySessionData
+import models.incomeSourceDetails.{AddDateStartedResponse, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -62,33 +62,27 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-
     handleShowRequest(
-      incomeSourceType = incomeSourceType,
       isAgent = isAgent,
       isChange = isChange
-    )
+    )(user, incomeSourceType = incomeSourceType)
   }
 
   def submit(isAgent: Boolean,
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-
     handleSubmitRequest(
-      incomeSourceType = incomeSourceType,
       isAgent = isAgent,
       isChange = isChange
-    )
+    )(user, incomeSourceType)
   }
 
-  private def handleShowRequest(incomeSourceType: IncomeSourceType,
-                                isAgent: Boolean,
+  private def handleShowRequest(isAgent: Boolean,
                                 isChange: Boolean)
-                               (implicit user: MtdItUser[_]): Future[Result] = {
-
+                               (implicit user: MtdItUser[_], incomeSourceType: IncomeSourceType): Future[Result] = {
     withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
-      getStartDate(incomeSourceType).flatMap {
+      getStartDate().flatMap {
         case Some(startDate) =>
           Future.successful {
             Ok(
@@ -114,14 +108,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       errorHandler.showInternalServerError()
   }
 
-  private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
-                                  isAgent: Boolean,
+  private def handleSubmitRequest(isAgent: Boolean,
                                   isChange: Boolean)
-                                 (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+                                 (implicit mtdItUser: MtdItUser[_], incomeSourceType: IncomeSourceType): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.addStartDateCheckMessagesPrefix
     withIncomeSourcesFS {
-      getStartDate(incomeSourceType).flatMap {
+      getStartDate().flatMap {
         case Some(startDate) =>
           form(messagesPrefix).bindFromRequest().fold(
             formWithErrors =>
@@ -240,12 +233,15 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
     }
   }
 
-  private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
-    val journeyType = JourneyType(Add, incomeSourceType)
-
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt)
-      case Left(ex) => Future.failed(ex)
+  private def getStartDate()
+                          (implicit user: MtdItUser[_], incomeSourceType: IncomeSourceType): Future[Option[LocalDate]] = {
+    sessionService.getMongoKeyTyped[AddDateStartedResponse]().flatMap {
+      case Right(Some(AddDateStartedResponse(date))) =>
+        Future.successful(Some(date))
+      case Right(_) =>
+        Future.failed(throw new Error("Not possible scenario"))
+      case Left(ex) =>
+        Future.failed(ex)
     }
   }
 

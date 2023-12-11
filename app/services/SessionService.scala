@@ -16,15 +16,17 @@
 
 package services
 
-import auth.MtdItUser
-import enums.JourneyType.{Add, Cease, JourneyType, Manage, Operation}
-import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
-import play.api.mvc.{RequestHeader, Result}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.JourneyType._
+import models.incomeSourceDetails.{AddJourneyPath, _}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.runtime.universe.typeOf
+import scala.reflect.runtime.universe._
 
 @Singleton
 class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
@@ -81,6 +83,63 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
   }
 
+  private def resolveJourneyType[T](implicit tag: TypeTag[T],
+                                    incomeSourceType: IncomeSourceType): JourneyType = {
+    if (typeOf[T] <:< typeOf[AddJourneyPath]) {
+        JourneyType(Add, incomeSourceType)
+    } else if (typeOf[T] <:< typeOf[ManageJourneyPath]) {
+      JourneyType(Manage, incomeSourceType)
+    } else if (typeOf[T] <:< typeOf[CeasedJourneyPath]) {
+      JourneyType(Cease, incomeSourceType)
+    } else {
+      throw new Error(s"Unable to detect journey type: ${tag.tpe}")
+    }
+  }
+
+  private def mongoObjectToAddResponse[T: TypeTag](obj: UIJourneySessionData): Option[AddJourneyPath] = {
+    typeOf[T] match {
+      case x if x == typeOf[AddBusinessNameResponse] =>
+        obj.addIncomeSourceData
+          .flatMap(add => add.businessName)
+          .map(x => AddBusinessNameResponse(name = x))
+      case x if x == typeOf[AddBusinessTradeResponse] =>
+        obj.addIncomeSourceData
+          .flatMap(add => add.businessTrade)
+          .map(x => AddBusinessTradeResponse(name = x))
+      case x if x == typeOf[AddDateStartedResponse] =>
+        obj.addIncomeSourceData
+          .flatMap(add => add.dateStarted)
+          .map(x => AddDateStartedResponse(date = x))
+      case x if x == AddDateStartedAndAccMethodResponse =>
+        obj.addIncomeSourceData
+          .map(add => (add.dateStarted, add.incomeSourcesAccountingMethod) )
+          .map(pr => AddDateStartedAndAccMethodResponse(date = pr._1, accMethod = pr._2))
+      case _ =>
+        throw new Error(s"Mapping not supported for type:")
+    }
+  }
+
+  private def mongoObjectToManageResponse[T](obj: UIJourneySessionData)
+                                           (implicit tag: TypeTag[T]): Option[ManageJourneyPath] = ???
+
+  private def mongoObjectToCeaseResponse[T](obj: UIJourneySessionData)
+                                           (implicit tag: TypeTag[T]): Option[ManageJourneyPath] = ???
+
+  def getMongoKeyTyped[A]()(implicit hc: HeaderCarrier, incomeSourceType: IncomeSourceType,
+                            ec: ExecutionContext, tag: TypeTag[A]): Future[Either[Error, Option[A]]] = {
+    val journeyType = resolveJourneyType[A]
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
+      case Some(data: UIJourneySessionData) if (typeOf[A] <:< typeOf[AddJourneyPath]) =>
+        Right(mongoObjectToAddResponse[A](data).asInstanceOf[Option[A]])
+      case Some(data: UIJourneySessionData) if (typeOf[A] <:< typeOf[ManageJourneyPath]) =>
+        Right(mongoObjectToManageResponse[A](data).asInstanceOf[Option[A]])
+      case Some(data: UIJourneySessionData) if (journeyType.operation == Cease) =>
+        Right(mongoObjectToCeaseResponse[A](data).asInstanceOf[Option[A]])
+      case _ =>
+        Left(new Error(s"Type is not supported => ${tag.tpe}"))
+    }
+  }
+
   def setMongoData(uiJourneySessionData: UIJourneySessionData)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     uiJourneySessionDataRepository.set(uiJourneySessionData)
@@ -88,6 +147,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
                  (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+    println(s"Data saving ")
     val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
     val jsonAccessorPath = journeyType.operation match {
       case Add => AddIncomeSourceData.getJSONKeyPath(key)
@@ -96,7 +156,9 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     }
     uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
       result => result.wasAcknowledged() match {
-        case true => Right(true)
+        case true =>
+          println(s"Data saved ...")
+          Right(true)
         case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
       }
     )
