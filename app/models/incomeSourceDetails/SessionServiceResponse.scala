@@ -22,11 +22,12 @@ import java.time.LocalDate
 
 trait JourneyPath
 
-trait AddJourneyPath extends JourneyPath
-trait ManageJourneyPath extends JourneyPath
-trait CeasedJourneyPath extends JourneyPath
+sealed trait AddJourneyPath extends JourneyPath
+sealed trait ManageJourneyPath extends JourneyPath
+sealed trait CeasedJourneyPath extends JourneyPath
 
 
 case class AddBusinessNameResponse(name: String) extends AddJourneyPath
 case class AddBusinessTradeResponse(name: String) extends AddJourneyPath
 case class AddDateStartedResponse(date: LocalDate) extends AddJourneyPath
+case class AddDateStartedAndAccMethodResponse(date: Option[LocalDate], accMethod: Option[String]) extends AddJourneyPath

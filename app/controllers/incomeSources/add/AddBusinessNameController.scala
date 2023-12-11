@@ -91,15 +91,15 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   private def getBusinessTrade()
                               (implicit user: MtdItUser[_],
                                incomeSourceType: IncomeSourceType = SelfEmployment): Future[Option[String]] = {
-    sessionService.getMongoKeyTyped[AddBusinessTradeResponse]().flatMap {
-      case Right(Some(AddBusinessTradeResponse(name))) =>
-        Future.successful(Some(name))
-      case Right(Some(_)) | Right(None) =>
-        // TODO: do we need to raise an Error if some other value returned?
-        Future.successful(None)
-      case Left(ex) =>
-        Future.failed(new Exception(s"Unable to create session 3: ${ex}"))
-    }
+    sessionService.getMongoKeyTyped[AddBusinessTradeResponse]()
+      .flatMap {
+        case Right(Some(AddBusinessTradeResponse(name))) =>
+          Future.successful(Some(name))
+        case Right(None) =>
+          Future.successful(None)
+        case Left(ex) =>
+          Future.failed(new Exception(s"Unable to create session 3: ${ex}"))
+      }
   }
 
 

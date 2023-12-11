@@ -18,7 +18,7 @@ package services
 
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType._
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.{AddJourneyPath, _}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -85,19 +85,18 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   private def resolveJourneyType[T](implicit tag: TypeTag[T],
                                     incomeSourceType: IncomeSourceType): JourneyType = {
-    typeOf[T] match {
-      case x if x == typeOf[AddBusinessNameResponse] =>
+    if (typeOf[T] <:< typeOf[AddJourneyPath]) {
         JourneyType(Add, incomeSourceType)
-      case x if x == typeOf[AddBusinessTradeResponse] =>
-        JourneyType(Add, incomeSourceType)
-      case x if x == typeOf[AddDateStartedResponse] =>
-        JourneyType(Add, incomeSourceType)
-      case x =>
-        throw new Error(s"Unable to resolve journey by type provided: ${x} - ${x == typeOf[AddBusinessNameResponse]}")
+    } else if (typeOf[T] <:< typeOf[ManageJourneyPath]) {
+      JourneyType(Manage, incomeSourceType)
+    } else if (typeOf[T] <:< typeOf[CeasedJourneyPath]) {
+      JourneyType(Cease, incomeSourceType)
+    } else {
+      throw new Error(s"Unable to detect journey type: ${tag.tpe}")
     }
   }
 
-  private def mongoObjectToAddResponse[T: TypeTag](obj: UIJourneySessionData): Option[AddJourneyPath] = {
+  private def mongoObjectToAddResponse[T: TypeTag](obj: UIJourneySessionData): Option[JourneyPath] = {
     typeOf[T] match {
       case x if x == typeOf[AddBusinessNameResponse] =>
         obj.addIncomeSourceData
@@ -111,6 +110,10 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
         obj.addIncomeSourceData
           .flatMap(add => add.dateStarted)
           .map(x => AddDateStartedResponse(date = x))
+      case x if x == AddDateStartedAndAccMethodResponse =>
+        obj.addIncomeSourceData
+          .map(add => (add.dateStarted, add.incomeSourcesAccountingMethod) )
+          .map(pr => AddDateStartedAndAccMethodResponse(date = pr._1, accMethod = pr._2))
       case _ =>
         throw new Error(s"Mapping not supported for type:")
     }
@@ -122,17 +125,17 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
   //  private def mongoObjectToCeaseResponse[T](obj: UIJourneySessionData): Option[ManageJourneyPath] = ???
 
   def getMongoKeyTyped[A]()(implicit hc: HeaderCarrier, incomeSourceType: IncomeSourceType,
-                            ec: ExecutionContext, tag: TypeTag[A]): Future[Either[Throwable, Option[_]]] = {
+                            ec: ExecutionContext, tag: TypeTag[A]): Future[Either[Error, Option[A]]] = {
     val journeyType = resolveJourneyType[A]
     uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
-        Right(mongoObjectToAddResponse[A](data))
+        Right(mongoObjectToAddResponse[A](data).asInstanceOf[Option[A]])
       //      case Some(data: UIJourneySessionData) if (journeyType.operation == Manage) =>
       //        Right(mongoObjectToManageResponse[A](data))
       //      case Some(data: UIJourneySessionData) if (journeyType.operation == Cease) =>
       //        Right(mongoObjectToCeaseResponse[A](data))
       case _ => // TODO: raise error
-        Right(None)
+        Left(new Error("Specify failure here"))
     }
   }
 
