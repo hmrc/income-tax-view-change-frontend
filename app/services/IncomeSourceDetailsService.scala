@@ -33,9 +33,9 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.util.Try
 
 @Singleton
-class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector)
+class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
+                                           implicit val ec: ExecutionContext)
   extends ActivePropertyBusinessesHelper {
-  implicit val ec: ExecutionContextExecutor = ExecutionContext.global
   val cacheExpiry: Duration = Duration(1, "day")
   val emptyAddress = AddressModel(
     addressLine1 = "",

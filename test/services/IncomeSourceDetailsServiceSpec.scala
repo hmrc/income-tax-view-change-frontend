@@ -38,7 +38,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
   val expectedAddressString1: Option[String] = Some("Line 1<br>Line 2<br>Line 3<br>Line 4<br>LN1 1NL<br>NI")
   val expectedAddressString2: Option[String] = Some("A Line 1<br>A Line 3<br>LN2 2NL<br>GB")
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector)
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector, ec)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
