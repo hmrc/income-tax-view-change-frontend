@@ -82,21 +82,6 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
         TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe errorResponse
       }
     }
-    "caching" when {
-//      "should cache" in {
-//        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(noIncomeDetails)
-//        TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key")).futureValue shouldBe noIncomeDetails
-//        TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key")).futureValue shouldBe noIncomeDetails
-//        verifyMockIncomeSourceDetailsResponse(1)
-//      }
-
-//      "should NOT cache" in {
-//        setupMockIncomeSourceDetailsResponse(testMtditid, testNino, Some(testSaUtr), Some(testCredId), Some(testUserType))(noIncomeDetails)
-//        TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("key2")).futureValue shouldBe noIncomeDetails
-//        TestIncomeSourceDetailsService.getIncomeSourceDetails(Some("someotherkey")).futureValue shouldBe noIncomeDetails
-//        verifyMockIncomeSourceDetailsResponse(2)
-//      }
-    }
   }
 
   "The IncomeSourceDetailsService.getAddIncomeSourceViewModel method" when {

@@ -23,7 +23,6 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import play.api.libs.json.{JsPath, JsSuccess, JsValue, Json}
 import services.helpers.ActivePropertyBusinessesHelper
 import uk.gov.hmrc.http.HeaderCarrier
 

@@ -16,7 +16,6 @@
 
 package helpers.agent
 
-import auth.HeaderExtractor
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -41,8 +40,7 @@ import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
 import java.time.Month.APRIL

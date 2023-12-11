@@ -259,37 +259,35 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   }
 
   private def handleValidatedInput(validatedInput: DateFormElement,
-                                                incomeSourceType: IncomeSourceType,
-                                                incomeSourceIdMaybe: Option[IncomeSourceId],
-                                                redirectAction: Call)(
-                                                 implicit headerCarrier: HeaderCarrier) = {
-    println(s"\nvalidatedInput: $validatedInput\n")
+                                   incomeSourceType: IncomeSourceType,
+                                   incomeSourceIdMaybe: Option[IncomeSourceId],
+                                   redirectAction: Call)(
+                                    implicit headerCarrier: HeaderCarrier) = {
     sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
       (incomeSourceType, incomeSourceIdMaybe) match {
         case (SelfEmployment, Some(incomeSourceId)) =>
           val result = Redirect(redirectAction)
-          println(s"\nsetting mongo key: ${validatedInput.date.toString} type: $incomeSourceType\n")
           sessionService.setMongoKey(
             CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
           ).flatMap {
             case Right(_) =>
-              println(s"\nsetting incomesourceid: ${incomeSourceId.value}\n")
               sessionService.setMongoKey(
                 CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
               ).flatMap {
-                case Right(_) =>
-                  println(s"\nall ok: ${result}\n")
-                  Future.successful(result)
-                case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
+                case Right(_) => Future.successful(result)
+                case Left(_) => Future.failed(new Error(
+                  s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
               }
 
-            case Left(_) => Future.failed(new Error(s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
+            case Left(_) => Future.failed(new Error(
+              s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
           }
 
         case _ =>
           val propertyEndDate = validatedInput.date.toString
           val result = Redirect(redirectAction)
-          sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate, journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
+          sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate,
+            journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
             case Right(_) => Future.successful(result)
             case Left(exception) => Future.failed(exception)
           }
@@ -302,13 +300,11 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
     val incomeSourceIdMaybe: Option[IncomeSourceId] = id.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
-    println(s"\nsession: ${user.session}\n")
     getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap { actions =>
       val (backAction, postAction, redirectAction) = actions
 
       incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)).bindFromRequest().fold(
         hasErrors => {
-          println(s"\nhasErrors: $hasErrors\n")
           Future.successful(BadRequest(incomeSourceEndDate(
             incomeSourceEndDateForm = hasErrors,
             postAction = postAction,

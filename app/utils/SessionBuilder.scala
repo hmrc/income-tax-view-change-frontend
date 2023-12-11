@@ -16,22 +16,14 @@
 
 package utils
 
-//import org.joda.time.DateTime
 import play.api.mvc.Session
 import uk.gov.hmrc.http.{SessionId, SessionKeys}
 
-import java.time.LocalDate
 import java.util.UUID
 
 case class AuthExchange(bearerToken: String, sessionAuthorityUri: String)
 
 object SessionBuilder {
-
-  def buildPrivilegedSession(authExchange: AuthExchange): Session = Session(Map(
-    SessionKeys.sessionId -> SessionId(s"session-${UUID.randomUUID}").value,
-    SessionKeys.authToken -> authExchange.bearerToken,
-    SessionKeys.lastRequestTimestamp -> System.currentTimeMillis().toString
-  ))
 
   def buildGGSession(authExchange: AuthExchange): Session = Session(Map(
     SessionKeys.sessionId -> SessionId(s"session-${UUID.randomUUID}").value,

@@ -19,29 +19,23 @@ package audit
 import audit.models.{AuditModel, ExtendedAuditModel}
 import config.FrontendAppConfig
 import play.api.Logger
-import play.api.libs.json.{JsObject, JsValue, Json, Writes}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
-import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent, TruncationLog, RedactionLog}
+import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
-
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector)  {
 
-//  implicit val x: Writes[TruncationLog] = Json.writes[TruncationLog]
-//  implicit val y: Writes[RedactionLog] = Json.writes[RedactionLog]
-//  implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
-//  implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
-
   def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
-//    Logger("application").debug(s"Splunk Audit Event:\n\n${Json.toJson(dataEvent)}")
+    Logger("application").debug(s"Splunk Audit Event:\n\n$dataEvent")
     auditConnector.sendEvent(dataEvent).map {
       case Success =>
         Logger("application").debug("[AuditingService][audit] - Splunk Audit Successful")
@@ -65,7 +59,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
                                                                                  request: Request[_],
                                                                                  ec: ExecutionContext): Unit = {
     val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
-//    Logger("application").debug(s"Splunk Audit Event:\n\n${Json.toJson(extendedDataEvent)}")
+    Logger("application").debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
       case Success =>
         Logger("application").debug("[AuditingService][extendedAudit] - Splunk Audit Successful")

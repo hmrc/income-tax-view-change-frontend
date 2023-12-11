@@ -1,5 +1,4 @@
 
-import play.core.PlayVersion
 import play.sbt.routes.RoutesKeys
 import sbt._
 import sbt.Keys.libraryDependencySchemes
@@ -43,9 +42,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
-//  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
-//  "com.github.tomakehurst" % "wiremock-jre8" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope,
   "org.scalacheck" %% "scalacheck" % "1.17.0" % scope,
   "uk.gov.hmrc" %% s"bootstrap-test-$playVersion"  % bootstrapPlayVersion % "test",
@@ -58,7 +55,6 @@ def it(scope: String = "it"): Seq[ModuleID] = Seq(
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
-//  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope,

@@ -106,7 +106,6 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkCeaseBusinessDetailsShowAgentUrl)
         )
 
-        println("GETTING MONGO KEYSS.....")
         sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSessionEndDateValue))
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
 
