@@ -21,14 +21,17 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.details.Details
 @import models.core.AddressModel
 @import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 @import enums.IncomeSourceJourney.{SelfEmployment, ForeignProperty, UkProperty}
+
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         govukSummaryList: GovukSummaryList,
+        govukDetails: GovukDetails,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         h1: h1,
         h2: h2,
@@ -174,6 +177,41 @@
     )
 }
 
+@getQuarterlyType = @{
+    viewModel.quarterReportingType match {
+        case Some(quarterType) =>
+            Seq(
+                SummaryListRow(
+                    key = Key(
+                        content = Text(messages("incomeSources.manage.quarterly-period"))
+                    ),
+                    value = Value(
+                        content = Text(messages(s"incomeSources.manage.quarterly-period.${quarterType.value.toLowerCase}"))
+                    )
+                )
+            )
+        case None => Seq.empty
+    }
+}
+
+@quarterlyTypeInfoMessage = @{
+    val messagePrefix = "incomeSources.manage.quarterly-period"
+    val externalRefLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
+
+    viewModel.quarterReportingType map { quarterType =>
+        val quarterTypeMessageKey = quarterType.value.toLowerCase
+        val p1 = p(id = Some("expandable-info-p1"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p1")))
+        val p2 = p(id = Some("expandable-info-p2"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p2")))
+        val anchor = link( id = Some("expandable-more-info-link"), target = Some("_blank"), link = externalRefLink, messageKey = s"$messagePrefix.content.p3" )
+        val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
+
+        govukDetails(Details(id = Some("expandable-info"),
+                            summary = Text(messages(s"incomeSources.manage.quarterly-period.$quarterTypeMessageKey.summary")),
+                            content = content))
+
+    }
+}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
@@ -212,6 +250,7 @@
                     content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.businessAccountingMethod)))
                 )
             ))
+                ++ getQuarterlyType
                 ++ {
             if(viewModel.itsaHasMandatedOrVoluntaryStatusCurrentYear
                     && viewModel.latencyDetails.isDefined) getTaxYears else Seq.empty
@@ -219,6 +258,7 @@
         attributes = Map("id" -> "manage-details-table")),
     )
 
+    @quarterlyTypeInfoMessage
     <br>
     <br>
 
