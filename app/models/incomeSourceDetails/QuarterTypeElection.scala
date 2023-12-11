@@ -23,18 +23,18 @@ trait QuarterReportingType {
 }
 
 object Standard extends QuarterReportingType {
-  val value: String = "standard"
+  val value: String = "STANDARD"
 }
 
 object Calendar extends QuarterReportingType {
-  val value: String = "calendar"
+  val value: String = "CALENDAR"
 }
 
 case class QuarterTypeElection(quarterReportingType: String, taxYearofElection: String) {
   val isStandardQuarterlyReporting: Option[QuarterReportingType] = {
     quarterReportingType match {
-      case "STANDARD" => Some(Standard)
-      case "CALENDAR" => Some(Calendar)
+      case Standard.value => Some(Standard)
+      case Calendar.value => Some(Calendar)
       case _ => None
     }
   }

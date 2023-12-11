@@ -186,7 +186,7 @@
                         content = Text(messages("incomeSources.manage.quarterly-period"))
                     ),
                     value = Value(
-                        content = Text(messages(s"incomeSources.manage.quarterly-period.${quarterType.value}"))
+                        content = Text(messages(s"incomeSources.manage.quarterly-period.${quarterType.value.toLowerCase}"))
                     )
                 )
             )
@@ -199,7 +199,7 @@
     val externalRefLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
 
     viewModel.quarterReportingType map { quarterType =>
-        val quarterTypeMessageKey = quarterType.value
+        val quarterTypeMessageKey = quarterType.value.toLowerCase
         val p1 = p(id = Some("expandable-info-p1"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p1")))
         val p2 = p(id = Some("expandable-info-p2"))(Html(messages(s"$messagePrefix.$quarterTypeMessageKey.content.p2")))
         val anchor = link( id = Some("expandable-more-info-link"), target = Some("_blank"), link = externalRefLink, messageKey = s"$messagePrefix.content.p3" )
