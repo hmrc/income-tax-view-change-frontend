@@ -112,6 +112,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   }
 
   def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataISAdded(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData()))
 
@@ -164,7 +165,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
       "user has already completed the journey" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -176,6 +177,20 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+
+      }
+      "user has already added their income source" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetMongo(Right(Some(sessionDataISAdded(journeyTypeSE))))
+
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
 
       }
@@ -705,7 +720,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
       "user has already completed the journey" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -717,6 +732,20 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+
+      }
+      "user has already added their income source" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockGetMongo(Right(Some(sessionDataISAdded(journeyTypeSE))))
+
+        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
 
       }

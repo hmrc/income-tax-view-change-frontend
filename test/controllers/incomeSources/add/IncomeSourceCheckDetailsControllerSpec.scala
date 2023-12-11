@@ -90,6 +90,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
     )))
 
   def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataISAdded(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, None)
 
@@ -270,7 +271,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
         }
       }
 
-      s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
         s"user has already completed the journey" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -282,6 +283,19 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
           val result: Future[Result] = TestCheckDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
+          redirectLocation(result) shouldBe Some(redirectUrl)
+        }
+        s"user has already added their income source" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetMongo(Right(Some(sessionDataISAdded(JourneyType(Add, SelfEmployment)))))
+
+          val result: Future[Result] = TestCheckDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }

@@ -73,6 +73,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
   val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataISAdded(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData()))
   def sessionDataWithDate(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(dateStarted = Some(LocalDate.parse("2022-01-01")))))
@@ -187,7 +188,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
       }
     }
     for (incomeSourceType <- incomeSourceTypes) yield {
-      s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+      s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
         s"user has already completed the journey (${incomeSourceType.key})" in {
           disableAllSwitches()
           enable(IncomeSources)
@@ -199,6 +200,19 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
           val result: Future[Result] = TestAddIncomeSourceStartDateController.show(false, isChange = false, incomeSourceType)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+          redirectLocation(result) shouldBe Some(redirectUrl)
+        }
+        s"user has already added their income source (${incomeSourceType.key})" in {
+          disableAllSwitches()
+          enable(IncomeSources)
+
+          mockNoIncomeSources()
+          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+          setupMockGetMongo(Right(Some(sessionDataISAdded(JourneyType(Add, incomeSourceType)))))
+
+          val result: Future[Result] = TestAddIncomeSourceStartDateController.show(false, isChange = false, incomeSourceType)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }

@@ -64,6 +64,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   }
 
   def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+  def sessionDataISAdded(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData()))
 
@@ -238,7 +239,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         status(result) shouldBe Status.SEE_OTHER
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
       s"user has already completed the journey" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -251,6 +252,20 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         status(result) shouldBe SEE_OTHER
         val expectedUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
         else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
+        redirectLocation(result) shouldBe Some(expectedUrl.url)
+      }
+      s"user has already added their income source" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockBusinessIncomeSource()
+        setupMockAuth(isAgent)
+        setupMockGetMongo(Right(Some(sessionDataISAdded(JourneyType(Add, incomeSourceType)))))
+
+        val result: Future[Result] = showResult(incomeSourceType, isAgent)
+        status(result) shouldBe SEE_OTHER
+        val expectedUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType)
+        else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType)
         redirectLocation(result) shouldBe Some(expectedUrl.url)
       }
     }

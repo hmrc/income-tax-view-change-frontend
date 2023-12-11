@@ -80,6 +80,7 @@ class AddBusinessNameControllerSpec extends TestSupport
   val validBusinessName: String = "Test Business Name"
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
+  val sessionDataISAdded: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
   val sessionDataCompletedJourney: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
   val sessionDataNameTrade: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(businessName = Some("testBusinessName"), businessTrade = Some("testBusinessTrade"))))
 
@@ -131,7 +132,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         redirectLocation(result) mustBe Some(routes.HomeController.show().url)
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
       "user has already completed the journey" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -143,6 +144,19 @@ class AddBusinessNameControllerSpec extends TestSupport
         val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
+      "user has already added their income source" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetMongo(Right(Some(sessionDataISAdded)))
+
+        val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }
@@ -264,7 +278,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
       "user has already completed the journey" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -276,6 +290,19 @@ class AddBusinessNameControllerSpec extends TestSupport
         val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
+      "user has already added their income source" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockGetMongo(Right(Some(sessionDataISAdded)))
+
+        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }
@@ -359,7 +386,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) mustBe Some(routes.HomeController.show().url)
     }
-    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
       "user has already completed the journey" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -371,6 +398,19 @@ class AddBusinessNameControllerSpec extends TestSupport
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
+      "user has already added their income source" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetMongo(Right(Some(sessionDataISAdded)))
+
+        val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }
@@ -505,7 +545,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
       "user has already completed the journey" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -517,6 +557,19 @@ class AddBusinessNameControllerSpec extends TestSupport
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
+      "user has already added their income source" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        setupMockGetMongo(Right(Some(sessionDataISAdded)))
+
+        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }

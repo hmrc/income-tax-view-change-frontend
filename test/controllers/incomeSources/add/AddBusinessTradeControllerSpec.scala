@@ -65,6 +65,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
   val validBusinessTrade: String = "Test Business Trade"
   val validBusinessName: String = "Test Business Name"
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
+  val sessionDataISAdded: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
   val sessionDataCompletedJourney: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
   val sessionDataName: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(businessName = Some("testBusinessName"))))
 
@@ -393,7 +394,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
       redirectLocation(result) mustBe Some(routes.HomeController.show().url)
 
     }
-    s"return ${Status.SEE_OTHER}: redirect to You Cannot Go Back page" when {
+    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
       "user has already completed the journey" in {
         disableAllSwitches()
         enable(IncomeSources)
@@ -405,6 +406,19 @@ class AddBusinessTradeControllerSpec extends TestSupport
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
+        redirectLocation(result) shouldBe Some(redirectUrl)
+      }
+      "user has already added their income source" in {
+        disableAllSwitches()
+        enable(IncomeSources)
+
+        mockNoIncomeSources()
+        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockGetMongo(Right(Some(sessionDataISAdded)))
+
+        val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
+        status(result) shouldBe SEE_OTHER
+        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }
