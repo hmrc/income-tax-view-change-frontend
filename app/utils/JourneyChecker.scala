@@ -91,40 +91,6 @@ trait JourneyChecker extends IncomeSourcesUtils {
     }
   }
 
-//  def withSessionData(journeyType: JourneyType, midwayFlag: Boolean = true)(codeBlock: UIJourneySessionData => Future[Result])
-//                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-//    withIncomeSourcesFS {
-//      sessionService.getMongo(journeyType.toString).flatMap {
-//        case Right(Some(data: UIJourneySessionData)) if isJourneyComplete(data, journeyType, midwayFlag) =>
-//          val manageData = data.manageIncomeSourceData
-//          val reportingMethod = manageData.flatMap(_.reportingMethod)
-//          val taxYear = manageData.flatMap(_.taxYear)
-//          val incomeSourceId = journeyType.businessType match {
-//            case SelfEmployment =>
-//              manageData.flatMap(_.incomeSourceId).map { unhashedString =>
-//                val unhashedIncomeSourceId = IncomeSourceId.mkIncomeSourceId(unhashedString)
-//                val hashedIncomeSourceId = IncomeSourceIdHash.mkIncomeSourceIdHash(unhashedIncomeSourceId)
-//                hashedIncomeSourceId.hash
-//              }
-//            case _ => None
-//          }
-//          redirectUrl(journeyType, reportingMethod, taxYear, incomeSourceId, useDefaultRedirect(data, journeyType, midwayFlag))(user)
-//        case Right(Some(data: UIJourneySessionData)) =>
-//          codeBlock(data)
-//        case Right(None) =>
-//          sessionService.createSession(journeyType.toString).flatMap { _ =>
-//            val data = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
-//            codeBlock(data)
-//          }
-//        case Left(ex) =>
-//          val agentPrefix = if (isAgent(user)) "[Agent]" else ""
-//          Logger("application").error(s"$agentPrefix" +
-//            s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
-//          Future.failed(ex)
-//      }
-//    }
-//  }
-
   private def isJourneyComplete(data: UIJourneySessionData, journeyType: JourneyType, midwayFlag: Boolean): Boolean = {
     (journeyType.operation, midwayFlag) match {
       case (Add, true) =>
