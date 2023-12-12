@@ -29,5 +29,6 @@ sealed trait CeasedJourneyPath extends JourneyPath
 
 case class AddBusinessNameResponse(name: String) extends AddJourneyPath
 case class AddBusinessTradeResponse(name: String) extends AddJourneyPath
+
 case class AddDateStartedResponse(date: LocalDate) extends AddJourneyPath
 case class AddDateStartedAndAccMethodResponse(date: Option[LocalDate], accMethod: Option[String]) extends AddJourneyPath

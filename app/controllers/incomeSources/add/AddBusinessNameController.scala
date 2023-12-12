@@ -209,11 +209,24 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
               },
             formData => {
               val redirect = Redirect(redirectLocal)
-              sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
-                case Right(result) if result => Future.successful(redirect)
-                case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-                case Left(exception) => Future.failed(exception)
+              implicit val incomeSourceType: IncomeSourceType = SelfEmployment
+              for {
+                e <- sessionService.setMongoKeyTyped( AddBusinessNameResponse(formData.name) )
+              } yield if (e){
+                redirect
+              } else {
+                throw new Exception("Mongo update call was not acknowledged")
               }
+//              {
+//                case result if result => Future.successful(redirect)
+//                case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
+//                case Left(exception) => Future.failed(exception)
+//              }
+//              sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
+//                case Right(result) if result => Future.successful(redirect)
+//                case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
+//                case Left(exception) => Future.failed(exception)
+//              }
             }
           )
       }

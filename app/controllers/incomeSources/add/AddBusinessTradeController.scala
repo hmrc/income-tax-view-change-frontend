@@ -173,12 +173,19 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
 
   def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean, journeyType: JourneyType)(implicit user: MtdItUser[_]): Future[Result] = {
     val successURL = Redirect(getSuccessURL(isAgent, isChange))
-
-    sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, businessTrade, journeyType).flatMap {
-      case Right(result) if result => Future.successful(successURL)
-      case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-      case Left(exception) => Future.failed(exception)
+    implicit val incomeSourceType: IncomeSourceType = journeyType.businessType
+    for {
+      e <- sessionService.setMongoKeyTyped( AddBusinessTradeResponse(businessTrade) )
+    } yield if (e){
+      successURL
+    } else {
+      throw new Exception("Mongo update call was not acknowledged")
     }
+//      .flatMap {
+//      case Right(result) if result => Future.successful(successURL)
+//      case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
+//      case Left(exception) => Future.failed(exception)
+//    }
   }
 
 }
