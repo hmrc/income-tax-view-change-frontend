@@ -104,13 +104,14 @@ trait JourneyChecker extends IncomeSourcesUtils {
   }
 
   private def isJourneyComplete(data: UIJourneySessionData, journeyType: JourneyType, midwayFlag: Boolean): Boolean = {
-    journeyType.operation match {
-      case Add =>
-        {if (midwayFlag) data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false) else false} ||
+    (journeyType.operation, midwayFlag) match {
+      case (Add, true) =>
+        data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
+      case (Add, false) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case Manage =>
+      case (Manage,_ ) =>
         data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case Cease =>
+      case (Cease,_) =>
         data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case _ => false
     }
