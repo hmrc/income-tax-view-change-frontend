@@ -29,6 +29,7 @@ import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import play.api.Logger
+import play.api.i18n.Lang.logger
 import play.api.mvc._
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
@@ -338,6 +339,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     val incomeSourceIdMaybe: Option[IncomeSourceId] = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
     withIncomeSourcesFS {
+      logger.info("QUICK::" + sources)
       for {
         value <- if (incomeSourceType == SelfEmployment) {
           getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe
