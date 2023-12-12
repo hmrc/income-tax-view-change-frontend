@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.manage
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -58,6 +58,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     super.beforeEach()
     disableAllSwitches()
     enable(IncomeSources)
+    enable(CalendarQuarterTypes)
     reset(mockCalculationListService)
     reset(mockITSAStatusService)
     reset(mockDateService)
@@ -106,6 +107,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
   case object FIRST_AND_SECOND_YEAR_CRYSTALLIZED extends Scenario
 
+  case object EXPIRED_LATENCY extends Scenario
+
   case object ERROR_TESTING extends Scenario
 
   val testBusinessAddress: AddressModel = address
@@ -121,6 +124,16 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     setupMockCreateSession(true)
 
     scenario match {
+      case EXPIRED_LATENCY =>
+        when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2025)
+        when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
+          .thenReturn(Future.successful(true))
+        mockUkPlusForeignPlusSoleTraderWithLatency()
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2023), any)(any, any, any))
+          .thenReturn(Future.successful(Some(false)))
+        when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
+          .thenReturn(Future.successful(Some(false)))
+
       case ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
@@ -175,6 +188,25 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         val result = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
 
         status(result) shouldBe Status.SEE_OTHER
+      }
+      "CalendarQuarterTypes FS is disabled" in {
+        disable(CalendarQuarterTypes)
+        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").size() shouldBe 4
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").get(0) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").get(1) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").get(2) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").get(3) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
 
       }
     }
@@ -192,6 +224,26 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
         status(result) shouldBe SEE_OTHER
       }
+    }
+    "CalendarQuarterTypes FS is disabled" in {
+      disable(CalendarQuarterTypes)
+      mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
+
+      val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+      val document: Document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe Status.OK
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").size() shouldBe 4
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").get(0) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").get(1) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").get(2) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").get(3) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+
     }
   }
 
@@ -293,6 +345,26 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.unknown
 
       }
+      "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
+        mockAndBasicSetup(EXPIRED_LATENCY)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.standard
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+
+      }
+
     }
   }
 
@@ -394,6 +466,25 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.unknown
 
       }
+      "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
+        mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.standard
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+
+      }
     }
   }
 
@@ -471,6 +562,24 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
 
+      }
+      "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
+        mockAndBasicSetup(EXPIRED_LATENCY)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
       }
     }
   }
@@ -550,6 +659,25 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
 
       }
+      "FS is enabled and the .showAgent method is called with a valid id parameter, latency expired" in {
+        mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
+
+      }
     }
   }
 
@@ -622,6 +750,25 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
+
+      }
+      "FS is enabled and the .show method is called with a valid id parameter, latency expired" in {
+        mockAndBasicSetup(EXPIRED_LATENCY)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.title
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.standard
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
     }
@@ -697,6 +844,25 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
+
+      }
+      "FS is enabled and the .showAgent method is called with a valid id parameter, latency expired" in {
+        mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.title shouldBe TestManageIncomeSourceDetailsController.titleAgent
+        document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
+        Option(document.getElementById("change-link-1")).isDefined shouldBe true
+        Option(document.getElementById("change-link-2")).isDefined shouldBe true
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.standard
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
     }
