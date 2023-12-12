@@ -23,9 +23,9 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

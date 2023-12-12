@@ -29,7 +29,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.add.YouCannotGoBackError
+import views.html.incomeSources.YouCannotGoBackError
 
 import scala.concurrent.Future
 
@@ -50,19 +50,15 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
-    val title: String = messages("cannot-go-back.heading")
-    val messageSE: String = messages("cannot-go-back.sole-trader")
-    val messageUK: String = messages("cannot-go-back.uk-property")
-    val messageFP: String = messages("cannot-go-back.foreign-property")
+    val title: String = messages("cannotGoBack.heading")
+    val messageSE: String = messages("cannotGoBack.soleTraderAdded")
+    val messageUK: String = messages("cannotGoBack.ukPropertyAdded")
+    val messageFP: String = messages("cannotGoBack.foreignPropertyAdded")
 
     def getTitle(incomeSourceType: IncomeSourceType, isAgent: Boolean): String = {
       (isAgent, incomeSourceType) match {
-        case (false, SelfEmployment) => messages("htmlTitle", s"$title - $messageSE")
-        case (false, UkProperty) => messages("htmlTitle", s"$title - $messageUK")
-        case (false, ForeignProperty) => messages("htmlTitle", s"$title - $messageFP")
-        case (true, SelfEmployment) => messages("htmlTitle.agent", s"$title - $messageSE")
-        case (true, UkProperty) => messages("htmlTitle.agent", s"$title - $messageUK")
-        case (true, ForeignProperty) => messages("htmlTitle.agent", s"$title - $messageFP")
+        case (false, _) => messages("htmlTitle", s"$title")
+        case (true, _) => messages("htmlTitle.agent", s"$title")
       }
     }
   }
@@ -115,7 +111,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         status(result) shouldBe OK
         document.title shouldBe TestYouCannotGoBackController.getTitle(SelfEmployment, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageSE
+        document.getElementById("subheading").text() shouldBe TestYouCannotGoBackController.messageSE
       }
       "Display the you cannot go back error page (Individual, UkProperty)" in {
         disableAllSwitches()
@@ -129,7 +125,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         status(result) shouldBe OK
         document.title shouldBe TestYouCannotGoBackController.getTitle(UkProperty, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageUK
+        document.getElementById("subheading").text() shouldBe TestYouCannotGoBackController.messageUK
       }
       "Display the you cannot go back error page (Individual, ForeignProperty)" in {
         disableAllSwitches()
@@ -143,7 +139,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         status(result) shouldBe OK
         document.title shouldBe TestYouCannotGoBackController.getTitle(ForeignProperty, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageFP
+        document.getElementById("subheading").text() shouldBe TestYouCannotGoBackController.messageFP
       }
 
       "Display the you cannot go back error page (Agent, SelfEmployment)" in {
@@ -158,7 +154,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         status(result) shouldBe OK
         document.title shouldBe TestYouCannotGoBackController.getTitle(SelfEmployment, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageSE
+        document.getElementById("subheading").text() shouldBe TestYouCannotGoBackController.messageSE
       }
       "Display the you cannot go back error page (Agent, UkProperty)" in {
         disableAllSwitches()
@@ -172,7 +168,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         status(result) shouldBe OK
         document.title shouldBe TestYouCannotGoBackController.getTitle(UkProperty, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageUK
+        document.getElementById("subheading").text() shouldBe TestYouCannotGoBackController.messageUK
       }
       "Display the you cannot go back error page (Agent, ForeignProperty)" in {
         disableAllSwitches()
@@ -186,7 +182,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         status(result) shouldBe OK
         document.title shouldBe TestYouCannotGoBackController.getTitle(ForeignProperty, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageFP
+        document.getElementById("subheading").text() shouldBe TestYouCannotGoBackController.messageFP
       }
     }
   }

@@ -39,7 +39,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
+import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
@@ -538,14 +538,18 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddIncomeSource(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/new-income-sources", session)
 
+    def getManageSECannotGoBack: WSResponse = get(s"/income-sources/manage/manage-business-cannot-go-back", clientDetailsWithConfirmation)
+
+    def getManageUKPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back", clientDetailsWithConfirmation)
+
+    def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back", clientDetailsWithConfirmation)
+
     def getCeaseSECannotGoBack(): WSResponse = get("/income-sources/cease/cease-business-cannot-go-back", clientDetailsWithConfirmation)
 
     def getCeaseUKCannotGoBack(): WSResponse = get("/income-sources/cease/cease-uk-property-cannot-go-back", clientDetailsWithConfirmation)
 
     def getCeaseFPCannotGoBack(): WSResponse = get("/income-sources/cease/cease-foreign-property-cannot-go-back", clientDetailsWithConfirmation)
   }
-
-
 
   def unauthorisedTest(uri: String): Unit = {
     "unauthorised" should {

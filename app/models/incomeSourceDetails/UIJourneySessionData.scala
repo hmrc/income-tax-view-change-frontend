@@ -94,8 +94,9 @@ object AddIncomeSourceData {
 
 case class ManageIncomeSourceData(incomeSourceId: Option[String] = None,
                                   reportingMethod: Option[String] = None,
-                                  taxYear: Option[String] = None,
+                                  taxYear: Option[Int] = None,
                                   journeyIsComplete: Option[Boolean] = None)
+
 object ManageIncomeSourceData {
 
   val incomeSourceIdField = "incomeSourceId"
@@ -109,10 +110,10 @@ object ManageIncomeSourceData {
 }
 
 case class CeaseIncomeSourceData(
-                                  incomeSourceId: Option[String],
-                                  endDate: Option[String],
-                                  ceasePropertyDeclare: Option[String],
-                                  journeyIsComplete: Option[Boolean]
+                                  incomeSourceId: Option[String] = None,
+                                  endDate: Option[String] = None,
+                                  ceasePropertyDeclare: Option[String] = None,
+                                  journeyIsComplete: Option[Boolean] = None
                                 )
 
 object CeaseIncomeSourceData {

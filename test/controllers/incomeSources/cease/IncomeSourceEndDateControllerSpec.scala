@@ -36,7 +36,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.cease.IncomeSourceEndDate
@@ -440,6 +440,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
         setupMockSetSessionKeyMongo(Right(true))
 
         val result: Future[Result] = (isAgent, isChange) match {

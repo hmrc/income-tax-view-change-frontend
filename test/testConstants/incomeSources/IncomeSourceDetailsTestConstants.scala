@@ -20,6 +20,9 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.JourneyType
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails._
+import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSessionId}
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, CeaseIncomeSourceData, IncomeSourceDetailsError, IncomeSourceDetailsModel, ManageIncomeSourceData, UIJourneySessionData}
@@ -153,7 +156,7 @@ object IncomeSourceDetailsTestConstants {
         UIJourneySessionData(
           sessionId = testSessionId,
           journeyType = journeyType.toString,
-          ceaseIncomeSourceData = Some(CeaseIncomeSourceData(None, Some("2022-10-10"), Some("true"), Some(false)))
+          ceaseIncomeSourceData = Some(CeaseIncomeSourceData())
         )
     }
   }
@@ -206,9 +209,9 @@ object IncomeSourceDetailsTestConstants {
         addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
       case "MANAGE" => UIJourneySessionData(testSessionId, journeyType.toString,
         manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId),
-          taxYear = Some("2022-2023"), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))
+          taxYear = Some(2023), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))
       case "CEASE" => UIJourneySessionData(testSessionId, journeyType.toString,
-        ceaseIncomeSourceData = Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDateString), ceasePropertyDeclare = Some(true.toString), journeyIsComplete = Some(true))))
+        ceaseIncomeSourceData = Some(CeaseIncomeSourceData(journeyIsComplete = Some(true))))
     }
   }
 }

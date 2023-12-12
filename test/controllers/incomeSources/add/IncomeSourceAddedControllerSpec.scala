@@ -27,8 +27,8 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.AddIncomeSourceData.journeyIsCompleteField
-import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import models.incomeSourceDetails._
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

@@ -1468,13 +1468,21 @@ business-added.previous-tax-years-t1                    = You must make sure tha
 
 ## You cannot go back - Your business has been added page ##
 
-cannot-go-back.heading                                  = You cannot go back
-cannot-go-back.sole-trader                              = Your sole trader business has been added
-cannot-go-back.uk-property                              = Your UK property business has been added
-cannot-go-back.foreign-property                         = Your foreign property business has been added
-cannot-go-back.you-can                                  = You can:
-cannot-go-back.manage-link                              = view and manage your income sources
-cannot-go-back.home-link                                = go back to the homepage
+cannotGoBack.heading                                      = You cannot go back
+cannotGoBack.soleTraderAdded                              = Your sole trader business has been added
+cannotGoBack.ukPropertyAdded                              = Your UK property business has been added
+cannotGoBack.foreignPropertyAdded                         = Your foreign property business has been added
+
+cannotGoBack.manage.UK                                    = Your reporting method for your UK property business for tax year {0} to {1}
+cannotGoBack.manage.FP                                    = Your reporting method for your foreign property business for tax year {0} to {1}
+cannotGoBack.manage.SE                                    = Your reporting method for your sole trader business for tax year {0} to {1}
+cannotGoBack.manage.reportingMethod                       = has changed to {0} reporting.
+cannotGoBack.manage.annual                                = annual
+cannotGoBack.manage.quarterly                             = quarterly
+
+cannotGoBack.youCan                                       = You can:
+cannotGoBack.manageLink                                   = view and manage your income sources
+cannotGoBack.homeLink                                     = go back to the homepage
 
 cannot-go-back.sole-trader-ceased                       = Your sole trader business has ceased.
 cannot-go-back.uk-property-ceased                       = Your UK property business has ceased.
