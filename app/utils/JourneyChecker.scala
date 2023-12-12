@@ -45,7 +45,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
           Future.successful {
             Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(journeyType.businessType))
           }
-        case (Add, true, true) =>
+        case (Add, true, false) =>
           Future.successful {
             Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(journeyType.businessType))
           }
