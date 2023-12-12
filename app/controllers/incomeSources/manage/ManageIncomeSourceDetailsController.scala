@@ -116,23 +116,27 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def showSoleTraderBusiness(hashIdString: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
+      withIncomeSourcesFS {
+        val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
 
-      val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
-        .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
-      sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-        case Right(_) => handleRequest(
-          sources = user.incomeSources,
-          isAgent = false,
-          backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-          incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
-          incomeSourceType = SelfEmployment
-        )
-        case Left(exception) => Future.failed(exception)
-      }.recover {
-        case exception =>
-          Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] ${exception.getMessage}")
-          itvcErrorHandler.showInternalServerError()
+        val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
+          .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
+        sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
+          sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+            case Right(_) => handleRequest(
+              sources = user.incomeSources,
+              isAgent = false,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+              incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
+              incomeSourceType = SelfEmployment
+            )
+            case Left(exception) => Future.failed(exception)
+          }
+        }.recover {
+          case exception =>
+            Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] ${exception.getMessage}")
+            itvcErrorHandler.showInternalServerError()
+        }
       }
   }
 
@@ -141,21 +145,24 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
-            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
-            val result = handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-              incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
-              incomeSourceType = SelfEmployment
-            )
+            withIncomeSourcesFS {
+              val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
+              val result = handleRequest(
+                sources = mtdItUser.incomeSources,
+                isAgent = true,
+                backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
+                incomeSourceIdHashMaybe = incomeSourceIdHashMaybe,
+                incomeSourceType = SelfEmployment
+              )
 
-            val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => mtdItUser.incomeSources.compareHashToQueryString(x))
-              .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
-
-            sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-              case Right(_) => result
-              case Left(exception) => Future.failed(exception)
+              val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => mtdItUser.incomeSources.compareHashToQueryString(x))
+                .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
+              sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
+                sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+                  case Right(_) => result
+                  case Left(exception) => Future.failed(exception)
+                }
+              }
             }
         }
   }
