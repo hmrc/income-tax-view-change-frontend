@@ -21,7 +21,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
   val ukPropertyBackErrorUrl: String = backErrorController.showAgent(UkProperty).url
   val foreignPropertyBackErrorUrl: String = backErrorController.showAgent(ForeignProperty).url
 
-  val title = messagesAPI("cannot-go-back.heading")
+  val title = messagesAPI("cannotGoBack.heading")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val UIJourneySessionDataRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]

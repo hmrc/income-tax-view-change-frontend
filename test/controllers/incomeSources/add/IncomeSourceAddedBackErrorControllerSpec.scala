@@ -54,8 +54,8 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
-    val title: String = messages("cannot-go-back.heading")
-    val warningMessage: String = s"! Warning ${messages("cannot-go-back.warning-message")}"
+    val title: String = messages("cannotGoBack.heading")
+    val warningMessage: String = s"! Warning ${messages("cannotGoBack.warningMessage")}"
 
     def getTitle(isAgent: Boolean): String = {
       if (isAgent )messages("htmlTitle.agent", s"$title") else messages("htmlTitle", s"$title")

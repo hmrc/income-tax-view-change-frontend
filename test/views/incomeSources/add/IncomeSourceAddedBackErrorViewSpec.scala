@@ -39,36 +39,36 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
 
   "ReportingMethodSetBackError - Individual" should {
     "render self employment error page" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannot-go-back.warning-message")}"
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannotGoBack.warningMessage")}"
       document.getElementById("manage-message").text() shouldBe
-        s"${messages("cannot-go-back.sole-trader")}. ${messages("cannot-go-back.has-been-added-1")} ${messages("cannot-go-back.manage-link")} ${messages("cannot-go-back.has-been-added-2")}"
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("choose-message").text() shouldBe messages("cannot-go-back.need-to-choose")
+        s"${messages("cannotGoBack.soleTraderAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
       document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannot-go-back.warning-message")}"
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannotGoBack.warningMessage")}"
       document.getElementById("manage-message").text() shouldBe
-        s"${messages("cannot-go-back.uk-property")}. ${messages("cannot-go-back.has-been-added-1")} ${messages("cannot-go-back.manage-link")} ${messages("cannot-go-back.has-been-added-2")}"
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("choose-message").text() shouldBe messages("cannot-go-back.need-to-choose")
+        s"${messages("cannotGoBack.ukPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
       document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannot-go-back.warning-message")}"
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannotGoBack.warningMessage")}"
       document.getElementById("manage-message").text() shouldBe
-        s"${messages("cannot-go-back.foreign-property")}. ${messages("cannot-go-back.has-been-added-1")} ${messages("cannot-go-back.manage-link")} ${messages("cannot-go-back.has-been-added-2")}"
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("choose-message").text() shouldBe messages("cannot-go-back.need-to-choose")
+        s"${messages("cannotGoBack.foreignPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
@@ -78,36 +78,36 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
 
   "ReportingMethodSetBackError - Agent" should {
     "render self employment error page" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannot-go-back.warning-message")}"
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannotGoBack.warningMessage")}"
       document.getElementById("manage-message").text() shouldBe
-        s"${messages("cannot-go-back.sole-trader")}. ${messages("cannot-go-back.has-been-added-1")} ${messages("cannot-go-back.manage-link")} ${messages("cannot-go-back.has-been-added-2")}"
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("choose-message").text() shouldBe messages("cannot-go-back.need-to-choose")
+        s"${messages("cannotGoBack.soleTraderAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
       document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannot-go-back.warning-message")}"
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannotGoBack.warningMessage")}"
       document.getElementById("manage-message").text() shouldBe
-        s"${messages("cannot-go-back.uk-property")}. ${messages("cannot-go-back.has-been-added-1")} ${messages("cannot-go-back.manage-link")} ${messages("cannot-go-back.has-been-added-2")}"
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("choose-message").text() shouldBe messages("cannot-go-back.need-to-choose")
+        s"${messages("cannotGoBack.ukPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
       document.getElementsByClass("govuk-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannot-go-back.warning-message")}"
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("warning-message").text() shouldBe s"! Warning ${messages("cannotGoBack.warningMessage")}"
       document.getElementById("manage-message").text() shouldBe
-        s"${messages("cannot-go-back.foreign-property")}. ${messages("cannot-go-back.has-been-added-1")} ${messages("cannot-go-back.manage-link")} ${messages("cannot-go-back.has-been-added-2")}"
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("choose-message").text() shouldBe messages("cannot-go-back.need-to-choose")
+        s"${messages("cannotGoBack.foreignPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
+      document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
