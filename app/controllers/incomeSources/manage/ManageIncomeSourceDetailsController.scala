@@ -183,7 +183,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
           val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString
           val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
           val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
-          val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2
+          val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
+          val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2 || showIfLatencyExpired
           if (showQuarterReportingType) quarterTypeElection.isStandardQuarterlyReporting else None
         case None => quarterTypeElection.isStandardQuarterlyReporting
       }
