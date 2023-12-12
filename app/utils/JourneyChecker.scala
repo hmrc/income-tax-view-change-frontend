@@ -40,22 +40,28 @@ trait JourneyChecker extends IncomeSourcesUtils {
 
   private lazy val redirectUrl: (JourneyType, Boolean) => MtdItUser[_] => Future[Result] =
     (journeyType: JourneyType, useDefault: Boolean) => user => {
-      (journeyType.operation, isAgent(user)) match {
-        case (Add, true) =>
+      (journeyType.operation, isAgent(user), useDefault) match {
+        case (Add, true, true) =>
           Future.successful {
-            if (useDefault) Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(journeyType.businessType))
-            else Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(journeyType.businessType))
+            Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(journeyType.businessType))
           }
-        case (Add, false) =>
+        case (Add, true, true) =>
           Future.successful {
-            if (useDefault) Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(journeyType.businessType))
-            else Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(journeyType.businessType))
+            Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(journeyType.businessType))
           }
-        case (Manage, _) =>
+        case (Add, false, true) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(journeyType.businessType))
+          }
+        case (Add, false, false) =>
+          Future.successful {
+             Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(journeyType.businessType))
+          }
+        case (Manage, _, _) =>
           Future.successful {
             Redirect(controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent(user), journeyType.businessType))
           }
-        case (Cease, _) =>
+        case (Cease, _, _) =>
           Future.successful {
             Redirect(controllers.routes.HomeController.show()) //TODO: fix
           }
