@@ -17,4 +17,10 @@
 package exceptions
 
 case class MissingFieldException(fieldName: String) extends RuntimeException(s"Missing Mandatory Expected Field: $fieldName")
+
 case class MissingSessionKey(key:String) extends RuntimeException(s"Missing session key: $key")
+
+case class NoIncomeSourceFound(hash: String) extends RuntimeException(s"User had no income sources with ids matching the hash value: <$hash>")
+
+case class MultipleIncomeSourcesFound(hash: String, incomeSourceIds: List[String]) extends
+  RuntimeException(s"User had more than one income source with id matching the hash value: <$hash> and incomeSourceIds: <$incomeSourceIds>")

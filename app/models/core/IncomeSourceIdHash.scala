@@ -16,20 +16,31 @@
 
 package models.core
 
-import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
+import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 
 import scala.util.Try
 
 class IncomeSourceIdHash private(val hash: String) extends AnyVal {
   override def toString: String = s"IncomeSourceIdHash: $hash"
 
-  def oneOf(ids: List[IncomeSourceId]): Option[IncomeSourceId] = {
-    ids.find(id => {
-      val hashId = mkIncomeSourceIdHash(id)
-      hashId.hash == this.hash
-    })
+  def findIncomeSourceIdMatchingHash(incomeSourceIdHash: IncomeSourceIdHash, ids: List[IncomeSourceId]): Either[Throwable, IncomeSourceId] = {
+
+    val matchingIncomeSourceIds = ids.filter(_.toHash.hash == incomeSourceIdHash.hash)
+    println("LLLLLLLLL" + matchingIncomeSourceIds)
+
+    val noIncomeSourceFound: Int = 0
+    val success: Int = 1
+
+    matchingIncomeSourceIds.length match {
+      case matchedHash if matchedHash == noIncomeSourceFound => Left(NoIncomeSourceFound(hash = incomeSourceIdHash.hash))
+      case matchedHash if matchedHash == success => Right(matchingIncomeSourceIds.head)
+      case _ => Left(MultipleIncomeSourcesFound(hash = incomeSourceIdHash.hash, matchingIncomeSourceIds.map(_.value)))
+    }
   }
+
 }
+
+case class Success(matches: Int)
 
 object IncomeSourceIdHash {
   def mkIncomeSourceIdHash(id: IncomeSourceId): IncomeSourceIdHash = {

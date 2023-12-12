@@ -17,6 +17,7 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
+import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
@@ -39,6 +40,7 @@ import views.html.incomeSources.cease.IncomeSourceEndDate
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPredicate,
@@ -172,34 +174,44 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    val incomeSourceIdMaybe: Option[IncomeSourceId] = id.flatMap(x => user.incomeSources.compareHashToQueryString(x))
+    val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
-    getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
-      actions =>
-        val (backAction: Call, postAction: Call, _) = actions
-        (incomeSourceType, id) match {
-          case (SelfEmployment, None) =>
-            Future.failed(new Exception(s"Missing income source ID"))
-          case _ =>
-            getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
-              form: Form[DateFormElement] =>
-                Future.successful(Ok(
-                  incomeSourceEndDate(
-                    incomeSourceEndDateForm = form,
-                    postAction = postAction,
-                    isAgent = isAgent,
-                    backUrl = backAction.url,
-                    incomeSourceType = incomeSourceType
-                  )(user, messages))
-                )
+    hashCompareResult match {
+      case Some(Left(exception: Exception)) => Future.failed(exception)
+      case _ =>
+        val incomeSourceIdMaybe: Option[IncomeSourceId] = hashCompareResult.collect {
+          case Right(incomeSourceId) => Some(incomeSourceId)
+        }.flatten
+
+        getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
+          actions =>
+            val (backAction: Call, postAction: Call, _) = actions
+            (incomeSourceType, id) match {
+              case (SelfEmployment, None) =>
+                Future.failed(new Exception(s"Missing income source ID"))
+              case _ =>
+                getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
+                  form: Form[DateFormElement] =>
+                    Future.successful(Ok(
+                      incomeSourceEndDate(
+                        incomeSourceEndDateForm = form,
+                        postAction = postAction,
+                        isAgent = isAgent,
+                        backUrl = backAction.url,
+                        incomeSourceType = incomeSourceType
+                      )(user, messages))
+                    )
+                }
             }
         }
     }
+
+
   } recover {
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage}")
+        s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} =${ex.getCause}=")
       errorHandler.showInternalServerError()
   }
 
@@ -260,7 +272,9 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    val incomeSourceIdMaybe: Option[IncomeSourceId] = id.flatMap(x => user.incomeSources.compareHashToQueryString(x))
+    // TODO do
+    val incomeSourceIdMaybe: Option[IncomeSourceId] = None
+
 
     getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap { actions =>
       val (backAction, postAction, redirectAction) = actions

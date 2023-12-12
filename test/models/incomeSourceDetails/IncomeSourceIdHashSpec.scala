@@ -16,8 +16,9 @@
 
 package models.incomeSourceDetails
 
+import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
+import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
 import testUtils.UnitSpec
@@ -65,21 +66,35 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceId2: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId2)
         val incomeSourceIdList: List[IncomeSourceId] = List(incomeSourceId, incomeSourceId2)
 
-        val incomeSourceIdMatchingList: Option[IncomeSourceId] = mkIncomeSourceId(testSelfEmploymentId).toHash.oneOf(incomeSourceIdList)
+        val incomeSourceIdHash = mkIncomeSourceId(testSelfEmploymentId).toHash
+        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(mkIncomeSourceId(testSelfEmploymentId).toHash, incomeSourceIdList)
 
-        incomeSourceIdMatchingList shouldBe Option(incomeSourceId)
+        incomeSourceIdMatchingList shouldBe Right(incomeSourceId)
       }
     }
 
-    "return None" when {
+    "return a NoIncomeSourceFound exception" when {
       "given a wanted IncomeSourceId and a list non-matching IncomeSourceIds" in {
         val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
         val incomeSourceId2: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId2)
         val incomeSourceIdList: List[IncomeSourceId] = List(incomeSourceId, incomeSourceId2)
 
-        val incomeSourceIdMatchingList: Option[IncomeSourceId] = mkIncomeSourceId(testSelfEmploymentIdValidation).toHash.oneOf(incomeSourceIdList)
+        val incomeSourceIdHash = mkIncomeSourceId(testSelfEmploymentIdValidation).toHash
+        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(incomeSourceIdHash, incomeSourceIdList)
 
-        incomeSourceIdMatchingList shouldBe None
+        incomeSourceIdMatchingList shouldBe Left(throw NoIncomeSourceFound(incomeSourceIdHash.hash))
+      }
+    }
+
+    "return a MultipleIncomeSourcesFound exception" when {
+      "given a wanted IncomeSourceId and a list non-matching IncomeSourceIds" in {
+        val incomeSourceId: IncomeSourceId = mkIncomeSourceId(testSelfEmploymentId)
+        val incomeSourceIdList: List[IncomeSourceId] = List(incomeSourceId, incomeSourceId)
+
+        val incomeSourceIdHash = mkIncomeSourceId(testSelfEmploymentId).toHash
+        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(incomeSourceIdHash, incomeSourceIdList)
+
+        incomeSourceIdMatchingList shouldBe Left(throw MultipleIncomeSourcesFound(incomeSourceIdHash.hash))
       }
     }
 
