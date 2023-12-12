@@ -26,8 +26,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.collection.Seq
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import testOnly.models.Nino
 import testOnly.utils.FileUtil._
 import testOnly.utils.LoginUtil._
@@ -52,7 +51,8 @@ case class AuthExchange(bearerToken: String, sessionAuthorityUri: String)
 @Singleton
 class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                                     val userRepository: UserRepository,
-                                    val http: HttpClient) extends PlayAuthConnector {
+                                    val http: HttpClient,
+                                    implicit val ec: ExecutionContext) extends PlayAuthConnector {
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
 
   def login(nino: Nino, isAgent: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {

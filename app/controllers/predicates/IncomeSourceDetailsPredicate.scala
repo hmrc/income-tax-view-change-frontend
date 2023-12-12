@@ -44,7 +44,7 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     implicit val req: MtdItUserOptionNino[A] = request
 
     // no caching for now
-    incomeSourceDetailsService.getIncomeSourceDetails(None) map {
+    incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
         Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, None))
       case _ => Left(itvcErrorHandler.showInternalServerError())
