@@ -168,19 +168,6 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
           }
         )
         )
-
-      //      case x if x == typeOf[AddBusinessTradeResponse] =>
-      //        obj.addIncomeSourceData
-      //          .flatMap(add => add.businessTrade)
-      //          .map(x => AddBusinessTradeResponse(name = x))
-      //      case x if x == typeOf[AddDateStartedResponse] =>
-      //        obj.addIncomeSourceData
-      //          .flatMap(add => add.dateStarted)
-      //          .map(x => AddDateStartedResponse(date = x))
-      //      case x if x == AddDateStartedAndAccMethodResponse =>
-      //        obj.addIncomeSourceData
-      //          .map(add => (add.dateStarted, add.incomeSourcesAccountingMethod))
-      //          .map(pr => AddDateStartedAndAccMethodResponse(date = pr._1, accMethod = pr._2))
       case _ =>
         Left(new Error(s"Mapping not supported for type:"))
     }
