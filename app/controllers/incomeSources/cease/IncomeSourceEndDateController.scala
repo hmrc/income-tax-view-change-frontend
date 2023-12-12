@@ -174,7 +174,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
 
     val incomeSourceIdMaybe: Option[IncomeSourceId] = id.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
-    if(incomeSourceType == SelfEmployment) {
+    if(incomeSourceType == SelfEmployment && !isChange) {
       sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
     }
 
