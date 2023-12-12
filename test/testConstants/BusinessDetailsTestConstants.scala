@@ -80,6 +80,7 @@ object BusinessDetailsTestConstants {
   val testCessationDate2: String = "1 January 2019"
   val testCessationDate3: String = "1 January 2022"
   val testEndDate = LocalDate.parse("2023-01-01")
+  val testEndDateString: String = "2022-10-10"
   val testUnknownValue = "Unknown"
   val testUnknownSoleTraderBusinessValue = "Sole trader business"
   val testLatencyDetails = LatencyDetails(

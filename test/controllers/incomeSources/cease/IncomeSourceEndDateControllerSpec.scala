@@ -20,6 +20,7 @@ import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
@@ -28,12 +29,14 @@ import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
+import org.scalatest.Assertion
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.cease.IncomeSourceEndDate
@@ -139,7 +142,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         disableAllSwitches()
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
+        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-10-10")))
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
 
         val result: Future[Result] = (isAgent, isChange) match {
           case (true, true) =>
@@ -166,8 +170,8 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
         if (isChange) {
-          document.getElementById("income-source-end-date.day").`val`() shouldBe "27"
-          document.getElementById("income-source-end-date.month").`val`() shouldBe "8"
+          document.getElementById("income-source-end-date.day").`val`() shouldBe "10"
+          document.getElementById("income-source-end-date.month").`val`() shouldBe "10"
           document.getElementById("income-source-end-date.year").`val`() shouldBe "2022"
 
         }
@@ -330,6 +334,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
 
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+
 
         val result: Future[Result] = if (isChange && !isAgent) {
           TestIncomeSourceEndDateController.showChange(id, incomeSourceType)(fakeRequestWithActiveSession)
@@ -363,6 +370,58 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         "called .showAgent" in {
           testInternalServerErrors(isAgent = true, SelfEmployment, id = Some("12345"))
         }
+      }
+    }
+    "redirect to the Cannot Go Back page" when {
+      def setupCompletedCeaseJourney(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
+        setupMockAuthorisationSuccess(isAgent)
+        mockBothPropertyBothBusiness()
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+
+        val result = if (isAgent) {
+          incomeSourceType match {
+            case SelfEmployment =>
+              TestIncomeSourceEndDateController.showAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
+            case UkProperty | ForeignProperty =>
+              TestIncomeSourceEndDateController.showAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
+          }
+        } else {
+          incomeSourceType match {
+            case SelfEmployment =>
+              TestIncomeSourceEndDateController.show(Some(testSelfEmploymentId), incomeSourceType)(fakeRequestWithActiveSession)
+            case UkProperty | ForeignProperty =>
+              TestIncomeSourceEndDateController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
+          }
+        }
+
+        val expectedRedirectUrl = if(isAgent) {
+          routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType).url
+        } else {
+          routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
+        }
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+      }
+
+      "UK Property journey is complete - Individual" in {
+        setupCompletedCeaseJourney(None, isAgent = false, UkProperty)
+      }
+      "UK Property journey is complete - Agent" in {
+        setupCompletedCeaseJourney(None, isAgent = true, UkProperty)
+      }
+      "Foreign Property journey is complete - Individual" in {
+        setupCompletedCeaseJourney(None, isAgent = false, ForeignProperty)
+      }
+      "Foreign Property journey is complete - Agent" in {
+        setupCompletedCeaseJourney(None, isAgent = true, ForeignProperty)
+      }
+      "Self Employment journey is complete - Individual" in {
+        setupCompletedCeaseJourney(Some(testSelfEmploymentId), isAgent = false, SelfEmployment)
+      }
+      "Self Employment journey is complete - Agent" in {
+        setupCompletedCeaseJourney(Some(testSelfEmploymentId), isAgent = true, SelfEmployment)
       }
     }
   }
@@ -414,7 +473,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           "user is an Agent" in {
             testSubmitResponse(id = id, incomeSourceType, isAgent = true, isChange = false)
           }
-          /////////
         }
         "called .submitChange" when {
           "user is an Individual" in {

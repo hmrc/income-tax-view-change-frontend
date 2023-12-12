@@ -21,6 +21,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.SessionService
@@ -88,10 +89,18 @@ trait JourneyChecker extends IncomeSourcesUtils {
           redirectUrl(journeyType, reportingMethod, taxYear, incomeSourceId)(user)
         case Right(Some(data: UIJourneySessionData)) =>
           codeBlock(data)
-        case _ =>
-          sessionService.createSession(journeyType.toString).flatMap {
-            _ => withSessionData(journeyType)(codeBlock)
+
+        case Right(None) =>
+          sessionService.createSession(journeyType.toString).flatMap { _ =>
+            val data = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
+            codeBlock(data)
           }
+
+        case Left(ex) =>
+          val agentPrefix = if (isAgent(user)) "[Agent]" else ""
+          Logger("application").error(s"$agentPrefix" +
+            s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
+          Future.failed(ex)
       }
     }
   }

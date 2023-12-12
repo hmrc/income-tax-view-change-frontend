@@ -64,11 +64,12 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
+    withIncomeSourcesFS {
       updateMongoCeased(incomeSourceType)
       val incomeSourceDetails : Future[( Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
         case SelfEmployment =>
-          sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
+         val x = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
+          x
         case UkProperty =>
           Future.successful(
               (user.incomeSources.properties
@@ -96,6 +97,9 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
       incomeSourceDetails.flatMap {
         case (Right(Some(incomeSourceIdStr)), incomeSourceType) =>
           val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
+          println(Console.GREEN + incomeSourceId + Console.WHITE)
+          println(Console.GREEN + incomeSourceIdStr + Console.WHITE)
+
           val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(incomeSourceId) else None
           nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(

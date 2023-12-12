@@ -19,7 +19,7 @@ package controllers.incomeSources.cease
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -32,8 +32,11 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
 import org.scalatest.Assertion
 import play.api.http.Status
+import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import testConstants.BaseTestConstants.testSelfEmploymentId
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.cease.DeclarePropertyCeased
@@ -113,6 +116,9 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         setupMockAuthorisationSuccess(isAgent)
         enable(IncomeSources)
         mockPropertyIncomeSource()
+
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
 
         val result = showCall(isAgent, incomeSourceType)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -203,6 +209,52 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
         testUnauthorisedUserRedirectsToSignIn(isAgent = true, ForeignProperty)
       }
     }
+
+    "redirect to the Cannot Go Back page" when {
+      def setupCompletedCeaseJourney(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
+        setupMockAuthorisationSuccess(isAgent)
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothPropertyBothBusiness()
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+
+        val result = if (isAgent) {
+              TestDeclarePropertyCeasedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+        } else {
+              TestDeclarePropertyCeasedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+        }
+
+        val expectedRedirectUrl = if (isAgent) {
+          routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType).url
+        } else {
+          routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
+        }
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+      }
+
+      "UK Property journey is complete - Individual" in {
+        setupCompletedCeaseJourney(isAgent = false, UkProperty)
+      }
+      "UK Property journey is complete - Agent" in {
+        setupCompletedCeaseJourney(isAgent = true, UkProperty)
+      }
+      "Foreign Property journey is complete - Individual" in {
+        setupCompletedCeaseJourney(isAgent = false, ForeignProperty)
+      }
+      "Foreign Property journey is complete - Agent" in {
+        setupCompletedCeaseJourney(isAgent = true, ForeignProperty)
+      }
+      "Self Employment journey is complete - Individual" in {
+        setupCompletedCeaseJourney(isAgent = false, SelfEmployment)
+      }
+      "Self Employment journey is complete - Agent" in {
+        setupCompletedCeaseJourney(isAgent = true, SelfEmployment)
+      }
+    }
+
   }
 
   "DeclarePropertyCeasedController.submit / DeclarePropertyCeasedController.submitAgent" should {

@@ -34,10 +34,10 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(testPropertyIncomeId), SelfEmployment).url
-  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(Some(testPropertyIncomeId), SelfEmployment).url
-  val dateBusinessShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(testPropertyIncomeId), SelfEmployment).url
-  val dateBusinessSubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(Some(testPropertyIncomeId), SelfEmployment).url
+  val dateBusinessShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(Some(testSelfEmploymentId), SelfEmployment).url
+  val dateBusinessSubmitUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submit(Some(testSelfEmploymentId), SelfEmployment).url
+  val dateBusinessShowChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showChange(Some(testSelfEmploymentId), SelfEmployment).url
+  val dateBusinessSubmitChangeUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.submitChange(Some(testSelfEmploymentId), SelfEmployment).url
   val checkCeaseBusinessDetailsShowUrl: String = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment).url
 
   val dateUKPropertyShowUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.show(None, UkProperty).url
@@ -90,10 +90,13 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     s"redirect to $checkCeaseBusinessDetailsShowUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("27"), "income-source-end-date.month" -> Seq("8"), "income-source-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed")(formData)
 
@@ -102,7 +105,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkCeaseBusinessDetailsShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSessionEndDateValue))
+        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testEndDate2022))
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
 
       }
@@ -136,7 +139,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None, journeyIsComplete = Some(false))))))
+
 
         When(s"I call GET $dateBusinessShowChangeUrl")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-business-end-date?id=$testSelfEmploymentIdHashed")
@@ -158,10 +162,13 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     s"redirect to $checkCeaseBusinessDetailsShowUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("27"), "income-source-end-date.month" -> Seq("8"), "income-source-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/change-business-end-date?id=${testSelfEmploymentIdHashed}")(formData)
 
@@ -170,7 +177,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkCeaseBusinessDetailsShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSessionEndDateValue))
+        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testEndDate2022))
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(testSelfEmploymentId))
 
       }
@@ -221,10 +228,13 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/uk-property-end-date")(formData)
 
@@ -233,7 +243,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourCeaseDetailsUkPropertyShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(testSessionEndDateValueProperty))
+        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(testEndDate2022))
+        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(testPropertyIncomeId))
 
       }
       "form is filled incorrectly" in {
@@ -265,7 +276,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         When(s"I call GET $dateUKPropertyShowChangeUrl")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-uk-property-end-date")
@@ -286,10 +297,13 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-uk-property-end-date")(formData)
 
@@ -298,7 +312,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourCeaseDetailsUkPropertyShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(testSessionEndDateValueProperty))
+        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(testEndDate2022))
 
       }
       "form is filled incorrectly" in {
@@ -346,10 +360,13 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/foreign-property-end-date")(formData)
 
@@ -358,7 +375,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourCeaseDetailsForeignPropertyShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(testSessionEndDateValueProperty))
+        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(testEndDate2022))
 
       }
       "form is filled incorrectly" in {
@@ -390,7 +407,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue))))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
         When(s"I call GET $dateForeignPropertyShowChangeUrl")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/cease/change-foreign-property-end-date")
@@ -411,10 +428,14 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
     "redirect to showForeignPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
-          Map("income-source-end-date.day" -> Seq("20"), "income-source-end-date.month" -> Seq("12"), "income-source-end-date.year" -> Seq("2022"))
+          Map("income-source-end-date.day" -> Seq("10"), "income-source-end-date.month" -> Seq("10"), "income-source-end-date.year" -> Seq("2022"))
         }
         enable(IncomeSources)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+
 
         val result = IncomeTaxViewChangeFrontend.post("/income-sources/cease/change-foreign-property-end-date")(formData)
 
@@ -423,7 +444,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
           redirectURI(checkYourCeaseDetailsForeignPropertyShowUrl)
         )
 
-        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(testSessionEndDateValueProperty))
+        sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(testEndDate2022))
 
       }
       "form is filled incorrectly" in {
