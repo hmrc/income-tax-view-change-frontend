@@ -175,7 +175,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
         setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
 
-        val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+        val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
           BusinessNameForm.businessName -> validBusinessName
         ))
 
@@ -197,7 +197,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
           setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameEmpty
           ))
 
@@ -216,7 +216,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
           setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameLength
           ))
 
@@ -235,7 +235,7 @@ class AddBusinessNameControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
           setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             BusinessNameForm.businessName -> invalidBusinessNameEmpty
           ))
 
@@ -256,14 +256,14 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockCreateSession(true)
         setupMockGetMongo(Right(None))
 
-        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
         status(result) mustBe OK
       }
     }
     "return 303 and redirect to the sign in" when {
       "the user is not authenticated" in {
         setupMockAgentAuthorisationException()
-        val result = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+        val result = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -273,7 +273,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
       }
@@ -287,7 +287,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
 
-        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
@@ -325,7 +325,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         val redirectUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(
           incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
 
-        val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
           BusinessNameForm.businessName -> validBusinessName
         ))
 
@@ -346,7 +346,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockGetSessionKeyMongoTyped[String](Right(None))
       setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-      val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameEmpty
       ))
 
@@ -431,7 +431,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
           val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
-          val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+          val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
             BusinessNameForm.businessName -> validBusinessName))
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) mustBe Some(redirectUrl)
@@ -451,7 +451,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockCreateSession(true)
       setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameEmpty
       ))
 
@@ -468,7 +468,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameLength
       ))
 
@@ -485,7 +485,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameEmpty
       ))
 
@@ -503,7 +503,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
       setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
         BusinessNameForm.businessName -> businessName
       ))
 
@@ -523,14 +523,14 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockGetMongo(Right(Some(sessionDataNameTrade)))
         setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
 
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakePostRequestConfirmedClient())
         status(result) mustBe OK
       }
     }
     "return 303 and redirect to the sign in" when {
       "the user is not authenticated" in {
         setupMockAgentAuthorisationException()
-        val result = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+        val result = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
       }
     }
@@ -540,7 +540,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakePostRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
       }
@@ -554,7 +554,7 @@ class AddBusinessNameControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
 
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakePostRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
@@ -589,7 +589,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 
-        val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+        val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
           BusinessNameForm.businessName -> validBusinessName
         ))
 
@@ -608,7 +608,7 @@ class AddBusinessNameControllerSpec extends TestSupport
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-      val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+      val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
         BusinessNameForm.businessName -> invalidBusinessNameEmpty
       ))
 

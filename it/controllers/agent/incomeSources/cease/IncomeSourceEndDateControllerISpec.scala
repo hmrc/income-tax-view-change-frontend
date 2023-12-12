@@ -97,7 +97,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed", additionalCookies = clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post(
+          s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed",
+          additionalCookies = clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),

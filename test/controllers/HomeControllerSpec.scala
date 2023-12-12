@@ -494,7 +494,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe s"${messages("home.overdue.date")} 15 June 2018"
-            document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
+            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockFalse"
           }
           "display the home page with right details and without dunning lock warning and one overdue payment from CESA" in {
 
@@ -531,7 +531,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
-            document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
+            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
           }
           "display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in {
 
@@ -551,7 +551,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe messages("home.overdue.date.payment.count", "3")
-            document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
+            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
           }
           "display the home page with right details and with dunning lock warning and one overdue payments from CESA" in {
 
@@ -570,7 +570,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
-            document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockTrue"
+            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
           }
           "display the home page with right details and without dunning lock warning and one overdue payments from CESA" in {
 
@@ -589,7 +589,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe agentTitle
             document.select("#payments-tile p:nth-child(2)").text shouldBe twoOverduePayments
-            document.select("#overdue-warning").text shouldBe s"! $overdueWarningMessageDunningLockFalse"
+            document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockFalse"
           }
         }
       }

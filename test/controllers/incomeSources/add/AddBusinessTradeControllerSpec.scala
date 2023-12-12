@@ -151,7 +151,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> validBusinessTrade
             ))
           status(result) mustBe SEE_OTHER
@@ -197,7 +197,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(businessNameAsTrade)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> businessNameAsTrade
             ))
 
@@ -237,7 +237,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeChar)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeChar
             ))
 
@@ -256,7 +256,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeChar)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeChar
             ))
 
@@ -276,7 +276,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeEmpty)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
@@ -295,7 +295,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeEmpty)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty
             ))
 
@@ -315,7 +315,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeShort)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = false, isChange = true)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeShort
             ))
 
@@ -334,7 +334,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeShort)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeShort
             ))
 
@@ -354,7 +354,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeLong)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeLong
             ))
 
@@ -373,7 +373,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeLong)))
 
           val result: Future[Result] =
-            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClient().withFormUrlEncodedBody(
+            TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
               BusinessTradeForm.businessTrade -> invalidBusinessTradeLong
             ))
 

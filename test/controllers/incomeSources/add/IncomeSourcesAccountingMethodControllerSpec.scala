@@ -109,10 +109,10 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
   def submitResult(incomeSourceType: IncomeSourceType, accountingMethod: String, isAgent: Boolean = false): Future[Result] = {
     if (isAgent)
-      TestIncomeSourcesAccountingMethodController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient()
+      TestIncomeSourcesAccountingMethodController.submitAgent(incomeSourceType)(fakePostRequestConfirmedClient()
         .withFormUrlEncodedBody(selfEmploymentAccountingMethod -> accountingMethod))
     else
-      TestIncomeSourcesAccountingMethodController.submit(incomeSourceType)(fakeRequestNoSession
+      TestIncomeSourcesAccountingMethodController.submit(incomeSourceType)(fakeRequestNoSession.withMethod("POST")
         .withFormUrlEncodedBody(selfEmploymentAccountingMethod -> accountingMethod))
   }
 
