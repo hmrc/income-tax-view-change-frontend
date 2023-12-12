@@ -1484,6 +1484,11 @@ cannotGoBack.youCan                                       = You can:
 cannotGoBack.manageLink                                   = view and manage your income sources
 cannotGoBack.homeLink                                     = go back to the homepage
 
+cannotGoBack.warningMessage                               = You still need to choose a reporting method. If you leave this page, you will be set to report annually for up to two tax years.
+cannotGoBack.hasBeenAdded1                                = You can manage it from the
+cannotGoBack.hasBeenAdded2                                = page.
+cannotGoBack.needToChoose                                 = You now need to choose how often you want to send income and expense updates to HMRC for this income source.
+
 ## Income Source Ceased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        =
 business-ceased.obligation.heading1.se.part2                        = Sole trader business

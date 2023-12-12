@@ -36,9 +36,9 @@
 
 @getAddedMessage = @{
     incomeSourceType match {
-        case SelfEmployment => messages("cannot-go-back.sole-trader")
-        case UkProperty => messages("cannot-go-back.uk-property")
-        case ForeignProperty => messages("cannot-go-back.foreign-property")
+        case SelfEmployment => messages("cannotGoBack.soleTraderAdded")
+        case UkProperty => messages("cannotGoBack.ukPropertyAdded")
+        case ForeignProperty => messages("cannotGoBack.foreignPropertyAdded")
     }
 }
 
@@ -47,17 +47,17 @@
 }
 
 @mainTemplate(
-    pageTitle = s"${messages("cannot-go-back.heading")}",
+    pageTitle = s"${messages("cannotGoBack.heading")}",
     isAgent = isAgent,
     backUrl = None,
     btaNavPartial = user.btaNavPartial) {
     @formWithCSRF(action = postAction) {
 
-        @h1(msg = messages("cannot-go-back.heading"), classes = "govuk-heading-xl", id = Some("title"))
+        @h1(msg = messages("cannotGoBack.heading"), classes = "govuk-heading-xl", id = Some("title"))
 
         @govukWarningText(WarningText(
             iconFallbackText = "Warning",
-            content = Text(messages("cannot-go-back.warning-message")),
+            content = Text(messages("cannotGoBack.warningMessage")),
             attributes = Map("id" -> "warning-message")
         ))
 
@@ -65,13 +65,13 @@
             @{
                 getAddedMessage + "."
             }
-            @messages("cannot-go-back.has-been-added-1")
-            @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link", id = Some("manage-link"))
-            @messages("cannot-go-back.has-been-added-2")
+            @messages("cannotGoBack.hasBeenAdded1")
+            @link(link = getManageUrl, messageKey = "cannotGoBack.manageLink", id = Some("manage-link"))
+            @messages("cannotGoBack.hasBeenAdded2")
         }
 
         @p(classes = "govuk-body", id = Some("choose-message")) {
-            @messages("cannot-go-back.need-to-choose")
+            @messages("cannotGoBack.needToChoose")
         }
 
         @continueButton()

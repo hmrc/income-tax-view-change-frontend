@@ -1452,6 +1452,11 @@ cannotGoBack.youCan                                  = Gallwch wneud y canlynol:
 cannotGoBack.manageLink                              = bwrw golwg dros eich ffynonellau incwm a’u rheoli
 cannotGoBack.homeLink                                = mynd yn ôl i’r hafan
 
+cannotGoBack.warningMessage                        = Mae dal angen i chi ddewis dull o adrodd.  Os byddwch yn gadael y dudalen hon, byddwch wedi’ch trefnu i adrodd yn flynyddol am hyd at ddwy flwyddyn dreth.
+cannotGoBack.hasBeenAdded1                         = Gallwch ei reoli o’r dudalen
+cannotGoBack.hasBeenAdded2                         =
+cannotGoBack.needToChoose                          = Nawr mae angen i chi ddewis pa mor aml yr hoffech anfon diweddariadau am eich incwm a’ch treuliau at CThEF ar gyfer y ffynhonnell incwm hon.
+
 ## Income Source Creased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        = Mae
 business-ceased.obligation.heading1.se.part2                        = Busnes unig fasnachwr
