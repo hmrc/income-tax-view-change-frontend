@@ -38,8 +38,8 @@ trait JourneyChecker extends IncomeSourcesUtils {
 
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
-  private lazy val redirectUrl: (JourneyType, Option[String], Option[String], Option[String], Boolean) => MtdItUser[_] => Future[Result] =
-    (journeyType: JourneyType, reportingMethod: Option[String], taxYear: Option[String], incomeSourceId: Option[String], useDefault: Boolean) => user => {
+  private lazy val redirectUrl: (JourneyType, Boolean) => MtdItUser[_] => Future[Result] =
+    (journeyType: JourneyType, useDefault: Boolean) => user => {
       (journeyType.operation, isAgent(user)) match {
         case (Add, true) =>
           Future.successful {
@@ -53,7 +53,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
           }
         case (Manage, _) =>
           Future.successful {
-            Redirect(controllers.routes.HomeController.show()) //TODO: fix
+            Redirect(controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent(user), journeyType.businessType))
           }
         case (Cease, _) =>
           Future.successful {
@@ -74,19 +74,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
     withIncomeSourcesFS {
       sessionService.getMongo(journeyType.toString).flatMap {
         case Right(Some(data: UIJourneySessionData)) if isJourneyComplete(data, journeyType, midwayFlag) =>
-          val manageData = data.manageIncomeSourceData
-          val reportingMethod = manageData.flatMap(_.reportingMethod)
-          val taxYear = manageData.flatMap(_.taxYear)
-          val incomeSourceId = journeyType.businessType match {
-            case SelfEmployment =>
-              manageData.flatMap(_.incomeSourceId).map { unhashedString =>
-                val unhashedIncomeSourceId = IncomeSourceId.mkIncomeSourceId(unhashedString)
-                val hashedIncomeSourceId = IncomeSourceIdHash.mkIncomeSourceIdHash(unhashedIncomeSourceId)
-                hashedIncomeSourceId.hash
-              }
-            case _ => None
-          }
-          redirectUrl(journeyType, reportingMethod, taxYear, incomeSourceId, useDefaultRedirect(data, journeyType, midwayFlag))(user)
+          redirectUrl(journeyType, useDefaultRedirect(data, journeyType, midwayFlag))(user)
         case Right(Some(data: UIJourneySessionData)) =>
           codeBlock(data)
         case Right(None) =>
@@ -103,9 +91,44 @@ trait JourneyChecker extends IncomeSourcesUtils {
     }
   }
 
+//  def withSessionData(journeyType: JourneyType, midwayFlag: Boolean = true)(codeBlock: UIJourneySessionData => Future[Result])
+//                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+//    withIncomeSourcesFS {
+//      sessionService.getMongo(journeyType.toString).flatMap {
+//        case Right(Some(data: UIJourneySessionData)) if isJourneyComplete(data, journeyType, midwayFlag) =>
+//          val manageData = data.manageIncomeSourceData
+//          val reportingMethod = manageData.flatMap(_.reportingMethod)
+//          val taxYear = manageData.flatMap(_.taxYear)
+//          val incomeSourceId = journeyType.businessType match {
+//            case SelfEmployment =>
+//              manageData.flatMap(_.incomeSourceId).map { unhashedString =>
+//                val unhashedIncomeSourceId = IncomeSourceId.mkIncomeSourceId(unhashedString)
+//                val hashedIncomeSourceId = IncomeSourceIdHash.mkIncomeSourceIdHash(unhashedIncomeSourceId)
+//                hashedIncomeSourceId.hash
+//              }
+//            case _ => None
+//          }
+//          redirectUrl(journeyType, reportingMethod, taxYear, incomeSourceId, useDefaultRedirect(data, journeyType, midwayFlag))(user)
+//        case Right(Some(data: UIJourneySessionData)) =>
+//          codeBlock(data)
+//        case Right(None) =>
+//          sessionService.createSession(journeyType.toString).flatMap { _ =>
+//            val data = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
+//            codeBlock(data)
+//          }
+//        case Left(ex) =>
+//          val agentPrefix = if (isAgent(user)) "[Agent]" else ""
+//          Logger("application").error(s"$agentPrefix" +
+//            s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
+//          Future.failed(ex)
+//      }
+//    }
+//  }
+
   private def isJourneyComplete(data: UIJourneySessionData, journeyType: JourneyType, midwayFlag: Boolean): Boolean = {
     (journeyType.operation, midwayFlag) match {
       case (Add, true) =>
+        data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false) ||
         data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
       case (Add, false) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
