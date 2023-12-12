@@ -56,7 +56,7 @@
         @h1(msg = messages("cannotGoBack.heading"), classes = "govuk-heading-xl", id = Some("title"))
 
         @govukWarningText(WarningText(
-            iconFallbackText = "Warning",
+            iconFallbackText = Some("Warning"),
             content = Text(messages("cannotGoBack.warningMessage")),
             attributes = Map("id" -> "warning-message")
         ))
