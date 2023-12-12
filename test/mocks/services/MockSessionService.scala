@@ -22,7 +22,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import play.api.mvc.{RequestHeader, Result}
 import services.SessionService
 import testUtils.UnitSpec
 
@@ -100,7 +99,7 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockSetSessionKeyMongo(key:String)(result: Either[Throwable, Boolean]): Unit = {
+  def setupMockSetSessionKeyMongo(key: String)(result: Either[Throwable, Boolean]): Unit = {
     when(
       mockSessionService.setMongoKey(ArgumentMatchers.eq(key), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any())

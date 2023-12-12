@@ -305,7 +305,12 @@ GET          /agents/income-sources/add/add-uk-property-cannot-go-back          
 GET          /income-sources/add/add-foreign-property-cannot-go-back                           controllers.incomeSources.add.YouCannotGoBackErrorController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/income-sources/add/add-foreign-property-cannot-go-back                    controllers.incomeSources.add.YouCannotGoBackErrorController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
-
+GET          /income-sources/manage/manage-uk-property-cannot-go-back                              controllers.incomeSources.manage.CannotGoBackErrorController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = UkProperty)
+GET          /agents/income-sources/manage/manage-uk-property-cannot-go-back                       controllers.incomeSources.manage.CannotGoBackErrorController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = UkProperty)
+GET          /income-sources/manage/manage-foreign-property-cannot-go-back                         controllers.incomeSources.manage.CannotGoBackErrorController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /agents/income-sources/manage/manage-foreign-property-cannot-go-back                  controllers.incomeSources.manage.CannotGoBackErrorController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /income-sources/manage/manage-business-cannot-go-back                                 controllers.incomeSources.manage.CannotGoBackErrorController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /agents/income-sources/manage/manage-business-cannot-go-back                          controllers.incomeSources.manage.CannotGoBackErrorController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
 
 # Income Sources - Cease
 GET          /income-sources/cease/cease-an-income-source                 controllers.incomeSources.cease.CeaseIncomeSourceController.show()

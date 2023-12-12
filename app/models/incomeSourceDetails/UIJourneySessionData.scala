@@ -72,7 +72,7 @@ case class AddIncomeSourceData(
                                 address: Option[Address] = None,
                                 countryCode: Option[String] = None,
                                 incomeSourcesAccountingMethod: Option[String] = None,
-                                hasBeenAdded: Option[Boolean] = None
+                                journeyIsComplete: Option[Boolean] = None
                               )
 
 object AddIncomeSourceData {
@@ -85,20 +85,24 @@ object AddIncomeSourceData {
   val addressField: String = "address"
   val countryCodeField: String = "countryCode"
   val incomeSourcesAccountingMethodField: String = "incomeSourcesAccountingMethod"
-  val hasBeenAddedField: String = "hasBeenAdded"
+  val journeyIsCompleteField: String = "journeyIsComplete"
 
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 
   implicit val format: OFormat[AddIncomeSourceData] = Json.format[AddIncomeSourceData]
 }
 
-case class ManageIncomeSourceData(
-                                   incomeSourceId: Option[String] = None
-                                 )
+case class ManageIncomeSourceData(incomeSourceId: Option[String] = None,
+                                  reportingMethod: Option[String] = None,
+                                  taxYear: Option[Int] = None,
+                                  journeyIsComplete: Option[Boolean] = None)
 
 object ManageIncomeSourceData {
 
   val incomeSourceIdField = "incomeSourceId"
+  val reportingMethodField: String = "reportingMethod"
+  val taxYearField: String = "taxYear"
+  val journeyIsCompleteField: String = "journeyIsComplete"
 
   def getJSONKeyPath(name: String): String = s"manageIncomeSourceData.$name"
 
@@ -106,9 +110,10 @@ object ManageIncomeSourceData {
 }
 
 case class CeaseIncomeSourceData(
-                                  incomeSourceId: Option[String],
-                                  endDate: Option[String],
-                                  ceasePropertyDeclare: Option[String]
+                                  incomeSourceId: Option[String] = None,
+                                  endDate: Option[String] = None,
+                                  ceasePropertyDeclare: Option[String] = None,
+                                  journeyIsComplete: Option[Boolean] = None
                                 )
 
 object CeaseIncomeSourceData {
@@ -116,6 +121,7 @@ object CeaseIncomeSourceData {
   val incomeSourceIdField: String = "incomeSourceId"
   val dateCeasedField: String = "endDate"
   val ceasePropertyDeclare: String = "ceasePropertyDeclare"
+  val journeyIsCompleteField: String = "journeyIsComplete"
 
   def getJSONKeyPath(name: String): String = s"ceaseIncomeSourceData.$name"
 

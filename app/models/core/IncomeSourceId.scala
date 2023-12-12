@@ -25,6 +25,9 @@ class IncomeSourceId private(val value: String) extends AnyVal {
 }
 
 object IncomeSourceId {
+  def apply(incomeSourceAsString: String): IncomeSourceId = {
+    new IncomeSourceId(incomeSourceAsString)
+  }
   def mkIncomeSourceId(incomeSourceAsString: String): IncomeSourceId = {
 
     new IncomeSourceId(incomeSourceAsString)

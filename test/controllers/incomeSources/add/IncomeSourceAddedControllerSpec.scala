@@ -26,7 +26,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.hasBeenAddedField
+import models.incomeSourceDetails.AddIncomeSourceData.journeyIsCompleteField
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails._
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -178,7 +178,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, SelfEmployment), Right(Some(true)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
