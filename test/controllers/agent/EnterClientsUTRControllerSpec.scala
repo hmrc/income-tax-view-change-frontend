@@ -139,7 +139,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
-          val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -163,7 +163,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             response = Right(ClientDetails(Some("John"), Some("Doe"), testNino, testMtditid))
           )
 
-          val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> utrWithSpaces
           ))
 
@@ -186,7 +186,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           mockEnterClientsUTR(HtmlFormat.empty)
 
-          val result = TestEnterClientsUTRController.submit()(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = TestEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> "invalid"
           ))
 
@@ -204,7 +204,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             response = Left(CitizenDetailsNotFound)
           )
 
-          val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -220,7 +220,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             response = Left(BusinessDetailsNotFound)
           )
 
-          val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -239,7 +239,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockAgentAuthorisationException(InsufficientEnrolments())
 
-          val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
 
@@ -257,7 +257,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
             response = Left(UnexpectedResponse)
           )
 
-          val result = TestEnterClientsUTRController.submit(fakeRequestWithActiveSession.withFormUrlEncodedBody(
+          val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
           result.failed.futureValue shouldBe an[InternalServerException]

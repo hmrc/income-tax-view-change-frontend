@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-package testUtils
+package enums
 
-import akka.actor.ActorSystem
+import enums.AccountingMethod.fromApiField
+import forms.IncomeSourcesFormsSpec.convertToAnyShouldWrapper
+import org.scalatest.wordspec.AnyWordSpec
 
-trait MaterializerSupport {
-  implicit val system = ActorSystem("Sys")
+class AccountingMethodSpec extends AnyWordSpec {
+
+    "fromApiField call" when {
+      "conversion from Api field" in {
+        fromApiField(cashOrAccrualsField = true) shouldBe AccrualsAsAccountingMethod
+        fromApiField(cashOrAccrualsField = false) shouldBe CashAsAccountingMethod
+      }
+  }
+
 }
+
+

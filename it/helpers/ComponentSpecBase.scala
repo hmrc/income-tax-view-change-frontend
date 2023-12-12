@@ -118,7 +118,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val titleThereIsAProblem = "There’s a problem"
   val titleClientRelationshipFailure: String = "agent.client_relationship_failure.heading"
 
-  def config: Map[String, String] = Map(
+  def config: Map[String, Object] = Map(
+    "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
@@ -156,7 +157,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
-    .overrides(bind[HeaderExtractor].to[TestHeaderExtractor]) // adding dumy Authorization header in order for it:tests to pass
+    .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
     .overrides(bind[DateServiceInterface].to[TestDateService])
     .configure(config)
     .build()
@@ -218,7 +219,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
       buildClient(uri)
         .withFollowRedirects(false)
-        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "Csrf-Token" -> "nocheck",
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
+          "Csrf-Token" -> "nocheck",
           "X-Session-ID" -> testSessionId)
         .post(body).futureValue
     }

@@ -556,10 +556,10 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     def checkSubmitRedirect(isAgent: Boolean, incomeSourceType: IncomeSourceType, expectedRedirectUrl: String): Assertion = {
       val result = {
         if (isAgent) {
-          TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakeRequestConfirmedClient()
+          TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakePostRequestConfirmedClient()
             .withFormUrlEncodedBody(formData.toSeq: _*))
         } else {
-          TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakeRequestWithActiveSession
+          TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakePostRequestWithActiveSession
             .withFormUrlEncodedBody(formData.toSeq: _*))
         }
       }
@@ -746,10 +746,10 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
 
         val result = {
           if (isAgent) {
-            TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakeRequestConfirmedClient()
+            TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakePostRequestConfirmedClient()
               .withFormUrlEncodedBody(invalidFormData.toSeq: _*))
           } else {
-            TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakeRequestWithActiveSession
+            TestIncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)(fakePostRequestWithActiveSession
               .withFormUrlEncodedBody(invalidFormData.toSeq: _*))
           }
         }

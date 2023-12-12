@@ -20,7 +20,7 @@ import mocks.connectors.MockCalculationListConnector
 import models.calculationList.CalculationListErrorModel
 import models.core.Nino
 import org.mockito.Mockito.{mock, when}
-import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
+import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND, NO_CONTENT}
 import testConstants.BaseTestConstants.{testNino, testTaxYear, testTaxYearRange}
 import testConstants.CalculationListTestConstants
 import testUtils.TestSupport
@@ -87,8 +87,8 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
         setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListMin)
         TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe None
       }
-      "returns Some(false) given 404 response from 1404" in {
-        val error = CalculationListErrorModel(NOT_FOUND, "not found")
+      "returns Some(false) given 204 response from 1404" in {
+        val error = CalculationListErrorModel(NO_CONTENT, "not found")
         setupGetLegacyCalculationList(testNino, taxYearEnd)(error)
         TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe Some(false)
       }
@@ -114,8 +114,8 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
         setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListMin)
         TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt, true).futureValue shouldBe None
       }
-      "returns Some(false) given 404 response from 1896" in {
-        val error = CalculationListErrorModel(NOT_FOUND, "not found")
+      "returns Some(false) given 204 response from 1896" in {
+        val error = CalculationListErrorModel(NO_CONTENT, "not found")
         setupGetCalculationList(testNino, testTaxYearRange)(error)
         TestCalculationListService.isTaxYearCrystallised(taxYearEnd.toInt, true).futureValue shouldBe Some(false)
       }

@@ -21,6 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.AccountingMethod.fromApiField
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
@@ -58,42 +59,39 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                errorHandler: ShowInternalServerError,
                                                incomeSourceType: IncomeSourceType,
                                                cashOrAccrualsFlag: Option[String])
-                                              (implicit user: MtdItUser[_], backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
-    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
-
-    if (userActiveBusinesses.flatMap(_.cashOrAccruals).distinct.size > 1) {
+                                              (implicit user: MtdItUser[_],
+                                               backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
+    val cashOrAccrualsRecords = user.incomeSources.getCashOrAccruals()
+    if (cashOrAccrualsRecords.distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error getting business cashOrAccruals Field")
     }
-
-    val successRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-
-    userActiveBusinesses.map(_.cashOrAccruals).headOption match {
-      case Some(cashOrAccrualsFieldMaybe) =>
-        if (cashOrAccrualsFieldMaybe.isDefined) {
-          val accountingMethodIsAccruals: String = if (cashOrAccrualsFieldMaybe.get) "accruals" else "cash"
-          sessionService.setMongoKey(
-            AddIncomeSourceData.incomeSourcesAccountingMethodField,
-            accountingMethodIsAccruals,
-            JourneyType(Add, incomeSourceType)).flatMap {
-            case Right(_) => Future.successful(Redirect(successRedirectUrl))
-            case Left(ex) => Future.failed(ex)
-          }
-        } else {
-          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-            s"Error getting business cashOrAccruals field")
-          Future.successful(errorHandler.showInternalServerError())
+    cashOrAccrualsRecords.headOption.flatten match {
+      case Some(cashOrAccrualsField) =>
+        sessionService.setMongoKey(
+          key = AddIncomeSourceData.incomeSourcesAccountingMethodField,
+          value = fromApiField(cashOrAccrualsField).name,
+          journeyType = JourneyType(Add, incomeSourceType)).flatMap {
+            case Right(_) =>
+              val successRedirectUrl = {
+                if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+                else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+              }
+            Future.successful(Redirect(successRedirectUrl))
+          case Left(ex) =>
+            Future.failed(ex)
         }
       case None =>
-        Future.successful(Ok(view(
-          cashOrAccrualsFlag = cashOrAccrualsFlag,
-          incomeSourcesType = incomeSourceType,
-          form = IncomeSourcesAccountingMethodForm(incomeSourceType),
-          postAction = postAction,
-          isAgent = isAgent,
-          backUrl = backUrl,
-          btaNavPartial = user.btaNavPartial
-        )(user, messages)))
+        Future.successful(
+          Ok(view(
+            cashOrAccrualsFlag = cashOrAccrualsFlag,
+            incomeSourcesType = incomeSourceType,
+            form = IncomeSourcesAccountingMethodForm(incomeSourceType),
+            postAction = postAction,
+            isAgent = isAgent,
+            backUrl = backUrl,
+            btaNavPartial = user.btaNavPartial
+          )(user, messages)))
     }
   }.recover {
     case exception =>
@@ -223,6 +221,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           case _ =>
             routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, incomeSourceType).url
         }
+
         handleRequest(
           isAgent = false,
           incomeSourceType = incomeSourceType,
@@ -278,7 +277,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         }
 
         sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
-
           case Right(cashOrAccrualsFlag) =>
             handleRequest(
               isAgent = false,
@@ -286,9 +284,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
               cashOrAccrualsFlag = cashOrAccrualsFlag,
               backUrl = backUrl
             )
-
           case Left(exception) => Future.failed(exception)
-
         }.recover {
           case exception =>
             Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethod] ${exception.getMessage}")

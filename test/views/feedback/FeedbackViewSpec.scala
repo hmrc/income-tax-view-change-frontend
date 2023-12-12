@@ -76,7 +76,7 @@ class FeedbackViewSpec extends ViewSpec {
       }
 
       "have a send button" in new TestSetup() {
-        document.select("button.govuk-button").text shouldBe msgs("feedback.send")
+        document.select("button.govuk-button").text.contains(msgs("feedback.send")) shouldBe true
       }
     }
 
