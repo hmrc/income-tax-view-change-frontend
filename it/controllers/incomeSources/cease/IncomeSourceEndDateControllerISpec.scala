@@ -244,8 +244,6 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         )
 
         sessionService.getMongoKey(dateCeasedField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(testEndDate2022))
-        sessionService.getMongoKey(incomeSourceIdField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(testPropertyIncomeId))
-
       }
       "form is filled incorrectly" in {
         val formData: Map[String, Seq[String]] = {

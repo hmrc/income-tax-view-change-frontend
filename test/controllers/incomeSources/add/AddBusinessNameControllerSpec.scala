@@ -27,7 +27,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, hasBeenAddedField}
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, journeyIsCompleteField}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
@@ -136,7 +136,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, SelfEmployment), Right(Some(true)))
 
         val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
@@ -270,7 +270,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, SelfEmployment), Right(Some(true)))
 
         val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
@@ -365,7 +365,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, SelfEmployment), Right(Some(true)))
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
@@ -511,7 +511,7 @@ class AddBusinessNameControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, SelfEmployment), Right(Some(true)))
 
         val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakePostRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
