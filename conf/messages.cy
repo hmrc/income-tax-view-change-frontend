@@ -1437,9 +1437,9 @@ business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wn
 ## You cannot go back - Your business has been added page ##
 
 cannotGoBack.heading                                      = Ni allwch fynd yn ôl
-cannotGoBack.soleTraderAdded                              = Mae’ch busnes unig fasnachwr wedi’i ychwanegu.
-cannotGoBack.ukPropertyAdded                              = Mae’ch busnes eiddo yn y DU wedi’i ychwanegu.
-cannotGoBack.foreignPropertyAdded                         = Mae’ch busnes eiddo tramor wedi’i ychwanegu.
+cannotGoBack.soleTraderAdded                              = Mae’ch busnes unig fasnachwr wedi’i ychwanegu
+cannotGoBack.ukPropertyAdded                              = Mae’ch busnes eiddo yn y DU wedi’i ychwanegu
+cannotGoBack.foreignPropertyAdded                         = Mae’ch busnes eiddo tramor wedi’i ychwanegu
 
 cannotGoBack.manage.UK                                    = Mae’ch dull o adrodd ar gyfer eich busnes eiddo yn y DU ar gyfer blwyddyn dreth {0} to {1}
 cannotGoBack.manage.FP                                    = Mae’ch dull o adrodd ar gyfer eich busnes eiddo tramor ar gyfer blwyddyn dreth {0} to {1}
