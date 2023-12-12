@@ -36,12 +36,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
 
   val sessionService: SessionService
 
-  private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType match {
-    case Some(Agent) =>
-      true
-    case _ =>
-      false
-  }
+  private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
   private lazy val redirectUrl: (JourneyType, Option[String], Option[String], Option[String], Boolean) => MtdItUser[_] => Future[Result] =
     (journeyType: JourneyType, reportingMethod: Option[String], taxYear: Option[String], incomeSourceId: Option[String], useDefault: Boolean) => user => {
