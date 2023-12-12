@@ -16,7 +16,7 @@
 
 package controllers.incomeSources.manage
 
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.SessionTimeoutPredicate
 import mocks.connectors.MockBusinessDetailsConnector
@@ -54,6 +54,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     super.beforeEach()
     disableAllSwitches()
     enable(IncomeSources)
+    enable(CalendarQuarterTypes)
     reset(mockCalculationListService)
     reset(mockITSAStatusService)
     reset(mockDateService)
@@ -180,6 +181,25 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         val result = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
 
         status(result) shouldBe Status.SEE_OTHER
+      }
+      "CalendarQuarterTypes FS is disabled" in {
+        disable(CalendarQuarterTypes)
+        mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
+
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val document: Document = Jsoup.parse(contentAsString(result))
+
+        status(result) shouldBe Status.OK
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").size() shouldBe 4
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").get(0) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").get(1) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").get(2) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__row").get(3) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
 
       }
     }
@@ -196,6 +216,26 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
 
         status(result) shouldBe SEE_OTHER
       }
+    }
+    "CalendarQuarterTypes FS is disabled" in {
+      disable(CalendarQuarterTypes)
+      mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
+
+      val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+      val document: Document = Jsoup.parse(contentAsString(result))
+
+      status(result) shouldBe Status.OK
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").size() shouldBe 4
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").get(0) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").get(1) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").get(2) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+      document.getElementById("manage-details-table")
+        .getElementsByClass("govuk-summary-list__row").get(3) shouldNot be(TestManageIncomeSourceDetailsController.calendar)
+
     }
   }
 
