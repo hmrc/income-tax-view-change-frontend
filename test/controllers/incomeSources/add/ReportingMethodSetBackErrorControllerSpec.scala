@@ -56,12 +56,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
     def getTitle(incomeSourceType: IncomeSourceType, isAgent: Boolean): String = {
       (isAgent, incomeSourceType) match {
-        case (false, SelfEmployment) => messages("htmlTitle", s"$title")
-        case (false, UkProperty) => messages("htmlTitle", s"$title")
-        case (false, ForeignProperty) => messages("htmlTitle", s"$title")
-        case (true, SelfEmployment) => messages("htmlTitle.agent", s"$title")
-        case (true, UkProperty) => messages("htmlTitle.agent", s"$title")
-        case (true, ForeignProperty) => messages("htmlTitle.agent", s"$title")
+        case (false, _) => messages("htmlTitle", s"$title")
+        case (true, _) => messages("htmlTitle.agent", s"$title")
       }
     }
   }

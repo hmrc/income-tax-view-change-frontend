@@ -18,7 +18,9 @@ package models.incomeSourceDetails
 
 import scala.util.Try
 
-case class TaxYear(startYear: Int, endYear: Int)
+case class TaxYear(startYear: Int, endYear: Int) {
+  override def toString: String = s"$startYear-$endYear"
+}
 
 object TaxYear {
 
@@ -27,14 +29,14 @@ object TaxYear {
     def isValidYear(year: String): Boolean =
       year.length == 4 &&
         year.forall(_.isDigit) &&
-          Try(year.toInt).toOption.isDefined
+        Try(year.toInt).toOption.isDefined
 
     def differenceIsOne(yearOne: String, yearTwo: String): Boolean =
       yearOne.toInt + 1 == yearTwo.toInt
 
     isValidYear(yearOne) &&
       isValidYear(yearTwo) &&
-        differenceIsOne(yearOne, yearTwo)
+      differenceIsOne(yearOne, yearTwo)
   }
 
   def getTaxYearModel(years: String): Option[TaxYear] = {
@@ -48,3 +50,4 @@ object TaxYear {
     }
   }
 }
+

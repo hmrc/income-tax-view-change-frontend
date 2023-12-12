@@ -79,4 +79,3 @@ class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: S
         }
   }
 }
-

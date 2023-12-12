@@ -18,7 +18,9 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Cease, JourneyType}
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -33,6 +35,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.BusinessDetailsTestConstants.{ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2}
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 import testUtils.TestSupport
 
 import scala.concurrent.Future
@@ -90,6 +93,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
         enable(IncomeSources)
         mockBothIncomeSources()
         setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, SelfEmployment)))))
         setupMockDeleteSession(true)
 
         when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any()))
