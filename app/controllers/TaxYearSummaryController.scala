@@ -29,12 +29,12 @@ import implicits.ImplicitDateFormatter
 import models.financialDetails.MfaDebitUtils.filterMFADebits
 import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel, Message}
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
-import services.{CalculationService, DateService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService}
+import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -42,7 +42,6 @@ import views.html.TaxYearSummary
 
 import java.net.URI
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -109,7 +108,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           origin = origin,
           isAgent = isAgent
         ))
-      case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+      case error: LiabilityCalculationError if error.status == NO_CONTENT =>
         auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(
           mtdItUser, documentDetailsWithDueDates, obligations, messagesApi))
 
@@ -236,7 +235,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
       if (taxYear.toString.matches("[0-9]{4}")) {
-        handleRequest(taxYear, origin, false)
+        handleRequest(taxYear, origin, isAgent = false)
       } else {
         Future.successful(itvcErrorHandler.showInternalServerError())
       }
@@ -246,7 +245,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     implicit user =>
       if (taxYear.toString.matches("[0-9]{4}")) {
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          handleRequest(taxYear, None, true)
+          handleRequest(taxYear, None, isAgent = true)
         }
       } else {
         Future.successful(agentItvcErrorHandler.showInternalServerError())

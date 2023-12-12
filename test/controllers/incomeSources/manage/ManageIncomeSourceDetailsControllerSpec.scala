@@ -87,6 +87,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
     val unknown: String = messages("incomeSources.generic.unknown")
     val annually: String = messages("incomeSources.manage.business-manage-details.annually")
     val quarterly: String = messages("incomeSources.manage.business-manage-details.quarterly")
+    val standard: String = messages("incomeSources.manage.quarterly-period.standard")
+    val calendar: String = messages("incomeSources.manage.quarterly-period.calendar")
 
   }
 
@@ -147,6 +149,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .thenReturn(Future.successful(false))
         mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
 
+
       case ERROR_TESTING =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2023)
         when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any, any, any))
@@ -201,6 +204,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dt").text() shouldBe "Business address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__row").get(1).getElementsByTag("dd").text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.calendar
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
@@ -293,7 +298,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .getElementsByClass("govuk-summary-list__key").get(1).text() shouldBe "Business address"
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.businessWithLatencyAddress
-
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.calendar
       }
       "FS is enabled and the .showAgent(id) method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
@@ -382,6 +388,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.standard
       }
       "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
@@ -395,9 +403,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -412,9 +422,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, but non eligable itsa status" in {
@@ -450,6 +462,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.standard
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
@@ -463,9 +477,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-1")).isDefined shouldBe true
         Option(document.getElementById("change-link-2")).isDefined shouldBe true
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -480,9 +496,11 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(4).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {
@@ -518,6 +536,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
       }
       "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
@@ -533,7 +553,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -550,7 +570,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, but non eligable itsa status" in {
@@ -586,6 +606,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.select("h1:nth-child(1)").text shouldBe TestManageIncomeSourceDetailsController.heading
         Option(document.getElementById("change-link-1")).isDefined shouldBe false
         Option(document.getElementById("change-link-2")).isDefined shouldBe false
+        document.getElementById("manage-details-table")
+          .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.calendar
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years not crystallised" in {
@@ -602,7 +624,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -619,7 +641,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(2).text() shouldBe TestManageIncomeSourceDetailsController.annually
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.quarterly
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.annually
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, but non eligable itsa status" in {

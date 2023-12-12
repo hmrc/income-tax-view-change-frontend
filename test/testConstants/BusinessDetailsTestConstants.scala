@@ -16,11 +16,11 @@
 
 package testConstants
 
-import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.SelfEmployment
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core._
 import models.incomeSourceDetails.viewmodels._
-import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import testConstants.BaseTestConstants._
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
@@ -110,6 +110,23 @@ object BusinessDetailsTestConstants {
     taxYear2 = year2024.toString,
     latencyIndicator2 = "Q")
 
+  val testLatencyDetails4 = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2023, 1, 1),
+    taxYear1 = year2023.toString,
+    latencyIndicator1 = "Q",
+    taxYear2 = year2024.toString,
+    latencyIndicator2 = "A")
+
+  val testLatencyDetails5 = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2023, 1, 1),
+    taxYear1 = year2023.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2024.toString,
+    latencyIndicator2 = "A")
+
+  val quarterTypeElectionStandard = QuarterTypeElection("STANDARD", "2021")
+  val quarterTypeElectionCalendar = QuarterTypeElection("CALENDAR", "2021")
+
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = Some(testBusinessAccountingPeriod),
@@ -163,7 +180,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
-    address = Some(address)
+    address = Some(address),
+    quarterTypeElection = Some(quarterTypeElectionStandard)
   )
 
   val businessWithLatency3 = BusinessDetailsModel(
@@ -221,7 +239,8 @@ object BusinessDetailsTestConstants {
     cessation = None,
     cashOrAccruals = Some(false),
     latencyDetails = None,
-    address = Some(address)
+    address = Some(address),
+    quarterTypeElection = Some(quarterTypeElectionCalendar)
   )
 
   val soleTraderBusiness2 = BusinessDetailsModel(

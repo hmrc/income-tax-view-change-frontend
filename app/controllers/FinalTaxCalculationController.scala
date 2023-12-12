@@ -24,8 +24,6 @@ import controllers.agent.utils.SessionKeys.{clientFirstName, clientLastName}
 import controllers.predicates._
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
-
-import javax.inject.Inject
 import models.finalTaxCalculation.TaxReturnRequestModel
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -36,6 +34,7 @@ import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.FinalTaxCalculationView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControllerComponents,
@@ -67,7 +66,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         Ok(view(TaxYearSummaryViewModel(calculationResponse), taxYear, isAgent = isAgent, backUrl))
           .addingToSession(calcPagesBackPage -> "submission")
-      case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
+      case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("[FinalTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
@@ -142,7 +141,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
             Logger("application").error("[Agent][FinalTaxCalculationController][submit] UTR missing.")
             itvcErrorHandler.showInternalServerError()
         }
-      case calcError: LiabilityCalculationError if calcError.status == NOT_FOUND =>
+      case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
         Logger("application").info("[Agent][FinalTaxCalculationController][submit] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
@@ -174,7 +173,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
             Logger("application").error("[FinalTaxCalculationController][submit] Name or UTR missing.")
             itvcErrorHandler.showInternalServerError()
         }
-      case calcError: LiabilityCalculationError if calcError.status == NOT_FOUND =>
+      case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
         Logger("application").info("[FinalTaxCalculationController][submit] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
