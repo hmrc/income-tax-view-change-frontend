@@ -16,24 +16,22 @@
 
 package controllers.agent
 
-import auth.BaseFrontendController
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
 import controllers.agent.utils.SessionKeys
-import controllers.predicates.AuthPredicate.{AuthPredicate, AuthPredicateSuccess}
+import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
 import forms.agent.ClientsUTRForm
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, confidenceLevel, credentials}
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment, InsufficientEnrolments}
-import uk.gov.hmrc.http.{InternalServerException, Request}
+import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment}
+import uk.gov.hmrc.http.InternalServerException
 import views.html.agent.EnterClientsUTR
 
 import javax.inject.{Inject, Singleton}

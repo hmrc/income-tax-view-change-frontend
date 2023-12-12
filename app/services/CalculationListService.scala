@@ -47,7 +47,7 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
   private def getLegacyCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
     calculationListConnector.getLegacyCalculationList(Nino(user.nino), taxYear.toString).flatMap {
       case res: CalculationListModel => Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
+      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
     }
   }
@@ -56,7 +56,7 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
     val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
     calculationListConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
       case res: CalculationListModel => Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
+      case err: CalculationListErrorModel if err.code == 204 => Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
     }
   }

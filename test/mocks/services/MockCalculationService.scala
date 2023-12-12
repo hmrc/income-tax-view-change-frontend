@@ -20,7 +20,6 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.Mockito.mock
 import services.CalculationService
 import testConstants.BaseTestConstants._
 import testConstants.NewCalcBreakdownUnitTestConstants._
@@ -69,7 +68,7 @@ trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(500, "Internal server error"))
 
   def mockCalculationNotFoundNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testTaxYear): Unit =
-    setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(404, "not found"))
+    setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(204, "not found"))
 
   def mockCalculationWithErrorMessages(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelErrorMessagesForIndividual)

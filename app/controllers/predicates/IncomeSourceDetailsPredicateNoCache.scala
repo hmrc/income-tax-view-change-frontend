@@ -40,7 +40,7 @@ class IncomeSourceDetailsPredicateNoCache @Inject()(val incomeSourceDetailsServi
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: MtdItUserOptionNino[A] = request
 
-    incomeSourceDetailsService.getIncomeSourceDetails(None) map {
+    incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
         Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, request.arn))
       case _ => Left(itvcErrorHandler.showInternalServerError())

@@ -101,8 +101,9 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
           Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed", additionalCookies = clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post(
+          s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed",
+          additionalCookies = clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),

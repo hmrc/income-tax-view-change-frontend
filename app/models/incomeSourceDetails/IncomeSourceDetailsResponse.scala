@@ -97,10 +97,17 @@ case class IncomeSourceDetailsModel(nino: String,
     }
   }
 
-  def compareHashToQueryString(incomeSourceIdHash: IncomeSourceIdHash)(implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
+  def compareHashToQueryString(incomeSourceIdHash: IncomeSourceIdHash)
+                              (implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
     val xs = user.incomeSources.businesses.map(m => mkIncomeSourceId(m.incomeSourceId))
-
     incomeSourceIdHash.oneOf(xs)
+  }
+
+  def getCashOrAccruals()
+                       (implicit user: MtdItUser[_]): List[Option[Boolean]] = {
+    user.incomeSources.businesses
+      .filterNot(_.isCeased)
+      .map(_.cashOrAccruals)
   }
 }
 

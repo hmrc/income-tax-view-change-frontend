@@ -33,7 +33,7 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
     metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), Some(false), Some("customerRequest")),
     calculation = None)
 
-  val liabilityCalculationNotFoundResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NOT_FOUND, "not found")
+  val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "not found")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
 
 
@@ -50,11 +50,11 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
           TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationSuccessResponse
 
         }
-        "NOT_FOUND response is returned from the IncomeTaxCalculationConnector" should {
+        "NO_CONTENT response is returned from the IncomeTaxCalculationConnector" should {
           "return a LiabilityCalculationError" in {
-            mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationNotFoundResponse)
+            mockGetCalculationResponse(testMtditid, testNino, "2018")(liabilityCalculationNoContentResponse)
 
-            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationNotFoundResponse
+            TestCalculationService.getLiabilityCalculationDetail(testMtditid, testNino, testTaxYear).futureValue shouldBe liabilityCalculationNoContentResponse
           }
         }
         "error response is returned from the IncomeTaxCalculationConnector" should {

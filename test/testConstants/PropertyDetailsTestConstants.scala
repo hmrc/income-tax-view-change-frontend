@@ -21,6 +21,7 @@ import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, Pro
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import models.nextUpdates.NextUpdateModel
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
+import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5}
 import testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 
 import java.time.LocalDate
@@ -74,7 +75,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
-    None
+    cessation = None,
+    quarterTypeElection = Some(quarterTypeElectionCalendar)
   )
 
   val foreignPropertyDetails2 = PropertyDetailsModel(
@@ -83,7 +85,7 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
-    None
+    cessation = None
   )
 
   val foreignPropertyDetailsNoStartDate = PropertyDetailsModel(
@@ -212,7 +214,8 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    latencyDetails = None
+    latencyDetails = None,
+    quarterTypeElection = Some(quarterTypeElectionStandard)
   )
 
   val ukPropertyDetails2 = PropertyDetailsModel(
@@ -242,7 +245,8 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    latencyDetails = Some(testLatencyDetails2)
+    latencyDetails = Some(testLatencyDetails4),
+    quarterTypeElection = Some(quarterTypeElectionCalendar)
   )
 
   val ukPropertyWithLatencyDetailsAndUnknowns = PropertyDetailsModel(
@@ -272,7 +276,8 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    latencyDetails = Some(testLatencyDetails2)
+    latencyDetails = Some(testLatencyDetails5),
+    quarterTypeElection = Some(quarterTypeElectionStandard)
   )
 
   val foreignPropertyWithLatencyDetailsAndUnknowns = PropertyDetailsModel(
