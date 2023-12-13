@@ -1538,8 +1538,8 @@ incomeSources.manage.quarterly-period.calendar                        =   Calend
 incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
 incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod chwarterol calendr?
 incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r ffynhonnell incwm hon yn adrodd o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
-incomeSources.manage.quarterly-period.standard.content.p2             =   YGallwch newid hyn i adrodd o’r 1af o’r mis, yn ôl chwarterau calendr, yn eich meddalwedd sy’n cydweddu os yw’n gallu gwneud hynny.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   TAr hyn o bryd mae’r ffynhonnell incwm hon yn adrodd o 1 Ebrill yn ôl chwarterau calendr.
+incomeSources.manage.quarterly-period.standard.content.p2             =   Gallwch newid hyn i adrodd o’r 1af o’r mis, yn ôl chwarterau calendr, yn eich meddalwedd sy’n cydweddu os yw’n gallu gwneud hynny.
+incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r ffynhonnell incwm hon yn adrodd o 1 Ebrill yn ôl chwarterau calendr.
 incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
 incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am gyfnodau chwarterol
 
