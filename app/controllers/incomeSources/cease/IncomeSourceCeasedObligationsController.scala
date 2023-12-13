@@ -26,13 +26,14 @@ import enums.JourneyType.{Cease, JourneyType}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.CeaseIncomeSourceData
+import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import javax.inject.Inject
@@ -53,7 +54,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
                                                         implicit override val mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,
                                                         dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker{
 
   private def getBusinessName(incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[String] = {
     user.incomeSources.businesses
@@ -63,9 +64,11 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
+      updateMongoCeased(incomeSourceType)
       val incomeSourceDetails : Future[( Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
         case SelfEmployment =>
-          sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
+         val x = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
+          x
         case UkProperty =>
           Future.successful(
               (user.incomeSources.properties
@@ -93,6 +96,9 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
       incomeSourceDetails.flatMap {
         case (Right(Some(incomeSourceIdStr)), incomeSourceType) =>
           val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
+          println(Console.GREEN + incomeSourceId + Console.WHITE)
+          println(Console.GREEN + incomeSourceIdStr + Console.WHITE)
+
           val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(incomeSourceId) else None
           nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
@@ -127,5 +133,18 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
           implicit mtdItUser =>
             handleRequest(isAgent = true, incomeSourceType = incomeSourceType)
         }
+  }
+
+  private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    sessionService.getMongo(JourneyType(Cease, incomeSourceType).toString).flatMap {
+      case Right(Some(sessionData)) =>
+        val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(CeaseIncomeSourceData(incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField), endDate = None, ceasePropertyDeclare = None, journeyIsComplete = None ))
+        val updatedCeaseIncomeSourceSessionData = oldCeaseIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
+        val uiJourneySessionData: UIJourneySessionData = sessionData.copy(ceaseIncomeSourceData = Some(updatedCeaseIncomeSourceSessionData))
+
+        sessionService.setMongoData(uiJourneySessionData)
+
+      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
+    }
   }
 }

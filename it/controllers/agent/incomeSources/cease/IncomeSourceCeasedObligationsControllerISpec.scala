@@ -2,7 +2,7 @@ package controllers.agent.incomeSources.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.Cease
+import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
@@ -53,10 +53,12 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
         await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None)))))
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None, journeyIsComplete = Some(true))))))
 
         val result = IncomeTaxViewChangeFrontend.getBusinessCeasedObligations(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
+
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, JourneyType(Cease, SelfEmployment)).futureValue shouldBe Right(Some(true))
 
         val expectedText: String = b1TradingName + " " + messagesAPI(s"$prefix.heading1.base")
 
@@ -84,10 +86,15 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None, journeyIsComplete = Some(true))))))
+
         val result = IncomeTaxViewChangeFrontend.getUkPropertyCeasedObligations(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("business-ceased.obligation.heading1.uk-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
+
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, JourneyType(Cease, UkProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),
@@ -113,11 +120,16 @@ class IncomeSourceCeasedObligationsControllerISpec extends ComponentSpecBase {
         And("API 1330 getNextUpdates returns a success response with a valid ObligationsModel")
         IncomeTaxViewChangeStub.stubGetNextUpdates(testMtditid, testObligationsModel)
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
+          Some(CeaseIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId), endDate = Some(testEndDate2022), ceasePropertyDeclare = None, journeyIsComplete = Some(true))))))
+
 
         val result = IncomeTaxViewChangeFrontend.getForeignPropertyCeasedObligations(clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         val expectedText: String = messagesAPI("business-ceased.obligation.heading1.foreign-property.part2") + " " + messagesAPI("business-ceased.obligation.heading1.base")
+
+        sessionService.getMongoKey(CeaseIncomeSourceData.journeyIsCompleteField, JourneyType(Cease, ForeignProperty)).futureValue shouldBe Right(Some(true))
 
         result should have(
           httpStatus(OK),

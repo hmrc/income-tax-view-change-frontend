@@ -393,6 +393,13 @@ GET         /agents/income-sources/cease/error-foreign-property-not-ceased      
 GET         /income-sources/cease/error-business-not-ceased                                 controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET         /agents/income-sources/cease/error-business-not-ceased                          controllers.incomeSources.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
 
+GET         /income-sources/cease/cease-business-cannot-go-back                             controllers.incomeSources.cease.IncomeSourceCeasedBackErrorController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
+GET         /agents/income-sources/cease/cease-business-cannot-go-back                      controllers.incomeSources.cease.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
+GET         /income-sources/cease/cease-uk-property-cannot-go-back                          controllers.incomeSources.cease.IncomeSourceCeasedBackErrorController.show(incomeSourceType: IncomeSourceType = UkProperty)
+GET         /agents/income-sources/cease/cease-uk-property-cannot-go-back                   controllers.incomeSources.cease.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
+GET         /income-sources/cease/cease-foreign-property-cannot-go-back                     controllers.incomeSources.cease.IncomeSourceCeasedBackErrorController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
+GET         /agents/income-sources/cease/cease-foreign-property-cannot-go-back              controllers.incomeSources.cease.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
+
 # Income Sources - Manage
 GET          /income-sources/manage/view-and-manage-income-sources                         controllers.incomeSources.manage.ManageIncomeSourceController.show(isAgent: Boolean = false)
 GET          /agents/income-sources/manage/view-and-manage-income-sources                  controllers.incomeSources.manage.ManageIncomeSourceController.show(isAgent: Boolean = true)

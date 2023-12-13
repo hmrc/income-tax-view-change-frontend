@@ -33,6 +33,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.IncomeSourceEndDate
@@ -56,7 +57,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val ec: ExecutionContext,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   private def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, maybeIncomeSourceId: Option[IncomeSourceId], isChange: Boolean): Future[(Call, Call, Call)] = {
 
@@ -171,31 +172,35 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] =  withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
 
     val incomeSourceIdMaybe: Option[IncomeSourceId] = id.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
-    getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
-      actions =>
-        val (backAction: Call, postAction: Call, _) = actions
-        (incomeSourceType, id) match {
-          case (SelfEmployment, None) =>
-            Future.failed(new Exception(s"Missing income source ID"))
-          case _ =>
-            getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
-              form: Form[DateFormElement] =>
-                Future.successful(Ok(
-                  incomeSourceEndDate(
-                    incomeSourceEndDateForm = form,
-                    postAction = postAction,
-                    isAgent = isAgent,
-                    backUrl = backAction.url,
-                    incomeSourceType = incomeSourceType
-                  )(user, messages))
-                )
-            }
-        }
+    if(incomeSourceType == SelfEmployment && !isChange) {
+      sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
     }
+
+      getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
+        actions =>
+          val (backAction: Call, postAction: Call, _) = actions
+          (incomeSourceType, id) match {
+            case (SelfEmployment, None) =>
+              Future.failed(new Exception(s"Missing income source ID"))
+            case _ =>
+              getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
+                form: Form[DateFormElement] =>
+                  Future.successful(Ok(
+                    incomeSourceEndDate(
+                      incomeSourceEndDateForm = form,
+                      postAction = postAction,
+                      isAgent = isAgent,
+                      backUrl = backAction.url,
+                      incomeSourceType = incomeSourceType
+                    )(user, messages))
+                  )
+              }
+          }
+      }
   } recover {
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

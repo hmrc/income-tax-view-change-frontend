@@ -18,24 +18,26 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
+import models.incomeSourceDetails.CeaseIncomeSourceData.incomeSourceIdField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.Assertion
-import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.mvc.Results.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, businessesAndPropertyIncomeCeased, completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
@@ -105,6 +107,9 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
       mockGetObligationsViewModel(IncomeSourcesObligationsTestConstants.viewModel)
+
+      setupMockCreateSession(true)
+      setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
       setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
       when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
@@ -195,7 +200,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
               TestIncomeSourceObligationController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
           }
 
-          status(result) shouldBe Status.SEE_OTHER
+          status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
 
@@ -225,8 +230,10 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
         setupMockAuthorisationSuccess(isAgent)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
+        setupMockCreateSession(true)
+        setupMockGetSessionKeyMongoTyped(incomeSourceIdField, JourneyType(Cease, incomeSourceType), Right(None))
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
 
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
@@ -237,7 +244,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
           case (true) =>
             TestIncomeSourceObligationController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
         }
-
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
@@ -252,7 +258,9 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
         mockNoIncomeSources()
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+
         setupMockAuthorisationSuccess(isAgent)
 
         when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
@@ -289,13 +297,14 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
         disableAllSwitches()
         enable(IncomeSources)
         setupMockAuthorisationSuccess(isAgent)
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+
         if (incomeSourceType.equals(ForeignProperty)) {
           mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
         } else if (incomeSourceType.equals(UkProperty)) {
           mockTwoActiveUkPropertyIncomeSourcesErrorScenario()
         }
-        setupMockGetSessionKeyMongoTyped[String](Right(None))
-
 
         when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
           .thenReturn(
