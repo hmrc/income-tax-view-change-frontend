@@ -108,6 +108,11 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
     }
 
     ".show" should {
+      for (incomeSourceType <- incomeSourceTypes) yield {
+        showSuccess(false, incomeSourceType)
+        showSuccess(true, incomeSourceType)
+      }
+
       def showSuccess(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         s"Display the you cannot go back error page (${if (isAgent) "agent" else "individual"}, $incomeSourceType)" in {
           disableAllSwitches()
@@ -126,18 +131,6 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
           document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
         }
       }
-
-      //      for (incomeSourceType <- incomeSourceTypes) yield {
-      //        showSuccess(false, incomeSourceType)
-      //        showSuccess(true, incomeSourceType)
-      //      }
-
-      showSuccess(false, SelfEmployment)
-      showSuccess(false, UkProperty)
-      showSuccess(false, ForeignProperty)
-      showSuccess(true, SelfEmployment)
-      showSuccess(true, UkProperty)
-      showSuccess(true, ForeignProperty)
     }
   }
 }
