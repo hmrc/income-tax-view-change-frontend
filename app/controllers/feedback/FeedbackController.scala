@@ -97,7 +97,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
           }
         }.recover {
           case ex: Exception => {
-            Logger("application").error(s"Unexpected error code from feedback form: ${ex.toString}")
+            Logger("application").error(s"Unexpected error code from feedback form: - ${ex.getMessage} - ${ex.getCause}")
             itvcErrorHandler.showInternalServerError()
           }
         }
@@ -123,7 +123,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
             }
           }.recover {
             case ex: Exception => {
-              Logger("application").error(s"Unexpected error code from feedback form: ${ex.toString}")
+              Logger("application").error(s"Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
               itvcErrorHandler.showInternalServerError()
             }
           }

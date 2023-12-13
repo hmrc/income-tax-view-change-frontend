@@ -131,9 +131,9 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
       }
     )
   }.recover {
-    case exception: Exception =>
+    case ex: Exception =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "[Agent]"}[DeclarePropertyCeasedController][handleSubmitRequest]: $exception")
+      Logger("application").error(s"${if (isAgent) "[Agent]"}[DeclarePropertyCeasedController][handleSubmitRequest]: - ${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 

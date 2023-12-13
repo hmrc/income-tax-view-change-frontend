@@ -219,7 +219,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
       case ex: Exception =>
         val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(s"[IncomeSourceReportingMethodController][handleSubmit]:" +
-          s"Unable to handle IncomeSourceReportingMethodController submit request for $incomeSourceType: ${ex.getMessage}")
+          s"Unable to handle IncomeSourceReportingMethodController submit request for $incomeSourceType: - ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -281,7 +281,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     handleUpdateResults(isAgent, incomeSourceType, id, results)
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: ${ex.getMessage}")
+      Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: - ${ex.getMessage} - ${ex.getCause}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
 

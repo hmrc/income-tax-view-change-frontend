@@ -98,7 +98,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
             =>
               val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
               Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
-            case Left(error)
+            case Left(_)
             =>
               throw new InternalServerException(s"[EnterClientsUTRController][submit] - Unexpected response received")
           }

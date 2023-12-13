@@ -73,8 +73,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           case Left(exception) => Future.failed(exception)
         }
       }.recover {
-        case exception =>
-          Logger("application").error(s"[ManageObligationsController][showSelfEmployment] ${exception.getMessage}")
+        case ex =>
+          Logger("application").error(s"[ManageObligationsController][showSelfEmployment] - ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent = false)
       }
   }
@@ -95,8 +95,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
           case Left(exception) => Future.failed(exception)
         }
       }.recover {
-        case exception =>
-          Logger("application").error(s"[ManageObligationsController][showAgentSelfEmployment] ${exception.getMessage}")
+        case ex =>
+          Logger("application").error(s"[ManageObligationsController][showAgentSelfEmployment] - ${ex.getMessage} - ${ex.getCause}")
           showInternalServerError(isAgent = true)
       }
   }

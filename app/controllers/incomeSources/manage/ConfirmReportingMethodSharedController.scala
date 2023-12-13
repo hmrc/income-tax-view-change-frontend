@@ -78,8 +78,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       }
       else handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, None)
     }.recover {
-      case exception =>
-        Logger("application").error(s"[ConfirmReportingMethodSharedController][show] ${exception.getMessage}")
+      case ex =>
+        Logger("application").error(s"[ConfirmReportingMethodSharedController][show] - ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
     }
   }
@@ -100,8 +100,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       }
       else handleSubmitRequest(taxYear, changeTo, isAgent, None, incomeSourceType)
     }.recover {
-      case exception =>
-        Logger("application").error(s"[ConfirmReportingMethodSharedController][submit] ${exception.getMessage}")
+      case ex =>
+        Logger("application").error(s"[ConfirmReportingMethodSharedController][submit] - ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
     }
   }

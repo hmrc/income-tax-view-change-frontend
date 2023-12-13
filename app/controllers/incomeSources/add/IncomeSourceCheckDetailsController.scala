@@ -238,13 +238,13 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         }
       case Left(ex) =>
         Logger("application").error(
-          s"[IncomeSourceCheckDetailsController][handleSubmit] - Error: ${ex.getMessage}")
+          s"[IncomeSourceCheckDetailsController][handleSubmit] - Error: - ${ex.getMessage} - ${ex.getCause}")
         Future.successful {
           Redirect(errorRedirectUrl(isAgent, incomeSourceType))
         }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: ${ex.getMessage}")
+        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: - ${ex.getMessage} - ${ex.getCause}")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
     }
   }
