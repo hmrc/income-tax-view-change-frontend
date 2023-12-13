@@ -33,7 +33,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
@@ -56,7 +56,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils {
 
 
   def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
@@ -121,6 +121,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
         val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
           .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
+
         sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
           sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
             case Right(_) => handleRequest(
@@ -132,11 +133,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             )
             case Left(exception) => Future.failed(exception)
           }
-        }.recover {
-          case exception =>
-            Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] ${exception.getMessage}")
-            itvcErrorHandler.showInternalServerError()
         }
+      }.recover {
+        case exception =>
+          Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] ${exception.getMessage}")
+          itvcErrorHandler.showInternalServerError()
       }
   }
 
@@ -145,8 +146,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       implicit user =>
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
+            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
             withIncomeSourcesFS {
-              val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = mkFromQueryString(hashIdString).toOption
               val result = handleRequest(
                 sources = mtdItUser.incomeSources,
                 isAgent = true,
@@ -157,12 +158,19 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
               val incomeSourceId: IncomeSourceId = incomeSourceIdHashMaybe.flatMap(x => mtdItUser.incomeSources.compareHashToQueryString(x))
                 .getOrElse(throw new Error(s"No incomeSourceId found for user with hash: [$hashIdString]"))
-              sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
-                sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-                  case Right(_) => result
-                  case Left(exception) => Future.failed(exception)
-                }
+
+              sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
+                case true =>
+                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+                    case Right(_) => result
+                    case Left(exception) => Future.failed(exception)
+                  }
+                case false => Future.failed(new Error("Failed to create mongo session"))
               }
+            }.recover {
+              case exception =>
+                Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusinessAgent] ${exception.getMessage}")
+                itvcErrorHandlerAgent.showInternalServerError()
             }
         }
   }
@@ -333,7 +341,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
     val incomeSourceIdMaybe: Option[IncomeSourceId] = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
-    withSessionData(JourneyType(Manage, incomeSourceType)) { _ =>
+    withIncomeSourcesFS {
       for {
         value <- if (incomeSourceType == SelfEmployment) {
           getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe
