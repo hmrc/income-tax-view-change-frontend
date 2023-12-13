@@ -133,8 +133,6 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
           .thenReturn(Future.successful(Some(false)))
         when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(2024), any)(any, any, any))
           .thenReturn(Future.successful(Some(false)))
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
-        when(mockSessionService.setMongoKey(any(), any(), any())(any(), any())).thenReturn(Future(Right(true)))
 
       case ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION =>
         when(mockDateService.getCurrentTaxYearEnd(any)).thenReturn(2024)
@@ -194,7 +192,9 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "CalendarQuarterTypes FS is disabled" in {
         disable(CalendarQuarterTypes)
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
+        setupMockAuthorisationSuccess(false)
         setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
+        setupMockSetSessionKeyMongo(Right(true))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -232,6 +232,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       disable(CalendarQuarterTypes)
       mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
       setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
+      setupMockSetSessionKeyMongo(Right(true))
 
       val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
       val document: Document = Jsoup.parse(contentAsString(result))
@@ -351,6 +352,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
         mockAndBasicSetup(EXPIRED_LATENCY)
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
+        setupMockSetSessionKeyMongo(Right(true))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -472,6 +475,8 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
         mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
+        setupMockSetSessionKeyMongo(Right(true))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -569,6 +574,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
         mockAndBasicSetup(EXPIRED_LATENCY)
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -665,6 +671,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, latency expired" in {
         mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -758,6 +765,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .show method is called with a valid id parameter, latency expired" in {
         mockAndBasicSetup(EXPIRED_LATENCY)
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
@@ -852,6 +860,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, latency expired" in {
         mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
+        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
         val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
