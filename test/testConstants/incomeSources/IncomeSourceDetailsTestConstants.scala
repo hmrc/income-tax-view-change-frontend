@@ -168,7 +168,7 @@ object IncomeSourceDetailsTestConstants {
             dateStarted = Some(LocalDate.of(2022, 1, 1)),
             accountingPeriodStartDate = Some(LocalDate.of(2022, 4, 5)),
             accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
-            createdIncomeSourceId = Some(testSelfEmploymentId),
+            incomeSourceId = Some(testSelfEmploymentId),
             address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"))),
             countryCode = Some("A Country"),
             incomeSourcesAccountingMethod = Some("cash"),

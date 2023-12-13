@@ -30,14 +30,14 @@ import views.html.incomeSources.YouCannotGoBackError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class YouCannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val authenticate: AuthenticationPredicate,
-                                               val authorisedFunctions: AuthorisedFunctions,
-                                               val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val retrieveBtaNavBar: NavBarPredicate,
-                                               val cannotGoBackError: YouCannotGoBackError)
-                                              (implicit val appConfig: FrontendAppConfig,
+class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                                                      val authenticate: AuthenticationPredicate,
+                                                      val authorisedFunctions: AuthorisedFunctions,
+                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                      val retrieveBtaNavBar: NavBarPredicate,
+                                                      val cannotGoBackError: YouCannotGoBackError)
+                                                     (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
                                                val itvcErrorHandler: ItvcErrorHandler,

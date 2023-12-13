@@ -17,7 +17,7 @@
 package controllers.incomeSources.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -121,29 +121,28 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                     incomeSourceType: IncomeSourceType,
                     cashOrAccrualsFlag: Option[String] = None,
                     backUrl: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] =
-    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
 
-      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-      val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
-        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
+    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
+      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
 
-      {
-        if (incomeSourceType == SelfEmployment) {
-          handleUserActiveBusinessesCashOrAccruals(isAgent, errorHandler, incomeSourceType, cashOrAccrualsFlag)(
-            user, backUrl, postAction, messages)
-        } else {
-          loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, cashOrAccrualsFlag)(
-            user, backUrl, postAction, messages)
-        }
-      }.recover {
-        case ex: Exception =>
-          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-            s"Error getting BusinessEndDate page: ${ex.getMessage}")
-          errorHandler.showInternalServerError()
+    {
+      if (incomeSourceType == SelfEmployment) {
+        handleUserActiveBusinessesCashOrAccruals(isAgent, errorHandler, incomeSourceType, cashOrAccrualsFlag)(
+          user, backUrl, postAction, messages)
+      } else {
+        loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, cashOrAccrualsFlag)(
+          user, backUrl, postAction, messages)
       }
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting BusinessEndDate page: ${ex.getMessage}")
+        errorHandler.showInternalServerError()
     }
+  }
 
   private def actionIndividualSubmitRequest(incomeSourceType: IncomeSourceType): (Call, String, Call) = {
     incomeSourceType match {

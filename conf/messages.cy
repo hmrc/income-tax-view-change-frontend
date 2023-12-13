@@ -1437,9 +1437,9 @@ business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wn
 ## You cannot go back - Your business has been added page ##
 
 cannotGoBack.heading                                      = Ni allwch fynd yn ôl
-cannotGoBack.soleTraderAdded                              = Mae’ch busnes unig fasnachwr wedi’i ychwanegu.
-cannotGoBack.ukPropertyAdded                              = Mae’ch busnes eiddo yn y DU wedi’i ychwanegu.
-cannotGoBack.foreignPropertyAdded                         = Mae’ch busnes eiddo tramor wedi’i ychwanegu.
+cannotGoBack.soleTraderAdded                              = Mae’ch busnes unig fasnachwr wedi’i ychwanegu
+cannotGoBack.ukPropertyAdded                              = Mae’ch busnes eiddo yn y DU wedi’i ychwanegu
+cannotGoBack.foreignPropertyAdded                         = Mae’ch busnes eiddo tramor wedi’i ychwanegu
 
 cannotGoBack.manage.UK                                    = Mae’ch dull o adrodd ar gyfer eich busnes eiddo yn y DU ar gyfer blwyddyn dreth {0} to {1}
 cannotGoBack.manage.FP                                    = Mae’ch dull o adrodd ar gyfer eich busnes eiddo tramor ar gyfer blwyddyn dreth {0} to {1}
@@ -1451,6 +1451,11 @@ cannotGoBack.manage.quarterly                             = chwarterol
 cannotGoBack.youCan                                  = Gallwch wneud y canlynol:
 cannotGoBack.manageLink                              = bwrw golwg dros eich ffynonellau incwm a’u rheoli
 cannotGoBack.homeLink                                = mynd yn ôl i’r hafan
+
+cannotGoBack.warningMessage                        = Mae dal angen i chi ddewis dull o adrodd.  Os byddwch yn gadael y dudalen hon, byddwch wedi’ch trefnu i adrodd yn flynyddol am hyd at ddwy flwyddyn dreth.
+cannotGoBack.hasBeenAdded1                         = Gallwch ei reoli o’r dudalen
+cannotGoBack.hasBeenAdded2                         =
+cannotGoBack.needToChoose                          = Nawr mae angen i chi ddewis pa mor aml yr hoffech anfon diweddariadau am eich incwm a’ch treuliau at CThEF ar gyfer y ffynhonnell incwm hon.
 
 ## Income Source Creased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        = Mae
