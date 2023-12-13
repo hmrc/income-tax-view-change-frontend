@@ -81,11 +81,13 @@ object AddIncomeSourceData {
   val dateStartedField = "dateStarted"
   val accountingPeriodStartDateField = "accountingPeriodStartDate"
   val accountingPeriodEndDateField = "accountingPeriodEndDate"
-  val createdIncomeSourceIdField: String = "createdIncomeSourceId"
+  val incomeSourceIdField: String = "incomeSourceId"
   val addressField: String = "address"
   val countryCodeField: String = "countryCode"
   val incomeSourcesAccountingMethodField: String = "incomeSourcesAccountingMethod"
   val journeyIsCompleteField: String = "journeyIsComplete"
+  val incomeSourceAddedField: String = "incomeSourceAdded"
+
 
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 
