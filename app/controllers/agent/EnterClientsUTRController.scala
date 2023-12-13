@@ -24,6 +24,7 @@ import controllers.predicates.AuthPredicate.AuthPredicate
 import controllers.predicates.IncomeTaxAgentUser
 import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPredicates
 import forms.agent.ClientsUTRForm
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.agent.ClientDetailsService
@@ -91,14 +92,16 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                   ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
                   Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*))
               }.recover {
-                case any =>
+                case ex =>
+                  Logger("application")
+                    .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
                   Redirect(controllers.agent.routes.UTRErrorController.show)
               }
             case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
             =>
               val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
               Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
-            case Left(error)
+            case Left(_)
             =>
               throw new InternalServerException(s"[EnterClientsUTRController][submit] - Unexpected response received")
           }

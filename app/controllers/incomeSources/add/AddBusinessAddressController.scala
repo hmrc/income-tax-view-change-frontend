@@ -131,7 +131,8 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
   }.recover {
     case ex =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: $ex ")
+      Logger("application")
+        .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
       errorHandler.showInternalServerError()
   }
 

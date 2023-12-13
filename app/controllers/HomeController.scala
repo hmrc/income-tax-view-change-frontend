@@ -134,7 +134,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     }.recover {
       case ex =>
-        Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage}")
+        Logger("application")
+          .error(s"[HomeController][Home] Downstream error, ${ex.getMessage} - ${ex.getCause}")
         itvcErrorHandler.showInternalServerError()
     }
   }

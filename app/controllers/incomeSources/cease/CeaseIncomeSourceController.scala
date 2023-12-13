@@ -88,12 +88,12 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
           ))
         } recover {
           case ex: Exception =>
-            Logger("application").error(s"[CeaseIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage}")
+            Logger("application").error(s"[CeaseIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage} - ${ex.getCause}")
             showInternalServerError(isAgent)
         }
       case Left(ex) =>
         Logger("application").error(
-          s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage}")
+          s"[CeaseIncomeSourceController][handleRequest] - Error: ${ex.getMessage} - ${ex.getCause}")
         Future(showInternalServerError(isAgent))
     }
   }

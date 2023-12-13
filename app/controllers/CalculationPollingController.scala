@@ -64,7 +64,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
             Future.successful(itvcErrorHandler.showInternalServerError())
         } recover {
           case ex: Exception =>
-            Logger("application").error(s"[CalculationPollingController][calculationPoller] Polling failed with exception: ${ex.getMessage}")
+            Logger("application").error(s"[CalculationPollingController][calculationPoller] Polling failed with exception: ${ex.getMessage} - ${ex.getCause}")
             itvcErrorHandler.showInternalServerError()
         }
 
