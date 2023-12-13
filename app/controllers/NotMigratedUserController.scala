@@ -58,7 +58,8 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
       }
     } .recover {
         case ex =>
-          Logger("application").error(s"[NotMigratedUserController][NotMigrated] error, ${ex.getMessage} - ${ex.getCause}")
+          Logger("application")
+            .error(s"[NotMigratedUserController][NotMigrated] error, ${ex.getMessage} - ${ex.getCause}")
           itvcErrorHandler.showInternalServerError()
       }
   }

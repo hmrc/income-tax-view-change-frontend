@@ -254,7 +254,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   } recover {
     case ex: Exception =>
-      logAndShowError(isAgent, s"[handleValidForm]: Error updating reporting method: ${ex.getMessage}")
+      logAndShowError(isAgent, s"[handleValidForm]: Error updating reporting method: ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def getReportingMethod(reportingMethod: String): Option[String] = {

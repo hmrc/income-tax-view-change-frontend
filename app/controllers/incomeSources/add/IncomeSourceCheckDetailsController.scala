@@ -101,12 +101,12 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         ))
       case Left(ex) =>
         Logger("application").error(
-          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
+          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     } recover {
       case ex: Exception =>
         Logger("application").error(
-          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: Unable to construct getCheckPropertyViewModel ${ex.getMessage}")
+          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: Unable to construct getCheckPropertyViewModel ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -244,7 +244,8 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: - ${ex.getMessage} - ${ex.getCause}")
+        Logger("application")
+          .error(s"[IncomeSourceCheckDetailsController][handleSubmit]: - ${ex.getMessage} - ${ex.getCause}")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
     }
   }
