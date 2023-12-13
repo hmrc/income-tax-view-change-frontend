@@ -29,7 +29,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceAddedBackError
@@ -58,14 +58,22 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
     val warningMessage: String = s"! Warning ${messages("cannotGoBack.warningMessage")}"
 
     def getTitle(isAgent: Boolean): String = {
-      if (isAgent )messages("htmlTitle.agent", s"$title") else messages("htmlTitle", s"$title")
+      if (isAgent) messages("htmlTitle.agent", s"$title") else messages("htmlTitle", s"$title")
     }
   }
+
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"))))
 
   def mockMongo(journeyType: JourneyType): Unit = {
     setupMockGetMongo(Right(Some(sessionData(journeyType))))
   }
+
+  def authenticate(isAgent: Boolean): Unit = {
+    if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+  }
+
+  val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   "ReportingMethodSetBackErrorController" should {
     "redirect a user back to the custom error page" when {
@@ -80,120 +88,56 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
     }
 
     "feature switch is disabled" should {
-      "redirect to home page" in {
-        disableAllSwitches()
+      def fsRedirectTest(isAgent: Boolean) = {
+        s"redirect to home page (${if (isAgent) "agent" else "individual"})" in {
+          disableAllSwitches()
 
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          authenticate(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceAddedBackErrorController.show(UkProperty)(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+          val result: Future[Result] = if (isAgent) TestIncomeSourceAddedBackErrorController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+          else TestIncomeSourceAddedBackErrorController.show(UkProperty)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some({
+            if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+          })
+        }
       }
-      "redirect to home page (agent)" in {
-        disableAllSwitches()
-
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val result: Future[Result] = TestIncomeSourceAddedBackErrorController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
-      }
+      fsRedirectTest(false)
+      fsRedirectTest(true)
     }
 
     ".show" should {
-      "Display the you cannot go back error page (Individual, SelfEmployment)" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+      def showSuccess(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+        s"Display the you cannot go back error page (${if (isAgent) "agent" else "individual"}, $incomeSourceType)" in {
+          disableAllSwitches()
+          enable(IncomeSources)
 
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo(JourneyType(Add, SelfEmployment))
+          authenticate(isAgent)
+          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+          mockMongo(JourneyType(Add, SelfEmployment))
 
-        val result = TestIncomeSourceAddedBackErrorController.show(SelfEmployment)(fakeRequestWithActiveSession)
-        val document = Jsoup.parse(contentAsString(result))
+          val result = if (isAgent) TestIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+          else TestIncomeSourceAddedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
+          val document = Jsoup.parse(contentAsString(result))
 
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = false)
-        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
-      }
-      "Display the you cannot go back error page (Individual, UkProperty)" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo(JourneyType(Add, UkProperty))
-
-        val result = TestIncomeSourceAddedBackErrorController.show(UkProperty)(fakeRequestWithActiveSession)
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = false)
-        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
-      }
-      "Display the you cannot go back error page (Individual, ForeignProperty)" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo(JourneyType(Add, ForeignProperty))
-
-        val result = TestIncomeSourceAddedBackErrorController.show(ForeignProperty)(fakeRequestWithActiveSession)
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = false)
-        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
+          status(result) shouldBe OK
+          document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent)
+          document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
+        }
       }
 
-      "Display the you cannot go back error page (Agent, SelfEmployment)" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+      //      for (incomeSourceType <- incomeSourceTypes) yield {
+      //        showSuccess(false, incomeSourceType)
+      //        showSuccess(true, incomeSourceType)
+      //      }
 
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo(JourneyType(Add, SelfEmployment))
-
-        val result = TestIncomeSourceAddedBackErrorController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = true)
-        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
-      }
-      "Display the you cannot go back error page (Agent, UkProperty)" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo(JourneyType(Add, UkProperty))
-
-        val result = TestIncomeSourceAddedBackErrorController.showAgent(UkProperty)(fakeRequestConfirmedClient())
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = true)
-        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
-      }
-      "Display the you cannot go back error page (Agent, ForeignProperty)" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        mockMongo(JourneyType(Add, ForeignProperty))
-
-        val result = TestIncomeSourceAddedBackErrorController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-        val document = Jsoup.parse(contentAsString(result))
-
-        status(result) shouldBe OK
-        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = true)
-        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
-      }
+      showSuccess(false, SelfEmployment)
+      showSuccess(false, UkProperty)
+      showSuccess(false, ForeignProperty)
+      showSuccess(true, SelfEmployment)
+      showSuccess(true, UkProperty)
+      showSuccess(true, ForeignProperty)
     }
   }
 }
