@@ -32,9 +32,9 @@ continueButton: ContinueButton)
 
 @getCeasedMessage = @{
     incomeSourceType match {
-        case SelfEmployment => messages("cannot-go-back.sole-trader-ceased")
-        case UkProperty => messages("cannot-go-back.uk-property-ceased")
-        case ForeignProperty => messages("cannot-go-back.foreign-property-ceased")
+        case SelfEmployment => messages("cannotGoBack.sole-trader-ceased")
+        case UkProperty => messages("cannotGoBack.uk-property-ceased")
+        case ForeignProperty => messages("cannotGoBack.foreign-property-ceased")
     }
 }
 
@@ -48,12 +48,12 @@ else controllers.routes.HomeController.show().url
 }
 
 @mainTemplate(
-pageTitle = s"${messages("cannot-go-back.heading")} - $getCeasedMessage",
+pageTitle = s"${messages("cannotGoBack.heading")} - $getCeasedMessage",
 isAgent = isAgent,
 backUrl = None,
 btaNavPartial = user.btaNavPartial) {
 
-    @h1(msg = messages("cannot-go-back.heading"), classes = "govuk-heading-xl", id = Some("title"))
+    @h1(msg = messages("cannotGoBack.heading"), classes = "govuk-heading-xl", id = Some("title"))
 
     @h2(msg = getCeasedMessage, classes = "govuk-heading-m", optId = Some("heading"))
 
@@ -61,11 +61,11 @@ btaNavPartial = user.btaNavPartial) {
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@p(classes = "govuk-!-margin-bottom-4") {
-            @link(link = getManageUrl, messageKey = "cannot-go-back.manage-link", id = Some("manage-link"))
+            @link(link = getManageUrl, messageKey = "cannotGoBack.manage-link", id = Some("manage-link"))
             }</li>
 
         <li>@p(classes = "govuk-!-margin-bottom-4") {
-            @link(link = getHomeUrl, messageKey = "cannot-go-back.home-link", id = Some("home-link"))
+            @link(link = getHomeUrl, messageKey = "cannotGoBack.home-link", id = Some("home-link"))
             }</li>
     </ul>
 }

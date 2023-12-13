@@ -34,60 +34,60 @@ class IncomeSourceCeasedBackErrorView extends TestSupport{
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }
 
-  "YouCannotGoBackError - Individual" should {
+  "IncomeSourceCeasedBackError - Individual" should {
     "render self employment error page" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("heading").text() shouldBe messages("cannot-go-back.sole-trader-ceased")
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("home-link").text() shouldBe messages("cannot-go-back.home-link")
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("heading").text() shouldBe messages("cannotGoBack.sole-trader-ceased")
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manage-link")
+      document.getElementById("home-link").text() shouldBe messages("cannotGoBack.home-link")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
     }
     "render UK property - error page" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("heading").text() shouldBe messages("cannot-go-back.uk-property-ceased")
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("home-link").text() shouldBe messages("cannot-go-back.home-link")
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("heading").text() shouldBe messages("cannotGoBack.uk-property-ceased")
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manage-link")
+      document.getElementById("home-link").text() shouldBe messages("cannotGoBack.home-link")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
     }
     "render Foreign property - error page" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("heading").text() shouldBe messages("cannot-go-back.foreign-property-ceased")
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("home-link").text() shouldBe messages("cannot-go-back.home-link")
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("heading").text() shouldBe messages("cannotGoBack.foreign-property-ceased")
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manage-link")
+      document.getElementById("home-link").text() shouldBe messages("cannotGoBack.home-link")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
     }
   }
 
-  "YouCannotGoBackError - Agent" should {
+  "IncomeSourceCeasedBackError - Agent" should {
     "render self employment error page" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("heading").text() shouldBe messages("cannot-go-back.sole-trader-ceased")
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("home-link").text() shouldBe messages("cannot-go-back.home-link")
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("heading").text() shouldBe messages("cannotGoBack.sole-trader-ceased")
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manage-link")
+      document.getElementById("home-link").text() shouldBe messages("cannotGoBack.home-link")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
     }
     "render UK property - error page" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("heading").text() shouldBe messages("cannot-go-back.uk-property-ceased")
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("home-link").text() shouldBe messages("cannot-go-back.home-link")
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("heading").text() shouldBe messages("cannotGoBack.uk-property-ceased")
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manage-link")
+      document.getElementById("home-link").text() shouldBe messages("cannotGoBack.home-link")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }
     }
     "render Foreign property - error page" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementById("title").text() shouldBe messages("cannot-go-back.heading")
-      document.getElementById("heading").text() shouldBe messages("cannot-go-back.foreign-property-ceased")
-      document.getElementById("manage-link").text() shouldBe messages("cannot-go-back.manage-link")
-      document.getElementById("home-link").text() shouldBe messages("cannot-go-back.home-link")
+      document.getElementById("title").text() shouldBe messages("cannotGoBack.heading")
+      document.getElementById("heading").text() shouldBe messages("cannotGoBack.foreign-property-ceased")
+      document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manage-link")
+      document.getElementById("home-link").text() shouldBe messages("cannotGoBack.home-link")
       "not render the back button" in {
         Option(document.getElementById("back")).isDefined shouldBe false
       }

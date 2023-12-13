@@ -72,9 +72,9 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+    withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
 
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
+      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
         case Right(Some(id)) =>
 
           val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)

@@ -37,10 +37,6 @@ object Utilities {
   def userAuditDetails(user: MtdItUserBase[_]): JsObject =
     getBaseDetails(user) ++ Json.obj("nino" -> user.nino)
 
-  def userAuditDetailsNino(user: MtdItUserBase[_]): JsObject =
-    getBaseDetails(user) ++ Json.obj("nino" -> user.nino)
-
-
   def userType(userType: Option[AffinityGroup]): JsObject = userType match {
     case Some(Agent) => Json.obj("userType" -> "Agent")
     case Some(_) => Json.obj("userType" -> "Individual")

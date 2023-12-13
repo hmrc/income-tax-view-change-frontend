@@ -12,10 +12,10 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
 
-  val title = messagesAPI("cannot-go-back.heading")
-  val headingSE = messagesAPI("cannot-go-back.sole-trader-ceased")
-  val headingUk = messagesAPI("cannot-go-back.uk-property-ceased")
-  val headingFP = messagesAPI("cannot-go-back.foreign-property-ceased")
+  val title = messagesAPI("cannotGoBack.heading")
+  val headingSE = messagesAPI("cannotGoBack.sole-trader-ceased")
+  val headingUk = messagesAPI("cannotGoBack.uk-property-ceased")
+  val headingFP = messagesAPI("cannotGoBack.foreign-property-ceased")
 
   val url: IncomeSourceType => String = (incomeSourceType: IncomeSourceType) =>
     controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url

@@ -68,10 +68,11 @@ case class AddIncomeSourceData(
                                 dateStarted: Option[LocalDate] = None,
                                 accountingPeriodStartDate: Option[LocalDate] = None,
                                 accountingPeriodEndDate: Option[LocalDate] = None,
-                                createdIncomeSourceId: Option[String] = None,
+                                incomeSourceId: Option[String] = None,
                                 address: Option[Address] = None,
                                 countryCode: Option[String] = None,
                                 incomeSourcesAccountingMethod: Option[String] = None,
+                                incomeSourceAdded: Option[Boolean] = None,
                                 journeyIsComplete: Option[Boolean] = None
                               )
 
@@ -87,7 +88,6 @@ object AddIncomeSourceData {
   val incomeSourcesAccountingMethodField: String = "incomeSourcesAccountingMethod"
   val journeyIsCompleteField: String = "journeyIsComplete"
   val incomeSourceAddedField: String = "incomeSourceAdded"
-
 
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 
@@ -124,7 +124,6 @@ object CeaseIncomeSourceData {
   val dateCeasedField: String = "endDate"
   val ceasePropertyDeclare: String = "ceasePropertyDeclare"
   val journeyIsCompleteField: String = "journeyIsComplete"
-
 
   def getJSONKeyPath(name: String): String = s"ceaseIncomeSourceData.$name"
 
