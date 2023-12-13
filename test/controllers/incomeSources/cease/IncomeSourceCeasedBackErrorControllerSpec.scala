@@ -25,7 +25,6 @@ import mocks.services.MockSessionService
 import org.scalatest.Assertion
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
 import views.html.incomeSources.cease.IncomeSourceCeasedBackError
 

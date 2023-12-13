@@ -395,7 +395,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           }
         }
 
-        val expectedRedirectUrl = if(isAgent) {
+        val expectedRedirectUrl = if (isAgent) {
           routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType).url
         } else {
           routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url

@@ -31,18 +31,18 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceCeasedBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                                     val authenticate: AuthenticationPredicate,
-                                                     val authorisedFunctions: AuthorisedFunctions,
-                                                     val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                     val retrieveBtaNavBar: NavBarPredicate,
-                                                     val sessionService: SessionService,
-                                                     val cannotGoBackCeasedError: IncomeSourceCeasedBackError)
-                                                    (implicit val appConfig: FrontendAppConfig,
-                                                     mcc: MessagesControllerComponents,
-                                                     val ec: ExecutionContext,
-                                                     val itvcErrorHandler: ItvcErrorHandler,
-                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
+                                                      val authenticate: AuthenticationPredicate,
+                                                      val authorisedFunctions: AuthorisedFunctions,
+                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                      val retrieveBtaNavBar: NavBarPredicate,
+                                                      val sessionService: SessionService,
+                                                      val cannotGoBackCeasedError: IncomeSourceCeasedBackError)
+                                                     (implicit val appConfig: FrontendAppConfig,
+                                                      mcc: MessagesControllerComponents,
+                                                      val ec: ExecutionContext,
+                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)

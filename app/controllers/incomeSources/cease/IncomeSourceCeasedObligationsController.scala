@@ -54,7 +54,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
                                                         implicit override val mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,
                                                         dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker{
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
   private def getBusinessName(incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[String] = {
     user.incomeSources.businesses
@@ -65,20 +65,20 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
       updateMongoCeased(incomeSourceType)
-      val incomeSourceDetails : Future[( Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
+      val incomeSourceDetails: Future[(Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
         case SelfEmployment =>
-         val x = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
+          val x = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
           x
         case UkProperty =>
           Future.successful(
-              (user.incomeSources.properties
-                .filter(_.isUkProperty)
-                .map(xs => xs.incomeSourceId).headOption match {
-                case Some(incomeSourceId) =>
-                  Right(Some(incomeSourceId))
-                case None =>
-                  Left(new Error("IncomeSourceId not found for UK property"))
-              }, UkProperty)
+            (user.incomeSources.properties
+              .filter(_.isUkProperty)
+              .map(xs => xs.incomeSourceId).headOption match {
+              case Some(incomeSourceId) =>
+                Right(Some(incomeSourceId))
+              case None =>
+                Left(new Error("IncomeSourceId not found for UK property"))
+            }, UkProperty)
           )
         case ForeignProperty =>
           Future.successful(
@@ -138,7 +138,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(JourneyType(Cease, incomeSourceType).toString).flatMap {
       case Right(Some(sessionData)) =>
-        val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(CeaseIncomeSourceData(incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField), endDate = None, ceasePropertyDeclare = None, journeyIsComplete = None ))
+        val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(CeaseIncomeSourceData(incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField), endDate = None, ceasePropertyDeclare = None, journeyIsComplete = None))
         val updatedCeaseIncomeSourceSessionData = oldCeaseIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(ceaseIncomeSourceData = Some(updatedCeaseIncomeSourceSessionData))
 
