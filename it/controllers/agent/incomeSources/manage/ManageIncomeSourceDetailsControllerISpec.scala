@@ -17,14 +17,15 @@
 package controllers.agent.incomeSources.manage
 
 import config.featureswitch.{IncomeSources, TimeMachineAddYear}
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.LatencyDetails
+import models.incomeSourceDetails.{LatencyDetails, UIJourneySessionData}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import play.api.http.Status.OK
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
@@ -70,6 +71,10 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val messagesUnknown: String = messagesAPI("incomeSources.generic.unknown")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = JourneyType(Manage, incomeSourceType).toString)
 
   s"calling GET $manageSelfEmploymentShowAgentUrl" should {
     "render the Manage Self Employment business page for your client" when {
@@ -230,6 +235,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
 
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
 
         result should have(
@@ -258,6 +265,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
 
@@ -290,6 +299,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
 
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
+
         result should have(
           httpStatus(OK),
           pageTitleAgent("incomeSources.manage.business-manage-details.heading"),
@@ -311,6 +322,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-uk-property", clientDetailsWithConfirmation)
 
@@ -338,6 +351,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
 
@@ -367,6 +382,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
 
@@ -399,6 +416,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
+
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
 
         result should have(
@@ -422,6 +441,8 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
+
+        await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/manage/your-details-foreign-property", clientDetailsWithConfirmation)
 
