@@ -16,15 +16,14 @@
 
 package audit.models
 
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import auth.MtdItUser
-import config.featureswitch.CutOverCredits
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json._
+import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import uk.gov.hmrc.auth.core.AffinityGroup._
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 import java.time.LocalDate
@@ -46,7 +45,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
       saUtr = Some(testSaUtr),
       credId = Some(testCredId),
       userType = userType,
-      arn = if (userType.contains("Agent")) Some(testArn) else None
+      arn = if (userType.contains(Agent)) Some(testArn) else None
     ),
     payments = Seq(
       Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,

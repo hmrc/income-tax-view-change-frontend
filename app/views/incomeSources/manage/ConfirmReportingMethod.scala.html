@@ -90,7 +90,6 @@
             ))
         }
 
-
         @govukCheckboxes(Checkboxes(
             name = prefix,
             items = Seq(CheckboxItem(
@@ -100,7 +99,7 @@
                     value = getMessage(s"checkbox.$newReportingMethod")
                 ),
                 value = "true",
-                checked = form.value.contains(true),
+                checked = form.value.contains("true"),
 
             )),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))

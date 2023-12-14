@@ -51,7 +51,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   import play.twirl.api.Html
 
-  implicit val htmlEq =
+  implicit val htmlEq: Equality[Html] =
     new Equality[Html] {
       def areEqual(a: Html, b: Any): Boolean = {
         Jsoup.parse(a.toString()).text() == Jsoup.parse(b.toString).text()
