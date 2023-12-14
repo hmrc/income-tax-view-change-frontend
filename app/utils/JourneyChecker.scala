@@ -88,11 +88,11 @@ trait JourneyChecker extends IncomeSourcesUtils {
     }
   }
 
-  def withSessionData(journeyType: JourneyType, midwayFlag: Boolean = true, initialPage: Boolean = false)(codeBlock: UIJourneySessionData => Future[Result])
+  def withSessionData(journeyType: JourneyType, midwayFlag: Boolean = true, initialPage: Boolean = false, nonLoopFlag: Boolean = false)(codeBlock: UIJourneySessionData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       sessionService.getMongo(journeyType.toString).flatMap {
-        case Right(Some(data: UIJourneySessionData)) if isJourneyComplete(data, journeyType, midwayFlag) =>
+        case Right(Some(data: UIJourneySessionData)) if isJourneyComplete(data, journeyType, midwayFlag) && !nonLoopFlag =>
           redirectUrl(journeyType, useDefaultRedirect(data, journeyType, midwayFlag))(user)
         case Right(Some(data: UIJourneySessionData)) =>
           codeBlock(data)
@@ -108,7 +108,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
           val agentPrefix = if (isAgent(user)) "[Agent]" else ""
           Logger("application").error(s"$agentPrefix" +
             s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
-          Future.failed(ex)
+          homeRedirectUrl(journeyType)(user)
       }
     }
   }
