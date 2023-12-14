@@ -26,7 +26,6 @@ class IncomeSourceIdHash private(val hash: String) extends AnyVal {
   def findIncomeSourceIdMatchingHash(incomeSourceIdHash: IncomeSourceIdHash, ids: List[IncomeSourceId]): Either[Throwable, IncomeSourceId] = {
 
     val matchingIncomeSourceIds = ids.filter(_.toHash.hash == incomeSourceIdHash.hash)
-    println("LLLLLLLLL" + matchingIncomeSourceIds)
 
     val noIncomeSourceFound: Int = 0
     val success: Int = 1

@@ -205,8 +205,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
             }
         }
     }
-
-
   } recover {
     case ex: Exception =>
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -272,53 +270,59 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
-    // TODO do
-    val incomeSourceIdMaybe: Option[IncomeSourceId] = None
+    val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
+    hashCompareResult match {
+      case Some(Left(exception: Exception)) => Future.failed(exception)
+      case _ =>
+        val incomeSourceIdMaybe: Option[IncomeSourceId] = hashCompareResult.collect {
+          case Right(incomeSourceId) => Some(incomeSourceId)
+        }.flatten
 
-    getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap { actions =>
-      val (backAction, postAction, redirectAction) = actions
+        getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap { actions =>
+          val (backAction, postAction, redirectAction) = actions
 
-      incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)).bindFromRequest().fold(
-        hasErrors => {
-          Future.successful(BadRequest(incomeSourceEndDate(
-            incomeSourceEndDateForm = hasErrors,
-            postAction = postAction,
-            backUrl = backAction.url,
-            isAgent = isAgent,
-            incomeSourceType = incomeSourceType
-          )(user, messages)))
-        },
+          incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)).bindFromRequest().fold(
+            hasErrors => {
+              Future.successful(BadRequest(incomeSourceEndDate(
+                incomeSourceEndDateForm = hasErrors,
+                postAction = postAction,
+                backUrl = backAction.url,
+                isAgent = isAgent,
+                incomeSourceType = incomeSourceType
+              )(user, messages)))
+            },
 
-        validatedInput =>
-          sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
-            (incomeSourceType, incomeSourceIdMaybe) match {
-              case (SelfEmployment, Some(incomeSourceId)) =>
-                val result = Redirect(redirectAction)
-                sessionService.setMongoKey(
-                  CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
-                ).flatMap {
-                  case Right(_) =>
+            validatedInput =>
+              sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
+                (incomeSourceType, incomeSourceIdMaybe) match {
+                  case (SelfEmployment, Some(incomeSourceId)) =>
+                    val result = Redirect(redirectAction)
                     sessionService.setMongoKey(
-                      CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
+                      CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
                     ).flatMap {
-                      case Right(_) => Future.successful(result)
-                      case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
+                      case Right(_) =>
+                        sessionService.setMongoKey(
+                          CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
+                        ).flatMap {
+                          case Right(_) => Future.successful(result)
+                          case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
+                        }
+
+                      case Left(_) => Future.failed(new Error(s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
                     }
 
-                  case Left(_) => Future.failed(new Error(s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
+                  case _ =>
+                    val propertyEndDate = validatedInput.date.toString
+                    val result = Redirect(redirectAction)
+                    sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate, journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
+                      case Right(_) => Future.successful(result)
+                      case Left(exception) => Future.failed(exception)
+                    }
                 }
-
-              case _ =>
-                val propertyEndDate = validatedInput.date.toString
-                val result = Redirect(redirectAction)
-                sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate, journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
-                  case Right(_) => Future.successful(result)
-                  case Left(exception) => Future.failed(exception)
-                }
-            }
-          }
-      )
+              }
+          )
+        }
     }
   } recover {
     case ex: Exception =>
@@ -328,9 +332,9 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       errorHandler.showInternalServerError()
   }
 
-  private def getFilledForm(form: Form[DateFormElement],
-                            incomeSourceType: IncomeSourceType,
-                            isChange: Boolean)(implicit user: MtdItUser[_]): Future[Form[DateFormElement]] = {
+  def getFilledForm(form: Form[DateFormElement],
+                    incomeSourceType: IncomeSourceType,
+                    isChange: Boolean)(implicit user: MtdItUser[_]): Future[Form[DateFormElement]] = {
 
     if (isChange) {
       sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType)).flatMap {
