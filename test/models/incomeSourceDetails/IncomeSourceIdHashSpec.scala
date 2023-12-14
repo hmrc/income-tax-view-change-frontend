@@ -67,7 +67,7 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceIdList: List[IncomeSourceId] = List(incomeSourceId, incomeSourceId2)
 
         val incomeSourceIdHash = mkIncomeSourceId(testSelfEmploymentId).toHash
-        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(mkIncomeSourceId(testSelfEmploymentId).toHash, incomeSourceIdList)
+        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(incomeSourceIdList)
 
         incomeSourceIdMatchingList shouldBe Right(incomeSourceId)
       }
@@ -80,7 +80,7 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceIdList: List[IncomeSourceId] = List(incomeSourceId, incomeSourceId2)
 
         val incomeSourceIdHash = mkIncomeSourceId(testSelfEmploymentIdValidation).toHash
-        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(incomeSourceIdHash, incomeSourceIdList)
+        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(incomeSourceIdList)
 
         incomeSourceIdMatchingList shouldBe Left(NoIncomeSourceFound(incomeSourceIdHash.hash))
       }
@@ -92,7 +92,7 @@ class IncomeSourceIdHashSpec extends UnitSpec {
         val incomeSourceIdList: List[IncomeSourceId] = List(incomeSourceId, incomeSourceId)
 
         val incomeSourceIdHash = mkIncomeSourceId(testSelfEmploymentId).toHash
-        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(incomeSourceIdHash, incomeSourceIdList)
+        val incomeSourceIdMatchingList: Either[Throwable, IncomeSourceId] = incomeSourceIdHash.findIncomeSourceIdMatchingHash(incomeSourceIdList)
 
         incomeSourceIdMatchingList shouldBe Left(MultipleIncomeSourcesFound(incomeSourceIdHash.hash, incomeSourceIdList.map(_.value)))
       }
