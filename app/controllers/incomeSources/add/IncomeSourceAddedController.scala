@@ -95,7 +95,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     }.recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting IncomeSourceAdded page: ${ex.getMessage}, IncomeSourceType: $incomeSourceType")
+          s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
         if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
         else itvcErrorHandler.showInternalServerError()
     }

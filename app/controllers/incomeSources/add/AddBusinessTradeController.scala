@@ -130,9 +130,9 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       }
     }
   }.recover {
-    case error =>
+    case ex =>
+      Logger("application").error(s"[AddBusinessTradeController][handleRequest] - ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessTradeController][handleRequest] ${error.getMessage}")
       errorHandler.showInternalServerError()
   }
 
@@ -154,9 +154,9 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
         case Left(exception) => Future.failed(exception)
       }
     }.recover {
-      case exception =>
+      case ex =>
+        Logger("application").error(s"[AddBusinessTradeController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[AddBusinessTradeController][handleSubmitRequest] ${exception.getMessage}")
         errorHandler.showInternalServerError()
     }
   }

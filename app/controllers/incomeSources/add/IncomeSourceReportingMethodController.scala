@@ -114,10 +114,10 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
       case Left(ex) => Future.failed(ex)
     }.recover {
       case ex: Exception =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(
           s"[UKPropertyReportingMethodController][handleRequest]:" +
             s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         errorHandler.showInternalServerError()
     }
   }
@@ -217,9 +217,9 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
       case Left(ex) => Future.failed(ex)
     }.recover {
       case ex: Exception =>
-        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(s"[IncomeSourceReportingMethodController][handleSubmit]:" +
-          s"Unable to handle IncomeSourceReportingMethodController submit request for $incomeSourceType: ${ex.getMessage}")
+          s"Unable to handle IncomeSourceReportingMethodController submit request for $incomeSourceType: - ${ex.getMessage} - ${ex.getCause}")
+        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         errorHandler.showInternalServerError()
     }
   }
@@ -281,7 +281,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     handleUpdateResults(isAgent, incomeSourceType, id, results)
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: ${ex.getMessage}")
+      Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: - ${ex.getMessage} - ${ex.getCause}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
 

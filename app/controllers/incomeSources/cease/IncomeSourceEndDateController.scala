@@ -198,9 +198,9 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
     }
   } recover {
     case ex: Exception =>
-      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage}")
+        s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
 
@@ -319,9 +319,9 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
     }
   } recover {
     case ex: Exception =>
-      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[IncomeSourceEndDateController][handleSubmitRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage}")
+        s"[IncomeSourceEndDateController][handleSubmitRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
 
