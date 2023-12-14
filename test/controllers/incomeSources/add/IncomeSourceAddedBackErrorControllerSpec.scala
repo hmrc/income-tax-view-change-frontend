@@ -25,6 +25,7 @@ import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSour
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
+import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -66,6 +67,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
 
   def mockMongo(journeyType: JourneyType): Unit = {
     setupMockGetMongo(Right(Some(sessionData(journeyType))))
+    setupMockGetSessionKeyMongoTyped[String](Right(Some("1234")))
   }
 
   def authenticate(isAgent: Boolean): Unit = {
@@ -73,19 +75,14 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
     else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
   }
 
+  def postRequest(isAgent: Boolean) = {
+    if (isAgent) fakePostRequestConfirmedClient()
+    else fakePostRequestWithActiveSession
+  }
+
   val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   "ReportingMethodSetBackErrorController" should {
-    "redirect a user back to the custom error page" when {
-      "the user is not authenticated" should {
-        "redirect them to sign in" in {
-          setupMockAuthorisationException()
-          val result = TestIncomeSourceAddedBackErrorController.show(SelfEmployment)(fakeRequestWithActiveSession)
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-        }
-      }
-    }
 
     "feature switch is disabled" should {
       def fsRedirectTest(isAgent: Boolean) = {
@@ -103,32 +100,65 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
           })
         }
       }
+
       fsRedirectTest(false)
       fsRedirectTest(true)
     }
 
-    ".show" should {
-      for (incomeSourceType <- incomeSourceTypes) yield {
+    for (incomeSourceType <- incomeSourceTypes) yield {
+      ".show" should {
         showSuccess(false, incomeSourceType)
         showSuccess(true, incomeSourceType)
+
+        def showSuccess(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+          s"Display the you cannot go back error page (${if (isAgent) "agent" else "individual"}, $incomeSourceType)" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+
+            authenticate(isAgent)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockMongo(JourneyType(Add, SelfEmployment))
+
+            val result = if (isAgent) TestIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceAddedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val document = Jsoup.parse(contentAsString(result))
+
+            status(result) shouldBe OK
+            document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent)
+            document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
+          }
+        }
       }
+    }
 
-      def showSuccess(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
-        s"Display the you cannot go back error page (${if (isAgent) "agent" else "individual"}, $incomeSourceType)" in {
-          disableAllSwitches()
-          enable(IncomeSources)
+    for (incomeSourceType <- incomeSourceTypes) yield {
+      for (isAgent <- Seq(true, false)) yield {
+        ".submit" should {
+          s"return ${Status.SEE_OTHER} and redirect to $incomeSourceType reporting method page (isAgent = $isAgent)" in {
+            disableAllSwitches()
+            enable(IncomeSources)
 
-          authenticate(isAgent)
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          mockMongo(JourneyType(Add, SelfEmployment))
+            mockNoIncomeSources()
+            authenticate(isAgent)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            mockMongo(JourneyType(Add, incomeSourceType))
 
-          val result = if (isAgent) TestIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-          else TestIncomeSourceAddedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
-          val document = Jsoup.parse(contentAsString(result))
+            val result = if (isAgent) TestIncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)(postRequest(isAgent))
+            else TestIncomeSourceAddedBackErrorController.submit(incomeSourceType)(postRequest(isAgent))
 
-          status(result) shouldBe OK
-          document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent)
-          document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url)
+          }
+        }
+      }
+    }
+    "redirect a user back to the custom error page" when {
+      "the user is not authenticated" should {
+        "redirect them to sign in" in {
+          setupMockAuthorisationException()
+          val result = TestIncomeSourceAddedBackErrorController.show(SelfEmployment)(fakeRequestWithActiveSession)
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
       }
     }
