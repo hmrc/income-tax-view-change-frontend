@@ -20,13 +20,13 @@
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 @this(
-mainTemplate: unifiedLayout,
-h1: h1,
-h2: h2,
-link: link,
-p: p,
-formWithCSRF: FormWithCSRF,
-continueButton: ContinueButton)
+    mainTemplate: unifiedLayout,
+    h1: h1,
+    h2: h2,
+    link: link,
+    p: p,
+    formWithCSRF: FormWithCSRF,
+    continueButton: ContinueButton)
 
 @(isAgent: Boolean = false, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
 
@@ -39,19 +39,19 @@ continueButton: ContinueButton)
 }
 
 @getManageUrl = @{
-controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
+    controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
 }
 
 @getHomeUrl = @{
-if(isAgent) controllers.routes.HomeController.showAgent.url
-else controllers.routes.HomeController.show().url
+    if(isAgent) controllers.routes.HomeController.showAgent.url
+    else controllers.routes.HomeController.show().url
 }
 
 @mainTemplate(
-pageTitle = s"${messages("cannotGoBack.heading")} - $getCeasedMessage",
-isAgent = isAgent,
-backUrl = None,
-btaNavPartial = user.btaNavPartial) {
+    pageTitle = s"${messages("cannotGoBack.heading")} - $getCeasedMessage",
+    isAgent = isAgent,
+    backUrl = None,
+    btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = messages("cannotGoBack.heading"), classes = "govuk-heading-xl", id = Some("title"))
 
