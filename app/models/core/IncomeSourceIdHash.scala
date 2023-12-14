@@ -23,17 +23,17 @@ import scala.util.Try
 class IncomeSourceIdHash private(val hash: String) extends AnyVal {
   override def toString: String = s"IncomeSourceIdHash: $hash"
 
-  def findIncomeSourceIdMatchingHash(incomeSourceIdHash: IncomeSourceIdHash, ids: List[IncomeSourceId]): Either[Throwable, IncomeSourceId] = {
+  def findIncomeSourceIdMatchingHash(ids: List[IncomeSourceId]): Either[Throwable, IncomeSourceId] = {
 
-    val matchingIncomeSourceIds = ids.filter(_.toHash.hash == incomeSourceIdHash.hash)
+    val matchingIncomeSourceIds = ids.filter(_.toHash.hash == this.hash)
 
     val noIncomeSourceFound: Int = 0
     val success: Int = 1
 
     matchingIncomeSourceIds.length match {
-      case matchedHash if matchedHash == noIncomeSourceFound => Left(NoIncomeSourceFound(hash = incomeSourceIdHash.hash))
+      case matchedHash if matchedHash == noIncomeSourceFound => Left(NoIncomeSourceFound(hash = this.hash))
       case matchedHash if matchedHash == success => Right(matchingIncomeSourceIds.head)
-      case _ => Left(MultipleIncomeSourcesFound(hash = incomeSourceIdHash.hash, matchingIncomeSourceIds.map(_.value)))
+      case _ => Left(MultipleIncomeSourcesFound(hash = this.hash, matchingIncomeSourceIds.map(_.value)))
     }
   }
 
@@ -44,10 +44,11 @@ object IncomeSourceIdHash {
   def apply(id: IncomeSourceId): IncomeSourceIdHash = {
     mkIncomeSourceIdHash(id)
   }
+
   def mkIncomeSourceIdHash(id: IncomeSourceId): IncomeSourceIdHash = {
     val hashA = id.value.hashCode().abs.toString
     val hashB = id.value.reverse.hashCode().abs.toString
-    new IncomeSourceIdHash(s"${hashB}${hashA}")
+    new IncomeSourceIdHash(s"$hashB$hashA")
   }
 
   def mkFromQueryString(hashCodeAsString: String): Either[Throwable, IncomeSourceIdHash] = Try {

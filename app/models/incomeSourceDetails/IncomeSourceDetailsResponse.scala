@@ -100,7 +100,7 @@ case class IncomeSourceDetailsModel(nino: String,
   def compareHashToQueryString(incomeSourceIdHash: IncomeSourceIdHash)
                               (implicit user: MtdItUser[_]): Either[Throwable, IncomeSourceId] = {
     val allUserIncomeSourceIds: List[IncomeSourceId] = user.incomeSources.businesses.filterNot(_.isCeased).map(m => mkIncomeSourceId(m.incomeSourceId))
-    incomeSourceIdHash.findIncomeSourceIdMatchingHash(incomeSourceIdHash = incomeSourceIdHash, ids = allUserIncomeSourceIds)
+    incomeSourceIdHash.findIncomeSourceIdMatchingHash(ids = allUserIncomeSourceIds)
   }
 
   def getCashOrAccruals()

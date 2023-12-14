@@ -357,9 +357,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       hashCompareResult match {
         case Some(Left(exception: Exception)) => Future.failed(exception)
         case _ =>
-          val incomeSourceIdMaybe: Option[IncomeSourceId] = hashCompareResult.collect {
-            case Right(incomeSourceId) => Some(incomeSourceId)
-          }.flatten
+          val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
 
           for {
             value <- if (incomeSourceType == SelfEmployment) {

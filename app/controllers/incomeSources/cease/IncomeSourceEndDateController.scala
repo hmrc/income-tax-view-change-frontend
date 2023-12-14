@@ -178,9 +178,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
     hashCompareResult match {
       case Some(Left(exception: Exception)) => Future.failed(exception)
       case _ =>
-        val incomeSourceIdMaybe: Option[IncomeSourceId] = hashCompareResult.collect {
-          case Right(incomeSourceId) => Some(incomeSourceId)
-        }.flatten
+        val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
 
         getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
           actions =>
@@ -311,9 +309,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
     hashCompareResult match {
       case Some(Left(exception: Exception)) => Future.failed(exception)
       case _ =>
-        val incomeSourceIdMaybe: Option[IncomeSourceId] = hashCompareResult.collect {
-          case Right(incomeSourceId) => Some(incomeSourceId)
-        }.flatten
+        val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
+
         getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap { actions =>
           val (backAction, postAction, redirectAction) = actions
 
