@@ -1488,7 +1488,6 @@ cannotGoBack.sole-trader-ceased                       = Your sole trader busines
 cannotGoBack.uk-property-ceased                       = Your UK property business has ceased.
 cannotGoBack.foreign-property-ceased                  = Your foreign property business has ceased.
 
-
 cannotGoBack.warningMessage                               = You still need to choose a reporting method. If you leave this page, you will be set to report annually for up to two tax years.
 cannotGoBack.hasBeenAdded1                                = You can manage it from the
 cannotGoBack.hasBeenAdded2                                = page.
