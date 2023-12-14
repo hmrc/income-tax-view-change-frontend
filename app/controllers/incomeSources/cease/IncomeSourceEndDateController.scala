@@ -185,7 +185,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
             val (backAction: Call, postAction: Call, _) = actions
             (incomeSourceType, id) match {
               case (SelfEmployment, None) =>
-                Future.failed(new Exception(s"Missing income source ID"))
+                Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
               case _ =>
                 getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
                   form: Form[DateFormElement] =>
