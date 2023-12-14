@@ -17,7 +17,7 @@
 package models.btaNavBar
 
 import auth.MtdItUser
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json}
 import play.twirl.api.Html
 
 case class BtaNavBarRequest[A](request: MtdItUser[A], serviceInfoContent: Option[Html])
@@ -27,7 +27,7 @@ case class ListLinks(message: String, url: String, alerts: Option[String] = None
 case class NavLinks(en: String, cy: String, url: String, alerts: Option[Int] = None)
 
 object NavLinks {
-  implicit val format = Json.format[NavLinks]
+  implicit val format: Format[NavLinks] = Json.format[NavLinks]
 }
 
 case class NavContent(home: NavLinks,
@@ -38,5 +38,5 @@ case class NavContent(home: NavLinks,
                      )
 
 object NavContent {
-  implicit val format = Json.format[NavContent]
+  implicit val format: Format[NavContent] = Json.format[NavContent]
 }

@@ -20,25 +20,24 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.IncomeSourceType
-import enums.JourneyType.{Add, JourneyType}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import play.api.mvc._
-import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
+import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.add.{IncomeSourceNotAddedError, YouCannotGoBackError}
+import views.html.incomeSources.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class YouCannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val authenticate: AuthenticationPredicate,
-                                               val authorisedFunctions: AuthorisedFunctions,
-                                               val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val retrieveBtaNavBar: NavBarPredicate,
-                                               val cannotGoBackError: YouCannotGoBackError)
-                                              (implicit val appConfig: FrontendAppConfig,
+class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                                                      val authenticate: AuthenticationPredicate,
+                                                      val authorisedFunctions: AuthorisedFunctions,
+                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                      val retrieveBtaNavBar: NavBarPredicate,
+                                                      val cannotGoBackError: YouCannotGoBackError)
+                                                     (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
                                                val itvcErrorHandler: ItvcErrorHandler,
@@ -47,7 +46,16 @@ class YouCannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionT
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType)))
+    val subheadingContent = getSubheadingContent(incomeSourceType)
+    Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))
+  }
+
+  def getSubheadingContent(incomeSourceType: IncomeSourceType)(implicit request: Request[_]): String = {
+    incomeSourceType match {
+      case SelfEmployment => messagesApi.preferred(request)("cannotGoBack.soleTraderAdded")
+      case UkProperty => messagesApi.preferred(request)("cannotGoBack.ukPropertyAdded")
+      case ForeignProperty => messagesApi.preferred(request)("cannotGoBack.foreignPropertyAdded")
+    }
   }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
@@ -71,4 +79,3 @@ class YouCannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionT
         }
   }
 }
-

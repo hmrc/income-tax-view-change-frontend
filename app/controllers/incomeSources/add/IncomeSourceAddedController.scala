@@ -23,9 +23,9 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -72,9 +72,9 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+    withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
 
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.createdIncomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
+      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
         case Right(Some(id)) =>
 
           val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
@@ -95,7 +95,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     }.recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting IncomeSourceAdded page: ${ex.getMessage}, IncomeSourceType: $incomeSourceType")
+          s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
         if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
         else itvcErrorHandler.showInternalServerError()
     }
@@ -133,7 +133,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(hasBeenAdded = Some(true))
+        val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
         sessionService.setMongoData(uiJourneySessionData)

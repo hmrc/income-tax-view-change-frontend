@@ -39,7 +39,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSelfEmploymentIdHashed, testSessionId}
+import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import java.time.LocalDate
@@ -96,7 +96,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int = 2023
   }
 
-  def config: Map[String, String] = Map(
+  def config: Map[String, Object] = Map(
+    "play.filters.disabled" -> Seq("uk.gov.hmrc.play.bootstrap.frontend.filters.SessionIdFilter"),
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
@@ -185,9 +186,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
       When(s"I call POST /report-quarterly/income-and-expenses/view/agents" + uri)
-      buildClient("/agents" + uri)
+      buildClient("/agents" + uri).withMethod("POST")
         .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
-          "Csrf-Token" -> "nocheck", "X-Session-ID" -> testSessionId)
+          "Csrf-Token" -> "nocheck",
+          "X-Session-ID" -> testSessionId,
+          "X-Session-Id" -> testSessionId,
+          "sessionId-qqq" -> testSessionId)
         .post(body).futureValue
     }
 
@@ -533,6 +537,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getBusinessEndDate(session: Map[String, String]): WSResponse = get(s"/income-sources/cease/business-end-date?id=$testSelfEmploymentIdHashed", session)
 
     def getAddIncomeSource(session: Map[String, String]): WSResponse = get(uri = s"/income-sources/add/new-income-sources", session)
+
+    def getManageSECannotGoBack: WSResponse = get(s"/income-sources/manage/manage-business-cannot-go-back", clientDetailsWithConfirmation)
+
+    def getManageUKPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back", clientDetailsWithConfirmation)
+
+    def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back", clientDetailsWithConfirmation)
   }
 
   def unauthorisedTest(uri: String): Unit = {

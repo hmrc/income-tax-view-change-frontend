@@ -17,7 +17,6 @@
 package controllers.incomeSources.cease
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
@@ -34,13 +33,13 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.IncomeSourceEndDate
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPredicate,
@@ -207,9 +206,9 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
     }
   } recover {
     case ex: Exception =>
-      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} =${ex.getCause}=")
+        s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
 
@@ -267,6 +266,43 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         }
   }
 
+  private def handleValidatedInput(validatedInput: DateFormElement,
+                                   incomeSourceType: IncomeSourceType,
+                                   incomeSourceIdMaybe: Option[IncomeSourceId],
+                                   redirectAction: Call)(
+                                    implicit headerCarrier: HeaderCarrier) = {
+    sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
+      (incomeSourceType, incomeSourceIdMaybe) match {
+        case (SelfEmployment, Some(incomeSourceId)) =>
+          val result = Redirect(redirectAction)
+          sessionService.setMongoKey(
+            CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
+          ).flatMap {
+            case Right(_) =>
+              sessionService.setMongoKey(
+                CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
+              ).flatMap {
+                case Right(_) => Future.successful(result)
+                case Left(_) => Future.failed(new Error(
+                  s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
+              }
+
+            case Left(_) => Future.failed(new Error(
+              s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
+          }
+
+        case _ =>
+          val propertyEndDate = validatedInput.date.toString
+          val result = Redirect(redirectAction)
+          sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate,
+            journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
+            case Right(_) => Future.successful(result)
+            case Left(exception) => Future.failed(exception)
+          }
+      }
+    }
+  }
+
   def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
                          (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
 
@@ -278,7 +314,6 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         val incomeSourceIdMaybe: Option[IncomeSourceId] = hashCompareResult.collect {
           case Right(incomeSourceId) => Some(incomeSourceId)
         }.flatten
-
         getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap { actions =>
           val (backAction, postAction, redirectAction) = actions
 
@@ -292,43 +327,16 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                 incomeSourceType = incomeSourceType
               )(user, messages)))
             },
-
-            validatedInput =>
-              sessionService.createSession(JourneyType(Cease, incomeSourceType).toString).flatMap { _ =>
-                (incomeSourceType, incomeSourceIdMaybe) match {
-                  case (SelfEmployment, Some(incomeSourceId)) =>
-                    val result = Redirect(redirectAction)
-                    sessionService.setMongoKey(
-                      CeaseIncomeSourceData.dateCeasedField, validatedInput.date.toString, JourneyType(Cease, incomeSourceType)
-                    ).flatMap {
-                      case Right(_) =>
-                        sessionService.setMongoKey(
-                          CeaseIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Cease, incomeSourceType)
-                        ).flatMap {
-                          case Right(_) => Future.successful(result)
-                          case Left(_) => Future.failed(new Error(s"Failed to set income source id in session storage. incomeSourceType: $incomeSourceType. incomeSourceType: $incomeSourceType"))
-                        }
-
-                      case Left(_) => Future.failed(new Error(s"Failed to set end date value in session storage. incomeSourceType: $incomeSourceType, incomeSourceType: $incomeSourceType"))
-                    }
-
-                  case _ =>
-                    val propertyEndDate = validatedInput.date.toString
-                    val result = Redirect(redirectAction)
-                    sessionService.setMongoKey(key = CeaseIncomeSourceData.dateCeasedField, value = propertyEndDate, journeyType = JourneyType(Cease, incomeSourceType)).flatMap {
-                      case Right(_) => Future.successful(result)
-                      case Left(exception) => Future.failed(exception)
-                    }
-                }
-              }
+            validatedInput => handleValidatedInput(validatedInput, incomeSourceType, incomeSourceIdMaybe,
+              redirectAction)
           )
         }
     }
   } recover {
     case ex: Exception =>
-      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[IncomeSourceEndDateController][handleSubmitRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage}")
+        s"[IncomeSourceEndDateController][handleSubmitRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
 

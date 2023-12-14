@@ -19,7 +19,7 @@ package controllers
 import audit.AuditingService
 import auth.MtdItUser
 import config._
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.utils.SessionKeys.calcPagesBackPage
@@ -76,7 +76,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
             Logger("application").warn(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data could be retrieved. Not found")
             itvcErrorHandler.showInternalServerError()
         }
-      case error: LiabilityCalculationError if error.status == NOT_FOUND =>
+      case error: LiabilityCalculationError if error.status == NO_CONTENT =>
         Logger("application").info(s"[IncomeSummaryController][showIncomeSummary[$taxYear]] No income data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>

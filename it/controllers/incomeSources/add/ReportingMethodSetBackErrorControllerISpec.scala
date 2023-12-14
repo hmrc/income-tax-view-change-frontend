@@ -8,18 +8,18 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
+class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
 
-  private lazy val backErrorController = controllers.incomeSources.add.routes.YouCannotGoBackErrorController
+  private lazy val backErrorController = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController
 
   val selfEmploymentBackErrorUrl: String = backErrorController.show(SelfEmployment).url
   val ukPropertyBackErrorUrl: String = backErrorController.show(UkProperty).url
   val foreignPropertyBackErrorUrl: String = backErrorController.show(ForeignProperty).url
 
-  val title = messagesAPI("cannot-go-back.heading")
-  val headingSE = messagesAPI("cannot-go-back.sole-trader")
-  val headingUk = messagesAPI("cannot-go-back.uk-property")
-  val headingFP = messagesAPI("cannot-go-back.foreign-property")
+  val title = messagesAPI("cannotGoBack.heading")
+  val headingSE = messagesAPI("cannotGoBack.soleTraderAdded")
+  val headingUk = messagesAPI("cannotGoBack.ukPropertyAdded")
+  val headingFP = messagesAPI("cannotGoBack.foreignPropertyAdded")
 
   s"calling GET $selfEmploymentBackErrorUrl" should {
     "render the self employment business not added error page" when {
@@ -36,7 +36,7 @@ class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(s"$title - $headingSE")
+          pageTitleIndividual(s"$title")
         )
       }
     }
@@ -73,7 +73,7 @@ class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(s"$title - $headingUk")
+          pageTitleIndividual(s"$title")
         )
       }
     }
@@ -110,7 +110,7 @@ class YouCannotGoBackErrorControllerISpec extends ComponentSpecBase{
 
         result should have(
           httpStatus(OK),
-          pageTitleIndividual(s"$title - $headingFP")
+          pageTitleIndividual(s"$title")
         )
       }
     }

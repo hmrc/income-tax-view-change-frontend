@@ -117,7 +117,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, SelfEmployment)) {
+    withSessionData(JourneyType(Add, SelfEmployment)) { _ =>
       getBusinessName(isChange).flatMap {
         nameOpt =>
           val filledForm = nameOpt.fold(BusinessNameForm.form)(name =>
@@ -130,7 +130,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       }.recover {
         case ex =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"[AddBusinessNameController][handleRequest] ${ex.getMessage}")
+          Logger("application").error(s"[AddBusinessNameController][handleRequest] - ${ex.getMessage} - ${ex.getCause}")
           errorHandler.showInternalServerError()
       }
     }
@@ -206,9 +206,10 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       }
     }
   }.recover {
-    case exception =>
+    case ex =>
+      Logger("application")
+        .error(s"[AddBusinessNameController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage}")
       errorHandler.showInternalServerError()
   }
 

@@ -20,7 +20,7 @@ import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import config.featureswitch.{IncomeSources, TimeMachineAddYear}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.Add
+import enums.JourneyType.{Add, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.stubGetITSAStatusDetailsError
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -126,11 +126,15 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   )(FakeRequest())
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
-
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
   }
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = JourneyType(Add, incomeSourceType).toString,
+    addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId))))
+
 
   def setupStubCalls(incomeSourceType: IncomeSourceType, scenario: ReportingMethodScenario): Unit = {
     Given("Income Sources FS is enabled")
@@ -149,14 +153,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
     }
 
-    incomeSourceType match {
-      case SelfEmployment => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
-      case UkProperty => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
-      case ForeignProperty => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
-    }
+    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
     And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
     ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
@@ -226,6 +223,9 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       pageTitleIndividual("incomeSources.add.incomeSourceReportingMethod.heading"),
       elementCountBySelector("#add-uk-property-reporting-method-form > legend:nth-of-type(2)")(0))
 
+    And("Mongo storage is successfully set")
+    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
+
     if (scenario.isLegacy) {
       result should have(
         elementTextBySelectorList("#add-uk-property-reporting-method-form", "legend:nth-of-type(1)")(s"Tax year 2023-2024")
@@ -247,6 +247,9 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     result should have(
       httpStatus(OK),
       pageTitleIndividual("incomeSources.add.incomeSourceReportingMethod.heading"))
+
+    And("Mongo storage is successfully set")
+    sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, JourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
 
     val currentTaxYear = dateService.getCurrentTaxYearEnd()
     val taxYear1: Int = currentTaxYear
@@ -471,15 +474,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       "tax_year_2_reporting_method" -> Seq("Q")
     )
 
-    incomeSourceType match {
-      case SelfEmployment => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
-        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
-      case UkProperty => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
-        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
-      case ForeignProperty => await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-FP",
-        addIncomeSourceData = Some(AddIncomeSourceData(createdIncomeSourceId = Some(testSelfEmploymentId))))))
-    }
-
+    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
     val result: WSResponse = IncomeTaxViewChangeFrontend.post(uri(incomeSourceType))(formData)
 
     AuditStub.verifyAuditContainsDetail(

@@ -31,7 +31,6 @@ object IncomeSourceIdHashSpecification extends Properties("IncomeSourceId") {
   property("make sure hash is unique") = forAll(incomeSourceIdGen) { ids =>
     val hashSet: List[String] = ids.distinct.map { i =>
       val incomeSourceId = mkIncomeSourceId( i.mkString(""))
-      //println(i.mkString(""))
       mkIncomeSourceIdHash(incomeSourceId).hash
     }
     ids.forall(x => x.mkString("").nonEmpty) &&

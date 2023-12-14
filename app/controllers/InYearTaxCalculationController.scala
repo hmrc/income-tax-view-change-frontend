@@ -30,7 +30,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{CalculationService, DateService, DateServiceInterface, IncomeSourceDetailsService}
+import services.{CalculationService, DateServiceInterface, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.InYearTaxCalculationView
@@ -85,7 +85,7 @@ class InYearTaxCalculationController @Inject()(
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp)(messages, user, appConfig))
           .addingToSession(calcPagesBackPage -> "submission")
-      case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NOT_FOUND =>
+      case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("[InYearTaxCalculationController][show] No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>

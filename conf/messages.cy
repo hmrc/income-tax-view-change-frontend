@@ -1436,13 +1436,26 @@ business-added.previous-tax-years-t1                    = Mae’n rhaid i chi wn
 
 ## You cannot go back - Your business has been added page ##
 
-cannot-go-back.heading                                  = Ni allwch fynd yn ôl
-cannot-go-back.sole-trader                              = Mae’ch busnes unig fasnachwr wedi’i ychwanegu.
-cannot-go-back.uk-property                              = Mae’ch busnes eiddo yn y DU wedi’i ychwanegu.
-cannot-go-back.foreign-property                         = Mae’ch busnes eiddo tramor wedi’i ychwanegu.
-cannot-go-back.you-can                                  = Gallwch wneud y canlynol:
-cannot-go-back.manage-link                              = bwrw golwg dros eich ffynonellau incwm a’u rheoli
-cannot-go-back.home-link                                = mynd yn ôl i’r hafan
+cannotGoBack.heading                                      = Ni allwch fynd yn ôl
+cannotGoBack.soleTraderAdded                              = Mae’ch busnes unig fasnachwr wedi’i ychwanegu
+cannotGoBack.ukPropertyAdded                              = Mae’ch busnes eiddo yn y DU wedi’i ychwanegu
+cannotGoBack.foreignPropertyAdded                         = Mae’ch busnes eiddo tramor wedi’i ychwanegu
+
+cannotGoBack.manage.UK                                    = Mae’ch dull o adrodd ar gyfer eich busnes eiddo yn y DU ar gyfer blwyddyn dreth {0} to {1}
+cannotGoBack.manage.FP                                    = Mae’ch dull o adrodd ar gyfer eich busnes eiddo tramor ar gyfer blwyddyn dreth {0} to {1}
+cannotGoBack.manage.SE                                    = Mae’ch dull o adrodd ar gyfer eich busnes unig fasnachwr ar gyfer blwyddyn dreth {0} to {1}
+cannotGoBack.manage.reportingMethod                       = wedi newid i adroddiadau {0}.
+cannotGoBack.manage.annual                                = blynyddol
+cannotGoBack.manage.quarterly                             = chwarterol
+
+cannotGoBack.youCan                                  = Gallwch wneud y canlynol:
+cannotGoBack.manageLink                              = bwrw golwg dros eich ffynonellau incwm a’u rheoli
+cannotGoBack.homeLink                                = mynd yn ôl i’r hafan
+
+cannotGoBack.warningMessage                        = Mae dal angen i chi ddewis dull o adrodd.  Os byddwch yn gadael y dudalen hon, byddwch wedi’ch trefnu i adrodd yn flynyddol am hyd at ddwy flwyddyn dreth.
+cannotGoBack.hasBeenAdded1                         = Gallwch ei reoli o’r dudalen
+cannotGoBack.hasBeenAdded2                         =
+cannotGoBack.needToChoose                          = Nawr mae angen i chi ddewis pa mor aml yr hoffech anfon diweddariadau am eich incwm a’ch treuliau at CThEF ar gyfer y ffynhonnell incwm hon.
 
 ## Income Source Creased Obligation Page ##
 business-ceased.obligation.heading1.se.part1                        = Mae
@@ -1515,6 +1528,17 @@ incomeSources.add.manageObligations.uk-property                       =   eiddo 
 incomeSources.add.manageObligations.foreign-property                  =   eiddo tramor
 incomeSources.add.manageObligations.heading                           =   Yr hyn y mae’n rhaid i chi ei wneud
 # manage journey manage income source
+incomeSources.manage.quarterly-period                                 =   Cyfnod chwarterol
+incomeSources.manage.quarterly-period.standard                        =   Safonol
+incomeSources.manage.quarterly-period.calendar                        =   Calendr
+incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
+incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod chwarterol calendr?
+incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r ffynhonnell incwm hon yn adrodd o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
+incomeSources.manage.quarterly-period.standard.content.p2             =   Gallwch newid hyn i adrodd o’r 1af o’r mis, yn ôl chwarterau calendr, yn eich meddalwedd sy’n cydweddu os yw’n gallu gwneud hynny.
+incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r ffynhonnell incwm hon yn adrodd o 1 Ebrill yn ôl chwarterau calendr.
+incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
+incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am gyfnodau chwarterol
+
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
 incomeSources.manage.business-manage-details.sole-trader-section      =   Busnesau unig fasnachwr
 incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes

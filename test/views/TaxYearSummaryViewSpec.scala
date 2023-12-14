@@ -289,7 +289,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     val taxCalculationNoData: String = messages("tax-year-summary.tax-calculation.no-calc")
     val forecastNoData: String = messages("forecast_taxCalc.noForecast.heading")
     val forecastNoDataNote: String = messages("forecast_taxCalc.noForecast.text")
-    val unattendedCalcPara: String = s"! ${messages("tax-year-summary.tax-calculation.unattended-calc")}"
+    val unattendedCalcPara: String = s"! Warning ${messages("tax-year-summary.tax-calculation.unattended-calc")}"
     val taxCalculationNoDataNote: String = messages("tax-year-summary.tax-calculation.no-calc.note")
     val payments: String = messages("tax-year-summary.payments")
     val updates: String = messages("tax-year-summary.updates")

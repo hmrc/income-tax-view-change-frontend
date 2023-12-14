@@ -20,59 +20,59 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockSessionService
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.add.YouCannotGoBackError
+import views.html.incomeSources.add.IncomeSourceAddedBackError
 
 import scala.concurrent.Future
 
-class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching {
+class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
 
-  object TestYouCannotGoBackController extends YouCannotGoBackErrorController(
+  object TestIncomeSourceAddedBackErrorController extends IncomeSourceAddedBackErrorController(
     app.injector.instanceOf[SessionTimeoutPredicate],
     MockAuthenticationPredicate,
     mockAuthService,
     MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[NavBarPredicate],
-    app.injector.instanceOf[YouCannotGoBackError]
+    app.injector.instanceOf[IncomeSourceAddedBackError],
+    mockSessionService
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
 
-    val title: String = messages("cannot-go-back.heading")
-    val messageSE: String = messages("cannot-go-back.sole-trader")
-    val messageUK: String = messages("cannot-go-back.uk-property")
-    val messageFP: String = messages("cannot-go-back.foreign-property")
+    val title: String = messages("cannotGoBack.heading")
+    val warningMessage: String = s"! Warning ${messages("cannotGoBack.warningMessage")}"
 
-    def getTitle(incomeSourceType: IncomeSourceType, isAgent: Boolean): String = {
-      (isAgent, incomeSourceType) match {
-        case (false, SelfEmployment) => messages("htmlTitle", s"$title - $messageSE")
-        case (false, UkProperty) => messages("htmlTitle", s"$title - $messageUK")
-        case (false, ForeignProperty) => messages("htmlTitle", s"$title - $messageFP")
-        case (true, SelfEmployment) => messages("htmlTitle.agent", s"$title - $messageSE")
-        case (true, UkProperty) => messages("htmlTitle.agent", s"$title - $messageUK")
-        case (true, ForeignProperty) => messages("htmlTitle.agent", s"$title - $messageFP")
-      }
+    def getTitle(isAgent: Boolean): String = {
+      if (isAgent )messages("htmlTitle.agent", s"$title") else messages("htmlTitle", s"$title")
     }
   }
+  def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"))))
 
-  "YouCannotGoBackErrorController" should {
+  def mockMongo(journeyType: JourneyType): Unit = {
+    setupMockGetMongo(Right(Some(sessionData(journeyType))))
+  }
+
+  "ReportingMethodSetBackErrorController" should {
     "redirect a user back to the custom error page" when {
       "the user is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
-          val result = TestYouCannotGoBackController.show(SelfEmployment)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceAddedBackErrorController.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -86,7 +86,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestYouCannotGoBackController.show(UkProperty)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedBackErrorController.show(UkProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -96,7 +96,7 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestYouCannotGoBackController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceAddedBackErrorController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -109,13 +109,14 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockMongo(JourneyType(Add, SelfEmployment))
 
-        val result = TestYouCannotGoBackController.show(SelfEmployment)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceAddedBackErrorController.show(SelfEmployment)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(SelfEmployment, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageSE
+        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = false)
+        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
       }
       "Display the you cannot go back error page (Individual, UkProperty)" in {
         disableAllSwitches()
@@ -123,13 +124,14 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockMongo(JourneyType(Add, UkProperty))
 
-        val result = TestYouCannotGoBackController.show(UkProperty)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceAddedBackErrorController.show(UkProperty)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(UkProperty, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageUK
+        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = false)
+        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
       }
       "Display the you cannot go back error page (Individual, ForeignProperty)" in {
         disableAllSwitches()
@@ -137,13 +139,14 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockMongo(JourneyType(Add, ForeignProperty))
 
-        val result = TestYouCannotGoBackController.show(ForeignProperty)(fakeRequestWithActiveSession)
+        val result = TestIncomeSourceAddedBackErrorController.show(ForeignProperty)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(ForeignProperty, isAgent = false)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageFP
+        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = false)
+        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
       }
 
       "Display the you cannot go back error page (Agent, SelfEmployment)" in {
@@ -152,13 +155,14 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockMongo(JourneyType(Add, SelfEmployment))
 
-        val result = TestYouCannotGoBackController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceAddedBackErrorController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(SelfEmployment, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageSE
+        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = true)
+        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
       }
       "Display the you cannot go back error page (Agent, UkProperty)" in {
         disableAllSwitches()
@@ -166,13 +170,14 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockMongo(JourneyType(Add, UkProperty))
 
-        val result = TestYouCannotGoBackController.showAgent(UkProperty)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceAddedBackErrorController.showAgent(UkProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(UkProperty, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageUK
+        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = true)
+        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
       }
       "Display the you cannot go back error page (Agent, ForeignProperty)" in {
         disableAllSwitches()
@@ -180,13 +185,14 @@ class YouCannotGoBackErrorControllerSpec extends TestSupport with MockAuthentica
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+        mockMongo(JourneyType(Add, ForeignProperty))
 
-        val result = TestYouCannotGoBackController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+        val result = TestIncomeSourceAddedBackErrorController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe OK
-        document.title shouldBe TestYouCannotGoBackController.getTitle(ForeignProperty, isAgent = true)
-        document.getElementById("heading").text() shouldBe TestYouCannotGoBackController.messageFP
+        document.title shouldBe TestIncomeSourceAddedBackErrorController.getTitle(isAgent = true)
+        document.getElementById("warning-message").text() shouldBe TestIncomeSourceAddedBackErrorController.warningMessage
       }
     }
   }

@@ -17,7 +17,7 @@
 package controllers.incomeSources.manage
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
@@ -33,7 +33,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
@@ -56,7 +56,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
 
   def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
@@ -129,7 +129,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               case Left(exception: Exception) => Future.failed(exception)
               case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
               case Right(incomeSourceId: IncomeSourceId) =>
-
                 sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
                   sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
                     case Right(_) => handleRequest(
@@ -141,13 +140,13 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                     )
                     case Left(exception) => Future.failed(exception)
                   }
+                }.recover {
+                  case ex =>
+                    Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] - ${ex.getMessage} - ${ex.getCause}")
+                    itvcErrorHandler.showInternalServerError()
                 }
             }
         }
-      }.recover {
-        case exception =>
-          Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] ${exception.getMessage}")
-          itvcErrorHandler.showInternalServerError()
       }
   }
 
@@ -157,6 +156,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
           implicit mtdItUser =>
             withIncomeSourcesFS {
+
               mkFromQueryString(hashIdString) match {
                 case Left(exception: Exception) => Future.failed(exception)
                 case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <${mkFromQueryString(hashIdString)}>"))
@@ -169,28 +169,40 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                     incomeSourceIdHashMaybe = Option(incomeSourceIdHash),
                     incomeSourceType = SelfEmployment
                   )
-
                   mtdItUser.incomeSources.compareHashToQueryString(incomeSourceIdHash) match {
                     case Left(exception: Exception) => Future.failed(exception)
                     case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
                     case Right(incomeSourceId: IncomeSourceId) =>
-                      sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap {
-                        case true =>
-                          sessionService.
-                            setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+                      sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
+                        sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment))
+                          .flatMap {
                             case Right(_) => result
                             case Left(exception) => Future.failed(exception)
                           }
-                        case false => Future.failed(new Error("Failed to create mongo session"))
                       }
                   }
               }
-            }.recover {
-              case exception =>
-                Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusinessAgent] ${exception.getMessage}")
-                itvcErrorHandlerAgent.showInternalServerError()
             }
         }
+  }
+
+  private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection]): Option[QuarterReportingType] = {
+    if (isEnabled(CalendarQuarterTypes)) {
+      quarterTypeElection.flatMap(quarterTypeElection => {
+        latencyDetails match {
+          case Some(latencyDetails: LatencyDetails) =>
+            val quarterIndicator = "Q"
+            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString
+            val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
+            val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
+            val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
+            val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2 || showIfLatencyExpired
+            if (showQuarterReportingType) quarterTypeElection.isStandardQuarterlyReporting else None
+          case None => quarterTypeElection.isStandardQuarterlyReporting
+        }
+      })
+    } else None
+
   }
 
   private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
@@ -220,7 +232,8 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
-      incomeSourceType = SelfEmployment
+      incomeSourceType = SelfEmployment,
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
     )
   }
 
@@ -236,9 +249,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
       latencyDetails = incomeSource.latencyDetails,
-      incomeSourceType = incomeSourceType
+      incomeSourceType = incomeSourceType,
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
     )
   }
+
 
   private def getManageIncomeSourceViewModel(sources: IncomeSourceDetailsModel, incomeSourceId: IncomeSourceId, isAgent: Boolean)
                                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, ManageIncomeSourceDetailsViewModel]] = {
@@ -335,7 +350,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, incomeSourceIdHashMaybe: Option[IncomeSourceIdHash],
                     incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    withIncomeSourcesFS {
+    withSessionData(JourneyType(Manage, incomeSourceType)) { _ =>
 
       val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = incomeSourceIdHashMaybe.map(x => user.incomeSources.compareHashToQueryString(x))
 

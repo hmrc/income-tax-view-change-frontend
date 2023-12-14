@@ -67,8 +67,8 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
       }
       else handleShowRequest(None, incomeSourceType, isAgent)
     }.recover {
-      case exception =>
-        Logger("application").error(s"[ReportingMethodChangeErrorController][show] ${exception.getMessage}")
+      case ex =>
+        Logger("application").error(s"[ReportingMethodChangeErrorController][show] - ${ex.getMessage} - ${ex.getCause}")
         showInternalServerError(isAgent)
     }
   }

@@ -42,6 +42,10 @@ class IncomeSourceIdHash private(val hash: String) extends AnyVal {
 case class Success(matches: Int)
 
 object IncomeSourceIdHash {
+
+  def apply(id: IncomeSourceId): IncomeSourceIdHash = {
+    mkIncomeSourceIdHash(id)
+  }
   def mkIncomeSourceIdHash(id: IncomeSourceId): IncomeSourceIdHash = {
     val hashA = id.value.hashCode().abs.toString
     val hashB = id.value.reverse.hashCode().abs.toString

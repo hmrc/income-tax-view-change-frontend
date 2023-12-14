@@ -106,7 +106,7 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("govuk-button").text() shouldBe messages("incomeSources.ceaseBusiness.checkDetails.confirm")
+      document.select("#main-content .govuk-button").text() shouldBe messages("incomeSources.ceaseBusiness.checkDetails.confirm")
     }
   }
 
@@ -144,7 +144,7 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
     }
 
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("govuk-button").text() shouldBe messages("incomeSources.ceaseBusiness.checkDetails.confirm")
+      document.select("#main-content .govuk-button").text() shouldBe messages("incomeSources.ceaseBusiness.checkDetails.confirm")
     }
   }
 

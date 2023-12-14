@@ -77,8 +77,7 @@ trait ClientConfirmedController extends BaseAgentController {
       getClientMtditid, Some(getClientNino), getClientName, None, getClientUtr, user.credId, Some(Agent), user.agentReferenceNumber
     )
 
-    val cacheKey = None
-    incomeSourceDetailsService.getIncomeSourceDetails(cacheKey)(hc = hc, mtdUser = userOptionNino) map {
+    incomeSourceDetailsService.getIncomeSourceDetails()(hc = hc, mtdUser = userOptionNino) map {
       case model@IncomeSourceDetailsModel(nino, _, _, _, _) => MtdItUser(
         userOptionNino.mtditid, nino, userOptionNino.userName, model, None, userOptionNino.saUtr,
         userOptionNino.credId, userOptionNino.userType, userOptionNino.arn)

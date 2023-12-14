@@ -23,11 +23,10 @@ import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector) {
+class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, implicit val ec: ExecutionContext) {
 
   def start(nino: String, fullAmount: Option[BigDecimal])
            (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, String]] = {

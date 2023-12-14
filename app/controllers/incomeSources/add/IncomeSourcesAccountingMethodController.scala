@@ -94,8 +94,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           )(user, messages)))
     }
   }.recover {
-    case exception =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] ${exception.getMessage}")
+    case ex =>
+      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] - ${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 
@@ -121,7 +121,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                     incomeSourceType: IncomeSourceType,
                     cashOrAccrualsFlag: Option[String] = None,
                     backUrl: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
 
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -139,7 +139,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
     }.recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting BusinessEndDate page: ${ex.getMessage}")
+          s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -202,9 +202,9 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           case Left(exception) => Future.failed(exception)
         }
       }.recover {
-        case exception =>
+        case ex =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] ${exception.getMessage}")
+          Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
           errorHandler.showInternalServerError()
       }
     )
@@ -285,8 +285,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             )
           case Left(exception) => Future.failed(exception)
         }.recover {
-          case exception =>
-            Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethod] ${exception.getMessage}")
+          case ex =>
+            Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethod] - ${ex.getMessage} - ${ex.getCause}")
             itvcErrorHandler.showInternalServerError()
         }
     }
@@ -314,8 +314,9 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                 )
               case Left(exception) => Future.failed(exception)
             }.recover {
-              case exception =>
-                Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethodAgent] ${exception.getMessage}")
+              case ex =>
+                Logger("application")
+                  .error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethodAgent] - ${ex.getMessage} - ${ex.getCause}")
                 itvcErrorHandlerAgent.showInternalServerError()
             }
         }

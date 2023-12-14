@@ -26,7 +26,8 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.hasBeenAddedField
+import models.incomeSourceDetails.AddIncomeSourceData.{incomeSourceAddedField, journeyIsCompleteField}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails._
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
@@ -118,13 +119,15 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   }
 
   def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
+    setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, incomeSourceType), Right(None))
+    setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, incomeSourceType), Right(None))
     when(mockSessionService.getMongo(any())(any(), any())).thenReturn(
       Future(Right(Some(UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
         addIncomeSourceData = Some(AddIncomeSourceData()))))))
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
-    when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
   }
 
+  def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
 
   "IncomeSourceAddedController" should {
     "redirect a user back to the custom error page" when {
@@ -178,11 +181,11 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
         mockNoIncomeSources()
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[Boolean](hasBeenAddedField, JourneyType(Add, SelfEmployment), Right(Some(true)))
+        setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, SelfEmployment)))))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.YouCannotGoBackErrorController.show(SelfEmployment).url
+        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
       }
     }
@@ -220,7 +223,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         mockMongo(SelfEmployment)
-        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -256,7 +259,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         mockMongo(SelfEmployment)
-        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -279,7 +282,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
         mockProperty()
-        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
+        mockMongo(SelfEmployment)
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -294,7 +298,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           thenReturn(Future(testObligationsModel))
         mockFailure()
         mockMongo(SelfEmployment)
-        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -312,9 +316,10 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         mockFailure()
+        mockMongo(SelfEmployment)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
-        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
+        setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
         val result: Future[Result] = TestIncomeSourceAddedController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -340,7 +345,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
 
           mockMongo(UkProperty)
 
-          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, UkProperty), result = Right(Some(testSelfEmploymentId)))
+          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, UkProperty), result = Right(Some(testSelfEmploymentId)))
 
           val result = TestIncomeSourceAddedController.show(UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
@@ -363,6 +368,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockUKPropertyIncomeSource()
           mockFailure()
+          mockMongo(UkProperty)
           val result = TestIncomeSourceAddedController.show(UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
@@ -382,7 +388,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
           mockMongo(UkProperty)
 
-          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, UkProperty), result = Right(Some(testSelfEmploymentId)))
+          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, UkProperty), result = Right(Some(testSelfEmploymentId)))
 
           val result = TestIncomeSourceAddedController.showAgent(UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
@@ -446,7 +452,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
             thenReturn(Future(testObligationsModel))
           mockMongo(ForeignProperty)
-          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, ForeignProperty), result = Right(Some("123456")))
+          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, ForeignProperty), result = Right(Some("123456")))
 
           val result: Future[Result] = TestIncomeSourceAddedController.show(ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
@@ -487,7 +493,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             thenReturn(Future(testObligationsModel))
           mockMongo(ForeignProperty)
 
-          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.createdIncomeSourceIdField, journeyType = JourneyType(Add, ForeignProperty), result = Right(Some("123")))
+          setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, ForeignProperty), result = Right(Some("123")))
 
           val result: Future[Result] = TestIncomeSourceAddedController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK

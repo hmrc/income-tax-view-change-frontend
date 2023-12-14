@@ -27,7 +27,7 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import exceptions.MissingSessionKey
 import models.createIncomeSource.CreateIncomeSourceResponse
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourcesAccountingMethodField}
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceIdField, incomeSourcesAccountingMethodField}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
@@ -84,7 +84,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleRequest(sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
-                           (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+                           (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
     val backUrl: String = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType).url
     else controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType).url
     val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -101,12 +101,12 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         ))
       case Left(ex) =>
         Logger("application").error(
-          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: ${ex.getMessage}")
+          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     } recover {
       case ex: Exception =>
         Logger("application").error(
-          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: Unable to construct getCheckPropertyViewModel ${ex.getMessage}")
+          s"[IncomeSourceCheckDetailsController][handleRequest] - Error: Unable to construct getCheckPropertyViewModel ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -218,7 +218,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           case Right(CreateIncomeSourceResponse(id)) =>
             auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
 
-            sessionService.setMongoKey(AddIncomeSourceData.createdIncomeSourceIdField, id, JourneyType(Add, incomeSourceType)).flatMap {
+            sessionService.setMongoKey(AddIncomeSourceData.incomeSourceIdField, id, JourneyType(Add, incomeSourceType)).flatMap {
               case Right(result) if result =>
                 Future.successful {
                   Redirect(redirectUrl(isAgent, incomeSourceType))
@@ -238,13 +238,14 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         }
       case Left(ex) =>
         Logger("application").error(
-          s"[IncomeSourceCheckDetailsController][handleSubmit] - Error: ${ex.getMessage}")
+          s"[IncomeSourceCheckDetailsController][handleSubmit] - Error: - ${ex.getMessage} - ${ex.getCause}")
         Future.successful {
           Redirect(errorRedirectUrl(isAgent, incomeSourceType))
         }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: ${ex.getMessage}")
+        Logger("application")
+          .error(s"[IncomeSourceCheckDetailsController][handleSubmit]: - ${ex.getMessage} - ${ex.getCause}")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
     }
   }

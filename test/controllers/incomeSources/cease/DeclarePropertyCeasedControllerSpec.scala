@@ -85,13 +85,13 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
     ))
 
     (isAgent, incomeSourceType) match {
-      case (true, UkProperty) => TestDeclarePropertyCeasedController.submitAgent(UkProperty)(fakeRequestConfirmedClient()
+      case (true, UkProperty) => TestDeclarePropertyCeasedController.submitAgent(UkProperty)(fakePostRequestConfirmedClient()
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (_, UkProperty) => TestDeclarePropertyCeasedController.submit(UkProperty)(fakeRequestWithNinoAndOrigin("pta")
+      case (_, UkProperty) => TestDeclarePropertyCeasedController.submit(UkProperty)(fakePostRequestWithNinoAndOrigin("pta")
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (true, _) => TestDeclarePropertyCeasedController.submitAgent(ForeignProperty)(fakeRequestConfirmedClient()
+      case (true, _) => TestDeclarePropertyCeasedController.submitAgent(ForeignProperty)(fakePostRequestConfirmedClient()
         .withFormUrlEncodedBody(formData.toSeq: _*))
-      case (_, _) => TestDeclarePropertyCeasedController.submit(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta")
+      case (_, _) => TestDeclarePropertyCeasedController.submit(ForeignProperty)(fakePostRequestWithNinoAndOrigin("pta")
         .withFormUrlEncodedBody(formData.toSeq: _*))
     }
   }

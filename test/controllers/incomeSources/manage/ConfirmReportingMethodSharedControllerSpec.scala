@@ -18,21 +18,25 @@ package controllers.incomeSources.manage
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{JourneyType, Manage}
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.MockIncomeSourceDetailsService
+import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import org.scalatest.Assertion
 import play.api.http.Status
+import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{SessionService, UpdateIncomeSourceService}
+import services.UpdateIncomeSourceService
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
@@ -45,9 +49,9 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   with MockNavBarEnumFsPredicate
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
-  with TestSupport {
+  with TestSupport
+  with MockSessionService {
 
-  val mockSessionService: SessionService = mock(classOf[SessionService])
 
   object TestConfirmReportingMethodSharedController
     extends ConfirmReportingMethodSharedController(
@@ -120,6 +124,42 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       "all query parameters are valid for an Agent" in {
         val result = runShowTest(isAgent = true)
         status(result) shouldBe Status.OK
+      }
+    }
+    "redirect to the Cannot Go Back page" when {
+      def setupCompletedManageJourney(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
+        setupMockAuthorisationSuccess(isAgent)
+        mockBothPropertyBothBusiness()
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+        val result = if (isAgent) TestConfirmReportingMethodSharedController
+          .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+        else TestConfirmReportingMethodSharedController
+          .show(testTaxYear, testChangeToAnnual, isAgent, incomeSourceType)(fakeRequestWithActiveSession)
+
+        val expectedRedirectUrl = routes.CannotGoBackErrorController.show(isAgent = isAgent, incomeSourceType).url
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+      }
+
+      "UK Property journey is complete - Individual" in {
+        setupCompletedManageJourney(isAgent = false, UkProperty)
+      }
+      "UK Property journey is complete - Agent" in {
+        setupCompletedManageJourney(isAgent = true, UkProperty)
+      }
+      "Foreign Property journey is complete - Individual" in {
+        setupCompletedManageJourney(isAgent = false, ForeignProperty)
+      }
+      "Foreign Property journey is complete - Agent" in {
+        setupCompletedManageJourney(isAgent = true, ForeignProperty)
+      }
+      "Self Employment journey is complete - Individual" in {
+        setupCompletedManageJourney(isAgent = false, SelfEmployment)
+      }
+      "Self Employment journey is complete - Agent" in {
+        setupCompletedManageJourney(isAgent = true, SelfEmployment)
       }
     }
   }
@@ -285,6 +325,9 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     else
       setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
 
+    setupMockCreateSession(true)
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+
     when(mockSessionService.getMongoKey(any(), any())(any(), any()))
       .thenReturn(Future(Right(incomeSourceId)))
 
@@ -320,6 +363,10 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     when(mockSessionService.getMongoKey(any(), any())(any(), any()))
       .thenReturn(Future(Right(incomeSourceId)))
 
+    setupMockCreateSession(true)
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, incomeSourceType)))))
+    setupMockSetMongoData(true)
+
     when(
       TestConfirmReportingMethodSharedController
         .updateIncomeSourceService.updateTaxYearSpecific(any(), any(), any())(any(), any()))
@@ -335,9 +382,9 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     TestConfirmReportingMethodSharedController
       .submit(taxYear, changeTo, isAgent, incomeSourceType)(
         (if (isAgent)
-          fakeRequestConfirmedClient()
+          fakePostRequestConfirmedClient()
         else
-          fakeRequestWithActiveSession).withFormUrlEncodedBody(
+          fakePostRequestWithActiveSession).withFormUrlEncodedBody(
           if (withValidForm)
             validTestForm
           else

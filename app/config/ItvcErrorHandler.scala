@@ -17,8 +17,8 @@
 package config
 
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Request, Result}
-import play.api.mvc.Results.{Ok, InternalServerError}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.errorPages.templates.ErrorTemplate

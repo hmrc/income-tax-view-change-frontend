@@ -19,10 +19,10 @@ package testConstants
 import controllers.agent.utils.SessionKeys
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.btaNavBar.{NavContent, NavLinks}
-import models.core.AddressModel
+import models.core.{AddressModel, IncomeSourceId}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.LatencyDetails
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import models.incomeSourceDetails.{LatencyDetails, QuarterTypeElection, Standard}
 import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -94,6 +94,8 @@ object BaseIntegrationTestConstants {
     taxYear2 = testYear2024.toString,
     latencyIndicator2 = "Q")
 
+  val quarterTypeElection = QuarterTypeElection("STANDARD", "2021")
+
   val testNavLinks: NavContent = NavContent(
     NavLinks("testEnHome", "testCyHome", "testUrl"),
     NavLinks("testEnAccount", "testCyAccount", "testUrl"),
@@ -135,7 +137,7 @@ object BaseIntegrationTestConstants {
   }
 
   val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testDate),
     address = expectedAddress,
@@ -144,11 +146,12 @@ object BaseIntegrationTestConstants {
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = SelfEmployment
+    incomeSourceType = SelfEmployment,
+    quarterReportingType = Some(Standard)
   )
 
   val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId),
+    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
     tradingName = None,
     tradingStartDate = propertyTradingStartDate,
     address = None,
@@ -157,11 +160,12 @@ object BaseIntegrationTestConstants {
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = UkProperty
+    incomeSourceType = UkProperty,
+    quarterReportingType = Some(Standard)
   )
 
   val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId),
+    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
     tradingName = None,
     tradingStartDate = propertyTradingStartDate,
     address = None,
@@ -170,6 +174,7 @@ object BaseIntegrationTestConstants {
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = ForeignProperty
+    incomeSourceType = ForeignProperty,
+    quarterReportingType = None
   )
 }

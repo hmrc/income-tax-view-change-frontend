@@ -87,7 +87,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                 isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
-    withIncomeSourcesFSWithSessionCheck(JourneyType(Add, incomeSourceType)) {
+    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
       getStartDate(incomeSourceType).flatMap {
         case Some(startDate) =>
           Future.successful {
@@ -108,9 +108,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       }
     }
   }.recover {
-    case exception =>
+    case ex =>
+      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest][${incomeSourceType.key}] ${exception.getMessage}")
       errorHandler.showInternalServerError()
   }
 
@@ -152,9 +152,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       }
     }
   }.recover {
-    case exception =>
+    case ex =>
+      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest][${incomeSourceType.key}] ${exception.getMessage}")
       errorHandler.showInternalServerError()
   }
 

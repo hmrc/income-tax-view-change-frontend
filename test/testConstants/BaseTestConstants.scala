@@ -16,7 +16,7 @@
 
 package testConstants
 
-import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
+import auth.{MtdItUser, MtdItUserOptionNino}
 import config.FrontendAppConfig
 import models.btaNavBar.ListLinks
 import models.core.Nino
@@ -26,8 +26,8 @@ import play.api.http.Status
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
 import testConstants.BusinessDetailsTestConstants.business1
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testConstants.PropertyDetailsTestConstants.propertyDetails
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
@@ -88,6 +88,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testSelfEmploymentIdValidation = "XAIS00000000002"
   val testPropertyIncomeId = "1234"
   val testPropertyIncomeId2 = "1235"
+  val testHashedSelfEmploymentId: String = "4154473711487316523"
   val testTaxCalculationId = "CALCID"
   val testTimeStampString = "2017-07-06T12:34:56.789Z"
   val testYear2017 = 2017
