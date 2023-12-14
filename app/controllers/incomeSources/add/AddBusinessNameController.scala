@@ -117,7 +117,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(JourneyType(Add, SelfEmployment)) { _ =>
+    withSessionData(JourneyType(Add, SelfEmployment), initialPage = true) { _ =>
       getBusinessName(isChange).flatMap {
         nameOpt =>
           val filledForm = nameOpt.fold(BusinessNameForm.form)(name =>
