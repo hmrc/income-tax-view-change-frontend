@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
@@ -27,23 +27,21 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceAddedField, journeyIsCompleteField}
+import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.{any, isA}
 import org.mockito.Mockito.{mock, verify}
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.SessionService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
 
 import java.time.LocalDate
@@ -72,6 +70,11 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   val journeyTypeSE = JourneyType(Add, SelfEmployment)
   val journeyTypeUK = JourneyType(Add, UkProperty)
   val journeyTypeFP = JourneyType(Add, ForeignProperty)
+  def journeyType(sourceType: IncomeSourceType) = sourceType match {
+    case SelfEmployment => journeyTypeSE
+    case UkProperty => journeyTypeUK
+    case ForeignProperty => journeyTypeFP
+  }
 
   val addIncomeSourceDataEmpty = AddIncomeSourceData()
   val addIncomeSourceDataProperty = AddIncomeSourceData(dateStarted = Some(testStartDate))
@@ -83,9 +86,21 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   val uiJourneySessionDataSE: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(addIncomeSourceDataSE))
   val uiJourneySessionDataUK: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-UK", Some(addIncomeSourceDataProperty))
   val uiJourneySessionDataFP: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-FP", Some(addIncomeSourceDataProperty))
+  def uiJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = incomeSourceType match {
+    case SelfEmployment => uiJourneySessionDataSE
+    case UkProperty => uiJourneySessionDataUK
+    case ForeignProperty => uiJourneySessionDataFP
+  }
 
   val UIJourneySessionDataUkWithAccSD: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-UK", Some(addIncomeSourceDataPropertyWithAccSD))
   val UIJourneySessionDataFpWithAccSD: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-FP", Some(addIncomeSourceDataPropertyWithAccSD))
+  def dataWithAccSD(incomeSourceType: IncomeSourceType) = incomeSourceType match {
+    case SelfEmployment => uiJourneySessionDataSE
+    case UkProperty => UIJourneySessionDataUkWithAccSD
+    case ForeignProperty => UIJourneySessionDataFpWithAccSD
+  }
+
+  val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   object TestAddIncomeSourceStartDateCheckController
     extends AddIncomeSourceStartDateCheckController(authenticate = MockAuthenticationPredicate,
@@ -116,7 +131,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData()))
 
-  def sessionDataWithDate(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(dateStarted = Some(LocalDate.parse("2022-01-01")))))
+  def sessionDataWithDate(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(dateStarted = Some(LocalDate.parse("2022-11-11")))))
 
   def getInitialMongo(sourceType: IncomeSourceType): Option[UIJourneySessionData] = {
     Some(sessionData(JourneyType(Add, sourceType)))
@@ -140,1114 +155,317 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     }
   }
 
-  "Individual - AddIncomeSourceStartDateCheckController.show" should {
-    s"return ${Status.OK}: render the custom not found error view" when {
-      "Income Sources FS is disabled" in {
-        disableAllSwitches()
-        disable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.routes.HomeController.show().url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-
-      }
-    }
-    s"return ${Status.SEE_OTHER}: return to home page" when {
-      "called with an unauthenticated user" in {
-        setupMockAuthorisationException()
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
-      "user has already completed the journey" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionDataCompletedJourney(journeyTypeSE))))
-
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-
-      }
-      "user has already added their income source" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionDataISAdded(journeyTypeSE))))
-
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-
-      }
-    }
-
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionData(journeyTypeSE))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling UK Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionData(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Foreign Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionData(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false)(fakeRequestWithActiveSession)
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-    }
-    s"return ${Status.OK}" when {
-      s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(
-          fakeRequestWithActiveSession
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url
-        status(result) shouldBe OK
-      }
-    }
-    s"return ${Status.OK}" when {
-      s"calling Foreign Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false)(
-          fakeRequestWithActiveSession
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
-        status(result) shouldBe OK
-      }
-    }
-    s"return ${Status.OK}" when {
-      s"calling UK Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false)(
-          fakeRequestWithActiveSession
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
-        status(result) shouldBe OK
-      }
-    }
-    s"return ${Status.OK}: render the Add Business Start Date Check Change page" when {
-      "isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(
-          fakeRequestWithActiveSession
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = true).url
-        status(result) shouldBe OK
-      }
-    }
-    s"return ${Status.OK}: render the Add Foreign Property Start Date Check Change page" when {
-      "isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true)(
-          fakeRequestWithActiveSession
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = true).url
-        status(result) shouldBe OK
-      }
-    }
-    s"return ${Status.OK}: render the Add UK Property Start Date Check Change page" when {
-      "isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true)(
-          fakeRequestWithActiveSession
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
-        status(result) shouldBe OK
-      }
-    }
-  }
-  "Individual - AddIncomeSourceStartDateCheckController.submit" should {
-    s"return ${Status.SEE_OTHER}: redirect to home page" when {
-      "IncomeSources FS is disabled" in {
-        disableAllSwitches()
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.routes.HomeController.show().url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-    }
-  }
-  "Individual - Sole Trader Business - AddIncomeSourceStartDateCheckController.submit" should {
-    s"return ${Status.BAD_REQUEST} with an error summary" when {
-      "form is submitted with neither radio option selected" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody())
-
-        status(result) shouldBe BAD_REQUEST
-      }
-      "an invalid response is submitted" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
-
-        val invalidResponse: String = "£££"
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> invalidResponse
-            ))
-
-        status(result) shouldBe BAD_REQUEST
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect back to add business start date page with businessStartDate removed from session" when {
-      "No is submitted with the form" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockSetMongoData(result = true)
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseNo
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        verifyMongoDatesRemoved()
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to add business trade page" when {
-      "Yes is submitted with the form with a valid session" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(uiJourneySessionDataSE)))
-        setupMockSetMongoData(result = true)
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        verifySetMongoData(SelfEmployment)
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = false).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to check business details page" when {
-      "Yes is submitted with isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(uiJourneySessionDataSE)))
-        setupMockSetMongoData(result = true)
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = false, isChange = true)(
-          fakePostRequestWithActiveSession
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        verifySetMongoData(SelfEmployment)
-        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url)
-      }
-    }
-  }
-  "Individual - UK Property - AddIncomeSourceStartDateCheckController.submit" should {
-    s"return ${Status.BAD_REQUEST} with an error summary" when {
-      "form is submitted with neither radio option selected" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-            .withFormUrlEncodedBody())
-
-        status(result) shouldBe BAD_REQUEST
-      }
-      "an invalid response is submitted" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val invalidResponse: String = "£££"
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> invalidResponse
-            ))
-
-        status(result) shouldBe BAD_REQUEST
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
-      "No is submitted with the form" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-        setupMockSetMongoData(result = true)
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseNo
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        verifyMongoDatesRemoved()
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to UK Property accounting method page" when {
-      "Yes is submitted with the form with a valid session" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to check uk property details page" when {
-      "Yes is submitted with isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = true)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(UkProperty).url)
-      }
-    }
-  }
-  "Individual - Foreign Property - AddIncomeSourceStartDateCheckController.submit" should {
-    s"return ${Status.BAD_REQUEST} with an error summary" when {
-      "form is submitted with neither radio option selected" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody())
-
-        status(result) shouldBe BAD_REQUEST
-      }
-      "an invalid response is submitted" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val invalidResponse: String = "£££"
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> invalidResponse
-            ))
-
-        status(result) shouldBe BAD_REQUEST
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
-      "No is submitted with the form" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-        setupMockSetMongoData(result = true)
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseNo
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        verifyMongoDatesRemoved()
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to Foreign Property accounting method page" when {
-      "Yes is submitted with the form with a valid session" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = false, isChange = false)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to check foreign property details page" when {
-      "Yes is submitted with isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = false, isChange = true)(
-          fakePostRequestWithActiveSession
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.show(ForeignProperty).url)
-      }
-    }
+  def authenticate(isAgent: Boolean): Unit = {
+    if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
   }
 
-  "Agent - AddIncomeSourceStartDateCheckController.show" should {
-    s"return ${Status.OK}: render the custom not found error view" when {
-      "Income Sources FS is disabled" in {
-        disable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.routes.HomeController.showAgent.url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-
+  "AddIncomeSourceStartDateCheckController.show" should {
+    for (incomeSourceType <- incomeSourceTypes) yield {
+      for (isAgent <- Seq(true, false)) yield {
+        s"return ${Status.OK}: render the custom not found error view (isAgent = $isAgent, $incomeSourceType)" when {
+          "Income Sources FS is disabled" in {showISDisabledTest(isAgent, incomeSourceType)}
+        }
+        s"return ${Status.SEE_OTHER}: redirect to home page (isAgent = $isAgent, $incomeSourceType)" when {
+          "called with an unauthenticated user" in {showUnauthenticatedTest(isAgent, incomeSourceType)}
+        }
+        s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page (isAgent = $isAgent, $incomeSourceType)" when {
+          "user has already completed the journey" in {showCompletedBackTest(isAgent, incomeSourceType)}
+          "user has already added their income source" in {showAddedBackTest(isAgent, incomeSourceType)}
+        }
+        s"return ${Status.INTERNAL_SERVER_ERROR} (isAgent = $isAgent, $incomeSourceType)" when {
+          s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {showSessionMissingTest(isAgent, incomeSourceType)}
+        }
+        s"return ${Status.OK} (isAgent = $isAgent, $incomeSourceType)" when {
+          s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {showSuccessTest(isAgent, incomeSourceType)}
+        }
+        s"return ${Status.OK}: render the Add Business Start Date Check Change page (isAgent = $isAgent, $incomeSourceType)" when {
+          "isUpdate flag set to true" in {showChangeTest(isAgent, incomeSourceType)}
+        }
       }
     }
-    s"return ${Status.SEE_OTHER}: redirect to home page" when {
-      "called with an unauthenticated user" in {
-        setupMockAgentAuthorisationException()
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
 
-        status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
-      }
+    def showISDisabledTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disable(IncomeSources)
+
+      mockNoIncomeSources()
+      authenticate(isAgent)
+
+      val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
+
+      status(result) shouldBe SEE_OTHER
+      val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+      redirectLocation(result) shouldBe Some(redirectUrl)
     }
-    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
-      "user has already completed the journey" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+    def showUnauthenticatedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+      val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionDataCompletedJourney(journeyTypeSE))))
-
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-
-      }
-      "user has already added their income source" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionDataISAdded(journeyTypeSE))))
-
-        val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-
-      }
+      status(result) shouldBe Status.SEE_OTHER
+      redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
     }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+    def showCompletedBackTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionData(journeyTypeSE))))
+      mockNoIncomeSources()
+      authenticate(isAgent)
+      setupMockGetMongo(Right(Some(sessionDataCompletedJourney(journeyType(incomeSourceType)))))
 
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
+      val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
+      status(result) shouldBe SEE_OTHER
+      val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
+      else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+      redirectLocation(result) shouldBe Some(redirectUrl)
     }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling UK Property Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+    def showAddedBackTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionData(JourneyType(Add, UkProperty)))))
+      mockNoIncomeSources()
+      authenticate(isAgent)
+      setupMockGetMongo(Right(Some(sessionDataISAdded(journeyType(incomeSourceType)))))
 
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false)(fakeRequestConfirmedClient())
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
+      val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
+      status(result) shouldBe SEE_OTHER
+      val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType).url
+      else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
+      redirectLocation(result) shouldBe Some(redirectUrl)
     }
-    s"return ${Status.INTERNAL_SERVER_ERROR}" when {
-      s"calling Foreign Property Start Date Check Page and session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+    def showSessionMissingTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionData(JourneyType(Add, ForeignProperty)))))
+      mockNoIncomeSources()
+      authenticate(isAgent)
+      setupMockGetMongo(Right(Some(sessionData(journeyType(incomeSourceType)))))
 
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false)(
-          fakeRequestConfirmedClient()
-        )
+      val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
+      status(result) shouldBe INTERNAL_SERVER_ERROR
     }
-    s"return ${Status.OK}" when {
-      s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+    def showSuccessTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(uiJourneySessionDataSE)))
+      mockNoIncomeSources()
+      authenticate(isAgent)
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(dataWithAccSD(incomeSourceType))))
 
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(
-          fakeRequestConfirmedClient()
-        )
+      val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {
+          if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
+        }
+      )
 
-        val document: Document = Jsoup.parse(contentAsString(result))
+      val document: Document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
-        status(result) shouldBe OK
-      }
+      document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false).url
+      status(result) shouldBe OK
     }
-    s"return ${Status.OK}" when {
-      s"calling UK Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+    def showChangeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(UIJourneySessionDataUkWithAccSD)))
+      mockNoIncomeSources()
+      authenticate(isAgent)
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(journeyType(incomeSourceType)))))
 
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false)(
-          fakeRequestConfirmedClient())
+      val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true)(
+        {
+          if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
+        }
+      )
 
-        val document: Document = Jsoup.parse(contentAsString(result))
+      val document: Document = Jsoup.parse(contentAsString(result))
 
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
-        status(result) shouldBe OK
-      }
+      document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true).url
+      status(result) shouldBe OK
     }
-    s"return ${Status.OK}" when {
-      s"calling Foreign Property Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
-        disableAllSwitches()
-        enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(UIJourneySessionDataFpWithAccSD)))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false)(
-          fakeRequestConfirmedClient()
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
-        status(result) shouldBe OK
-      }
-    }
-    s"return ${Status.OK}: render the Add Business Start Date Check Change page" when {
-      "isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(
-          fakeRequestConfirmedClient()
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
-        status(result) shouldBe OK
-      }
-    }
-    s"return ${Status.OK}: render the Add Foreign Property Start Date Check Change page" when {
-      "isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(
-          fakeRequestConfirmedClient()
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true).url
-        status(result) shouldBe OK
-      }
-    }
-    s"return ${Status.OK}: render the Add UK Property Start Date Check Change page" when {
-      "isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true)(
-          fakeRequestConfirmedClient()
-        )
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-
-        document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true).url
-        status(result) shouldBe OK
-      }
-    }
   }
-  "Agent - AddIncomeSourceStartDateCheckController.submit" should {
-    s"return ${Status.SEE_OTHER}: redirect to home page" when {
-      "IncomeSources FS is disabled" in {
-        disableAllSwitches()
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(
-          fakeRequestConfirmedClient()
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.routes.HomeController.showAgent.url
-        redirectLocation(result) shouldBe Some(redirectUrl)
+  "AddIncomeSourceStartDateCheckController.submit" should {
+    for (incomeSourceType <- incomeSourceTypes) yield {
+      for (isAgent <- Seq(true, false)) yield {
+        s"return ${Status.SEE_OTHER}: redirect to home page(isAgent = $isAgent, $incomeSourceType)" when {
+          "IncomeSources FS is disabled" in {
+            submitISDisabled(isAgent, incomeSourceType)
+          }
+        }
+        s"return ${Status.BAD_REQUEST} with an error summary(isAgent = $isAgent, $incomeSourceType)" when {
+          "form is submitted with neither radio option selected" in {
+            submitNoOptionsTest(isAgent, incomeSourceType)
+          }
+          "an invalid response is submitted" in {
+            submitInvalidResponseTest(isAgent, incomeSourceType)
+          }
+        }
+        s"return ${Status.SEE_OTHER}: redirect back to add $incomeSourceType start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session, isAgent = $isAgent" when {
+          "No is submitted with the form" in {
+            submitRedirectWithAccPeriodRemovedTest(isAgent, incomeSourceType)
+          }
+        }
+        s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType accounting method page, isAgent = $isAgent" when {
+          "Yes is submitted with the form with a valid session" in {
+            submitRedirectAccMethodTest(isAgent, incomeSourceType)
+          }
+        }
+        s"return ${Status.SEE_OTHER}: redirect to check $incomeSourceType details page, isAgent = $isAgent" when {
+          "Yes is submitted with isUpdate flag set to true" in {
+            submitRedirectCheckDetailsTest(isAgent, incomeSourceType)
+          }
+        }
       }
     }
-  }
-  "Agent - Sole Trader Business - AddIncomeSourceStartDateCheckController.submit" should {
-    s"return ${Status.BAD_REQUEST} with an error summary" when {
-      "form is submitted with neither radio option selected" in {
-        disableAllSwitches()
-        enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
+    def submitISDisabled(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
 
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
+      mockNoIncomeSources()
+      authenticate(isAgent)
 
-            .withFormUrlEncodedBody())
+      val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {
+          if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithActiveSession
+        }
+          .withFormUrlEncodedBody(
+            AddIncomeSourceStartDateCheckForm.response -> responseYes
+          ))
 
-        status(result) shouldBe BAD_REQUEST
-      }
-      "an invalid response is submitted" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
-
-        val invalidResponse: String = "£££"
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> invalidResponse
-            ))
-
-        status(result) shouldBe BAD_REQUEST
-      }
+      status(result) shouldBe SEE_OTHER
+      val redirectUrl = if(isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+      redirectLocation(result) shouldBe Some(redirectUrl)
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add business start date page with businessStartDate removed from session" when {
-      "No is submitted with the form" in {
-        disableAllSwitches()
-        enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(journeyTypeSE))))
-        setupMockSetMongoData(result = true)
+    def submitNoOptionsTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseNo
-            ))
+      mockNoIncomeSources()
+      authenticate((isAgent))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, incomeSourceType)))))
 
-        status(result) shouldBe SEE_OTHER
-        verifyMongoDatesRemoved()
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url)
-      }
+      val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {
+          if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithActiveSession
+        }
+
+          .withFormUrlEncodedBody())
+
+      status(result) shouldBe BAD_REQUEST
     }
-    s"return ${Status.SEE_OTHER}: redirect to add business trade page" when {
-      "Yes is submitted with the form with a valid session" in {
-        disableAllSwitches()
-        enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(uiJourneySessionDataSE)))
-        setupMockSetMongoData(result = true)
+    def submitInvalidResponseTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
+      mockNoIncomeSources()
+      authenticate(isAgent)
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, incomeSourceType)))))
+      setupMockGetMongo(Right(Some(uiJourneySessionDataFP)))
 
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
+      val invalidResponse: String = "£££"
 
-        status(result) shouldBe SEE_OTHER
-        verifySetMongoData(SelfEmployment)
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = false).url)
-      }
+      val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {
+
+          if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithActiveSession
+        }
+
+          .withFormUrlEncodedBody(
+            AddIncomeSourceStartDateCheckForm.response -> invalidResponse
+          ))
+
+      status(result) shouldBe BAD_REQUEST
     }
-    s"return ${Status.SEE_OTHER}: redirect to check business details page" when {
-      "Yes is submitted with isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeSE, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(uiJourneySessionDataSE)))
-        setupMockSetMongoData(result = true)
+    def submitRedirectWithAccPeriodRemovedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = true)(
-          fakePostRequestConfirmedClient()
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
+      mockNoIncomeSources()
+      authenticate(isAgent)
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(uiJourneySessionData(incomeSourceType))))
+      setupMockSetMongoData(result = true)
 
-        status(result) shouldBe SEE_OTHER
-        verifySetMongoData(SelfEmployment)
-        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url)
-      }
+      val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {
+          if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithActiveSession
+        }
+          .withFormUrlEncodedBody(
+            AddIncomeSourceStartDateCheckForm.response -> responseNo
+          ))
+
+      status(result) shouldBe SEE_OTHER
+      verifyMongoDatesRemoved()
+      redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false).url)
     }
-  }
-  "Agent - UK Property - AddIncomeSourceStartDateCheckController.submit" should {
-    s"return ${Status.BAD_REQUEST} with an error summary" when {
-      "form is submitted with neither radio option selected" in {
-        disableAllSwitches()
-        enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
+    def submitRedirectAccMethodTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
 
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
+      mockNoIncomeSources()
+      authenticate(isAgent)
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockSetMongoData(result = true)
+      setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, incomeSourceType)))))
 
-            .withFormUrlEncodedBody())
+      val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
+        {
+          if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithActiveSession
+        }
 
-        status(result) shouldBe BAD_REQUEST
-      }
-      "an invalid response is submitted" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+          .withFormUrlEncodedBody(
+            AddIncomeSourceStartDateCheckForm.response -> responseYes
+          ))
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val invalidResponse: String = "£££"
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> invalidResponse
-            ))
-
-        status(result) shouldBe BAD_REQUEST
-      }
+      status(result) shouldBe SEE_OTHER
+      if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
+      redirectLocation(result) shouldBe Some({
+        (isAgent, incomeSourceType) match {
+          case (false, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
+          case (false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType)
+          case (true, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
+          case (true, _) => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType)
+        }
+      }.url)
     }
-    s"return ${Status.SEE_OTHER}: redirect back to add UK Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
-      "No is submitted with the form" in {
-        disableAllSwitches()
-        enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(uiJourneySessionDataSE)))
-        setupMockSetMongoData(result = true)
+    def submitRedirectCheckDetailsTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      disableAllSwitches()
+      enable(IncomeSources)
+      authenticate(isAgent)
+      mockNoIncomeSources()
 
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseNo
-            ))
+      setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
+      setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, incomeSourceType)))))
+      setupMockSetMongoData(result = true)
 
-        status(result) shouldBe SEE_OTHER
-        verifyMongoDatesRemoved()
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to UK Property accounting method page" when {
-      "Yes is submitted with the form with a valid session" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+      val result = TestAddIncomeSourceStartDateCheckController.submit(isAgent, isChange = true, incomeSourceType)(
+        {
+          if (isAgent) fakePostRequestConfirmedClient() else fakePostRequestWithActiveSession
+        }
+          .withFormUrlEncodedBody(
+            AddIncomeSourceStartDateCheckForm.response -> responseYes
+          ))
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(UkProperty).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to check uk property details page" when {
-      "Yes is submitted with isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeUK, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, UkProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = UkProperty, isAgent = true, isChange = true)(
-          fakePostRequestConfirmedClient()
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(UkProperty).url)
-      }
-    }
-  }
-  "Agent - Foreign Property - AddIncomeSourceStartDateCheckController.submit" should {
-    s"return ${Status.BAD_REQUEST} with an error summary" when {
-      "form is submitted with neither radio option selected" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-
-            .withFormUrlEncodedBody())
-
-        status(result) shouldBe BAD_REQUEST
-      }
-      "an invalid response is submitted" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-        setupMockGetMongo(Right(Some(uiJourneySessionDataFP)))
-
-        val invalidResponse: String = "£££"
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> invalidResponse
-            ))
-
-        status(result) shouldBe BAD_REQUEST
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect back to add Foreign Property start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session" when {
-      "No is submitted with the form" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(uiJourneySessionDataFP)))
-        setupMockSetMongoData(result = true)
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseNo
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        verifyMongoDatesRemoved()
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to Foreign Property accounting method page" when {
-      "Yes is submitted with the form with a valid session" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = true, isChange = false)(
-          fakePostRequestConfirmedClient()
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.showAgent(ForeignProperty).url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to check foreign property details page" when {
-      "Yes is submitted with isUpdate flag set to true" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyTypeFP, Right(Some(testStartDate)))
-        setupMockGetMongo(Right(Some(sessionDataWithDate(JourneyType(Add, ForeignProperty)))))
-
-        val result = TestAddIncomeSourceStartDateCheckController.submit(incomeSourceType = ForeignProperty, isAgent = true, isChange = true)(
-          fakePostRequestConfirmedClient()
-
-            .withFormUrlEncodedBody(
-              AddIncomeSourceStartDateCheckForm.response -> responseYes
-            ))
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty).url)
-      }
+      status(result) shouldBe SEE_OTHER
+      if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
+      redirectLocation(result) shouldBe Some({
+        if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType) else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      }.url)
     }
   }
 }
