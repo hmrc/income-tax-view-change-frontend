@@ -39,8 +39,6 @@ class IncomeSourceIdHash private(val hash: String) extends AnyVal {
 
 }
 
-case class Success(matches: Int)
-
 object IncomeSourceIdHash {
 
   def apply(id: IncomeSourceId): IncomeSourceIdHash = {
