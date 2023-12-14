@@ -96,9 +96,6 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
       incomeSourceDetails.flatMap {
         case (Right(Some(incomeSourceIdStr)), incomeSourceType) =>
           val incomeSourceId = mkIncomeSourceId(incomeSourceIdStr)
-          println(Console.GREEN + incomeSourceId + Console.WHITE)
-          println(Console.GREEN + incomeSourceIdStr + Console.WHITE)
-
           val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(incomeSourceId) else None
           nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false).map { viewModel =>
             Ok(obligationsView(
