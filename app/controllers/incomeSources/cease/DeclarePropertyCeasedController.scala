@@ -30,7 +30,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.DeclarePropertyCeased
 
 import javax.inject.Inject
@@ -50,10 +50,10 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
                                                 val itvcErrorHandler: ItvcErrorHandler,
                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                                )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
 
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url

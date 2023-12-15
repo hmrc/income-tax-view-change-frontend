@@ -1452,6 +1452,10 @@ cannotGoBack.youCan                                  = Gallwch wneud y canlynol:
 cannotGoBack.manageLink                              = bwrw golwg dros eich ffynonellau incwm a’u rheoli
 cannotGoBack.homeLink                                = mynd yn ôl i’r hafan
 
+cannotGoBack.sole-trader-ceased                       = Mae’ch busnes unig fasnachwr wedi dod i ben.
+cannotGoBack.uk-property-ceased                       = Mae’ch busnes eiddo yn y DU wedi dod i ben.
+cannotGoBack.foreign-property-ceased                  = Mae’ch busnes eiddo tramor wedi dod i ben.
+
 cannotGoBack.warningMessage                        = Mae dal angen i chi ddewis dull o adrodd.  Os byddwch yn gadael y dudalen hon, byddwch wedi’ch trefnu i adrodd yn flynyddol am hyd at ddwy flwyddyn dreth.
 cannotGoBack.hasBeenAdded1                         = Gallwch ei reoli o’r dudalen
 cannotGoBack.hasBeenAdded2                         =

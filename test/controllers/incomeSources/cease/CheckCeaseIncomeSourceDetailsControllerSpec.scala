@@ -20,26 +20,27 @@ import audit.models.CeaseIncomeSourceAuditModel
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.UpdateIncomeSourceConnector
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.MockSessionService
-import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import org.scalatest.Assertion
 import play.api.http.Status
+import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.UpdateIncomeSourceTestConstants
 import testConstants.UpdateIncomeSourceTestConstants.failureResponse
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{checkCeaseBusinessDetailsModel, checkCeaseForeignPropertyDetailsModel, checkCeaseUkPropertyDetailsModel}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
@@ -93,6 +94,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
   val individual: Boolean = false
   val agent: Boolean = true
 
+
   "CheckCeaseIncomeSourceDetailsController.show" should {
     "return 200 OK" when {
       def stage(isAgent: Boolean): Unit = {
@@ -108,10 +110,14 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
       }
 
       def testCheckCeaseIncomeSourcePage(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
+
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+
         stage(isAgent)
         val result: Future[Result] = incomeSourceType match {
           case SelfEmployment =>
-            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(),  mkIncomeSourceId(any()), any()))
+            when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), mkIncomeSourceId(any()), any()))
               .thenReturn(Right(checkCeaseBusinessDetailsModel))
             if (isAgent)
               TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
@@ -207,6 +213,52 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         }
       }
     }
+
+    "redirect to the Cannot Go Back page" when {
+      def setupCompletedCeaseJourney(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
+        setupMockAuthorisationSuccess(isAgent)
+        disableAllSwitches()
+        enable(IncomeSources)
+        mockBothPropertyBothBusiness()
+        setupMockCreateSession(true)
+        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+
+        val result = if (isAgent) {
+          TestCeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+        } else {
+          TestCeaseCheckIncomeSourceDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+        }
+
+        val expectedRedirectUrl = if (isAgent) {
+          routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSourceType).url
+        } else {
+          routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
+        }
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+      }
+
+      "UK Property journey is complete - Individual" in {
+        setupCompletedCeaseJourney(isAgent = false, UkProperty)
+      }
+      "UK Property journey is complete - Agent" in {
+        setupCompletedCeaseJourney(isAgent = true, UkProperty)
+      }
+      "Foreign Property journey is complete - Individual" in {
+        setupCompletedCeaseJourney(isAgent = false, ForeignProperty)
+      }
+      "Foreign Property journey is complete - Agent" in {
+        setupCompletedCeaseJourney(isAgent = true, ForeignProperty)
+      }
+      "Self Employment journey is complete - Individual" in {
+        setupCompletedCeaseJourney(isAgent = false, SelfEmployment)
+      }
+      "Self Employment journey is complete - Agent" in {
+        setupCompletedCeaseJourney(isAgent = true, SelfEmployment)
+      }
+    }
+
   }
   "CheckCeaseIncomeSourceDetailsController.submit" should {
     def stage(isAgent: Boolean): Unit = {

@@ -23,8 +23,13 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSessionId}
+import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
+import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, CeaseIncomeSourceData, IncomeSourceDetailsError, IncomeSourceDetailsModel, ManageIncomeSourceData, UIJourneySessionData}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
+import testConstants.UpdateIncomeSourceTestConstants.incomeSourceId
 
 import java.time.LocalDate
 

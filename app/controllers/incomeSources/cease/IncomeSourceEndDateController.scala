@@ -34,7 +34,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceEndDate
 
 import java.time.LocalDate
@@ -56,7 +56,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val ec: ExecutionContext,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   private def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, maybeIncomeSourceId: Option[IncomeSourceId], isChange: Boolean): Future[(Call, Call, Call)] = {
 
@@ -171,7 +171,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
 
     val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
@@ -179,6 +179,10 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       case Some(Left(exception: Exception)) => Future.failed(exception)
       case _ =>
         val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
+
+        if (incomeSourceType == SelfEmployment && !isChange) {
+          sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
+        }
 
         getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
           actions =>
