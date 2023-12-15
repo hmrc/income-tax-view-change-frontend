@@ -34,6 +34,12 @@ object IncomeSourceId {
 
   }
 
+  def toOption(input: Option[Either[Throwable, IncomeSourceId]]): Option[IncomeSourceId] = {
+    input.collect {
+      case Right(incomeSourceId) => Some(incomeSourceId)
+    }.flatten
+  }
+
   // For future validation implementation:
   // suggested valid pattern - val validPattern = "^[a-zA-Z0-9]{15}$".r
   // suggested method of comparison - validPattern.unapplySeq(incomeSourceAsString).isDefined

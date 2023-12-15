@@ -98,9 +98,9 @@ case class IncomeSourceDetailsModel(nino: String,
   }
 
   def compareHashToQueryString(incomeSourceIdHash: IncomeSourceIdHash)
-                              (implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
-    val xs = user.incomeSources.businesses.map(m => mkIncomeSourceId(m.incomeSourceId))
-    incomeSourceIdHash.oneOf(xs)
+                              (implicit user: MtdItUser[_]): Either[Throwable, IncomeSourceId] = {
+    val allUserIncomeSourceIds: List[IncomeSourceId] = user.incomeSources.businesses.filterNot(_.isCeased).map(m => mkIncomeSourceId(m.incomeSourceId))
+    incomeSourceIdHash.findIncomeSourceIdMatchingHash(ids = allUserIncomeSourceIds)
   }
 
   def getCashOrAccruals()
