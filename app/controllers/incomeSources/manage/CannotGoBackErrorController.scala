@@ -46,7 +46,7 @@ class CannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTime
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
                                             val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker{
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
     implicit user =>
