@@ -72,6 +72,13 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
         TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
 
       }
+
+      "return a payment history error for status 422" in {
+        setupGetPayments(getCurrentTaxEndYear)(PaymentsError(422, "ERROR"))
+        setupGetPayments(getCurrentTaxEndYear - 1)(Payments(List.empty))
+        TestPaymentHistoryService.getPaymentHistory.futureValue shouldBe Left(PaymentHistoryError)
+
+      }
     }
 
     "a successful Payment History response is returned from the connector" should {

@@ -43,6 +43,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
       val paymentsContainsFailure: Boolean = paymentResponses.exists {
         case Payments(_) => false
         case PaymentsError(status, _) if status == 404 => false
+        case PaymentsError(status, _) if status == 422 => true
         case PaymentsError(_, _) => true
       }
       if (paymentsContainsFailure) {
