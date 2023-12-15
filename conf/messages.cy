@@ -1452,6 +1452,10 @@ cannotGoBack.youCan                                  = Gallwch wneud y canlynol:
 cannotGoBack.manageLink                              = bwrw golwg dros eich ffynonellau incwm a’u rheoli
 cannotGoBack.homeLink                                = mynd yn ôl i’r hafan
 
+cannotGoBack.sole-trader-ceased                       = Mae’ch busnes unig fasnachwr wedi dod i ben.
+cannotGoBack.uk-property-ceased                       = Mae’ch busnes eiddo yn y DU wedi dod i ben.
+cannotGoBack.foreign-property-ceased                  = Mae’ch busnes eiddo tramor wedi dod i ben.
+
 cannotGoBack.warningMessage                        = Mae dal angen i chi ddewis dull o adrodd.  Os byddwch yn gadael y dudalen hon, byddwch wedi’ch trefnu i adrodd yn flynyddol am hyd at ddwy flwyddyn dreth.
 cannotGoBack.hasBeenAdded1                         = Gallwch ei reoli o’r dudalen
 cannotGoBack.hasBeenAdded2                         =
@@ -1538,6 +1542,7 @@ incomeSources.manage.quarterly-period.standard.content.p2             =   Gallwc
 incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r ffynhonnell incwm hon yn adrodd o 1 Ebrill yn ôl chwarterau calendr.
 incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
 incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am gyfnodau chwarterol
+incomeSources.manage.quarterly-period.content.external-ref-link       =   https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax.cy#anfon-diweddariadau-chwarterol
 
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
 incomeSources.manage.business-manage-details.sole-trader-section      =   Busnesau unig fasnachwr

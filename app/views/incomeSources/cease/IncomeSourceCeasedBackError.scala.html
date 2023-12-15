@@ -19,14 +19,24 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
-@this(mainTemplate: unifiedLayout,
+@this(
+    mainTemplate: unifiedLayout,
     h1: h1,
     h2: h2,
     link: link,
     p: p,
+    formWithCSRF: FormWithCSRF,
     continueButton: ContinueButton)
 
-@(isAgent: Boolean, subheadingContent: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@getCeasedMessage = @{
+    incomeSourceType match {
+        case SelfEmployment => messages("cannotGoBack.sole-trader-ceased")
+        case UkProperty => messages("cannotGoBack.uk-property-ceased")
+        case ForeignProperty => messages("cannotGoBack.foreign-property-ceased")
+    }
+}
 
 @getManageUrl = @{
     controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
@@ -38,25 +48,25 @@
 }
 
 @mainTemplate(
-    pageTitle = s"${messages("cannotGoBack.heading")}",
+    pageTitle = s"${messages("cannotGoBack.heading")} - $getCeasedMessage",
     isAgent = isAgent,
     backUrl = None,
     btaNavPartial = user.btaNavPartial) {
 
     @h1(msg = messages("cannotGoBack.heading"), classes = "govuk-heading-xl", id = Some("title"))
 
-    @h2(msg = subheadingContent, classes = "govuk-heading-m", optId = Some("subheading"))
+    @h2(msg = getCeasedMessage, classes = "govuk-heading-m", optId = Some("heading"))
 
     <p class="govuk-body">@messages("cannotGoBack.youCan")</p>
 
     <ul class="govuk-list govuk-list--bullet">
         <li>@p(classes = "govuk-!-margin-bottom-4") {
-            @link(link = getManageUrl, messageKey = "cannotGoBack.manageLink", id = Some("manage-link"))
+                @link(link = getManageUrl, messageKey = "cannotGoBack.manageLink", id = Some("manage-link"))
             }
         </li>
 
         <li>@p(classes = "govuk-!-margin-bottom-4") {
-            @link(link = getHomeUrl, messageKey = "cannotGoBack.homeLink", id = Some("home-link"))
+                @link(link = getHomeUrl, messageKey = "cannotGoBack.homeLink", id = Some("home-link"))
             }
         </li>
     </ul>

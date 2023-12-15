@@ -20,6 +20,12 @@ import auth.MtdItUser
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType._
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, Cease, JourneyType, Manage}
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import play.api.Logger
+import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.mvc.Result
@@ -32,9 +38,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait JourneyChecker extends IncomeSourcesUtils {
   self =>
+  val sessionService: SessionService
+
   implicit val ec: ExecutionContext
 
-  val sessionService: SessionService
 
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
@@ -61,9 +68,13 @@ trait JourneyChecker extends IncomeSourcesUtils {
           Future.successful {
             Redirect(controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent(user), journeyType.businessType))
           }
-        case (Cease, _, _) =>
+        case (Cease, true, _) =>
           Future.successful {
-            Redirect(controllers.routes.HomeController.show()) //TODO: fix
+            Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(journeyType.businessType))
+          }
+        case (Cease, false, _) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(journeyType.businessType))
           }
       }
     }
@@ -117,13 +128,13 @@ trait JourneyChecker extends IncomeSourcesUtils {
     (journeyType.operation, midwayFlag) match {
       case (Add, true) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false) ||
-          data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
+        data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
       case (Add, false) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case (Manage, _) =>
         data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case (Cease, _) =>
-        data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
+      case (Cease,_) =>
+        data.ceaseIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case _ => false
     }
   }

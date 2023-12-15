@@ -26,13 +26,13 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import models.core.IncomeSourceId
-import IncomeSourceId.mkIncomeSourceId
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
 import javax.inject.Inject
@@ -53,7 +53,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   private def getSessionData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[(Either[Throwable, Option[IncomeSourceId]], Either[Throwable, Option[String]])] = {
     val incomeSourceIdFuture: Future[Either[Throwable, Option[IncomeSourceId]]] = if (incomeSourceType == SelfEmployment) {
@@ -87,7 +87,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
 
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
     val sessionDataFuture = getSessionData(incomeSourceType)

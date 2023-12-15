@@ -532,6 +532,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddIncomeSource(): WSResponse = get(uri = s"/income-sources/add/new-income-sources")
 
+    def getCeaseSECannotGoBack(): WSResponse = get("/income-sources/cease/cease-business-cannot-go-back")
+
+    def getCeaseUKCannotGoBack(): WSResponse = get("/income-sources/cease/cease-uk-property-cannot-go-back")
+
+    def getCeaseFPCannotGoBack(): WSResponse = get("/income-sources/cease/cease-foreign-property-cannot-go-back")
+
     def getManageSECannotGoBack: WSResponse = get(s"/income-sources/manage/manage-business-cannot-go-back")
 
     def getManageUKPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-uk-property-cannot-go-back")
