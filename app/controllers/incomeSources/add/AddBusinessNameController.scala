@@ -110,6 +110,11 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
         Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
       }
     }
+  }.recover {
+    case ex =>
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application").error(s"[AddBusinessNameController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
+      errorHandler.showInternalServerError()
   }
 
   private def getSubmitAction(isAgent: Boolean, isChange: Boolean) = {
@@ -182,9 +187,10 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       )
     }
   }.recover {
-    case exception =>
+    case ex =>
+      Logger("application")
+        .error(s"[AddBusinessNameController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleSubmitRequest] ${exception.getMessage}")
       errorHandler.showInternalServerError()
   }
 

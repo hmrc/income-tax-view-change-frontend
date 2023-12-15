@@ -18,7 +18,7 @@ package utils
 
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, ItvcErrorHandler, ShowInternalServerError}
-import enums.JourneyType._
+import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
@@ -31,11 +31,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait JourneyChecker extends IncomeSourcesUtils {
   self =>
-  implicit val ec: ExecutionContext
 
   val sessionService: SessionService
   val itvcErrorHandler: ItvcErrorHandler
   val itvcErrorHandlerAgent: AgentItvcErrorHandler
+
+  implicit val ec: ExecutionContext
 
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
@@ -64,9 +65,13 @@ trait JourneyChecker extends IncomeSourcesUtils {
           Future.successful {
             Redirect(controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent(user), journeyType.businessType))
           }
-        case (Cease, _, _) =>
+        case (Cease, true, _) =>
           Future.successful {
-            Redirect(controllers.routes.HomeController.show()) //TODO: fix
+            Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(journeyType.businessType))
+          }
+        case (Cease, false, _) =>
+          Future.successful {
+            Redirect(controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(journeyType.businessType))
           }
       }
     }
@@ -112,7 +117,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
       case (Manage, _) =>
         data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case (Cease, _) =>
-        data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
+        data.ceaseIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case _ => false
     }
   }

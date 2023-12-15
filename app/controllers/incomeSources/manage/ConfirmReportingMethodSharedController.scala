@@ -78,12 +78,14 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              changeTo: String,
              isAgent: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = {
+    authenticatedAction(isAgent) { implicit user =>
 
-    withSessionData(JourneyType(Manage, incomeSourceType)) { sessionData =>
-      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
-      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-      handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
+      withSessionData(JourneyType(Manage, incomeSourceType)) { sessionData =>
+        val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+        val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+        handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
+      }
     }
   }
 
@@ -96,29 +98,29 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value))
 
-      Future.successful(
-        (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
-          case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
+    Future.successful(
+      (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
+        case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
 
-            val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
+          val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
 
-            Ok(
-              confirmReportingMethod(
-                isAgent = isAgent,
-                backUrl = backCall.url,
-                newReportingMethod = reportingMethod,
-                form = ConfirmReportingMethodForm(changeTo),
-                taxYearEndYear = taxYearModel.endYear.toString,
-                taxYearStartYear = taxYearModel.startYear.toString,
-                postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
-              )
+          Ok(
+            confirmReportingMethod(
+              isAgent = isAgent,
+              backUrl = backCall.url,
+              newReportingMethod = reportingMethod,
+              form = ConfirmReportingMethodForm(changeTo),
+              taxYearEndYear = taxYearModel.endYear.toString,
+              taxYearStartYear = taxYearModel.startYear.toString,
+              postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+              isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
             )
-          case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
-          case (_, None, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse reporting method: $changeTo")
-          case (_, _, None) => logAndShowError(isAgent, s"[handleShowRequest]: Could not find incomeSourceId for $incomeSourceType")
-        }
-      )
+          )
+        case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
+        case (_, None, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse reporting method: $changeTo")
+        case (_, _, None) => logAndShowError(isAgent, s"[handleShowRequest]: Could not find incomeSourceId for $incomeSourceType")
+      }
+    )
   }
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
@@ -233,7 +235,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
     }
   } recover {
     case ex: Exception =>
-      logAndShowError(isAgent, s"[handleValidForm]: Error updating reporting method: ${ex.getMessage}")
+      logAndShowError(isAgent, s"[handleValidForm]: Error updating reporting method: ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def getReportingMethod(reportingMethod: String): Option[String] = {

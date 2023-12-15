@@ -115,7 +115,9 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
       case None =>
         val agentPrefix = if (isAgent) "[Agent]" else ""
         Logger("application").error(agentPrefix + "[IncomeSourceReportingMethodController][handleSubmit] Unable to retrieve incomeSourceId from session data")
-        Future.successful(errorHandler(isAgent).showInternalServerError())
+        Future.successful {
+          errorHandler(isAgent).showInternalServerError()
+        }
     }
   }
 
@@ -275,7 +277,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     handleUpdateResults(isAgent, incomeSourceType, id, results)
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: ${ex.getMessage}")
+      Logger("application").error(s"[IncomeSourceReportingMethodController][updateReportingMethod]: - ${ex.getMessage} - ${ex.getCause}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
 

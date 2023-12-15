@@ -111,6 +111,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           Future.successful(showInternalServerError(isAgent))
       }
     }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
   }
 
   private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
@@ -151,6 +156,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
           Future.successful(showInternalServerError(isAgent))
       }
     }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
   }
 
   private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {

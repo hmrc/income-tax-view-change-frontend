@@ -70,8 +70,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
             changeTo,
             incomeSourceIdOption
           )
-        case Left(exception) =>
-          Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${exception.getMessage}")
+        case Left(ex) =>
+          Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage}")
           Future.successful {
             errorHandler(false).showInternalServerError()
           }
@@ -91,8 +91,8 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               changeTo,
               incomeSourceIdOption
             )
-          case Left(exception) =>
-            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${exception.getMessage}")
+          case Left(ex) =>
+            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage} - ${ex.getCause}")
             Future.successful {
               errorHandler(true).showInternalServerError()
             }

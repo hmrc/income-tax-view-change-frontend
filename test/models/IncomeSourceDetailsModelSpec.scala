@@ -17,6 +17,7 @@
 package models
 
 import auth.MtdItUser
+import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import forms.IncomeSourcesFormsSpec.{fakeRequestConfirmedClientwithFullBusinessDetails, fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -160,25 +161,27 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
         val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
 
-        result shouldBe testSelfEmploymentIdMaybe
+        result shouldBe Right(testSelfEmploymentIdMaybe.get)
       }
     }
     "user has multiple incomeSourceIdHashes matching the url incomeSourceIdHash" should {
       "return the matching incomeSourceId inside an Option" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, dualBusinessIncome)
 
+        val listOfIncomeSourceIds: List[String] = user.incomeSources.businesses.filterNot(_.isCeased).map(_.incomeSourceId)
+
         val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
 
-        result shouldBe testSelfEmploymentIdMaybe
+        result shouldBe Left(MultipleIncomeSourcesFound(testSelfEmploymentIdHash.toOption.get.hash, listOfIncomeSourceIds))
       }
     }
     "user has no incomeSourceIdHashes matching the url incomeSourceIdHash" should {
-      "return None" in {
+      "return an exception" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessIncome2023)
 
         val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = emptyIncomeSourceIdHash)
 
-        result shouldBe None
+        result shouldBe Left(NoIncomeSourceFound(emptyIncomeSourceIdHash.hash))
       }
     }
     "user has no incomeSources" should {
@@ -187,7 +190,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
         val result = user.incomeSources.compareHashToQueryString(incomeSourceIdHash = testSelfEmploymentIdHash.toOption.get)
 
-        result shouldBe None
+        result shouldBe Left(NoIncomeSourceFound(testSelfEmploymentIdHash.toOption.get.hash))
       }
     }
   }

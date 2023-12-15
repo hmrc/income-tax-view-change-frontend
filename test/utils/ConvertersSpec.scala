@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package exceptions
+package utils
 
-case class MissingFieldException(fieldName: String) extends RuntimeException(s"Missing Mandatory Expected Field: $fieldName")
+import org.scalacheck.Gen
+import testUtils.TestSupport
 
-case class MissingSessionKey(key:String) extends RuntimeException(s"Missing session key: $key")
-
-case class NoIncomeSourceFound(hash: String) extends RuntimeException(s"User has no matching incomeSources. Hash: <$hash>")
-
-case class MultipleIncomeSourcesFound(hash: String, incomeSourceIds: List[String]) extends
-  RuntimeException(s"User has multiple matching incomeSources. hash: <$hash>. incomeSourceIds: <$incomeSourceIds>")
+class ConvertersSpec extends TestSupport {
+  import converters.OptionExtension
+  "OptionExtension" when {
+    "call trim method" should {
+      "Some('') return None" in {
+        Some("").trim() shouldBe None
+      }
+      "Some('anyString') return Some(_)" in {
+        val underTest = Gen.oneOf( ('A' to 'Z') ++ ('a' to 'z') ).sample.get.toString
+        Some(underTest).trim().isDefined shouldBe true
+      }
+    }
+  }
+}

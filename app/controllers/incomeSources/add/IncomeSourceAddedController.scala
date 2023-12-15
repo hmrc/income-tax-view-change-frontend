@@ -97,6 +97,11 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
           }
       }
     }
+  }.recover {
+    case ex: Exception =>
+      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
+      errorHandler(isAgent).showInternalServerError()
   }
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],

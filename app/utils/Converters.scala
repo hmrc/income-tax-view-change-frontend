@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package exceptions
+package utils
 
-case class MissingFieldException(fieldName: String) extends RuntimeException(s"Missing Mandatory Expected Field: $fieldName")
 
-case class MissingSessionKey(key:String) extends RuntimeException(s"Missing session key: $key")
+package object converters {
 
-case class NoIncomeSourceFound(hash: String) extends RuntimeException(s"User has no matching incomeSources. Hash: <$hash>")
+  implicit class OptionExtension(in: Option[String]) {
+    def trim(): Option[String] = {
+      in match {
+        case Some("") => None
+        case _ => in
+      }
+    }
+  }
 
-case class MultipleIncomeSourcesFound(hash: String, incomeSourceIds: List[String]) extends
-  RuntimeException(s"User has multiple matching incomeSources. hash: <$hash>. incomeSourceIds: <$incomeSourceIds>")
+}

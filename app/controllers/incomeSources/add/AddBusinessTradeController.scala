@@ -25,6 +25,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
 import models.incomeSourceDetails.AddIncomeSourceData
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -112,6 +113,11 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
         Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL))
       }
     }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"[AddBusinessTradeController][handleRequest] - ${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
   }
 
   def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = authenticatedAction(isAgent) {
@@ -128,6 +134,11 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
         formData => handleSuccess(formData.trade, isAgent, isChange)
       )
     }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"[AddBusinessTradeController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
   }
 
   def handleFormErrors(form: Form[BusinessTradeForm], isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {

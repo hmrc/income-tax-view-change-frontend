@@ -103,7 +103,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   } recover {
     case ex: Exception =>
       Logger("application").error(s"[CeaseCheckIncomeSourceDetailsController][handleRequest]${if (isAgent) "[Agent] "}" +
-        s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage}")
+        s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
       Redirect(controllers.incomeSources.cease.routes.IncomeSourceNotCeasedController.show(isAgent, SelfEmployment))
   }
 
@@ -157,10 +157,10 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
       }
     } recover {
       case ex: Exception =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
         Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest] Error Submitting Cease Date: ${
-          ex.getMessage
-        }")
+          ex.getMessage} - ${ex.getCause}")
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         errorHandler.showInternalServerError()
     }
 

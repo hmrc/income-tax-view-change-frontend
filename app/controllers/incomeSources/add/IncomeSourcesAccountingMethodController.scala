@@ -95,8 +95,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           )(user, messages)))
     }
   }.recover {
-    case exception =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] ${exception.getMessage}")
+    case ex =>
+      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] - ${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
 
@@ -138,6 +138,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         }
       }
     }
+  }.recover {
+    case ex: Exception =>
+      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
+      errorHandler(isAgent).showInternalServerError()
   }
 
   private def actionIndividualSubmitRequest(incomeSourceType: IncomeSourceType): (Call, String, Call) = {
@@ -201,6 +206,10 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         }
       }
     )
+  }.recover {
+    case ex =>
+      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
+      errorHandler(isAgent).showInternalServerError()
   }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =

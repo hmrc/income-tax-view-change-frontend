@@ -115,7 +115,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     case ex: Throwable =>
       val agentPrefix = if (isAgent) "[Agent]" else ""
       Logger("application").error(agentPrefix +
-        s"[IncomeSourceCheckDetailsController][handleRequest]: Unexpected exception ${ex.getMessage}")
+        s"[IncomeSourceCheckDetailsController][handleRequest]: Unexpected exception ${ex.getMessage} - ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }
 
