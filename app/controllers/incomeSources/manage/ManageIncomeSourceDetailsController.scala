@@ -333,7 +333,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
 
     val incomeSourceIdMaybe: Option[IncomeSourceId] = incomeSourceIdHashMaybe.flatMap(x => user.incomeSources.compareHashToQueryString(x))
 
-    withIncomeSourcesFS {
+    withSessionData(JourneyType(Manage, incomeSourceType)) { _ =>
       for {
         value <- if (incomeSourceType == SelfEmployment) {
           getManageIncomeSourceViewModel(sources = sources, incomeSourceId = incomeSourceIdMaybe

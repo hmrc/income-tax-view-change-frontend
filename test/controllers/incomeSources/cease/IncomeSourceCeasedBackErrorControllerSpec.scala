@@ -51,13 +51,10 @@ class IncomeSourceCeasedBackErrorControllerSpec extends TestSupport with MockAut
       setupMockAuthorisationSuccess(isAgent)
       mockUKPropertyIncomeSourceWithLatency2024()
 
-      val result = (isAgent, incomeSourceType) match {
-        case (true, SelfEmployment) => TestIncomeSourceCeasedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-        case (false, SelfEmployment) => TestIncomeSourceCeasedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
-        case (true, UkProperty) => TestIncomeSourceCeasedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-        case (false, UkProperty) => TestIncomeSourceCeasedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
-        case (true, ForeignProperty) => TestIncomeSourceCeasedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-        case (false, ForeignProperty) => TestIncomeSourceCeasedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
+      val result = if (isAgent) {
+        TestIncomeSourceCeasedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+      } else {
+        TestIncomeSourceCeasedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
       }
 
       status(result) shouldBe OK
