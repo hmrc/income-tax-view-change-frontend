@@ -32,7 +32,9 @@ import java.time.LocalDate
 
 class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
-  val toDay : LocalDate = LocalDate.of(2023, 15, 1)
+  // Failing when we set date to 3rd of Jan 2024
+  //val toDay : LocalDate = LocalDate.of(2024, 3, 1)
+  val toDay : LocalDate = LocalDate.of(2023, 12, 15)
 
   val transactionName = "what-you-owe-response"
   val auditEvent = "WhatYouOweResponse"
