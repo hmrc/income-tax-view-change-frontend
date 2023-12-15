@@ -63,6 +63,8 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                                      ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
   lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     (isAgent, incomeSourceType.equals(SelfEmployment)) match {
       case (false, true) => routes.AddBusinessAddressController.show(false).url
@@ -105,20 +107,15 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { sessionData =>
 
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
-      case Right(Some(id)) =>
-        handleIncomeSourceIdRetrievalSuccess(incomeSourceType = incomeSourceType, id = id, isAgent = isAgent)
-      case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
-      case Left(ex) => Future.failed(ex)
-    }.recover {
-      case ex: Exception =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(
-          s"[UKPropertyReportingMethodController][handleRequest]:" +
-            s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
-        errorHandler.showInternalServerError()
+    val incomeSourceId = sessionData.addIncomeSourceData.flatMap(_.incomeSourceId)
+    incomeSourceId match {
+      case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType = incomeSourceType, id = id, isAgent = isAgent)
+      case None =>
+        val agentPrefix = if (isAgent) "[Agent]" else ""
+        Logger("application").error(agentPrefix + "[IncomeSourceReportingMethodController][handleSubmit] Unable to retrieve incomeSourceId from session data")
+        Future.successful(errorHandler(isAgent).showInternalServerError())
     }
   }
 
@@ -126,14 +123,12 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   private def handleIncomeSourceIdRetrievalSuccess(incomeSourceType: IncomeSourceType, id: String, isAgent: Boolean)
                                                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
     val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
     updateMongoAdded(incomeSourceType).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"[ReportingMethodController][handleRequest] Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {
-          errorHandler.showInternalServerError()
+          errorHandler(isAgent).showInternalServerError()
         }
       case true =>
         itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -207,20 +202,19 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                          (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
-      case Right(Some(id)) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
-        invalid => handleInvalidForm(invalid, incomeSourceType, mkIncomeSourceId(id), isAgent),
-        valid => handleValidForm(valid, incomeSourceType, mkIncomeSourceId(id), isAgent)
-      )
-      case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
-      case Left(ex) => Future.failed(ex)
-    }.recover {
-      case ex: Exception =>
-        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[IncomeSourceReportingMethodController][handleSubmit]:" +
-          s"Unable to handle IncomeSourceReportingMethodController submit request for $incomeSourceType: ${ex.getMessage}")
-        errorHandler.showInternalServerError()
+                          (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { sessionData =>
+    val incomeSourceId = sessionData.addIncomeSourceData.flatMap(_.incomeSourceId)
+    incomeSourceId match {
+      case Some(id) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
+        invalid => handleInvalidForm(invalid, incomeSourceType, IncomeSourceId(id), isAgent),
+        valid => handleValidForm(valid, incomeSourceType, IncomeSourceId(id), isAgent))
+      case None =>
+        val agentPrefix = if (isAgent) "[Agent]" else ""
+        Logger("application").error(agentPrefix +
+          "[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data")
+        Future.successful {
+          errorHandler(isAgent).showInternalServerError()
+        }
     }
   }
 

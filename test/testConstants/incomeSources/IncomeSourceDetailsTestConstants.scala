@@ -16,8 +16,8 @@
 
 package testConstants.incomeSources
 
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.JourneyType.JourneyType
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._
@@ -197,6 +197,10 @@ object IncomeSourceDetailsTestConstants {
         )
     }
   }
+
+  val addedIncomeSourceUIJourneySessionData: IncomeSourceType => UIJourneySessionData = (incomeSourceType: IncomeSourceType) =>
+    UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
+      addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
   val completedUIJourneySessionData: JourneyType => UIJourneySessionData = (journeyType: JourneyType) => {
     journeyType.operation.operationType match {

@@ -17,15 +17,14 @@
 package utils
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.SelfEmployment
+import config.{AgentItvcErrorHandler, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyType._
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
-import play.api.mvc.Results.{Redirect, contentDispositionHeader}
+import play.api.mvc.Results.Redirect
 import services.SessionService
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, jsonFormat}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,8 +34,12 @@ trait JourneyChecker extends IncomeSourcesUtils {
   implicit val ec: ExecutionContext
 
   val sessionService: SessionService
+  val itvcErrorHandler: ItvcErrorHandler
+  val itvcErrorHandlerAgent: AgentItvcErrorHandler
 
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
+
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   private lazy val redirectUrl: (JourneyType, Boolean) => MtdItUser[_] => Future[Result] =
     (journeyType: JourneyType, useDefault: Boolean) => user => {
@@ -55,7 +58,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
           }
         case (Add, false, false) =>
           Future.successful {
-             Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(journeyType.businessType))
+            Redirect(controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(journeyType.businessType))
           }
         case (Manage, _, _) =>
           Future.successful {
@@ -92,7 +95,9 @@ trait JourneyChecker extends IncomeSourcesUtils {
           val agentPrefix = if (isAgent(user)) "[Agent]" else ""
           Logger("application").error(s"$agentPrefix" +
             s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
-          Future.failed(ex)
+          Future.successful {
+            errorHandler(isAgent(user)).showInternalServerError()
+          }
       }
     }
   }
@@ -101,12 +106,12 @@ trait JourneyChecker extends IncomeSourcesUtils {
     (journeyType.operation, midwayFlag) match {
       case (Add, true) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false) ||
-        data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
+          data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
       case (Add, false) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case (Manage,_ ) =>
+      case (Manage, _) =>
         data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case (Cease,_) =>
+      case (Cease, _) =>
         data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case _ => false
     }

@@ -18,7 +18,7 @@ package controllers.incomeSources.manage
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney._
@@ -55,27 +55,26 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
-      withIncomeSourcesFS {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(incomeSourceIdMaybe) =>
-            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(mkIncomeSourceId)
-            handleRequest(
-              incomeSourceType = SelfEmployment,
-              isAgent = false,
-              taxYear,
-              changeTo,
-              incomeSourceIdOption
-            )
-          case Left(exception) => Future.failed(exception)
-        }
-      }.recover {
-        case exception =>
-          Logger("application").error(s"[ManageObligationsController][showSelfEmployment] ${exception.getMessage}")
-          showInternalServerError(isAgent = false)
+      sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
+        case Right(incomeSourceIdMaybe) =>
+          val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
+          handleRequest(
+            incomeSourceType = SelfEmployment,
+            isAgent = false,
+            taxYear,
+            changeTo,
+            incomeSourceIdOption
+          )
+        case Left(exception) =>
+          Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${exception.getMessage}")
+          Future.successful {
+            errorHandler(false).showInternalServerError()
+          }
       }
   }
 
@@ -84,7 +83,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       withIncomeSourcesFS {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
           case Right(incomeSourceIdMaybe) =>
-            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(mkIncomeSourceId)
+            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
             handleRequest(
               incomeSourceType = SelfEmployment,
               isAgent = true,
@@ -92,12 +91,12 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               changeTo,
               incomeSourceIdOption
             )
-          case Left(exception) => Future.failed(exception)
+          case Left(exception) =>
+            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${exception.getMessage}")
+            Future.successful {
+              errorHandler(true).showInternalServerError()
+            }
         }
-      }.recover {
-        case exception =>
-          Logger("application").error(s"[ManageObligationsController][showAgentSelfEmployment] ${exception.getMessage}")
-          showInternalServerError(isAgent = true)
       }
   }
 
@@ -155,7 +154,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
         }
   }
 
-  private lazy val successPostUrl =  (isAgent: Boolean) => {
+  private lazy val successPostUrl = (isAgent: Boolean) => {
     if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit()
     else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
   }
@@ -171,10 +170,10 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
               nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
                 Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, successPostUrl(isAgent)))
               }
-            case Left(error) => showError(isAgent, error.getMessage )
+            case Left(error) => showError(isAgent, error.getMessage)
           }
         case (Some(_), _) =>
-          showError (isAgent, s"Invalid changeTo mode provided: -$changeTo-")
+          showError(isAgent, s"Invalid changeTo mode provided: -$changeTo-")
         case (None, _) =>
           showError(isAgent, "Invalid tax year provided")
       }
@@ -184,8 +183,9 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     Logger("application").error(
       s"${if (isAgent) "[Agent]"}[ManageObligationsController][handleRequest] - $message")
-    if (isAgent) Future.successful(itvcErrorHandlerAgent.showInternalServerError())
-    else Future.successful(itvcErrorHandler.showInternalServerError())
+    Future.successful {
+      errorHandler(isAgent).showInternalServerError()
+    }
   }
 
   def getBusinessName(mode: IncomeSourceType, incomeSourceId: Option[IncomeSourceId])(implicit user: MtdItUser[_]): String = {

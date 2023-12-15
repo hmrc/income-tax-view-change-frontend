@@ -26,13 +26,12 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import models.core.IncomeSourceId
-import IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
 import javax.inject.Inject
@@ -53,26 +52,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
-
-  private def getSessionData(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[(Either[Throwable, Option[IncomeSourceId]], Either[Throwable, Option[String]])] = {
-    val incomeSourceIdFuture: Future[Either[Throwable, Option[IncomeSourceId]]] = if (incomeSourceType == SelfEmployment) {
-      sessionService
-        .getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment))
-        .collect {
-          case Right(incomeSourceMaybeId) =>
-            Right(incomeSourceMaybeId.map(id => mkIncomeSourceId(id)))
-          case Left(ex) => Left(ex)
-        }
-    } else {
-      Future(Right(None))
-    }
-    val cessationEndDateFuture = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.dateCeasedField, JourneyType(Cease, incomeSourceType))
-    for {
-      incomeSourceId <- incomeSourceIdFuture
-      cessationEndDate <- cessationEndDateFuture
-    } yield (incomeSourceId, cessationEndDate)
-  }
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
     (isAgent, incomeSourceType) match {
@@ -87,24 +67,26 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { sessionData =>
 
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
-    val sessionDataFuture = getSessionData(incomeSourceType)
-
-    sessionDataFuture.flatMap {
-      case (Right(Some(incomeSourceId)), Right(Some(cessationEndDate))) =>
-        incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(sources, incomeSourceId, cessationEndDate) match {
+    val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
+    val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
+    (incomeSourceIdOpt, endDateOpt) match {
+      case (Some(id), Some(endDate)) =>
+        incomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(sources, IncomeSourceId(id), endDate) match {
           case Right(viewModel) =>
-            Future.successful(Ok(view(
-              viewModel = viewModel,
-              isAgent = isAgent,
-              backUrl = routes.CeaseIncomeSourceController.show().url,
-              messagesPrefix = messagesPrefix)))
+            Future.successful {
+              Ok(view(
+                viewModel = viewModel,
+                isAgent = isAgent,
+                backUrl = routes.CeaseIncomeSourceController.show().url,
+                messagesPrefix = messagesPrefix))
+            }
           case Left(ex) => Future.failed(ex)
         }
-      case (Right(None), Right(Some(cessationEndDate))) =>
-        incomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(sources, cessationEndDate, incomeSourceType) match {
+      case (None, Some(endDate)) =>
+        incomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(sources, endDate, incomeSourceType) match {
           case Right(viewModel) =>
             Future.successful(Ok(view(
               viewModel = viewModel,
@@ -149,37 +131,38 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
         }
   }
 
-  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    val sessionDataFuture = getSessionData(incomeSourceType)
+  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] =
+    withSessionData(JourneyType(Cease, incomeSourceType)) { sessionData =>
+      val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
+      val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
+      (incomeSourceIdOpt, endDateOpt) match {
+        case (Some(id), Some(endDate)) =>
+          // Update for SE Business
+          updateCessationDate(endDate, incomeSourceType, IncomeSourceId(id), isAgent)
+        case (None, Some(endDate)) =>
+          // Update for Property
+          val propertyIncomeSources = if (incomeSourceType.equals(UkProperty)) {
+            user.incomeSources.properties.find(propertyDetailsModel => propertyDetailsModel.isUkProperty && !propertyDetailsModel.isCeased)
+          }
+          else {
+            user.incomeSources.properties.find(propertyDetailsModel => propertyDetailsModel.isForeignProperty && !propertyDetailsModel.isCeased)
+          }
 
-    sessionDataFuture.flatMap {
-      case (Right(Some(incomeSourceId)), Right(Some(cessationEndDate))) =>
-        // Update for SE Business
-        updateCessationDate(cessationEndDate, incomeSourceType, incomeSourceId, isAgent)
-      case (Right(None), Right(Some(cessationEndDate))) =>
-        // Update for Property
-        val propertyIncomeSources = if (incomeSourceType.equals(UkProperty)) {
-          user.incomeSources.properties.find(propertyDetailsModel => propertyDetailsModel.isUkProperty && !propertyDetailsModel.isCeased)
-        }
-        else {
-          user.incomeSources.properties.find(propertyDetailsModel => propertyDetailsModel.isForeignProperty && !propertyDetailsModel.isCeased)
-        }
+          val incomeSourceId = IncomeSourceId(propertyIncomeSources.head.incomeSourceId)
+          updateCessationDate(endDate, incomeSourceType, incomeSourceId, isAgent)
 
-        val incomeSourceId = mkIncomeSourceId(propertyIncomeSources.head.incomeSourceId)
-        updateCessationDate(cessationEndDate, incomeSourceType, incomeSourceId, isAgent)
-
-      case (_, _) =>
-        val errorMessage = s"Unable to get required data from session for $incomeSourceType"
-        Future.failed(new Exception(errorMessage))
+        case (_, _) =>
+          val errorMessage = s"Unable to get required data from session for $incomeSourceType"
+          Future.failed(new Exception(errorMessage))
+      }
+    } recover {
+      case ex: Exception =>
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest] Error Submitting Cease Date: ${
+          ex.getMessage
+        }")
+        errorHandler.showInternalServerError()
     }
-  } recover {
-    case ex: Exception =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[CheckCeaseBusinessDetailsController][handleSubmitRequest] Error Submitting Cease Date: ${
-        ex.getMessage
-      }")
-      errorHandler.showInternalServerError()
-  }
 
   def updateCessationDate(cessationDate: String, incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId, isAgent: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {

@@ -28,7 +28,6 @@ import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService, SessionService}
@@ -37,7 +36,6 @@ import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDate
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -91,16 +89,20 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+    withSessionData(JourneyType(Add, incomeSourceType)) { sessionData =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType.toString).flatMap {
-          case true => Future.successful(None)
-          case false => throw new Exception("Unable to create session")
-        }
+        sessionService.createSession(journeyType.toString)
       }
 
-      getFilledForm(form(messagesPrefix), incomeSourceType, isChange).map { filledForm =>
+      val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
+      val filledForm = dateStartedOpt match {
+        case Some(date) =>
+          form(messagesPrefix).fill(DateFormElement(date))
+        case None => form(messagesPrefix)
+      }
+
+      Future.successful {
         Ok(
           addIncomeSourceStartDate(
             form = filledForm,
@@ -111,11 +113,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
           )
         )
       }
-    }.recover {
-      case ex =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest][${incomeSourceType.key}] ${ex.getMessage}")
-        errorHandler.showInternalServerError()
     }
   }
 
@@ -176,33 +173,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
         andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
         authenticatedCodeBlock(user)
       }
-  }
-
-  private def getFilledForm(form: Form[DateFormElement],
-                            incomeSourceType: IncomeSourceType,
-                            isChange: Boolean)(implicit user: MtdItUser[_]): Future[Form[DateFormElement]] = {
-
-    if (isChange) {
-      getStartDate(incomeSourceType).flatMap {
-        case Some(date) =>
-          Future.successful(
-            form.fill(
-              DateFormElement(date)
-            )
-          )
-        case None =>
-          throw new Exception(s"Unable to retrieve start date from Mongo")
-      }
-    }
-    else Future.successful(form)
-  }
-
-  private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
-    val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt)
-      case Left(ex) => Future.failed(ex)
-    }
   }
 
   private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {

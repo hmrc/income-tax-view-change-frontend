@@ -28,7 +28,6 @@ import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -68,19 +67,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            isAgent: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-    withSessionData(JourneyType(Manage, incomeSourceType)) { _ =>
-      if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
-          case Right(Some(incomeSourceId)) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, Some(mkIncomeSourceId(incomeSourceId)))
-          case Right(None) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, None)
-          case Left(exception) => Future.failed(exception)
-        }
-      }
-      else handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, None)
-    }.recover {
-      case exception =>
-        Logger("application").error(s"[ConfirmReportingMethodSharedController][show] ${exception.getMessage}")
-        showInternalServerError(isAgent)
+    withSessionData(JourneyType(Manage, incomeSourceType)) { sessionData =>
+      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+      handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
     }
   }
 
@@ -90,19 +80,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
 
-    withIncomeSourcesFS {
-      if (incomeSourceType == SelfEmployment) {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
-          case Right(Some(incomeSourceId)) => handleSubmitRequest(taxYear, changeTo, isAgent, Some(mkIncomeSourceId(incomeSourceId)), incomeSourceType)
-          case Right(None) => handleSubmitRequest(taxYear, changeTo, isAgent, None, incomeSourceType)
-          case Left(exception) => Future.failed(exception)
-        }
-      }
-      else handleSubmitRequest(taxYear, changeTo, isAgent, None, incomeSourceType)
-    }.recover {
-      case exception =>
-        Logger("application").error(s"[ConfirmReportingMethodSharedController][submit] ${exception.getMessage}")
-        showInternalServerError(isAgent)
+    withSessionData(JourneyType(Manage, incomeSourceType)) { sessionData =>
+      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+      handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
     }
   }
 
@@ -115,7 +96,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(m => m.value))
 
-    withIncomeSourcesFS {
       Future.successful(
         (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
           case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
@@ -139,7 +119,6 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           case (_, _, None) => logAndShowError(isAgent, s"[handleShowRequest]: Could not find incomeSourceId for $incomeSourceType")
         }
       )
-    }
   }
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {

@@ -18,20 +18,18 @@ package controllers.incomeSources.add
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 import utils.{IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
@@ -55,6 +53,8 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
     implicit user =>
@@ -71,13 +71,12 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { sessionData =>
+      val incomeSourceIdOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourceId)
 
-    withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
-
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
-        case Right(Some(id)) =>
-
-          val incomeSourceId: IncomeSourceId = mkIncomeSourceId(id)
+      incomeSourceIdOpt match {
+        case Some(id) =>
+          val incomeSourceId: IncomeSourceId = IncomeSourceId(id)
 
           incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
             case Some((startDate, businessName)) =>
@@ -85,63 +84,48 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
               handleSuccess(incomeSourceId, incomeSourceType, businessName, showPreviousTaxYears, isAgent)
             case None => Logger("application").error(
               s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
-              if (isAgent) Future(itvcErrorHandlerAgent.showInternalServerError())
-              else Future(itvcErrorHandler.showInternalServerError())
+              Future.successful {
+                errorHandler(isAgent).showInternalServerError()
+              }
           }
-
-        case Right(_) => Future.failed(new Error("[IncomeSourceReportingMethodController][handleSubmit] Could not find an incomeSourceId in session data"))
-        case Left(ex) => Future.failed(ex)
-      }
-    }.recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting IncomeSourceAdded page: ${ex.getMessage}, IncomeSourceType: $incomeSourceType")
-        if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-        else itvcErrorHandler.showInternalServerError()
-    }
-  }
-
-  def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    updateMongoAdded(incomeSourceType).flatMap {
-      case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
-        Future.successful {
-          if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-          else itvcErrorHandler.showInternalServerError()
-        }
-      case true => incomeSourceType match {
-        case SelfEmployment =>
-          businessName match {
-            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-            }
-            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-            }
+        case None =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix +
+            s"[IncomeSourceAddedController][handleRequest]: Unable to retrieve incomeSourceId from Mongo for $incomeSourceType")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
           }
-        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-          Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
-        }
-        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-          Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
-        }
       }
     }
   }
 
-  private def updateMongoAdded(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
+                    showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
         val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
         val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
-
-        sessionService.setMongoData(uiJourneySessionData)
-
-      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
+        sessionService.setMongoData(uiJourneySessionData).flatMap { _ =>
+          incomeSourceType match {
+            case SelfEmployment =>
+              nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+                Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
+              }
+            case _ => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+              Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = incomeSourceType))
+            }
+          }
+        }
+      case _ =>
+        val agentPrefix = if (isAgent) "[Agent]" else ""
+        Logger("application").error(agentPrefix +
+          s"[IncomeSourceAddedController][handleSuccess]: Unable to retrieve Mongo session data for $incomeSourceType")
+        Future.successful {
+          errorHandler(isAgent).showInternalServerError()
+        }
     }
   }
-
 
   private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val redirectUrl = if (isAgent) routes.AddIncomeSourceController.showAgent().url else routes.AddIncomeSourceController.show().url
