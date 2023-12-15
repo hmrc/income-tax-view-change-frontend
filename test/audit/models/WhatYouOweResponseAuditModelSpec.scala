@@ -32,6 +32,8 @@ import java.time.LocalDate
 
 class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
+  val toDay : LocalDate = LocalDate.of(2023, 15, 1)
+
   val transactionName = "what-you-owe-response"
   val auditEvent = "WhatYouOweResponse"
   val lpiPaymentOnAccount1: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
@@ -39,10 +41,10 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
   val paymentOnAccount2: String = messages("whatYouOwe.paymentOnAccount2.text")
   val class2Nic: String = messages("whatYouOwe.class2Nic.text")
 
-  val dueDateInFuture: String = LocalDate.now().plusDays(45).toString
-  val dueDateIsSoon: String = LocalDate.now().plusDays(1).toString
+  val dueDateInFuture: String = toDay.plusDays(45).toString
+  val dueDateIsSoon: String = toDay.plusDays(1).toString
 
-  val outStandingCharges: String = LocalDate.now().minusDays(30).toString
+  val outStandingCharges: String = toDay.minusDays(30).toString
 
   def testWhatYouOweResponseAuditModel(userType: Option[AffinityGroup] = Some(Agent),
                                        yearOfMigration: Option[String] = Some("2015"),
@@ -159,12 +161,12 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       }
 
       "user's first year of migration" in {
-        val currentTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.now)
+        val currentTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(toDay)
         balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(currentTaxYear.toString))) shouldBe None
       }
 
       "user's second or more year of migration and balance details contains all zero amounts" in {
-        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.now) - 1
+        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(toDay) - 1
         val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
           balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0, None, None, None,None)
         )
@@ -174,7 +176,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       }
 
       "user's second or more year of migration and balance details contains some zero amounts" in {
-        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(LocalDate.now) - 1
+        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(toDay) - 1
         val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
           balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None,None)
         )
@@ -201,7 +203,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           "outstandingAmount" -> 42.5,
           "chargeType" -> lpiPaymentOnAccount1,
           "dueDate" -> "2019-06-25",
-          "endTaxYear" -> LocalDate.now().getYear,
+          "endTaxYear" -> toDay.getYear,
           "overDue" -> true
         )
       }
