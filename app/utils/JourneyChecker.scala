@@ -17,21 +17,13 @@
 package utils
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType._
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
-import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import play.api.Logger
-import enums.JourneyType.{Add, Cease, JourneyType, Manage}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
-import play.api.mvc.Results.{Redirect, contentDispositionHeader}
+import play.api.mvc.Results.Redirect
 import services.SessionService
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, jsonFormat}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
