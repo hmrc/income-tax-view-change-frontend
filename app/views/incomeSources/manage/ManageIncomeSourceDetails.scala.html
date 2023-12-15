@@ -247,7 +247,7 @@
                     content = Text(getAccountingMethodMessage)
                 ),
                 value = Value(
-                    content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.businessAccountingMethod)))
+                    content = Text(messages(viewModel.businessAccountingMethodAsKey(viewModel.isTraditionalAccountingMethod)))
                 )
             ))
                 ++ getQuarterlyType

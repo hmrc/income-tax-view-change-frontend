@@ -347,7 +347,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Accounting method for sole trader income"
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.unknown
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe "Traditional accounting"
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
@@ -470,7 +470,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__key").get(3).text() shouldBe "Accounting method for sole trader income"
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe TestManageIncomeSourceDetailsController.unknown
+          .getElementsByClass("govuk-summary-list__value").get(3).text() shouldBe "Traditional accounting"
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
@@ -569,7 +569,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
+          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe "Traditional accounting"
 
       }
       "FS is enabled and the .show(id) method is called with a valid id parameter, latency expired" in {
@@ -666,7 +666,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
+          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe "Traditional accounting"
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, latency expired" in {
@@ -760,7 +760,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
+          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe "Traditional accounting"
 
       }
       "FS is enabled and the .show method is called with a valid id parameter, latency expired" in {
@@ -855,7 +855,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         document.getElementById("manage-details-table")
           .getElementsByClass("govuk-summary-list__value").get(0).text() shouldBe TestManageIncomeSourceDetailsController.unknown
         document.getElementById("manage-details-table")
-          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe TestManageIncomeSourceDetailsController.unknown
+          .getElementsByClass("govuk-summary-list__value").get(1).text() shouldBe "Traditional accounting"
 
       }
       "FS is enabled and the .showAgent method is called with a valid id parameter, latency expired" in {

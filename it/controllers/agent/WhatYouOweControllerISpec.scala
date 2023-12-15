@@ -40,7 +40,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
       None,
       Some(getCurrentTaxYearEnd),
       None,
-      address = Some(address)
+      address = Some(address),
+      cashOrAccruals = false
     )),
     properties = Nil
   )
@@ -93,7 +94,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
               None,
               Some(getCurrentTaxYearEnd),
               None,
-              address = Some(address)
+              address = Some(address),
+              cashOrAccruals = false
             )),
             properties = Nil
           )

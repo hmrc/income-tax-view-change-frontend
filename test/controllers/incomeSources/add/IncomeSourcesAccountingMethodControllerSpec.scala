@@ -204,20 +204,6 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         verifySetMongoKey(AddIncomeSourceData.incomeSourcesAccountingMethodField, accountingMethod, JourneyType(Add, incomeSourceType))
       }
     }
-    "return 500 INTERNAL_SERVER_ERROR" when {
-      "navigating to the page with FS Enabled and a user with a " + incomeSourceType + " business missing its cashOrAccruals field" in {
-        setupMockAuth(isAgent)
-        enable(IncomeSources)
-        mockBusinessIncomeSourceMissingCashOrAccrualsField()
-        val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetMongo(Right(Some(sessionData(journeyType))))
-
-        val result: Future[Result] = showResult(incomeSourceType, isAgent)
-
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
-      }
-    }
     "return 303 SEE_OTHER and redirect to custom not found error page for " + incomeSourceType when {
       "navigating to the page with FS Disabled" in {
         setupMockAuth(isAgent)
