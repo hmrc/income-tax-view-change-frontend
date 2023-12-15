@@ -67,13 +67,12 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
       updateMongoCeased(incomeSourceType)
       val incomeSourceDetails: Future[(Either[Throwable, Option[String]], IncomeSourceType)] = incomeSourceType match {
         case SelfEmployment =>
-          val x = sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
-          x
+          sessionService.getMongoKeyTyped[String](CeaseIncomeSourceData.incomeSourceIdField, JourneyType(Cease, SelfEmployment)).map((_, SelfEmployment))
         case UkProperty =>
           Future.successful(
             (user.incomeSources.properties
               .filter(_.isUkProperty)
-              .map(xs => xs.incomeSourceId).headOption match {
+              .map(incomeSource => incomeSource.incomeSourceId).headOption match {
               case Some(incomeSourceId) =>
                 Right(Some(incomeSourceId))
               case None =>
@@ -84,7 +83,7 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
           Future.successful(
             (user.incomeSources.properties
               .filter(_.isForeignProperty)
-              .map(xs => xs.incomeSourceId).headOption match {
+              .map(incomeSource => incomeSource.incomeSourceId).headOption match {
               case Some(incomeSourceId) =>
                 Right(Some(incomeSourceId))
               case None =>
