@@ -171,7 +171,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] =
+    withSessionData(JourneyType(Cease, incomeSourceType), initialPage = true) { _ =>
 
     val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 

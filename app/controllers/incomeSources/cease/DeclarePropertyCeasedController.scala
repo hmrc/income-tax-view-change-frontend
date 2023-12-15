@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -53,7 +53,8 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] =
+    withSessionData(JourneyType(Cease, incomeSourceType), initialPage = {if (incomeSourceType != SelfEmployment) true else false}) { _ =>
 
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url

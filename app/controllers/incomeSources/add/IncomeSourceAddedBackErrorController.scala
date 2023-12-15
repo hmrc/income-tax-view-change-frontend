@@ -49,7 +49,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false, nonLoopFlag = true) { _ =>
     val postAction = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
     else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
     Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
