@@ -196,7 +196,7 @@
 
 @quarterlyTypeInfoMessage = @{
     val messagePrefix = "incomeSources.manage.quarterly-period"
-    val externalRefLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
+    val externalRefLink = messages(s"$messagePrefix.content.external-ref-link")
 
     viewModel.quarterReportingType map { quarterType =>
         val quarterTypeMessageKey = quarterType.value.toLowerCase
