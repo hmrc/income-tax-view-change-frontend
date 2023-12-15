@@ -54,7 +54,7 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] =
-    withSessionData(JourneyType(Cease, incomeSourceType), initialPage = {if (incomeSourceType != SelfEmployment) true else false}) { _ =>
+    withSessionData(JourneyType(Cease, incomeSourceType), initialPage = true) { _ =>
 
     val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
       controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
