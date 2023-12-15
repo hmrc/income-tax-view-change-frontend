@@ -25,6 +25,7 @@ import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.converters.OptionExtension
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -61,13 +62,6 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))}
   }
 
-  private def removeEmptyStrings(strOpt: Option[String]): Option[String] = {
-    strOpt match {
-      case Some(str) => if (str == "") None else Some(str)
-      case None => None
-    }
-  }
-
   def createRequest(viewModel: CheckDetailsViewModel)(implicit
                                                       ec: ExecutionContext,
                                                       user: MtdItUser[_],
@@ -88,9 +82,9 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
             tradingName = viewModel.businessName.get,
             addressDetails = AddressDetails(
               addressLine1 = viewModel.businessAddressLine1,
-              addressLine2 = removeEmptyStrings(viewModel.businessAddressLine2),
-              addressLine3 = removeEmptyStrings(viewModel.businessAddressLine3),
-              addressLine4 = removeEmptyStrings(viewModel.businessAddressLine4),
+              addressLine2 = viewModel.businessAddressLine2.trim(),
+              addressLine3 = viewModel.businessAddressLine3.trim(),
+              addressLine4 = viewModel.businessAddressLine4.trim(),
               countryCode = Some("GB"), // required to be GB by API when postcode present
               postalCode = viewModel.businessPostalCode
             ),
