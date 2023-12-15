@@ -42,7 +42,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
   class Setup extends NextUpdatesService(mockObligationsConnector)
 
   val previousObligation: NextUpdateModel = NextUpdateModel(LocalDate.now, LocalDate.now, LocalDate.now, "Quarterly", Some(LocalDate.now), "#001")
-  implicit val isTimeMachineEnabled = isEnabled(TimeMachineAddYear)
+  implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
 
   def currentObligation(date: LocalDate): NextUpdateModel = NextUpdateModel(date, date, date, "Quarterly", None, "#001")
 
