@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
 import enums.JourneyType.{Add, JourneyType}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
@@ -49,10 +49,17 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
-    val postAction = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
-    else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
-    Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
+    val cannotGoBackRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
+    else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
+    if (data.addIncomeSourceData.exists(addData => addData.journeyIsComplete.contains(true))) {
+      Future.successful(Redirect(cannotGoBackRedirectUrl))
+    }
+    else {
+      val postAction = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
+      else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
+      Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
+    }
   }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate

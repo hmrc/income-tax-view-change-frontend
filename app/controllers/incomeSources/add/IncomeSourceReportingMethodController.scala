@@ -23,7 +23,7 @@ import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourceReportingMethodForm
 import models.core.IncomeSourceId
@@ -105,7 +105,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { _ =>
 
     sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(id)) =>

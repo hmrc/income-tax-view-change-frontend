@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -117,7 +117,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(JourneyType(Add, SelfEmployment)) { _ =>
+    withSessionData(JourneyType(Add, SelfEmployment), journeyState = InitialPage) { _ =>
       getBusinessName(isChange).flatMap {
         nameOpt =>
           val filledForm = nameOpt.fold(BusinessNameForm.form)(name =>

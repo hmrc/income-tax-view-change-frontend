@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
@@ -87,7 +87,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
                                 isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
-    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
       getStartDate(incomeSourceType).flatMap {
         case Some(startDate) =>
           Future.successful {

@@ -16,24 +16,31 @@
 
 package controllers.incomeSources.add
 
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
+import mocks.services.MockSessionService
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.SessionService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
 import views.html.incomeSources.YouCannotGoBackError
+
 import scala.concurrent.Future
 
 class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with FeatureSwitching {
+  with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService{
+
+
 
   object TestReportingMethodSetBackController$ extends ReportingMethodSetBackErrorController(
     app.injector.instanceOf[SessionTimeoutPredicate],
@@ -47,7 +54,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,
     app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[AgentItvcErrorHandler]) {
+    app.injector.instanceOf[AgentItvcErrorHandler],
+    mockSessionService) {
 
     val title: String = messages("cannotGoBack.heading")
     val messageSE: String = messages("cannotGoBack.soleTraderAdded")
@@ -60,6 +68,13 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
         case (true, _) => messages("htmlTitle.agent", s"$title")
       }
     }
+  }
+
+  def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"))))
+
+  def mockMongo(journeyType: JourneyType): Unit = {
+    setupMockGetMongo(Right(Some(sessionData(journeyType))))
+    setupMockGetSessionKeyMongoTyped[String](Right(Some("1234")))
   }
 
   "ReportingMethodSetBackErrorController" should {
@@ -105,6 +120,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
+        mockMongo(JourneyType(Add, SelfEmployment))
+
         val result = TestReportingMethodSetBackController$.show(SelfEmployment)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
 
@@ -119,6 +136,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
+        mockMongo(JourneyType(Add, UkProperty))
+
         val result = TestReportingMethodSetBackController$.show(UkProperty)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
 
@@ -132,6 +151,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        mockMongo(JourneyType(Add, ForeignProperty))
 
         val result = TestReportingMethodSetBackController$.show(ForeignProperty)(fakeRequestWithActiveSession)
         val document = Jsoup.parse(contentAsString(result))
@@ -148,6 +169,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
+        mockMongo(JourneyType(Add, SelfEmployment))
+
         val result = TestReportingMethodSetBackController$.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
@@ -162,6 +185,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
+        mockMongo(JourneyType(Add, UkProperty))
+
         val result = TestReportingMethodSetBackController$.showAgent(UkProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))
 
@@ -175,6 +200,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+
+        mockMongo(JourneyType(Add, ForeignProperty))
 
         val result = TestReportingMethodSetBackController$.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         val document = Jsoup.parse(contentAsString(result))

@@ -83,8 +83,8 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
 
     val result: WSResponse = incomeSourceType match {
       case SelfEmployment => IncomeTaxViewChangeFrontend.getManageSECannotGoBack
-      case UkProperty => IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack
-      case ForeignProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
+      case UkProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
+      case ForeignProperty => IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack
     }
 
     result should have(

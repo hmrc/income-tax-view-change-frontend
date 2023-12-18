@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -87,7 +87,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
 
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
     val sessionDataFuture = getSessionData(incomeSourceType)
