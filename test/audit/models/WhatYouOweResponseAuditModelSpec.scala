@@ -77,7 +77,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       testWhatYouOweResponseAuditModel().auditType shouldBe auditEvent
     }
 
-// TODO: renable unit test
+// TODO: re-enable unit test
 //    "Have the correct details for the audit event" in {
 //      testWhatYouOweResponseAuditModel(Some(Individual)).detail shouldBe Json.obj(
 //        "userType" -> "Individual",
