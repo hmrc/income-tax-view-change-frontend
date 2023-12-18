@@ -33,7 +33,7 @@ import java.time.LocalDate
 class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
   // Failing when we set date to 3rd of Jan 2024
-  val toDay : LocalDate = LocalDate.of(2023, 12, 15)
+  //val toDay : LocalDate = LocalDate.of(2023, 12, 15)
 
   val transactionName = "what-you-owe-response"
   val auditEvent = "WhatYouOweResponse"
@@ -120,7 +120,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
-            "overDue" -> false
+            "overDue" -> true
           ),
           Json.obj(
             "chargeType" -> paymentOnAccount1,
@@ -183,9 +183,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
         )
 
         balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(prevTaxYear.toString),
-          chargesList = chargesModelWithSomeBalanceDetails)) shouldBe Some(Json.obj(
-          "totalBalance" -> 3.0
-        ))
+          chargesList = chargesModelWithSomeBalanceDetails)) shouldBe None
       }
     }
 

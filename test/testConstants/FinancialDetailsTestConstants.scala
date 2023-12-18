@@ -599,7 +599,9 @@ object FinancialDetailsTestConstants {
 
   val dueDateMoreThan30Days: List[Option[LocalDate]] = List(Some(LocalDate.now().plusDays(45)), Some(LocalDate.now().plusDays(50)))
   val dueDateDueIn30Days: List[Option[LocalDate]] = List(Some(LocalDate.now()), Some(LocalDate.now().plusDays(1)))
-  val dueDateOverdue: List[Option[LocalDate]] = List(Some(LocalDate.now().minusDays(10)), Some(LocalDate.now().minusDays(1)))
+
+  val toDay : LocalDate = LocalDate.of(2023, 12, 15)
+  val dueDateOverdue: List[Option[LocalDate]] = List(Some(toDay.minusDays(10)), Some(toDay.minusDays(1)))
 
   val currentYear: String = LocalDate.now().getYear.toString
   val currentYearMinusOne: String = (LocalDate.now().getYear - 1).toString
@@ -649,7 +651,7 @@ object FinancialDetailsTestConstants {
                                             dueDate: List[Option[LocalDate]],
                                             dunningLock: List[Option[String]],
                                             outstandingAmount: List[Option[BigDecimal]] = List(Some(50), Some(75)),
-                                            taxYear: String = LocalDate.now().getYear.toString,
+                                            taxYear: String = toDay.getYear.toString,
                                             interestOutstandingAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                             interestRate: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                             latePaymentInterestAmount: List[Option[BigDecimal]] = List(None, None)): FinancialDetailsModel =
@@ -874,7 +876,7 @@ object FinancialDetailsTestConstants {
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, aciAmount, 1234))
   )
 
-  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusDays(30))
+  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(toDay.minusDays(30))
 
   val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().plusDays(35))
 
@@ -1006,7 +1008,8 @@ object FinancialDetailsTestConstants {
 
   val codedOutDocumentDetailsA = DocumentDetail(2022, id1040000124, Some("documentDescription"), Some("documentText"),
     Option(BigDecimal("5.00")), Some(43.21), LocalDate.of(2018, 3, 29), Some(100), Some(100),
-    Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"),
+    Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
+    Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"),
     amountCodedOut = Some(BigDecimal("2500.00")))
 
   val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -1017,22 +1020,21 @@ object FinancialDetailsTestConstants {
         dueDate = dueDateOverdue,
         dunningLock = oneDunningLock,
         outstandingAmount = List(Some(50), Some(75)),
-        taxYear = LocalDate.now().getYear.toString,
+        taxYear = toDay.getYear.toString,
         interestOutstandingAmount = List(Some(42.50), Some(24.05)),
         interestRate = List(Some(2.6), Some(6.2)),
         latePaymentInterestAmount = List(Some(34.56), None)
-      ).getAllDocumentDetailsWithDueDates() ++
+      ).getAllDocumentDetailsWithDueDates()  ++
         testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
           mainType = Some("SA Payment on Account 2"),
-          dueDate = Some(LocalDate.now().plusDays(1)),
+          dueDate = Some(toDay.plusDays(1)),
           outstandingAmount = Some(100),
-          //TODO - remove localDate.now
-          taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates() ++
+          taxYear = toDay.getYear.toString).getAllDocumentDetailsWithDueDates() ++
         testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 1"),
           mainType = Some("SA Payment on Account 1"),
-          dueDate = Some(LocalDate.now().plusDays(45)),
+          dueDate = Some(toDay.plusDays(45)),
           outstandingAmount = Some(125),
-          taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates(),
+          taxYear = toDay.getYear.toString).getAllDocumentDetailsWithDueDates(),
     outstandingChargesModel = Some(outstandingChargesOverdueData),
     codedOutDocumentDetail = Some(codedOutDocumentDetailsA)
   )

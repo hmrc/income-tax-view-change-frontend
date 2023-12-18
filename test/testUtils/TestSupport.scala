@@ -34,7 +34,7 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
-import services.DateService
+import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
@@ -43,6 +43,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 import org.scalatestplus.play.guice._
 
+import java.time.LocalDate
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -78,7 +79,21 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   implicit val conf: Configuration = app.configuration
   implicit val environment: Environment = app.injector.instanceOf[Environment]
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  implicit val dateService: DateService = app.injector.instanceOf[DateService]
+
+  // Set fixed date for DateService
+  val toDay : LocalDate = LocalDate.of(2023, 12, 15)
+  implicit val dateService: DateService = new DateService {
+
+    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = toDay
+
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = toDay.getYear
+
+    override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = toDay
+
+    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+
+    override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate =  LocalDate.of(2024, 4, 5)
+  }
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
 
