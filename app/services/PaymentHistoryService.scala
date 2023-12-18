@@ -22,6 +22,7 @@ import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import models.core.Nino
 import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
+import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
 import services.PaymentHistoryService.PaymentHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -42,8 +43,8 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
     Future.sequence(orderedTaxYears.map(financialDetailsConnector.getPayments)) map { paymentResponses =>
       val paymentsContainsFailure: Boolean = paymentResponses.exists {
         case Payments(_) => false
-        case PaymentsError(status, _) if status == 404 => false
-        case PaymentsError(status, _) if status == 422 => true
+        case PaymentsError(status, _) if status == NOT_FOUND => false
+        case PaymentsError(status, _) if status == UNPROCESSABLE_ENTITY => true
         case PaymentsError(_, _) => true
       }
       if (paymentsContainsFailure) {
