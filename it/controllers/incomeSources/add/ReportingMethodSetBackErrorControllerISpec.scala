@@ -2,15 +2,20 @@ package controllers.incomeSources.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData}
 
 class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
 
   private lazy val backErrorController = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
   val selfEmploymentBackErrorUrl: String = backErrorController.show(SelfEmployment).url
   val ukPropertyBackErrorUrl: String = backErrorController.show(UkProperty).url
@@ -21,6 +26,11 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
   val headingUk = messagesAPI("cannotGoBack.ukPropertyAdded")
   val headingFP = messagesAPI("cannotGoBack.foreignPropertyAdded")
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession(Add))
+  }
+
   s"calling GET $selfEmploymentBackErrorUrl" should {
     "render the self employment business not added error page" when {
       "Income Sources FS is enabled" in {
@@ -28,6 +38,8 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Add, SelfEmployment))))
 
         val result = IncomeTaxViewChangeFrontend
           .get(s"/income-sources/add/add-business-cannot-go-back")
@@ -66,6 +78,8 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
+        await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Add, UkProperty))))
+
         val result = IncomeTaxViewChangeFrontend
           .get(s"/income-sources/add/add-uk-property-cannot-go-back")
 
@@ -102,6 +116,8 @@ class ReportingMethodSetBackErrorControllerISpec extends ComponentSpecBase{
 
         And("API 1771  returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+        await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Add, ForeignProperty))))
 
         val result = IncomeTaxViewChangeFrontend
           .get(s"/income-sources/add/add-foreign-property-cannot-go-back")

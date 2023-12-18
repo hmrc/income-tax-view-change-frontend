@@ -167,6 +167,8 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         And("API 1171 getIncomeSourceDetails returns a success response")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
 
+        await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
+          addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         Then("user is shown a error page")
         val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added")

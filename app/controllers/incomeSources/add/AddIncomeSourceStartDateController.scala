@@ -21,12 +21,12 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, InitialPage, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
-import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceAddedField}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -91,7 +91,12 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
+      incomeSourceType match {
+        case SelfEmployment => BeforeSubmissionPage
+        case _ => InitialPage
+      }
+    }) { _ =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
         sessionService.createSession(journeyType.toString).flatMap {

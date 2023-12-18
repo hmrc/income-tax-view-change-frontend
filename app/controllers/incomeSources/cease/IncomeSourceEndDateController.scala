@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, InitialPage, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
 import forms.models.DateFormElement
@@ -171,7 +171,8 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
+                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] =
+    withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
     val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
