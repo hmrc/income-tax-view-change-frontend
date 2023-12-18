@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.AccountingMethod.fromApiField
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel}
@@ -72,11 +72,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           key = AddIncomeSourceData.incomeSourcesAccountingMethodField,
           value = fromApiField(cashOrAccrualsField).name,
           journeyType = JourneyType(Add, incomeSourceType)).flatMap {
-            case Right(_) =>
-              val successRedirectUrl = {
-                if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-                else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-              }
+          case Right(_) =>
+            val successRedirectUrl = {
+              if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+              else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+            }
             Future.successful(Redirect(successRedirectUrl))
           case Left(ex) =>
             Future.failed(ex)
@@ -121,28 +121,29 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                     incomeSourceType: IncomeSourceType,
                     cashOrAccrualsFlag: Option[String] = None,
                     backUrl: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType)) { _ =>
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] =
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
 
-    val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
-      controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
+      val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType) else
+        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
 
-    {
-      if (incomeSourceType == SelfEmployment) {
-        handleUserActiveBusinessesCashOrAccruals(isAgent, errorHandler, incomeSourceType, cashOrAccrualsFlag)(
-          user, backUrl, postAction, messages)
-      } else {
-        loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, cashOrAccrualsFlag)(
-          user, backUrl, postAction, messages)
+      {
+        if (incomeSourceType == SelfEmployment) {
+          handleUserActiveBusinessesCashOrAccruals(isAgent, errorHandler, incomeSourceType, cashOrAccrualsFlag)(
+            user, backUrl, postAction, messages)
+        } else {
+          loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, cashOrAccrualsFlag)(
+            user, backUrl, postAction, messages)
+        }
+      }.recover {
+        case ex: Exception =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+            s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
+          errorHandler.showInternalServerError()
       }
-    }.recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
-        errorHandler.showInternalServerError()
     }
-  }
 
   private def actionIndividualSubmitRequest(incomeSourceType: IncomeSourceType): (Call, String, Call) = {
     incomeSourceType match {

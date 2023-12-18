@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
 import enums.JourneyType.{JourneyType, Manage}
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
@@ -73,7 +73,7 @@ class CannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTime
   }
 
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Manage, incomeSourceType), nonLoopFlag = true) { data =>
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
     data.manageIncomeSourceData match {
       case Some(manageData) if manageData.reportingMethod.isDefined && manageData.taxYear.isDefined =>
         val subheadingContent = getSubheadingContent(incomeSourceType, manageData.reportingMethod.get, manageData.taxYear.get)

@@ -21,7 +21,7 @@ import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, TimeMachine
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, InitialPage, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
@@ -350,7 +350,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String, incomeSourceIdHashMaybe: Option[IncomeSourceIdHash],
                     incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    withSessionData(JourneyType(Manage, incomeSourceType), initialPage = true) { _ =>
+    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = InitialPage) { _ =>
 
       val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = incomeSourceIdHashMaybe.map(x => user.incomeSources.compareHashToQueryString(x))
 

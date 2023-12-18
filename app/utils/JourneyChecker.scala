@@ -17,6 +17,7 @@
 package utils
 
 import auth.MtdItUser
+import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
@@ -84,23 +85,23 @@ trait JourneyChecker extends IncomeSourcesUtils {
       }
     }
 
-  private def useDefaultRedirect(data: UIJourneySessionData, journeyType: JourneyType, midwayFlag: Boolean): Boolean = {
+  private def useDefaultRedirect(data: UIJourneySessionData, journeyType: JourneyType, journeyState: JourneyState): Boolean = {
     journeyType.operation match {
-      case Add => !(midwayFlag && data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false))
+      case Add => !((journeyState == BeforeSubmissionPage || journeyState == InitialPage) && data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false))
       case _ => true
     }
   }
 
-  def withSessionData(journeyType: JourneyType, midwayFlag: Boolean = true, initialPage: Boolean = false, nonLoopFlag: Boolean = false)(codeBlock: UIJourneySessionData => Future[Result])
+  def withSessionData(journeyType: JourneyType, journeyState: JourneyState)(codeBlock: UIJourneySessionData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     withIncomeSourcesFS {
       sessionService.getMongo(journeyType.toString).flatMap {
-        case Right(Some(data: UIJourneySessionData)) if isJourneyComplete(data, journeyType, midwayFlag) && !nonLoopFlag =>
-          redirectUrl(journeyType, useDefaultRedirect(data, journeyType, midwayFlag))(user)
+        case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, journeyType, journeyState) =>
+          redirectUrl(journeyType, useDefaultRedirect(data, journeyType, journeyState))(user)
         case Right(Some(data: UIJourneySessionData)) =>
           codeBlock(data)
         case Right(None) =>
-          if (initialPage) {
+          if (journeyState == InitialPage) {
             sessionService.createSession(journeyType.toString).flatMap { _ =>
               val data = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
               codeBlock(data)
@@ -116,16 +117,17 @@ trait JourneyChecker extends IncomeSourcesUtils {
     }
   }
 
-  private def isJourneyComplete(data: UIJourneySessionData, journeyType: JourneyType, midwayFlag: Boolean): Boolean = {
-    (journeyType.operation, midwayFlag) match {
-      case (Add, true) =>
+  private def showCannotGoBackErrorPage(data: UIJourneySessionData, journeyType: JourneyType, journeyState: JourneyState): Boolean = {
+    (journeyType.operation, journeyState) match {
+      case (_, CannotGoBackPage) => false
+      case (Add, BeforeSubmissionPage) | (Add, InitialPage) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false) ||
-        data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
-      case (Add, false) =>
+          data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
+      case (Add, _) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case (Manage, _) =>
         data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
-      case (Cease,_) =>
+      case (Cease, _) =>
         data.ceaseIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)
       case _ => false
     }

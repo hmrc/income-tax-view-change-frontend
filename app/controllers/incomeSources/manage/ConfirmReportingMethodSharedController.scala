@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
@@ -68,7 +68,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            isAgent: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-    withSessionData(JourneyType(Manage, incomeSourceType)) { _ =>
+    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { _ =>
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
           case Right(Some(incomeSourceId)) => handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, Some(mkIncomeSourceId(incomeSourceId)))
@@ -230,7 +230,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           )
         Future.successful(Redirect(errorCall))
       case res: UpdateIncomeSourceResponseModel =>
-        withSessionData(JourneyType(Manage, incomeSourceType)) {
+        withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) {
           uiJourneySessionData =>
             val newUIJourneySessionData = {
               uiJourneySessionData.copy(manageIncomeSourceData =
