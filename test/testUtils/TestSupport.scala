@@ -86,7 +86,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
     override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = toDay
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = toDay.getYear
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = toDay.getYear + 1
 
     override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = toDay
 

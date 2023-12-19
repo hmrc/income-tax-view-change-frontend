@@ -601,7 +601,7 @@ object FinancialDetailsTestConstants {
 
 
   val dueDateMoreThan30Days: List[Option[LocalDate]] = List(Some(toDay.plusDays(45)), Some(toDay.plusDays(50)))
-  val dueDateDueIn30Days: List[Option[LocalDate]] = List(Some(LocalDate.now()), Some(LocalDate.now().plusDays(1)))
+  val dueDateDueIn30Days: List[Option[LocalDate]] = List(Some(toDay), Some(toDay.plusDays(1)))
 
   val dueDateOverdue: List[Option[LocalDate]] = List(Some(toDay.minusDays(10)), Some(toDay.minusDays(1)))
 

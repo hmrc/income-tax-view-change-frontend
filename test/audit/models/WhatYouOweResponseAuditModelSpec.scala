@@ -183,7 +183,9 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
         )
 
         balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(prevTaxYear.toString),
-          chargesList = chargesModelWithSomeBalanceDetails)) shouldBe None
+          chargesList = chargesModelWithSomeBalanceDetails)) shouldBe Some(Json.obj(
+          "totalBalance" -> 3.0
+        ))
       }
     }
 

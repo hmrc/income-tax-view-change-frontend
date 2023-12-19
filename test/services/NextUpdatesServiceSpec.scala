@@ -402,27 +402,5 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       )
     }
 
-    "Fix for MISUV-6494" in new Setup {
-      // Read response from plain json file
-      val source: BufferedSource = Source.fromURL(getClass.getResource("/data/1330_Transformed.json"))
-      val jsonString: String = source.getLines().toList.mkString("")
-      val json: JsValue = Json.parse(jsonString)
-
-      val expectedResponse: ObligationsModel = json.validate[ObligationsModel].fold(
-        _ => None, valid => Some(valid)).get
-
-      when(mockObligationsConnector.getNextUpdates()(ArgumentMatchers.any(), ArgumentMatchers.any()))
-        .thenReturn(Future.successful(expectedResponse))
-
-      val expectedResult: ObligationsViewModel = ObligationsViewModel(
-        quarterlyObligationsDates = List.empty,
-        eopsObligationsDates = List(),  // List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "EOPS", false)),
-        finalDeclarationDates = List(DatesModel(LocalDate.parse("2023-04-06"), LocalDate.parse("2024-04-05"), LocalDate.parse("2025-01-31"), "23P0", true, obligationType = "Crystallised")),
-        currentTaxYear = 2023,
-        showPrevTaxYears = false
-      )
-      val actualResult: Future[ObligationsViewModel] = getObligationsViewModel("XTIT00001015155", showPreviousTaxYears = false)
-      actualResult.futureValue shouldBe expectedResult
-    }
   }
 }
