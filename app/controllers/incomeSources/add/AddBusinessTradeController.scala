@@ -39,14 +39,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate,
-                                           val authorisedFunctions: AuthorisedFunctions,
-                                           checkSessionTimeout: SessionTimeoutPredicate,
+class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                            val addBusinessTradeView: AddBusinessTrade,
                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                            val retrieveBtaNavBar: NavBarPredicate,
                                            val sessionService: SessionService,
-                                           incomeSourceDetailsService: IncomeSourceDetailsService,
                                            auth: Authenticator)
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
