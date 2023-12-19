@@ -42,9 +42,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationPredicate,
-                                                   val authorisedFunctions: AuthorisedFunctions,
+class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                    checkSessionTimeout: SessionTimeoutPredicate,
+                                                   authenticate: Authenticate,
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
                                                    val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                    val retrieveBtaNavBar: NavBarPredicate,
@@ -63,7 +63,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def show(isAgent: Boolean,
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = authenticate.authenticatedAction(isAgent) { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
@@ -75,7 +75,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def submit(isAgent: Boolean,
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = authenticate.authenticatedAction(isAgent) { implicit user =>
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
@@ -161,22 +161,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
       case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
       case Left(exception) => Future.failed(exception)
     }
-  }
-
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
   }
 
   private def getFilledForm(form: Form[DateFormElement],

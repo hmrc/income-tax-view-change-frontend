@@ -37,7 +37,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 trait JourneyChecker extends IncomeSourcesUtils {
-  self =>
   val sessionService: SessionService
 
   implicit val ec: ExecutionContext

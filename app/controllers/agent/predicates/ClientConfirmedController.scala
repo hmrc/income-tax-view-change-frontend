@@ -20,17 +20,18 @@ import auth.{MtdItUser, MtdItUserOptionNino, MtdItUserWithNino}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.utils.SessionKeys
 import controllers.predicates.AuthPredicate.AuthPredicate
-import controllers.predicates.IncomeTaxAgentUser
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, IncomeTaxAgentUser, NavBarPredicate, SessionTimeoutPredicate}
 import controllers.predicates.agent.AgentAuthenticationPredicate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
-import play.api.mvc.{AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames, InternalServerException}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ClientConfirmedController extends BaseAgentController {
 
