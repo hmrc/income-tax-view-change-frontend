@@ -26,7 +26,7 @@ import forms.incomeSources.add.BusinessTradeForm
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
-import mocks.services.{MockClientDetailsService, MockSessionService}
+import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionService}
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, incomeSourceAddedField, journeyIsCompleteField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.mockito.ArgumentMatchers
@@ -41,6 +41,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
+import utils.Authenticator
 import views.html.incomeSources.add.AddBusinessTrade
 
 import scala.concurrent.Future
@@ -50,6 +51,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
   with MockFrontendAuthorisedFunctions
   with MockIncomeSourceDetailsPredicate
   with MockAuthenticationPredicate
+  with MockIncomeSourceDetailsService
   with MockItvcErrorHandler
   with MockNavBarEnumFsPredicate
   with MockClientDetailsService
@@ -59,8 +61,9 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
   val mockAddBusinessTradeView: AddBusinessTrade = mock(classOf[AddBusinessTrade])
   val mockBusinessTradeForm: BusinessTradeForm = mock(classOf[BusinessTradeForm])
-  val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
+  val auth = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
+    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
 
   val validBusinessTrade: String = "Test Business Trade"
   val validBusinessName: String = "Test Business Name"
@@ -71,14 +74,12 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
   object TestAddBusinessTradeController
     extends AddBusinessTradeController(
-      MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       addBusinessTradeView = app.injector.instanceOf[AddBusinessTrade],
       retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       retrieveBtaNavBar = MockNavBarPredicate,
       sessionService = mockSessionService,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
+      auth
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
