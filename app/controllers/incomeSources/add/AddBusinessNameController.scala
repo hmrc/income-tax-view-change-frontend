@@ -30,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +45,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
                                           val retrieveBtaNavBar: NavBarPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val sessionService: SessionService)
+                                          val sessionService: SessionService,
+                                          auth: Authenticator)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit override val mcc: MessagesControllerComponents,
@@ -92,8 +93,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -103,17 +103,13 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
   }
 
   def showAgent(): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(
-                isAgent = true,
-                backUrl = backUrlAgent,
-                isChange = false
-              )
-          }
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
+        handleRequest(
+          isAgent = true,
+          backUrl = backUrlAgent,
+          isChange = false
+        )
     }
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -145,19 +141,14 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
     }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       handleSubmitRequest(isAgent = false, isChange = false)
   }
 
-  def submitAgent: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, isChange = false)
-        }
+  def submitAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleSubmitRequest(isAgent = true, isChange = false)
   }
 
   def submitChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate

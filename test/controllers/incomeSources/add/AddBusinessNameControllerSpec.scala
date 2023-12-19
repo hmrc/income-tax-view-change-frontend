@@ -40,6 +40,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
+import utils.Authenticator
 import views.html.incomeSources.add.AddBusinessName
 
 import scala.concurrent.Future
@@ -59,6 +60,9 @@ class AddBusinessNameControllerSpec extends TestSupport
   val mockBusinessNameForm: BusinessNameForm = mock(classOf[BusinessNameForm])
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
 
+  val auth = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
+    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
+
   object TestAddBusinessNameController
     extends AddBusinessNameController(
       MockAuthenticationPredicate,
@@ -69,7 +73,8 @@ class AddBusinessNameControllerSpec extends TestSupport
       retrieveBtaNavBar = MockNavBarPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      sessionService = mockSessionService
+      sessionService = mockSessionService,
+      auth
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
