@@ -28,20 +28,20 @@ import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
 import org.scalactic.Equality
 import org.scalatest._
+import org.scalatestplus.play.guice._
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
-import services.{DateService, DateServiceInterface}
+import services.DateService
 import testConstants.BaseTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
-import org.scalatestplus.play.guice._
 
 import java.time.LocalDate
 import scala.concurrent.duration._
@@ -81,7 +81,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   // Set fixed date for DateService
-  val toDay : LocalDate = LocalDate.of(2023, 12, 15)
+  lazy val toDay : LocalDate = LocalDate.of(2023, 12, 15)
   implicit val dateService: DateService = new DateService {
 
     override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = toDay

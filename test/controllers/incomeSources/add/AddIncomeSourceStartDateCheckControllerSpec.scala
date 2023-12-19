@@ -61,7 +61,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
   val testStartDate: LocalDate = LocalDate.of(2022, 11, 11)
   val testBusinessAccountingPeriodStartDate: LocalDate = LocalDate.of(2022, 11, 11)
-  val testBusinessAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 4, 5)
+  val testBusinessAccountingPeriodEndDate: LocalDate = LocalDate.of(2024, 4, 5)
 
   val responseNo: String = AddIncomeSourceStartDateCheckForm.responseNo
   val responseYes: String = AddIncomeSourceStartDateCheckForm.responseYes
