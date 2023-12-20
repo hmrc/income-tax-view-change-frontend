@@ -95,15 +95,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def preMtdPayments(from: String, to: String) = s"${messages("whatYouOwe.pre-mtd-year", from, to)}"
 
   class TestSetup(creditCharges: List[DocumentDetail] = List(),
-              charges: WhatYouOweChargesList,
-              currentTaxYear: Int = toDay.getYear,
-              hasLpiWithDunningBlock: Boolean = false,
-              dunningLock: Boolean = false,
-              whatYouOweCreditAmountEnabled: Boolean = false,
-              migrationYear: Int = toDay.getYear - 1,
-              codingOutEnabled: Boolean = true,
-              MFADebitsEnabled: Boolean = false
-             ) {
+                  charges: WhatYouOweChargesList,
+                  currentTaxYear: Int = toDay.getYear,
+                  hasLpiWithDunningBlock: Boolean = false,
+                  dunningLock: Boolean = false,
+                  whatYouOweCreditAmountEnabled: Boolean = false,
+                  migrationYear: Int = toDay.getYear - 1,
+                  codingOutEnabled: Boolean = true,
+                  MFADebitsEnabled: Boolean = false
+                 ) {
     val individualUser: MtdItUser[_] = MtdItUser(
       mtditid = testMtditid,
       nino = testNino,
@@ -135,14 +135,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   class AgentTestSetup(creditCharges: List[DocumentDetail] = List(),
-                   charges: WhatYouOweChargesList,
-                   currentTaxYear: Int = toDay.getYear,
-                   migrationYear: Int = toDay.getYear - 1,
-                   codingOutEnabled: Boolean = true,
-                   MFADebitsEnabled: Boolean = false,
-                   whatYouOweCreditAmountEnabled: Boolean = false,
-                   dunningLock: Boolean = false,
-                   hasLpiWithDunningBlock: Boolean = false) {
+                       charges: WhatYouOweChargesList,
+                       currentTaxYear: Int = toDay.getYear,
+                       migrationYear: Int = toDay.getYear - 1,
+                       codingOutEnabled: Boolean = true,
+                       MFADebitsEnabled: Boolean = false,
+                       whatYouOweCreditAmountEnabled: Boolean = false,
+                       dunningLock: Boolean = false,
+                       hasLpiWithDunningBlock: Boolean = false) {
 
     val agentUser: MtdItUser[_] = MtdItUser(
       nino = "AA111111A",
@@ -155,9 +155,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       userType = Some(testUserTypeAgent),
       arn = Some(testArn)
     )(FakeRequest())
+
     def findAgentElementById(id: String): Option[Element] = {
       Option(pageDocument.getElementById(id))
     }
+
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
     private val currentDateIs: LocalDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
@@ -485,24 +487,25 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
 
-        // TODO: fix this failing test
-//        "have POA data in same table as balancing payment " in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-//
-//          val poa1Table: Element = pageDocument.select("tr").get(2)
-//          poa1Table.select("td").first().text() shouldBe toDay.toLongDateShort
-//          poa1Table.select("td").get(1).text() shouldBe poa1Text + s" 1"
-//          poa1Table.select("td").get(2).text() shouldBe taxYearSummaryText((toDay.getYear - 1).toString, toDay.getYear.toString)
-//
-//          poa1Table.select("td").last().text() shouldBe "£50.00"
-//
-//          val poa2Table: Element = pageDocument.select("tr").get(3)
-//          poa2Table.select("td").first().text() shouldBe toDay.plusDays(1).toLongDateShort
-//          poa2Table.select("td").get(1).text() shouldBe poa2Text + s" 2"
-//          poa2Table.select("td").get(2).text() shouldBe taxYearSummaryText((toDay.getYear - 1).toString, toDay.getYear.toString)
-//
-//          poa2Table.select("td").last().text() shouldBe "£75.00"
-//
-//        }
+        "have POA data in same table as balancing payment " in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
+
+          println(s"Here is a document: ${whatYouOweDataWithDataDueIn30Days()}")
+
+          val poa1Table: Element = pageDocument.select("tr").get(2)
+          poa1Table.select("td").first().text() shouldBe toDay.toLongDateShort
+          poa1Table.select("td").get(1).text() shouldBe poa1Text + s" 1"
+          poa1Table.select("td").get(2).text() shouldBe taxYearSummaryText((toDay.getYear - 1).toString, toDay.getYear.toString)
+
+          poa1Table.select("td").last().text() shouldBe "£50.00"
+
+          val poa2Table: Element = pageDocument.select("tr").get(3)
+          poa2Table.select("td").first().text() shouldBe toDay.plusDays(1).toLongDateShort
+          poa2Table.select("td").get(1).text() shouldBe poa2Text + s" 2"
+          poa2Table.select("td").get(2).text() shouldBe taxYearSummaryText((toDay.getYear - 1).toString, toDay.getYear.toString)
+
+          poa2Table.select("td").last().text() shouldBe "£75.00"
+
+        }
 
         "have payment type drop down details" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
           pageDocument.select(".govuk-details__summary-text").text shouldBe dropDownInfo
@@ -516,29 +519,27 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById("balancing-charge-type-overdue") shouldBe None
         }
 
-          //TODO: fix A
-//        "have Data for due within 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-//
-//          pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-//            toDay.getYear, "1040000124").url
-//          findElementById("due-0-overdue") shouldBe None
-//          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-//            toDay.getYear).url
-//        }
-//
-        // TOOD: fix C
-        "have data with POA2 with hyperlink and no overdue" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-          //pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(toDay.getYear, "1040000125").url
-          //findElementById("due-1-overdue") shouldBe None
+        "have Data for due within 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
+
+          pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+            toDay.getYear, "1040000124").url
+          findElementById("due-0-overdue") shouldBe None
+          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
+            toDay.getYear).url
         }
 
-        // TODO: fix D
-//        "have payment details and should not contain future payments and overdue payment headers" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
-//          pageDocument.getElementById("payment-button").text shouldBe payNow
-//
-//          pageDocument.getElementById("payment-button-link").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(5000).url
-//
-//        }
+        "have data with POA2 with hyperlink and no overdue" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
+          pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(toDay.getYear, "1040000125").url
+          findElementById("due-1-overdue") shouldBe None
+        }
+
+        "have payment details and should not contain future payments " +
+          "and overdue payment headers" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
+          pageDocument.getElementById("payment-button").text shouldBe payNow
+          pageDocument.getElementById("payment-button-link").
+            attr("href") shouldBe controllers.routes.PaymentController.
+            paymentHandoff(5000).url
+        }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks), dunningLock = true) {
@@ -574,15 +575,16 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
-// TODO: fix F
-//        s"display $paymentUnderReview when there is a dunningLock against a single charge" in new TestSetup(
-//          charges = whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
-//          val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
-//          val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(3)
-//
-//          dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearAndUnderReview
-//          dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2"
-//        }
+
+        s"display $paymentUnderReview when there is a dunningLock against a single charge" in new TestSetup(
+          charges = whatYouOweDataWithDataDueIn30Days(oneDunningLock)(dateService)) {
+          val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
+          val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(3)
+
+          dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearAndUnderReview
+          dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2"
+        }
+
         "should have payment processing bullets when there is a single charge" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
 
@@ -595,15 +597,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
 
-// TODO: fix G
-//        s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
-//          charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
-//          val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
-//          val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(3)
-//
-//          dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearAndUnderReview
-//          dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2 $paymentUnderReview"
-//        }
+        s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
+          charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)(dateService)) {
+          val dueWithInThirtyDaysTableRow1: Element = pageDocument.select("tr").get(2)
+          val dueWithInThirtyDaysTableRow2: Element = pageDocument.select("tr").get(3)
+
+          dueWithInThirtyDaysTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearAndUnderReview
+          dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2 $paymentUnderReview"
+        }
+
         "should have payment processing bullets when there is multiple charge" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
 
@@ -1163,11 +1165,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       s"have the title '${
         messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
-      }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
-        // TODO: re-enable these
-        //pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(toDay.getYear, "1040000124").url
-        //pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(toDay.getYear).url
+        pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(toDay.getYear, "1040000124").url
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(toDay.getYear).url
       }
 
       "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {

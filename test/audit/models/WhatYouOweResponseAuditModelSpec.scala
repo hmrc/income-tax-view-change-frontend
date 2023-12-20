@@ -32,9 +32,6 @@ import java.time.LocalDate
 
 class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
-  // Failing when we set date to 3rd of Jan 2024
-  //val toDay : LocalDate = LocalDate.of(2023, 12, 15)
-
   val transactionName = "what-you-owe-response"
   val auditEvent = "WhatYouOweResponse"
   val lpiPaymentOnAccount1: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
@@ -198,7 +195,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           )
         )
 
-        (auditJson.detail \ "balanceDetails" \ "creditAmount").toString() shouldBe "JsDefined(-1000)"
+        (auditJson.detail \ "balanceDetails" \ "creditAmount").toString shouldBe "JsDefined(-1000)"
         (auditJson.detail \ "charges")(0) shouldBe Json.obj(
           "chargeUnderReview" -> true,
           "outstandingAmount" -> 42.5,
