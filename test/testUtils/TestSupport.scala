@@ -81,12 +81,12 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   // Set fixed date for DateService
-  lazy val toDay : LocalDate = LocalDate.of(2023, 12, 15)
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
   implicit val dateService: DateService = new DateService {
 
-    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = toDay
+    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = fixedDate
 
-    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = toDay.getYear + 1
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = fixedDate.getYear + 1
 
     override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2023, 4, 6)
 

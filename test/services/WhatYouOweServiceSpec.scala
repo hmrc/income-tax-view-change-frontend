@@ -211,7 +211,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
                 Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
                 Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
                 Some( LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot"),
-                effectiveDateOfPayment = Some(toDay.minusDays(1))),
+                effectiveDateOfPayment = Some(fixedDate.minusDays(1))),
               Some(LocalDate.of(2018, 3, 29)), isLatePaymentInterest = true)))
         }
       }
