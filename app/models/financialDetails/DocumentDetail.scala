@@ -16,12 +16,11 @@
 
 package models.financialDetails
 
-import config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
-import services.{DateService, DateServiceInterface}
+import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -42,7 +41,8 @@ case class DocumentDetail(taxYear: Int,
                           paymentLotItem: Option[String] = None,
                           paymentLot: Option[String] = None,
                           effectiveDateOfPayment: Option[LocalDate] = None,
-                          amountCodedOut: Option[BigDecimal] = None
+                          amountCodedOut: Option[BigDecimal] = None,
+                          documentDueDate: Option[LocalDate] = None
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {
@@ -178,7 +178,7 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
                                      codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
 
-  val isOverdue: Boolean = documentDetail.effectiveDateOfPayment.exists(_ isBefore dateService.getCurrentDate())
+  val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate())
 }
 
 object DocumentDetail {
@@ -201,6 +201,7 @@ object DocumentDetail {
       (__ \ "paymentLotItem").readNullable[String] and
       (__ \ "paymentLot").readNullable[String] and
       (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
-      (__ \ "amountCodedOut").readNullable[BigDecimal]
+      (__ \ "amountCodedOut").readNullable[BigDecimal] and
+      (__ \ "documentDueDate").readNullable[LocalDate]
     ) (DocumentDetail.apply _)
 }

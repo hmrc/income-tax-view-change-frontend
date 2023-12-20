@@ -20,7 +20,7 @@ import audit.mocks.MockAuditingService
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.FinancialDetailsConnector
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -67,7 +67,9 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       .thenReturn(Future.successful(chargeHistory))
 
     mockBothIncomeSources()
-    if(isAgent){setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)}
+    if (isAgent) {
+      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    }
 
     val controller = new ChargeSummaryController(
       MockAuthenticationPredicate,
@@ -106,7 +108,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "redirect a user back to the home page" when {
 
       "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel()) {
-        val result: Future[Result] = controller.show(testTaxYear, "fakeId")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "fakeId")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
@@ -117,7 +119,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
       "coding out exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
         disable(CodingOut)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
@@ -129,7 +131,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel()) {
         enable(ChargeHistory)
         enable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -140,7 +142,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "redirect a user back to the custom error page" when {
         "PAYE SA exists but FS is disabled" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
           disable(CodingOut)
-          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithActiveSession)
+          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
@@ -148,14 +150,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
 
         "class 2 Nics exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
           disable(CodingOut)
-          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithActiveSession)
+          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         }
         "cancelled PAYE exists but FS is disabled" in new Setup(testFinancialDetailsModelWithCancelledPayeSa()) {
           disable(CodingOut)
-          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithActiveSession)
+          val result: Future[Result] = controller.show(testTaxYear, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
 
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
@@ -167,7 +169,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         financialDetailsModel(lpiWithDunningBlock = None)) {
         enable(ChargeHistory)
         disable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe lateInterestSuccessHeading
@@ -178,7 +180,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with late payment interest flag and a matching id in the financial response with locks, not showing the locks banner" in new Setup(
         financialDetailsModel(lpiWithDunningBlock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
 
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123", isLatePaymentCharge = true)(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner").size() shouldBe 0
@@ -188,7 +190,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "provided with a matching id in the financial response with dunning locks, showing the locks banner" in new Setup(
         financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
 
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
@@ -199,7 +201,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         chargesWithAllocatedPaymentModel()) {
         disable(ChargeHistory)
         enable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -211,7 +213,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         chargesWithAllocatedPaymentModel()) {
         disable(ChargeHistory)
         enable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -223,7 +225,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         financialDetailsModel()) {
         disable(ChargeHistory)
         disable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -234,7 +236,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         financialDetailsModel()) {
         disable(ChargeHistory)
         disable(PaymentAllocation)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe successHeading
@@ -247,14 +249,14 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "the charge history response is an error" in new Setup(
         financialDetailsModel(), chargeHistory = ChargesHistoryErrorModel(INTERNAL_SERVER_ERROR, "Failure")) {
         enable(ChargeHistory)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
       }
 
       "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing) {
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
@@ -265,7 +267,7 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
       "the charge is an MFA Debit and MFACreditsAndDebits FS is Enabled" in new Setup(
         financialDetailsModelWithMFADebit()) {
         enable(MFACreditsAndDebits)
-        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
         status(result) shouldBe Status.OK
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe "Tax year 6 April 2017 to 5 April 2018 " +
@@ -275,11 +277,11 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
     "Redirects to Not Found Page" when {
       "the charge is an MFA Debit and MFACreditsAndDebits FS is Disabled" in new Setup(
         financialDetailsModelWithMFADebit()) {
-          disable(MFACreditsAndDebits)
-          val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithActiveSession)
+        disable(MFACreditsAndDebits)
+        val result: Future[Result] = controller.show(testTaxYear, "1040000123")(fakeRequestWithNinoAndOrigin("PTA"))
 
-          status(result) shouldBe Status.OK
-          JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe messages("error.custom.heading")
+        status(result) shouldBe Status.OK
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe messages("error.custom.heading")
       }
     }
   }

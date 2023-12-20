@@ -17,7 +17,6 @@
 package models.financialDetails
 
 import auth.MtdItUser
-import exceptions.MissingFieldException
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -36,7 +35,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       financialDetails.find { fd =>
         fd.transactionId.contains(documentDetail.transactionId) &&
           fd.taxYear.toInt == documentDetail.taxYear
-      }.flatMap(_ => documentDetail.effectiveDateOfPayment)
+      }.flatMap(_ => documentDetail.documentDueDate)
     }
   }
 
@@ -73,7 +72,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     financialDetails.find { fd =>
       fd.transactionId.contains(documentDetail.transactionId) &&
         fd.taxYear.toInt == documentDetail.taxYear
-    } flatMap (_ => documentDetail.effectiveDateOfPayment)
+    } flatMap (_ => documentDetail.documentDueDate)
   }
 
   def findDocumentDetailForYearWithDueDate(taxYear: Int)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {

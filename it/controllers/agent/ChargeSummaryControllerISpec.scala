@@ -34,7 +34,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.messages.ChargeSummaryMessages
-import testConstants.messages.ChargeSummaryMessages.{codingOutInsetPara, codingOutMessage, codingOutMessageWithStringMessagesArgument, notCurrentlyChargingInterest, paymentBreakdownHeading, underReview}
+import testConstants.messages.ChargeSummaryMessages._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
@@ -467,7 +467,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "outstandingAmount" -> 1200.00,
           "originalAmount" -> 1200.00,
           "documentDate" -> "2018-03-29",
-          "effectiveDateOfPayment" -> "2018-03-30"
+          "effectiveDateOfPayment" -> "2018-03-30",
+          "documentDueDate" -> "2018-03-30"
         )
       ),
       "financialDetails" -> Json.arr(
@@ -499,7 +500,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "outstandingAmount" -> 0,
           "originalAmount" -> 1200.00,
           "documentDate" -> "2018-03-29",
-          "effectiveDateOfPayment" -> "2018-03-30"
+          "effectiveDateOfPayment" -> "2018-03-30",
+          "documentDueDate" -> "2018-03-30"
         ),
         Json.obj(
           "taxYear" -> testTaxYear,
@@ -514,7 +516,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
           "statisticalFlag" -> false,
           "paymentLot" -> "MA999991A",
           "paymentLotItem" -> "5",
-          "effectiveDateOfPayment" -> "2018-03-30"
+          "effectiveDateOfPayment" -> "2018-03-30",
+          "documentDueDate" -> "2018-03-30"
         )
       ),
       "financialDetails" -> Json.arr(
