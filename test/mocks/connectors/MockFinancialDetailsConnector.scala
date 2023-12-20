@@ -17,24 +17,15 @@
 package mocks.connectors
 
 import connectors.FinancialDetailsConnector
-import models.calculationList.CalculationListResponseModel
-import models.core.{Nino, NinoResponse}
+import models.core.Nino
 import models.financialDetails.{FinancialDetailsResponseModel, PaymentsResponse}
-import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseModel}
-import models.nextUpdates.NextUpdatesResponseModel
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import models.paymentAllocations.PaymentAllocationsResponse
-import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import testUtils.UnitSpec
-import uk.gov.hmrc.auth.core.AffinityGroup
-
-import java.time.LocalDate
 import scala.concurrent.Future
 
 trait MockFinancialDetailsConnector extends UnitSpec with BeforeAndAfterEach {

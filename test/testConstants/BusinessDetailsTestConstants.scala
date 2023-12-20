@@ -36,13 +36,13 @@ object BusinessDetailsTestConstants {
   val year2023: Int = 2023
   val year2024: Int = 2024
 
+  val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
   val address = AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")
   val businessIncomeSourceId = "1234"
 
   val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, Month.APRIL, 6))) LocalDate.of(currentDate.getYear, Month.APRIL, 5)
-    else LocalDate.of(currentDate.getYear + 1, Month.APRIL, 5)
+    if (fixedDate.isBefore(LocalDate.of(fixedDate.getYear, Month.APRIL, 6))) LocalDate.of(fixedDate.getYear, Month.APRIL, 5)
+    else LocalDate.of(fixedDate.getYear + 1, Month.APRIL, 5)
   }
 
   val testBusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2017, Month.JUNE, 1), end = LocalDate.of(year2018, Month.MAY, 30))
