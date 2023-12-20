@@ -17,22 +17,32 @@
 package mocks.auth
 
 import auth.FrontendAuthorisedFunctions
+import config.FrontendAppConfig
+import controllers.predicates.SessionTimeoutPredicate
+import mocks.MockItvcErrorHandler
+import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
+import play.api.mvc.MessagesControllerComponents
 import testConstants.BaseTestConstants._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.Authenticator
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
+trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockAuthenticationPredicate
+  with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockItvcErrorHandler {
   self: Suite =>
 
   val mockAuthService = mock(classOf[FrontendAuthorisedFunctions])
+
+  val testAuthenticator = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
+    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

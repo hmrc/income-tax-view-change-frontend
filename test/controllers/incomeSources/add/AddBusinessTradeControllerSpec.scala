@@ -58,12 +58,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
   with FeatureSwitching
   with MockSessionService {
 
-
   val mockAddBusinessTradeView: AddBusinessTrade = mock(classOf[AddBusinessTrade])
   val mockBusinessTradeForm: BusinessTradeForm = mock(classOf[BusinessTradeForm])
-
-  val auth = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
-    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
 
   val validBusinessTrade: String = "Test Business Trade"
   val validBusinessName: String = "Test Business Name"
@@ -78,7 +74,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
       addBusinessTradeView = app.injector.instanceOf[AddBusinessTrade],
       retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       sessionService = mockSessionService,
-      auth
+      testAuthenticator
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],

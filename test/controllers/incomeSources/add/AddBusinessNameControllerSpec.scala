@@ -60,16 +60,13 @@ class AddBusinessNameControllerSpec extends TestSupport
   val mockBusinessNameForm: BusinessNameForm = mock(classOf[BusinessNameForm])
   val postAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
 
-  val auth = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
-    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
-
   object TestAddBusinessNameController
     extends AddBusinessNameController(
       authorisedFunctions = mockAuthService,
       addBusinessView = app.injector.instanceOf[AddBusinessName],
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       sessionService = mockSessionService,
-      auth
+      testAuthenticator
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],

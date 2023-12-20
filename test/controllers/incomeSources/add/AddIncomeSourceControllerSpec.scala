@@ -53,16 +53,12 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
   with MockSessionService
   with TestSupport {
 
-  val auth = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
-    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
-
-
   val controller = new AddIncomeSourceController(
     app.injector.instanceOf[views.html.incomeSources.add.AddIncomeSources],
     app.injector.instanceOf[SessionTimeoutPredicate],
     mockAuthService,
     mockIncomeSourceDetailsService,
-    auth
+    testAuthenticator
   )(app.injector.instanceOf[FrontendAppConfig],
     ec,
     app.injector.instanceOf[ItvcErrorHandler],

@@ -60,17 +60,13 @@ class AddBusinessAddressControllerSpec extends TestSupport
   val redirectActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
   val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
 
-  val auth = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
-    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
-
-
   object TestAddBusinessAddressController
     extends AddBusinessAddressController(
       authorisedFunctions = mockAuthService,
       retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       addressLookupService = mockAddressLookupService,
-      auth
+      testAuthenticator
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],
