@@ -207,10 +207,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             chargesList = List(DocumentDetailWithDueDate(
-              DocumentDetail(currentYear.toInt, "1040000124", Some("ITSA - POA 2"), Some("documentText"), Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
+              DocumentDetail(currentYear.toInt, "1040000124", Some("ITSA - POA 2"), Some("documentText"),
+                Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
                 Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
-                Some(LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot"),
-                effectiveDateOfPayment = Some(LocalDate.now().minusDays(1))),
+                Some( LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot"),
+                effectiveDateOfPayment = Some(toDay.minusDays(1))),
               Some(LocalDate.of(2018, 3, 29)), isLatePaymentInterest = true)))
         }
       }
