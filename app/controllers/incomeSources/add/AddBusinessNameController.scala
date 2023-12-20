@@ -37,14 +37,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
-                                          val authorisedFunctions: AuthorisedFunctions,
-                                          checkSessionTimeout: SessionTimeoutPredicate,
+class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                           val addBusinessView: AddBusinessName,
-                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                          val retrieveBtaNavBar: NavBarPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val sessionService: SessionService,
                                           auth: Authenticator)
                                          (implicit val appConfig: FrontendAppConfig,
@@ -151,19 +146,15 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       handleSubmitRequest(isAgent = true, isChange = false)
   }
 
-  def submitChange: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submitChange: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       handleSubmitRequest(isAgent = false, isChange = true)
   }
 
-  def submitChangeAgent: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, isChange = true)
-        }
+  def submitChangeAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleSubmitRequest(isAgent = true, isChange = true)
+
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -204,8 +195,7 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       errorHandler.showInternalServerError()
   }
 
-  def changeBusinessName(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def changeBusinessName(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -214,17 +204,13 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
       )
   }
 
-  def changeBusinessNameAgent(): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(
-                isAgent = true,
-                backUrl = checkDetailsBackUrlAgent,
-                isChange = true
-              )
-          }
-    }
+  def changeBusinessNameAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        backUrl = checkDetailsBackUrlAgent,
+        isChange = true
+      )
+  }
+
 }
