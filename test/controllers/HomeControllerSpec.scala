@@ -67,9 +67,9 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     )
   val homePageTitle = s"${messages("htmlTitle", messages("home.heading"))}"
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
+  val mockDateService: DateService = mock(classOf[DateService])
 
   trait Setup {
-    val mockDateService: DateService = mock(classOf[DateService])
     val NextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
     val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
     val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
@@ -97,13 +97,12 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
     val overdueWarningMessageDunningLockTrue: String = messages("home.overdue.message.dunningLock.true")
     val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
-    val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"
+    val expectedOverDuePaymentsText1 = s"${messages("home.overdue.date")} 31 January 2019"
     val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   }
 
   //new setup for agent
   implicit val lang: Lang = Lang("en-US")
-  val mockDateService: DateService = mock(classOf[DateService])
   val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   val javaMessagesApi: MessagesApi = inject[play.i18n.MessagesApi]
   val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.agent.overdue.message.dunningLock.true")
@@ -162,7 +161,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title shouldBe homePageTitle
-        document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+        document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText1
       }
 
       "there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
@@ -179,7 +178,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
         document.title shouldBe homePageTitle
-        document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
+        document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText1
       }
 
       "display number of payments due when there are multiple payment due and dunning locks" in new Setup {

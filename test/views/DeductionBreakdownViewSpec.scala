@@ -123,7 +123,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       }
 
       "have the correct caption" in new Setup(view) {
-        layoutContent.selectHead(" caption").text.contains(deductions)
+        layoutContent.selectHead(" caption").text().contains(deductions.toString)
       }
 
       "have the correct guidance" in new Setup(view) {

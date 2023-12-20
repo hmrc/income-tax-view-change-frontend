@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{AfterSubmissionPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -72,7 +72,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
-    withSessionData(JourneyType(Add, incomeSourceType), midwayFlag = false) { _ =>
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { _ =>
 
       sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
         case Right(Some(id)) =>
