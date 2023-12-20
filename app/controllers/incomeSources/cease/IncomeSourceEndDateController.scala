@@ -34,7 +34,7 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceEndDate
 
 import java.time.LocalDate
@@ -42,15 +42,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPredicate,
-                                              val authorisedFunctions: FrontendAuthorisedFunctions,
-                                              val checkSessionTimeout: SessionTimeoutPredicate,
+class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                               val incomeSourceEndDateForm: IncomeSourceEndDateForm,
-                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                              val retrieveBtaNavBar: NavBarPredicate,
-                                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                               val incomeSourceEndDate: IncomeSourceEndDate,
-                                              val sessionService: SessionService)
+                                              val sessionService: SessionService,
+                                              val auth: Authenticator)
                                              (implicit val appConfig: FrontendAppConfig,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
@@ -114,9 +110,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       })
   }
 
-  def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
       implicit user =>
         val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
         handleRequest(
@@ -127,24 +121,18 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         )
     }
 
-  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType,
-              id = incomeSourceIdHashMaybe,
-              isChange = false
-            )
-        }
+  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType,
+        id = incomeSourceIdHashMaybe,
+        isChange = false
+      )
   }
 
-  def showChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def showChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
       implicit user =>
         val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
         handleRequest(
@@ -155,19 +143,15 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
         )
     }
 
-  def showChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType,
-              id = incomeSourceIdHashMaybe,
-              isChange = true
-            )
-        }
+  def showChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType,
+        id = incomeSourceIdHashMaybe,
+        isChange = true
+      )
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
@@ -215,8 +199,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       errorHandler.showInternalServerError()
   }
 
-  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleSubmitRequest(
@@ -227,23 +210,18 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       )
   }
 
-  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-            handleSubmitRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType,
-              id = incomeSourceIdHashMaybe,
-              isChange = false
-            )
-        }
+  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
+      handleSubmitRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType,
+        id = incomeSourceIdHashMaybe,
+        isChange = false
+      )
   }
 
-  def submitChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submitChange(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
       handleSubmitRequest(
@@ -254,19 +232,15 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       )
   }
 
-  def submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
-            handleSubmitRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType,
-              id = incomeSourceIdHashMaybe,
-              isChange = true
-            )
-        }
+  def submitChangeAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
+      handleSubmitRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType,
+        id = incomeSourceIdHashMaybe,
+        isChange = true
+      )
   }
 
   private def handleValidatedInput(validatedInput: DateFormElement,

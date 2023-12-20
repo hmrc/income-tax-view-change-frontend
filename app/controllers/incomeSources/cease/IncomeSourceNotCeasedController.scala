@@ -25,18 +25,15 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
+import utils.Authenticator
 import views.html.errorPages.templates.ErrorTemplateWithLink
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceNotCeasedController @Inject()(val authenticate: AuthenticationPredicate,
-                                                val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                val checkSessionTimeout: SessionTimeoutPredicate,
-                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                val retrieveBtaNavBar: NavBarPredicate,
-                                                val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                val errorTemplate: ErrorTemplateWithLink)
+class IncomeSourceNotCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                val errorTemplate: ErrorTemplateWithLink,
+                                                val auth: Authenticator)
                                                (implicit val appConfig: FrontendAppConfig,
                                                 implicit val itvcErrorHandler: ItvcErrorHandler,
                                                 implicit val agentItvcErrorHandler: AgentItvcErrorHandler,
@@ -44,25 +41,9 @@ class IncomeSourceNotCeasedController @Inject()(val authenticate: Authentication
                                                 implicit val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(isAgent, incomeSourceType)
-  }
-
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent) {
-      Authenticated.async { implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-            authenticatedCodeBlock(mtdItUser)
-          }
-      }
-    } else {
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
-    }
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {

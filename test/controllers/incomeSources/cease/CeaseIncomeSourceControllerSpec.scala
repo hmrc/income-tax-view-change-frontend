@@ -46,15 +46,12 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
 
   val controller = new CeaseIncomeSourceController(
     app.injector.instanceOf[views.html.incomeSources.cease.CeaseIncomeSources],
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
     mockIncomeSourceDetailsService,
     sessionService = mockSessionService,
-    app.injector.instanceOf[NavBarPredicate]
+    testAuthenticator
   )(
     ec,
     app.injector.instanceOf[MessagesControllerComponents],

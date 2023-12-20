@@ -28,7 +28,7 @@ import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{Authenticator, IncomeSourcesUtils}
 import views.html.incomeSources.manage.ManageIncomeSources
 
 import javax.inject.{Inject, Singleton}
@@ -36,13 +36,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                             val checkSessionTimeout: SessionTimeoutPredicate,
-                                             val authenticate: AuthenticationPredicate,
                                              val authorisedFunctions: AuthorisedFunctions,
-                                             val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              val sessionService: SessionService,
-                                             val retrieveBtaNavBar: NavBarPredicate)
+                                             val auth: Authenticator)
                                             (implicit val ec: ExecutionContext,
                                              implicit override val mcc: MessagesControllerComponents,
                                              implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -50,7 +47,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
     handleRequest(
       sources = user.incomeSources,
       isAgent = isAgent,
@@ -85,21 +82,5 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
           Future(showInternalServerError(isAgent))
       }
     }
-  }
-
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
   }
 }

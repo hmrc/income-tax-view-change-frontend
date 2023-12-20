@@ -32,22 +32,20 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: AuthenticationPredicate,
+class CeaseCheckIncomeSourceDetailsController @Inject()(
                                                         val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                        val retrieveBtaNavBar: NavBarPredicate,
                                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                         val view: CeaseCheckIncomeSourceDetails,
                                                         val updateIncomeSourceService: UpdateIncomeSourceService,
                                                         val sessionService: SessionService,
-                                                        val auditingService: AuditingService)
+                                                        val auditingService: AuditingService,
+                                                        val auth: Authenticator)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,
@@ -126,8 +124,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
       implicit user =>
         handleRequest(
           sources = user.incomeSources,
@@ -136,17 +133,13 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
         )
     }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        sources = mtdItUser.incomeSources,
+        isAgent = true,
+        incomeSourceType = incomeSourceType
+      )
   }
 
   def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
@@ -211,22 +204,17 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       handleSubmitRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
           implicit mtdItUser =>
             handleSubmitRequest(
               isAgent = true,
               incomeSourceType = incomeSourceType)
         }
-  }
 }

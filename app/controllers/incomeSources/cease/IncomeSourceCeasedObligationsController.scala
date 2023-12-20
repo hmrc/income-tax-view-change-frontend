@@ -33,22 +33,18 @@ import play.api.mvc._
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCeasedObligationsController @Inject()(authenticate: AuthenticationPredicate,
-                                                        val authorisedFunctions: AuthorisedFunctions,
-                                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                        val retrieveBtaNavBar: NavBarPredicate,
+class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                         val itvcErrorHandler: ItvcErrorHandler,
-                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                         val obligationsView: IncomeSourceCeasedObligations,
                                                         val nextUpdatesService: NextUpdatesService,
-                                                        val sessionService: SessionService)
+                                                        val sessionService: SessionService,
+                                                        val auth: Authenticator)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                         implicit override val mcc: MessagesControllerComponents,
@@ -116,19 +112,14 @@ class IncomeSourceCeasedObligationsController @Inject()(authenticate: Authentica
       errorHandler.showInternalServerError()
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(isAgent = false, incomeSourceType = incomeSourceType)
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleRequest(isAgent = true, incomeSourceType = incomeSourceType)
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(isAgent = true, incomeSourceType = incomeSourceType)
   }
 
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {

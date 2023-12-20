@@ -25,9 +25,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class Authenticator @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                               val authenticate: AuthenticationPredicate,
                               val authorisedFunctions: AuthorisedFunctions,

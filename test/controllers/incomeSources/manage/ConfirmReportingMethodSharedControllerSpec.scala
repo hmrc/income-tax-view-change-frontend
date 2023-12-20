@@ -56,17 +56,13 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   object TestConfirmReportingMethodSharedController
     extends ConfirmReportingMethodSharedController(
       manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
       auditingService = mockAuditingService,
       dateService = dateService,
-      sessionService = mockSessionService
+      sessionService = mockSessionService,
+      auth = testAuthenticator
     )(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
