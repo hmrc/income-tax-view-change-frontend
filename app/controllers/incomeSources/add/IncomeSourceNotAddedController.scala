@@ -24,20 +24,16 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{Authenticator, IncomeSourcesUtils}
 import views.html.incomeSources.add.IncomeSourceNotAddedError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                               val authenticate: AuthenticationPredicate,
-                                               val authorisedFunctions: AuthorisedFunctions,
-                                               val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                val businessDetailsService: CreateBusinessDetailsService,
-                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                               val retrieveBtaNavBar: NavBarPredicate,
-                                               val incomeSourceNotAddedError: IncomeSourceNotAddedError)
+                                               val incomeSourceNotAddedError: IncomeSourceNotAddedError,
+                                               val auth: Authenticator)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
@@ -58,8 +54,7 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
     )))
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -67,16 +62,12 @@ class IncomeSourceNotAddedController @Inject()(val checkSessionTimeout: SessionT
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType
+      )
   }
 }
 

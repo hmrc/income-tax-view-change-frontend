@@ -37,25 +37,21 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceReportingMethod
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceReportingMethodController @Inject()(val authenticate: AuthenticationPredicate,
-                                                      val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                      val checkSessionTimeout: SessionTimeoutPredicate,
-                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                      val retrieveBtaNavBar: NavBarPredicate,
-                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                       val updateIncomeSourceService: UpdateIncomeSourceService,
                                                       val itsaStatusService: ITSAStatusService,
                                                       val dateService: DateService,
                                                       val calculationListService: CalculationListService,
                                                       val auditingService: AuditingService,
                                                       val view: IncomeSourceReportingMethod,
-                                                      val sessionService: SessionService)
+                                                      val sessionService: SessionService,
+                                                      val auth: Authenticator)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,
@@ -82,26 +78,9 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
 
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(isAgent = isAgent, incomeSourceType)
-  }
-
-  private def authenticatedAction(isAgent: Boolean)
-                                 (authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-        implicit user =>
-          authenticatedCodeBlock(user)
-      }
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -201,7 +180,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     }
   }
 
-  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleSubmit(isAgent, incomeSourceType)
   }

@@ -25,19 +25,15 @@ import enums.JourneyType.{Add, JourneyType}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                                      val authenticate: AuthenticationPredicate,
-                                                      val authorisedFunctions: AuthorisedFunctions,
-                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                      val retrieveBtaNavBar: NavBarPredicate,
-                                                      val cannotGoBackError: YouCannotGoBackError)
+class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                                      val cannotGoBackError: YouCannotGoBackError,
+                                                      val auth: Authenticator)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,
@@ -60,8 +56,7 @@ class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: S
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -69,15 +64,11 @@ class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: S
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType
+      )
   }
 }

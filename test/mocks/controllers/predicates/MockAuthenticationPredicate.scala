@@ -19,14 +19,20 @@ package mocks.controllers.predicates
 import audit.mocks.MockAuditingService
 import auth.FrontEndHeaderExtractor
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.AuthenticationPredicate
+import controllers.predicates.{AuthenticationPredicate, SessionTimeoutPredicate}
+import mocks.MockItvcErrorHandler
 import mocks.auth._
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
+import utils.Authenticator
 
-trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions with MockAuditingService {
+trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions
+  with MockAuditingService with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockItvcErrorHandler{
+
+  val testAuthenticator = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
+    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
 
   object MockAuthenticationPredicate extends AuthenticationPredicate()(
     ec,

@@ -35,14 +35,10 @@ import utils.Authenticator
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach with MockAuthenticationPredicate
-  with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockItvcErrorHandler {
+trait MockFrontendAuthorisedFunctions extends BeforeAndAfterEach {
   self: Suite =>
 
   val mockAuthService = mock(classOf[FrontendAuthorisedFunctions])
-
-  val testAuthenticator = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
-    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

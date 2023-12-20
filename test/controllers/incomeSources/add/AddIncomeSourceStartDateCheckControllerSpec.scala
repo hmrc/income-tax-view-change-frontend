@@ -103,15 +103,13 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   object TestAddIncomeSourceStartDateCheckController
-    extends AddIncomeSourceStartDateCheckController(authenticate = MockAuthenticationPredicate,
+    extends AddIncomeSourceStartDateCheckController(
       authorisedFunctions = mockAuthService,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
       addIncomeSourceStartDateCheckView = app.injector.instanceOf[AddIncomeSourceStartDateCheck],
       languageUtils = languageUtils,
-      sessionService = mockSessionService
+      sessionService = mockSessionService,
+      testAuthenticator
     )(
       app.injector.instanceOf[FrontendAppConfig],
       dateService,
