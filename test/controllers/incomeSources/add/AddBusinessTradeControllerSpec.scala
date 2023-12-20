@@ -77,7 +77,6 @@ class AddBusinessTradeControllerSpec extends TestSupport
       authorisedFunctions = mockAuthService,
       addBusinessTradeView = app.injector.instanceOf[AddBusinessTrade],
       retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
       sessionService = mockSessionService,
       auth
     )(

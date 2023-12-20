@@ -65,14 +65,9 @@ class AddBusinessNameControllerSpec extends TestSupport
 
   object TestAddBusinessNameController
     extends AddBusinessNameController(
-      MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       addBusinessView = app.injector.instanceOf[AddBusinessName],
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
       sessionService = mockSessionService,
       auth
     )(

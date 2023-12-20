@@ -37,6 +37,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
+import utils.Authenticator
 
 import scala.concurrent.Future
 
@@ -59,17 +60,17 @@ class AddBusinessAddressControllerSpec extends TestSupport
   val redirectActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
   val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
 
+  val auth = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
+    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
+
 
   object TestAddBusinessAddressController
     extends AddBusinessAddressController(
-      MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      addressLookupService = mockAddressLookupService
+      addressLookupService = mockAddressLookupService,
+      auth
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],

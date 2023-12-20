@@ -20,6 +20,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import implicits.ImplicitDateFormatter
+import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
@@ -36,6 +37,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
 import testUtils.TestSupport
+import utils.Authenticator
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -45,19 +47,22 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
   with ImplicitDateFormatter
   with MockIncomeSourceDetailsService
   with MockNavBarEnumFsPredicate
+  with MockItvcErrorHandler
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
   with MockSessionService
   with TestSupport {
 
+  val auth = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
+    app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
+
+
   val controller = new AddIncomeSourceController(
     app.injector.instanceOf[views.html.incomeSources.add.AddIncomeSources],
     app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate]
+    auth
   )(app.injector.instanceOf[FrontendAppConfig],
     ec,
     app.injector.instanceOf[ItvcErrorHandler],

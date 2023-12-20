@@ -32,20 +32,17 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{Authenticator, IncomeSourcesUtils}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredicate,
-                                             val authorisedFunctions: AuthorisedFunctions,
-                                             checkSessionTimeout: SessionTimeoutPredicate,
+class AddBusinessAddressController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                             val retrieveBtaNavBar: NavBarPredicate,
                                              val itvcErrorHandler: ItvcErrorHandler,
-                                             incomeSourceDetailsService: IncomeSourceDetailsService,
-                                             addressLookupService: AddressLookupService)
+                                             addressLookupService: AddressLookupService,
+                                             auth: Authenticator)
                                             (implicit
                                              val appConfig: FrontendAppConfig,
                                              val ec: ExecutionContext,
@@ -55,21 +52,15 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
                                             )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(isAgent = false, isChange = isChange)
   }
 
-  def showAgent(isChange: Boolean): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(isAgent = true, isChange = isChange)
-          }
-    }
+  def showAgent(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(isAgent = true, isChange = isChange)
+  }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
@@ -136,21 +127,15 @@ class AddBusinessAddressController @Inject()(authenticate: AuthenticationPredica
       errorHandler.showInternalServerError()
   }
 
-  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
       handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)
   }
 
-  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-            handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)
-        }
-
+  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
+      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)
   }
 }
