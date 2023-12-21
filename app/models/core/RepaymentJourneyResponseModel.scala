@@ -18,7 +18,7 @@ package models.core
 
 import play.api.libs.json.{Json, OFormat}
 
-trait RepaymentJourneyResponseModel
+sealed trait RepaymentJourneyResponseModel
 
 object RepaymentJourneyResponseModel {
 

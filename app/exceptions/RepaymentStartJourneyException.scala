@@ -19,5 +19,9 @@ package exceptions
 final case class RepaymentStartJourneyException(status: Int, message: String) extends
   RuntimeException(s"Repayment journey start error with response code: $status and message: $message")
 
+case object RepaymentStartJourneyAmountIsNoneException extends
+  RuntimeException(s"Repayment journey start error: Amount is None")
+
+
 final case class RepaymentViewJourneyException(status: Int, message: String) extends
   RuntimeException(s"Repayment journey view error with response code: $status and message: $message")
