@@ -24,7 +24,7 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{Authenticator, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.add.IncomeSourceNotAddedError
 
 import javax.inject.Inject
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                val businessDetailsService: CreateBusinessDetailsService,
                                                val incomeSourceNotAddedError: IncomeSourceNotAddedError,
-                                               val auth: Authenticator)
+                                               val auth: AuthenticatorPredicate)
                                               (implicit val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val ec: ExecutionContext,

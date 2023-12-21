@@ -32,7 +32,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
-import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
 
 import javax.inject.Inject
@@ -45,7 +45,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
                                                         val updateIncomeSourceService: UpdateIncomeSourceService,
                                                         val sessionService: SessionService,
                                                         val auditingService: AuditingService,
-                                                        val auth: Authenticator)
+                                                        val auth: AuthenticatorPredicate)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext,

@@ -33,7 +33,7 @@ import play.api.mvc._
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import javax.inject.Inject
@@ -44,7 +44,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
                                                         val obligationsView: IncomeSourceCeasedObligations,
                                                         val nextUpdatesService: NextUpdatesService,
                                                         val sessionService: SessionService,
-                                                        val auth: Authenticator)
+                                                        val auth: AuthenticatorPredicate)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                         implicit override val mcc: MessagesControllerComponents,

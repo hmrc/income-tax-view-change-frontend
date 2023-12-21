@@ -26,12 +26,12 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import play.api.{Configuration, Environment}
 import testUtils.TestSupport
-import utils.Authenticator
+import utils.AuthenticatorPredicate
 
 trait MockAuthenticationPredicate extends TestSupport with MockFrontendAuthorisedFunctions
   with MockAuditingService with MockIncomeSourceDetailsPredicate with MockNavBarEnumFsPredicate with MockItvcErrorHandler{
 
-  val testAuthenticator = new Authenticator(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
+  val testAuthenticator = new AuthenticatorPredicate(app.injector.instanceOf[SessionTimeoutPredicate], MockAuthenticationPredicate, mockAuthService, MockNavBarPredicate, MockIncomeSourceDetailsPredicate, mockIncomeSourceDetailsService)(
     app.injector.instanceOf[MessagesControllerComponents], app.injector.instanceOf[FrontendAppConfig], mockItvcErrorHandler, ec)
 
   object MockAuthenticationPredicate extends AuthenticationPredicate()(

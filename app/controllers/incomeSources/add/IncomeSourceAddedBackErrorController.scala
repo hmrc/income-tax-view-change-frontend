@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedBackError
 
 import javax.inject.Inject
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                      val cannotGoBackError: IncomeSourceAddedBackError,
                                                      val sessionService: SessionService,
-                                                     auth: Authenticator)
+                                                     auth: AuthenticatorPredicate)
                                                     (implicit val appConfig: FrontendAppConfig,
                                                      mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext,

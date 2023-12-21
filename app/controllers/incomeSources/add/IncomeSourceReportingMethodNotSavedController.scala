@@ -26,7 +26,7 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Authenticator, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
 import javax.inject.{Inject, Singleton}
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                               val view: IncomeSourceReportingMethodNotSaved,
-                                                              val auth: Authenticator)
+                                                              val auth: AuthenticatorPredicate)
                                                              (implicit val ec: ExecutionContext,
                                                               implicit override val mcc: MessagesControllerComponents,
                                                               implicit val itvcAgentErrorHandler: AgentItvcErrorHandler,

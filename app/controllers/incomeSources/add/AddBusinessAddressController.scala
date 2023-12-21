@@ -32,7 +32,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{Authenticator, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
                                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                              val itvcErrorHandler: ItvcErrorHandler,
                                              addressLookupService: AddressLookupService,
-                                             auth: Authenticator)
+                                             auth: AuthenticatorPredicate)
                                             (implicit
                                              val appConfig: FrontendAppConfig,
                                              val ec: ExecutionContext,

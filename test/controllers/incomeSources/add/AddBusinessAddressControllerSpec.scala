@@ -37,7 +37,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import utils.Authenticator
+import utils.AuthenticatorPredicate
 
 import scala.concurrent.Future
 

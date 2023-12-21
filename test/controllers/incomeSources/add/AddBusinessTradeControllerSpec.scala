@@ -41,7 +41,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import utils.Authenticator
+import utils.AuthenticatorPredicate
 import views.html.incomeSources.add.AddBusinessTrade
 
 import scala.concurrent.Future

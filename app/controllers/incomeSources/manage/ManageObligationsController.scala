@@ -33,7 +33,7 @@ import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Authenticator, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
@@ -46,7 +46,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
                                             val obligationsView: ManageObligations,
                                             val sessionService: SessionService,
                                             nextUpdatesService: NextUpdatesService,
-                                            val auth: Authenticator)
+                                            val auth: AuthenticatorPredicate)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController

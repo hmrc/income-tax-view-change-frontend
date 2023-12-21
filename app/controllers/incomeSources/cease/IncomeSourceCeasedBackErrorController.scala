@@ -25,7 +25,7 @@ import enums.JourneyType.{Cease, JourneyType}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceCeasedBackError
 
 import javax.inject.Inject
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeSourceCeasedBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                       val sessionService: SessionService,
                                                       val cannotGoBackCeasedError: IncomeSourceCeasedBackError,
-                                                      val auth: Authenticator)
+                                                      val auth: AuthenticatorPredicate)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,

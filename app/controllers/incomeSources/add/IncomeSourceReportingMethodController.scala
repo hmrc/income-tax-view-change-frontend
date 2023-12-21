@@ -37,7 +37,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Authenticator, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceReportingMethod
 
 import javax.inject.Inject
@@ -51,7 +51,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
                                                       val auditingService: AuditingService,
                                                       val view: IncomeSourceReportingMethod,
                                                       val sessionService: SessionService,
-                                                      val auth: Authenticator)
+                                                      val auth: AuthenticatorPredicate)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,

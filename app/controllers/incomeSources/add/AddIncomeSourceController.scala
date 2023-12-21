@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{Authenticator, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.add.AddIncomeSources
 
 import javax.inject.{Inject, Singleton}
@@ -39,7 +39,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                                           val checkSessionTimeout: SessionTimeoutPredicate,
                                           val authorisedFunctions: AuthorisedFunctions,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          auth: Authenticator)
+                                          auth: AuthenticatorPredicate)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val ec: ExecutionContext,
                                           implicit val itvcErrorHandler: ItvcErrorHandler,
