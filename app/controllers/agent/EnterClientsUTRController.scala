@@ -93,13 +93,13 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                     SessionKeys.clientNino -> nino,
                     SessionKeys.clientUTR -> validUTR
                   ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
-                  addAudit(true, user, validUTR, nino, mtdItId)
+                  sendAudit(true, user, validUTR, nino, mtdItId)
                   Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*))
               }.recover {
                 case ex =>
                   Logger("application")
                     .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
-                  addAudit(false, user, validUTR, nino, mtdItId)
+                  sendAudit(false, user, validUTR, nino, mtdItId)
                   Redirect(controllers.agent.routes.UTRErrorController.show)
               }
             case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
@@ -114,7 +114,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       )
   }
 
-  private def addAudit(isSuccessful: Boolean, user: IncomeTaxAgentUser, validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
+  private def sendAudit(isSuccessful: Boolean, user: IncomeTaxAgentUser, validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
     auditingService.extendedAudit(EnterClientUTRAuditModel(
       isSuccessful = isSuccessful,
       nino = nino,
