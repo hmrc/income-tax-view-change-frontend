@@ -17,7 +17,7 @@
 package services
 
 import connectors.RepaymentConnector
-import exceptions.MissingFieldException
+import exceptions.{MissingFieldException, RepaymentStartJourneyException, RepaymentViewJourneyException}
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,7 +40,7 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
           case RepaymentJourneyErrorResponse(status, message) =>
             Logger("application").error(s"[RepaymentService][start]: " +
               s"Repayment journey start error with response code: $status and message: $message")
-            Left(new InternalError)
+            Left(RepaymentStartJourneyException(status, message))
           case _ =>
             Logger("application").error(s" [RepaymentService][start]: " +
               s" Repayment journey view error with response code: unknown and message: unknown")
@@ -67,7 +67,7 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
       case RepaymentJourneyErrorResponse(status, message) =>
         Logger("application").error(s" [RepaymentService][view]: " +
           s" Repayment journey view error with response code: $status and message: $message")
-        Left(new InternalError)
+        Left(RepaymentViewJourneyException(status, message))
       case _ =>
         Logger("application").error(s" [RepaymentService][view]: " +
           s" Repayment journey view error with response code: unknown and message: unknown")

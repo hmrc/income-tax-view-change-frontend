@@ -17,6 +17,7 @@
 package services
 
 import connectors.RepaymentConnector
+import exceptions.{RepaymentStartJourneyException, RepaymentViewJourneyException}
 import mocks.MockHttp
 import mocks.connectors.MockBusinessDetailsConnector
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
@@ -31,7 +32,7 @@ class RepaymentServiceSpec extends TestSupport
   with MockHttp with MockBusinessDetailsConnector {
 
   val nino = "AA010101Q"
-  val fullAmount = BigDecimal("303.00")
+  val fullAmount: BigDecimal = BigDecimal("303.00")
 
   val repaymentConnector: RepaymentConnector = mock(classOf[RepaymentConnector])
 
@@ -40,7 +41,6 @@ class RepaymentServiceSpec extends TestSupport
   "RepaymentService" when {
     "core scenarios" when {
       "action start " should {
-        // A: happy path: fullAmount exists and > 0
         "return success - Next url" in {
           val expected = "http://nextUrl/withSessionId"
           when(repaymentConnector.start(any(), any())(any()))
@@ -52,18 +52,27 @@ class RepaymentServiceSpec extends TestSupport
             .start(nino, fullAmount = Some(fullAmount))
           actualFutureResult.futureValue should be(Right(expected))
         }
-        // B: ~: fullAmount not exists or None
-        "return failure" in {
+        "return standard service failure" in {
           val result = Future.successful(RepaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Server error details"))
           when(repaymentConnector.start(any(), any())(any()))
             .thenReturn(result)
           val actualFutureResult = UnderTestService
             .start(nino, fullAmount = Some(fullAmount))
           actualFutureResult.futureValue match {
-            case Right(_) => fail("Failure expected")
-            case Left(ex) if ex.isInstanceOf[InternalError] =>
+            case Right(_) =>
+              fail("Failure expected")
+            case Left(RepaymentStartJourneyException(INTERNAL_SERVER_ERROR,"Server error details")) =>
               succeed
-            case _ => fail("Unexpected error")
+            case _ =>
+              fail("Unexpected error")
+          }
+        }
+        "handle critical error" in {
+          when(repaymentConnector.start(any(), any())(any()))
+            .thenThrow(new Error("BigBoom"))
+          intercept[Error] {
+            UnderTestService
+              .start(nino, fullAmount = Some(fullAmount))
           }
         }
       }
@@ -86,9 +95,16 @@ class RepaymentServiceSpec extends TestSupport
           val actualFutureResult = UnderTestService.view(nino)
           actualFutureResult.futureValue match {
             case Right(_) => fail("Failure expected")
-            case Left(ex) if ex.isInstanceOf[InternalError] =>
+            case Left(RepaymentViewJourneyException(SERVICE_UNAVAILABLE, "Service not available")) =>
               succeed
             case _ => fail("Unexpected error")
+          }
+        }
+        "handle critical error" in {
+          when(repaymentConnector.view(any())(any()))
+            .thenThrow(new Error("Some internal error"))
+          intercept[Error] {
+            UnderTestService.view(nino)
           }
         }
       }
