@@ -29,13 +29,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class Authenticator @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                              val authenticate: AuthenticationPredicate,
-                              val authorisedFunctions: AuthorisedFunctions,
-                              val retrieveBtaNavBar: NavBarPredicate,
-                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                              val incomeSourceDetailsService: IncomeSourceDetailsService)
-                             (implicit mcc: MessagesControllerComponents,
+class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
+                                       val authenticate: AuthenticationPredicate,
+                                       val authorisedFunctions: AuthorisedFunctions,
+                                       val retrieveBtaNavBar: NavBarPredicate,
+                                       val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                       val incomeSourceDetailsService: IncomeSourceDetailsService)
+                                      (implicit mcc: MessagesControllerComponents,
                               val appConfig: FrontendAppConfig,
                               val itvcErrorHandler: AgentItvcErrorHandler,
                               val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport {
