@@ -65,17 +65,16 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
       case RepaymentJourneyModel(nextUrl) =>
         Right(nextUrl)
       case RepaymentJourneyErrorResponse(status, message) =>
-        Logger("application").error(s" [RepaymentService][start]: " +
+        Logger("application").error(s" [RepaymentService][view]: " +
           s" Repayment journey view error with response code: $status and message: $message")
         Left(new InternalError)
       case _ =>
-        Logger("application").error(s" [RepaymentService][start]: " +
+        Logger("application").error(s" [RepaymentService][view]: " +
           s" Repayment journey view error with response code: unknown and message: unknown")
         Left(new InternalError)
     }.recover { case ex: Exception =>
-      Logger("application").error(s"[RepaymentService][start]: " +
+      Logger("application").error(s"[RepaymentService][view]: " +
         s"Repayment journey view error with exception: $ex")
-
       Left(ex)
     }
   }

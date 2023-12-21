@@ -22,9 +22,8 @@ import mocks.connectors.MockBusinessDetailsConnector
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}
 import testUtils.TestSupport
-
 
 import scala.concurrent.Future
 
@@ -35,26 +34,29 @@ class RepaymentServiceSpec extends TestSupport
   val fullAmount = BigDecimal("303.00")
 
   val repaymentConnector: RepaymentConnector = mock(classOf[RepaymentConnector])
+
   object UnderTestService extends RepaymentService(repaymentConnector, ec)
 
-  "RepaymentService " when {
-    "Core scenarios" when {
+  "RepaymentService" when {
+    "core scenarios" when {
       "action start " should {
         // A: happy path: fullAmount exists and > 0
         "return success - Next url" in {
-          val expected = "http://NextUrl/WithSessionId"
-          when( repaymentConnector.start( any(), any() )(any()) )
-            .thenReturn( Future{ RepaymentJourneyModel(expected)  } )
+          val expected = "http://nextUrl/withSessionId"
+          when(repaymentConnector.start(any(), any())(any()))
+            .thenReturn(Future {
+              RepaymentJourneyModel(expected)
+            })
 
           val actualFutureResult = UnderTestService
             .start(nino, fullAmount = Some(fullAmount))
-          actualFutureResult.futureValue should be (Right(expected))
+          actualFutureResult.futureValue should be(Right(expected))
         }
         // B: ~: fullAmount not exists or None
         "return failure" in {
-          when( repaymentConnector.start( any(), any() )(any()) )
-            .thenReturn( Future{ RepaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Server error details")  } )
-
+          val result = Future.successful(RepaymentJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Server error details"))
+          when(repaymentConnector.start(any(), any())(any()))
+            .thenReturn(result)
           val actualFutureResult = UnderTestService
             .start(nino, fullAmount = Some(fullAmount))
           actualFutureResult.futureValue match {
@@ -68,10 +70,26 @@ class RepaymentServiceSpec extends TestSupport
 
       "action view " should {
         "return success" in {
-          // TODO: my tests
+          val expected = "http://NextUrl/WithSessionId"
+          when(repaymentConnector.view(any())(any()))
+            .thenReturn(Future.successful {
+              RepaymentJourneyModel(expected)
+            })
+          val actualFutureResult = UnderTestService.view(nino)
+          actualFutureResult.futureValue should be(Right(expected))
         }
         "return failure" in {
-          // TODO: my tests
+          when(repaymentConnector.view(any())(any()))
+            .thenReturn(Future.successful {
+              RepaymentJourneyErrorResponse(SERVICE_UNAVAILABLE, "Service not available")
+            })
+          val actualFutureResult = UnderTestService.view(nino)
+          actualFutureResult.futureValue match {
+            case Right(_) => fail("Failure expected")
+            case Left(ex) if ex.isInstanceOf[InternalError] =>
+              succeed
+            case _ => fail("Unexpected error")
+          }
         }
       }
 
