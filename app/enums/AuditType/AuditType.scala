@@ -129,3 +129,7 @@ case object UpdateIncomeSource extends AuditType {
 case object CreateIncomeSource extends AuditType {
   override val name: String = "CreateIncomeSource"
 }
+
+case object EnterClientUTR extends AuditType {
+  override val name: String = "AgentLoginUTRSubmitted"
+}
