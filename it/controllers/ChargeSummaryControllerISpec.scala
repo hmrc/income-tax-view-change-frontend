@@ -449,7 +449,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "outstandingAmount" -> 1200.00,
           "originalAmount" -> 1200.00,
           "documentDate" -> "2018-03-29",
-          "effectiveDateOfPayment" -> "2018-03-30"
+          "effectiveDateOfPayment" -> "2018-03-30",
+          "documentDueDate" -> "2018-03-30"
         )
       ),
       "financialDetails" -> Json.arr(
@@ -481,7 +482,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
           "outstandingAmount" -> 0,
           "originalAmount" -> 1200.00,
           "documentDate" -> "2018-03-29",
-          "effectiveDateOfPayment" -> "2018-03-30"
+          "effectiveDateOfPayment" -> "2018-03-30",
+          "documentDueDate" -> "2018-03-30"
         ),
         Json.obj(
           "taxYear" -> testTaxYear,
@@ -557,7 +559,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
       originalAmount = Some(1200),
       outstandingAmount = Some(1200),
       documentDate = LocalDate.of(2018, 3, 29),
-      effectiveDateOfPayment = Some(LocalDate.parse("2018-03-30"))
+      effectiveDateOfPayment = Some(LocalDate.parse("2018-03-30")),
+      documentDueDate = Some(LocalDate.parse("2018-03-30"))
     )
     val docDetailPaid = docDetailUnpaid.copy(outstandingAmount = Some(0))
 

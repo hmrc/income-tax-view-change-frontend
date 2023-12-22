@@ -211,7 +211,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
                 Some(0), Some(12.34), LocalDate.of(2018, 3, 29), Some(10), Some(100),
                 Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
                 Some( LocalDate.of(2018, 3, 29)), Some(10), Some(100), Some("paymentLotItem"), Some("paymentLot"),
-                effectiveDateOfPayment = Some(fixedDate.minusDays(1))),
+                effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1))),
               Some(LocalDate.of(2018, 3, 29)), isLatePaymentInterest = true)))
         }
       }
@@ -225,14 +225,16 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-            effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")))
+            effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")),
+            documentDueDate = Some(LocalDate.parse("2021-08-24")))
           val dd2 = DocumentDetail(taxYear = 2021, transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
             documentText = Some(CODING_OUT_CANCELLED), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
-            effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")))
+            effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
+            documentDueDate = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED), amountCodedOut = Some(2500.00))
           when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
@@ -267,13 +269,17 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching {
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None, latePaymentInterestId = None,
             interestFromDate = Some(LocalDate.parse("2019-05-25")), interestEndDate = Some(LocalDate.parse("2019-06-25")),
-            latePaymentInterestAmount = None, effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")))
+            latePaymentInterestAmount = None,
+            effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")),
+            documentDueDate = Some(LocalDate.parse("2021-08-24")))
           val dd2 = DocumentDetail(taxYear = 2021, transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
             documentText = Some(CODING_OUT_CANCELLED), outstandingAmount = Some(43.21),
             originalAmount = Some(43.21), documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None, latePaymentInterestId = None,
             interestFromDate = Some(LocalDate.parse("2019-05-25")), interestEndDate = Some(LocalDate.parse("2019-06-25")),
-            latePaymentInterestAmount = None, effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")))
+            latePaymentInterestAmount = None,
+            effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
+            documentDueDate = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED))
           when(mockFinancialDetailsConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
