@@ -40,7 +40,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val businessName = messages("incomeSources.manage.business-manage-details.business-name")
   val businessAddress = messages("incomeSources.manage.business-manage-details.business-address")
   val dateStarted = messages("incomeSources.manage.business-manage-details.date-started")
-  val businessAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
+  val isTraditionalAccountingMethod = messages("incomeSources.manage.business-manage-details.accounting-method")
   val ukAccountingMethod = messages("incomeSources.manage.uk-property-manage-details.accounting-method")
   val quarterlyPeriodType = messages("incomeSources.manage.quarterly-period")
   val foreignAccountingMethod = messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
@@ -66,13 +66,13 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
   val expandableInfoContentP3 = messages("incomeSources.manage.quarterly-period.content.p3")
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax#send-quarterly-updates"
   val opensInNewTabText = messages("pagehelp.opensInNewTabText")
-
+  val cashBasisAccounting = "Cash basis accounting"
   val viewModel: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
     incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
     tradingName = Some(testTradeName),
     tradingStartDate = Some(testStartDate),
     address = expectedAddress,
-    businessAccountingMethod = Some(false),
+    isTraditionalAccountingMethod = false,
     itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
@@ -86,7 +86,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = None,
     address = None,
-    businessAccountingMethod = None,
+    isTraditionalAccountingMethod = false,
     itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
@@ -100,7 +100,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
-    businessAccountingMethod = Some(false),
+    isTraditionalAccountingMethod = false,
     itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
@@ -114,7 +114,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = None,
     address = None,
-    businessAccountingMethod = None,
+    isTraditionalAccountingMethod = false,
     itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
@@ -128,7 +128,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = Some(testStartDate),
     address = None,
-    businessAccountingMethod = Some(false),
+    isTraditionalAccountingMethod = false,
     itsaHasMandatedOrVoluntaryStatusCurrentYear = true,
     taxYearOneCrystallised = Some(false),
     taxYearTwoCrystallised = Some(false),
@@ -142,7 +142,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     tradingName = None,
     tradingStartDate = None,
     address = None,
-    businessAccountingMethod = None,
+    isTraditionalAccountingMethod = false,
     itsaHasMandatedOrVoluntaryStatusCurrentYear = false,
     taxYearOneCrystallised = None,
     taxYearTwoCrystallised = None,
@@ -268,7 +268,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe isTraditionalAccountingMethod
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe quarterlyPeriodType
       document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
@@ -299,12 +299,12 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe isTraditionalAccountingMethod
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
       document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe unknown
-      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "Cash basis accounting"
     }
   }
   "ManageSelfEmployment - Agent" should {
@@ -320,7 +320,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe businessName
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe businessAddress
       document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe dateStarted
-      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe businessAccountingMethod
+      document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe isTraditionalAccountingMethod
       document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe quarterlyPeriodType
       document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe reportingMethod1
       document.getElementsByClass("govuk-summary-list__key").eq(6).text() shouldBe reportingMethod2
@@ -387,7 +387,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
-      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
     }
   }
   "Manage Uk Property - Agent" should {
@@ -430,7 +430,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe ukAccountingMethod
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
-      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
     }
   }
 
@@ -474,7 +474,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
-      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "Cash basis accounting"
     }
   }
   "Manage Foreign Property - Agent" should {
@@ -517,7 +517,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe foreignAccountingMethod
 
       document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe unknown
-      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe unknown
+      document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe cashBasisAccounting
     }
   }
 }

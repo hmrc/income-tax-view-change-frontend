@@ -18,16 +18,16 @@ package models
 
 import auth.MtdItUser
 import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
-import forms.IncomeSourcesFormsSpec.{fakeRequestConfirmedClientwithFullBusinessDetails, fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
+import forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.core.IncomeSourceIdHash.mkFromQueryString
+import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.scalatest.matchers.should.Matchers
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, _}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -86,7 +86,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
         singleBusinessIncomeWithLatency2019.businesses.head.address.get shouldBe testBizAddress
       }
       "should have a cashOrAccruals field" in {
-        singleBusinessIncomeWithLatency2019.businesses.head.cashOrAccruals.get shouldBe false
+        singleBusinessIncomeWithLatency2019.businesses.head.cashOrAccruals shouldBe false
       }
       //Test Property details
       s"should not have property details" in {
@@ -127,7 +127,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),
               cessation = None,
               latencyDetails = None,
-              address = Some(address)
+              address = Some(address),
+              cashOrAccruals = true
             ),
             BusinessDetailsModel(
               incomeSourceId = "",
@@ -137,7 +138,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
               cessation = None,
               latencyDetails = None,
-              address = Some(address)
+              address = Some(address),
+              cashOrAccruals = true
             )
           ),
           List(PropertyDetailsModel(
@@ -146,7 +148,8 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             firstAccountingPeriodEndDate = None,
             incomeSourceType = Some("property-unspecified"),
             tradingStartDate = Some(LocalDate.parse("2022-01-01")),
-            None
+            None,
+            cashOrAccruals = true
           )
           ))
         preSanitised.sanitise shouldBe expected
@@ -200,9 +203,9 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       "return " in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, ukPropertyAndSoleTraderBusinessIncomeNoTradingName)
 
-        val result = user.incomeSources.getCashOrAccruals()
+        val result = user.incomeSources.getBusinessCashOrAccruals()
 
-        result shouldBe List(None)
+        result shouldBe List(true)
       }
     }
 

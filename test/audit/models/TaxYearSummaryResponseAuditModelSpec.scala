@@ -125,7 +125,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     None,
     Some(getCurrentTaxYearEnd),
     None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   ))
 
   val singleErrorMessage: Option[Messages] = Some(Messages(errors = Some(Seq(

@@ -203,7 +203,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           Some("Test name"),
           None,
           Some(LocalDate.of(2022, 1, 1)),
-          None
+          None,
+          cashOrAccruals = false
         )), List.empty)
         mockSelfEmployment()
 
@@ -240,7 +241,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           Some("Test name"),
           None,
           Some(LocalDate.of(2022, 1, 1)),
-          None
+          None,
+          cashOrAccruals = false
         )), List.empty)
         mockSelfEmployment()
         val day = LocalDate.of(2023, 1, 1)
@@ -276,7 +278,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           None,
           None,
           Some(LocalDate.of(2022, 1, 1)),
-          None
+          None,
+          cashOrAccruals = false
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
@@ -312,7 +315,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
           testSelfEmploymentId,
           None,
           Some("test"),
-          None, None, None
+          None, None, None,
+          cashOrAccruals = false
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         mockFailure()
@@ -432,7 +436,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             None,
             Some("foreign-property"),
             Some(LocalDate.of(2022, 4, 21)),
-            None
+            None,
+            cashOrAccruals = false
           )))
 
           val day = LocalDate.of(2023, 1, 1)
@@ -472,7 +477,8 @@ class IncomeSourceAddedControllerSpec extends TestSupport
             None,
             Some("foreign-property"),
             Some(LocalDate.of(2022, 4, 21)),
-            None
+            None,
+            cashOrAccruals = false
           )))
 
           val day = LocalDate.of(2023, 1, 1)

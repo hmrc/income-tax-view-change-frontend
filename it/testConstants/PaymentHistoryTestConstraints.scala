@@ -45,7 +45,8 @@ object PaymentHistoryTestConstraints {
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     None,
     None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = false
   )
 
   val business2 = BusinessDetailsModel(
@@ -58,7 +59,8 @@ object PaymentHistoryTestConstraints {
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     None,
     None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = false
   )
 
 }
