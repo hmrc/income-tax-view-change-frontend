@@ -225,15 +225,11 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     ((isAgent, isChange, incomeSourceType) match {
       case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-      case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
-      case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-      case (false, false, _) => routes.AddIncomeSourceController.show()
-      case (_, false, _) => routes.AddIncomeSourceController.showAgent()
-      case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(UkProperty)
-      case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
+      case (_,     false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+      case (false, false,              _) => routes.AddIncomeSourceController.show()
+      case (_,     false,              _) => routes.AddIncomeSourceController.showAgent()
+      case (false,     _,              _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_,         _,              _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 }
