@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package models.core
+package exceptions
 
-import play.api.libs.json.{Json, OFormat}
+final case class RepaymentStartJourneyException(status: Int, message: String) extends
+  RuntimeException(s"Repayment journey start error with response code: $status and message: $message")
 
-sealed trait RepaymentJourneyResponseModel
+case object RepaymentStartJourneyAmountIsNoneException extends
+  RuntimeException(s"Repayment journey start error: Amount is None")
 
-object RepaymentJourneyResponseModel {
 
-  final case class RepaymentJourneyModel(nextUrl: String) extends RepaymentJourneyResponseModel
-
-  object RepaymentJourneyModel {
-    implicit val formats: OFormat[RepaymentJourneyModel] = Json.format[RepaymentJourneyModel]
-  }
-
-  final case class RepaymentJourneyErrorResponse(status: Int, message: String) extends RepaymentJourneyResponseModel
-}
+final case class RepaymentViewJourneyException(status: Int, message: String) extends
+  RuntimeException(s"Repayment journey view error with response code: $status and message: $message")

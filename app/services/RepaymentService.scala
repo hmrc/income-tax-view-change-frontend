@@ -17,7 +17,7 @@
 package services
 
 import connectors.RepaymentConnector
-import exceptions.MissingFieldException
+import exceptions.{MissingFieldException, RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,20 +40,15 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
           case RepaymentJourneyErrorResponse(status, message) =>
             Logger("application").error(s"[RepaymentService][start]: " +
               s"Repayment journey start error with response code: $status and message: $message")
-            Left(new InternalError)
-          case _ =>
-            Logger("application").error(s" [RepaymentService][start]: " +
-              s" Repayment journey view error with response code: unknown and message: unknown")
-            Left(new InternalError)
-        }.recover { case ex: Exception =>
+            Left(RepaymentStartJourneyException(status, message))
+        }.recover { case ex =>
           Logger("application").error(s"[RepaymentService][start]: " +
             s"Repayment journey start error with exception: $ex")
           Left(ex)
         }
       case None =>
-        Logger("application").error(s"[RepaymentService][start] " +
-          s"AvailableCredit not found")
-        Future.successful(Left(new MissingFieldException("availableCredit")))
+        Logger("application").error(s"[RepaymentService][start] - Amount is none")
+        Future.successful(Left(RepaymentStartJourneyAmountIsNoneException))
 
     }
   }
@@ -65,17 +60,12 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
       case RepaymentJourneyModel(nextUrl) =>
         Right(nextUrl)
       case RepaymentJourneyErrorResponse(status, message) =>
-        Logger("application").error(s" [RepaymentService][start]: " +
+        Logger("application").error(s" [RepaymentService][view]: " +
           s" Repayment journey view error with response code: $status and message: $message")
-        Left(new InternalError)
-      case _ =>
-        Logger("application").error(s" [RepaymentService][start]: " +
-          s" Repayment journey view error with response code: unknown and message: unknown")
-        Left(new InternalError)
+        Left(RepaymentViewJourneyException(status, message))
     }.recover { case ex: Exception =>
-      Logger("application").error(s"[RepaymentService][start]: " +
+      Logger("application").error(s"[RepaymentService][view]: " +
         s"Repayment journey view error with exception: $ex")
-
       Left(ex)
     }
   }
