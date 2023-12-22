@@ -187,7 +187,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   private def getFilledForm(form: Form[DateFormElement],
                             incomeSourceType: IncomeSourceType,
                             isChange: Boolean)(implicit user: MtdItUser[_]): Future[Form[DateFormElement]] = {
-
     if (isChange) {
       getStartDate(incomeSourceType).flatMap {
         case Some(date) =>
