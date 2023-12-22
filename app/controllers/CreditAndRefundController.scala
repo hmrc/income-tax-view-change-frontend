@@ -33,6 +33,7 @@ import services.{CreditService, DateServiceInterface, IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.maybeUnallocatedCreditType
 import views.html.CreditAndRefunds
@@ -50,7 +51,8 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                           val repaymentService: RepaymentService,
-                                          val auditingService: AuditingService)
+                                          val auditingService: AuditingService,
+                                          val auth: AuthenticatorPredicate)
                                          (implicit val appConfig: FrontendAppConfig,
                                           dateService: DateServiceInterface,
                                           val languageUtils: LanguageUtils,
@@ -62,8 +64,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+    auth.authenticatedAction(isAgent = false) {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
@@ -148,23 +149,18 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def showAgent(): Action[AnyContent] = {
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-            implicit mtdItUser =>
-              handleRequest(
-                backUrl = controllers.routes.HomeController.showAgent.url,
-                itvcErrorHandler = itvcErrorHandlerAgent,
-                isAgent = true
-              )
-          }
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
+        handleRequest(
+          backUrl = controllers.routes.HomeController.showAgent.url,
+          itvcErrorHandler = itvcErrorHandlerAgent,
+          isAgent = true
+        )
     }
   }
 
   def startRefund(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+    auth.authenticatedAction(isAgent = false) {
       implicit user =>
         user.userType match {
           case _ if isDisabled(CreditsRefundsRepay) =>

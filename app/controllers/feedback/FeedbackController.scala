@@ -28,6 +28,7 @@ import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
+import utils.AuthenticatorPredicate
 import views.html.feedback.{Feedback, FeedbackThankYou}
 
 import java.net.URLEncoder
@@ -49,12 +50,12 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                    mcc: MessagesControllerComponents,
                                    val itvcErrorHandler: ItvcErrorHandler,
-                                   val agentItvcErrorHandler: AgentItvcErrorHandler
+                                   val agentItvcErrorHandler: AgentItvcErrorHandler,
+                                   val auth: AuthenticatorPredicate
                                   ) extends ClientConfirmedController with I18nSupport {
 
 
-  def show: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit)
       request.headers.get(REFERER) match {
@@ -78,8 +79,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         }
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,

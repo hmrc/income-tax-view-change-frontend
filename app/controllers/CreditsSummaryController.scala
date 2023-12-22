@@ -30,6 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditHistoryService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.AuthenticatorPredicate
 import views.html.CreditsSummary
 
 import java.net.URI
@@ -45,7 +46,8 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                                          retrieveBtaNavBar: NavBarPredicate,
                                          authenticate: AuthenticationPredicate,
                                          retrieveNino: NinoPredicate,
-                                         retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate)
+                                         retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                         auth: AuthenticatorPredicate)
                                         (implicit val appConfig: FrontendAppConfig,
                                          mcc: MessagesControllerComponents,
                                          msgApi: MessagesApi,
@@ -88,7 +90,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   def handleRequest(calendarYear: Int,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[AnyContent],
+                   (implicit user: MtdItUser[_],
                     hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     creditHistoryService.getCreditsHistory(calendarYear, user.nino, isEnabled(MFACreditsAndDebits), isEnabled(CutOverCredits)).flatMap {
       case Right(credits) =>
@@ -119,7 +121,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   }
 
   def showCreditsSummary(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+    auth.authenticatedAction(isAgent = false) {
       implicit user =>
         handleRequest(
           calendarYear = calendarYear,
@@ -130,14 +132,11 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   }
 
   def showAgentCreditsSummary(calendarYear: Int): Action[AnyContent] = {
-    Authenticated.async { implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          handleRequest(
-            calendarYear = calendarYear,
-            isAgent = true
-          )
-        }
+    auth.authenticatedAction(isAgent = true) { implicit mtdItUser =>
+      handleRequest(
+        calendarYear = calendarYear,
+        isAgent = true
+      )
     }
   }
 

@@ -21,9 +21,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.{BaseAgentController, ClientConfirmedController}
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, ActionBuilder, ActionFunction, AnyContent, BodyParser, MessagesControllerComponents, Request, Result}
 import services.IncomeSourceDetailsService
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,10 +38,9 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                        val incomeSourceDetailsService: IncomeSourceDetailsService)
                                       (implicit mcc: MessagesControllerComponents,
-                              val appConfig: FrontendAppConfig,
-                              val itvcErrorHandler: AgentItvcErrorHandler,
-                              val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport {
-
+                                       val appConfig: FrontendAppConfig,
+                                       val itvcErrorHandler: AgentItvcErrorHandler,
+                                       val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport {
 
   def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     if (isAgent)

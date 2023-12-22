@@ -95,15 +95,11 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
 
     val controller = new RefundToTaxPayerController(
       refundToTaxPayerView,
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       mockRepaymentHistoryConnector,
-      MockIncomeSourceDetailsPredicate,
-      mockIncomeSourceDetailsService,
       mockAuthService,
-      app.injector.instanceOf[NavBarPredicate],
       app.injector.instanceOf[ItvcErrorHandler],
-      mockAuditingService
+      mockAuditingService,
+      testAuthenticator
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig],

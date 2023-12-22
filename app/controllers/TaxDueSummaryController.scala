@@ -34,7 +34,7 @@ import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.TaxCalcFallBackBackLink
+import utils.{AuthenticatorPredicate, TaxCalcFallBackBackLink}
 import views.html.TaxCalcBreakdown
 
 import javax.inject.{Inject, Singleton}
@@ -42,16 +42,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val authenticate: AuthenticationPredicate,
-                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                         val calculationService: CalculationService,
-                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val taxCalcBreakdown: TaxCalcBreakdown,
                                         val auditingService: AuditingService,
-                                        val retrieveBtaNavBar: NavBarPredicate)
+                                        val auth: AuthenticatorPredicate)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
@@ -84,8 +80,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
   }
 
 
-  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
       implicit user =>
         handleRequest(
           origin = origin,
@@ -93,19 +88,14 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
           taxYear = taxYear,
           isAgent = false
         )
-    }
   }
 
-  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = {
-    Authenticated.async { implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          handleRequest(
-            itcvErrorHandler = itvcErrorHandlerAgent,
-            taxYear = taxYear,
-            isAgent = true
-          )
-        }
-    }
+  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        itcvErrorHandler = itvcErrorHandlerAgent,
+        taxYear = taxYear,
+        isAgent = true
+      )
   }
 }

@@ -53,16 +53,13 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     val controller = new controllers.NextUpdatesController(
       app.injector.instanceOf[NoNextUpdates],
       app.injector.instanceOf[NextUpdates],
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
-      MockIncomeSourceDetailsPredicateNoCache,
       mockIncomeSourceDetailsService,
       app.injector.instanceOf[AuditingService],
       mockNextUpdatesService,
       app.injector.instanceOf[ItvcErrorHandler],
-      app.injector.instanceOf[NavBarPredicate],
       appConfig,
       mockAuthService,
+      testAuthenticator
     )(
       app.injector.instanceOf[MessagesControllerComponents],
       mockItvcErrorHandler,
@@ -73,16 +70,13 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
   object TestNextUpdatesController extends NextUpdatesController(
     app.injector.instanceOf[NoNextUpdates],
     app.injector.instanceOf[NextUpdates],
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
-    MockIncomeSourceDetailsPredicateNoCache,
     app.injector.instanceOf[services.IncomeSourceDetailsService],
     app.injector.instanceOf[AuditingService],
     mockNextUpdatesService,
     app.injector.instanceOf[ItvcErrorHandler],
-    app.injector.instanceOf[NavBarPredicate],
     appConfig,
     app.injector.instanceOf[FrontendAuthorisedFunctions],
+    testAuthenticator
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     mockItvcErrorHandler,
