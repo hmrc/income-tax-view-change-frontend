@@ -653,14 +653,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
         val mixedJson = Json.obj(
           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
           "documentDetails" -> Json.arr(
-            documentDetailJson(3400.00, 1000.00, currentTaxYearEnd, transactionId = "transId1"),
-            documentDetailJson(1000.00, 0.00, currentTaxYearEnd, transactionId = "transId2"),
-            documentDetailJson(1000.00, 3000.00, currentTaxYearEnd, transactionId = "transId3")
           ),
           "financialDetails" -> Json.arr(
-            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId4"),
-            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId5"),
-            financialDetailJson(currentTaxYearEnd.toString, transactionId = "transId6")
           )
         )
 
