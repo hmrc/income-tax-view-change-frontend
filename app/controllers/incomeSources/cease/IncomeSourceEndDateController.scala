@@ -75,7 +75,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       case (false, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType)
       case (false,     _) => routes.IncomeSourceEndDateController.submitChange(hashedId, incomeSourceType)
       case (_,     false) => routes.IncomeSourceEndDateController.submitAgent(hashedId, incomeSourceType)
-      case (_,         _) => routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
+      case (_,         _) => routes.IncomeSourceEndDateController.submitChangeAgent(hashedId, incomeSourceType)
     }
   }
 
