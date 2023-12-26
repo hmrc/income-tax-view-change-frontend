@@ -58,6 +58,32 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
+  private def getBackCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
+    (isAgent, incomeSourceType) match {
+      case (false, SelfEmployment) => routes.CeaseIncomeSourceController.show()
+      case (_,     SelfEmployment) => routes.CeaseIncomeSourceController.showAgent()
+      case (false,  _)             => routes.DeclarePropertyCeasedController.show(incomeSourceType)
+      case (_,      _)             => routes.DeclarePropertyCeasedController.showAgent(incomeSourceType)
+    }
+  }
+
+  private def getPostAction(isAgent: Boolean, isChange: Boolean, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType): Call = {
+
+    val hashedId: Option[String] = maybeIncomeSourceId.map(_.toHash.hash)
+
+    (isAgent, isChange) match {
+      case (false, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType)
+      case (false,     _) => routes.IncomeSourceEndDateController.submitChange(hashedId, incomeSourceType)
+      case (_,     false) => routes.IncomeSourceEndDateController.submitAgent(hashedId, incomeSourceType)
+      case (_,         _) => routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
+    }
+  }
+
+  private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
+    if (isAgent) routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
+    else routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType)
+  }
+
   def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
     (checkSessionTimeout andThen authenticate
       andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
@@ -302,31 +328,5 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
     } else {
       Future.successful(form)
     }
-  }
-
-  private def getBackCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
-    (isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) => routes.CeaseIncomeSourceController.show()
-      case (_,     SelfEmployment) => routes.CeaseIncomeSourceController.showAgent()
-      case (false,  _)             => routes.DeclarePropertyCeasedController.show(incomeSourceType)
-      case (_,      _)             => routes.DeclarePropertyCeasedController.showAgent(incomeSourceType)
-    }
-  }
-
-  private def getPostAction(isAgent: Boolean, isChange: Boolean, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType): Call = {
-
-    val hashedId: Option[String] = maybeIncomeSourceId.map(_.toHash.hash)
-
-    (isAgent, isChange) match {
-      case (false, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType)
-      case (false,     _) => routes.IncomeSourceEndDateController.submitChange(hashedId, incomeSourceType)
-      case (_,     false) => routes.IncomeSourceEndDateController.submitAgent(hashedId, incomeSourceType)
-      case (_,         _) => routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
-    }
-  }
-
-  private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
-    if (isAgent) routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
-    else routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType)
   }
 }
