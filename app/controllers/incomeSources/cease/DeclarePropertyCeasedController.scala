@@ -53,7 +53,7 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] =
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
       val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
@@ -66,7 +66,8 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
         incomeSourceType = incomeSourceType,
         postAction = postAction,
         isAgent = isAgent,
-        backUrl = backUrl)(user, messages)))
+        backUrl = backUrl
+      )))
 
     } recover {
       case ex: Exception =>

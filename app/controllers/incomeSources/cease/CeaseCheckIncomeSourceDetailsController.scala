@@ -75,15 +75,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   }
 
   private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
-    (isAgent, incomeSourceType) match {
-      case (true, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment)
-      case (false, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.show(SelfEmployment)
-      case (true, UkProperty) => routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty)
-      case (false, UkProperty) => routes.IncomeSourceCeasedObligationsController.show(UkProperty)
-      case (true, ForeignProperty) => routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty)
-      case (false, ForeignProperty) => routes.IncomeSourceCeasedObligationsController.show(ForeignProperty)
-      case _ => routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType)
-    }
+    if (isAgent) routes.IncomeSourceCeasedObligationsController.show(incomeSourceType)
+    else routes.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType)
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
