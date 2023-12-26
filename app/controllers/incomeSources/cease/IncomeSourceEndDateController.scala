@@ -67,16 +67,19 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
     }
   }
 
-  private def getPostAction(isAgent: Boolean, isChange: Boolean, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType): Call = {
+  private def getPostAction(isAgent: Boolean, isChange: Boolean, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType
+                           ): Future[Call] = {
 
     val hashedId: Option[String] = maybeIncomeSourceId.map(_.toHash.hash)
 
-    (isAgent, isChange) match {
-      case (false, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType)
-      case (false,     _) => routes.IncomeSourceEndDateController.submitChange(hashedId, incomeSourceType)
-      case (_,     false) => routes.IncomeSourceEndDateController.submitAgent(hashedId, incomeSourceType)
-      case (_,         _) => routes.IncomeSourceEndDateController.submitChangeAgent(hashedId, incomeSourceType)
-    }
+    Future.successful(
+      (isAgent, isChange) match {
+        case (false, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType)
+        case (false,     _) => routes.IncomeSourceEndDateController.submitChange(hashedId, incomeSourceType)
+        case (_,     false) => routes.IncomeSourceEndDateController.submitAgent(hashedId, incomeSourceType)
+        case (_,         _) => routes.IncomeSourceEndDateController.submitChangeAgent(hashedId, incomeSourceType)
+      }
+    )
   }
 
   private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
@@ -155,30 +158,34 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
           sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
         }
 
-        (incomeSourceType, id) match {
-          case (SelfEmployment, None) =>
-            Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
-          case _ =>
-            Future {
-              getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
-                form: Form[DateFormElement] =>
-                  Future.successful(Ok(
-                    incomeSourceEndDate(
-                      incomeSourceEndDateForm = form,
-                      postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
-                      isAgent = isAgent,
-                      backUrl = getBackCall(isAgent, incomeSourceType).url,
-                      incomeSourceType = incomeSourceType
-                    )
-                  ))
+        getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType).flatMap { postAction =>
+          (incomeSourceType, id) match {
+            case (SelfEmployment, None) =>
+              Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
+            case _ =>
+              Future {
+                getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
+                  form: Form[DateFormElement] =>
+                    Future.successful(Ok(
+                      incomeSourceEndDate(
+                        incomeSourceEndDateForm = form,
+                        postAction = postAction,
+                        isAgent = isAgent,
+                        backUrl = getBackCall(isAgent, incomeSourceType).url,
+                        incomeSourceType = incomeSourceType
+                      )
+                    ))
+                }
+              }.flatten.recover {
+                case ex: Exception =>
+                  Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+                    s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
+                  (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
               }
-            }.flatten.recover {
-              case ex: Exception =>
-                Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-                  s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
-                (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
-            }
+          }
+
         }
+
     }
   } recover {
     case ex: Exception =>
