@@ -75,8 +75,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(val authenticate: Authen
   }
 
   private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
-    if (isAgent) routes.IncomeSourceCeasedObligationsController.show(incomeSourceType)
-    else routes.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType)
+    if (isAgent) routes.IncomeSourceCeasedObligationsController.showAgent(incomeSourceType)
+    else routes.IncomeSourceCeasedObligationsController.show(incomeSourceType)
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, incomeSourceType: IncomeSourceType)
