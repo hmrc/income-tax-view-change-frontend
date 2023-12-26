@@ -163,30 +163,21 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
             case (SelfEmployment, None) =>
               Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
             case _ =>
-              Future {
-                getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
-                  form: Form[DateFormElement] =>
-                    Future.successful(Ok(
-                      incomeSourceEndDate(
-                        incomeSourceEndDateForm = form,
-                        postAction = postAction,
-                        isAgent = isAgent,
-                        backUrl = getBackCall(isAgent, incomeSourceType).url,
-                        incomeSourceType = incomeSourceType
-                      )
-                    ))
-                }
-              }.flatten.recover {
-                case ex: Exception =>
-                  Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-                    s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
-                  (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
+              getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
+                form: Form[DateFormElement] =>
+                  Future.successful(Ok(
+                    incomeSourceEndDate(
+                      incomeSourceEndDateForm = form,
+                      postAction = postAction,
+                      isAgent = isAgent,
+                      backUrl = getBackCall(isAgent, incomeSourceType).url,
+                      incomeSourceType = incomeSourceType
+                    )
+                  ))
               }
+            }
           }
-
         }
-
-    }
   } recover {
     case ex: Exception =>
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
@@ -296,11 +287,12 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
       case _ =>
         val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
 
+        getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType).flatMap { postAction =>
           incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)).bindFromRequest().fold(
             hasErrors => {
               Future.successful(BadRequest(incomeSourceEndDate(
                 incomeSourceEndDateForm = hasErrors,
-                postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
+                postAction = postAction,
                 backUrl = getBackCall(isAgent, incomeSourceType).url,
                 isAgent = isAgent,
                 incomeSourceType = incomeSourceType
@@ -314,6 +306,7 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                 getRedirectCall(isAgent, incomeSourceType)
               )
           )
+        }
     }
   } recover {
     case ex: Exception =>
