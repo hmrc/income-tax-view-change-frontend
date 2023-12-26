@@ -60,7 +60,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                incomeSourceType: IncomeSourceType,
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_],
-                                               backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
+                                               backUrl: String, postAction: Call): Future[Result] = {
     val cashOrAccrualsRecords = user.incomeSources.getCashOrAccruals()
     if (cashOrAccrualsRecords.distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
@@ -91,7 +91,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             isAgent = isAgent,
             backUrl = backUrl,
             btaNavPartial = user.btaNavPartial
-          )(user, messages)))
+          )))
     }
   }.recover {
     case ex =>
@@ -104,8 +104,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_],
                                                backUrl: String,
-                                               postAction: Call,
-                                               messages: Messages): Future[Result] = {
+                                               postAction: Call
+                                              ): Future[Result] = {
     Future.successful(Ok(view(
       cashOrAccrualsFlag = cashOrAccrualsFlag,
       incomeSourcesType = incomeSourceType,
@@ -114,14 +114,14 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       isAgent = isAgent,
       backUrl = backUrl,
       btaNavPartial = user.btaNavPartial
-    )(user, messages)))
+    )))
   }
 
   def handleRequest(isAgent: Boolean,
                     incomeSourceType: IncomeSourceType,
                     cashOrAccrualsFlag: Option[String] = None,
                     backUrl: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] =
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
 
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -129,10 +129,10 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
       {
         if (incomeSourceType == SelfEmployment) {
           handleUserActiveBusinessesCashOrAccruals(isAgent, errorHandler, incomeSourceType, cashOrAccrualsFlag)(
-            user, backUrl, postAction(incomeSourceType), messages)
+            user, backUrl, postAction(incomeSourceType))
         } else {
           loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, cashOrAccrualsFlag)(
-            user, backUrl, postAction(incomeSourceType), messages)
+            user, backUrl, postAction(incomeSourceType))
         }
       }.recover {
         case ex: Exception =>
