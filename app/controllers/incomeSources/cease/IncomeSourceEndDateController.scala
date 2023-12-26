@@ -170,6 +170,11 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
                     incomeSourceType = incomeSourceType
                   )
                 ))
+            } recover {
+              case ex: Exception =>
+                Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+                  s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
+                (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
             }
         }
     }
