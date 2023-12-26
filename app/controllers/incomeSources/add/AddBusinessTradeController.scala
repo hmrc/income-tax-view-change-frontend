@@ -54,17 +54,16 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  lazy val checkBusinessStartDate: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, SelfEmployment).url
-  lazy val checkBusinessStartDateAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, SelfEmployment).url
+  lazy val checkBusinessStartDate: Boolean => String = isAgent =>
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment).url
   lazy val checkBusinessDetails: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
   lazy val checkBusinessDetailsAgent: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 
   private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
     (isAgent, isChange) match {
-      case (true, true) => checkBusinessDetailsAgent
+      case (true, true)  => checkBusinessDetailsAgent
       case (false, true) => checkBusinessDetails
-      case (true, false) => checkBusinessStartDateAgent
-      case (false, false) => checkBusinessStartDate
+      case (_, false)    => checkBusinessStartDate(isAgent)
     }
   }
 
