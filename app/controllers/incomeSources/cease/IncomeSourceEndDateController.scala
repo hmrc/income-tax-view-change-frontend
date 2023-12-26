@@ -159,18 +159,20 @@ class IncomeSourceEndDateController @Inject()(val authenticate: AuthenticationPr
           case (SelfEmployment, None) =>
             Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
           case _ =>
-            getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
-              form: Form[DateFormElement] =>
-                Future.successful(Ok(
-                  incomeSourceEndDate(
-                    incomeSourceEndDateForm = form,
-                    postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
-                    isAgent = isAgent,
-                    backUrl = getBackCall(isAgent, incomeSourceType).url,
-                    incomeSourceType = incomeSourceType
-                  )
-                ))
-            } recover {
+            Future {
+              getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
+                form: Form[DateFormElement] =>
+                  Future.successful(Ok(
+                    incomeSourceEndDate(
+                      incomeSourceEndDateForm = form,
+                      postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
+                      isAgent = isAgent,
+                      backUrl = getBackCall(isAgent, incomeSourceType).url,
+                      incomeSourceType = incomeSourceType
+                    )
+                  ))
+              }
+            }.flatten.recover {
               case ex: Exception =>
                 Logger("application").error(s"${if (isAgent) "[Agent]"}" +
                   s"[IncomeSourceEndDateController][handleRequest]: Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
