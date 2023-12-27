@@ -72,9 +72,8 @@ class AddBusinessNameController @Inject()(authenticate: AuthenticationPredicate,
 
   private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
     (isAgent, isChange) match {
-      case (false, false) => routes.AddIncomeSourceStartDateController.show(isAgent = false, isChange = false, SelfEmployment)
+      case (_,     false) => routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, SelfEmployment)
       case (false,     _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_,     false) => routes.AddIncomeSourceStartDateController.show(isAgent = true, isChange = false, SelfEmployment)
       case (_,         _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }
   }
