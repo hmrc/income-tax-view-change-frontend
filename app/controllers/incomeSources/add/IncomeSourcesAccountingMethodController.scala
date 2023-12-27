@@ -60,7 +60,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                incomeSourceType: IncomeSourceType,
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_],
-                                               backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
+                                               backUrl: String, postAction: Call): Future[Result] = {
     val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
     if (cashOrAccrualsRecords.distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
