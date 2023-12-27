@@ -152,7 +152,8 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
       None,
       Some(LocalDate.of(2018, 1, 1)),
       None,
-      address = Some(address)
+      address = Some(address),
+      cashOrAccruals = false
     )),
     properties = List(
       PropertyDetailsModel(
@@ -161,7 +162,8 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
         None,
         None,
         Some(LocalDate.of(2018, 1, 1)),
-        None
+        None,
+        cashOrAccruals = false
       )
     )
   )

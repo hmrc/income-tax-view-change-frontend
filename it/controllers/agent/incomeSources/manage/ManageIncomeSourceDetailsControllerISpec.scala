@@ -216,7 +216,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(3)", "dd")(messagesUnknown),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dt")("Accounting method for sole trader income"),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")(messagesUnknown)
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(4)", "dd")("Cash basis accounting")
         )
       }
     }
@@ -333,7 +333,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for UK property income"),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(messagesUnknown),
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")("Cash basis accounting"),
         )
       }
     }
@@ -452,7 +452,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
           elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method for foreign property income"),
-          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(messagesUnknown)
+          elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")("Cash basis accounting")
         )
       }
     }

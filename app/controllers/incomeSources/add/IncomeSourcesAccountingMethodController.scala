@@ -60,13 +60,13 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                                                incomeSourceType: IncomeSourceType,
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_],
-                                               backUrl: String, postAction: Call): Future[Result] = {
-    val cashOrAccrualsRecords = user.incomeSources.getCashOrAccruals()
+                                               backUrl: String, postAction: Call, messages: Messages): Future[Result] = {
+    val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
     if (cashOrAccrualsRecords.distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting business cashOrAccruals Field")
+        s"Error multiple values for business cashOrAccruals Field found")
     }
-    cashOrAccrualsRecords.headOption.flatten match {
+    cashOrAccrualsRecords.headOption match {
       case Some(cashOrAccrualsField) =>
         sessionService.setMongoKey(
           key = AddIncomeSourceData.incomeSourcesAccountingMethodField,
