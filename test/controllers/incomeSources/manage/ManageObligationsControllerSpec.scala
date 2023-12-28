@@ -18,7 +18,7 @@ package controllers.incomeSources.manage
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney._
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -97,6 +97,18 @@ class ManageObligationsControllerSpec extends TestSupport
     ))
   ))
 
+  private val propertyDetailsModelUK = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = None,
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some("uk-property"),
+    tradingStartDate = None,
+    cessation = None,
+    cashOrAccruals = false,
+    latencyDetails = None
+  )
+  private val propertyDetailsModelForeign = propertyDetailsModelUK.copy(incomeSourceType = Some("foriegn-property"))
+
   def setUpBusiness(isAgent: Boolean): OngoingStubbing[Future[NextUpdatesResponseModel]] = {
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
     else setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
@@ -107,7 +119,8 @@ class ManageObligationsControllerSpec extends TestSupport
       Some("Test name"),
       None,
       Some(LocalDate.of(2022, 1, 1)),
-      None
+      None,
+      cashOrAccruals = false
     )), List.empty)
     setupMockGetIncomeSourceDetails()(sources)
 
@@ -133,38 +146,12 @@ class ManageObligationsControllerSpec extends TestSupport
     if (isUkProperty) {
       setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
       when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-        .thenReturn(
-          Right(
-            PropertyDetailsModel(
-              incomeSourceId = testPropertyIncomeId,
-              accountingPeriod = None,
-              firstAccountingPeriodEndDate = None,
-              incomeSourceType = Some("uk-property"),
-              tradingStartDate = None,
-              cessation = None,
-              cashOrAccruals = None,
-              latencyDetails = None
-            )
-          )
-        )
+        .thenReturn(Right(propertyDetailsModelUK))
     }
     else {
       setupMockGetIncomeSourceDetails()(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
       when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-        .thenReturn(
-          Right(
-            PropertyDetailsModel(
-              incomeSourceId = testPropertyIncomeId,
-              accountingPeriod = None,
-              firstAccountingPeriodEndDate = None,
-              incomeSourceType = Some("foreign-property"),
-              tradingStartDate = None,
-              cessation = None,
-              cashOrAccruals = None,
-              latencyDetails = None
-            )
-          )
-        )
+        .thenReturn(Right(propertyDetailsModelForeign))
     }
     val day = LocalDate.of(2023, 1, 1)
     val dates: Seq[DatesModel] = Seq(
@@ -311,7 +298,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "show correct page when individual valid" in {
         mockAuth(false)
         setUpBusiness(isAgent = false)
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testId))))
+        when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
 
         val result: Future[Result] = TestManageObligationsController.showSelfEmployment(changeToA, taxYear)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -319,7 +306,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "show correct page when agent valid" in {
         mockAuth(true)
         setUpBusiness(isAgent = true)
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testId))))
+        when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
 
         val result: Future[Result] = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -327,14 +314,16 @@ class ManageObligationsControllerSpec extends TestSupport
       "show page with 'Sole trader business' when business has no name" in {
         mockAuth(true)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
-          testId,
-          None,
-          None,
-          None,
-          Some(LocalDate.of(2022, 1, 1)),
-          None
-        )), List.empty)
+        val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(
+          BusinessDetailsModel(
+            testId,
+            None,
+            None,
+            None,
+            Some(LocalDate.of(2022, 1, 1)),
+            None,
+            cashOrAccruals = true
+          )), List.empty)
 
         val day = LocalDate.of(2023, 1, 1)
         val dates: Seq[DatesModel] = Seq(
@@ -351,7 +340,7 @@ class ManageObligationsControllerSpec extends TestSupport
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testId))))
+        when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
 
         val result: Future[Result] = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
         status(result) shouldBe OK

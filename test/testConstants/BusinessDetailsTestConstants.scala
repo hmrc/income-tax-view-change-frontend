@@ -36,13 +36,13 @@ object BusinessDetailsTestConstants {
   val year2023: Int = 2023
   val year2024: Int = 2024
 
+  val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
   val address = AddressModel("8 Test", Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), "United Kingdom")
   val businessIncomeSourceId = "1234"
 
   val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, Month.APRIL, 6))) LocalDate.of(currentDate.getYear, Month.APRIL, 5)
-    else LocalDate.of(currentDate.getYear + 1, Month.APRIL, 5)
+    if (fixedDate.isBefore(LocalDate.of(fixedDate.getYear, Month.APRIL, 6))) LocalDate.of(fixedDate.getYear, Month.APRIL, 5)
+    else LocalDate.of(fixedDate.getYear + 1, Month.APRIL, 5)
   }
 
   val testBusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2017, Month.JUNE, 1), end = LocalDate.of(year2018, Month.MAY, 30))
@@ -136,7 +136,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
 
@@ -148,7 +149,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = None,
-    address = Some(testBizAddress)
+    address = Some(testBizAddress),
+    cashOrAccruals = true
   )
 
   val business1Address2 = BusinessDetailsModel(
@@ -159,7 +161,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = None,
-    address = Some(testBizAddress)
+    address = Some(testBizAddress),
+    cashOrAccruals = true
   )
 
   val businessWithLatency1 = BusinessDetailsModel(
@@ -170,7 +173,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val businessWithLatency2 = BusinessDetailsModel(
@@ -182,7 +186,8 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = Some(address),
-    quarterTypeElection = Some(quarterTypeElectionStandard)
+    quarterTypeElection = Some(quarterTypeElectionStandard),
+    cashOrAccruals = true
   )
 
   val businessWithLatency3 = BusinessDetailsModel(
@@ -193,7 +198,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
-    address = Some(testBizAddress)
+    address = Some(testBizAddress),
+    cashOrAccruals = true
   )
 
   val businessWithLatency4 = BusinessDetailsModel(
@@ -204,7 +210,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
-    address = Some(testBizAddress)
+    address = Some(testBizAddress),
+    cashOrAccruals = true
   )
 
   val businessWithLatencyAndUnknowns = BusinessDetailsModel(
@@ -216,7 +223,7 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = None,
-    cashOrAccruals = None
+    cashOrAccruals = true
   )
 
   val businessWithLatency2019 = BusinessDetailsModel(
@@ -228,7 +235,7 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
     address = Some(testBizAddress),
-    cashOrAccruals = Some(false)
+    cashOrAccruals = false
   )
 
   val soleTraderBusiness = BusinessDetailsModel(
@@ -238,7 +245,7 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    cashOrAccruals = Some(false),
+    cashOrAccruals = false,
     latencyDetails = None,
     address = Some(address),
     quarterTypeElection = Some(quarterTypeElectionCalendar)
@@ -251,7 +258,7 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate3),
     cessation = None,
-    cashOrAccruals = Some(true),
+    cashOrAccruals = true,
     latencyDetails = None,
     address = Some(address)
   )
@@ -263,7 +270,8 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
     tradingStartDate = Some(testStartDate3),
     cessation = None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val soleTraderBusinessNoTradingName = BusinessDetailsModel(
@@ -274,7 +282,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = None,
-    address = None
+    address = None,
+    cashOrAccruals = true
   )
 
   val soleTraderBusinessNoTradingNameNoStartDate = BusinessDetailsModel(
@@ -285,7 +294,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = None,
     cessation = None,
     latencyDetails = None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val soleTraderBusinessNoTradingStartDate = BusinessDetailsModel(
@@ -296,7 +306,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = None,
     cessation = None,
     latencyDetails = None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val businessDetailsViewModel = BusinessDetailsViewModel(
@@ -361,7 +372,8 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     cessation = None,
     tradingStartDate = Some(testStartDate2),
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val business2018 = BusinessDetailsModel(
@@ -371,7 +383,8 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val business2019 = BusinessDetailsModel(
@@ -381,7 +394,8 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     cessation = None,
     tradingStartDate = Some(testStartDate),
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val businessNotValidObligationType = fakeNextUpdatesModel(NextUpdateModel(
@@ -400,7 +414,8 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     cessation = None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val ceasedBusiness = BusinessDetailsModel(
@@ -410,7 +425,8 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate),
     cessation = Some(testCessation),
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val ceasedBusiness2 = BusinessDetailsModel(
@@ -420,7 +436,8 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     tradingStartDate = Some(testStartDate3),
     cessation = Some(testCessation2),
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(
@@ -430,12 +447,14 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = true
   )
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
 
   val obligationsDataSuccessModel: NextUpdatesModel = NextUpdatesModel(testSelfEmploymentId, List(overdueObligation, openObligation))
-  val obligationsAllDeadlinesSuccessNotValidObligationType: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel(testSelfEmploymentId, List(businessNotValidObligationType))))
+  val obligationsAllDeadlinesSuccessNotValidObligationType: ObligationsModel = ObligationsModel(
+    Seq(NextUpdatesModel(testSelfEmploymentId, List(businessNotValidObligationType))))
 
 }

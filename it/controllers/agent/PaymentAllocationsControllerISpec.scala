@@ -54,7 +54,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
       None,
       Some(getCurrentTaxYearEnd),
       None,
-      address = Some(address)
+      address = Some(address),
+      cashOrAccruals = false
     )),
     properties = List(
       PropertyDetailsModel(
@@ -63,7 +64,8 @@ class PaymentAllocationsControllerISpec extends ComponentSpecBase with FeatureSw
         None,
         None,
         Some(getCurrentTaxYearEnd),
-        None
+        None,
+        cashOrAccruals = false
       )
     )
   )

@@ -26,7 +26,7 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               tradingName: Option[String],
                                               tradingStartDate: Option[LocalDate],
                                               address: Option[AddressModel],
-                                              businessAccountingMethod: Option[Boolean] = None,
+                                              isTraditionalAccountingMethod: Boolean,
                                               itsaHasMandatedOrVoluntaryStatusCurrentYear: Boolean,
                                               taxYearOneCrystallised: Option[Boolean],
                                               taxYearTwoCrystallised: Option[Boolean],
@@ -42,13 +42,10 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
     }
   }
 
-  def businessAccountingMethodAsKey(businessAccountingMethod: Option[Boolean]): String = {
-    businessAccountingMethod match {
-      case Some(value) => value match {
-        case value if !value => "incomeSources.manage.business-manage-details.cash-accounting"
-        case _ => "incomeSources.manage.business-manage-details.traditional-accounting"
-      }
-      case None => "incomeSources.generic.unknown"
+  def businessAccountingMethodAsKey(isTraditionalAccountingMethod: Boolean): String = {
+    isTraditionalAccountingMethod match {
+      case true => "incomeSources.manage.business-manage-details.traditional-accounting"
+      case false => "incomeSources.manage.business-manage-details.cash-accounting"
     }
   }
 }

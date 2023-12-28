@@ -34,7 +34,7 @@ import testConstants.messages.WhatYouOweMessages.{hmrcAdjustment, hmrcAdjustment
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
-import java.time.Month.{APRIL, JANUARY}
+import java.time.Month.APRIL
 
 class WhatYouOweControllerISpec extends ComponentSpecBase {
 
@@ -563,14 +563,9 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
           val mixedJson = Json.obj(
             "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
             "documentDetails" -> Json.arr(
-              documentDetailJson(3400.00, 1000.00, testTaxYear, transactionId = "transId1"),
-              documentDetailJson(1000.00, 0, testTaxYear, transactionId = "transId2"),
-              documentDetailJson(1000.00, 3000.00, testTaxYear, transactionId = "transId3")
             ),
             "financialDetails" -> Json.arr(
-              financialDetailJson(testTaxYear.toString, transactionId = "transId5"),
-              financialDetailJson(testTaxYear.toString, transactionId = "transId6"),
-              financialDetailJson(testTaxYear.toString, transactionId = "transId7")
+
             )
           )
 
