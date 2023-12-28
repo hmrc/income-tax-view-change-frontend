@@ -1,16 +1,16 @@
 
 package controllers.agent
 
+import audit.models.ConfirmClientDetailsAuditModel
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
+import helpers.servicemocks.AuditStub
 import helpers.servicemocks.AuthStub.titleInternalServer
-import org.hamcrest.core.Is.is
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.junit.Assert.assertThat
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.clientDetailsWithoutConfirmation
+import testConstants.BaseIntegrationTestConstants._
 
 class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
@@ -120,6 +120,8 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
       stubAuthorisedAgentUser(authorised = true)
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetailsWithoutConfirmation)
+
+      AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = Some("Test User"), nino = Some(testNino), mtditid = Some(testMtditid), arn = Some("1"), saUtr = Some(testSaUtr), credId = None))
 
       Then("The user is redirected to the next page")
       result should have(
