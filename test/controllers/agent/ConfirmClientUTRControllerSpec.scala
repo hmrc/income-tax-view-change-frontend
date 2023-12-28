@@ -16,20 +16,22 @@
 
 package controllers.agent
 
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import audit.models.ConfirmClientDetailsAuditModel
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.views.agent.MockConfirmClient
-import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testCredId, testMtditidAgent, testSaUtrId}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 
 class ConfirmClientUTRControllerSpec extends TestSupport
+  with MockAuthenticationPredicate
   with MockConfirmClient
   with MockFrontendAuthorisedFunctions
   with FeatureSwitching
@@ -37,7 +39,8 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 
   object TestConfirmClientUTRController extends ConfirmClientUTRController(
     confirmClient,
-    mockAuthService
+    mockAuthService,
+    mockAuditingService
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
@@ -165,6 +168,8 @@ class ConfirmClientUTRControllerSpec extends TestSupport
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
 
       val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
+
+      verifyExtendedAudit(ConfirmClientDetailsAuditModel(clientName = Some("Test User"), nino = None, mtditid = Some(testMtditidAgent), arn = Some(testArn), saUtr = Some(testSaUtrId), credId = Some(testCredId)))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
