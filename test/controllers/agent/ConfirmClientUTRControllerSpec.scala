@@ -26,7 +26,7 @@ import mocks.views.agent.MockConfirmClient
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testCredId, testMtditidAgent, testSaUtrId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testCredId, testMtditidAgent, testNino, testSaUtrId}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 
@@ -169,7 +169,7 @@ class ConfirmClientUTRControllerSpec extends TestSupport
 
       val result = TestConfirmClientUTRController.submit()(fakeRequestWithClientDetails)
 
-      verifyExtendedAudit(ConfirmClientDetailsAuditModel(clientName = Some("Test User"), nino = None, mtditid = Some(testMtditidAgent), arn = Some(testArn), saUtr = Some(testSaUtrId), credId = Some(testCredId)))
+      verifyExtendedAudit(ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditidAgent, arn = testArn, saUtr = testSaUtrId, credId = Some(testCredId)))
 
       status(result) shouldBe SEE_OTHER
       redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)

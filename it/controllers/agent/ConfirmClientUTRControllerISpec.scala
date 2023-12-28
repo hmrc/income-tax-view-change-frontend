@@ -121,7 +121,7 @@ class ConfirmClientUTRControllerISpec extends ComponentSpecBase with FeatureSwit
 
       val result: WSResponse = IncomeTaxViewChangeFrontend.postConfirmClientUTR(clientDetailsWithoutConfirmation)
 
-      AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = Some("Test User"), nino = Some(testNino), mtditid = Some(testMtditid), arn = Some("1"), saUtr = Some(testSaUtr), credId = None))
+      AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNino, mtditid = testMtditid, arn = "1", saUtr = testSaUtr, credId = None))
 
       Then("The user is redirected to the next page")
       result should have(

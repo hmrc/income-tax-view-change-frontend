@@ -52,14 +52,21 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
 
   def submit: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
-      auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
-        clientName = fetchClientName,
-        nino = request.session.get(SessionKeys.clientNino),
-        mtditid = request.session.get(SessionKeys.clientMTDID),
-        arn = user.agentReferenceNumber,
-        saUtr = request.session.get(SessionKeys.clientUTR),
-        credId = user.credId)
-      )
+      for {
+        clientName <- fetchClientName
+        nino <- request.session.get(SessionKeys.clientNino)
+        clientMTDID <- request.session.get(SessionKeys.clientMTDID)
+        arn <- user.agentReferenceNumber
+        saUtr <- request.session.get(SessionKeys.clientUTR)
+      } yield
+        auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
+          clientName = clientName,
+          nino = nino,
+          mtditid = clientMTDID,
+          arn = arn,
+          saUtr = saUtr,
+          credId = user.credId
+        ))
       Future.successful(
         Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(
           SessionKeys.confirmedClient -> "true"
