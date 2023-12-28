@@ -90,8 +90,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         interestOutstandingAmount = Some(0.00),
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
         latePaymentInterestAmount = Some(100.00),
-        effectiveDateOfPayment = Some(LocalDate.of(2021, 6, 24)),
-        documentDueDate = Some(LocalDate.of(2021, 6, 24))
+        effectiveDateOfPayment =  Some(LocalDate.of(2021, 6, 24))
       )
     ),
     financialDetails = List(
@@ -117,8 +116,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         interestOutstandingAmount = Some(0.00),
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
         latePaymentInterestAmount = Some(100.00),
-        effectiveDateOfPayment = Some(LocalDate.now()),
-        documentDueDate = Some(LocalDate.now())
+        effectiveDateOfPayment = Some(LocalDate.now())
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -130,8 +128,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         outstandingAmount = Some(500.00),
         interestOutstandingAmount = Some(0.00),
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
-        effectiveDateOfPayment = Some(LocalDate.now().plusDays(2)),
-        documentDueDate = Some(LocalDate.now().plusDays(2))
+        effectiveDateOfPayment = Some(LocalDate.now().plusDays(2))
       )),
     List(
       FinancialDetail(
@@ -162,8 +159,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         outstandingAmount = Some(0),
         interestOutstandingAmount = None,
         interestEndDate = None,
-        effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
-        documentDueDate = Some(LocalDate.of(2021, 4, 23))
+        effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23))
       ),
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -175,8 +171,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         outstandingAmount = Some(0),
         interestOutstandingAmount = None,
         interestEndDate = None,
-        effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 22)),
-        documentDueDate = Some(LocalDate.of(2021, 4, 22))
+        effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 22))
       )),
     List(
       FinancialDetail(
@@ -623,7 +618,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "a")(poa1Lpi),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")(LocalDate.of(2021, 6, 24).toLongDateShort),
-          elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
+          elementTextBySelectorList("#payments", "tbody",  "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
           elementTextBySelectorList("#updates", "div", "h3")(updateTabDue(getCurrentTaxYearEnd.toLongDate)),
           elementTextBySelectorList("#updates", "div", "table", "caption")(
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"

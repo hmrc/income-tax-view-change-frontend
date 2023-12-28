@@ -16,11 +16,9 @@
 
 package models.financialDetails
 
-import enums.CodingOutType._
 import testConstants.FinancialDetailsTestConstants.fullDocumentDetailModel
 import testUtils.UnitSpec
-
-import java.time.LocalDate
+import enums.CodingOutType._
 
 class DocumentDetailSpec extends UnitSpec {
 
@@ -59,37 +57,6 @@ class DocumentDetailSpec extends UnitSpec {
         }
       }
 
-    }
-
-    "getDueDate" should {
-      val dd1 = DocumentDetail(taxYear = 2017,
-        transactionId = "transid2",
-        documentDescription = Some("ITSA- POA 1"),
-        documentText = Some("documentText"),
-        outstandingAmount = None,
-        originalAmount = None,
-        documentDate = LocalDate.parse("2018-03-21"),
-        effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
-        documentDueDate = Some(LocalDate.parse("2021-12-01")))
-
-      val dd2 = DocumentDetail(taxYear = 2017,
-        transactionId = "transid2",
-        documentDescription = Some("ITSA- POA 1"),
-        documentText = Some("documentText"),
-        outstandingAmount = None,
-        originalAmount = None,
-        documentDate = LocalDate.parse("2018-03-21"),
-        effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
-        documentDueDate = Some(LocalDate.parse("2021-12-01")),
-        latePaymentInterestAmount = Some(100),
-        interestEndDate = Some(LocalDate.parse("2022-01-02")))
-
-      "return the right due date" in {
-        dd1.getDueDate().get shouldBe LocalDate.parse("2021-12-01")
-      }
-      "return the right due date if its has positive latePaymentInterestAmount" in {
-        dd2.getDueDate().get shouldBe LocalDate.parse("2022-01-02")
-      }
     }
 
     "originalAmountIsNotZeroOrNegative" should {

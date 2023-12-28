@@ -17,14 +17,15 @@
 package views
 
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import enums.CodingOutType._
 import exceptions.MissingFieldException
+import enums.CodingOutType._
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{Message, Messages}
+import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
@@ -42,8 +43,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
 
-  import TaxYearSummaryMessages._
   import implicitDateFormatter._
+  import TaxYearSummaryMessages._
 
   def modelComplete(crystallised: Option[Boolean], unattendedCalc: Boolean = false): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
     timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
@@ -767,6 +768,22 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         }
       }
 
+      "throw exception when Due Date is missing as Agent" in {
+        val expectedException = intercept[MissingFieldException] {
+          new Setup(estimateView(testWithOneMissingDueDateChargesList, isAgent = true))
+        }
+
+        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
+      }
+
+      "throw exception when Due Date is missing as Individual" in {
+        val expectedException = intercept[MissingFieldException] {
+          new Setup(estimateView(testWithOneMissingDueDateChargesList))
+        }
+
+        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
+      }
+
       "throw exception when Original Amount is missing as Agent" in {
         val expectedException = intercept[MissingFieldException] {
           new Setup(estimateView(testWithMissingOriginalAmountChargesList, isAgent = true))
@@ -947,13 +964,13 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         taxYearSummaryView(
           taxYear = testYear,
           modelOpt = Some(modelComplete(Some(false))),
-          charges = testWithMissingOriginalAmountChargesList,
+          charges = documentDetailWithDueDateMissingDueDate,
           obligations = testObligationsModel,
           backUrl = "testBackURL",
           isAgent = false,
           codingOutEnabled = false)
       }
-      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
+      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
   }
 }

@@ -33,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart}
+import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2CessationReason, b2TradingStart, testMtdItId}
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -169,8 +169,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       outstandingAmount = Some(500.00),
                       originalAmount = Some(1000.00),
                       documentDate = LocalDate.of(2018, 3, 29),
-                      effectiveDateOfPayment = Some(currentDate),
-                      documentDueDate = Some(currentDate)
+                      effectiveDateOfPayment = Some(currentDate)
                     )
                   ),
                   financialDetails = List(
@@ -308,8 +307,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         outstandingAmount = Some(500.00),
                         originalAmount = Some(1000.00),
                         documentDate = LocalDate.of(2018, 3, 29),
-                        effectiveDateOfPayment = Some(currentDate.minusDays(1)),
-                        documentDueDate = Some(currentDate.minusDays(1))
+                        effectiveDateOfPayment = Some(currentDate.minusDays(1))
                       )
                     ),
                     financialDetails = List(
@@ -377,8 +375,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                         outstandingAmount = Some(500.00),
                         originalAmount = Some(1000.00),
                         documentDate = LocalDate.of(2018, 3, 29),
-                        effectiveDateOfPayment = Some(currentDate.minusDays(1)),
-                        documentDueDate = Some(currentDate.minusDays(1))
+                        effectiveDateOfPayment = Some(currentDate.minusDays(1))
                       )
                     ),
                     financialDetails = List(
@@ -450,8 +447,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       outstandingAmount = Some(500.00),
                       originalAmount = Some(1000.00),
                       documentDate = LocalDate.of(2018, 3, 29),
-                      effectiveDateOfPayment = Some(currentDate.minusDays(1)),
-                      documentDueDate = Some(currentDate.minusDays(1)),
+                      effectiveDateOfPayment = Some(currentDate.minusDays(1))
                     ),
                     DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear,
@@ -461,8 +457,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                       outstandingAmount = Some(500.00),
                       originalAmount = Some(1000.00),
                       documentDate = LocalDate.of(2018, 3, 29),
-                      effectiveDateOfPayment = Some(currentDate.minusDays(1)),
-                      documentDueDate = Some(currentDate.minusDays(1))
+                      effectiveDateOfPayment = Some(currentDate.minusDays(1))
                     )
                   ),
                   financialDetails = List(

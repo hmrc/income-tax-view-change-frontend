@@ -17,9 +17,10 @@
 package controllers
 
 import audit.mocks.MockAuditingService
+import config.featureswitch.FeatureSwitch.switches
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -29,7 +30,7 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import play.api.i18n.Lang
@@ -148,7 +149,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           .thenReturn(Future.successful(List(FinancialDetailsModel(
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
             documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
-              documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+              effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
             financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
               transactionId = Some("testId"),
               items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
@@ -191,19 +192,19 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
-                documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
-                documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
-                documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
                 transactionId = Some("testId3"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))
@@ -229,25 +230,25 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
-                documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
-                paymentLotItem = Some("123"), paymentLot = Some("456"), documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                paymentLotItem = Some("123"), paymentLot = Some("456"), effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
-                documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
-                documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+                effectiveDateOfPayment = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
                 transactionId = Some("testId3"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString)))))))

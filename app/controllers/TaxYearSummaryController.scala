@@ -160,12 +160,12 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         }
         val documentDetailsWithDueDatesCodingOutPaye: List[DocumentDetailWithDueDate] = {
           docDetailsCodingOut.filter(dd => dd.isPayeSelfAssessment && dd.originalAmountIsNotZeroOrNegative).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         val documentDetailsWithDueDatesCodingOut: List[DocumentDetailWithDueDate] = {
           docDetailsCodingOut.filter(dd => !dd.isPayeSelfAssessment && dd.originalAmountIsNotZeroOrNegative).map(
-            documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
+            documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
