@@ -74,8 +74,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
           journeyType = JourneyType(Add, incomeSourceType)).flatMap {
           case Right(_) =>
             val successRedirectUrl = {
-              if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-              else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+              if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
+              else routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
             }
             Future.successful(Redirect(successRedirectUrl))
           case Left(ex) =>
@@ -120,9 +120,11 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
   def handleRequest(isAgent: Boolean,
                     incomeSourceType: IncomeSourceType,
                     cashOrAccrualsFlag: Option[String] = None,
-                    backUrl: String)
+                    isChange: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
+
+      val backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
 
       val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -148,8 +150,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
   }
 
   private lazy val postAction: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType)
-    else routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
+    if (isAgent) routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType)
+    else routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
   }
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
@@ -196,7 +198,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
         handleRequest(
           isAgent = false,
           incomeSourceType = incomeSourceType,
-          backUrl = getBackUrl(isAgent = false, isChange = false, incomeSourceType)
+          isChange = false
         )
     }
 
@@ -208,7 +210,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
             handleRequest(
               isAgent = true,
               incomeSourceType = incomeSourceType,
-              backUrl = getBackUrl(isAgent = true, isChange = false, incomeSourceType)
+              isChange = false
             )
         }
   }
@@ -238,7 +240,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
               isAgent = false,
               incomeSourceType = incomeSourceType,
               cashOrAccrualsFlag = cashOrAccrualsFlag,
-              backUrl = getBackUrl(isAgent = false, isChange = true, incomeSourceType)
+              isChange = true
             )
           case Left(exception) => Future.failed(exception)
         }.recover {
@@ -259,7 +261,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
                   isAgent = true,
                   incomeSourceType = incomeSourceType,
                   cashOrAccrualsFlag = cashOrAccrualsFlag,
-                  backUrl = getBackUrl(isAgent = true, isChange = true, incomeSourceType)
+                  isChange = true
                 )
               case Left(exception) => Future.failed(exception)
             }.recover {
