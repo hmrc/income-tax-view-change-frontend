@@ -148,15 +148,15 @@ class IncomeSourcesAccountingMethodController @Inject()(val authenticate: Authen
   }
 
   private lazy val postAction: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
-    else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+    if (isAgent) routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType)
+    else routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
   }
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, isChange, incomeSourceType) match {
-      case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange = false)
-      case (_,     false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange = false)
-      case (_,     false, _)              => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, incomeSourceType)
+      case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange)
+      case (_,     false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_,     false, _)              => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
       case (false, _,     _)              => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
       case (_,     _,     _)              => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
