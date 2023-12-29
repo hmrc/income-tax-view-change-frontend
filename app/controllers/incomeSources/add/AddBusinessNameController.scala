@@ -30,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AgentChange, AgentNormal, AuthenticatorPredicate, IncomeSourcesUtils, IndividualChange, IndividualNormal, JourneyChecker, UserStatus}
 import views.html.incomeSources.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
@@ -49,28 +49,28 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
-    ((isAgent, isChange) match {
-      case (false, false) => routes.AddIncomeSourceController.show()
-      case (false,     _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_,     false) => routes.AddIncomeSourceController.showAgent()
-      case (_,         _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    (UserStatus(isAgent, isChange) match {
+      case IndividualNormal => routes.AddIncomeSourceController.show()
+      case IndividualChange => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case AgentNormal      => routes.AddIncomeSourceController.showAgent()
+      case AgentChange      => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 
   private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
-    (isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessNameController.submit()
-      case (false,     _) => routes.AddBusinessNameController.submitChange()
-      case (_,     false) => routes.AddBusinessNameController.submitAgent()
-      case (_,         _) => routes.AddBusinessNameController.submitChangeAgent()
+    UserStatus(isAgent, isChange) match {
+      case IndividualNormal => routes.AddBusinessNameController.submit()
+      case IndividualChange => routes.AddBusinessNameController.submitChange()
+      case AgentNormal      => routes.AddBusinessNameController.submitAgent()
+      case AgentChange      => routes.AddBusinessNameController.submitChangeAgent()
     }
   }
 
   private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
-    (isAgent, isChange) match {
-      case (_,     false) => routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, SelfEmployment)
-      case (false,     _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_,         _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    UserStatus(isAgent, isChange) match {
+      case IndividualNormal | AgentNormal => routes.AddIncomeSourceStartDateController.show(isAgent, isChange, SelfEmployment)
+      case IndividualChange               => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case AgentChange                    => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }
   }
 
@@ -209,3 +209,10 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }
 
 }
+
+val individualNormal = (false, false)
+val agentNormal = (true, false)
+val individualChange = (false, true)
+val agentChange = (true, true)
+
+val normal = (_, false)
