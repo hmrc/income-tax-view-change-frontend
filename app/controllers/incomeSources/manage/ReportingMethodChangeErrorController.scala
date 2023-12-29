@@ -32,22 +32,18 @@ import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.manage.{ManageIncomeSources, ReportingMethodChangeError}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                     val checkSessionTimeout: SessionTimeoutPredicate,
-                                                     val authenticate: AuthenticationPredicate,
                                                      val authorisedFunctions: AuthorisedFunctions,
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                     val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                      val reportingMethodChangeError: ReportingMethodChangeError,
-                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                      val sessionService: SessionService,
-                                                     val retrieveBtaNavBar: NavBarPredicate)
+                                                     val auth: AuthenticatorPredicate)
                                                     (implicit val ec: ExecutionContext,
                                                      implicit val itvcErrorHandler: ItvcErrorHandler,
                                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -57,7 +53,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
 
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
     withIncomeSourcesFS {
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, incomeSourceType)).flatMap {
@@ -112,22 +108,5 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
   private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
     (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler)
       .showInternalServerError()
-  }
-
-  private def authenticatedAction(isAgent: Boolean
-                                 )(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
   }
 }

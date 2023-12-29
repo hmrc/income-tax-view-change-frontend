@@ -49,15 +49,12 @@ class IncomeSummaryControllerSpec extends TestSupport with MockCalculationServic
   object TestIncomeSummaryController extends IncomeSummaryController(
     app.injector.instanceOf[IncomeBreakdown],
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
-    MockIncomeSourceDetailsPredicate,
     mockIncomeSourceDetailsService,
     mockCalculationService,
     app.injector.instanceOf[AuditingService],
-    app.injector.instanceOf[NavBarPredicate],
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
+    testAuthenticator
   )(
     ec,
     languageUtils,

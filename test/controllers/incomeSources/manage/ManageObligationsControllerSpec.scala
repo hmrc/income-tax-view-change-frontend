@@ -58,17 +58,14 @@ class ManageObligationsControllerSpec extends TestSupport
   val mockSessionService: SessionService = mock(classOf[SessionService])
 
   object TestManageObligationsController extends ManageObligationsController(
-    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
-    retrieveBtaNavBar = MockNavBarPredicate,
     obligationsView = app.injector.instanceOf[ManageObligations],
     sessionService = mockSessionService,
-    mockNextUpdatesService
+    mockNextUpdatesService,
+    testAuthenticator
   )(
     ec = ec,
     mcc = app.injector.instanceOf[MessagesControllerComponents],

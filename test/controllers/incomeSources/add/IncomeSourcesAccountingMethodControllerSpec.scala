@@ -125,15 +125,11 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
 
   object TestIncomeSourcesAccountingMethodController extends IncomeSourcesAccountingMethodController(
-    MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
-    MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[IncomeSourcesAccountingMethod],
     app.injector.instanceOf[CustomNotFoundError],
-    sessionService = mockSessionService)(appConfig,
+    sessionService = mockSessionService,
+    testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler])

@@ -31,7 +31,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.AddBusinessTrade
 
 import javax.inject.{Inject, Singleton}
@@ -39,14 +39,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate,
-                                           val authorisedFunctions: AuthorisedFunctions,
-                                           checkSessionTimeout: SessionTimeoutPredicate,
+class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                            val addBusinessTradeView: AddBusinessTrade,
                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                           val retrieveBtaNavBar: NavBarPredicate,
                                            val sessionService: SessionService,
-                                           incomeSourceDetailsService: IncomeSourceDetailsService)
+                                           auth: AuthenticatorPredicate)
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -71,23 +68,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
     }).url
   }
 
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent) {
-      Authenticated.async { implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-            authenticatedCodeBlock(mtdItUser)
-          }
-      }
-    } else {
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
-    }
-  }
-
-  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(isAgent, isChange)
   }
@@ -127,7 +108,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       errorHandler.showInternalServerError()
   }
 
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
       handleSubmitRequest(isAgent, isChange)
   }
