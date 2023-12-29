@@ -129,3 +129,11 @@ case object UpdateIncomeSource extends TransactionName {
 case object CreateIncomeSource extends TransactionName {
   val name = "create-income-source"
 }
+
+case object EnterClientUTR extends TransactionName {
+  val name = "agent-login-utr-submitted"
+}
+
+case object ClientDetailsConfirmed extends TransactionName {
+  val name = "client-details-confirmed"
+}

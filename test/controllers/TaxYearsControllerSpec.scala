@@ -50,17 +50,13 @@ class TaxYearsControllerSpec extends MockAuthenticationPredicate
   object TestTaxYearsController extends TaxYearsController(
     app.injector.instanceOf[TaxYears],
     mockAuthService,
-    mockIncomeSourceDetailsService,
-    dateService
+    dateService,
+    testAuthenticator
   )(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents],
     ec,
     mockItvcErrorHandler,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    app.injector.instanceOf[NavBarPredicate],
-    MockAuthenticationPredicate,
-    MockIncomeSourceDetailsPredicate
   )
 
   ".viewTaxYears" when {

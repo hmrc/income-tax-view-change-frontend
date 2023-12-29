@@ -62,16 +62,13 @@ class PaymentAllocationControllerSpec extends MockAuthenticationPredicate
 
     val controller = new PaymentAllocationsController(
       app.injector.instanceOf[PaymentAllocation],
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       mockAuthService,
-      MockIncomeSourceDetailsPredicate,
       mockIncomeSourceDetailsService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
       mockPaymentAllocationsService,
-      app.injector.instanceOf[NavBarPredicate],
-      mockAuditingService
+      mockAuditingService,
+      testAuthenticator
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[ImplicitDateFormatterImpl],

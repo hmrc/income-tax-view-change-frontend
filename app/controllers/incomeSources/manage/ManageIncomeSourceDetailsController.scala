@@ -33,7 +33,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
@@ -41,26 +41,21 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
-                                                    val checkSessionTimeout: SessionTimeoutPredicate,
-                                                    val authenticate: AuthenticationPredicate,
                                                     val authorisedFunctions: AuthorisedFunctions,
-                                                    val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                    val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                     val itsaStatusService: ITSAStatusService,
                                                     val dateService: DateService,
-                                                    val retrieveBtaNavBar: NavBarPredicate,
                                                     val calculationListService: CalculationListService,
-                                                    val sessionService: SessionService)
+                                                    val sessionService: SessionService,
+                                                    val auth: AuthenticatorPredicate)
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)
   extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
 
-  def showUkProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def showUkProperty: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -71,23 +66,18 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       )
   }
 
-  def showUkPropertyAgent: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-              None,
-              incomeSourceType = UkProperty
-            )
-        }
+  def showUkPropertyAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        sources = mtdItUser.incomeSources,
+        isAgent = true,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
+        None,
+        incomeSourceType = UkProperty
+      )
   }
 
-  def showForeignProperty: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def showForeignProperty: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -98,23 +88,18 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       )
   }
 
-  def showForeignPropertyAgent: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-              None,
-              incomeSourceType = ForeignProperty
-            )
-        }
+  def showForeignPropertyAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        sources = mtdItUser.incomeSources,
+        isAgent = true,
+        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
+        None,
+        incomeSourceType = ForeignProperty
+      )
   }
 
-  def showSoleTraderBusiness(hashIdString: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def showSoleTraderBusiness(hashIdString: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       withIncomeSourcesFS {
         val incomeSourceIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(hashIdString)
@@ -150,40 +135,36 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       }
   }
 
-  def showSoleTraderBusinessAgent(hashIdString: String): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            withIncomeSourcesFS {
+  def showSoleTraderBusinessAgent(hashIdString: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      withIncomeSourcesFS {
 
-              mkFromQueryString(hashIdString) match {
-                case Left(exception: Exception) => Future.failed(exception)
-                case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <${mkFromQueryString(hashIdString)}>"))
-                case Right(incomeSourceIdHash: IncomeSourceIdHash) =>
+        mkFromQueryString(hashIdString) match {
+          case Left(exception: Exception) => Future.failed(exception)
+          case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <${mkFromQueryString(hashIdString)}>"))
+          case Right(incomeSourceIdHash: IncomeSourceIdHash) =>
 
-                  val result = handleRequest(
-                    sources = mtdItUser.incomeSources,
-                    isAgent = true,
-                    backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-                    incomeSourceIdHashMaybe = Option(incomeSourceIdHash),
-                    incomeSourceType = SelfEmployment
-                  )
-                  mtdItUser.incomeSources.compareHashToQueryString(incomeSourceIdHash) match {
-                    case Left(exception: Exception) => Future.failed(exception)
-                    case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
-                    case Right(incomeSourceId: IncomeSourceId) =>
-                      sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
-                        sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment))
-                          .flatMap {
-                            case Right(_) => result
-                            case Left(exception) => Future.failed(exception)
-                          }
-                      }
-                  }
-              }
+            val result = handleRequest(
+              sources = mtdItUser.incomeSources,
+              isAgent = true,
+              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
+              incomeSourceIdHashMaybe = Option(incomeSourceIdHash),
+              incomeSourceType = SelfEmployment
+            )
+            mtdItUser.incomeSources.compareHashToQueryString(incomeSourceIdHash) match {
+              case Left(exception: Exception) => Future.failed(exception)
+              case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
+              case Right(incomeSourceId: IncomeSourceId) =>
+                sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
+                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment))
+                    .flatMap {
+                      case Right(_) => result
+                      case Left(exception) => Future.failed(exception)
+                    }
+                }
             }
         }
+      }
   }
 
   private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection]): Option[QuarterReportingType] = {
@@ -227,7 +208,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingName = incomeSource.tradingName,
       tradingStartDate = incomeSource.tradingStartDate,
       address = incomeSource.address,
-      businessAccountingMethod = incomeSource.cashOrAccruals,
+      isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
       itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,
@@ -244,7 +225,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       tradingName = None,
       tradingStartDate = incomeSource.tradingStartDate,
       address = None,
-      businessAccountingMethod = incomeSource.cashOrAccruals,
+      isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
       itsaHasMandatedOrVoluntaryStatusCurrentYear = itsaStatus,
       taxYearOneCrystallised = crystallisationTaxYear1,
       taxYearTwoCrystallised = crystallisationTaxYear2,

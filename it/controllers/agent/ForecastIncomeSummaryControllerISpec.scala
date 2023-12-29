@@ -115,7 +115,8 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
       None,
       Some(getCurrentTaxYearEnd),
       None,
-      address = Some(address)
+      address = Some(address),
+      cashOrAccruals = false
     )),
     properties = List(
       PropertyDetailsModel(
@@ -124,7 +125,8 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
         None,
         None,
         Some(getCurrentTaxYearEnd),
-        None
+        None,
+        cashOrAccruals = false
       )
     )
   )

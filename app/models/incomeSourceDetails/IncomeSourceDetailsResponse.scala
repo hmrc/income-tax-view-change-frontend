@@ -103,8 +103,8 @@ case class IncomeSourceDetailsModel(nino: String,
     incomeSourceIdHash.findIncomeSourceIdMatchingHash(ids = allUserIncomeSourceIds)
   }
 
-  def getCashOrAccruals()
-                       (implicit user: MtdItUser[_]): List[Option[Boolean]] = {
+  def getBusinessCashOrAccruals()
+                               (implicit user: MtdItUser[_]): List[Boolean] = {
     user.incomeSources.businesses
       .filterNot(_.isCeased)
       .map(_.cashOrAccruals)

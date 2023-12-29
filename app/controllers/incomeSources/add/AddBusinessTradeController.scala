@@ -31,7 +31,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.AddBusinessTrade
 
 import javax.inject.{Inject, Singleton}
@@ -39,14 +39,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate,
-                                           val authorisedFunctions: AuthorisedFunctions,
-                                           checkSessionTimeout: SessionTimeoutPredicate,
+class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                            val addBusinessTradeView: AddBusinessTrade,
                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                           val retrieveBtaNavBar: NavBarPredicate,
                                            val sessionService: SessionService,
-                                           incomeSourceDetailsService: IncomeSourceDetailsService)
+                                           auth: AuthenticatorPredicate)
                                           (implicit val appConfig: FrontendAppConfig,
                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -54,49 +51,24 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
                                            val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  lazy val checkBusinessStartDate: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(isAgent = false, isChange = false, SelfEmployment).url
-  lazy val checkBusinessStartDateAgent: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(isAgent = true, isChange = false, SelfEmployment).url
-  lazy val checkBusinessDetails: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-  lazy val checkBusinessDetailsAgent: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-
   private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
-    (isAgent, isChange) match {
-      case (true, true) => checkBusinessDetailsAgent
-      case (false, true) => checkBusinessDetails
-      case (true, false) => checkBusinessStartDateAgent
-      case (false, false) => checkBusinessStartDate
-    }
+    ((isAgent, isChange) match {
+      case (_,    false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment)
+      case (false,    _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,        _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    }).url
   }
 
   private def getSuccessURL(isAgent: Boolean, isChange: Boolean): String = {
-    lazy val addBusinessAddress: String = controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = false).url
-    lazy val addBusinessAddressAgent: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
-
-    (isAgent, isChange) match {
-      case (true, true) => checkBusinessDetailsAgent
-      case (false, true) => checkBusinessDetails
-      case (true, false) => addBusinessAddressAgent
-      case (false, false) => addBusinessAddress
-    }
+    ((isAgent, isChange) match {
+      case (false, false) => routes.AddBusinessAddressController.show(isChange = false)
+      case (false,     _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     false) => routes.AddBusinessAddressController.showAgent(isChange = false)
+      case (_,         _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    }).url
   }
 
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent) {
-      Authenticated.async { implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-            authenticatedCodeBlock(mtdItUser)
-          }
-      }
-    } else {
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
-    }
-  }
-
-  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(isAgent, isChange)
   }
@@ -136,7 +108,7 @@ class AddBusinessTradeController @Inject()(authenticate: AuthenticationPredicate
       errorHandler.showInternalServerError()
   }
 
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit request =>
       handleSubmitRequest(isAgent, isChange)
   }

@@ -33,7 +33,7 @@ import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.TaxCalcFallBackBackLink
+import utils.{AuthenticatorPredicate, TaxCalcFallBackBackLink}
 import views.html.IncomeBreakdown
 
 import javax.inject.{Inject, Singleton}
@@ -42,21 +42,17 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
                                         val authorisedFunctions: AuthorisedFunctions,
-                                        val checkSessionTimeout: SessionTimeoutPredicate,
-                                        val authenticate: AuthenticationPredicate,
-                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                         val calculationService: CalculationService,
                                         val auditingService: AuditingService,
-                                        val retrieveBtaNavBar: NavBarPredicate,
                                         val itvcErrorHandler: ItvcErrorHandler,
-                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                        val auth: AuthenticatorPredicate)
                                        (implicit val ec: ExecutionContext,
                                         val languageUtils: LanguageUtils,
                                         val appConfig: FrontendAppConfig,
                                         implicit override val mcc: MessagesControllerComponents)
   extends ClientConfirmedController with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
-
 
 
   def handleRequest(origin: Option[String] = None,
@@ -86,28 +82,22 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     }
   }
 
-  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleRequest(
-          origin = origin,
-          itcvErrorHandler = itvcErrorHandler,
-          taxYear = taxYear,
-          isAgent = false
-        )
-    }
+  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      handleRequest(
+        origin = origin,
+        itcvErrorHandler = itvcErrorHandler,
+        taxYear = taxYear,
+        isAgent = false
+      )
   }
 
-  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] = {
-    Authenticated.async { implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          handleRequest(
-            itcvErrorHandler = itvcErrorHandlerAgent,
-            taxYear = taxYear,
-            isAgent = true
-          )
-        }
-    }
+  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        itcvErrorHandler = itvcErrorHandlerAgent,
+        taxYear = taxYear,
+        isAgent = true
+      )
   }
 }

@@ -373,7 +373,8 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
             interestEndDate = Some(LocalDate.of(2019, 1, 1)),
             latePaymentInterestAmount = Some(54.32),
             interestOutstandingAmount = Some(42.5),
-            effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1))
+            effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1)),
+            documentDueDate = Some(LocalDate.of(2023, 7, 1))
           )
         ),
         financialDetails = List(

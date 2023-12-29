@@ -28,23 +28,12 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
-  def getDueDateFor(documentDetail: DocumentDetail): Option[LocalDate] = {
-    if (documentDetail.isLatePaymentInterest) {
-      documentDetail.interestEndDate
-    } else {
-      financialDetails.find { fd =>
-        fd.transactionId.contains(documentDetail.transactionId) &&
-          fd.taxYear.toInt == documentDetail.taxYear
-      }.flatMap(_ => documentDetail.documentDueDate)
-    }
-  }
-
   def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
     financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
   }
 
   def getAllDueDates: List[LocalDate] = {
-    documentDetails.flatMap(getDueDateFor)
+    documentDetails.flatMap(_.getDueDate())
   }
 
   def dunningLockExists(documentId: String): Boolean = {
@@ -77,25 +66,25 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   def findDocumentDetailForYearWithDueDate(taxYear: Int)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     findDocumentDetailForTaxYear(taxYear)
-      .map(documentDetail => DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail)))
+      .map(documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate()))
   }
 
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
     documentDetails.find(_.transactionId == id)
       .map(documentDetail => DocumentDetailWithDueDate(
-        documentDetail, getDueDateFor(documentDetail), dunningLock = dunningLockExists(documentDetail.transactionId)))
+        documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId)))
   }
 
   def getAllDocumentDetailsWithDueDates(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
-      DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail),
+      DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
         codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)))
   }
 
   def getAllDocumentDetailsWithDueDatesAndFinancialDetails(codingOutEnabled: Boolean = false)(implicit dateService: DateServiceInterface): List[(DocumentDetailWithDueDate, FinancialDetail)] = {
     documentDetails.map(documentDetail =>
-      (DocumentDetailWithDueDate(documentDetail, getDueDateFor(documentDetail),
+      (DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
         documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
         codingOutEnabled = codingOutEnabled, isMFADebit = isMFADebit(documentDetail.transactionId)),
         financialDetails.find(_.transactionId.get == documentDetail.transactionId)

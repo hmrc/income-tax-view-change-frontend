@@ -174,6 +174,14 @@ case class DocumentDetail(taxYear: Int,
       "unknownCharge"
   }
 
+  def getDueDate(): Option[LocalDate] = {
+    if (isLatePaymentInterest) {
+      interestEndDate
+    } else {
+      documentDueDate
+    }
+  }
+
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
@@ -205,5 +213,5 @@ object DocumentDetail {
       (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
       (__ \ "amountCodedOut").readNullable[BigDecimal] and
       (__ \ "documentDueDate").readNullable[LocalDate]
-    ) (DocumentDetail.apply _)
+    )(DocumentDetail.apply _)
 }

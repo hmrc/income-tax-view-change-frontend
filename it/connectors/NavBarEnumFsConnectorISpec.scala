@@ -16,7 +16,7 @@ import scala.concurrent.duration._
 import scala.concurrent.Future
 
 class NavBarEnumFsConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
-  
+
   val timeout: PatienceConfig = PatienceConfig(5.seconds)
   lazy val connector: BtaNavBarPartialConnector = inject[BtaNavBarPartialConnector]
 

@@ -62,7 +62,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
       Some(getCurrentTaxYearEnd),
       Some(b2TradingStart),
       Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
-      address = Some(address)
+      address = Some(address),
+      cashOrAccruals = false
     )),
     properties = Nil
   )
@@ -575,7 +576,8 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             Some(getCurrentTaxYearEnd),
             Some(b2TradingStart),
             Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
-            address = Some(address)
+            address = Some(address),
+            cashOrAccruals = false
           )),
           properties = Nil
         )

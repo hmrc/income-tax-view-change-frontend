@@ -44,15 +44,10 @@ class NotMigratedUserControllerSpec extends MockAuthenticationPredicate
 
     val controller = new NotMigratedUserController(
       app.injector.instanceOf[NotMigratedUser],
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       mockAuthService,
-      MockIncomeSourceDetailsPredicate,
       app.injector.instanceOf[ItvcErrorHandler],
       mockItvcErrorHandler,
-      mockIncomeSourceDetailsService,
-      app.injector.instanceOf[NavBarPredicate]
-    )(ec,
+      testAuthenticator)(ec,
       app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[FrontendAppConfig])
 

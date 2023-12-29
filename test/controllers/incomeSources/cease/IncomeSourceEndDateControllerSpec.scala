@@ -50,15 +50,11 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
   val validCeaseDate: String = "2022-08-27"
 
   object TestIncomeSourceEndDateController extends IncomeSourceEndDateController(
-    MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
     app.injector.instanceOf[IncomeSourceEndDateForm],
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
-    MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[IncomeSourceEndDate],
-    sessionService = mockSessionService)(appConfig,
+    sessionService = mockSessionService,
+    testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {
