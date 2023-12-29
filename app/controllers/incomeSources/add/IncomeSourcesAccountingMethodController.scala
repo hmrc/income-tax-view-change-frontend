@@ -43,7 +43,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                         val view: IncomeSourcesAccountingMethod,
                                                         val customNotFoundErrorView: CustomNotFoundError,
                                                         val sessionService: SessionService,
-                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                         val auth: AuthenticatorPredicate)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         mcc: MessagesControllerComponents,
@@ -244,26 +243,23 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
         }
     }
 
-  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
-              case Right(cashOrAccrualsFlag) =>
-                handleRequest(
-                  isAgent = true,
-                  incomeSourceType = incomeSourceType,
-                  cashOrAccrualsFlag = cashOrAccrualsFlag,
-                  isChange = true
-                )
-              case Left(exception) => Future.failed(exception)
-            }.recover {
-              case ex =>
-                Logger("application")
-                  .error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethodAgent] - ${ex.getMessage} - ${ex.getCause}")
-                itvcErrorHandlerAgent.showInternalServerError()
-            }
+  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
+        sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
+          case Right(cashOrAccrualsFlag) =>
+            handleRequest(
+              isAgent = true,
+              incomeSourceType = incomeSourceType,
+              cashOrAccrualsFlag = cashOrAccrualsFlag,
+              isChange = true
+            )
+          case Left(exception) => Future.failed(exception)
+        }.recover {
+          case ex =>
+            Logger("application")
+              .error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethodAgent] - ${ex.getMessage} - ${ex.getCause}")
+            itvcErrorHandlerAgent.showInternalServerError()
         }
-  }
+    }
 }
