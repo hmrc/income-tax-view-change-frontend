@@ -54,60 +54,33 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
-  private def getActions(isAgent: Boolean, incomeSourceType: IncomeSourceType, maybeIncomeSourceId: Option[IncomeSourceId], isChange: Boolean): Future[(Call, Call, Call)] = {
+  private def getBackCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
+    (isAgent, incomeSourceType) match {
+      case (false, SelfEmployment) => routes.CeaseIncomeSourceController.show()
+      case (_,     SelfEmployment) => routes.CeaseIncomeSourceController.showAgent()
+      case (false,  _)             => routes.DeclarePropertyCeasedController.show(incomeSourceType)
+      case (_,      _)             => routes.DeclarePropertyCeasedController.showAgent(incomeSourceType)
+    }
+  }
 
-    val hashedId: Option[String] = maybeIncomeSourceId.map(m => m.toHash.hash)
+  private def getPostAction(isAgent: Boolean, isChange: Boolean, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType
+                           ): Future[Call] = {
+
+    val hashedId: Option[String] = maybeIncomeSourceId.map(_.toHash.hash)
+
     Future.successful(
-      (incomeSourceType, isAgent, isChange) match {
-        case (UkProperty, true, false) =>
-          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
-            routes.IncomeSourceEndDateController.submitAgent(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty))
-        case (UkProperty, false, false) =>
-          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
-            routes.IncomeSourceEndDateController.submit(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty))
-        case (UkProperty, true, true) =>
-          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
-            routes.IncomeSourceEndDateController.submitChangeAgent(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty))
-        case (UkProperty, false, true) =>
-          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
-            routes.IncomeSourceEndDateController.submitChange(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.show(UkProperty))
-        case (ForeignProperty, true, false) =>
-          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
-            routes.IncomeSourceEndDateController.submitAgent(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty))
-        case (ForeignProperty, false, false) =>
-          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
-            routes.IncomeSourceEndDateController.submit(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty))
-        case (ForeignProperty, true, true) =>
-          (routes.DeclarePropertyCeasedController.showAgent(incomeSourceType),
-            routes.IncomeSourceEndDateController.submitChangeAgent(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty))
-        case (ForeignProperty, false, true) =>
-          (routes.DeclarePropertyCeasedController.show(incomeSourceType),
-            routes.IncomeSourceEndDateController.submitChange(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.show(ForeignProperty))
-        case (SelfEmployment, true, false) =>
-          (routes.CeaseIncomeSourceController.showAgent(),
-            routes.IncomeSourceEndDateController.submitAgent(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment))
-        case (SelfEmployment, false, false) =>
-          (routes.CeaseIncomeSourceController.show(),
-            routes.IncomeSourceEndDateController.submit(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment))
-        case (SelfEmployment, true, true) =>
-          (routes.CeaseIncomeSourceController.showAgent(),
-            routes.IncomeSourceEndDateController.submitChangeAgent(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment))
-        case (SelfEmployment, false, true) =>
-          (routes.CeaseIncomeSourceController.show(),
-            routes.IncomeSourceEndDateController.submitChange(id = hashedId, incomeSourceType = incomeSourceType),
-            routes.CeaseCheckIncomeSourceDetailsController.show(SelfEmployment))
-      })
+      (isAgent, isChange) match {
+        case (false, false) => routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType)
+        case (false,     _) => routes.IncomeSourceEndDateController.submitChange(hashedId, incomeSourceType)
+        case (_,     false) => routes.IncomeSourceEndDateController.submitAgent(hashedId, incomeSourceType)
+        case (_,         _) => routes.IncomeSourceEndDateController.submitChangeAgent(hashedId, incomeSourceType)
+      }
+    )
+  }
+
+  private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
+    if (isAgent) routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
+    else routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType)
   }
 
   def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
@@ -155,7 +128,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
   }
 
   def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], ec: ExecutionContext, messages: Messages): Future[Result] =
+                   (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] =
     withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
     val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
@@ -169,28 +142,26 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
           sessionService.createSession(JourneyType(Cease, incomeSourceType).toString)
         }
 
-        getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap {
-          actions =>
-            val (backAction: Call, postAction: Call, _) = actions
-            (incomeSourceType, id) match {
-              case (SelfEmployment, None) =>
-                Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
-              case _ =>
-                getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
-                  form: Form[DateFormElement] =>
-                    Future.successful(Ok(
-                      incomeSourceEndDate(
-                        incomeSourceEndDateForm = form,
-                        postAction = postAction,
-                        isAgent = isAgent,
-                        backUrl = backAction.url,
-                        incomeSourceType = incomeSourceType
-                      )(user, messages))
+        getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType).flatMap { postAction =>
+          (incomeSourceType, id) match {
+            case (SelfEmployment, None) =>
+              Future.failed(new Exception(s"Missing income source ID for hash: <$id>"))
+            case _ =>
+              getFilledForm(incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)), incomeSourceType, isChange).flatMap {
+                form: Form[DateFormElement] =>
+                  Future.successful(Ok(
+                    incomeSourceEndDate(
+                      incomeSourceEndDateForm = form,
+                      postAction = postAction,
+                      isAgent = isAgent,
+                      backUrl = getBackCall(isAgent, incomeSourceType).url,
+                      incomeSourceType = incomeSourceType
                     )
-                }
+                  ))
+              }
             }
+          }
         }
-    }
   } recover {
     case ex: Exception =>
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
@@ -281,7 +252,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
   }
 
   def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, isChange: Boolean)
-                         (implicit user: MtdItUser[_], messages: Messages): Future[Result] = withIncomeSourcesFS {
+                         (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
 
@@ -290,21 +261,24 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
       case _ =>
         val incomeSourceIdMaybe: Option[IncomeSourceId] = IncomeSourceId.toOption(hashCompareResult)
 
-        getActions(isAgent, incomeSourceType, incomeSourceIdMaybe, isChange).flatMap { actions =>
-          val (backAction, postAction, redirectAction) = actions
-
+        getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType).flatMap { postAction =>
           incomeSourceEndDateForm(incomeSourceType, incomeSourceIdMaybe.map(_.value)).bindFromRequest().fold(
             hasErrors => {
               Future.successful(BadRequest(incomeSourceEndDate(
                 incomeSourceEndDateForm = hasErrors,
                 postAction = postAction,
-                backUrl = backAction.url,
+                backUrl = getBackCall(isAgent, incomeSourceType).url,
                 isAgent = isAgent,
                 incomeSourceType = incomeSourceType
-              )(user, messages)))
+              )))
             },
-            validatedInput => handleValidatedInput(validatedInput, incomeSourceType, incomeSourceIdMaybe,
-              redirectAction)
+            validatedInput =>
+              handleValidatedInput(
+                validatedInput,
+                incomeSourceType,
+                incomeSourceIdMaybe,
+                getRedirectCall(isAgent, incomeSourceType)
+              )
           )
         }
     }
@@ -328,7 +302,8 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
               DateFormElement(
                 LocalDate.parse(date)
               )
-            ))
+            )
+          )
         case _ => Future.failed(new Exception(s"[IncomeSourceEndDateController][getFilledForm]: Error getting ${CeaseIncomeSourceData.dateCeasedField}:"))
       }
     } else {

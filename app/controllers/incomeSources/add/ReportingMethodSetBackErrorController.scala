@@ -35,11 +35,11 @@ class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: A
                                                       val cannotGoBackError: YouCannotGoBackError,
                                                       val auth: AuthenticatorPredicate)
                                                      (implicit val appConfig: FrontendAppConfig,
-                                               mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                      val sessionService: SessionService) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker{
+                                                      mcc: MessagesControllerComponents,
+                                                      val ec: ExecutionContext,
+                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                      val sessionService: SessionService) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)

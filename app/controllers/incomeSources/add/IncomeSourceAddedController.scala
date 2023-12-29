@@ -93,30 +93,28 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
     }
   }
 
-  def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    updateMongoAdded(incomeSourceType).flatMap {
-      case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
-        Future.successful {
-          if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-          else itvcErrorHandler.showInternalServerError()
-        }
-      case true => incomeSourceType match {
-        case SelfEmployment =>
-          businessName match {
-            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-            }
-            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-            }
+  def handleSuccess(incomeSourceId: IncomeSourceId,
+                    incomeSourceType: IncomeSourceType,
+                    businessName: Option[String],
+                    showPreviousTaxYears: Boolean,
+                    isAgent: Boolean
+                   )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    updateMongoAdded(incomeSourceType).flatMap { updateIsSuccess =>
+      (updateIsSuccess, incomeSourceType) match {
+        case (false, _) =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"} Error retrieving data from session, IncomeSourceType: $incomeSourceType")
+          Future.successful {
+            (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
           }
-        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-          Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
-        }
-        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-          Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
-        }
+        case (true, SelfEmployment) =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
+          }
+        case (true, property) =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = property))
+          }
       }
     }
   }
