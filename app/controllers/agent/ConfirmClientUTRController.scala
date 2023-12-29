@@ -16,6 +16,8 @@
 
 package controllers.agent
 
+import audit.AuditingService
+import audit.models.ConfirmClientDetailsAuditModel
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ConfirmClientController
@@ -30,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
-                                           val authorisedFunctions: AuthorisedFunctions)
+                                           val authorisedFunctions: AuthorisedFunctions,
+                                           val auditingService: AuditingService)
                                           (implicit mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: AgentItvcErrorHandler,
@@ -49,6 +52,21 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
 
   def submit: Action[AnyContent] = Authenticated.async { implicit request =>
     implicit user =>
+      for {
+        clientName <- fetchClientName
+        nino <- request.session.get(SessionKeys.clientNino)
+        clientMTDID <- request.session.get(SessionKeys.clientMTDID)
+        arn <- user.agentReferenceNumber
+        saUtr <- request.session.get(SessionKeys.clientUTR)
+      } yield
+        auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
+          clientName = clientName,
+          nino = nino,
+          mtditid = clientMTDID,
+          arn = arn,
+          saUtr = saUtr,
+          credId = user.credId
+        ))
       Future.successful(
         Redirect(controllers.routes.HomeController.showAgent.url).addingToSession(
           SessionKeys.confirmedClient -> "true"
