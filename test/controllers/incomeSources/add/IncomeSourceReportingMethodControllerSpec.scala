@@ -53,19 +53,15 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
   val mockDateService: DateService = mock(classOf[DateService])
 
   object TestIncomeSourceReportingMethodController extends IncomeSourceReportingMethodController(
-    MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
-    MockIncomeSourceDetailsPredicate,
     mockUpdateIncomeSourceService,
     mockITSAStatusService,
     mockDateService,
     mockCalculationListService,
     mockAuditingService,
     mockIncomeSourceReportingMethod,
-    mockSessionService
+    mockSessionService,
+    testAuthenticator
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],

@@ -27,20 +27,18 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import views.html.notMigrated.NotMigratedUser
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.Logger
+import utils.AuthenticatorPredicate
 
 @Singleton
 class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
-                                          val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: AuthorisedFunctions,
-                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val retrieveBtaNavBar: NavBarPredicate)
+                                          val auth: AuthenticatorPredicate)
                                          (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
@@ -64,8 +62,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
       }
   }
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandler, isAgent = false,
         backUrl = controllers.routes.HomeController.show().url)
@@ -79,15 +76,10 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
     Redirect("https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account")
   }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit user =>
-            handleShowRequest(errorHandler = itvcErrorHandlerAgent,
-              isAgent = true,
-              backUrl = controllers.routes.HomeController.showAgent.url)
-        }
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit user =>
+      handleShowRequest(errorHandler = itvcErrorHandlerAgent,
+        isAgent = true,
+        backUrl = controllers.routes.HomeController.showAgent.url)
   }
-
 }

@@ -62,15 +62,12 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   val mockDateService: DateService = mock(classOf[DateService])
 
   object TestIncomeSourceAddedController extends IncomeSourceAddedController(
-    MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-    retrieveBtaNavBar = MockNavBarPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
-    mockNextUpdatesService
+    mockNextUpdatesService,
+    testAuthenticator
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],

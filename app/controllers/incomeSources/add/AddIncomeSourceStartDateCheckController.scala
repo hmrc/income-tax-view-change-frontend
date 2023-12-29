@@ -33,7 +33,7 @@ import play.api.mvc._
 import services.{DateService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
 
 import java.time.LocalDate
@@ -41,15 +41,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceStartDateCheckController @Inject()(authenticate: AuthenticationPredicate,
-                                                        val authorisedFunctions: AuthorisedFunctions,
+class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                         val checkSessionTimeout: SessionTimeoutPredicate,
-                                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                        val retrieveBtaNavBar: NavBarPredicate,
-                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                         val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
                                                         val languageUtils: LanguageUtils,
-                                                        val sessionService: SessionService)
+                                                        val sessionService: SessionService,
+                                                        auth: AuthenticatorPredicate)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         implicit val dateService: DateService,
                                                         mcc: MessagesControllerComponents,
@@ -61,7 +58,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   def show(isAgent: Boolean,
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
@@ -73,7 +70,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
   def submit(isAgent: Boolean,
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
@@ -156,22 +153,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(authenticate: Authentica
       Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
-  }
-
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
   }
 
   private def handleValidForm(validForm: form,

@@ -41,14 +41,10 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
   with MockIncomeSourceDetailsPredicate with FeatureSwitching with MockSessionService {
 
   object TestIncomeSourceAddedBackErrorController extends IncomeSourceAddedBackErrorController(
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    MockIncomeSourceDetailsPredicate,
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
     app.injector.instanceOf[IncomeSourceAddedBackError],
-    mockSessionService
+    mockSessionService,
+    testAuthenticator
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,

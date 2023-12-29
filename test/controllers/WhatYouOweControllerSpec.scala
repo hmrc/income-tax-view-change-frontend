@@ -49,21 +49,17 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
     val controller = new WhatYouOweController(
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
-      MockIncomeSourceDetailsPredicate,
       whatYouOweService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
-      MockNavBarPredicate,
       mockAuthService,
       mockAuditingService,
       dateService,
-      mockIncomeSourceDetailsService,
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[MessagesControllerComponents],
       ec,
-      app.injector.instanceOf[WhatYouOwe]
+      app.injector.instanceOf[WhatYouOwe],
+      testAuthenticator
     )
   }
 

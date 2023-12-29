@@ -26,20 +26,16 @@ import play.api.mvc._
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                                              val authenticate: AuthenticationPredicate,
-                                                              val authorisedFunctions: AuthorisedFunctions,
-                                                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                              val retrieveBtaNavBar: NavBarPredicate,
-                                                              val view: IncomeSourceReportingMethodNotSaved)
+class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                                              val view: IncomeSourceReportingMethodNotSaved,
+                                                              val auth: AuthenticatorPredicate)
                                                              (implicit val ec: ExecutionContext,
                                                               implicit override val mcc: MessagesControllerComponents,
                                                               implicit val itvcAgentErrorHandler: AgentItvcErrorHandler,
@@ -63,8 +59,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
   }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -72,15 +67,11 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val checkSessionTi
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType
+      )
   }
 }

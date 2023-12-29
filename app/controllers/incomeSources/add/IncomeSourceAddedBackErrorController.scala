@@ -27,20 +27,16 @@ import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                                     val authenticate: AuthenticationPredicate,
-                                                     val authorisedFunctions: AuthorisedFunctions,
-                                                     val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                     val retrieveBtaNavBar: NavBarPredicate,
+class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                      val cannotGoBackError: IncomeSourceAddedBackError,
-                                                     val sessionService: SessionService)
+                                                     val sessionService: SessionService,
+                                                     auth: AuthenticatorPredicate)
                                                     (implicit val appConfig: FrontendAppConfig,
                                                      mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext,
@@ -62,8 +58,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -71,31 +66,23 @@ class IncomeSourceAddedBackErrorController @Inject()(val checkSessionTimeout: Se
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType
+      )
   }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleSubmit(isAgent = true, incomeSourceType)
-        }
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleSubmit(isAgent = true, incomeSourceType)
+
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {

@@ -34,22 +34,19 @@ import views.html.WhatYouOwe
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import enums.GatewayPage.WhatYouOwePage
+import utils.AuthenticatorPredicate
 
-class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                     val authenticate: AuthenticationPredicate,
-                                     val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                     val whatYouOweService: WhatYouOweService,
+class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                     val retrieveBtaNavBar: NavBarPredicate,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val auditingService: AuditingService,
                                      val dateService: DateServiceInterface,
-                                     val incomeSourceDetailsService: IncomeSourceDetailsService,
                                      implicit val appConfig: FrontendAppConfig,
                                      implicit override val mcc: MessagesControllerComponents,
                                      implicit val ec: ExecutionContext,
-                                     whatYouOwe: WhatYouOwe
+                                     whatYouOwe: WhatYouOwe,
+                                     val auth: AuthenticatorPredicate
                                     ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def handleRequest(backUrl: String,
@@ -91,8 +88,7 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
@@ -102,16 +98,12 @@ class WhatYouOweController @Inject()(val checkSessionTimeout: SessionTimeoutPred
       )
   }
 
-  def showAgent: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              backUrl = controllers.routes.HomeController.showAgent.url,
-              itvcErrorHandler = itvcErrorHandlerAgent,
-              isAgent = true
-            )
-        }
+  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        backUrl = controllers.routes.HomeController.showAgent.url,
+        itvcErrorHandler = itvcErrorHandlerAgent,
+        isAgent = true
+      )
   }
 }

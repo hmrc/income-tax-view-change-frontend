@@ -43,13 +43,9 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
 
   object TestReportingMethodSetBackController$ extends ReportingMethodSetBackErrorController(
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    MockIncomeSourceDetailsPredicate,
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
-    app.injector.instanceOf[YouCannotGoBackError]
+    app.injector.instanceOf[YouCannotGoBackError],
+    testAuthenticator
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,

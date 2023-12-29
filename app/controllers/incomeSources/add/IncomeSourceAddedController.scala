@@ -32,21 +32,18 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: AuthorisedFunctions,
-                                            checkSessionTimeout: SessionTimeoutPredicate,
-                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                            val retrieveBtaNavBar: NavBarPredicate,
+class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: IncomeSourceAddedObligations,
-                                            nextUpdatesService: NextUpdatesService)
+                                            nextUpdatesService: NextUpdatesService,
+                                            auth: AuthenticatorPredicate)
                                            (implicit val appConfig: FrontendAppConfig,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             implicit override val mcc: MessagesControllerComponents,
@@ -55,19 +52,14 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(isAgent = false, incomeSourceType)
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(isAgent = true, incomeSourceType)
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(isAgent = true, incomeSourceType)
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -148,19 +140,14 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     Future.successful(Redirect(redirectUrl))
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       handleSubmitRequest(isAgent = false)
   }
 
-  def agentSubmit: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true)
-        }
+  def agentSubmit: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleSubmitRequest(isAgent = true)
   }
 
 }

@@ -76,10 +76,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
     val controller = new HomeController(
       app.injector.instanceOf[views.html.Home],
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       mockAuthService,
-      MockIncomeSourceDetailsPredicate,
       NextUpdatesService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
@@ -87,8 +84,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       financialDetailsService,
       mockDateService,
       whatYouOweService,
-      app.injector.instanceOf[NavBarPredicate],
-      mockAuditingService)(
+      mockAuditingService,
+      testAuthenticator)(
       ec,
       app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[FrontendAppConfig]
@@ -113,10 +110,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
   object TestHomeController extends HomeController(
     app.injector.instanceOf[views.html.Home],
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    MockIncomeSourceDetailsPredicate,
     mockNextUpdatesService,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
@@ -124,8 +118,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     mockFinancialDetailsService,
     mockDateService,
     mockWhatYouOweService,
-    app.injector.instanceOf[NavBarPredicate],
-    mockAuditingService)(
+    mockAuditingService,
+    testAuthenticator)(
     ec,
     app.injector.instanceOf[MessagesControllerComponents],
     app.injector.instanceOf[FrontendAppConfig]
