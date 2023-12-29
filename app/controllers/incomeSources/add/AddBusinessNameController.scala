@@ -112,9 +112,10 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       implicit mtdItUser =>
         handleRequest(
           isAgent = true,
-          backUrl = getBackUrl(isAgent = true, isChange = false),,
+          backUrl = getBackUrl(isAgent = true, isChange = false),
           isChange = false
         )
+    }
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withSessionData(JourneyType(Add, SelfEmployment), journeyState = InitialPage) { _ =>

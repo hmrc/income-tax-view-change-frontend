@@ -43,6 +43,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                         val view: IncomeSourcesAccountingMethod,
                                                         val customNotFoundErrorView: CustomNotFoundError,
                                                         val sessionService: SessionService,
+                                                        val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                         val auth: AuthenticatorPredicate)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         mcc: MessagesControllerComponents,
@@ -187,43 +188,45 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     )
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      handleRequest(
+        isAgent = false,
+        incomeSourceType = incomeSourceType,
+        isChange = false
+      )
+  }
+
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
         handleRequest(
-          isAgent = false,
+          isAgent = true,
           incomeSourceType = incomeSourceType,
           isChange = false
         )
     }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = false) {
       implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType,
-              isChange = false
-            )
-        }
+        handleSubmitRequest(
+          isAgent = false,
+          incomeSourceType
+        )
   }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleSubmitRequest(isAgent = false, incomeSourceType)
-  }
-
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleSubmitRequest(isAgent = true, incomeSourceType)
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = true) {
+      implicit mtdItUser =>
+        handleSubmitRequest(
+          isAgent = true,
+          incomeSourceType
+        )
   }
 
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+    auth.authenticatedAction(isAgent = false) {
       implicit user =>
         sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
           case Right(cashOrAccrualsFlag) =>
