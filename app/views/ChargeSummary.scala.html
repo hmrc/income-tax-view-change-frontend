@@ -158,6 +158,10 @@
     }
 }
 
+@isBalancingChargeZero = @{
+    val isBalancingCharge = documentDetail.isBalancingCharge(codingOutEnabled)
+    documentDetail.originalAmount.map( _ == BigDecimal(0) && isBalancingCharge ).getOrElse(false)
+}
 
 
 @mainTemplate(pageTitle = pageTitle, backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial,
@@ -228,7 +232,7 @@
         )
     }
 
-    @if(hasPaymentBreakdown) {
+    @if(hasPaymentBreakdown && !isBalancingChargeZero) {
         @chargeSummaryHasPaymentBreakdown(
             paymentAllocations,
             payments,
@@ -268,7 +272,7 @@
         }
     }
 
-    @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
+    @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment) && !isBalancingChargeZero){
         <div id="payment-link-@{taxYearTo}">
             <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, origin)">
                 @messages("paymentDue.payNow")
@@ -278,11 +282,11 @@
         @paymentProcessingInfo
     }
 
-    @if(isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
+    @if(isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment) && !isBalancingChargeZero){
         @paymentProcessingInfo
     }
 
-    @if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){
+    @if((chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero ){
         @if(hasPaymentBreakdown && documentDetail.isNotCodingOutDocumentDetail) {
             <h3 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h3>
         } else {

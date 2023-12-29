@@ -27,7 +27,7 @@ import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
 import models.financialDetails.MfaDebitUtils.filterMFADebits
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
@@ -168,7 +168,20 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.getDueDateFor(documentDetail),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
-        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
+        val documentDetailZeroBalancingCharge: List[DocumentDetailWithDueDate] = {
+          documentDetails.filter(_.isBalancingCharge(isEnabled(CodingOut))).filter(_.originalAmount == Some(BigDecimal(0))).map {
+            documentDetail =>
+              DocumentDetailWithDueDate(
+                DocumentDetail(taxYear = documentDetail.taxYear,
+                  documentDescription = documentDetail.documentDescription,
+                  documentText = documentDetail.documentText,
+                  originalAmount = documentDetail.originalAmount,
+                  transactionId = documentDetail.transactionId,
+                  outstandingAmount = None,
+                  documentDate = documentDetail.documentDate), None)
+          }
+        }
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut ++ documentDetailZeroBalancingCharge)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
         Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")

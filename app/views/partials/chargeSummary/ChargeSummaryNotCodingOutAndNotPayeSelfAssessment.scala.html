@@ -43,8 +43,14 @@
             <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
         }
         @{
-            if(latePaymentInterestCharge) documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
-            else documentDetail.documentDueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
+            if(latePaymentInterestCharge) {
+                documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
+            } else if(documentDetail.isBalancingCharge(codingOutEnabled)) {
+                val dueDate = documentDetail.documentDueDate.map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
+                documentDetail.originalAmount.filter( _ != 0 ).map( _ => dueDate).getOrElse(messages("tax-year-summary.na"))
+            } else {
+                documentDetail.documentDueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
+            }
         }
     </dd>
 </div>

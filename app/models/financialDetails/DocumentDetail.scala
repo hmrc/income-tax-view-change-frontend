@@ -158,6 +158,8 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
+  def isBalancingCharge(codedOutEnabled: Boolean = false): Boolean = getChargeTypeKey(codedOutEnabled) == "balancingCharge.text"
+
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"

@@ -165,6 +165,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     documentDetail = fullDocumentDetailModel.copy(
       documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)), codingOutEnabled = true))
 
+  val testBalancingPaymentChargeWithZeroValue: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+    documentDetail = fullDocumentDetailModel.copy(
+      documentDescription = Some("TRM New Charge"), documentText = Some("document Text"), originalAmount = Some(BigDecimal(0))), codingOutEnabled = true))
+
 
   val immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
@@ -231,6 +235,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   def payeView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+
+  def testBalancingPaymentChargeWithZeroValueView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
@@ -741,6 +748,17 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         paymentTypeLink.text shouldBe remainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
+      }
+
+      "display the Balancing payment on the payments table when coding out is enabled and a zero amount" in new Setup(testBalancingPaymentChargeWithZeroValueView(codingOutEnabled = false)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        val paymentTabRow: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
+        paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
+        paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(0).toCurrencyString
+        paymentTypeLink.text shouldBe remainingBalance
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          testYear, fullDocumentDetailModel.transactionId).url
+
       }
 
       "display updates by due-date" in new Setup(estimateView()) {
