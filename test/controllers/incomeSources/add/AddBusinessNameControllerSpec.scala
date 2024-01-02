@@ -39,6 +39,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport
+import utils.AuthenticatorPredicate
 import views.html.incomeSources.add.AddBusinessName
 
 import scala.concurrent.Future
@@ -60,15 +61,11 @@ class AddBusinessNameControllerSpec extends TestSupport
 
   object TestAddBusinessNameController
     extends AddBusinessNameController(
-      MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
       addBusinessView = app.injector.instanceOf[AddBusinessName],
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      sessionService = mockSessionService
+      sessionService = mockSessionService,
+      testAuthenticator
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],

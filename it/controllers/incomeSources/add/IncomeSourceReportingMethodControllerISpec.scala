@@ -41,7 +41,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
-import java.time.Month.APRIL
+import java.time.Month.{APRIL, SEPTEMBER}
 
 sealed trait ReportingMethodScenario {
   def isLegacy: Boolean
@@ -176,10 +176,12 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
   }
 
-  def setupStubErrorCall(scenario: APIErrorScenario): Unit = {
+  def setupStubErrorCall(scenario: APIErrorScenario, incomeSourceType: IncomeSourceType): Unit = {
     Given("Income Sources FS is enabled")
     enable(IncomeSources)
     enable(TimeMachineAddYear)
+
+    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
     if (scenario.equals(API1171)) {
       And("API 1171 getIncomeSourceDetails returns an error response")
@@ -307,19 +309,19 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
     "500 INTERNAL_SERVER_ERROR" when {
       "API 1171 returns an error" in {
-        setupStubErrorCall(API1171)
+        setupStubErrorCall(API1171, UkProperty)
         checkError(UkProperty)
       }
       "API 1404 returns an error" in {
-        setupStubErrorCall(API1404)
+        setupStubErrorCall(API1404, UkProperty)
         checkError(UkProperty)
       }
       "API 1878 returns an error" in {
-        setupStubErrorCall(API1878)
+        setupStubErrorCall(API1878, UkProperty)
         checkError(UkProperty)
       }
       "API 1896 returns an error" in {
-        setupStubErrorCall(API1896)
+        setupStubErrorCall(API1896, UkProperty)
         checkError(UkProperty)
       }
     }
@@ -356,19 +358,19 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
     "500 INTERNAL_SERVER_ERROR" when {
       "API 1171 returns an error" in {
-        setupStubErrorCall(API1171)
+        setupStubErrorCall(API1171, ForeignProperty)
         checkError(ForeignProperty)
       }
       "API 1404 returns an error" in {
-        setupStubErrorCall(API1404)
+        setupStubErrorCall(API1404, ForeignProperty)
         checkError(ForeignProperty)
       }
       "API 1878 returns an error" in {
-        setupStubErrorCall(API1878)
+        setupStubErrorCall(API1878, ForeignProperty)
         checkError(ForeignProperty)
       }
       "API 1896 returns an error" in {
-        setupStubErrorCall(API1896)
+        setupStubErrorCall(API1896, ForeignProperty)
         checkError(ForeignProperty)
       }
     }
@@ -405,19 +407,19 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
     "500 INTERNAL_SERVER_ERROR" when {
       "API 1171 returns an error" in {
-        setupStubErrorCall(API1171)
+        setupStubErrorCall(API1171, SelfEmployment)
         checkError(SelfEmployment)
       }
       "API 1404 returns an error" in {
-        setupStubErrorCall(API1404)
+        setupStubErrorCall(API1404, SelfEmployment)
         checkError(SelfEmployment)
       }
       "API 1878 returns an error" in {
-        setupStubErrorCall(API1878)
+        setupStubErrorCall(API1878, SelfEmployment)
         checkError(SelfEmployment)
       }
       "API 1896 returns an error" in {
-        setupStubErrorCall(API1896)
+        setupStubErrorCall(API1896, SelfEmployment)
         checkError(SelfEmployment)
       }
     }
@@ -497,7 +499,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
     }
     s"303 SEE_OTHER - redirect to ${errorRedirectUrl(UkProperty)}" when {
       "API 1776 updateIncomeSource returns a failure response" in {
-        setupStubErrorCall(API1776)
+        setupStubErrorCall(API1776, UkProperty)
         checkSubmitErrorRedirect(UkProperty)
       }
       "400 BAD_REQUEST" when {
@@ -517,7 +519,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       }
       s"303 SEE_OTHER - redirect to ${errorRedirectUrl(ForeignProperty)}" when {
         "API 1776 updateIncomeSource returns a failure response" in {
-          setupStubErrorCall(API1776)
+          setupStubErrorCall(API1776, ForeignProperty)
           checkSubmitErrorRedirect(ForeignProperty)
         }
       }
@@ -538,7 +540,7 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
       }
       s"303 SEE_OTHER - redirect to ${errorRedirectUrl(SelfEmployment)}" when {
         "API 1776 updateIncomeSource returns a failure response" in {
-          setupStubErrorCall(API1776)
+          setupStubErrorCall(API1776, SelfEmployment)
           checkSubmitErrorRedirect(SelfEmployment)
         }
         "400 BAD_REQUEST" when {

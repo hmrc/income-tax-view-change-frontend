@@ -55,7 +55,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(testIncomeType),
     tradingStartDate = Some(testStartDate),
-    None
+    cessation = None,
+    cashOrAccruals = true
   )
 
   val ukPropertyDetailsViewModel = PropertyDetailsViewModel(
@@ -77,7 +78,8 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    quarterTypeElection = Some(quarterTypeElectionCalendar)
+    quarterTypeElection = Some(quarterTypeElectionCalendar),
+    cashOrAccruals = true
   )
 
   val foreignPropertyDetails2 = PropertyDetailsModel(
@@ -86,7 +88,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    cashOrAccruals = true
   )
 
   val foreignPropertyDetailsNoStartDate = PropertyDetailsModel(
@@ -95,7 +98,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = None,
-    None
+    cessation = None,
+    cashOrAccruals = true
   )
 
   val foreignPropertyDetailsViewModel = PropertyDetailsViewModel(
@@ -108,7 +112,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    cashOrAccruals = true
   )
 
   val uKPropertyDetails2 = PropertyDetailsModel(
@@ -117,7 +122,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
-    cessation = None
+    cessation = None,
+    cashOrAccruals = true
   )
 
   val ceaseForeignPropertyDetailsViewModel = CeasePropertyDetailsViewModel(
@@ -130,7 +136,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(testIncomeType),
     tradingStartDate = Some(testStartDate),
-    cessation = Some(testPropertyCessation)
+    cessation = Some(testPropertyCessation),
+    cashOrAccruals = true
   )
 
   val ceasedUKPropertyDetails = PropertyDetailsModel(
@@ -139,7 +146,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
-    cessation = Some(testPropertyCessation)
+    cessation = Some(testPropertyCessation),
+    cashOrAccruals = true
   )
 
   val ceasedUKPropertyDetailsCessation2020 = PropertyDetailsModel(
@@ -148,7 +156,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
-    cessation = Some(testPropertyCessation3)
+    cessation = Some(testPropertyCessation3),
+    cashOrAccruals = true
   )
 
   val ceasedForeignPropertyDetails = PropertyDetailsModel(
@@ -157,7 +166,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
-    cessation = Some(testPropertyCessation)
+    cessation = Some(testPropertyCessation),
+    cashOrAccruals = true
   )
 
   val ceasedForeignPropertyDetailsCessation2023 = PropertyDetailsModel(
@@ -166,7 +176,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate2),
-    cessation = Some(testPropertyCessation2)
+    cessation = Some(testPropertyCessation2),
+    cashOrAccruals = true
   )
 
   val ceasedForeignPropertyDetailsNoIncomeSourceType = PropertyDetailsModel(
@@ -175,7 +186,8 @@ object PropertyDetailsTestConstants {
     firstAccountingPeriodEndDate = None,
     incomeSourceType = None,
     tradingStartDate = Some(testStartDate2),
-    cessation = Some(testPropertyCessation2)
+    cessation = Some(testPropertyCessation2),
+    cashOrAccruals = true
   )
 
   val openCrystallised: NextUpdateModel = fakeNextUpdatesModel(NextUpdateModel(
@@ -230,7 +242,8 @@ object PropertyDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = None,
-    quarterTypeElection = Some(quarterTypeElectionStandard)
+    quarterTypeElection = Some(quarterTypeElectionStandard),
+    cashOrAccruals = true
   )
 
   val ukPropertyDetails2 = PropertyDetailsModel(
@@ -240,7 +253,8 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    latencyDetails = None
+    latencyDetails = None,
+    cashOrAccruals = true
   )
 
   val ukPropertyWithLatencyDetails1 = PropertyDetailsModel(
@@ -250,7 +264,8 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    latencyDetails = Some(testLatencyDetails1)
+    latencyDetails = Some(testLatencyDetails1),
+    cashOrAccruals = true
   )
 
   val ukPropertyWithLatencyDetails2 = PropertyDetailsModel(
@@ -261,7 +276,8 @@ object PropertyDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails4),
-    quarterTypeElection = Some(quarterTypeElectionCalendar)
+    quarterTypeElection = Some(quarterTypeElectionCalendar),
+    cashOrAccruals = true
   )
 
   val ukPropertyWithLatencyDetailsAndUnknowns = PropertyDetailsModel(
@@ -271,7 +287,8 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(ukIncomeType),
     tradingStartDate = None,
     cessation = None,
-    latencyDetails = Some(testLatencyDetails2)
+    latencyDetails = Some(testLatencyDetails2),
+    cashOrAccruals = true
   )
 
   val foreignPropertyWithLatencyDetails1 = PropertyDetailsModel(
@@ -281,7 +298,8 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = Some(testStartDate),
     cessation = None,
-    latencyDetails = Some(testLatencyDetails1)
+    latencyDetails = Some(testLatencyDetails1),
+    cashOrAccruals = true
   )
 
   val foreignPropertyWithLatencyDetails2 = PropertyDetailsModel(
@@ -292,7 +310,8 @@ object PropertyDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     latencyDetails = Some(testLatencyDetails5),
-    quarterTypeElection = Some(quarterTypeElectionStandard)
+    quarterTypeElection = Some(quarterTypeElectionStandard),
+    cashOrAccruals = true
   )
 
   val foreignPropertyWithLatencyDetailsAndUnknowns = PropertyDetailsModel(
@@ -302,6 +321,7 @@ object PropertyDetailsTestConstants {
     incomeSourceType = Some(foreignIncomeType),
     tradingStartDate = None,
     cessation = None,
-    latencyDetails = Some(testLatencyDetails2)
+    latencyDetails = Some(testLatencyDetails2),
+    cashOrAccruals = true
   )
 }

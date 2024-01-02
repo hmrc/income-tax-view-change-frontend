@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
 import enums.JourneyType.{JourneyType, Manage}
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.Logger
@@ -28,27 +28,23 @@ import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                            val authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: AuthorisedFunctions,
-                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val retrieveBtaNavBar: NavBarPredicate,
+class CannotGoBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val cannotGoBackError: YouCannotGoBackError,
-                                            val sessionService: SessionService)
+                                            val sessionService: SessionService,
+                                            val auth: AuthenticatorPredicate)
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
                                             val itvcErrorHandler: ItvcErrorHandler,
-                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
+                                            val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(
         isAgent = isAgent,
@@ -56,25 +52,8 @@ class CannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTime
       )
   }
 
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
-  }
-
-
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    getManageData(incomeSourceType).flatMap {
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
+    data.manageIncomeSourceData match {
       case Some(manageData) if manageData.reportingMethod.isDefined && manageData.taxYear.isDefined =>
         val subheadingContent = getSubheadingContent(incomeSourceType, manageData.reportingMethod.get, manageData.taxYear.get)
         Future.successful {
@@ -87,15 +66,6 @@ class CannotGoBackErrorController @Inject()(val checkSessionTimeout: SessionTime
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
-    }
-  }
-
-  private def getManageData(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Option[ManageIncomeSourceData]] = {
-    val journeyType = JourneyType(Manage, incomeSourceType).toString
-    sessionService.getMongo(journeyType).map {
-      case Right(Some(data: UIJourneySessionData)) =>
-        data.manageIncomeSourceData
-      case _ => None
     }
   }
 

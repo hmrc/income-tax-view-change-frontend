@@ -60,16 +60,13 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
   val checkDetailsHeading: String = messages("incomeSources.ceaseBusiness.checkDetails.heading")
 
   object TestCeaseCheckIncomeSourceDetailsController extends CeaseCheckIncomeSourceDetailsController(
-    MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[NavBarPredicate],
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[CeaseCheckIncomeSourceDetails],
     mockUpdateIncomeSourceService,
     sessionService = mockSessionService,
-    auditingService = mockAuditingService)(appConfig,
+    auditingService = mockAuditingService,
+    testAuthenticator)(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     ec,
     app.injector.instanceOf[ItvcErrorHandler],

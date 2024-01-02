@@ -20,10 +20,10 @@ sealed trait ReportingMethod {
   val name: String
 }
 
-final case object AnnualReportingMethod extends ReportingMethod {
+case object AnnualReportingMethod extends ReportingMethod {
   override val name: String = "annual"
 }
 
-final case object QuarterlyReportingMethod extends ReportingMethod {
+case object QuarterlyReportingMethod extends ReportingMethod {
   override val name: String = "quarterly"
 }

@@ -47,11 +47,11 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     //To avoid wait time for first call, calling getCalculationResponse with end time as current time
     lockService.withLock(getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)) flatMap {
       case Some(statusCode) =>
-        Logger("application").debug(s"[CalculationPollingService] Response received from Calculation service")
+        Logger("application").debug("[CalculationPollingService] Response received from Calculation service")
         if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
         else pollCalcInIntervals(calcId, nino, taxYear, mtditid, endTimeInMillis)
       case None =>
-        Logger("application").debug(s"[CalculationPollingService] Failed to acquire Mongo lock")
+        Logger("application").debug("[CalculationPollingService] Failed to acquire Mongo lock")
         Future.successful(Status.INTERNAL_SERVER_ERROR)
     }
   }

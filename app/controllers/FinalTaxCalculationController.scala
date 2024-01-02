@@ -32,6 +32,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{CalculationService, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.AuthenticatorPredicate
 import views.html.FinalTaxCalculationView
 
 import javax.inject.Inject
@@ -49,7 +50,8 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
                                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                               val retrieveBtaNavBar: NavBarPredicate,
-                                              implicit val appConfig: FrontendAppConfig
+                                              implicit val appConfig: FrontendAppConfig,
+                                              val auth: AuthenticatorPredicate
                                              ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
@@ -76,8 +78,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
 
-  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -87,17 +88,13 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       )
   }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleShowRequest(
-              itvcErrorHandler = itvcErrorHandlerAgent,
-              isAgent = true,
-              taxYear = taxYear
-            )
-        }
+  def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleShowRequest(
+        itvcErrorHandler = itvcErrorHandlerAgent,
+        isAgent = true,
+        taxYear = taxYear
+      )
   }
 
   def submit(taxYear: Int, origin: Option[String]): Action[AnyContent] = action.async { implicit user =>

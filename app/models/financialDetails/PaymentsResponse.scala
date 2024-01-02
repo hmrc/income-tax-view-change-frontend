@@ -82,7 +82,7 @@ object Payment {
 case class PaymentsWithChargeType(payments: Seq[Payment], mainType: Option[String], chargeType: Option[String]) {
   def getPaymentAllocationTextInChargeSummary: Option[String] = {
     if (MfaDebitUtils.isMFADebitMainType(mainType)) {
-      Some(s"chargeSummary.paymentAllocations.mfaDebit")
+      Some("chargeSummary.paymentAllocations.mfaDebit")
     } else {
       FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
         .map(typesKey => s"chargeSummary.paymentAllocations.$typesKey")

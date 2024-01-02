@@ -20,8 +20,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
@@ -30,9 +29,9 @@ import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, SessionService}
+import services.{DateService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDate
 
@@ -40,15 +39,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationPredicate,
-                                                   val authorisedFunctions: AuthorisedFunctions,
-                                                   checkSessionTimeout: SessionTimeoutPredicate,
+class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDate,
-                                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                   val retrieveBtaNavBar: NavBarPredicate,
                                                    val customNotFoundErrorView: CustomNotFoundError,
-                                                   incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                   val sessionService: SessionService)
+                                                   val sessionService: SessionService,
+                                                   auth: AuthenticatorPredicate)
                                                   (implicit val appConfig: FrontendAppConfig,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -61,7 +56,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def show(isAgent: Boolean,
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
@@ -73,7 +68,7 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
   def submit(isAgent: Boolean,
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
@@ -89,7 +84,12 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionData(JourneyType(Add, incomeSourceType)) { sessionData =>
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
+      incomeSourceType match {
+        case SelfEmployment => BeforeSubmissionPage
+        case _ => InitialPage
+      }
+    }) { sessionData =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
         sessionService.createSession(journeyType.toString)
@@ -165,22 +165,6 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     }
   }
 
-  private def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
-  }
-
   private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
     routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType)
   }
@@ -196,14 +180,10 @@ class AddIncomeSourceStartDateController @Inject()(authenticate: AuthenticationP
     ((isAgent, isChange, incomeSourceType) match {
       case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
       case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
-      case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
       case (false, false, _) => routes.AddIncomeSourceController.show()
       case (_, false, _) => routes.AddIncomeSourceController.showAgent()
-      case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(UkProperty)
-      case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
+      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 }

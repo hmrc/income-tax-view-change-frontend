@@ -22,8 +22,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
 import forms.incomeSources.manage.ConfirmReportingMethodForm
@@ -34,27 +33,23 @@ import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseErr
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
+import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: ManageIncomeSources,
-                                                       val checkSessionTimeout: SessionTimeoutPredicate,
-                                                       val authenticate: AuthenticationPredicate,
                                                        val authorisedFunctions: AuthorisedFunctions,
                                                        val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                       val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                                        val confirmReportingMethod: ConfirmReportingMethod,
-                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                       val retrieveBtaNavBar: NavBarPredicate,
                                                        val sessionService: SessionService,
                                                        val auditingService: AuditingService,
-                                                       val dateService: DateService)
+                                                       val dateService: DateService,
+                                                       val auth: AuthenticatorPredicate)
                                                       (implicit val ec: ExecutionContext,
                                                        implicit val itvcErrorHandler: ItvcErrorHandler,
                                                        override implicit val mcc: MessagesControllerComponents,
@@ -66,8 +61,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
            changeTo: String,
            isAgent: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authenticatedAction(isAgent) { implicit user =>
-    withSessionData(JourneyType(Manage, incomeSourceType)) { sessionData =>
+          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+    withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
       val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
       val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
       handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
@@ -78,14 +73,12 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
              changeTo: String,
              isAgent: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = {
-    authenticatedAction(isAgent) { implicit user =>
+            ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
 
-      withSessionData(JourneyType(Manage, incomeSourceType)) { sessionData =>
-        val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
-        val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
-        handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
-      }
+    withSessionData(JourneyType(Manage, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+      val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+      val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
+      handleSubmitRequest(taxYear, changeTo, isAgent, incomeSourceIdOpt, incomeSourceType)
     }
   }
 
@@ -197,7 +190,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     updateIncomeSourceResFuture flatMap {
       case _: UpdateIncomeSourceResponseError =>
-        logAndShowError(isAgent, s"[handleValidForm]: Failed to update reporting method")
+        logAndShowError(isAgent, "[handleValidForm]: Failed to update reporting method")
         auditingService
           .extendedAudit(
             IncomeSourceReportingMethodAuditModel(
@@ -210,8 +203,8 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             )
           )
         Future.successful(Redirect(errorCall))
-      case res: UpdateIncomeSourceResponseModel =>
-        withSessionData(JourneyType(Manage, incomeSourceType)) {
+      case _: UpdateIncomeSourceResponseModel =>
+        withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) {
           uiJourneySessionData =>
             val newUIJourneySessionData = {
               uiJourneySessionData.copy(manageIncomeSourceData =
@@ -282,22 +275,5 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
   private def getErrorCall(incomeSourceType: IncomeSourceType, isAgent: Boolean): Call = {
     routes.ReportingMethodChangeErrorController
       .show(isAgent, incomeSourceType)
-  }
-
-  private def authenticatedAction(isAgent: Boolean
-                                 )(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
   }
 }

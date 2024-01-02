@@ -42,7 +42,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
       case error: NextUpdatesErrorModel => throw new Exception(s"${error.message}")
       case _ =>
         Logger("application").error("Unexpected Exception getting next deadline due and Overdue Obligations")
-        throw new Exception(s"Unexpected Exception getting next deadline due and Overdue Obligations")
+        throw new Exception("Unexpected Exception getting next deadline due and Overdue Obligations")
     }
   }
 
@@ -61,7 +61,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
           case _ => Right(overdueDatesCount)
         }
       case _ =>
-        throw new InternalServerException(s"Unexpected Exception getting obligation due dates")
+        throw new InternalServerException("Unexpected Exception getting obligation due dates")
     }
   }
 

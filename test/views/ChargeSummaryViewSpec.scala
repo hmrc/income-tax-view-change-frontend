@@ -18,10 +18,10 @@ package views
 
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import enums.ChargeType._
+import enums.CodingOutType._
 import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
-import enums.CodingOutType._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -35,7 +35,7 @@ import views.html.ChargeSummary
 
 import java.time.LocalDate
 
-class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
+class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
   val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url
@@ -43,17 +43,17 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
   import Messages._
 
   class TestSetup(documentDetail: DocumentDetail,
-              dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
-              paymentBreakdown: List[FinancialDetail] = List(),
-              chargeHistory: List[ChargeHistoryModel] = List(),
-              paymentAllocations: List[PaymentsWithChargeType] = List(),
-              payments: FinancialDetailsModel = payments,
-              chargeHistoryEnabled: Boolean = true,
-              paymentAllocationEnabled: Boolean = false,
-              latePaymentInterestCharge: Boolean = false,
-              codingOutEnabled: Boolean = false,
-              isAgent: Boolean = false,
-              isMFADebit: Boolean = false) {
+                  dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+                  paymentBreakdown: List[FinancialDetail] = List(),
+                  chargeHistory: List[ChargeHistoryModel] = List(),
+                  paymentAllocations: List[PaymentsWithChargeType] = List(),
+                  payments: FinancialDetailsModel = payments,
+                  chargeHistoryEnabled: Boolean = true,
+                  paymentAllocationEnabled: Boolean = false,
+                  latePaymentInterestCharge: Boolean = false,
+                  codingOutEnabled: Boolean = false,
+                  isAgent: Boolean = false,
+                  isMFADebit: Boolean = false) {
     val view: Html = chargeSummary(dateService.getCurrentDate(isEnabled(TimeMachineAddYear)), DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
       latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
@@ -143,6 +143,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
     val cancelledSaPayeCreated: String = messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
 
     def payeTaxCodeText(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", year - 1, year)}"
+
     def payeTaxCodeTextWithStringMessage(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", (year - 1).toString, year.toString)}"
 
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
@@ -376,6 +377,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
 
       "display a due date" in new TestSetup(documentDetailModel()) {
         verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
+      }
+
+      "display a due date as N/A" in new TestSetup(documentDetail = documentDetailModel(documentDueDate = None, lpiWithDunningBlock = None), dueDate = None) {
+        verifySummaryListRowNumeric(1, dueDate, "N/A")
       }
 
       "display the correct due date for an interest charge" in new TestSetup(documentDetailModel(), latePaymentInterestCharge = true) {

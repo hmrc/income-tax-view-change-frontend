@@ -65,7 +65,8 @@ class FeedbackControllerSpec extends MockAuthenticationPredicate
     mockIncomeSourceDetailsService,
     app.injector.instanceOf[MessagesControllerComponents],
     mockErrorHandler,
-    mockItvcErrorHandler
+    mockItvcErrorHandler,
+    testAuthenticator
   )
 
   ".show" when {

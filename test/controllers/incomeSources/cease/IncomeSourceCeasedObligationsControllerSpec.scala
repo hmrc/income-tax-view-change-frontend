@@ -59,16 +59,12 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
   val mockDateService: DateService = mock(classOf[DateService])
 
   object TestIncomeSourceObligationController extends IncomeSourceCeasedObligationsController(
-    MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-    retrieveBtaNavBar = MockNavBarPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
-    incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceCeasedObligations],
     mockNextUpdatesService,
-    sessionService = mockSessionService)(
+    sessionService = mockSessionService,
+    testAuthenticator)(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
     mcc = app.injector.instanceOf[MessagesControllerComponents],

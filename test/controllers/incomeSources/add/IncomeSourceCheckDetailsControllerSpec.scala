@@ -92,18 +92,16 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
   def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
   def sessionDataISAdded(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
+  def sessionDataPartial(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"), dateStarted = Some(LocalDate.parse("2022-01-01")))))
+
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, None)
 
   object TestCheckDetailsController extends IncomeSourceCheckDetailsController(
     checkDetailsView = app.injector.instanceOf[IncomeSourceCheckDetails],
-    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    authenticate = MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-    incomeSourceDetailsService = mockIncomeSourceDetailsService,
-    retrieveBtaNavBar = MockNavBarPredicate,
     businessDetailsService = mockBusinessDetailsService,
-    auditingService = app.injector.instanceOf[AuditingService]
+    auditingService = app.injector.instanceOf[AuditingService],
+    testAuthenticator
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     sessionService = mockSessionService,
@@ -154,7 +152,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             }
             else {
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(None))
+              setupMockGetMongo(Right(Some(sessionData(JourneyType(Add, incomeSourceType)))))
               setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(Some(testPropertyStartDate)))
               setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
             }
@@ -311,12 +309,12 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
             when(mockSessionService.getMongoKeyTyped[Boolean](any(), any())(any(), any())).thenReturn(Future(Right(None)))
             if (incomeSourceType == SelfEmployment) {
-              setupMockGetMongo(Right(None))
+              setupMockGetMongo(Right(Some(sessionDataPartial(JourneyType(Add, incomeSourceType)))))
               setupMockCreateSession(true)
             }
             else {
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(None))
+              setupMockGetMongo(Right(Some(sessionDataPartial(JourneyType(Add, incomeSourceType)))))
               setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, JourneyType(Add, incomeSourceType), Right(None))
               setupMockGetSessionKeyMongoTyped[String](incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType), Right(Some(accruals)))
             }

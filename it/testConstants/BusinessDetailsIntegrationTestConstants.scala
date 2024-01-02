@@ -74,7 +74,8 @@ object BusinessDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
     cessation = None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = false
   )
 
   val business1WithAddress2 = BusinessDetailsModel(
@@ -88,7 +89,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingStartDate = Some(b1TradingStart),
     cessation = None,
     address = Some(testBusinessAddress),
-    cashOrAccruals = Some(b1AccountingMethod)
+    cashOrAccruals = b1AccountingMethod
   )
 
   val business2 = BusinessDetailsModel(
@@ -101,7 +102,8 @@ object BusinessDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
     cessation = None,
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = false
   )
 
   val business3 = BusinessDetailsModel(
@@ -114,7 +116,8 @@ object BusinessDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
     cessation = Some(CessationModel(Some(LocalDate.of(2020, 1, 1)), None)),
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = false
   )
 
   val business3WithUnknowns: BusinessDetailsModel = BusinessDetailsModel(
@@ -128,7 +131,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingStartDate = None,
     cessation = None,
     address = None,
-    cashOrAccruals = None
+    cashOrAccruals = false
   )
 
   val businessWithAddressAndAccountingMethod = BusinessDetailsModel(
@@ -142,7 +145,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingStartDate = Some(b1TradingStart),
     cessation = None,
     address = Some(testBusinessAddress),
-    cashOrAccruals = Some(b1AccountingMethod)
+    cashOrAccruals = b1AccountingMethod
   )
 
   val ceasedBusiness1 = BusinessDetailsModel(
@@ -155,7 +158,8 @@ object BusinessDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(b2AccountingEnd),
     tradingStartDate = Some(b2TradingStart),
     cessation = Some(CessationModel(Some(b2CessationDate), Some(b2CessationReason))),
-    address = Some(address)
+    address = Some(address),
+    cashOrAccruals = false
   )
 
   val businessUnknownAddressName = BusinessDetailsModel(
@@ -168,7 +172,8 @@ object BusinessDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(b1AccountingEnd),
     tradingStartDate = Some(b1TradingStart),
     cessation = None,
-    address = None
+    address = None,
+    cashOrAccruals = false
   )
 
   val businessForManageYourDetailsAudit = BusinessDetailsModel(
@@ -182,7 +187,7 @@ object BusinessDetailsIntegrationTestConstants {
     tradingStartDate = Some(testDate),
     cessation = None,
     address = expectedAddress,
-    cashOrAccruals = Some(false),
+    cashOrAccruals = false,
     latencyDetails = Some(testLatencyDetails3)
   )
 }

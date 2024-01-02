@@ -2,13 +2,16 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Cease, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.scalatest.Assertion
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData}
 
 class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
 
@@ -17,12 +20,21 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
   val headingUk = messagesAPI("cannotGoBack.uk-property-ceased")
   val headingFP = messagesAPI("cannotGoBack.foreign-property-ceased")
 
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession(Cease))
+  }
+
   val url: IncomeSourceType => String = (incomeSourceType: IncomeSourceType) =>
     controllers.incomeSources.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
 
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
     enable(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+
+    await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType))))
 
     val specificHeading = incomeSourceType match {
       case SelfEmployment => headingSE

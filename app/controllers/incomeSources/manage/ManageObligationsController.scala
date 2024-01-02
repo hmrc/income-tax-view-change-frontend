@@ -20,7 +20,6 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
@@ -32,23 +31,20 @@ import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.IncomeSourcesUtils
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.manage.ManageObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                            val authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: AuthorisedFunctions,
-                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val retrieveBtaNavBar: NavBarPredicate,
                                             val obligationsView: ManageObligations,
                                             val sessionService: SessionService,
-                                            nextUpdatesService: NextUpdatesService)
+                                            nextUpdatesService: NextUpdatesService,
+                                            val auth: AuthenticatorPredicate)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig) extends ClientConfirmedController
@@ -56,8 +52,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
         case Right(incomeSourceIdMaybe) =>
@@ -77,7 +72,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }
   }
 
-  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = authenticatedAction(isAgent = true) {
+  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit user =>
       withIncomeSourcesFS {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
@@ -99,8 +94,7 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       }
   }
 
-  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         incomeSourceType = UkProperty,
@@ -111,23 +105,18 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       )
   }
 
-  def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              incomeSourceType = UkProperty,
-              isAgent = true,
-              taxYear,
-              changeTo,
-              None
-            )
-        }
+  def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        incomeSourceType = UkProperty,
+        isAgent = true,
+        taxYear,
+        changeTo,
+        None
+      )
   }
 
-  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         incomeSourceType = ForeignProperty,
@@ -138,19 +127,15 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       )
   }
 
-  def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              incomeSourceType = ForeignProperty,
-              isAgent = true,
-              taxYear,
-              changeTo,
-              None
-            )
-        }
+  def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        incomeSourceType = ForeignProperty,
+        isAgent = true,
+        taxYear,
+        changeTo,
+        None
+      )
   }
 
   private lazy val successPostUrl = (isAgent: Boolean) => {
@@ -220,35 +205,13 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   }
 
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false)))
   }
 
-  def agentSubmit: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true)))
-        }
-  }
-
-  private def authenticatedAction(isAgent: Boolean
-                                 )(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
+  def agentSubmit: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true)))
   }
 }

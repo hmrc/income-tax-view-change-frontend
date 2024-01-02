@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.{IncomeSourceType, InitialPage, SelfEmployment}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.DeclarePropertyCeasedForm
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -30,20 +30,16 @@ import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.DeclarePropertyCeased
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclarePropertyCeasedController @Inject()(val authenticate: AuthenticationPredicate,
-                                                val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                val checkSessionTimeout: SessionTimeoutPredicate,
-                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                val retrieveBtaNavBar: NavBarPredicate,
-                                                val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                 val view: DeclarePropertyCeased,
-                                                val sessionService: SessionService)
+                                                val sessionService: SessionService,
+                                                val auth: AuthenticatorPredicate)
                                                (implicit val appConfig: FrontendAppConfig,
                                                 mcc: MessagesControllerComponents,
                                                 val ec: ExecutionContext,
@@ -53,32 +49,32 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = withSessionData(JourneyType(Cease, incomeSourceType)) { _ =>
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
+    withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
-    val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
-      controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
-    val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType) else
-      controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
+      val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
+        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
+      val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType) else
+        controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
 
-    Future.successful(Ok(view(
-      declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),
-      incomeSourceType = incomeSourceType,
-      postAction = postAction,
-      isAgent = isAgent,
-      backUrl = backUrl)(user, messages)))
+      Future.successful(Ok(view(
+        declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),
+        incomeSourceType = incomeSourceType,
+        postAction = postAction,
+        isAgent = isAgent,
+        backUrl = backUrl
+      )))
 
-  } recover {
-    case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[DeclarePropertyCeasedController][handleRequest] Error getting declare property ceased page: ${ex.getMessage} - ${ex.getCause}")
-      val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      errorHandler.showInternalServerError()
-  }
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"[DeclarePropertyCeasedController][handleRequest] Error getting declare property ceased page: ${ex.getMessage} - ${ex.getCause}")
+        val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        errorHandler.showInternalServerError()
+    }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
       implicit user =>
         handleRequest(
           isAgent = false,
@@ -86,16 +82,12 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
         )
     }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType
+      )
   }
 
   def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
@@ -138,18 +130,13 @@ class DeclarePropertyCeasedController @Inject()(val authenticate: Authentication
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       handleSubmitRequest(isAgent = false, incomeSourceType = incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true, incomeSourceType = incomeSourceType)
-        }
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleSubmitRequest(isAgent = true, incomeSourceType = incomeSourceType)
   }
 }

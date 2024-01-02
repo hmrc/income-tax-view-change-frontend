@@ -20,32 +20,30 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{CannotGoBackPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.JourneyType.{Add, JourneyType}
 import play.api.mvc._
-import services.IncomeSourceDetailsService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.YouCannotGoBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                                      val authenticate: AuthenticationPredicate,
-                                                      val authorisedFunctions: AuthorisedFunctions,
-                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                      val retrieveBtaNavBar: NavBarPredicate,
-                                                      val cannotGoBackError: YouCannotGoBackError)
+class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
+                                                      val cannotGoBackError: YouCannotGoBackError,
+                                                      val auth: AuthenticatorPredicate)
                                                      (implicit val appConfig: FrontendAppConfig,
-                                               mcc: MessagesControllerComponents,
-                                               val ec: ExecutionContext,
-                                               val itvcErrorHandler: ItvcErrorHandler,
-                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
+                                                      mcc: MessagesControllerComponents,
+                                                      val ec: ExecutionContext,
+                                                      val itvcErrorHandler: ItvcErrorHandler,
+                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                      val sessionService: SessionService) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { _ =>
     val subheadingContent = getSubheadingContent(incomeSourceType)
     Future.successful(Ok(cannotGoBackError(isAgent, subheadingContent)))
   }
@@ -58,8 +56,7 @@ class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: S
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -67,15 +64,11 @@ class ReportingMethodSetBackErrorController @Inject()(val checkSessionTimeout: S
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType
+      )
   }
 }

@@ -44,15 +44,11 @@ class ReportingMethodChangeErrorControllerSpec
   object TestReportingMethodChangeErrorController
     extends ReportingMethodChangeErrorController(
       manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
       updateIncomeSourceService = mock(classOf[UpdateIncomeSourceService]),
       sessionService = mockSessionService,
-      reportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
+      reportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError],
+      auth = testAuthenticator
     )(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],

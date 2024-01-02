@@ -26,33 +26,31 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, NavBarPredicate, IncomeSourceDetailsPredicateNoCache, IncomeTaxAgentUser, NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicateNoCache, IncomeTaxAgentUser, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
+
 import javax.inject.{Inject, Singleton}
 import models.nextUpdates.ObligationsModel
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.AuthenticatorPredicate
 import views.html.{NextUpdates, NoNextUpdates}
 
 @Singleton
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
                                       nextUpdatesView: NextUpdates,
-                                      checkSessionTimeout: SessionTimeoutPredicate,
-                                      authenticate: AuthenticationPredicate,
-                                      retrieveNinoWithIncomeSourcesNoCache: IncomeSourceDetailsPredicateNoCache,
                                       incomeSourceDetailsService: IncomeSourceDetailsService,
                                       auditingService: AuditingService,
                                       nextUpdatesService: NextUpdatesService,
                                       itvcErrorHandler: ItvcErrorHandler,
-                                      val retrieveBtaNavBar: NavBarPredicate,
                                       val appConfig: FrontendAppConfig,
-                                      val authorisedFunctions: FrontendAuthorisedFunctions)
+                                      val authorisedFunctions: FrontendAuthorisedFunctions,
+                                      val auth: AuthenticatorPredicate)
                                      (implicit mcc: MessagesControllerComponents,
                                       implicit val agentItvcErrorHandler: AgentItvcErrorHandler,
                                       val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def getNextUpdates(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar).async {
+  def getNextUpdates(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
         for {

@@ -16,10 +16,9 @@
 
 package controllers
 
-import config.featureswitch.CreditsRefundsRepay
-import config.featureswitch.FeatureSwitching
+import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.SessionTimeoutPredicate
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
@@ -50,21 +49,17 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
     val controller = new WhatYouOweController(
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
-      MockIncomeSourceDetailsPredicate,
       whatYouOweService,
       app.injector.instanceOf[ItvcErrorHandler],
       app.injector.instanceOf[AgentItvcErrorHandler],
-      MockNavBarPredicate,
       mockAuthService,
       mockAuditingService,
       dateService,
-      mockIncomeSourceDetailsService,
       app.injector.instanceOf[FrontendAppConfig],
       app.injector.instanceOf[MessagesControllerComponents],
       ec,
-      app.injector.instanceOf[WhatYouOwe]
+      app.injector.instanceOf[WhatYouOwe],
+      testAuthenticator
     )
   }
 
@@ -99,7 +94,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
@@ -120,7 +115,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
@@ -138,7 +133,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
           .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -169,7 +164,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK
@@ -199,7 +194,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         when(whatYouOweService.getCreditCharges()(any(), any()))
           .thenReturn(Future.successful(List()))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+        val result: Future[Result] = controller.show()(fakeRequestWithNinoAndOrigin("PTA"))
         val resultAgent: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient())
 
         status(result) shouldBe Status.OK

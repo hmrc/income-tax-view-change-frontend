@@ -44,7 +44,7 @@
         }
         @{
             if(latePaymentInterestCharge) documentDetail.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
-            else documentDetail.effectiveDateOfPayment.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+            else documentDetail.documentDueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
         }
     </dd>
 </div>
