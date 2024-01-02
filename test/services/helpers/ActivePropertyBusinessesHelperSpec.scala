@@ -18,9 +18,11 @@ package services.helpers
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{foreignPropertyIncome, noIncomeDetails, twoActiveForeignPropertyIncomes, twoActiveUkPropertyBusinesses, ukPropertyIncome}
 import testUtils.TestSupport
+
 import scala.language.reflectiveCalls
 
 class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitching {
@@ -29,12 +31,12 @@ class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitchi
     val activePropertyBusinessesHelper: ActivePropertyBusinessesHelper = new ActivePropertyBusinessesHelper {}
   }
 
-  "getActiveUkOrForeignPropertyBusinessFromUserIncomeSources where isUkProperty = false" when {
+  "getActiveUkOrForeignPropertyBusinessFromUserIncomeSources for ForeignProperty" when {
     "user has income sources" should {
       "return a PropertyDetailsModel when the user has one active property" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, foreignPropertyIncome)
 
-        val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)(user = user)
+        val result = fixture.activePropertyBusinessesHelper.getActiveProperty(ForeignProperty)(user = user)
 
         result shouldBe Right(foreignPropertyDetails)
       }
@@ -43,28 +45,28 @@ class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitchi
       "return an exception when the user has more than one active property" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoActiveForeignPropertyIncomes)
 
-        val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)(user = user)
+        val result = fixture.activePropertyBusinessesHelper.getActiveProperty(ForeignProperty)(user = user)
 
-        result.toString shouldBe Left(new Error("More than one active foreign property found. There should only be one.")).toString
+        result.toString shouldBe Left(new Exception("More than one active ForeignProperty found. There should only be one.")).toString
       }
     }
     "user has income sources" should {
       "return an exception when the user has no active property" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
 
-        val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)(user = user)
+        val result = fixture.activePropertyBusinessesHelper.getActiveProperty(ForeignProperty)(user = user)
 
-        result.toString shouldBe Left(new Error("No active foreign properties found.")).toString
+        result.toString shouldBe Left(new Exception("No active ForeignProperty found.")).toString
       }
     }
   }
 
-  "getActiveUkOrForeignPropertyBusinessFromUserIncomeSources where isUkProperty = true" when {
+  "getActiveUkOrForeignPropertyBusinessFromUserIncomeSources where UkProperty" when {
     "user has income sources" should {
       "return a PropertyDetailsModel when the user has one active property" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, ukPropertyIncome)
 
-        val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)(user = user)
+        val result = fixture.activePropertyBusinessesHelper.getActiveProperty(UkProperty)(user = user)
 
         result shouldBe Right(ukPropertyDetails)
       }
@@ -73,18 +75,18 @@ class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitchi
       "return an exception when the user has more than one active property" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, twoActiveUkPropertyBusinesses)
 
-        val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)(user = user)
+        val result = fixture.activePropertyBusinessesHelper.getActiveProperty(UkProperty)(user = user)
 
-        result.toString shouldBe Left(new Error("More than one active UK property found. There should only be one.")).toString
+        result.toString shouldBe Left(new Exception("More than one active UkProperty found. There should only be one.")).toString
       }
     }
     "user has income sources" should {
       "return an exception when the user has no active property" in {
         implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, noIncomeDetails)
 
-        val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)(user = user)
+        val result = fixture.activePropertyBusinessesHelper.getActiveProperty(UkProperty)(user = user)
 
-        result.toString shouldBe Left(new Error("No active UK properties found.")).toString
+        result.toString shouldBe Left(new Exception("No active UkProperty found.")).toString
       }
     }
   }

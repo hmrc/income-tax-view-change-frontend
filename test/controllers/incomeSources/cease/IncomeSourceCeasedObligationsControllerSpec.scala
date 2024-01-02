@@ -35,7 +35,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
-import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
+import testConstants.PropertyDetailsTestConstants.ceasedPropertyDetailsModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncomeCeased, completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
@@ -109,19 +109,13 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
 
       setupMockCreateSession(true)
       setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
 
       when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
       when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
         thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-      if (incomeSourceType.equals(ForeignProperty)) {
-        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-          .thenReturn(Right(foreignPropertyDetails))
-      } else if (incomeSourceType.equals(UkProperty)) {
-        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-          .thenReturn(Right(ukPropertyDetails))
-      }
+      when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
+        .thenReturn(Some(ceasedPropertyDetailsModel(incomeSourceType)))
 
       val result: Future[Result] = showCall(isAgent, incomeSourceType)
       val document: Document = Jsoup.parse(contentAsString(result))
@@ -262,12 +256,8 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
 
         setupMockAuthorisationSuccess(isAgent)
 
-        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-          .thenReturn(
-            Left(
-              new Error("No active properties found.")
-            )
-          )
+        when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
+          .thenReturn(None)
 
         val result: Future[Result] = (isAgent) match {
           case (false) =>
@@ -305,12 +295,8 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
           mockTwoActiveUkPropertyIncomeSourcesErrorScenario()
         }
 
-        when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-          .thenReturn(
-            Left(
-              new Error("Too many active properties found. There should only be one.")
-            )
-          )
+        when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
+          .thenReturn(None)
 
         val result: Future[Result] = (isAgent) match {
           case (false) =>

@@ -18,18 +18,12 @@ package testConstants.incomeSources
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
-import models.core.AddressModel
-import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSessionId}
-import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
-import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, CeaseIncomeSourceData, IncomeSourceDetailsError, IncomeSourceDetailsModel, ManageIncomeSourceData, UIJourneySessionData}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSessionId}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
-import testConstants.UpdateIncomeSourceTestConstants.incomeSourceId
 
 import java.time.LocalDate
 
@@ -110,26 +104,26 @@ object IncomeSourceDetailsTestConstants {
     ceasedBusinesses = Nil)
 
   val checkCeaseBusinessDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testSelfEmploymentId),
+    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = Some(testTradeName),
     address = Some(address),
-    businessEndDate = LocalDate.parse("2022-04-23"),
+    businessEndDate = LocalDate.of(2022, 1, 1),
     SelfEmployment
   )
 
   val checkCeaseUkPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId),
+    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
     tradingName = None,
     address = None,
-    businessEndDate = LocalDate.parse("2022-04-23"),
+    businessEndDate = LocalDate.of(2022, 1, 1),
     UkProperty
   )
 
   val checkCeaseForeignPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = mkIncomeSourceId(testPropertyIncomeId2),
+    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
     tradingName = None,
     address = None,
-    businessEndDate = LocalDate.parse("2022-04-23"),
+    businessEndDate = LocalDate.of(2022, 1, 1),
     ForeignProperty
   )
 
@@ -194,8 +188,8 @@ object IncomeSourceDetailsTestConstants {
           sessionId = testSessionId,
           journeyType = journeyType.toString,
           ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
-            incomeSourceId = Some(testSelfEmploymentId),
-            endDate = Some(LocalDate.now().toString),
+            incomeSourceId = if (journeyType.businessType == SelfEmployment) Some(testSelfEmploymentId) else Some(testPropertyIncomeId),
+            endDate = Some(LocalDate.of(2022, 1, 1)),
             ceasePropertyDeclare = Some("true"),
             journeyIsComplete = None
           ))

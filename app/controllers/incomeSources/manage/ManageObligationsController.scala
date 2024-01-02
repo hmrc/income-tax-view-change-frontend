@@ -25,9 +25,8 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.ManageIncomeSourceData
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{ManageIncomeSourceData, PropertyDetailsModel}
 import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, NextUpdatesService, SessionService}
@@ -165,12 +164,12 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
       (getTaxYearModel(taxYear), changeTo) match {
         case (Some(years), AnnualReportingMethod.name | QuarterlyReportingMethod.name) =>
           getIncomeSourceId(incomeSourceType, incomeSourceId, isAgent = isAgent) match {
-            case Right(incomeSourceId) =>
+            case Some(incomeSourceId) =>
               val addedBusinessName: String = getBusinessName(incomeSourceType, Some(incomeSourceId))
               nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears = false) map { viewModel =>
                 Ok(obligationsView(viewModel, addedBusinessName, years, changeTo, isAgent, successPostUrl(isAgent)))
               }
-            case Left(error) => showError(isAgent, error.getMessage)
+            case None => showError(isAgent, s"Unable to retrieve income source ID for $incomeSourceType")
           }
         case (Some(_), _) =>
           showError(isAgent, s"Invalid changeTo mode provided: -$changeTo-")
@@ -206,20 +205,20 @@ class ManageObligationsController @Inject()(val checkSessionTimeout: SessionTime
   }
 
   def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: Option[IncomeSourceId], isAgent: Boolean)
-                       (implicit user: MtdItUser[_]): Either[Throwable, IncomeSourceId] = {
-    (incomeSourceType, id) match {
-      case (SelfEmployment, Some(id)) => Right(id)
-      case _ =>
-        Seq(UkProperty, ForeignProperty).find(_ == incomeSourceType)
-          .map(_ => incomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(incomeSourceType == UkProperty))
-          .getOrElse(Left(new Error("No id supplied for Self Employment business")))
-        match {
-          case Right(property: PropertyDetailsModel) => Right(mkIncomeSourceId(property.incomeSourceId))
-          case Left(error: Error) => Left(error)
-          case _ => Left(new Error(s"Unknown error. IncomeSourceType: $incomeSourceType"))
+                       (implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
+
+    incomeSourceType match {
+      case SelfEmployment =>
+        id.orElse {
+          val message = "[ManageObligationsController][getIncomeSourceId] Missing required income source ID for Self Employment"
+          Logger("application").error(message)
+          None
         }
+      case UkProperty | ForeignProperty =>
+        incomeSourceDetailsService.getActiveProperty(incomeSourceType).map(property => IncomeSourceId(property.incomeSourceId))
     }
   }
+
 
   def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
     andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {

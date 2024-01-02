@@ -111,12 +111,10 @@ object ManageIncomeSourceData {
   implicit val format: OFormat[ManageIncomeSourceData] = Json.format[ManageIncomeSourceData]
 }
 
-case class CeaseIncomeSourceData(
-                                  incomeSourceId: Option[String] = None,
-                                  endDate: Option[String] = None,
-                                  ceasePropertyDeclare: Option[String] = None,
-                                  journeyIsComplete: Option[Boolean] = None
-                                )
+case class CeaseIncomeSourceData(incomeSourceId: Option[String] = None,
+                                 endDate: Option[LocalDate] = None,
+                                 ceasePropertyDeclare: Option[String] = None,
+                                 journeyIsComplete: Option[Boolean] = None)
 
 object CeaseIncomeSourceData {
 

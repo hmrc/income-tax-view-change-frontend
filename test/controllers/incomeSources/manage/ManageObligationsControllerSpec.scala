@@ -18,7 +18,7 @@ package controllers.incomeSources.manage
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
+import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney._
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -135,38 +135,36 @@ class ManageObligationsControllerSpec extends TestSupport
 
     if (isUkProperty) {
       setupMockGetIncomeSourceDetails()(ukPropertyIncomeWithCeasedUkPropertyIncome)
-      when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-        .thenReturn(
-          Right(
-            PropertyDetailsModel(
-              incomeSourceId = testPropertyIncomeId,
-              accountingPeriod = None,
-              firstAccountingPeriodEndDate = None,
-              incomeSourceType = Some("uk-property"),
-              tradingStartDate = None,
-              cessation = None,
-              cashOrAccruals = None,
-              latencyDetails = None
-            )
+      when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
+        .thenReturn(Some(
+          PropertyDetailsModel(
+            incomeSourceId = testPropertyIncomeId,
+            accountingPeriod = None,
+            firstAccountingPeriodEndDate = None,
+            incomeSourceType = Some("uk-property"),
+            tradingStartDate = None,
+            cessation = None,
+            cashOrAccruals = None,
+            latencyDetails = None
           )
+        )
         )
     }
     else {
       setupMockGetIncomeSourceDetails()(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
-      when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
-        .thenReturn(
-          Right(
-            PropertyDetailsModel(
-              incomeSourceId = testPropertyIncomeId,
-              accountingPeriod = None,
-              firstAccountingPeriodEndDate = None,
-              incomeSourceType = Some("foreign-property"),
-              tradingStartDate = None,
-              cessation = None,
-              cashOrAccruals = None,
-              latencyDetails = None
-            )
+      when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
+        .thenReturn(Some(
+          PropertyDetailsModel(
+            incomeSourceId = testPropertyIncomeId,
+            accountingPeriod = None,
+            firstAccountingPeriodEndDate = None,
+            incomeSourceType = Some("foreign-property"),
+            tradingStartDate = None,
+            cessation = None,
+            cashOrAccruals = None,
+            latencyDetails = None
           )
+        )
         )
     }
     val day = LocalDate.of(2023, 1, 1)
@@ -314,7 +312,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "show correct page when individual valid" in {
         mockAuth(false)
         setUpBusiness(isAgent = false)
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testId))))
+        when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
 
         val result: Future[Result] = TestManageObligationsController.showSelfEmployment(changeToA, taxYear)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -322,7 +320,7 @@ class ManageObligationsControllerSpec extends TestSupport
       "show correct page when agent valid" in {
         mockAuth(true)
         setUpBusiness(isAgent = true)
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testId))))
+        when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
 
         val result: Future[Result] = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -354,7 +352,7 @@ class ManageObligationsControllerSpec extends TestSupport
         )))
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
           thenReturn(Future(testObligationsModel))
-        when(mockSessionService.getMongoKey(any(),any())(any(),any())).thenReturn(Future(Right(Some(testId))))
+        when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
 
         val result: Future[Result] = TestManageObligationsController.showAgentSelfEmployment(changeToQ, taxYear)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -389,11 +387,9 @@ class ManageObligationsControllerSpec extends TestSupport
           mockAuth(false)
           mockTwoActiveUkPropertyIncomeSourcesErrorScenario()
 
-          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+          when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
             .thenReturn(
-              Left(
-                new Error(s"More than one active UK property found. There should only be one.")
-              )
+              None
             )
 
           val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
@@ -422,11 +418,9 @@ class ManageObligationsControllerSpec extends TestSupport
           mockAuth(false)
           mockNoIncomeSources()
 
-          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+          when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
             .thenReturn(
-              Left(
-                new Error("No active foreign properties found.")
-              )
+              None
             )
 
           val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)
@@ -436,11 +430,9 @@ class ManageObligationsControllerSpec extends TestSupport
           mockAuth(false)
           mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
 
-          when(mockIncomeSourceDetailsService.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(any())(any()))
+          when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
             .thenReturn(
-              Left(
-                new Error(s"More than one active foreign property found. There should only be one.")
-              )
+              None
             )
 
           val result: Future[Result] = TestManageObligationsController.showUKProperty(changeToA, taxYear)(fakeRequestWithActiveSession)

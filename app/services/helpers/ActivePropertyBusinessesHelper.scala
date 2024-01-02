@@ -17,20 +17,30 @@
 package services.helpers
 
 import auth.MtdItUser
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.PropertyDetailsModel
+import play.api.Logger
 
 trait ActivePropertyBusinessesHelper {
-  def getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty: Boolean)(implicit user: MtdItUser[_])
-  : Either[Throwable, PropertyDetailsModel] = {
+  def getActiveProperty(incomeSourceType: IncomeSourceType)
+                       (implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
 
-    val activeForeignProperty = if (isUkProperty) user.incomeSources.properties.filterNot(_.isCeased).filter(_.isUkProperty) else
-      user.incomeSources.properties.filterNot(_.isCeased).filter(_.isForeignProperty)
+    def selectActiveProperty(filter: PropertyDetailsModel => Boolean) : Option[PropertyDetailsModel] = {
+      val activeProperty = user.incomeSources.properties.filter(p => !p.isCeased && filter(p))
 
-    activeForeignProperty match {
-      case list: List[PropertyDetailsModel] if list.length == 1 => Right(list.head)
-      case list: List[PropertyDetailsModel] if list.length > 1 =>
-        Left(new Error(s"More than one active ${if (isUkProperty) "UK property" else "foreign property"} found. There should only be one."))
-      case _ => Left(new Error(s"No active ${if (isUkProperty) "UK properties" else "foreign properties"} found."))
+      activeProperty match {
+        case property :: Nil => Some(property)
+        case _ =>
+          Logger("application").error(s"[ActivePropertyBusinessesHelper][getActiveProperty]" +
+            s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
+          None
+      }
+    }
+
+    incomeSourceType match {
+      case SelfEmployment => None
+      case UkProperty => selectActiveProperty(_.isUkProperty)
+      case _ => selectActiveProperty(_.isForeignProperty)
     }
   }
 }
