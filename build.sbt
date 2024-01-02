@@ -86,9 +86,15 @@ lazy val microservice = Project(appName, file("."))
   .settings(scalaVersion := currentScalaVersion)
   .settings(scoverageSettings: _*)
   .settings(defaultSettings(): _*)
+  .settings(semanticdbEnabled := true) // enable SemanticDB
+  .settings(semanticdbVersion := scalafixSemanticdb.revision)
+  //.settings(scalacOptions += "-Ywarn-unused-import") // Scala 2.x only, required by `RemoveUnused`
   .settings(majorVersion := 1)
   .settings(scalacOptions += "-Wconf:cat=lint-multiarg-infix:silent")
-  .settings(scalacOptions += "-Xfatal-warnings")
+  .settings(scalacOptions += "-Ywarn-unused")
+  //.settings(scalacOptions += "-Xfatal-warnings")
+
+  .settings(scalafixOnCompile := true)
   .settings(
     Test / Keys.fork := true,
     Test / javaOptions += "-Dlogger.resource=logback-test.xml",
