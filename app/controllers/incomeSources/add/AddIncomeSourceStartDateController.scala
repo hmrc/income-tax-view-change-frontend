@@ -176,7 +176,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
             )
           )
         case None =>
-          throw new Exception(s"Unable to retrieve start date from Mongo")
+          throw new Exception("Unable to retrieve start date from Mongo")
       }
     }
     else Future.successful(form)

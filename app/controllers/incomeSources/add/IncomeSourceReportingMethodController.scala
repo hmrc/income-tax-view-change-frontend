@@ -94,7 +94,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     }.recover {
       case ex: Exception =>
         Logger("application").error(
-          s"[UKPropertyReportingMethodController][handleRequest]:" +
+          "[UKPropertyReportingMethodController][handleRequest]:" +
             s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         errorHandler.showInternalServerError()
@@ -144,7 +144,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
         sessionService.setMongoData(uiJourneySessionData)
 
-      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
+      case _ => Future.failed(new Exception("failed to retrieve session data"))
     }
   }
 
@@ -175,7 +175,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
             }
         }
       case _ =>
-        Logger("application").info(s"[IncomeSourceReportingMethodController][getUKPropertyReportingMethodDetails]: Latency details not available")
+        Logger("application").info("[IncomeSourceReportingMethodController][getUKPropertyReportingMethodDetails]: Latency details not available")
         Future.successful(None)
     }
   }
@@ -196,7 +196,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
       case Left(ex) => Future.failed(ex)
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[IncomeSourceReportingMethodController][handleSubmit]:" +
+        Logger("application").error("[IncomeSourceReportingMethodController][handleSubmit]:" +
           s"Unable to handle IncomeSourceReportingMethodController submit request for $incomeSourceType: - ${ex.getMessage} - ${ex.getCause}")
         val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         errorHandler.showInternalServerError()
@@ -287,7 +287,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     updateResults.map { results =>
       val successCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseModel])
       val errorCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseError])
-      val prefix = s"[IncomeSourceReportingMethodController][handleUpdateResults]: "
+      val prefix = "[IncomeSourceReportingMethodController][handleUpdateResults]: "
 
       if (successCount == results.length) {
         Logger("application").info(prefix + s"Successfully updated all new selected reporting methods for $incomeSourceType")

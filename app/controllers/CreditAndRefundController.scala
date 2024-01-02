@@ -137,7 +137,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case (Some(CutOverCreditType), false) => cutOverCredit
       case (None, true) => payment
       case (_,_) =>
-        Logger("application").warn(s"[CreditAndRefundController][getCreditType] - Unknown credit")
+        Logger("application").warn("[CreditAndRefundController][getCreditType] - Unknown credit")
         "unknownCredit"
     }
   }

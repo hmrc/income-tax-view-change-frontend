@@ -80,12 +80,12 @@ class ForecastIncomeSummaryController @Inject()(val forecastIncomeSummaryView: F
               Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear, origin, isAgent), isAgent,
                 user.btaNavPartial))
             case _ =>
-              onError(s"No income data could be retrieved. Not found", isAgent, taxYear)
+              onError("No income data could be retrieved. Not found", isAgent, taxYear)
           }
         case error: LiabilityCalculationError if error.status == NO_CONTENT =>
-          onError(s"No income data found.", isAgent, taxYear)
+          onError("No income data found.", isAgent, taxYear)
         case _: LiabilityCalculationError =>
-          onError(s"No new calc income data error found. Downstream error", isAgent, taxYear)
+          onError("No new calc income data error found. Downstream error", isAgent, taxYear)
       }
     }
   }

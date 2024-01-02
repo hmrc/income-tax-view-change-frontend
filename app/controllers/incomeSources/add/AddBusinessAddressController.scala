@@ -71,10 +71,10 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
         case Right(Some(location)) =>
           Redirect(location)
         case Right(None) =>
-          Logger("application").error(s"[AddBusinessAddressController][handleRequest] - No redirect location returned from connector")
+          Logger("application").error("[AddBusinessAddressController][handleRequest] - No redirect location returned from connector")
           itvcErrorHandler.showInternalServerError()
         case Left(_) =>
-          Logger("application").error(s"[AddBusinessAddressController][handleRequest] - Unexpected response")
+          Logger("application").error("[AddBusinessAddressController][handleRequest] - Unexpected response")
           itvcErrorHandler.showInternalServerError()
       }
     }
@@ -116,7 +116,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
 
     addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
       case true => Future.successful(redirect)
-      case false => Future.failed(new Exception(s"failed to set session data"))
+      case false => Future.failed(new Exception("failed to set session data"))
     })
 
   }.recover {

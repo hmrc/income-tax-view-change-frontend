@@ -85,7 +85,7 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
             )
           )
         case None =>
-          Logger("error").info(s"[ReportingMethodChangeErrorController][handleShowRequest]: " +
+          Logger("error").info("[ReportingMethodChangeErrorController][handleShowRequest]: " +
             s"could not find incomeSourceId for $incomeSourceType")
           showInternalServerError(isAgent)
       }

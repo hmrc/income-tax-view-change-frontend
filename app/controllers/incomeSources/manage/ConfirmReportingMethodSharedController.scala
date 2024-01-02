@@ -212,7 +212,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
 
     updateIncomeSourceResFuture flatMap {
       case _: UpdateIncomeSourceResponseError =>
-        logAndShowError(isAgent, s"[handleValidForm]: Failed to update reporting method")
+        logAndShowError(isAgent, "[handleValidForm]: Failed to update reporting method")
         auditingService
           .extendedAudit(
             IncomeSourceReportingMethodAuditModel(
@@ -225,7 +225,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
             )
           )
         Future.successful(Redirect(errorCall))
-      case res: UpdateIncomeSourceResponseModel =>
+      case _: UpdateIncomeSourceResponseModel =>
         withSessionData(JourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) {
           uiJourneySessionData =>
             val newUIJourneySessionData = {

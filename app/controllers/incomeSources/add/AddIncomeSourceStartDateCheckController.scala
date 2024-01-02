@@ -99,8 +99,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
             )
           }
         case None =>
-          Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleRequest]: " +
-            s"Failed to get income source start date from session")
+          Logger("application").error("[AddIncomeSourceStartDateCheckController][handleRequest]: " +
+            "Failed to get income source start date from session")
           Future.successful(showInternalServerError(isAgent))
       }
     }
@@ -143,8 +143,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
               )
           )
         case None =>
-          Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
-            s"Failed to get income source start date from session")
+          Logger("application").error("[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
+            "Failed to get income source start date from session")
           Future.successful(showInternalServerError(isAgent))
       }
     }

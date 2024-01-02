@@ -42,7 +42,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
       case Failure(err, _) =>
         Logger("application").debug(s"[AuditingService][audit] - Splunk Audit Error, message: $err")
       case Disabled =>
-        Logger("application").debug(s"[AuditingService][audit] - Auditing Disabled")
+        Logger("application").debug("[AuditingService][audit] - Auditing Disabled")
     }
   }
 
@@ -66,7 +66,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
       case Failure(err, _) =>
         Logger("application").debug(s"[AuditingService][extendedAudit] - Splunk Audit Error, message: $err")
       case Disabled =>
-        Logger("application").debug(s"[AuditingService][extendedAudit] - Auditing Disabled")
+        Logger("application").debug("[AuditingService][extendedAudit] - Auditing Disabled")
     }
   }
 
