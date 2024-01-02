@@ -67,7 +67,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUserBase[_],
     case "paymentOnAccount2.text" => "Late payment interest for payment on account 2 of 2"
     case "balancingCharge.text" => "Late payment interest for remaining balance"
     case other =>
-      Logger("application").warn(s"[PaymentAllocationsResponseAuditModel][getAllocationDescriptionFromKey] key not found: " + other)
+      Logger("application").warn("[PaymentAllocationsResponseAuditModel][getAllocationDescriptionFromKey] key not found: " + other)
       "allocation"
   }
 

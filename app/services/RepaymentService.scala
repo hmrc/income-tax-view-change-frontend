@@ -30,7 +30,7 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
 
   def start(nino: String, fullAmount: Option[BigDecimal])
            (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, String]] = {
-    Logger("application").debug(s"[RepaymentService][start]: " +
+    Logger("application").debug("[RepaymentService][start]: " +
       s"Repayment journey start with nino: $nino and fullAmount: $fullAmount ")
     fullAmount match {
       case Some(amt)=>
@@ -38,16 +38,16 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
           case RepaymentJourneyModel(nextUrl) =>
             Right(nextUrl)
           case RepaymentJourneyErrorResponse(status, message) =>
-            Logger("application").error(s"[RepaymentService][start]: " +
+            Logger("application").error("[RepaymentService][start]: " +
               s"Repayment journey start error with response code: $status and message: $message")
             Left(RepaymentStartJourneyException(status, message))
         }.recover { case ex =>
-          Logger("application").error(s"[RepaymentService][start]: " +
+          Logger("application").error("[RepaymentService][start]: " +
             s"Repayment journey start error with exception: $ex")
           Left(ex)
         }
       case None =>
-        Logger("application").error(s"[RepaymentService][start] - Amount is none")
+        Logger("application").error("[RepaymentService][start] - Amount is none")
         Future.successful(Left(RepaymentStartJourneyAmountIsNoneException))
 
     }
@@ -60,11 +60,11 @@ class RepaymentService @Inject()(val repaymentConnector: RepaymentConnector, imp
       case RepaymentJourneyModel(nextUrl) =>
         Right(nextUrl)
       case RepaymentJourneyErrorResponse(status, message) =>
-        Logger("application").error(s" [RepaymentService][view]: " +
+        Logger("application").error(" [RepaymentService][view]: " +
           s" Repayment journey view error with response code: $status and message: $message")
         Left(RepaymentViewJourneyException(status, message))
     }.recover { case ex: Exception =>
-      Logger("application").error(s"[RepaymentService][view]: " +
+      Logger("application").error("[RepaymentService][view]: " +
         s"Repayment journey view error with exception: $ex")
       Left(ex)
     }

@@ -87,7 +87,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
           ) flatMap {
             case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
               authorisedFunctions.authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdItId).withDelegatedAuthRule("mtd-it-auth")).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
-                case enrolments ~ affinity ~ confidence ~ credentials =>
+                case _ ~ _ ~ _ ~ _ =>
                   val sessionValues: Seq[(String, String)] = Seq(
                     SessionKeys.clientMTDID -> mtdItId,
                     SessionKeys.clientNino -> nino,
@@ -108,7 +108,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
               Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
             case Left(_)
             =>
-              throw new InternalServerException(s"[EnterClientsUTRController][submit] - Unexpected response received")
+              throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
           }
         }
       )

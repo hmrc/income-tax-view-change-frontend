@@ -86,7 +86,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.flatMap(_.getTaxYearOpt))
         val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
         if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-          Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
+          Logger("application").warn("[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         } else {
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))

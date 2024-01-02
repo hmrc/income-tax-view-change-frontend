@@ -131,7 +131,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
 
         sessionService.setMongoData(uiJourneySessionData)
 
-      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
+      case _ => Future.failed(new Exception("failed to retrieve session data"))
     }
   }
 }

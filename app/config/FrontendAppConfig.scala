@@ -37,7 +37,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val appName: String = servicesConfig.getString("appName")
 
   //Feedback Config
-  private lazy val contactHost: String = servicesConfig.getString(s"contact-frontend.host")
+  private lazy val contactHost: String = servicesConfig.getString("contact-frontend.host")
   private lazy val contactFrontendService: String = servicesConfig.baseUrl("contact-frontend")
   lazy val contactFormServiceIdentifier: String = "ITVC"
   lazy val contactFrontendBaseUrl: String = s"$contactFrontendService"
@@ -73,7 +73,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   def exitSurveyUrl(identifier: String): String = s"$exitSurveyBaseUrl/$identifier"
 
   //Sign out
-  lazy val ggUrl: String = servicesConfig.getString(s"government-gateway.url")
+  lazy val ggUrl: String = servicesConfig.getString("government-gateway.url")
 
   def ggSignOutUrl(identifier: String): String = s"$ggUrl/bas-gateway/sign-out-without-state?continue=${exitSurveyUrl(identifier)}"
 

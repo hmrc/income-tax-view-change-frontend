@@ -131,7 +131,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                 case (_, _) =>
                   Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
               }
-            case (_, _) => Left(new Error(s"Error while retrieving date started or accounting method from session"))
+            case (_, _) => Left(new Error("Error while retrieving date started or accounting method from session"))
           }
         }
       }
