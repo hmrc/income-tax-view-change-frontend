@@ -38,16 +38,16 @@ import views.html.incomeSources.add.IncomeSourceAddedObligations
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: AuthorisedFunctions,
-                                            checkSessionTimeout: SessionTimeoutPredicate,
-                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                            val retrieveBtaNavBar: NavBarPredicate,
-                                            val itvcErrorHandler: ItvcErrorHandler,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val obligationsView: IncomeSourceAddedObligations,
-                                            nextUpdatesService: NextUpdatesService)
-                                           (implicit val appConfig: FrontendAppConfig,
+class IncomeSourceAddedObligationsController @Inject()(authenticate: AuthenticationPredicate,
+                                                       val authorisedFunctions: AuthorisedFunctions,
+                                                       checkSessionTimeout: SessionTimeoutPredicate,
+                                                       val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                                       val retrieveBtaNavBar: NavBarPredicate,
+                                                       val itvcErrorHandler: ItvcErrorHandler,
+                                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                                       val obligationsView: IncomeSourceAddedObligations,
+                                                       nextUpdatesService: NextUpdatesService)
+                                                      (implicit val appConfig: FrontendAppConfig,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             implicit override val mcc: MessagesControllerComponents,
                                             implicit val sessionService: SessionService,

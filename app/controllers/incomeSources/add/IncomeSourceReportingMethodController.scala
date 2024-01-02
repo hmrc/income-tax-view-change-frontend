@@ -75,8 +75,8 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     else routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
 
   lazy val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceAddedController.show(incomeSourceType).url
+    if (isAgent) routes.IncomeSourceAddedObligationsController.showAgent(incomeSourceType).url
+    else routes.IncomeSourceAddedObligationsController.show(incomeSourceType).url
 
   lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
