@@ -36,10 +36,12 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
   }
 
   def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: Option[LocalDate])(
-
     implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
 
-    val body: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId,
+    Logger("application").error(s"[IncomeTaxViewChangeConnector][updateCessationDate] - Json validation error parsing update income source response,")
+
+
+    val body= UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId,
       cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate)))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
