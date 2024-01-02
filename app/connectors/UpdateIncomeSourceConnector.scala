@@ -36,8 +36,10 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClient,
   }
 
   def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: Option[LocalDate])(
+
     implicit headerCarrier: HeaderCarrier): Future[UpdateIncomeSourceResponse] = {
-    val body = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId,
+
+    val body: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(nino = nino, incomeSourceID = incomeSourceId,
       cessation = Some(Cessation(cessationIndicator = true, cessationDate = cessationDate)))
 
     http.PUT[UpdateIncomeSourceRequestModel, HttpResponse](
