@@ -167,7 +167,7 @@ case class DocumentDetail(taxYear: Int,
 
   def isBalancingChargeZero(codedOutEnabled: Boolean = false): Boolean = {
     (isBalancingCharge(codedOutEnabled), this.originalAmount) match {
-      case (true, Some(value)) => if (value == BigDecimal(0.0)) true else false
+      case (true, Some(value)) => value == BigDecimal(0.0)
       case _ => false
     }
   }
