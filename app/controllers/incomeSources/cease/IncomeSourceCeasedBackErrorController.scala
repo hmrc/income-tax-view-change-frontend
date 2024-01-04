@@ -25,20 +25,16 @@ import enums.JourneyType.{Cease, JourneyType}
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.cease.IncomeSourceCeasedBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCeasedBackErrorController @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
-                                                      val authenticate: AuthenticationPredicate,
-                                                      val authorisedFunctions: AuthorisedFunctions,
-                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                      val retrieveBtaNavBar: NavBarPredicate,
+class IncomeSourceCeasedBackErrorController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                                       val sessionService: SessionService,
-                                                      val cannotGoBackCeasedError: IncomeSourceCeasedBackError)
+                                                      val cannotGoBackCeasedError: IncomeSourceCeasedBackError,
+                                                      val auth: AuthenticatorPredicate)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,
@@ -51,8 +47,7 @@ class IncomeSourceCeasedBackErrorController @Inject()(val checkSessionTimeout: S
     Future.successful(Ok(cannotGoBackCeasedError(isAgent, incomeSourceType)))
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -60,16 +55,12 @@ class IncomeSourceCeasedBackErrorController @Inject()(val checkSessionTimeout: S
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        incomeSourceType = incomeSourceType
+      )
   }
 
 }

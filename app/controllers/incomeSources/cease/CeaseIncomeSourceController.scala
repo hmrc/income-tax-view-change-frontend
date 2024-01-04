@@ -28,29 +28,25 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.cease.CeaseIncomeSources
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeSources,
-                                            val checkSessionTimeout: SessionTimeoutPredicate,
-                                            val authenticate: AuthenticationPredicate,
                                             val authorisedFunctions: AuthorisedFunctions,
-                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val sessionService: SessionService,
-                                            val retrieveBtaNavBar: NavBarPredicate)
+                                            val auth: AuthenticatorPredicate)
                                            (implicit val ec: ExecutionContext,
                                             implicit override val mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -59,17 +55,13 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       )
   }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              backUrl = controllers.routes.HomeController.showAgent.url
-            )
-        }
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        sources = mtdItUser.incomeSources,
+        isAgent = true,
+        backUrl = controllers.routes.HomeController.showAgent.url
+      )
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)

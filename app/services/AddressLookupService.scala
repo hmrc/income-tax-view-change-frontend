@@ -64,7 +64,7 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
           case Right(Some(model)) => Right(model)
         }
       case None =>
-        Logger("application").error(s"[AddressLookupService][fetchAddress] - No id provided")
+        Logger("application").error("[AddressLookupService][fetchAddress] - No id provided")
         Future(Left(AddressError("No id provided")))
     }
   }

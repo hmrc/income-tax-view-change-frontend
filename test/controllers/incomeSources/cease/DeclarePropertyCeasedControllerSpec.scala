@@ -49,14 +49,10 @@ class DeclarePropertyCeasedControllerSpec extends TestSupport with MockAuthentic
   val mockDeclarePropertyCeased: DeclarePropertyCeased = app.injector.instanceOf[DeclarePropertyCeased]
 
   object TestDeclarePropertyCeasedController extends DeclarePropertyCeasedController(
-    MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
-    MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[DeclarePropertyCeased],
-    sessionService = mockSessionService)(appConfig,
+    sessionService = mockSessionService,
+    testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler]) {

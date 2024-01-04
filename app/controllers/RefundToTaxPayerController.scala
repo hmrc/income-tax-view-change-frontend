@@ -32,6 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.AuthenticatorPredicate
 import views.html.RefundToTaxPayer
 
 import javax.inject.{Inject, Singleton}
@@ -39,15 +40,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayer,
-                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                           val authenticate: AuthenticationPredicate,
                                            val repaymentHistoryConnector: RepaymentHistoryConnector,
-                                           val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
                                            val authorisedFunctions: AuthorisedFunctions,
-                                           retrieveBtaNavBar: NavBarPredicate,
                                            itvcErrorHandler: ItvcErrorHandler,
-                                           auditingService: AuditingService)
+                                           auditingService: AuditingService,
+                                           val auth: AuthenticatorPredicate)
                                           (implicit mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext,
                                            val appConfig: FrontendAppConfig,
@@ -58,7 +55,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                     isAgent: Boolean,
                     itvcErrorHandler: ShowInternalServerError,
                     repaymentRequestNumber: String)
-                   (implicit user: MtdItUser[AnyContent], hc: HeaderCarrier): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isEnabled(PaymentHistoryRefunds)) {
       (for {
         repaymentHistoryModel <- repaymentHistoryConnector.getRepaymentHistoryByRepaymentId(Nino(user.nino), repaymentRequestNumber).collect {
@@ -88,30 +85,25 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
     }
   }
 
-  def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleRequest(
-          backUrl = controllers.routes.PaymentHistoryController.show(origin).url,
-          origin = origin,
-          isAgent = false,
-          itvcErrorHandler = itvcErrorHandler,
-          repaymentRequestNumber = repaymentRequestNumber
-        )
-    }
+  def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      handleRequest(
+        backUrl = controllers.routes.PaymentHistoryController.show(origin).url,
+        origin = origin,
+        isAgent = false,
+        itvcErrorHandler = itvcErrorHandler,
+        repaymentRequestNumber = repaymentRequestNumber
+      )
+  }
 
-  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = {
-    Authenticated.async { implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          handleRequest(
-            backUrl = controllers.routes.PaymentHistoryController.showAgent.url,
-            isAgent = true,
-            itvcErrorHandler = itvcErrorHandlerAgent,
-            repaymentRequestNumber = repaymentRequestNumber
-          )
-        }
-    }
+  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        backUrl = controllers.routes.PaymentHistoryController.showAgent.url,
+        isAgent = true,
+        itvcErrorHandler = itvcErrorHandlerAgent,
+        repaymentRequestNumber = repaymentRequestNumber
+      )
   }
 }
 

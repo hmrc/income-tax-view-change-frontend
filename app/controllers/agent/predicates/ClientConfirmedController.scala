@@ -82,7 +82,7 @@ trait ClientConfirmedController extends BaseAgentController {
         userOptionNino.mtditid, nino, userOptionNino.userName, model, None, userOptionNino.saUtr,
         userOptionNino.credId, userOptionNino.userType, userOptionNino.arn)
       case _ =>
-        Logger("application").error(s"[IncomeTaxViewChangeConnector][getIncomeSources] - Failed to retrieve income sources for agent")
+        Logger("application").error("[IncomeTaxViewChangeConnector][getIncomeSources] - Failed to retrieve income sources for agent")
         throw new InternalServerException("[ClientConfirmedController][getMtdItUserWithIncomeSources] IncomeSourceDetailsModel not created")
     }
   }

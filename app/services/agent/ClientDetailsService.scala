@@ -40,13 +40,13 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
             Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
           case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
           case _ =>
-            Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Business Details")
+            Logger("application").error("[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Business Details")
             Future.successful(Left(UnexpectedResponse))
         }
       case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(code, _) if code == 404 => Future.successful(Left(CitizenDetailsNotFound))
       case err =>
-        Logger("application").error(s"[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Citizen Details" + err)
+        Logger("application").error("[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Citizen Details" + err)
         Future.successful(Left(UnexpectedResponse))
     }
 }

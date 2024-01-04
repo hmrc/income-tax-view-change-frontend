@@ -18,12 +18,14 @@ package services.helpers
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
+import org.scalatest.EitherValues
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{foreignPropertyIncome, noIncomeDetails, twoActiveForeignPropertyIncomes, twoActiveUkPropertyBusinesses, ukPropertyIncome}
 import testUtils.TestSupport
+
 import scala.language.reflectiveCalls
 
-class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitching {
+class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitching with EitherValues {
 
   val fixture = new {
     val activePropertyBusinessesHelper: ActivePropertyBusinessesHelper = new ActivePropertyBusinessesHelper {}
@@ -45,7 +47,7 @@ class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitchi
 
         val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)(user = user)
 
-        result.toString shouldBe Left(new Error("More than one active foreign property found. There should only be one.")).toString
+        result.left.value.asInstanceOf[Error].getMessage should be("More than one active foreign property found. There should only be one.")
       }
     }
     "user has income sources" should {
@@ -54,7 +56,7 @@ class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitchi
 
         val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = false)(user = user)
 
-        result.toString shouldBe Left(new Error("No active foreign properties found.")).toString
+        result.left.value.asInstanceOf[Error].getMessage should be("No active foreign properties found.")
       }
     }
   }
@@ -75,7 +77,7 @@ class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitchi
 
         val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)(user = user)
 
-        result.toString shouldBe Left(new Error("More than one active UK property found. There should only be one.")).toString
+        result.left.value.asInstanceOf[Error].getMessage should be("More than one active UK property found. There should only be one.")
       }
     }
     "user has income sources" should {
@@ -84,7 +86,7 @@ class ActivePropertyBusinessesHelperSpec extends TestSupport with FeatureSwitchi
 
         val result = fixture.activePropertyBusinessesHelper.getActiveUkOrForeignPropertyBusinessFromUserIncomeSources(isUkProperty = true)(user = user)
 
-        result.toString shouldBe Left(new Error("No active UK properties found.")).toString
+        result.left.value.asInstanceOf[Error].getMessage should be("No active UK properties found.")
       }
     }
   }

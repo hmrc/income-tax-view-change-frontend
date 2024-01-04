@@ -61,16 +61,13 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
 
   val mockDateService: DateService = mock(classOf[DateService])
 
-  object TestIncomeSourceAddedObligationsController$ extends IncomeSourceAddedObligationsController(
-    MockAuthenticationPredicate,
+  object TestIncomeSourceAddedObligationsController extends IncomeSourceAddedObligationsController(
     authorisedFunctions = mockAuthService,
-    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-    retrieveBtaNavBar = MockNavBarPredicate,
     itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
     incomeSourceDetailsService = mockIncomeSourceDetailsService,
     obligationsView = app.injector.instanceOf[IncomeSourceAddedObligations],
-    mockNextUpdatesService
+    mockNextUpdatesService,
+    testAuthenticator
   )(
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
@@ -134,7 +131,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
       "the user is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
-          val result = TestIncomeSourceAddedObligationsController$.show(SelfEmployment)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceAddedObligationsController.show(SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }
@@ -144,7 +141,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
       "redirect to the session timeout page" in {
         setupMockAuthorisationException()
 
-        val result = TestIncomeSourceAddedObligationsController$.submit()(fakeRequestWithTimeoutSession)
+        val result = TestIncomeSourceAddedObligationsController.submit()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -158,7 +155,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.show(UkProperty)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.show(UkProperty)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
       }
@@ -168,7 +165,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
       }
@@ -183,7 +180,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, SelfEmployment)))))
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.show(SelfEmployment)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
         redirectLocation(result) shouldBe Some(redirectUrl)
@@ -203,7 +200,8 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           Some("Test name"),
           None,
           Some(LocalDate.of(2022, 1, 1)),
-          None
+          None,
+          cashOrAccruals = false
         )), List.empty)
         mockSelfEmployment()
 
@@ -225,7 +223,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         mockMongo(SelfEmployment)
         setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.show(SelfEmployment)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
       }
       "show correct page when agent valid" in {
@@ -240,7 +238,8 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           Some("Test name"),
           None,
           Some(LocalDate.of(2022, 1, 1)),
-          None
+          None,
+          cashOrAccruals = false
         )), List.empty)
         mockSelfEmployment()
         val day = LocalDate.of(2023, 1, 1)
@@ -261,7 +260,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         mockMongo(SelfEmployment)
         setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
       }
       //common code edge/error cases:
@@ -276,7 +275,8 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           None,
           None,
           Some(LocalDate.of(2022, 1, 1)),
-          None
+          None,
+          cashOrAccruals = false
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
@@ -285,7 +285,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         mockMongo(SelfEmployment)
         setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.show(SelfEmployment)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "throw an error when no id is supplied" in {
@@ -300,7 +300,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         mockMongo(SelfEmployment)
         setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
       "throw an error when no start date for supplied business" in {
@@ -312,7 +312,8 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           testSelfEmploymentId,
           None,
           Some("test"),
-          None, None, None
+          None, None, None,
+          cashOrAccruals = false
         )), List.empty)
         setupMockGetIncomeSourceDetails()(sources)
         mockFailure()
@@ -321,7 +322,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           thenReturn(Future(testObligationsModel))
         setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, SelfEmployment), result = Right(Some(testSelfEmploymentId)))
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.show(SelfEmployment)(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.show(SelfEmployment)(fakeRequestWithActiveSession)
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
@@ -347,7 +348,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
 
           setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, UkProperty), result = Right(Some(testSelfEmploymentId)))
 
-          val result = TestIncomeSourceAddedObligationsController$.show(UkProperty)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceAddedObligationsController.show(UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
         }
       }
@@ -357,7 +358,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           mockUKPropertyIncomeSource()
 
-          val result = TestIncomeSourceAddedObligationsController$.show(UkProperty)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceAddedObligationsController.show(UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
         }
@@ -369,7 +370,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           mockUKPropertyIncomeSource()
           mockFailure()
           mockMongo(UkProperty)
-          val result = TestIncomeSourceAddedObligationsController$.show(UkProperty)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceAddedObligationsController.show(UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
@@ -390,7 +391,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
 
           setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, UkProperty), result = Right(Some(testSelfEmploymentId)))
 
-          val result = TestIncomeSourceAddedObligationsController$.showAgent(UkProperty)(fakeRequestConfirmedClient())
+          val result = TestIncomeSourceAddedObligationsController.showAgent(UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
         }
       }
@@ -400,7 +401,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           disable(IncomeSources)
           mockUKPropertyIncomeSource()
 
-          val result = TestIncomeSourceAddedObligationsController$.showAgent(UkProperty)(fakeRequestConfirmedClient())
+          val result = TestIncomeSourceAddedObligationsController.showAgent(UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent.url)
         }
@@ -413,7 +414,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           mockFailure()
           mockMongo(UkProperty)
 
-          val result = TestIncomeSourceAddedObligationsController$.showAgent(UkProperty)(fakeRequestConfirmedClient())
+          val result = TestIncomeSourceAddedObligationsController.showAgent(UkProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
@@ -432,7 +433,8 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
             None,
             Some("foreign-property"),
             Some(LocalDate.of(2022, 4, 21)),
-            None
+            None,
+            cashOrAccruals = false
           )))
 
           val day = LocalDate.of(2023, 1, 1)
@@ -454,7 +456,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
           mockMongo(ForeignProperty)
           setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, ForeignProperty), result = Right(Some("123456")))
 
-          val result: Future[Result] = TestIncomeSourceAddedObligationsController$.show(ForeignProperty)(fakeRequestWithActiveSession)
+          val result: Future[Result] = TestIncomeSourceAddedObligationsController.show(ForeignProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe OK
 
         }
@@ -472,7 +474,8 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
             None,
             Some("foreign-property"),
             Some(LocalDate.of(2022, 4, 21)),
-            None
+            None,
+            cashOrAccruals = false
           )))
 
           val day = LocalDate.of(2023, 1, 1)
@@ -495,7 +498,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
 
           setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, ForeignProperty), result = Right(Some("123")))
 
-          val result: Future[Result] = TestIncomeSourceAddedObligationsController$.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
+          val result: Future[Result] = TestIncomeSourceAddedObligationsController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
           status(result) shouldBe OK
 
         }
@@ -510,7 +513,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.submit(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.submit(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.show().url)
       }
@@ -521,7 +524,7 @@ class IncomeSourceAddedObligationsControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceAddedObligationsController$.agentSubmit(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceAddedObligationsController.agentSubmit(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url)
       }

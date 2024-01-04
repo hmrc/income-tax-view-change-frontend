@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.IncomeSourcesUtils
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 import views.html.incomeSources.add.AddIncomeSources
 
 import javax.inject.{Inject, Singleton}
@@ -37,11 +37,9 @@ import scala.util.{Failure, Success}
 @Singleton
 class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources,
                                           val checkSessionTimeout: SessionTimeoutPredicate,
-                                          val authenticate: AuthenticationPredicate,
                                           val authorisedFunctions: AuthorisedFunctions,
-                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                          val retrieveBtaNavBar: NavBarPredicate)
+                                          auth: AuthenticatorPredicate)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val ec: ExecutionContext,
                                           implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -53,8 +51,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
   lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
 
-  def show(): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -64,18 +61,15 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
       )
   }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              isAgent = true,
-              homePageCall = homePageCallAgent,
-              sources = mtdItUser.incomeSources,
-              backUrl = controllers.routes.HomeController.showAgent.url
-            )
-        }
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        isAgent = true,
+        homePageCall = homePageCallAgent,
+        sources = mtdItUser.incomeSources,
+        backUrl = controllers.routes.HomeController.showAgent.url
+      )
+
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel,

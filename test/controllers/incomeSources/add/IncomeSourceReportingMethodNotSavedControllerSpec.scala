@@ -74,13 +74,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
 
   object TestIncomeSourceReportingMethodNotSavedController
     extends IncomeSourceReportingMethodNotSavedController(
-      authenticate = MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
       view = view,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService
+      testAuthenticator
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       appConfig = app.injector.instanceOf[FrontendAppConfig],

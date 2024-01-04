@@ -49,7 +49,8 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     propertyIncomeType,
     propertyTradingStartDate,
-    None
+    None,
+    cashOrAccruals = false
   )
 
   val oldProperty: PropertyDetailsModel = PropertyDetailsModel(
@@ -61,7 +62,8 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     propertyIncomeType,
     propertyTradingStartDate,
-    None
+    None,
+    cashOrAccruals = false
   )
 
   def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
@@ -73,7 +75,8 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear)),
     propertyIncomeType,
     propertyTradingStartDate,
-    None
+    None,
+    cashOrAccruals = false
   )
 
   val ukProperty: PropertyDetailsModel = PropertyDetailsModel(
@@ -86,7 +89,7 @@ object PropertyDetailsIntegrationTestConstants {
     ukPropertyIncomeType,
     propertyTradingStartDate,
     None,
-    cashOrAccruals = Some(false)
+    cashOrAccruals = false
   )
 
   val ukPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
@@ -98,7 +101,8 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     ukPropertyIncomeType,
     None,
-    None
+    None,
+    cashOrAccruals = false
   )
 
   val foreignProperty: PropertyDetailsModel = PropertyDetailsModel(
@@ -111,7 +115,7 @@ object PropertyDetailsIntegrationTestConstants {
     foreignPropertyIncomeType,
     propertyTradingStartDate,
     None,
-    cashOrAccruals = Some(false)
+    cashOrAccruals = false
   )
 
   val foreignPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
@@ -123,7 +127,8 @@ object PropertyDetailsIntegrationTestConstants {
     firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
     foreignPropertyIncomeType,
     None,
-    None
+    None,
+    cashOrAccruals = false
   )
 
   val propertySuccessResponse: JsValue = Json.obj(
@@ -144,7 +149,7 @@ object PropertyDetailsIntegrationTestConstants {
     incomeSourceType = ukPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
     cessation = None,
-    cashOrAccruals = Some(false),
+    cashOrAccruals = false,
     latencyDetails = Some(testLatencyDetails3)
   )
 
@@ -158,7 +163,7 @@ object PropertyDetailsIntegrationTestConstants {
     incomeSourceType = foreignPropertyIncomeType,
     tradingStartDate = propertyTradingStartDate,
     cessation = None,
-    cashOrAccruals = Some(false),
+    cashOrAccruals = false,
     latencyDetails = Some(testLatencyDetails3)
   )
 

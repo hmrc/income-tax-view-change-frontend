@@ -125,15 +125,11 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
 
   object TestIncomeSourcesAccountingMethodController extends IncomeSourcesAccountingMethodController(
-    MockAuthenticationPredicate,
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
-    MockIncomeSourceDetailsPredicate,
     app.injector.instanceOf[IncomeSourcesAccountingMethod],
     app.injector.instanceOf[CustomNotFoundError],
-    sessionService = mockSessionService)(appConfig,
+    sessionService = mockSessionService,
+    testAuthenticator)(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler])
@@ -202,20 +198,6 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
         status(result) shouldBe Status.SEE_OTHER
         redirectLocation(result) shouldBe Some(getRedirectUrl(isAgent))
         verifySetMongoKey(AddIncomeSourceData.incomeSourcesAccountingMethodField, accountingMethod, JourneyType(Add, incomeSourceType))
-      }
-    }
-    "return 500 INTERNAL_SERVER_ERROR" when {
-      "navigating to the page with FS Enabled and a user with a " + incomeSourceType + " business missing its cashOrAccruals field" in {
-        setupMockAuth(isAgent)
-        enable(IncomeSources)
-        mockBusinessIncomeSourceMissingCashOrAccrualsField()
-        val journeyType = JourneyType(Add, incomeSourceType)
-        setupMockGetMongo(Right(Some(sessionData(journeyType))))
-
-        val result: Future[Result] = showResult(incomeSourceType, isAgent)
-
-        status(result) shouldBe Status.OK
-        contentType(result) shouldBe Some("text/html")
       }
     }
     "return 303 SEE_OTHER and redirect to custom not found error page for " + incomeSourceType when {

@@ -35,7 +35,7 @@ import play.mvc.Http
 import services.{IncomeSourceDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.FallBackBackLinks
+import utils.{AuthenticatorPredicate, FallBackBackLinks}
 import views.html.PaymentAllocation
 
 import java.time.LocalDate
@@ -44,16 +44,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentAllocation,
-                                             val checkSessionTimeout: SessionTimeoutPredicate,
-                                             val authenticate: AuthenticationPredicate,
                                              val authorisedFunctions: AuthorisedFunctions,
-                                             val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                              val incomeSourceDetailsService: IncomeSourceDetailsService,
                                              itvcErrorHandler: ItvcErrorHandler,
                                              implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              paymentAllocations: PaymentAllocationsService,
-                                             val retrieveBtaNavBar: NavBarPredicate,
-                                             auditingService: AuditingService)
+                                             auditingService: AuditingService,
+                                             val auth: AuthenticatorPredicate)
                                             (implicit override val mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext,
                                              val implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -63,8 +60,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show.url
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show.url
 
-  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
       implicit user =>
         if (isEnabled(PaymentAllocation)) {
           handleRequest(
@@ -90,7 +86,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.flatMap(_.getTaxYearOpt))
         val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
         if (!isEnabled(CutOverCredits) && paymentAllocations.paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)) {
-          Logger("application").warn(s"[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
+          Logger("application").warn("[PaymentAllocationsController][handleRequest] CutOverCredits is disabled and redirected to not found page")
           Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show.url)
         } else {
           auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
