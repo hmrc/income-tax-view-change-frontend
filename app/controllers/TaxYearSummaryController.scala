@@ -147,7 +147,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments
             .filter(_.isNotCodingOutDocumentDetail)
-            .filter(_.originalAmountIsNotZeroOrNegative)
+            .filter(_.originalAmountIsNotNegative)
             .map(
               documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
                 dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
@@ -168,14 +168,15 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
+
         f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
-        Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
-        Future.successful(agentItvcErrorHandler.showInternalServerError())
-      case _ =>
         Logger("application").error(s"[Agent][TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
+      case _ =>
+        Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
+        Future.successful(agentItvcErrorHandler.showInternalServerError())
     }
   }
 
