@@ -27,19 +27,20 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, incomeSourceAddedField, journeyIsCompleteField}
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, incomeSourceAddedField, incomeSourceIdField, journeyIsCompleteField}
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, isA}
 import org.mockito.Mockito.{mock, verify}
 import org.scalatest.matchers.must.Matchers._
 import play.api.http.Status
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.BearerTokenExpired
 import utils.AuthenticatorPredicate
 import views.html.incomeSources.add.AddBusinessName
 
@@ -81,536 +82,367 @@ class AddBusinessNameControllerSpec extends TestSupport
   val sessionDataCompletedJourney: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
   val sessionDataNameTrade: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(businessName = Some("testBusinessName"), businessTrade = Some("testBusinessTrade"))))
 
-  "Individual - ADD - AddBusinessNameController.show" should {
-    "return 200 OK" when {
-      "the individual is authenticated" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockCreateSession(true)
-        setupMockGetMongo(Right(None))
-
-        val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
-
-        status(result) mustBe OK
-      }
-    }
-
-    "return 303 and redirect to the sign in" when {
-      "the user is not authenticated" in {
-        setupMockAuthorisationException()
-        val result = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
-      }
-    }
-    "redirect to the session timeout page" when {
-      "the user has timed out" in {
-        setupMockAuthorisationException()
-
-        val result = TestAddBusinessNameController.show()(fakeRequestWithTimeoutSession)
-
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-      }
-    }
-
-    "return 303 and show home page" when {
-      "when feature switch is disabled" in {
-        disableAllSwitches()
-
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockCreateSession(true)
-
-        val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HomeController.show().url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
-      "user has already completed the journey" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
-
-        val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-      "user has already added their income source" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionDataISAdded)))
-
-        val result: Future[Result] = TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-    }
+  def authenticate(isAgent: Boolean): Unit = {
+    if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+    else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
   }
 
-  "Individual - ADD - AddBusinessNameController.submit" should {
-    "return 303 and redirect to add business start date" when {
-      "the individual is authenticated and the business name entered is valid" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+  for (isAgent <- Seq(true, false)) yield {
+    for (isChange <- Seq(true, false)) yield {
+      s"ADD - AddBusinessNameController.show (${if (isAgent) "Agent" else "Individual"}, isChange = $isChange)" should {
+        "return 200 OK" when {
+          "the user is authenticated" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+            authenticate(isAgent)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            if (isChange) {
+              setupMockGetMongo(Right(Some(sessionDataNameTrade)))
+              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
+              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+            }
+            else {
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(None))
+            }
 
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockCreateSession(true)
-        setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
-        setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+            val result: Future[Result] = (isChange, isAgent) match {
+              case (false, false) => TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+              case (false, true) => TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+              case (true, false) => TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
+              case (true, true) => TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+            }
 
-        val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-          BusinessNameForm.businessName -> validBusinessName
-        ))
-
-        status(result) mustBe SEE_OTHER
-        verify(mockSessionService)
-          .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
-        redirectLocation(result) mustBe Some(controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, isChange = false).url)
-      }
-
-      "show AddBusinessName with error" when {
-        "Business name is empty" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          val invalidBusinessNameEmpty: String = ""
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
-          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
-
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            BusinessNameForm.businessName -> invalidBusinessNameEmpty
-          ))
-
-          status(result) mustBe BAD_REQUEST
-          contentAsString(result) must include("Enter your name or the name of your business")
+            status(result) mustBe OK
+          }
         }
 
-        "Business name is too long" in {
-          disableAllSwitches()
-          enable(IncomeSources)
+        "return 303 and redirect to the sign in" when {
+          "the user is not authenticated" in {
+            if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+            val result = (isChange, isAgent) match {
+              case (false, false) => TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+              case (false, true) => TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+              case (true, false) => TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
+              case (true, true) => TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+            }
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+          }
+        }
+        "redirect to the session timeout page" when {
+          "the user has timed out" in {
+            if (isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired()) else setupMockAuthorisationException()
 
-          val invalidBusinessNameLength: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+            val result = (isChange, isAgent) match {
+              case (false, false) => TestAddBusinessNameController.show()(fakeRequestWithTimeoutSession)
+              case (false, true) => TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+              case (true, false) => TestAddBusinessNameController.changeBusinessName()(fakeRequestWithTimeoutSession)
+              case (true, true) => TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+            }
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            BusinessNameForm.businessName -> invalidBusinessNameLength
-          ))
-
-          status(result) mustBe BAD_REQUEST
-          contentAsString(result) must include("Business name must be 105 characters or fewer")
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
+          }
         }
 
-        "Business name has invalid characters" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-          val invalidBusinessNameEmpty: String = "££"
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
-          setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+        "return 303 and show home page" when {
+          "when feature switch is disabled" in {
+            disableAllSwitches()
 
-          val result: Future[Result] = TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-            BusinessNameForm.businessName -> invalidBusinessNameEmpty
-          ))
+            authenticate(isAgent)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockCreateSession(true)
 
-          status(result) mustBe BAD_REQUEST
-          contentAsString(result) must include("Business name cannot include !, &quot;&quot;, * or ?")
+            val result: Future[Result] = (isChange, isAgent) match {
+              case (false, false) => TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+              case (false, true) => TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+              case (true, false) => TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
+              case (true, true) => TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+            }
+            status(result) shouldBe SEE_OTHER
+            val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+            redirectLocation(result) shouldBe Some(homeUrl)
+          }
+        }
+        s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
+          "user has already completed the journey" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+
+            mockNoIncomeSources()
+            authenticate(isAgent)
+            setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
+
+            val result: Future[Result] = (isChange, isAgent) match {
+              case (false, false) => TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+              case (false, true) => TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+              case (true, false) => TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
+              case (true, true) => TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+            }
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
+            else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+          "user has already added their income source" in {
+            disableAllSwitches()
+            enable(IncomeSources)
+
+            mockNoIncomeSources()
+            authenticate(isAgent)
+            setupMockGetMongo(Right(Some(sessionDataISAdded)))
+
+            val result: Future[Result] = (isChange, isAgent) match {
+              case (false, false) => TestAddBusinessNameController.show()(fakeRequestWithActiveSession)
+              case (false, true) => TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
+              case (true, false) => TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
+              case (true, true) => TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
+            }
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
         }
       }
-    }
-  }
 
-  "Agent - Add - AddBusinessNameController.show" should {
-    "return 200 OK" when {
-      "the agent is authenticated" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockCreateSession(true)
-        setupMockGetMongo(Right(None))
+      s"ADD - AddBusinessNameController.submit (${if (isAgent) "Agent" else "Individual"}, isChange = $isChange)" should {
+        "return 303 and redirect to add business start date" when {
+          "the individual is authenticated and the business name entered is valid" in {
+            disableAllSwitches()
+            enable(IncomeSources)
 
-        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
-        status(result) mustBe OK
-      }
-    }
-    "return 303 and redirect to the sign in" when {
-      "the user is not authenticated" in {
-        setupMockAgentAuthorisationException()
-        val result = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-      }
-    }
-    "return 303 and show home page" when {
-      "when feature switch is disabled" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            authenticate(isAgent)
+            setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+            setupMockCreateSession(true)
+            setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
+            setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
+            setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
 
-        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
-      "user has already completed the journey" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+            val (result, redirectUrl) = (isChange, isAgent) match {
+              case (false, false) => (TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = isChange).url)
+              case (false, true) => (TestAddBusinessNameController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = isChange).url)
+              case (true, false) => (TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url)
+              case (true, true) => (TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url)
+            }
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
+            status(result) mustBe SEE_OTHER
+            verify(mockSessionService)
+              .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
+            redirectLocation(result) mustBe Some(redirectUrl)
+          }
 
-        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-      "user has already added their income source" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+          "show AddBusinessName with error" when {
+            "Business name is empty" in {
+              disableAllSwitches()
+              enable(IncomeSources)
 
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionDataISAdded)))
+              val invalidBusinessNameEmpty: String = ""
+              authenticate(isAgent)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
+              setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+              setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-        val result: Future[Result] = TestAddBusinessNameController.showAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-    }
-  }
+              val result: Future[Result] = (isChange, isAgent) match {
+                case (false, false) => TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+                case (false, true) => TestAddBusinessNameController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+                case (true, false) => TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+                case (true, true) => TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+              }
 
-  "Agent - Add - AddBusinessNameController.submit" should {
-    "return 303 and redirect to add business start date" when {
-      "the agent is authenticated and the business name entered is valid" in {
-        disableAllSwitches()
-        enable(IncomeSources)
+              status(result) mustBe BAD_REQUEST
+              contentAsString(result) must include("Enter your name or the name of your business")
+            }
 
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockCreateSession(true)
-        setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
-        setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+            "Business name is too long" in {
+              disableAllSwitches()
+              enable(IncomeSources)
 
-        val redirectUrl = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(
-          incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+              val invalidBusinessNameLength: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+              authenticate(isAgent)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockCreateSession(true)
+              setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+              setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-        val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
-          BusinessNameForm.businessName -> validBusinessName
-        ))
+              val result: Future[Result] = (isChange, isAgent) match {
+                case (false, false) => TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameLength))
+                case (false, true) => TestAddBusinessNameController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameLength))
+                case (true, false) => TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameLength))
+                case (true, true) => TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameLength))
+              }
 
-        status(result) mustBe SEE_OTHER
-        verify(mockSessionService)
-          .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
-        redirectLocation(result) mustBe Some(redirectUrl)
-      }
-    }
-    "return to AddBusinessName when business name is empty as an Agent" in {
-      disableAllSwitches()
-      enable(IncomeSources)
+              status(result) mustBe BAD_REQUEST
+              contentAsString(result) must include("Business name must be 105 characters or fewer")
+            }
 
-      val invalidBusinessNameEmpty: String = ""
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-      setupMockCreateSession(true)
-      setupMockGetSessionKeyMongoTyped[String](Right(None))
-      setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
+            "Business name has invalid characters" in {
+              disableAllSwitches()
+              enable(IncomeSources)
+              val invalidBusinessNameEmpty: String = "££"
+              authenticate(isAgent)
+              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+              setupMockCreateSession(true)
+              setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+              setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessTrade")))
+              setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
 
-      val result: Future[Result] = TestAddBusinessNameController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
-        BusinessNameForm.businessName -> invalidBusinessNameEmpty
-      ))
+              val result: Future[Result] = (isChange, isAgent) match {
+                case (false, false) => TestAddBusinessNameController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+                case (false, true) => TestAddBusinessNameController.submitAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+                case (true, false) => TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+                case (true, true) => TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+              }
 
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Enter your name or the name of your business")
-    }
-  }
+              status(result) mustBe BAD_REQUEST
+              contentAsString(result) must include("Business name cannot include !, &quot;&quot;, * or ?")
+            }
+            if (isChange) {
+              "show invalid error when business name is same as business trade name" in {
+                disableAllSwitches()
+                enable(IncomeSources)
+                authenticate(isAgent)
+                setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                val businessName: String = "Plumbing"
+                setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
+                setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
 
-  "Individual - Change - AddBusinessNameController.changeBusinessName" should {
-    "redirect a user back to the custom error page" when {
-      "the user is not authenticated" should {
-        "redirect them to sign in" in {
-          setupMockAuthorisationException()
-          val result = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
+                val result: Future[Result] = if (isAgent) TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> businessName))
+                else TestAddBusinessNameController.submitChange()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                  BusinessNameForm.businessName -> businessName))
+
+                status(result) mustBe BAD_REQUEST
+                contentAsString(result) must include("Trade and business name cannot be the same")
+              }
+            }
+          }
         }
       }
-    }
-    "the user has timed out" should {
-      "redirect to the session timeout page" in {
-        setupMockAuthorisationException()
 
-        val result = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithTimeoutSession)
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
-      }
-    }
-    "when feature switch is disabled" in {
-      disableAllSwitches()
-
-      setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-      val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.HomeController.show().url)
-    }
-    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
-      "user has already completed the journey" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
-
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-      "user has already added their income source" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-        setupMockGetMongo(Right(Some(sessionDataISAdded)))
-
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessName()(fakeRequestWithActiveSession)
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-    }
-  }
-
-  "Individual - Change - AddBusinessNameController.submitChange" should {
-    "change business name" when {
-      "redirect to the check business details" when {
-        "the individual is authenticated" in {
-          disableAllSwitches()
-          enable(IncomeSources)
-
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-          setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
-
-          val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-
-          val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
-            BusinessNameForm.businessName -> validBusinessName))
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) mustBe Some(redirectUrl)
-          verify(mockSessionService)
-            .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
-        }
-      }
-    }
-
-    "show empty error when business name is empty" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-
-      val invalidBusinessNameEmpty: String = ""
-      setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-      setupMockCreateSession(true)
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-        BusinessNameForm.businessName -> invalidBusinessNameEmpty
-      ))
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Enter your name or the name of your business")
-    }
-
-    "show length error when business name is too long" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-      setupMockCreateSession(true)
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-      val invalidBusinessNameLength: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
-      setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-        BusinessNameForm.businessName -> invalidBusinessNameLength
-      ))
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Business name must be 105 characters or fewer")
-    }
-
-    "show invalid error when business name has invalid characters" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-      setupMockCreateSession(true)
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-      val invalidBusinessNameEmpty: String = "££"
-      setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-        BusinessNameForm.businessName -> invalidBusinessNameEmpty
-      ))
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Business name cannot include !, &quot;&quot;, * or ?")
-    }
-
-    "show invalid error when business name is same as business trade name" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-      setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-      setupMockCreateSession(true)
-      val businessName: String = "Plumbing"
-      setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
-      setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
-
-      val result: Future[Result] = TestAddBusinessNameController.submitChange()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-        BusinessNameForm.businessName -> businessName
-      ))
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Trade and business name cannot be the same")
-    }
-  }
-
-  "Agent - Change - AddBusinessNameController.changeBusinessNameAgent" should {
-    "return 200 OK" when {
-      "the agent is authenticated" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(sessionDataNameTrade)))
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakePostRequestConfirmedClient())
-        status(result) mustBe OK
-      }
-    }
-    "return 303 and redirect to the sign in" when {
-      "the user is not authenticated" in {
-        setupMockAgentAuthorisationException()
-        val result = TestAddBusinessNameController.showAgent()(fakePostRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-      }
-    }
-    "return 303 and show home page" when {
-      "when feature switch is disabled" in {
-        disableAllSwitches()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakePostRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) mustBe Some(routes.HomeController.showAgent.url)
-      }
-    }
-    s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
-      "user has already completed the journey" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
-
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakePostRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-      "user has already added their income source" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-
-        mockNoIncomeSources()
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        setupMockGetMongo(Right(Some(sessionDataISAdded)))
-
-        val result: Future[Result] = TestAddBusinessNameController.changeBusinessNameAgent()(fakeRequestConfirmedClient())
-        status(result) shouldBe SEE_OTHER
-        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
-        redirectLocation(result) shouldBe Some(redirectUrl)
-      }
-    }
-  }
-
-  "Agent - Change - AddBusinessNameController.submitChangeAgent" should {
-    "return 303 and redirect to add business check details" when {
-      "the agent is authenticated and the business name entered is valid" in {
-        disableAllSwitches()
-        enable(IncomeSources)
-        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-        setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
-        setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-        setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
-        setupMockGetSessionKeyMongoTyped[Boolean](Right(None))
-
-        val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-
-        val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
-          BusinessNameForm.businessName -> validBusinessName
-        ))
-
-        status(result) mustBe SEE_OTHER
-        verify(mockSessionService)
-          .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
-        redirectLocation(result) mustBe Some(redirectUrl)
-      }
-    }
-    "return to AddBusinessName when business name is empty as an Agent" in {
-      disableAllSwitches()
-      enable(IncomeSources)
-      setupMockCreateSession(true)
-      setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
-      val invalidBusinessNameEmpty: String = ""
-      setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-
-      val result: Future[Result] = TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
-        BusinessNameForm.businessName -> invalidBusinessNameEmpty
-      ))
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Enter your name or the name of your business")
+      //
+      //      s"Change - AddBusinessNameController.submitChange ${if (isAgent) "Agent" else "Individual"}" should {
+      //        "change business name" when {
+      //          "redirect to the check business details" when {
+      //            "the individual is authenticated" in {
+      //              disableAllSwitches()
+      //              enable(IncomeSources)
+      //
+      //              authenticate(isAgent)
+      //              setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+      //              setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
+      //              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
+      //              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
+      //
+      //              val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+      //              else controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+      //
+      //              val result: Future[Result] = if (isAgent) TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //                BusinessNameForm.businessName -> validBusinessName))
+      //              else TestAddBusinessNameController.submitChange()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //                BusinessNameForm.businessName -> validBusinessName))
+      //              status(result) shouldBe SEE_OTHER
+      //              redirectLocation(result) mustBe Some(redirectUrl)
+      //              verify(mockSessionService)
+      //                .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
+      //            }
+      //          }
+      //        }
+      //
+      //        "show empty error when business name is empty" in {
+      //          disableAllSwitches()
+      //          enable(IncomeSources)
+      //
+      //          val invalidBusinessNameEmpty: String = ""
+      //          authenticate(isAgent)
+      //          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+      //          setupMockCreateSession(true)
+      //          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+      //
+      //          val result: Future[Result] = if (isAgent) TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //            BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+      //          else TestAddBusinessNameController.submitChange()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //            BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+      //
+      //          status(result) mustBe BAD_REQUEST
+      //          contentAsString(result) must include("Enter your name or the name of your business")
+      //        }
+      //
+      //        "show length error when business name is too long" in {
+      //          disableAllSwitches()
+      //          enable(IncomeSources)
+      //          setupMockCreateSession(true)
+      //          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+      //          val invalidBusinessNameLength: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      //          authenticate(isAgent)
+      //          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+      //
+      //          val result: Future[Result] = if (isAgent) TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //            BusinessNameForm.businessName -> invalidBusinessNameLength))
+      //          else TestAddBusinessNameController.submitChange()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //            BusinessNameForm.businessName -> invalidBusinessNameLength))
+      //
+      //          status(result) mustBe BAD_REQUEST
+      //          contentAsString(result) must include("Business name must be 105 characters or fewer")
+      //        }
+      //
+      //        "show invalid error when business name has invalid characters" in {
+      //          disableAllSwitches()
+      //          enable(IncomeSources)
+      //          setupMockCreateSession(true)
+      //          setupMockGetSessionKeyMongoTyped[String](Right(Some("testBusinessName")))
+      //          val invalidBusinessNameEmpty: String = "££"
+      //          authenticate(isAgent)
+      //          setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+      //
+      //          val result: Future[Result] = if (isAgent) TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //            BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+      //          else TestAddBusinessNameController.submitChange()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //            BusinessNameForm.businessName -> invalidBusinessNameEmpty))
+      //
+      //          status(result) mustBe BAD_REQUEST
+      //          contentAsString(result) must include("Business name cannot include !, &quot;&quot;, * or ?")
+      //        }
+      //
+      //                "show invalid error when business name is same as business trade name" in {
+      //                  disableAllSwitches()
+      //                  enable(IncomeSources)
+      //                  authenticate(isAgent)
+      //                  setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+      //                  setupMockCreateSession(true)
+      //                  val businessName: String = "Plumbing"
+      //                  setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
+      //                  setupMockGetSessionKeyMongoTyped[String](Right(Some(businessName)))
+      //
+      //                  val result: Future[Result] = if (isAgent) TestAddBusinessNameController.submitChangeAgent()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //                    BusinessNameForm.businessName -> businessName))
+      //                  else TestAddBusinessNameController.submitChange()(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+      //                    BusinessNameForm.businessName -> businessName))
+      //
+      //                  status(result) mustBe BAD_REQUEST
+      //                  contentAsString(result) must include("Trade and business name cannot be the same")
+      //                }
+      //      }
     }
   }
 }
