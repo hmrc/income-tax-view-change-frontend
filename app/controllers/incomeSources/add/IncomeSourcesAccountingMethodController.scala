@@ -60,7 +60,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
     if (cashOrAccrualsRecords.distinct.size > 1) {
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error multiple values for business cashOrAccruals Field found")
+        "Error multiple values for business cashOrAccruals Field found")
     }
     cashOrAccrualsRecords.headOption match {
       case Some(cashOrAccrualsField) =>

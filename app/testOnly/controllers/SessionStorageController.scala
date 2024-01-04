@@ -54,7 +54,7 @@ class SessionStorageController @Inject()
               .withSession(request.session + (k -> v))
           )
         case None =>
-          Future.successful(Ok(s"Unable to add data to session storage"))
+          Future.successful(Ok("Unable to add data to session storage"))
     }
 
   }

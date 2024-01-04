@@ -75,12 +75,12 @@ class ForecastTaxCalcSummaryController @Inject()(val forecastTaxCalcSummaryView:
             case Some(model) =>
               auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, model))
               Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial))
-            case _ => onError(s"No tax calculation data could be retrieved. Not found", isAgent, taxYear)
+            case _ => onError("No tax calculation data could be retrieved. Not found", isAgent, taxYear)
           }
         case error: LiabilityCalculationError if error.status == NO_CONTENT =>
-          onError(s"No tax calculation data found.", isAgent, taxYear)
+          onError("No tax calculation data found.", isAgent, taxYear)
         case _: LiabilityCalculationError =>
-          onError(s"No new tax calculation data found. Downstream error", isAgent, taxYear)
+          onError("No new tax calculation data found. Downstream error", isAgent, taxYear)
       }
     }
   }

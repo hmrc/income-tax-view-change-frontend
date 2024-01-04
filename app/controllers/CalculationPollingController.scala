@@ -69,7 +69,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
         }
 
       case _ =>
-        Logger("application").error(s"[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
+        Logger("application").error("[CalculationPollingController][calculationPoller] calculationId and nino not found in session")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
   }
