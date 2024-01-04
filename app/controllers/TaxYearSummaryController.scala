@@ -27,7 +27,7 @@ import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
 import models.financialDetails.MfaDebitUtils.filterMFADebits
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.nextUpdates.ObligationsModel
@@ -147,7 +147,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments
             .filter(_.isNotCodingOutDocumentDetail)
-            .filter(_.originalAmountIsNotZeroOrNegative)
+            .filter(_.originalAmountIsNotNegative)
             .map(
               documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
                 dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
@@ -168,27 +168,15 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
               dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId)))
         }
-        val documentDetailZeroBalancingCharge: List[DocumentDetailWithDueDate] = {
-          documentDetails.filter(_.isBalancingCharge(isEnabled(CodingOut))).filter(_.originalAmount == Some(BigDecimal(0))).map {
-            documentDetail =>
-              DocumentDetailWithDueDate(
-                DocumentDetail(taxYear = documentDetail.taxYear,
-                  documentDescription = documentDetail.documentDescription,
-                  documentText = documentDetail.documentText,
-                  originalAmount = documentDetail.originalAmount,
-                  transactionId = documentDetail.transactionId,
-                  outstandingAmount = None,
-                  documentDate = documentDetail.documentDate), None)
-          }
-        }
-        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut ++ documentDetailZeroBalancingCharge)
+
+        f(documentDetailsWithDueDates ++ documentDetailsWithDueDatesForLpi ++ documentDetailsWithDueDatesCodingOutPaye ++ documentDetailsWithDueDatesCodingOut)
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
-        Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
-        Future.successful(agentItvcErrorHandler.showInternalServerError())
-      case _ =>
         Logger("application").error(s"[Agent][TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
         Future.successful(itvcErrorHandler.showInternalServerError())
+      case _ =>
+        Logger("application").error(s"[TaxYearSummaryController][withTaxYearFinancials] - Could not retrieve financial details for year: $taxYear")
+        Future.successful(agentItvcErrorHandler.showInternalServerError())
     }
   }
 

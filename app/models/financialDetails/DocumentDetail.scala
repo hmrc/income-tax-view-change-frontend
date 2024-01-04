@@ -70,6 +70,11 @@ case class DocumentDetail(taxYear: Int,
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
+  def originalAmountIsNotNegative: Boolean = originalAmount match {
+    case Some(amount) if amount < 0 => false
+    case _ => true
+  }
+
   def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
     case Some(amount) if amount <= 0 => false
     case _ => true
@@ -159,6 +164,20 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def isBalancingCharge(codedOutEnabled: Boolean = false): Boolean = getChargeTypeKey(codedOutEnabled) == "balancingCharge.text"
+
+  def isBalancingChargeZero(codedOutEnabled: Boolean = false): Boolean = {
+    (isBalancingCharge(codedOutEnabled), this.originalAmount) match {
+      case (true, Some(value)) => if (value == BigDecimal(0.0)) true else false
+      case _ => false
+    }
+  }
+
+  def getBalancingChargeDueDate(codedOutEnabled: Boolean = false): Option[LocalDate] = {
+    isBalancingChargeZero(codedOutEnabled) match {
+      case true => None
+      case _ => documentDueDate
+    }
+  }
 
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"

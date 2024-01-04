@@ -158,10 +158,7 @@
     }
 }
 
-@isBalancingChargeZero = @{
-    val isBalancingCharge = documentDetail.isBalancingCharge(codingOutEnabled)
-    documentDetail.originalAmount.map( _ == BigDecimal(0) && isBalancingCharge ).getOrElse(false)
-}
+@isBalancingChargeZero = @{documentDetail.isBalancingChargeZero(codingOutEnabled)}
 
 
 @mainTemplate(pageTitle = pageTitle, backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial,
@@ -272,7 +269,7 @@
         }
     }
 
-    @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment) && !isBalancingChargeZero){
+    @if(!isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
         <div id="payment-link-@{taxYearTo}">
             <a class="govuk-button" role="button" data-module="govuk-button" href="@controllers.routes.PaymentController.paymentHandoff(documentDetail.remainingToPay.toPence, origin)">
                 @messages("paymentDue.payNow")
@@ -282,7 +279,7 @@
         @paymentProcessingInfo
     }
 
-    @if(isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment) && !isBalancingChargeZero){
+    @if(isAgent && documentDetail.remainingToPay > 0 && !(codingOutEnabled && documentDetail.isPayeSelfAssessment)){
         @paymentProcessingInfo
     }
 
