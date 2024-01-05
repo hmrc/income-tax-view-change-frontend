@@ -646,6 +646,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         }
 
       }
+
       "hide payment allocations in history table" when {
         "allocations enabled but list is empty" when {
           "chargeHistory enabled, having Payment created in the first row" in new TestSetup(documentDetailModel(),
@@ -756,6 +757,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
           document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
         }
       }
+
+      "display balancing charge due date as N/A and hide sections - Payment Breakdown ,Make a payment button ,Any payments you make, Payment History" when {
+        val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = None, originalAmount = Some(BigDecimal(0)), documentDate = LocalDate.of(2018, 3, 29))
+        "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
+          document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
+          document.select("p").get(2).text shouldBe "View what you owe to check if you have any other payments due."
+          document.select("#payment-history-table").isEmpty shouldBe true
+          document.select("#heading-payment-breakdown").isEmpty shouldBe true
+          document.select(s"#payment-link-${documentDetailModel().taxYear}").isEmpty shouldBe true
+          document.select("#payment-days-note").isEmpty shouldBe true
+        }
+      }
     }
   }
 
@@ -809,12 +822,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
       "not have a payment link when there is an outstanding amount of 0" in new TestSetup(documentDetailModel(outstandingAmount = Some(0)), isAgent = true) {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
+
       "list payment allocations with right number of rows and agent payment allocations link" in new TestSetup(documentDetailModel(),
         chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = List(
           paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0)), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
         document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
       }
+
+
     }
     "MFA Credits" when {
       val paymentAllocations = List(

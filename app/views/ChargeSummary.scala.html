@@ -158,6 +158,7 @@
     }
 }
 
+@isBalancingChargeZero = @{documentDetail.isBalancingChargeZero(codingOutEnabled)}
 
 
 @mainTemplate(pageTitle = pageTitle, backUrl = Some(backUrl), isAgent = isAgent, btaNavPartial = btaNavPartial,
@@ -228,7 +229,7 @@
         )
     }
 
-    @if(hasPaymentBreakdown) {
+    @if(hasPaymentBreakdown && !isBalancingChargeZero) {
         @chargeSummaryHasPaymentBreakdown(
             paymentAllocations,
             payments,
@@ -282,7 +283,7 @@
         @paymentProcessingInfo
     }
 
-    @if(chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)){
+    @if((chargeHistoryEnabled || (paymentAllocationEnabled && paymentAllocations.nonEmpty)) && !isBalancingChargeZero ){
         @if(hasPaymentBreakdown && documentDetail.isNotCodingOutDocumentDetail) {
             <h3 class="govuk-heading-l">@messages("chargeSummary.chargeHistory.heading")</h3>
         } else {

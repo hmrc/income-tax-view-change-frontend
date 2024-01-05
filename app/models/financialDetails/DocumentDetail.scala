@@ -70,6 +70,11 @@ case class DocumentDetail(taxYear: Int,
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
 
+  def originalAmountIsNotNegative: Boolean = originalAmount match {
+    case Some(amount) if amount < 0 => false
+    case _ => true
+  }
+
   def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
     case Some(amount) if amount <= 0 => false
     case _ => true
@@ -156,6 +161,22 @@ case class DocumentDetail(taxYear: Int,
   def isCancelledPayeSelfAssessment: Boolean = (documentDescription, documentText) match {
     case ((Some("TRM New Charge") | Some("TRM Amend Charge")), Some(CODING_OUT_CANCELLED.name)) => true
     case _ => false
+  }
+
+  def isBalancingCharge(codedOutEnabled: Boolean = false): Boolean = getChargeTypeKey(codedOutEnabled) == "balancingCharge.text"
+
+  def isBalancingChargeZero(codedOutEnabled: Boolean = false): Boolean = {
+    (isBalancingCharge(codedOutEnabled), this.originalAmount) match {
+      case (true, Some(value)) => value == BigDecimal(0.0)
+      case _ => false
+    }
+  }
+
+  def getBalancingChargeDueDate(codedOutEnabled: Boolean = false): Option[LocalDate] = {
+    isBalancingChargeZero(codedOutEnabled) match {
+      case true => None
+      case _ => documentDueDate
+    }
   }
 
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
