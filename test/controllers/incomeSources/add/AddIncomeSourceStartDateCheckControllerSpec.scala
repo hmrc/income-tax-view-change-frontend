@@ -434,9 +434,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       redirectLocation(result) shouldBe Some({
         (isAgent, incomeSourceType) match {
           case (false, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
-          case (false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType)
           case (true, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
-          case (true, _) => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType)
+          case _ => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
         }
       }.url)
     }
