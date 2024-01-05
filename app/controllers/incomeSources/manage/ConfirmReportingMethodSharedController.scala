@@ -114,23 +114,27 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
       Future.successful(
         (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
           case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
-            if (TaxYear.isValidTaxYear(getTaxYearModel(taxYear), latencyDetails = user.incomeSources.getLatencyDetails(incomeSourceType, id.value))) {
-              val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
-              Ok(
-                confirmReportingMethod(
-                  isAgent = isAgent,
-                  backUrl = backCall.url,
-                  newReportingMethod = reportingMethod,
-                  form = ConfirmReportingMethodForm(changeTo),
-                  taxYearEndYear = taxYearModel.endYear.toString,
-                  taxYearStartYear = taxYearModel.startYear.toString,
-                  postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                  isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
-                )
-              )
-            }
-            else {
-              logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
+            user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
+              case Some(latencyDetails) =>
+                if (TaxYear.isValidTaxYear(taxYearModel, latencyDetails)) {
+                  val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
+                  Ok(
+                    confirmReportingMethod(
+                      isAgent = isAgent,
+                      backUrl = backCall.url,
+                      newReportingMethod = reportingMethod,
+                      form = ConfirmReportingMethodForm(changeTo),
+                      taxYearEndYear = taxYearModel.endYear.toString,
+                      taxYearStartYear = taxYearModel.startYear.toString,
+                      postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
+                      isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+                    )
+                  )
+                }
+                else {
+                  logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
+                }
+              case None => logAndShowError(isAgent, s"[handleShowRequest]: Could not retrieve latency details")
             }
           case (None, _, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse taxYear: $taxYear")
           case (_, None, _) => logAndShowError(isAgent, s"[handleShowRequest]: Could not parse reporting method: $changeTo")
