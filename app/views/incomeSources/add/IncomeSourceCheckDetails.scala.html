@@ -103,11 +103,7 @@
     }
 
     @changeAccountingMethodURL = @{
-        if(isAgent) {
-            controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(viewModel.incomeSourceType).url
-        } else {
-            controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType).url
-        }
+            controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType, isAgent).url
     }
 
     @extractName = @{

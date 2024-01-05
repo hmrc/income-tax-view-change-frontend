@@ -29,7 +29,7 @@ import models.incomeSourceDetails.AddIncomeSourceData.{incomeSourceAddedField, j
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, isA}
 import org.mockito.Mockito.{mock, reset, verify, when}
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -86,18 +86,21 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
       s"${messages("htmlTitle", getHeading(incomeSourceType))}"
   }
 
+  def getRequest(isAgent: Boolean) = {
+    if (isAgent) fakeRequestConfirmedClient()
+    else fakeRequestWithActiveSession
+  }
+  def postRequest(isAgent: Boolean) = {
+    if (isAgent) fakePostRequestConfirmedClient()
+    else fakePostRequestWithActiveSession
+  }
+
   def showResult(incomeSourceType: IncomeSourceType, isAgent: Boolean = false): Future[Result] = {
-    if (isAgent)
-      TestIncomeSourcesAccountingMethodController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-    else
-      TestIncomeSourcesAccountingMethodController.show(incomeSourceType)(fakeRequestWithActiveSession)
+      TestIncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)(getRequest(isAgent))
   }
 
   def changeResult(incomeSourceType: IncomeSourceType, isAgent: Boolean = false, cashOrAccrualsFlag: Option[String] = None): Future[Result] = {
-    if (isAgent)
-      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(incomeSourceType)(fakeRequestConfirmedClient())
-    else
-      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType)(fakeRequestWithActiveSession)
+      TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType, isAgent)(getRequest(isAgent))
   }
 
   def setupMockAuth(isAgent: Boolean = false): Unit = {
@@ -108,11 +111,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   }
 
   def submitResult(incomeSourceType: IncomeSourceType, accountingMethod: String, isAgent: Boolean = false): Future[Result] = {
-    if (isAgent)
-      TestIncomeSourcesAccountingMethodController.submitAgent(incomeSourceType)(fakePostRequestConfirmedClient()
-        .withFormUrlEncodedBody(selfEmploymentAccountingMethod -> accountingMethod))
-    else
-      TestIncomeSourcesAccountingMethodController.submit(incomeSourceType)(fakeRequestNoSession.withMethod("POST")
+      TestIncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)(postRequest(isAgent)
         .withFormUrlEncodedBody(selfEmploymentAccountingMethod -> accountingMethod))
   }
 
