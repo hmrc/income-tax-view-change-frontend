@@ -34,7 +34,7 @@ import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.UpdateIncomeSourceService
+import services.{CalculationListService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
@@ -52,7 +52,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   with TestSupport
   with MockSessionService {
 
-
   object TestConfirmReportingMethodSharedController
     extends ConfirmReportingMethodSharedController(
       manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
@@ -66,8 +65,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       confirmReportingMethod = app.injector.instanceOf[ConfirmReportingMethod],
       auditingService = mockAuditingService,
       dateService = dateService,
-      sessionService = mockSessionService
-    )(
+      sessionService = mockSessionService)(
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       mcc = app.injector.instanceOf[MessagesControllerComponents],
@@ -95,7 +93,15 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
         val result = runShowTest(isAgent = false, taxYear = invalidTaxYear)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
+      "taxYear parameter doesn't match latency details for an Individual" in {
+        val result = runShowTest(isAgent = false, taxYear = invalidTaxYearLatency)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
       "changeTo parameter has an invalid format for an Individual" in {
+        val result = runShowTest(isAgent = false, changeTo = invalidChangeTo)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "changeTo parameter is outside of Latency Years for an Individual" in {
         val result = runShowTest(isAgent = false, changeTo = invalidChangeTo)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
@@ -105,6 +111,10 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
       }
       "taxYear parameter has an invalid format for an Agent" in {
         val result = runShowTest(isAgent = true, taxYear = invalidTaxYear)
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      }
+      "taxYear parameter doesn't match latency details for an Agent" in {
+        val result = runShowTest(isAgent = true, taxYear = invalidTaxYearLatency)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
       "changeTo parameter has an invalid format for an Agent" in {
@@ -318,7 +328,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
     if (disableIncomeSources)
       disable(IncomeSources)
 
-    mockBothPropertyBothBusiness()
+    mockBothPropertyBothBusinessWithLatency()
 
     if (isAgent)
       setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
@@ -401,6 +411,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthenticationPredi
   private lazy val testIncomeSourceId = "XA00001234"
   private lazy val testTaxYear = "2022-2023"
   private lazy val invalidTaxYear = "$$$$-££££"
+  private lazy val invalidTaxYearLatency = "2055-2056"
   private lazy val invalidChangeTo = "randomText"
   private lazy val testChangeToAnnual = "annual"
   private lazy val testChangeToQuarterly = "quarterly"
