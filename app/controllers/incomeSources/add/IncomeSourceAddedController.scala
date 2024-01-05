@@ -32,21 +32,18 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicate,
-                                            val authorisedFunctions: AuthorisedFunctions,
-                                            checkSessionTimeout: SessionTimeoutPredicate,
-                                            val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                            val retrieveBtaNavBar: NavBarPredicate,
+class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: IncomeSourceAddedObligations,
-                                            nextUpdatesService: NextUpdatesService)
+                                            nextUpdatesService: NextUpdatesService,
+                                            auth: AuthenticatorPredicate)
                                            (implicit val appConfig: FrontendAppConfig,
                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             implicit override val mcc: MessagesControllerComponents,
@@ -55,19 +52,14 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
                                             dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(isAgent = false, incomeSourceType)
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(isAgent = true, incomeSourceType)
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(isAgent = true, incomeSourceType)
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -101,30 +93,28 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     }
   }
 
-  def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String], showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    updateMongoAdded(incomeSourceType).flatMap {
-      case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
-        Future.successful {
-          if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-          else itvcErrorHandler.showInternalServerError()
-        }
-      case true => incomeSourceType match {
-        case SelfEmployment =>
-          businessName match {
-            case Some(businessName) => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(businessName = Some(businessName), sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-            }
-            case None => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-              Ok(obligationsView(sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
-            }
+  def handleSuccess(incomeSourceId: IncomeSourceId,
+                    incomeSourceType: IncomeSourceType,
+                    businessName: Option[String],
+                    showPreviousTaxYears: Boolean,
+                    isAgent: Boolean
+                   )(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    updateMongoAdded(incomeSourceType).flatMap { updateIsSuccess =>
+      (updateIsSuccess, incomeSourceType) match {
+        case (false, _) =>
+          Logger("application").error(s"${if (isAgent) "[Agent]"} Error retrieving data from session, IncomeSourceType: $incomeSourceType")
+          Future.successful {
+            (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
           }
-        case UkProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-          Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = UkProperty))
-        }
-        case ForeignProperty => nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
-          Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = ForeignProperty))
-        }
+        case (true, SelfEmployment) =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            Ok(obligationsView(businessName = businessName, sources = viewModel, isAgent = isAgent, incomeSourceType = SelfEmployment))
+          }
+        case (true, property) =>
+          nextUpdatesService.getObligationsViewModel(incomeSourceId.value, showPreviousTaxYears) map { viewModel =>
+            Ok(obligationsView(viewModel, isAgent = isAgent, incomeSourceType = property))
+          }
       }
     }
   }
@@ -138,7 +128,7 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
 
         sessionService.setMongoData(uiJourneySessionData)
 
-      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
+      case _ => Future.failed(new Exception("failed to retrieve session data"))
     }
   }
 
@@ -148,19 +138,14 @@ class IncomeSourceAddedController @Inject()(authenticate: AuthenticationPredicat
     Future.successful(Redirect(redirectUrl))
   }
 
-  def submit: Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
       handleSubmitRequest(isAgent = false)
   }
 
-  def agentSubmit: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleSubmitRequest(isAgent = true)
-        }
+  def agentSubmit: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleSubmitRequest(isAgent = true)
   }
 
 }

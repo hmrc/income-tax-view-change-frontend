@@ -54,7 +54,8 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
     app.injector.instanceOf[NavBarPredicate],
     MockAuthenticationPredicate,
     app.injector.instanceOf[NinoPredicate],
-    MockIncomeSourceDetailsPredicate
+    MockIncomeSourceDetailsPredicate,
+    testAuthenticator
   )(appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     app.injector.instanceOf[MessagesApi],

@@ -200,10 +200,13 @@
             <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.payments")</caption>
             @paymentsTableHead("payments-table-head")
             <tbody>
-            @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate.getOrElse(throw MissingFieldException("Due Date"))).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
+            @for((documentDetailWithDueDate, index) <- charges.sortBy(_.dueDate).sortBy(_.documentDetail.isPayeSelfAssessment).zipWithIndex) {
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
-                        @if(documentDetailWithDueDate.isOverdue && !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment && ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) || (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
+                        @if(documentDetailWithDueDate.isOverdue &&
+                            !documentDetailWithDueDate.documentDetail.isPayeSelfAssessment &&
+                            ((!documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.isPaid) ||
+                            (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
                         <div>
@@ -214,16 +217,19 @@
                     </th>
                     @if(documentDetailWithDueDate.isLatePaymentInterest) {
                         @documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.map { latePaymentInterestAmount =>
-                        @documentDetailWithDueDate.dueDate.map { dueDate =>
-                            <td class="govuk-table__cell">@dueDate.toLongDateShort</td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric">@latePaymentInterestAmount.toCurrencyString</td>
-                            }
+                             <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
+                             <td class="govuk-table__cell govuk-table__cell--numeric">@latePaymentInterestAmount.toCurrencyString</td>
                         }
                     } else if(codingOutEnabled && documentDetailWithDueDate.documentDetail.isPayeSelfAssessment) {
                         <td class="govuk-table__cell">@messages("tax-year-summary.na")</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
+                    } else if(documentDetailWithDueDate.documentDetail.isBalancingCharge(codingOutEnabled)) {
+                         <td class="govuk-table__cell">
+                            @documentDetailWithDueDate.documentDetail.getBalancingChargeDueDate(codingOutEnabled).map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
+                         </td>
+                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                     } else {
-                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort</td>
+                        <td class="govuk-table__cell">@documentDetailWithDueDate.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")).toCurrencyString</td>
                     }
                 </tr>

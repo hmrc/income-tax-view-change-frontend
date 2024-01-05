@@ -52,13 +52,10 @@ class ManageIncomeSourceControllerSpec extends MockAuthenticationPredicate
   object TestManageIncomeSourceController
     extends ManageIncomeSourceController(
       manageIncomeSources = app.injector.instanceOf[ManageIncomeSources],
-      checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
       authorisedFunctions = mockAuthService,
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
       incomeSourceDetailsService = mockIncomeSourceDetailsService,
-      sessionService = mockSessionService
+      sessionService = mockSessionService,
+      testAuthenticator
     )(
       mcc = app.injector.instanceOf[MessagesControllerComponents],
       itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler],

@@ -31,13 +31,10 @@ import views.html.errorPages.templates.ErrorTemplateWithLink
 
 class IncomeSourceNotCeasedControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate {
 
-  object TestIncomeSourceNotCeasedController extends IncomeSourceNotCeasedController(MockAuthenticationPredicate,
+  object TestIncomeSourceNotCeasedController extends IncomeSourceNotCeasedController(
     mockAuthService,
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
-    MockIncomeSourceDetailsPredicate,
-    app.injector.instanceOf[ErrorTemplateWithLink])(appConfig, app.injector.instanceOf[ItvcErrorHandler],
+    app.injector.instanceOf[ErrorTemplateWithLink],
+    testAuthenticator)(appConfig, app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],
     app.injector.instanceOf[MessagesControllerComponents],
     ec)

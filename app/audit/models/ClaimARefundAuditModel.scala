@@ -53,10 +53,10 @@ case class ClaimARefundAuditModel(balanceDetails: Option[BalanceDetails],
       case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
       case (_, Some(date)) if isPayment => s"Payment made on ${getFullDueDate(date)}"
       case (_, None) if isPayment =>
-        Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid payment date")
+        Logger("application").error("[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid payment date")
         "unknownDate"
       case (_, _) =>
-        Logger("application").error(s"[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid credit type")
+        Logger("application").error("[ClaimARefundAuditModel][getCreditType] Missing or non-matching credit: not a valid credit type")
         "unknownCredit"
     }
   }

@@ -43,14 +43,10 @@ class IncomeSourceNotAddedControllerSpec extends TestSupport with MockAuthentica
   val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
   object TestIncomeSourceNotAddedController extends IncomeSourceNotAddedController(
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    MockIncomeSourceDetailsPredicate,
     businessDetailsService = mockBusinessDetailsService,
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
-    app.injector.instanceOf[IncomeSourceNotAddedError])(
+    app.injector.instanceOf[IncomeSourceNotAddedError],
+    testAuthenticator)(
     appConfig,
     app.injector.instanceOf[MessagesControllerComponents],
     ec,

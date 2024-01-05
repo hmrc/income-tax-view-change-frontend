@@ -17,15 +17,14 @@
 package views
 
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import exceptions.MissingFieldException
 import enums.CodingOutType._
+import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.DocumentDetailWithDueDate
-import models.liabilitycalculation.{Message, Messages}
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+import models.liabilitycalculation.{Message, Messages}
 import models.nextUpdates.{NextUpdateModelWithIncomeType, ObligationsModel}
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
@@ -43,8 +42,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
   val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
 
-  import implicitDateFormatter._
   import TaxYearSummaryMessages._
+  import implicitDateFormatter._
 
   def modelComplete(crystallised: Option[Boolean], unattendedCalc: Boolean = false): TaxYearSummaryViewModel = TaxYearSummaryViewModel(
     timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
@@ -166,6 +165,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
     documentDetail = fullDocumentDetailModel.copy(
       documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED)), codingOutEnabled = true))
 
+  val testBalancingPaymentChargeWithZeroValue: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
+    documentDetail = fullDocumentDetailModel.copy(
+      documentDescription = Some("TRM New Charge"), documentText = Some("document Text"), originalAmount = Some(BigDecimal(0))), codingOutEnabled = true))
+
 
   val immediatelyRejectedByNps: List[DocumentDetailWithDueDate] = List(fullDocumentDetailWithDueDateModel.copy(
     documentDetail = fullDocumentDetailModel.copy(
@@ -232,6 +235,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   def payeView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, Some(modelComplete(Some(false))), payeChargeList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
+
+  def testBalancingPaymentChargeWithZeroValueView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
+    testYear, Some(modelComplete(Some(false))), testBalancingPaymentChargeWithZeroValue, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
 
   def immediatelyRejectedByNpsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, Some(modelComplete(Some(false))), immediatelyRejectedByNps, testObligationsModel, "testBackURL", isAgent, codingOutEnabled)
@@ -744,6 +750,17 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
+      "display the Balancing payment on the payments table when coding out is enabled and a zero amount" in new Setup(testBalancingPaymentChargeWithZeroValueView(codingOutEnabled = false)) {
+        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        val paymentTabRow: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
+        paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
+        paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(0).toCurrencyString
+        paymentTypeLink.text shouldBe remainingBalance
+        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          testYear, fullDocumentDetailModel.transactionId).url
+
+      }
+
       "display updates by due-date" in new Setup(estimateView()) {
 
         testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { nextUpdateWithIncomeType =>
@@ -766,22 +783,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
               row.selectNth("td", 2).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }
-      }
-
-      "throw exception when Due Date is missing as Agent" in {
-        val expectedException = intercept[MissingFieldException] {
-          new Setup(estimateView(testWithOneMissingDueDateChargesList, isAgent = true))
-        }
-
-        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
-      }
-
-      "throw exception when Due Date is missing as Individual" in {
-        val expectedException = intercept[MissingFieldException] {
-          new Setup(estimateView(testWithOneMissingDueDateChargesList))
-        }
-
-        expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
       }
 
       "throw exception when Original Amount is missing as Agent" in {
@@ -964,13 +965,13 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         taxYearSummaryView(
           taxYear = testYear,
           modelOpt = Some(modelComplete(Some(false))),
-          charges = documentDetailWithDueDateMissingDueDate,
+          charges = testWithMissingOriginalAmountChargesList,
           obligations = testObligationsModel,
           backUrl = "testBackURL",
           isAgent = false,
           codingOutEnabled = false)
       }
-      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
+      thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
     }
   }
 }

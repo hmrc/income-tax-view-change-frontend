@@ -18,10 +18,10 @@ package views
 
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import enums.ChargeType._
+import enums.CodingOutType._
 import exceptions.MissingFieldException
 import models.chargeHistory.ChargeHistoryModel
 import models.financialDetails._
-import enums.CodingOutType._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -35,7 +35,7 @@ import views.html.ChargeSummary
 
 import java.time.LocalDate
 
-class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
+class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
   val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url
@@ -43,17 +43,17 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
   import Messages._
 
   class TestSetup(documentDetail: DocumentDetail,
-              dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
-              paymentBreakdown: List[FinancialDetail] = List(),
-              chargeHistory: List[ChargeHistoryModel] = List(),
-              paymentAllocations: List[PaymentsWithChargeType] = List(),
-              payments: FinancialDetailsModel = payments,
-              chargeHistoryEnabled: Boolean = true,
-              paymentAllocationEnabled: Boolean = false,
-              latePaymentInterestCharge: Boolean = false,
-              codingOutEnabled: Boolean = false,
-              isAgent: Boolean = false,
-              isMFADebit: Boolean = false) {
+                  dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
+                  paymentBreakdown: List[FinancialDetail] = List(),
+                  chargeHistory: List[ChargeHistoryModel] = List(),
+                  paymentAllocations: List[PaymentsWithChargeType] = List(),
+                  payments: FinancialDetailsModel = payments,
+                  chargeHistoryEnabled: Boolean = true,
+                  paymentAllocationEnabled: Boolean = false,
+                  latePaymentInterestCharge: Boolean = false,
+                  codingOutEnabled: Boolean = false,
+                  isAgent: Boolean = false,
+                  isMFADebit: Boolean = false) {
     val view: Html = chargeSummary(dateService.getCurrentDate(isEnabled(TimeMachineAddYear)), DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
       latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
@@ -143,6 +143,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
     val cancelledSaPayeCreated: String = messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
 
     def payeTaxCodeText(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", year - 1, year)}"
+
     def payeTaxCodeTextWithStringMessage(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", (year - 1).toString, year.toString)}"
 
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear}"
@@ -376,6 +377,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
 
       "display a due date" in new TestSetup(documentDetailModel()) {
         verifySummaryListRowNumeric(1, dueDate, "OVERDUE 15 May 2019")
+      }
+
+      "display a due date as N/A" in new TestSetup(documentDetail = documentDetailModel(documentDueDate = None, lpiWithDunningBlock = None), dueDate = None) {
+        verifySummaryListRowNumeric(1, dueDate, "N/A")
       }
 
       "display the correct due date for an interest charge" in new TestSetup(documentDetailModel(), latePaymentInterestCharge = true) {
@@ -641,6 +646,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
         }
 
       }
+
       "hide payment allocations in history table" when {
         "allocations enabled but list is empty" when {
           "chargeHistory enabled, having Payment created in the first row" in new TestSetup(documentDetailModel(),
@@ -751,6 +757,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
           document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
         }
       }
+
+      "display balancing charge due date as N/A and hide sections - Payment Breakdown ,Make a payment button ,Any payments you make, Payment History" when {
+        val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = None, originalAmount = Some(BigDecimal(0)), documentDate = LocalDate.of(2018, 3, 29))
+        "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
+          document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
+          document.select("p").get(2).text shouldBe "View what you owe to check if you have any other payments due."
+          document.select("#payment-history-table").isEmpty shouldBe true
+          document.select("#heading-payment-breakdown").isEmpty shouldBe true
+          document.select(s"#payment-link-${documentDetailModel().taxYear}").isEmpty shouldBe true
+          document.select("#payment-days-note").isEmpty shouldBe true
+        }
+      }
     }
   }
 
@@ -804,12 +822,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching{
       "not have a payment link when there is an outstanding amount of 0" in new TestSetup(documentDetailModel(outstandingAmount = Some(0)), isAgent = true) {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
+
       "list payment allocations with right number of rows and agent payment allocations link" in new TestSetup(documentDetailModel(),
         chargeHistoryEnabled = true, paymentAllocationEnabled = true, paymentAllocations = List(
           paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0)), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
         document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
       }
+
+
     }
     "MFA Credits" when {
       val paymentAllocations = List(

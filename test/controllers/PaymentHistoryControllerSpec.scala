@@ -57,17 +57,13 @@ class PaymentHistoryControllerSpec extends MockAuthenticationPredicate
 
     val controller = new PaymentHistoryController(
       app.injector.instanceOf[PaymentHistory],
-      app.injector.instanceOf[SessionTimeoutPredicate],
-      MockAuthenticationPredicate,
-      MockIncomeSourceDetailsPredicate,
-      mockIncomeSourceDetailsService,
       mockAuthService,
       mockAuditingService,
-      app.injector.instanceOf[NavBarPredicate],
       app.injector.instanceOf[ItvcErrorHandler],
       mockItvcErrorHandler,
       paymentHistoryService,
-      languageUtils
+      languageUtils,
+      testAuthenticator
     )(app.injector.instanceOf[MessagesControllerComponents],
       ec,
       app.injector.instanceOf[FrontendAppConfig])

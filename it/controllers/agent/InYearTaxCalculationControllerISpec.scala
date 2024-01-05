@@ -95,7 +95,8 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
       None,
       Some(LocalDate.of(taxYear, month, dayOfMonth)),
       None,
-      address = Some(address)
+      address = Some(address),
+      cashOrAccruals = false
     )),
     properties = List(
       PropertyDetailsModel(
@@ -104,7 +105,8 @@ class InYearTaxCalculationControllerISpec extends ComponentSpecBase {
         None,
         None,
         Some(LocalDate.of(taxYear, month, dayOfMonth)),
-        None
+        None,
+        cashOrAccruals = false
       )
     )
   )

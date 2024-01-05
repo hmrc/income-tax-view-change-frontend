@@ -29,7 +29,7 @@ class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalcu
 
   def getLatestCalculation(mtditid: String, nino: String, calcId: String, taxYear: Int)
                           (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    Logger("application").debug(s"[CalculationService][getLatestCalculation] - " +
+    Logger("application").debug("[CalculationService][getLatestCalculation] - " +
       s"Requesting calc data from the backend by calc id and taxYear: $calcId - $taxYear")
     incomeTaxCalculationConnector.getCalculationResponseByCalcId(mtditid, nino, calcId, taxYear)
   }

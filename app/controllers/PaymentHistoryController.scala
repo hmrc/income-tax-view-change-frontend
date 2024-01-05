@@ -37,23 +37,20 @@ import scala.concurrent.{ExecutionContext, Future}
 import enums.GatewayPage.PaymentHistoryPage
 import models.repaymentHistory.{PaymentHistoryEntry, RepaymentHistory, RepaymentHistoryUtils}
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 
 import java.time.LocalDate
 import javax.inject.Inject
 
 @Singleton
 class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
-                                         val checkSessionTimeout: SessionTimeoutPredicate,
-                                         val authenticate: AuthenticationPredicate,
-                                         val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                         val incomeSourceDetailsService: IncomeSourceDetailsService,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          auditingService: AuditingService,
-                                         retrieveBtaNavBar: NavBarPredicate,
                                          itvcErrorHandler: ItvcErrorHandler,
                                          implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService,
-                                         val languageUtils: LanguageUtils)
+                                         val languageUtils: LanguageUtils,
+                                         val auth: AuthenticatorPredicate)
                                         (implicit override val mcc: MessagesControllerComponents,
                                          implicit val ec: ExecutionContext,
                                          implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
@@ -98,9 +95,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -110,18 +105,12 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       )
   }
 
-  def showAgent(): Action[AnyContent] = {
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(
-                itvcErrorHandler = itvcErrorHandlerAgent,
-                isAgent = true,
-                backUrl = controllers.routes.HomeController.showAgent.url
-              )
-          }
-    }
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        itvcErrorHandler = itvcErrorHandlerAgent,
+        isAgent = true,
+        backUrl = controllers.routes.HomeController.showAgent.url
+      )
   }
 }

@@ -28,22 +28,19 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateService, DateServiceInterface, IncomeSourceDetailsService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.AuthenticatorPredicate
 import views.html.TaxYears
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                    val authorisedFunctions: AuthorisedFunctions,
-                                   incomeSourceDetailsService: IncomeSourceDetailsService,
-                                   implicit val dateService: DateServiceInterface)
+                                   implicit val dateService: DateServiceInterface,
+                                   val auth: AuthenticatorPredicate)
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    implicit val ec: ExecutionContext,
-                                   val itvcErrorHandler: AgentItvcErrorHandler,
-                                   val checkSessionTimeout: SessionTimeoutPredicate,
-                                   val retrieveBtaNavBar: NavBarPredicate,
-                                   val authenticate: AuthenticationPredicate,
-                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate
+                                   val itvcErrorHandler: AgentItvcErrorHandler
                                   ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
   def handleRequest(backUrl: String,
@@ -61,26 +58,20 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       origin = origin)))
   }
 
-  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = {
-    (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        handleRequest(
-          backUrl = controllers.routes.HomeController.show(origin).url,
-          isAgent = false,
-          origin = origin
-        )
-    }
+  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      handleRequest(
+        backUrl = controllers.routes.HomeController.show(origin).url,
+        isAgent = false,
+        origin = origin
+      )
   }
 
-  def showAgentTaxYears: Action[AnyContent] = {
-    Authenticated.async { implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
-          handleRequest(
-            backUrl = controllers.routes.HomeController.showAgent.url,
-            isAgent = true
-          )
-        }
-    }
+  def showAgentTaxYears: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        backUrl = controllers.routes.HomeController.showAgent.url,
+        isAgent = true
+      )
   }
 }

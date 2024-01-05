@@ -37,25 +37,21 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceReportingMethod
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceReportingMethodController @Inject()(val authenticate: AuthenticationPredicate,
-                                                      val authorisedFunctions: FrontendAuthorisedFunctions,
-                                                      val checkSessionTimeout: SessionTimeoutPredicate,
-                                                      val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                      val retrieveBtaNavBar: NavBarPredicate,
-                                                      val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                       val updateIncomeSourceService: UpdateIncomeSourceService,
                                                       val itsaStatusService: ITSAStatusService,
                                                       val dateService: DateService,
                                                       val calculationListService: CalculationListService,
                                                       val auditingService: AuditingService,
                                                       val view: IncomeSourceReportingMethod,
-                                                      val sessionService: SessionService)
+                                                      val sessionService: SessionService,
+                                                      val auth: AuthenticatorPredicate)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       mcc: MessagesControllerComponents,
                                                       val ec: ExecutionContext,
@@ -82,26 +78,9 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
 
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(isAgent = isAgent, incomeSourceType)
-  }
-
-  private def authenticatedAction(isAgent: Boolean)
-                                 (authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-        implicit user =>
-          authenticatedCodeBlock(user)
-      }
   }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -115,7 +94,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     }.recover {
       case ex: Exception =>
         Logger("application").error(
-          s"[UKPropertyReportingMethodController][handleRequest]:" +
+          "[UKPropertyReportingMethodController][handleRequest]:" +
             s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         errorHandler.showInternalServerError()
@@ -165,7 +144,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
 
         sessionService.setMongoData(uiJourneySessionData)
 
-      case _ => Future.failed(new Exception(s"failed to retrieve session data"))
+      case _ => Future.failed(new Exception("failed to retrieve session data"))
     }
   }
 
@@ -196,12 +175,12 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
             }
         }
       case _ =>
-        Logger("application").info(s"[IncomeSourceReportingMethodController][getUKPropertyReportingMethodDetails]: Latency details not available")
+        Logger("application").info("[IncomeSourceReportingMethodController][getUKPropertyReportingMethodDetails]: Latency details not available")
         Future.successful(None)
     }
   }
 
-  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleSubmit(isAgent, incomeSourceType)
   }
@@ -217,7 +196,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
       case Left(ex) => Future.failed(ex)
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"[IncomeSourceReportingMethodController][handleSubmit]:" +
+        Logger("application").error("[IncomeSourceReportingMethodController][handleSubmit]:" +
           s"Unable to handle IncomeSourceReportingMethodController submit request for $incomeSourceType: - ${ex.getMessage} - ${ex.getCause}")
         val errorHandler: ShowInternalServerError = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         errorHandler.showInternalServerError()
@@ -308,7 +287,7 @@ class IncomeSourceReportingMethodController @Inject()(val authenticate: Authenti
     updateResults.map { results =>
       val successCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseModel])
       val errorCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseError])
-      val prefix = s"[IncomeSourceReportingMethodController][handleUpdateResults]: "
+      val prefix = "[IncomeSourceReportingMethodController][handleUpdateResults]: "
 
       if (successCount == results.length) {
         Logger("application").info(prefix + s"Successfully updated all new selected reporting methods for $incomeSourceType")

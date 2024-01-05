@@ -31,14 +31,10 @@ import views.html.incomeSources.cease.IncomeSourceCeasedBackError
 class IncomeSourceCeasedBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockSessionService {
 
   object TestIncomeSourceCeasedBackErrorController extends IncomeSourceCeasedBackErrorController(
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    MockIncomeSourceDetailsPredicate,
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
     sessionService = mockSessionService,
-    app.injector.instanceOf[IncomeSourceCeasedBackError]
+    app.injector.instanceOf[IncomeSourceCeasedBackError],
+    testAuthenticator
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,

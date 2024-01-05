@@ -33,19 +33,15 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CalculationService, DateServiceInterface, IncomeSourceDetailsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
 import views.html.InYearTaxCalculationView
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class InYearTaxCalculationController @Inject()(
-                                                val executionContext: ExecutionContext,
+class InYearTaxCalculationController @Inject()(val executionContext: ExecutionContext,
                                                 view: InYearTaxCalculationView,
-                                                checkSessionTimeout: SessionTimeoutPredicate,
-                                                authenticate: AuthenticationPredicate,
-                                                retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                 calcService: CalculationService,
                                                 dateService: DateServiceInterface,
                                                 auditingService: AuditingService,
@@ -53,10 +49,10 @@ class InYearTaxCalculationController @Inject()(
                                                 implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
                                                 val languageUtils: LanguageUtils,
-                                                val retrieveBtaNavBar: NavBarPredicate,
                                                 implicit val appConfig: FrontendAppConfig,
                                                 implicit override val mcc: MessagesControllerComponents,
-                                                implicit val ec: ExecutionContext
+                                                implicit val ec: ExecutionContext,
+                                                val auth: AuthenticatorPredicate
                                               ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
 
@@ -94,8 +90,7 @@ class InYearTaxCalculationController @Inject()(
     }
   }
 
-  def show(origin: Option[String]): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
       handleRequest(
@@ -106,18 +101,14 @@ class InYearTaxCalculationController @Inject()(
       )
   }
 
-  def showAgent: Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
-            handleRequest(
-              isAgent = true,
-              currentDate,
-              currentDate.toLongDate
-            )
-        }
+  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+      handleRequest(
+        isAgent = true,
+        currentDate,
+        currentDate.toLongDate
+      )
   }
 
 }

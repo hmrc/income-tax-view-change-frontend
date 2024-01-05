@@ -27,7 +27,7 @@ case class PropertyDetailsModel(incomeSourceId: String,
                                 incomeSourceType: Option[String],
                                 tradingStartDate: Option[LocalDate],
                                 cessation: Option[CessationModel],
-                                cashOrAccruals: Option[Boolean] = None,
+                                cashOrAccruals: Boolean,
                                 latencyDetails: Option[LatencyDetails] = None,
                                 quarterTypeElection: Option[QuarterTypeElection] = None) {
 
