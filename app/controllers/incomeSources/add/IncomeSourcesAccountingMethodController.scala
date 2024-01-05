@@ -195,16 +195,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
       )
   }
 
-//  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-//    auth.authenticatedAction(isAgent = true) {
-//      implicit mtdItUser =>
-//        handleRequest(
-//          isAgent = true,
-//          incomeSourceType = incomeSourceType,
-//          isChange = false
-//        )
-//    }
-
   def submit(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
@@ -213,15 +203,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
           incomeSourceType
         )
   }
-
-//  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-//    auth.authenticatedAction(isAgent = true) {
-//      implicit mtdItUser =>
-//        handleSubmitRequest(
-//          isAgent = true,
-//          incomeSourceType
-//        )
-//  }
 
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
@@ -241,24 +222,4 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
             if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
         }
     }
-
-//  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-//    auth.authenticatedAction(isAgent = true) {
-//      implicit mtdItUser =>
-//        sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
-//          case Right(cashOrAccrualsFlag) =>
-//            handleRequest(
-//              isAgent = true,
-//              incomeSourceType = incomeSourceType,
-//              cashOrAccrualsFlag = cashOrAccrualsFlag,
-//              isChange = true
-//            )
-//          case Left(exception) => Future.failed(exception)
-//        }.recover {
-//          case ex =>
-//            Logger("application")
-//              .error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethodAgent] - ${ex.getMessage} - ${ex.getCause}")
-//            itvcErrorHandlerAgent.showInternalServerError()
-//        }
-//    }
 }
