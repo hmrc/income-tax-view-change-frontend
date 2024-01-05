@@ -218,8 +218,9 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
           case Left(exception) => Future.failed(exception)
         }.recover {
           case ex =>
+            val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
             Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethod] - ${ex.getMessage} - ${ex.getCause}")
-            if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
+            errorHandler.showInternalServerError()
         }
     }
 }
