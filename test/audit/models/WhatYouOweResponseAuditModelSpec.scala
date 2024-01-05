@@ -32,9 +32,6 @@ import java.time.LocalDate
 
 class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
-  // Failing when we set date to 3rd of Jan 2024
-  val toDay : LocalDate = LocalDate.of(2023, 12, 15)
-
   val transactionName = "what-you-owe-response"
   val auditEvent = "WhatYouOweResponse"
   val lpiPaymentOnAccount1: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
@@ -42,10 +39,10 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
   val paymentOnAccount2: String = messages("whatYouOwe.paymentOnAccount2.text")
   val class2Nic: String = messages("whatYouOwe.class2Nic.text")
 
-  val dueDateInFuture: String = toDay.plusDays(45).toString
-  val dueDateIsSoon: String = toDay.plusDays(1).toString
+  val dueDateInFuture: String = fixedDate.plusDays(45).toString
+  val dueDateIsSoon: String = fixedDate.plusDays(1).toString
 
-  val outStandingCharges: String = toDay.minusDays(30).toString
+  val outStandingCharges: String = fixedDate.minusDays(30).toString
 
   def testWhatYouOweResponseAuditModel(userType: Option[AffinityGroup] = Some(Agent),
                                        yearOfMigration: Option[String] = Some("2015"),
@@ -77,74 +74,73 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       testWhatYouOweResponseAuditModel().auditType shouldBe auditEvent
     }
 
-// TODO: re-enable unit test
-//    "Have the correct details for the audit event" in {
-//      testWhatYouOweResponseAuditModel(Some(Individual)).detail shouldBe Json.obj(
-//        "userType" -> "Individual",
-//        "saUtr" -> testSaUtr,
-//        "nino" -> testNino,
-//        "credId" -> testCredId,
-//        "mtditid" -> testMtditid,
-//        "balanceDetails" -> Json.obj(
-//          "balanceDueWithin30Days" -> 1.0,
-//          "overDueAmount" -> 2.0,
-//          "totalBalance" -> 3.0
-//        ),
-//        "charges" -> Json.arr(
-//          Json.obj(
-//            "chargeType" -> lpiPaymentOnAccount1,
-//            "dueDate" -> Some(LocalDate.parse("2019-06-25")),
-//            "outstandingAmount" -> 42.5,
-//            "chargeUnderReview" -> true,
-//            "endTaxYear" -> 2023,
-//            "overDue" -> true
-//          ),
-//          Json.obj(
-//            "chargeType" -> paymentOnAccount2,
-//            "dueDate" -> dueDateOverdue(1).get,
-//            "outstandingAmount" -> 75,
-//            "accruingInterest" -> 24.05,
-//            "interestRate" -> "6.2%",
-//            "interestFromDate" -> "2019-05-25",
-//            "interestEndDate" -> "2019-06-25",
-//            "chargeUnderReview" -> false,
-//            "endTaxYear" -> 2023,
-//            "overDue" -> true
-//          ),
-//          Json.obj(
-//            "chargeType" -> paymentOnAccount2,
-//            "dueDate" -> dueDateIsSoon,
-//            "outstandingAmount" -> 100,
-//            "accruingInterest" -> 100,
-//            "interestRate" -> "100%",
-//            "interestFromDate" -> "2018-03-29",
-//            "interestEndDate" -> "2018-03-29",
-//            "chargeUnderReview" -> false,
-//            "endTaxYear" -> 2023,
-//            "overDue" -> false
-//          ),
-//          Json.obj(
-//            "chargeType" -> paymentOnAccount1,
-//            "dueDate" -> dueDateInFuture,
-//            "outstandingAmount" -> 125,
-//            "accruingInterest" -> 100,
-//            "interestRate" -> "100%",
-//            "interestFromDate" -> "2018-03-29",
-//            "interestEndDate" -> "2018-03-29",
-//            "chargeUnderReview" -> false,
-//            "endTaxYear" -> 2023,
-//            "overDue" -> false
-//          ),
-//          Json.obj("accruingInterest" -> 12.67,
-//            "chargeType" -> "Remaining balance",
-//            "dueDate" -> outStandingCharges,
-//            "outstandingAmount" -> 123456.67
-//          )
-//        ),
-//        "codingOut" -> Json.obj( "amountCodedOut" -> 2500,
-//          "endTaxYear" -> "2022")
-//      )
-//    }
+    "Have the correct details for the audit event" in {
+      testWhatYouOweResponseAuditModel(Some(Individual)).detail shouldBe Json.obj(
+        "userType" -> "Individual",
+        "saUtr" -> testSaUtr,
+        "nino" -> testNino,
+        "credId" -> testCredId,
+        "mtditid" -> testMtditid,
+        "balanceDetails" -> Json.obj(
+          "balanceDueWithin30Days" -> 1.0,
+          "overDueAmount" -> 2.0,
+          "totalBalance" -> 3.0
+        ),
+        "charges" -> Json.arr(
+          Json.obj(
+            "chargeType" -> lpiPaymentOnAccount1,
+            "dueDate" -> Some(LocalDate.parse("2019-06-25")),
+            "outstandingAmount" -> 42.5,
+            "chargeUnderReview" -> true,
+            "endTaxYear" -> 2023,
+            "overDue" -> true
+          ),
+          Json.obj(
+            "chargeType" -> paymentOnAccount2,
+            "dueDate" -> dueDateOverdue(1).get,
+            "outstandingAmount" -> 75,
+            "accruingInterest" -> 24.05,
+            "interestRate" -> "6.2%",
+            "interestFromDate" -> "2019-05-25",
+            "interestEndDate" -> "2019-06-25",
+            "chargeUnderReview" -> false,
+            "endTaxYear" -> 2023,
+            "overDue" -> true
+          ),
+          Json.obj(
+            "chargeType" -> paymentOnAccount2,
+            "dueDate" -> dueDateIsSoon,
+            "outstandingAmount" -> 100,
+            "accruingInterest" -> 100,
+            "interestRate" -> "100%",
+            "interestFromDate" -> "2018-03-29",
+            "interestEndDate" -> "2018-03-29",
+            "chargeUnderReview" -> false,
+            "endTaxYear" -> 2023,
+            "overDue" -> true
+          ),
+          Json.obj(
+            "chargeType" -> paymentOnAccount1,
+            "dueDate" -> dueDateInFuture,
+            "outstandingAmount" -> 125,
+            "accruingInterest" -> 100,
+            "interestRate" -> "100%",
+            "interestFromDate" -> "2018-03-29",
+            "interestEndDate" -> "2018-03-29",
+            "chargeUnderReview" -> false,
+            "endTaxYear" -> 2023,
+            "overDue" -> false
+          ),
+          Json.obj("accruingInterest" -> 12.67,
+            "chargeType" -> "Remaining balance",
+            "dueDate" -> outStandingCharges,
+            "outstandingAmount" -> 123456.67
+          )
+        ),
+        "codingOut" -> Json.obj( "amountCodedOut" -> 2500,
+          "endTaxYear" -> "2022")
+      )
+    }
 
     "Have the agent details for the audit event" in {
       val agentJson = testWhatYouOweResponseAuditModel(Some(Agent)).detail
@@ -163,12 +159,12 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       }
 
       "user's first year of migration" in {
-        val currentTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(toDay)
+        val currentTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(fixedDate)
         balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(currentTaxYear.toString))) shouldBe None
       }
 
       "user's second or more year of migration and balance details contains all zero amounts" in {
-        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(toDay) - 1
+        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(fixedDate) - 1
         val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList(LocalDate.now()).copy(
           balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0, None, None, None,None)
         )
@@ -178,7 +174,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
       }
 
       "user's second or more year of migration and balance details contains some zero amounts" in {
-        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(toDay) - 1
+        val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(fixedDate) - 1
         val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList(LocalDate.now()).copy(
           balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None,None)
         )
@@ -199,13 +195,13 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
           )
         )
 
-        (auditJson.detail \ "balanceDetails" \ "creditAmount").toString() shouldBe "JsDefined(-1000)"
+        (auditJson.detail \ "balanceDetails" \ "creditAmount").toString shouldBe "JsDefined(-1000)"
         (auditJson.detail \ "charges")(0) shouldBe Json.obj(
           "chargeUnderReview" -> true,
           "outstandingAmount" -> 42.5,
           "chargeType" -> lpiPaymentOnAccount1,
           "dueDate" -> "2019-06-25",
-          "endTaxYear" -> toDay.getYear,
+          "endTaxYear" -> fixedDate.getYear,
           "overDue" -> true
         )
       }

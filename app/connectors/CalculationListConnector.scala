@@ -54,7 +54,7 @@ class CalculationListConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[CalculationListModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getLegacyCalculationList] - " +
+              Logger("application").error("[IncomeTaxViewChangeConnector][getLegacyCalculationList] - " +
                 s"Json validation error parsing legacy calculation list response, error $invalid")
               CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing legacy calculation list response")
             },
@@ -83,7 +83,7 @@ class CalculationListConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[CalculationListModel].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getCalculationList] - " +
+              Logger("application").error("[IncomeTaxViewChangeConnector][getCalculationList] - " +
                 s"Json validation error parsing calculation list response, error $invalid")
               CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
             },

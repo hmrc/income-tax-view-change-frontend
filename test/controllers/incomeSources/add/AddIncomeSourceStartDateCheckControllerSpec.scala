@@ -61,7 +61,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
   val testStartDate: LocalDate = LocalDate.of(2022, 11, 11)
   val testBusinessAccountingPeriodStartDate: LocalDate = LocalDate.of(2022, 11, 11)
-  val testBusinessAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 4, 5)
+  val testBusinessAccountingPeriodEndDate: LocalDate = LocalDate.of(2024, 4, 5)
 
   val responseNo: String = AddIncomeSourceStartDateCheckForm.responseNo
   val responseYes: String = AddIncomeSourceStartDateCheckForm.responseYes
@@ -103,15 +103,13 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   object TestAddIncomeSourceStartDateCheckController
-    extends AddIncomeSourceStartDateCheckController(authenticate = MockAuthenticationPredicate,
+    extends AddIncomeSourceStartDateCheckController(
       authorisedFunctions = mockAuthService,
       checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-      retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-      retrieveBtaNavBar = MockNavBarPredicate,
-      incomeSourceDetailsService = mockIncomeSourceDetailsService,
       addIncomeSourceStartDateCheckView = app.injector.instanceOf[AddIncomeSourceStartDateCheck],
       languageUtils = languageUtils,
-      sessionService = mockSessionService
+      sessionService = mockSessionService,
+      testAuthenticator
     )(
       app.injector.instanceOf[FrontendAppConfig],
       dateService,

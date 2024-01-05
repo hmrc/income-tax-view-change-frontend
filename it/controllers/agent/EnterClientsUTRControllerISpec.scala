@@ -15,14 +15,13 @@
  */
 package controllers.agent
 
+import audit.models.EnterClientUTRAuditModel
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
-import helpers.servicemocks.{CitizenDetailsStub, IncomeTaxViewChangeStub}
-import org.hamcrest.core.Is.is
+import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.junit.Assert.assertThat
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
@@ -175,6 +174,8 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
 
+        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
+
         Then("The enter clients utr page is returned with an error")
         result should have(
           httpStatus(SEE_OTHER),
@@ -201,6 +202,8 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
           )
 
           val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(utrWithSpaces))
+
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some("1"), saUtr = validUTR, credId = None))
 
           Then("The enter clients utr page is returned with an error")
           result should have(

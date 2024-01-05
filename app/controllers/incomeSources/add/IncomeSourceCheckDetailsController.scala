@@ -34,7 +34,7 @@ import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceCheckDetails
 
 import java.time.LocalDate
@@ -42,14 +42,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetails,
-                                                   val checkSessionTimeout: SessionTimeoutPredicate,
-                                                   val authenticate: AuthenticationPredicate,
                                                    val authorisedFunctions: AuthorisedFunctions,
-                                                   val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                   val retrieveBtaNavBar: NavBarPredicate,
                                                    val businessDetailsService: CreateBusinessDetailsService,
-                                                   val auditingService: AuditingService)
+                                                   val auditingService: AuditingService,
+                                                   auth: AuthenticatorPredicate)
                                                   (implicit val ec: ExecutionContext,
                                                    implicit override val mcc: MessagesControllerComponents,
                                                    val appConfig: FrontendAppConfig,
@@ -58,8 +54,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with IncomeSourcesUtils with FeatureSwitching with JourneyChecker {
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -68,17 +63,13 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-          implicit mtdItUser =>
-            handleRequest(
-              sources = mtdItUser.incomeSources,
-              isAgent = true,
-              incomeSourceType
-            )
-        }
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleRequest(
+        sources = mtdItUser.incomeSources,
+        isAgent = true,
+        incomeSourceType
+      )
   }
 
   private def handleRequest(sources: IncomeSourceDetailsModel,
@@ -140,7 +131,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                 case (_, _) =>
                   Left(new Error(s"Start date or accounting method not found in session. Start date: $dateMaybe, AccMethod: $methodMaybe"))
               }
-            case (_, _) => Left(new Error(s"Error while retrieving date started or accounting method from session"))
+            case (_, _) => Left(new Error("Error while retrieving date started or accounting method from session"))
           }
         }
       }
@@ -183,19 +174,14 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
   }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit user =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleSubmit(isAgent = true, incomeSourceType)
-        }
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleSubmit(isAgent = true, incomeSourceType)
   }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {

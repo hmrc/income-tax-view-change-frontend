@@ -35,15 +35,13 @@ import play.twirl.api.Html
 import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.AuthenticatorPredicate
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
-                               val checkSessionTimeout: SessionTimeoutPredicate,
-                               val authenticate: AuthenticationPredicate,
                                val authorisedFunctions: AuthorisedFunctions,
-                               val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                val nextUpdatesService: NextUpdatesService,
                                val itvcErrorHandler: ItvcErrorHandler,
                                implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -51,8 +49,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val financialDetailsService: FinancialDetailsService,
                                implicit val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
-                               val retrieveBtaNavBar: NavBarPredicate,
-                               auditingService: AuditingService)
+                               auditingService: AuditingService,
+                               auth: AuthenticatorPredicate)
                               (implicit val ec: ExecutionContext,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
@@ -140,8 +138,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = (checkSessionTimeout andThen authenticate
-    andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -151,16 +148,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
       )
   }
 
-  def showAgent(): Action[AnyContent] = Authenticated.async {
-    implicit request =>
-      implicit agent =>
-        getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap {
-          implicit mtdItUser =>
-            handleShowRequest(
-              itvcErrorHandler = itvcErrorHandlerAgent,
-              isAgent = true,
-              dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-            )
-        }
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleShowRequest(
+        itvcErrorHandler = itvcErrorHandlerAgent,
+        isAgent = true,
+        dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
+      )
   }
 }

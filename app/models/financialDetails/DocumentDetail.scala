@@ -16,12 +16,11 @@
 
 package models.financialDetails
 
-import config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
-import services.{DateService, DateServiceInterface}
+import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -42,7 +41,8 @@ case class DocumentDetail(taxYear: Int,
                           paymentLotItem: Option[String] = None,
                           paymentLot: Option[String] = None,
                           effectiveDateOfPayment: Option[LocalDate] = None,
-                          amountCodedOut: Option[BigDecimal] = None
+                          amountCodedOut: Option[BigDecimal] = None,
+                          documentDueDate: Option[LocalDate] = None
                          ) {
 
   def credit: Option[BigDecimal] = originalAmount match {
@@ -69,6 +69,11 @@ case class DocumentDetail(taxYear: Int,
 
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
+
+  def originalAmountIsNotNegative: Boolean = originalAmount match {
+    case Some(amount) if amount < 0 => false
+    case _ => true
+  }
 
   def originalAmountIsNotZeroOrNegative: Boolean = originalAmount match {
     case Some(amount) if amount <= 0 => false
@@ -158,6 +163,22 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
+  def isBalancingCharge(codedOutEnabled: Boolean = false): Boolean = getChargeTypeKey(codedOutEnabled) == "balancingCharge.text"
+
+  def isBalancingChargeZero(codedOutEnabled: Boolean = false): Boolean = {
+    (isBalancingCharge(codedOutEnabled), this.originalAmount) match {
+      case (true, Some(value)) => value == BigDecimal(0.0)
+      case _ => false
+    }
+  }
+
+  def getBalancingChargeDueDate(codedOutEnabled: Boolean = false): Option[LocalDate] = {
+    isBalancingChargeZero(codedOutEnabled) match {
+      case true => None
+      case _ => documentDueDate
+    }
+  }
+
   def getChargeTypeKey(codedOutEnabled: Boolean = false): String = documentDescription match {
     case Some("ITSA- POA 1") => "paymentOnAccount1.text"
     case Some("ITSA - POA 2") => "paymentOnAccount2.text"
@@ -172,13 +193,21 @@ case class DocumentDetail(taxYear: Int,
       "unknownCharge"
   }
 
+  def getDueDate(): Option[LocalDate] = {
+    if (isLatePaymentInterest) {
+      interestEndDate
+    } else {
+      documentDueDate
+    }
+  }
+
 }
 
 case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Option[LocalDate],
                                      isLatePaymentInterest: Boolean = false, dunningLock: Boolean = false,
                                      codingOutEnabled: Boolean = false, isMFADebit: Boolean = false)(implicit val dateService: DateServiceInterface) {
 
-  val isOverdue: Boolean = documentDetail.effectiveDateOfPayment.exists(_ isBefore dateService.getCurrentDate())
+  val isOverdue: Boolean = documentDetail.documentDueDate.exists(_ isBefore dateService.getCurrentDate())
 }
 
 object DocumentDetail {
@@ -201,6 +230,7 @@ object DocumentDetail {
       (__ \ "paymentLotItem").readNullable[String] and
       (__ \ "paymentLot").readNullable[String] and
       (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
-      (__ \ "amountCodedOut").readNullable[BigDecimal]
-    ) (DocumentDetail.apply _)
+      (__ \ "amountCodedOut").readNullable[BigDecimal] and
+      (__ \ "documentDueDate").readNullable[LocalDate]
+    )(DocumentDetail.apply _)
 }

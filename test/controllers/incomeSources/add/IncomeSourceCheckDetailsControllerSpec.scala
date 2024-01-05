@@ -98,14 +98,10 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
 
   object TestCheckDetailsController extends IncomeSourceCheckDetailsController(
     checkDetailsView = app.injector.instanceOf[IncomeSourceCheckDetails],
-    checkSessionTimeout = app.injector.instanceOf[SessionTimeoutPredicate],
-    authenticate = MockAuthenticationPredicate,
     authorisedFunctions = mockAuthService,
-    retrieveNinoWithIncomeSources = MockIncomeSourceDetailsPredicate,
-    incomeSourceDetailsService = mockIncomeSourceDetailsService,
-    retrieveBtaNavBar = MockNavBarPredicate,
     businessDetailsService = mockBusinessDetailsService,
-    auditingService = app.injector.instanceOf[AuditingService]
+    auditingService = app.injector.instanceOf[AuditingService],
+    testAuthenticator
   )(ec, mcc = app.injector.instanceOf[MessagesControllerComponents],
     appConfig = app.injector.instanceOf[FrontendAppConfig],
     sessionService = mockSessionService,

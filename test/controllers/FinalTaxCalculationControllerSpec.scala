@@ -64,7 +64,8 @@ class FinalTaxCalculationControllerSpec extends MockAuthenticationPredicate
     app.injector.instanceOf[AgentItvcErrorHandler],
     app.injector.instanceOf[IncomeSourceDetailsService],
     app.injector.instanceOf[NavBarPredicate],
-    app.injector.instanceOf[FrontendAppConfig]
+    app.injector.instanceOf[FrontendAppConfig],
+    testAuthenticator
   )
 
   val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")

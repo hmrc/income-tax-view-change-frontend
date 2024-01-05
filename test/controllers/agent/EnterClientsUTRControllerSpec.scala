@@ -16,11 +16,13 @@
 
 package controllers.agent
 
+import audit.models.EnterClientUTRAuditModel
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
+import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockClientDetailsService
 import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
@@ -29,13 +31,14 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.agent.ClientDetailsService._
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testMtditid, testNino}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testArn, testCredId, testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment, InsufficientEnrolments}
 import uk.gov.hmrc.http.InternalServerException
 
 class EnterClientsUTRControllerSpec extends TestSupport
+  with MockAuthenticationPredicate
   with MockEnterClientsUTR
   with MockFrontendAuthorisedFunctions
   with MockItvcErrorHandler
@@ -45,7 +48,8 @@ class EnterClientsUTRControllerSpec extends TestSupport
   object TestEnterClientsUTRController extends EnterClientsUTRController(
     enterClientsUTR,
     mockClientDetailsService,
-    mockAuthService
+    mockAuthService,
+    mockAuditingService,
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
@@ -144,6 +148,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           ))
 
           status(result) shouldBe SEE_OTHER
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
           result.futureValue.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -169,6 +174,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
 
           status(result) shouldBe SEE_OTHER
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
           redirectLocation(result) shouldBe Some(routes.ConfirmClientUTRController.show.url)
 
           result.futureValue.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
@@ -244,6 +250,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           ))
 
           status(result) shouldBe SEE_OTHER
+          verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = false, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId)))
           redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show.url)
         }
       }

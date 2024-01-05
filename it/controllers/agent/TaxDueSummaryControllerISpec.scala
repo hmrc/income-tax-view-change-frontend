@@ -61,7 +61,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
       None,
       Some(getCurrentTaxYearEnd),
       None,
-      address = Some(address)
+      address = Some(address),
+      cashOrAccruals = false
     )),
     properties = List(
       PropertyDetailsModel(
@@ -70,7 +71,8 @@ class TaxDueSummaryControllerISpec extends ComponentSpecBase with FeatureSwitchi
         None,
         None,
         Some(getCurrentTaxYearEnd),
-        None
+        None,
+        cashOrAccruals = false
       )
     )
   )

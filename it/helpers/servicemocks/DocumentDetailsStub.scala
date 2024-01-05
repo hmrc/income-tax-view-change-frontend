@@ -1,9 +1,9 @@
 
 package helpers.servicemocks
 
-import testConstants.BaseIntegrationTestConstants.testTaxYear
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import services.DateService
+import testConstants.BaseIntegrationTestConstants.testTaxYear
 
 import java.time.LocalDate
 
@@ -17,7 +17,8 @@ object DocumentDetailsStub {
     outstandingAmount = Some(1.2),
     documentDate = LocalDate.of(2018, 3, 29),
     amountCodedOut = Some(2500),
-    effectiveDateOfPayment = Some(LocalDate.parse("2018-02-14"))
+    effectiveDateOfPayment = Some(LocalDate.parse("2018-02-14")),
+    documentDueDate = Some(LocalDate.parse("2018-02-14"))
   )
 
   def docDateDetail(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
@@ -39,7 +40,8 @@ object DocumentDetailsStub {
     interestFromDate = Some(LocalDate.of(2018, 4, 14)),
     interestEndDate = Some(LocalDate.of(2019, 1, 1)),
     amountCodedOut = Some(2500),
-    effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1))
+    effectiveDateOfPayment = Some(LocalDate.of(2023, 7, 1)),
+    documentDueDate = Some(LocalDate.of(2023, 7, 1))
   )
 
   def docDateDetailWithInterest(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(
@@ -60,7 +62,8 @@ object DocumentDetailsStub {
     interestFromDate = Some(LocalDate.of(2018, 4, 14)),
     interestEndDate = Some(LocalDate.of(2019, 1, 1)),
     amountCodedOut = Some(2500),
-    effectiveDateOfPayment = Some(LocalDate.of(2017, 7, 1))
+    effectiveDateOfPayment = Some(LocalDate.of(2017, 7, 1)),
+    documentDueDate = Some(LocalDate.of(2017, 7, 1))
   )
 
   def docDateDetailWithInterestAndOverdue(dueDate: String, chargeType: String)(implicit dateService: DateService): DocumentDetailWithDueDate = DocumentDetailWithDueDate(

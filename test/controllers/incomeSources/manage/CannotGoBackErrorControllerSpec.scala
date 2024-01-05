@@ -34,14 +34,10 @@ import views.html.incomeSources.YouCannotGoBackError
 class CannotGoBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockSessionService {
 
   object TestCannotGoBackController extends CannotGoBackErrorController(
-    app.injector.instanceOf[SessionTimeoutPredicate],
-    MockAuthenticationPredicate,
     mockAuthService,
-    MockIncomeSourceDetailsPredicate,
-    mockIncomeSourceDetailsService,
-    app.injector.instanceOf[NavBarPredicate],
     app.injector.instanceOf[YouCannotGoBackError],
-    mockSessionService
+    mockSessionService,
+    testAuthenticator
   )(appConfig,
     mcc = app.injector.instanceOf[MessagesControllerComponents],
     ec,

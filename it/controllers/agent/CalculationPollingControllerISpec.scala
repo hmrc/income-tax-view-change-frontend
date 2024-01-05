@@ -70,7 +70,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
       Some(LocalDate.of(2018,1,1)),
       Some(b2TradingStart),
       None,
-      address = Some(address)
+      address = Some(address),
+      cashOrAccruals = false
     )
     ),
     properties = List(
@@ -80,7 +81,8 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
         Some(LocalDate.of(2018,1,1)),
         propertyIncomeType,
         propertyTradingStartDate,
-        None
+        None,
+        cashOrAccruals = false
       )
     )
   )

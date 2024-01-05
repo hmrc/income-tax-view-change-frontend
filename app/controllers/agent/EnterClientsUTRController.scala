@@ -16,6 +16,8 @@
 
 package controllers.agent
 
+import audit.AuditingService
+import audit.models.EnterClientUTRAuditModel
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.BaseAgentController
@@ -26,7 +28,7 @@ import controllers.predicates.agent.AgentAuthenticationPredicate.defaultAgentPre
 import forms.agent.ClientsUTRForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, confidenceLevel, credentials}
@@ -41,7 +43,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
                                           clientDetailsService: ClientDetailsService,
-                                          val authorisedFunctions: AuthorisedFunctions)
+                                          val authorisedFunctions: AuthorisedFunctions,
+                                          val auditingService: AuditingService)
                                          (implicit mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
@@ -84,17 +87,19 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
           ) flatMap {
             case Right(ClientDetails(firstName, lastName, nino, mtdItId)) =>
               authorisedFunctions.authorised(Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdItId).withDelegatedAuthRule("mtd-it-auth")).retrieve(allEnrolments and affinityGroup and confidenceLevel and credentials) {
-                case enrolments ~ affinity ~ confidence ~ credentials =>
+                case _ ~ _ ~ _ ~ _ =>
                   val sessionValues: Seq[(String, String)] = Seq(
                     SessionKeys.clientMTDID -> mtdItId,
                     SessionKeys.clientNino -> nino,
                     SessionKeys.clientUTR -> validUTR
                   ) ++ firstName.map(SessionKeys.clientFirstName -> _) ++ lastName.map(SessionKeys.clientLastName -> _)
+                  sendAudit(true, user, validUTR, nino, mtdItId)
                   Future.successful(Redirect(routes.ConfirmClientUTRController.show).addingToSession(sessionValues: _*))
               }.recover {
                 case ex =>
                   Logger("application")
                     .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
+                  sendAudit(false, user, validUTR, nino, mtdItId)
                   Redirect(controllers.agent.routes.UTRErrorController.show)
               }
             case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
@@ -103,9 +108,21 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
               Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
             case Left(_)
             =>
-              throw new InternalServerException(s"[EnterClientsUTRController][submit] - Unexpected response received")
+              throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
           }
         }
       )
+  }
+
+  private def sendAudit(isSuccessful: Boolean, user: IncomeTaxAgentUser, validUTR: String, nino: String, mtdItId: String)(implicit request: Request[_]): Unit = {
+    auditingService.extendedAudit(EnterClientUTRAuditModel(
+      isSuccessful = isSuccessful,
+      nino = nino,
+      mtditid = mtdItId,
+      arn = user.agentReferenceNumber,
+      saUtr = validUTR,
+      credId = user.credId
+    )
+    )
   }
 }
