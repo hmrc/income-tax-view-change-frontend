@@ -1009,33 +1009,39 @@ object FinancialDetailsTestConstants {
     Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"),
     amountCodedOut = Some(BigDecimal("2500.00")))
 
-  val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None),
-    chargesList =
-      testFinancialDetailsModelWithInterest(documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-        mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
-        dueDate = dueDateOverdue,
-        dunningLock = oneDunningLock,
-        outstandingAmount = List(Some(50), Some(75)),
-        taxYear = LocalDate.now().getYear.toString,
-        interestOutstandingAmount = List(Some(42.50), Some(24.05)),
-        interestRate = List(Some(2.6), Some(6.2)),
-        latePaymentInterestAmount = List(Some(34.56), None)
-      ).getAllDocumentDetailsWithDueDates() ++
-        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
-          mainType = Some("SA Payment on Account 2"),
-          dueDate = Some(LocalDate.now().plusDays(1)),
-          outstandingAmount = Some(100),
-          //TODO - remove localDate.now
-          taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates() ++
-        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 1"),
-          mainType = Some("SA Payment on Account 1"),
-          dueDate = Some(LocalDate.now().plusDays(45)),
-          outstandingAmount = Some(125),
-          taxYear = LocalDate.now().getYear.toString).getAllDocumentDetailsWithDueDates(),
-    outstandingChargesModel = Some(outstandingChargesOverdueData),
-    codedOutDocumentDetail = Some(codedOutDocumentDetailsA)
-  )
+
+   def whatYouOwePartialChargesList(now: LocalDate) = {
+    WhatYouOweChargesList(
+      balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None),
+      chargesList =
+        testFinancialDetailsModelWithInterest(documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+          mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
+          dueDate = dueDateOverdue,
+          dunningLock = oneDunningLock,
+          outstandingAmount = List(Some(50), Some(75)),
+          taxYear = taxYear(now).toString,
+          interestOutstandingAmount = List(Some(42.50), Some(24.05)),
+          interestRate = List(Some(2.6), Some(6.2)),
+          latePaymentInterestAmount = List(Some(34.56), None)
+        ).getAllDocumentDetailsWithDueDates() ++
+          testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
+            mainType = Some("SA Payment on Account 2"),
+            dueDate = Some(now.plusDays(1)),
+            outstandingAmount = Some(100),
+            taxYear = taxYear(now).toString).getAllDocumentDetailsWithDueDates() ++
+          testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 1"),
+            mainType = Some("SA Payment on Account 1"),
+            dueDate = Some(now.plusDays(45)),
+            outstandingAmount = Some(125),
+            taxYear = taxYear(now).toString).getAllDocumentDetailsWithDueDates(),
+      outstandingChargesModel = Some(outstandingChargesOverdueData),
+      codedOutDocumentDetail = Some(codedOutDocumentDetailsA)
+    )
+  }
+
+  private def taxYear(date: LocalDate) = {
+    date.getYear
+  }
 
   val whatYouOweDataWithMFADebitsData: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),

@@ -49,7 +49,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
   def testWhatYouOweResponseAuditModel(userType: Option[AffinityGroup] = Some(Agent),
                                        yearOfMigration: Option[String] = Some("2015"),
-                                       chargesList: WhatYouOweChargesList = whatYouOwePartialChargesList,
+                                       chargesList: WhatYouOweChargesList = whatYouOwePartialChargesList(LocalDate.now()),
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = MtdItUser(
       mtditid = testMtditid,
@@ -169,7 +169,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
       "user's second or more year of migration and balance details contains all zero amounts" in {
         val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(toDay) - 1
-        val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
+        val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList(LocalDate.now()).copy(
           balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0, None, None, None,None)
         )
 
@@ -179,7 +179,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
 
       "user's second or more year of migration and balance details contains some zero amounts" in {
         val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(toDay) - 1
-        val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
+        val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList(LocalDate.now()).copy(
           balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None,None)
         )
 
@@ -193,7 +193,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
     "produce a full audit Json model" when {
       "the audit 7b feature switch is on" in {
         val auditJson = testWhatYouOweResponseAuditModel(
-          chargesList = whatYouOwePartialChargesList.copy(
+          chargesList = whatYouOwePartialChargesList(toDay).copy(
             balanceDetails = BalanceDetails(
               balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None, Some(BigDecimal(-1000.0)))
           )
