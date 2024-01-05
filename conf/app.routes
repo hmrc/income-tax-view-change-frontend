@@ -238,7 +238,7 @@ POST         /agents/income-sources/add/business-added                    contro
 GET          /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = false)
 GET          /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = true)
 POST         /income-sources/add/uk-property-accounting-method            controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = false)
-POST         /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = UkPropert, isAgent: Boolean = true)
+POST         /agents/income-sources/add/uk-property-accounting-method     controllers.incomeSources.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = true)
 GET          /income-sources/add/uk-property-check-details                controllers.incomeSources.add.IncomeSourceCheckDetailsController.show(incomeSourceType: IncomeSourceType = UkProperty)
 GET          /agents/income-sources/add/uk-property-check-details         controllers.incomeSources.add.IncomeSourceCheckDetailsController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
 POST         /income-sources/add/uk-property-check-details                controllers.incomeSources.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = UkProperty)
@@ -462,7 +462,7 @@ POST         /income-sources/add/foreign-property-reporting-method              
 POST         /agents/income-sources/add/foreign-property-reporting-method                        controllers.incomeSources.add.IncomeSourceReportingMethodController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
 
 # Income Sources - TO BE IMPLEMENTED
-GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
-GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
+GET          /income-sources/add/foreign-property-accounting-method                 controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
+GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)

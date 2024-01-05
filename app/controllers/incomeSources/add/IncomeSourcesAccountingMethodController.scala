@@ -146,8 +146,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   }
 
   private lazy val postAction: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType)
-    else routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
+    routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)
   }
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
