@@ -63,9 +63,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
-      val incomeSourceIdOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourceId)
-
-      incomeSourceIdOpt match {
+      sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) =>
           val incomeSourceId: IncomeSourceId = IncomeSourceId(id)
 

@@ -86,8 +86,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
 
-      val incomeSourceId = sessionData.addIncomeSourceData.flatMap(_.incomeSourceId)
-      incomeSourceId match {
+      sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
@@ -185,8 +184,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]):
   Future[Result] = {
     withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
-      val incomeSourceId = sessionData.addIncomeSourceData.flatMap(_.incomeSourceId)
-      incomeSourceId match {
+      sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => IncomeSourceReportingMethodForm.form.bindFromRequest().fold(
           invalid => handleInvalidForm(invalid, incomeSourceType, IncomeSourceId(id), isAgent),
           valid => handleValidForm(valid, incomeSourceType, IncomeSourceId(id), isAgent))
