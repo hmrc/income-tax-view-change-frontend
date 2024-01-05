@@ -116,7 +116,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
             user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
               case Some(latencyDetails) =>
-                if (TaxYear.isValidTaxYear(taxYearModel, latencyDetails)) {
+                if (TaxYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
                   val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
                   Ok(
                     confirmReportingMethod(
