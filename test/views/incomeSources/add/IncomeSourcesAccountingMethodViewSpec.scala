@@ -64,21 +64,21 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
-        cashOrAccrualsFlag = Some(""),
-        incomeSourceType,
-        form,
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl
+      cashOrAccrualsFlag = Some(""),
+      incomeSourceType,
+      form,
+      postAction = postAction,
+      isAgent = isAgent,
+      backUrl = backUrl
     )
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
-        cashOrAccrualsFlag = Some(""),
-        incomeSourceType,
-        form = form.withError(s"$incomeSourcePrefix", s"$incomeSourcePrefix.no-selection"),
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl
+      cashOrAccrualsFlag = Some(""),
+      incomeSourceType,
+      form = form.withError(s"$incomeSourcePrefix", s"$incomeSourcePrefix.no-selection"),
+      postAction = postAction,
+      isAgent = isAgent,
+      backUrl = backUrl
     )
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))

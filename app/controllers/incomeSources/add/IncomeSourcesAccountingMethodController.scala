@@ -152,10 +152,10 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, isChange, incomeSourceType) match {
       case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange)
-      case (_,     false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_,     false, _)              => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
-      case (false, _,     _)              => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_,     _,     _)              => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (_, false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_, false, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 
@@ -202,7 +202,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
           isAgent,
           incomeSourceType
         )
-  }
+    }
 
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
