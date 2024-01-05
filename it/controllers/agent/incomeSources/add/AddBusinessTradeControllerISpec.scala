@@ -10,11 +10,9 @@ import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.UIJourneySessionDataRepository
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse}
-import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 class AddBusinessTradeControllerISpec extends ComponentSpecBase {
 
@@ -114,6 +112,9 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
       enable(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
+      await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+        addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+
       val formData: Map[String, Seq[String]] = {
         Map(
           BusinessTradeForm.businessTrade -> Seq("")
@@ -208,6 +209,9 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
       stubAuthorisedAgentUser(true)
       enable(IncomeSources)
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+
+      await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+        addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
 
       val formData: Map[String, Seq[String]] = {
         Map(

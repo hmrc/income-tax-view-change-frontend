@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
@@ -29,7 +29,7 @@ import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, SessionService}
+import services.{DateService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
@@ -119,7 +119,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                                   isAgent: Boolean,
                                   isChange: Boolean)
                                  (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType)) { sessionData =>
+    withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       dateStartedOpt match {
         case Some(startDate) =>
@@ -253,11 +253,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                             isChange: Boolean): String = {
 
     ((isAgent, isChange, incomeSourceType) match {
-      case (_,     false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
-      case (false, false, _)              => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType)
-      case (_,     false, _)              => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType)
-      case (false, _,     _)              => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_,     _,     _)              => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (_, false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
+      case (false, false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType)
+      case (_, false, _) => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType)
+      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 }

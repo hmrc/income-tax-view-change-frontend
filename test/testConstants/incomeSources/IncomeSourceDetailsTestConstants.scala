@@ -21,7 +21,7 @@ import enums.JourneyType.{Add, JourneyType}
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMigrationYear2019, testMtditid, testMtditid2, testNino, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
 
@@ -112,7 +112,7 @@ object IncomeSourceDetailsTestConstants {
   )
 
   val checkCeaseUkPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
+    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = None,
     address = None,
     businessEndDate = LocalDate.of(2022, 1, 1),
@@ -120,7 +120,7 @@ object IncomeSourceDetailsTestConstants {
   )
 
   val checkCeaseForeignPropertyDetailsModel = CheckCeaseIncomeSourceDetailsViewModel(
-    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
+    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
     tradingName = None,
     address = None,
     businessEndDate = LocalDate.of(2022, 1, 1),
@@ -188,8 +188,8 @@ object IncomeSourceDetailsTestConstants {
           sessionId = testSessionId,
           journeyType = journeyType.toString,
           ceaseIncomeSourceData = Some(CeaseIncomeSourceData(
-            incomeSourceId = if (journeyType.businessType == SelfEmployment) Some(testSelfEmploymentId) else Some(testPropertyIncomeId),
-            endDate = Some(LocalDate.of(2022, 1, 1)),
+            incomeSourceId = if(journeyType.businessType == SelfEmployment) Some(testSelfEmploymentId) else None,
+            endDate = Some(LocalDate.of(2022, 10, 10)),
             ceasePropertyDeclare = Some("true"),
             journeyIsComplete = None
           ))
@@ -204,7 +204,7 @@ object IncomeSourceDetailsTestConstants {
   val completedUIJourneySessionData: JourneyType => UIJourneySessionData = (journeyType: JourneyType) => {
     journeyType.operation.operationType match {
       case "ADD" => UIJourneySessionData(testSessionId, journeyType.toString,
-        addIncomeSourceData = Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+        addIncomeSourceData = Some(notCompletedUIJourneySessionData(journeyType).addIncomeSourceData.get.copy(journeyIsComplete = Some(true))))
       case "MANAGE" => UIJourneySessionData(testSessionId, journeyType.toString,
         manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId),
           taxYear = Some(2023), reportingMethod = Some("annual"), journeyIsComplete = Some(true))))

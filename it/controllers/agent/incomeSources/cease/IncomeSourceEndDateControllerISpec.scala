@@ -60,8 +60,8 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   val testChangeDay: String = "10"
   val testChangeMonth: String = "10"
   val testChangeYear: String = "2022"
-  val testSessionEndDateValue: String = "2022-08-27"
-  val testSessionEndDateValueProperty: String = "2022-12-20"
+  val testSessionEndDateValue: LocalDate = LocalDate.of(2022, 8, 27)
+  val testSessionEndDateValueProperty: LocalDate = LocalDate.of(2022, 12, 20)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -171,7 +171,7 @@ class IncomeSourceEndDateControllerISpec extends ComponentSpecBase {
   }
   s"calling POST $dateBusinessSubmitChangeAgentUrl" should {
     "redirect to showIncomeSourceEndDateControllerUrl" when {
-       "form is filled correctly" in {
+      "form is filled correctly" in {
         val formData: Map[String, Seq[String]] = {
           Map("income-source-end-date.day" -> Seq("27"), "income-source-end-date.month" -> Seq("08"), "income-source-end-date.year" -> Seq("2022"))
         }

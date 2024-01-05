@@ -18,7 +18,6 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
 import mocks.MockItvcErrorHandler
@@ -26,10 +25,8 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockNextUpdatesService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.AddIncomeSourceData.{incomeSourceAddedField, journeyIsCompleteField}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails._
+import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, ObligationsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -40,7 +37,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testNino, testSelfEmploymentId, testSessionId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
 import views.html.incomeSources.add.IncomeSourceAddedObligations
@@ -116,11 +113,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   }
 
   def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
-    setupMockGetSessionKeyMongoTyped[Boolean](journeyIsCompleteField, JourneyType(Add, incomeSourceType), Right(None))
-    setupMockGetSessionKeyMongoTyped[Boolean](incomeSourceAddedField, JourneyType(Add, incomeSourceType), Right(None))
-    when(mockSessionService.getMongo(any())(any(), any())).thenReturn(
-      Future(Right(Some(UIJourneySessionData(testSessionId, JourneyType(Add, incomeSourceType).toString,
-        addIncomeSourceData = Some(AddIncomeSourceData()))))))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
   }
 

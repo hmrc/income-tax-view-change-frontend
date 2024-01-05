@@ -54,21 +54,23 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
   def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
-        case Right(incomeSourceIdMaybe) =>
-          val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
-          handleRequest(
-            incomeSourceType = SelfEmployment,
-            isAgent = false,
-            taxYear,
-            changeTo,
-            incomeSourceIdOption
-          )
-        case Left(ex) =>
-          Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage}")
-          Future.successful {
-            errorHandler(false).showInternalServerError()
-          }
+      withIncomeSourcesFS {
+        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
+          case Right(incomeSourceIdMaybe) =>
+            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
+            handleRequest(
+              incomeSourceType = SelfEmployment,
+              isAgent = false,
+              taxYear,
+              changeTo,
+              incomeSourceIdOption
+            )
+          case Left(ex) =>
+            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage}")
+            Future.successful {
+              errorHandler(false).showInternalServerError()
+            }
+        }
       }
   }
 
@@ -200,7 +202,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
           None
         }
       case UkProperty | ForeignProperty =>
-        incomeSourceDetailsService.getActiveProperty(incomeSourceType).map(property => IncomeSourceId(property.incomeSourceId))
+        getActiveProperty(incomeSourceType).map(property => IncomeSourceId(property.incomeSourceId))
     }
   }
 

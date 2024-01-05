@@ -18,7 +18,6 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import forms.incomeSources.cease.IncomeSourceEndDateForm
@@ -133,13 +132,16 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
     "return 200 OK" when {
       def testShowResponse(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Unit = {
 
-        if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
-        setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-10-10")))
-        setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        if (isChange) {
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        } else {
+          setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        }
+
 
         val result: Future[Result] = (isAgent, isChange) match {
           case (true, true) =>
@@ -353,12 +355,6 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
           testInternalServerErrors(isAgent = true, incomeSourceType)
         }
       }
-      s"failed to get session data - ${CeaseIncomeSourceData.dateCeasedField}" when {
-        "called .showChange" in {
-          setupMockGetSessionKeyMongoTyped(Left(new Exception()))
-          testInternalServerErrors(isAgent = false, incomeSourceType = ForeignProperty, isChange = true)
-        }
-      }
       "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" when {
         "called .show" in {
           testInternalServerErrors(isAgent = false, SelfEmployment, id = Some("12345"))
@@ -376,19 +372,9 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
 
         val result = if (isAgent) {
-          incomeSourceType match {
-            case SelfEmployment =>
-              TestIncomeSourceEndDateController.showAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
-            case UkProperty | ForeignProperty =>
-              TestIncomeSourceEndDateController.showAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
-          }
+          TestIncomeSourceEndDateController.showAgent(id, incomeSourceType)(fakeRequestConfirmedClient())
         } else {
-          incomeSourceType match {
-            case SelfEmployment =>
-              TestIncomeSourceEndDateController.show(Some(testSelfEmploymentId), incomeSourceType)(fakeRequestWithActiveSession)
-            case UkProperty | ForeignProperty =>
-              TestIncomeSourceEndDateController.show(None, incomeSourceType)(fakeRequestWithActiveSession)
-          }
+          TestIncomeSourceEndDateController.show(id, incomeSourceType)(fakeRequestWithActiveSession)
         }
 
         val expectedRedirectUrl = if (isAgent) {
@@ -430,14 +416,18 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
               "income-source-end-date.year" -> "2022")
         }
 
-        if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
+        setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
         enable(IncomeSources)
         mockBothPropertyBothBusiness()
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
         setupMockSetSessionKeyMongo(Right(true))
+        if(incomeSourceType == SelfEmployment) setupMockSetSessionKeyMongo(Right(true))
+        if (isChange) {
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        } else {
+          setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
+        }
 
         val result: Future[Result] = (isAgent, isChange) match {
           case (true, true) =>
@@ -578,9 +568,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
               "income-source-end-date.year" -> "2022")
         }
 
-        if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-        else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-
+        setupMockAuthorisationSuccess(isAgent)
         disableAllSwitches()
         enable(IncomeSources)
         mockBothPropertyBothBusiness()

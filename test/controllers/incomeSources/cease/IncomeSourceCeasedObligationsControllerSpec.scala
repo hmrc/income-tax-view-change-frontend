@@ -18,7 +18,6 @@ package controllers.incomeSources.cease
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.SessionTimeoutPredicate
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import mocks.MockItvcErrorHandler
@@ -39,6 +38,7 @@ import testConstants.PropertyDetailsTestConstants.ceasedPropertyDetailsModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncomeCeased, completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants
 import testUtils.TestSupport
+import utils.IncomeSourcesUtils
 import views.html.incomeSources.cease.IncomeSourceCeasedObligations
 
 import java.time.LocalDate
@@ -57,6 +57,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
   with MockSessionService {
 
   val mockDateService: DateService = mock(classOf[DateService])
+  val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
 
   object TestIncomeSourceObligationController extends IncomeSourceCeasedObligationsController(
     authorisedFunctions = mockAuthService,
@@ -102,16 +103,17 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
       enable(IncomeSources)
       mockBothPropertyBothBusiness()
       mockGetObligationsViewModel(IncomeSourcesObligationsTestConstants.viewModel)
-
       setupMockCreateSession(true)
       setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
-
+      setupMockGetSessionKeyMongoTyped[String](Right(Some("2022-08-27")))
       when(mockDateService.getCurrentTaxYearStart(any())).thenReturn(LocalDate.of(2023, 1, 1))
       when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
         thenReturn(Future(IncomeSourcesObligationsTestConstants.testObligationsModel))
 
-      when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
-        .thenReturn(Some(ceasedPropertyDetailsModel(incomeSourceType)))
+      if(incomeSourceType != SelfEmployment) {
+        when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+          .thenReturn(Some(ceasedPropertyDetailsModel(incomeSourceType)))
+      }
 
       val result: Future[Result] = showCall(isAgent, incomeSourceType)
       val document: Document = Jsoup.parse(contentAsString(result))
@@ -252,7 +254,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
 
         setupMockAuthorisationSuccess(isAgent)
 
-        when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
+        when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
           .thenReturn(None)
 
         val result: Future[Result] = (isAgent) match {
@@ -291,7 +293,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends TestSupport
           mockTwoActiveUkPropertyIncomeSourcesErrorScenario()
         }
 
-        when(mockIncomeSourceDetailsService.getActiveProperty(any())(any()))
+        when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
           .thenReturn(None)
 
         val result: Future[Result] = (isAgent) match {

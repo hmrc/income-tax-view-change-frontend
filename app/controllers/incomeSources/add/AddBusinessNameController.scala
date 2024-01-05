@@ -29,7 +29,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.AddBusinessName
@@ -98,10 +98,6 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
   def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withSessionData(JourneyType(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
-      if (isChange) {
-        sessionService.createSession(journeyType.toString)
-      }
-
       val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
       val filledForm: Form[BusinessNameForm] = businessNameOpt.fold(BusinessNameForm.form)(name =>
         BusinessNameForm.form.fill(BusinessNameForm(name)))

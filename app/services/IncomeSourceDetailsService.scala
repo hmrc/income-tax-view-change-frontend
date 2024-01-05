@@ -23,7 +23,6 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import services.helpers.ActivePropertyBusinessesHelper
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -34,8 +33,7 @@ import scala.util.Try
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
-                                           implicit val ec: ExecutionContext)
-  extends ActivePropertyBusinessesHelper {
+                                           implicit val ec: ExecutionContext) {
   val cacheExpiry: Duration = Duration(1, "day")
   val emptyAddress = AddressModel(
     addressLine1 = "",

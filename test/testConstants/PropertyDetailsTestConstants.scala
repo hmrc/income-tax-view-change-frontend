@@ -230,7 +230,8 @@ object PropertyDetailsTestConstants {
       tradingStartDate = Some(testStartDate),
       cessation = Some(CessationModel(date = testCeaseDate, reason = Some("01"))),
       latencyDetails = None,
-      quarterTypeElection = Some(quarterTypeElectionStandard)
+      quarterTypeElection = Some(quarterTypeElectionStandard),
+      cashOrAccruals = true
     )
   }
 

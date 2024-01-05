@@ -18,7 +18,6 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
 import controllers.routes
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
@@ -27,7 +26,7 @@ import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, incomeSourceAddedField, journeyIsCompleteField}
+import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -36,12 +35,10 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.IncomeSourceDetailsService
 import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSessionId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
-import utils.AuthenticatorPredicate
 import views.html.incomeSources.add.AddBusinessTrade
 
 import scala.concurrent.Future
@@ -113,7 +110,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
         setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
         setupMockCreateSession(true)
-        setupMockGetMongo(Right(Some(sessionDataName)))
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = false, isChange = false)(fakeRequestWithActiveSession)
         status(result) shouldBe OK
@@ -124,7 +121,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
-        setupMockGetMongo(Right(Some(sessionDataName)))
+        setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
 
         val result: Future[Result] = TestAddBusinessTradeController.show(isAgent = true, isChange = false)(fakeRequestConfirmedClient())
         status(result) shouldBe OK
@@ -141,8 +138,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
           setupMockSetSessionKeyMongo(businessTradeField, validBusinessTrade, journeyType, Right(true))
 
 
@@ -163,8 +159,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
           setupMockSetSessionKeyMongo(businessTradeField, validBusinessTrade, journeyType, Right(true))
 
           val result: Future[Result] =
@@ -188,13 +183,12 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
           setupMockCreateSession(true)
-          val businessNameAsTrade: String = "Test Name"
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(businessNameAsTrade)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(businessNameAsTrade)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessName)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-              BusinessTradeForm.businessTrade -> businessNameAsTrade
+              BusinessTradeForm.businessTrade -> validBusinessName
             ))
 
           status(result) mustBe BAD_REQUEST
@@ -204,17 +198,16 @@ class AddBusinessTradeControllerSpec extends TestSupport
           disableAllSwitches()
           enable(IncomeSources)
 
-          val businessNameAsTrade = "Test Name"
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(businessNameAsTrade)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(businessNameAsTrade)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessName)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakeRequestConfirmedClientwithBusinessName()
               .withFormUrlEncodedBody(
-                BusinessTradeForm.businessTrade -> businessNameAsTrade
+                BusinessTradeForm.businessTrade -> validBusinessName
               ))
 
           status(result) mustBe BAD_REQUEST
@@ -229,8 +222,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeChar)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(invalidBusinessTradeChar)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -248,8 +241,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeChar)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(invalidBusinessTradeChar)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
@@ -268,8 +261,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeEmpty)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(invalidBusinessTradeEmpty)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -287,8 +280,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeEmpty)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(invalidBusinessTradeEmpty)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
@@ -307,8 +300,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeShort)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(invalidBusinessTradeShort)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -326,8 +319,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeShort)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(invalidBusinessTradeShort)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
@@ -346,8 +339,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeLong)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(invalidBusinessTradeLong)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
@@ -365,8 +358,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
           setupMockCreateSession(true)
-          setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-          setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeLong)))
+          setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment))
+            .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(invalidBusinessTradeLong)))))))
 
           val result: Future[Result] =
             TestAddBusinessTradeController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(

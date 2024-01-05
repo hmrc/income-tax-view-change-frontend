@@ -20,7 +20,6 @@ import audit.models.CeaseIncomeSourceAuditModel
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.UpdateIncomeSourceConnector
-import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, JourneyType}
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -55,7 +54,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
   val mockUpdateIncomeSourceConnector: UpdateIncomeSourceConnector = mock(classOf[UpdateIncomeSourceConnector])
   val mockHttpClient: HttpClient = mock(classOf[HttpClient])
 
-  val validCeaseDate: String = LocalDate.of(2022, 1, 1).toString
+  val validCeaseDate: String = LocalDate.of(2022, 10, 10).toString
 
   val checkDetailsHeading: String = messages("incomeSources.ceaseBusiness.checkDetails.heading")
 
@@ -107,34 +106,24 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends TestSupport with MockA
         setupMockCreateSession(true)
         setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Cease, incomeSourceType)))))
 
-        val result: Future[Result] = incomeSourceType match {
+        incomeSourceType match {
           case SelfEmployment =>
             when(mockIncomeSourceDetailsService.getCheckCeaseSelfEmploymentDetailsViewModel(any(), IncomeSourceId(any()), any()))
               .thenReturn(Right(checkCeaseBusinessDetailsModel))
-            if (isAgent)
-              TestCeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment)(fakeRequestConfirmedClient())
-            else
-              TestCeaseCheckIncomeSourceDetailsController.show(SelfEmployment)(fakeRequestWithNinoAndOrigin("pta"))
-
-          case ForeignProperty =>
-            when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
-              .thenReturn(Right(checkCeaseForeignPropertyDetailsModel))
-            if (isAgent)
-              TestCeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-            else
-              TestCeaseCheckIncomeSourceDetailsController.show(ForeignProperty)(fakeRequestWithNinoAndOrigin("pta"))
-
           case UkProperty =>
             when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
               .thenReturn(Right(checkCeaseUkPropertyDetailsModel))
-            if (isAgent)
-              TestCeaseCheckIncomeSourceDetailsController.showAgent(UkProperty)(fakeRequestConfirmedClient())
-            else
-              TestCeaseCheckIncomeSourceDetailsController.show(UkProperty)(fakeRequestWithNinoAndOrigin("pta"))
+          case ForeignProperty =>
+            when(mockIncomeSourceDetailsService.getCheckCeasePropertyIncomeSourceDetailsViewModel(any(), any(), any()))
+              .thenReturn(Right(checkCeaseForeignPropertyDetailsModel))
+        }
+
+        val result: Future[Result] = {
+          if (isAgent) TestCeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+          else TestCeaseCheckIncomeSourceDetailsController.show(incomeSourceType)(fakeRequestWithNinoAndOrigin("pta"))
         }
 
         val document: Document = Jsoup.parse(contentAsString(result))
-        println(redirectLocation(result))
         status(result) shouldBe Status.OK
         document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(
           TestCeaseCheckIncomeSourceDetailsController.heading(incomeSourceType))

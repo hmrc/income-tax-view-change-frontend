@@ -21,7 +21,7 @@ import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, TimeMachine
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, InitialPage, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
@@ -114,17 +114,15 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               case Left(exception: Exception) => Future.failed(exception)
               case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
               case Right(incomeSourceId: IncomeSourceId) =>
-                sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
-                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
-                    case Right(_) => handleRequest(
-                      sources = user.incomeSources,
-                      isAgent = false,
-                      backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-                      incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
-                      incomeSourceType = SelfEmployment
-                    )
-                    case Left(exception) => Future.failed(exception)
-                  }
+                sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment)).flatMap {
+                  case Right(_) => handleRequest(
+                    sources = user.incomeSources,
+                    isAgent = false,
+                    backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
+                    incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
+                    incomeSourceType = SelfEmployment
+                  )
+                  case Left(exception) => Future.failed(exception)
                 }.recover {
                   case ex =>
                     Logger("application").error(s"[ManageIncomeSourceDetailsController][showSoleTraderBusiness] - ${ex.getMessage} - ${ex.getCause}")
@@ -155,13 +153,11 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
               case Left(exception: Exception) => Future.failed(exception)
               case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
               case Right(incomeSourceId: IncomeSourceId) =>
-                sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
-                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment))
-                    .flatMap {
-                      case Right(_) => result
-                      case Left(exception) => Future.failed(exception)
-                    }
-                }
+                sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment))
+                  .flatMap {
+                    case Right(_) => result
+                    case Left(exception) => Future.failed(exception)
+                  }
             }
         }
       }
