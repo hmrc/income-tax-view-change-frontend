@@ -79,9 +79,9 @@ ScalaFix - linting rules only
 ** How to run:
    Check against main:
 
-   scalafix --rules=file:rules/LocalDateNowRule.scala
+   scalafix --rules=file:rules/src/main/scala/fix/LocalDateNowRule.scala
 
    Check against test:
-   test:scalafix --rules=file:rules/LocalDateNowRule.scala
+   test:scalafix --rules=file:rules/src/main/scala/fix/LocalDateNowRule.scala
 
    TODO: how to apply changes for it:~ ???   
