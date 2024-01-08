@@ -23,6 +23,12 @@ object LatencyYear {
       case "Q" => QuarterlyReporting(taxYear)
     }
   }
+
+  def isValidLatencyYear(year: TaxYear, latencyDetails: LatencyDetails): Boolean = {
+    val latencyYears = Set(latencyDetails.taxYear1, latencyDetails.taxYear2)
+    latencyYears.contains(year.endYear.toString)
+  }
+
 }
 
 sealed trait LatencyYear {
