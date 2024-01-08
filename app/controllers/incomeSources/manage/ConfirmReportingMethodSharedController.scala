@@ -280,14 +280,10 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
         routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
     }
 
-    val backCall = routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, getId(incomeSourceType, incomeSourceId))
+    val backCallId = if (incomeSourceType == SelfEmployment) incomeSourceId.map(v => v.value) else None
+    val backCall = routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, backCallId)
 
     (backCall, successCall)
-  }
-
-  private def getId(incomeSourceType: IncomeSourceType, id: Option[IncomeSourceId]):Option[String] = {
-    if (incomeSourceType == SelfEmployment) id.map(v => v.value)
-    else None
   }
 
   private def getPostAction(taxYear: String, changeTo: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {

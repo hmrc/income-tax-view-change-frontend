@@ -59,7 +59,16 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     implicit user =>
       withSessionData(JourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {
-          case SelfEmployment => showSoleTrader(id.getOrElse(""), isAgent)
+          case SelfEmployment => id match {
+            case Some(realId) => showSoleTrader(realId, isAgent)
+            case None => Logger("application")
+              .error(s"[ManageIncomeSourceDetailsController][show] no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
+              Future.successful(if (isAgent) {
+                itvcErrorHandlerAgent.showInternalServerError()
+              } else {
+                itvcErrorHandler.showInternalServerError()
+              })
+          }
           case _ => handleRequest(
             sources = user.incomeSources,
             isAgent = isAgent,
