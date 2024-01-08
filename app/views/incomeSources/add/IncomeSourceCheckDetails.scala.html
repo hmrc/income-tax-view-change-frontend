@@ -157,7 +157,7 @@
                         ActionItem(
                             href = changeBusinessNameURL,
                             content = Text(getMessage("change")),
-                            attributes = Map("id" -> "business-name-change-link")
+                            attributes = Map("id" -> "change-business-name-link")
                         )
                     )
                 ))
@@ -180,7 +180,7 @@
                     ActionItem(
                         href = changeStartDateURL,
                         content = Text(getMessage("change")),
-                        attributes = Map("id" -> "business-start-date-change-link")
+                        attributes = Map("id" -> "change-business-start-date-link")
                     )
                 )
             ))
@@ -203,7 +203,7 @@
                         ActionItem(
                             href = changeBusinessTradeURL,
                             content = Text(getMessage("change")),
-                            attributes = Map("id" -> "business-name-change-link")
+                            attributes = Map("id" -> "change-business-name-link")
                         )
                     )
                 ))
@@ -227,7 +227,7 @@
                         ActionItem(
                             href = changeBusinessAddressURL,
                             content = Text(getMessage("change")),
-                            attributes = Map("id" -> "business-address-change-link")
+                            attributes = Map("id" -> "change-business-address-link")
                         )
                     )
                 ))
@@ -251,7 +251,7 @@
                         ActionItem(
                             href = changeAccountingMethodURL,
                             content = Text(getMessage("change")),
-                            attributes = Map("id" -> "business-accounting-method-change-link")
+                            attributes = Map("id" -> "change-accounting-method-link")
                         )
                     )
                 ))
@@ -279,7 +279,8 @@
         @govukSummaryList(SummaryList(
             rows = {
                 businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow ++ businessAccountingMethodRow
-            }
+            },
+            attributes = Map("id" -> "check-details-table")
         ))
 
         <br>
