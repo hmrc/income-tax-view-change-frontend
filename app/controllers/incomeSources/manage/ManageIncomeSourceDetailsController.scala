@@ -71,50 +71,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       }
   }
 
-  //  def showUkProperty: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-  //    implicit user =>
-  //      handleRequest(
-  //        sources = user.incomeSources,
-  //        isAgent = false,
-  //        incomeSourceIdHashMaybe = None,
-  //        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-  //        incomeSourceType = UkProperty
-  //      )
-  //  }
-  //
-  //  def showUkPropertyAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-  //    implicit mtdItUser =>
-  //      handleRequest(
-  //        sources = mtdItUser.incomeSources,
-  //        isAgent = true,
-  //        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-  //        None,
-  //        incomeSourceType = UkProperty
-  //      )
-  //  }
-  //
-  //  def showForeignProperty: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-  //    implicit user =>
-  //      handleRequest(
-  //        sources = user.incomeSources,
-  //        isAgent = false,
-  //        incomeSourceIdHashMaybe = None,
-  //        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url,
-  //        incomeSourceType = ForeignProperty
-  //      )
-  //  }
-  //
-  //  def showForeignPropertyAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-  //    implicit mtdItUser =>
-  //      handleRequest(
-  //        sources = mtdItUser.incomeSources,
-  //        isAgent = true,
-  //        backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-  //        None,
-  //        incomeSourceType = ForeignProperty
-  //      )
-  //  }
-
   def showSoleTrader(hashIdString: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val incomeSourceIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(hashIdString)
     incomeSourceIdHash match {
@@ -152,38 +108,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
     }
   }
 
-//  def showSoleTraderBusinessAgent(hashIdString: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-//    implicit mtdItUser =>
-//      withIncomeSourcesFS {
-//
-//        mkFromQueryString(hashIdString) match {
-//          case Left(exception: Exception) => Future.failed(exception)
-//          case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <${mkFromQueryString(hashIdString)}>"))
-//          case Right(incomeSourceIdHash: IncomeSourceIdHash) =>
-//
-//            val result = handleRequest(
-//              sources = mtdItUser.incomeSources,
-//              isAgent = true,
-//              backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url,
-//              incomeSourceIdHashMaybe = Option(incomeSourceIdHash),
-//              incomeSourceType = SelfEmployment
-//            )
-//            mtdItUser.incomeSources.compareHashToQueryString(incomeSourceIdHash) match {
-//              case Left(exception: Exception) => Future.failed(exception)
-//              case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
-//              case Right(incomeSourceId: IncomeSourceId) =>
-//                sessionService.createSession(JourneyType(Manage, SelfEmployment).toString).flatMap { _ =>
-//                  sessionService.setMongoKey(ManageIncomeSourceData.incomeSourceIdField, incomeSourceId.value, JourneyType(Manage, SelfEmployment))
-//                    .flatMap {
-//                      case Right(_) => result
-//                      case Left(exception) => Future.failed(exception)
-//                    }
-//                }
-//            }
-//        }
-//      }
-//  }
-
   private def getQuarterType(latencyDetails: Option[LatencyDetails], quarterTypeElection: Option[QuarterTypeElection]): Option[QuarterReportingType] = {
     if (isEnabled(CalendarQuarterTypes)) {
       quarterTypeElection.flatMap(quarterTypeElection => {
@@ -200,7 +124,6 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         }
       })
     } else None
-
   }
 
   private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
