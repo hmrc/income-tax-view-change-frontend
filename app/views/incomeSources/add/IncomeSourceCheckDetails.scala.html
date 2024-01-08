@@ -147,7 +147,7 @@
         Seq(
             SummaryListRow(
                 key = Key(
-                    content = Text(getMessage("business-name"))
+                    content = Text(getMessage("business-name")),
                 ),
                 value = Value(
                     content = Text(extractName)
@@ -225,7 +225,7 @@
                 actions = Some(Actions(
                     items = Seq(
                         ActionItem(
-                            href = changeStartDateURL,
+                            href = changeBusinessAddressURL,
                             content = Text(getMessage("change")),
                             attributes = Map("id" -> "business-address-change-link")
                         )
@@ -281,70 +281,6 @@
                 businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow ++ businessAccountingMethodRow
             }
         ))
-
-        <dl class="govuk-summary-list" id="check-details-table">
-            @if(viewModel.incomeSourceType == SelfEmployment) {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
-                    <dd class="govuk-summary-list__value" id="business-name-value">@{
-                        extractName
-                    }</dd>
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" href=@changeBusinessNameURL>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                </div>
-            }
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
-                <dd class="govuk-summary-list__value" id="start-date-value">@{
-                    extractStartDate
-                }</dd>
-                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                    <a class="govuk-link" id="change-start-date-link" href=@changeStartDateURL>
-                    @getMessage("change")
-                    </a>
-                </dd>
-            </div>
-            @if(viewModel.incomeSourceType == SelfEmployment) {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@getMessage("business-description")</dt>
-                    <dd class="govuk-summary-list__value" id="business-trade-value">@{
-                        extractTrade
-                    }</dd>
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" href=@changeBusinessTradeURL>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
-                    <dd class="govuk-summary-list__value" id="business-address-value">@{
-                        extractAddress
-                    }</dd>
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" href=@changeBusinessAddressURL>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                </div>
-            }
-            @if(viewModel.showedAccountingMethod || viewModel.incomeSourceType != SelfEmployment) {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
-                    <dd class="govuk-summary-list__value" id="business-accounting-value">
-                    @messages(accountingMethodMessageKey)
-                    </dd>
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" id="change-accounting-method-link" href=@changeAccountingMethodURL>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                </div>
-            }
-        </dl>
 
         <br>
         <br>
