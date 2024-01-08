@@ -24,6 +24,9 @@ import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
 
 @Singleton
+//@SuppressWarnings(Array(
+//  "scalafix:LocalDate.now"
+//))
 class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface {
 
   def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = {
