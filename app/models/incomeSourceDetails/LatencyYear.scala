@@ -25,12 +25,8 @@ object LatencyYear {
   }
 
   def isValidLatencyYear(year: TaxYear, latencyDetails: LatencyDetails): Boolean = {
-    (latencyDetails, year) match {
-      case (details, year) =>
-        val latencyYears = Set(details.taxYear1, details.taxYear2)
-        latencyYears.contains(year.endYear.toString)
-      case _ => false
-    }
+    val latencyYears = Set(latencyDetails.taxYear1, latencyDetails.taxYear2)
+    latencyYears.contains(year.endYear.toString)
   }
 
 }
