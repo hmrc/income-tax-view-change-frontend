@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import play.twirl.api.HtmlFormat
 
 @this(
         mainTemplate: unifiedLayout,
@@ -99,13 +100,9 @@
     controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = true, viewModel.incomeSourceType).url
 }
 
-@changeAccountingMethodURL = @{
-    if(isAgent) {
-        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethodAgent(viewModel.incomeSourceType).url
-    } else {
-        controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType).url
+    @changeAccountingMethodURL = @{
+            controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType, isAgent).url
     }
-}
 
 @extractName = @{
     viewModel match {
