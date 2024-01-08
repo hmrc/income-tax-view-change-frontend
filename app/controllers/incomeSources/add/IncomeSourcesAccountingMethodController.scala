@@ -146,17 +146,16 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   }
 
   private lazy val postAction: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType)
-    else routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
+    routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)
   }
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, isChange, incomeSourceType) match {
       case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange)
-      case (_,     false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_,     false, _)              => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
-      case (false, _,     _)              => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_,     _,     _)              => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (_, false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_, false, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 
@@ -187,50 +186,31 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     )
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(
-        isAgent = false,
+        isAgent,
         incomeSourceType = incomeSourceType,
         isChange = false
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        handleRequest(
-          isAgent = true,
-          incomeSourceType = incomeSourceType,
-          isChange = false
+  def submit(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleSubmitRequest(
+          isAgent,
+          incomeSourceType
         )
     }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
-      implicit user =>
-        handleSubmitRequest(
-          isAgent = false,
-          incomeSourceType
-        )
-  }
-
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        handleSubmitRequest(
-          isAgent = true,
-          incomeSourceType
-        )
-  }
-
-  def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+  def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
       implicit user =>
         sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
           case Right(cashOrAccrualsFlag) =>
             handleRequest(
-              isAgent = false,
+              isAgent,
               incomeSourceType = incomeSourceType,
               cashOrAccrualsFlag = cashOrAccrualsFlag,
               isChange = true
@@ -238,28 +218,9 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
           case Left(exception) => Future.failed(exception)
         }.recover {
           case ex =>
+            val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
             Logger("application").error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethod] - ${ex.getMessage} - ${ex.getCause}")
-            itvcErrorHandler.showInternalServerError()
-        }
-    }
-
-  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourcesAccountingMethodField, JourneyType(Add, incomeSourceType)).flatMap {
-          case Right(cashOrAccrualsFlag) =>
-            handleRequest(
-              isAgent = true,
-              incomeSourceType = incomeSourceType,
-              cashOrAccrualsFlag = cashOrAccrualsFlag,
-              isChange = true
-            )
-          case Left(exception) => Future.failed(exception)
-        }.recover {
-          case ex =>
-            Logger("application")
-              .error(s"[IncomeSourcesAccountingMethodController][changeIncomeSourcesAccountingMethodAgent] - ${ex.getMessage} - ${ex.getCause}")
-            itvcErrorHandlerAgent.showInternalServerError()
+            errorHandler.showInternalServerError()
         }
     }
 }

@@ -56,29 +56,29 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
 
     val (backUrl, postAction) = incomeSourceType match {
       case SelfEmployment =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent (SelfEmployment))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment, isAgent))
       case UkProperty =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(UkProperty))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(UkProperty, isAgent))
       case _ =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submitAgent(ForeignProperty))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty, isAgent))
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
-        cashOrAccrualsFlag = Some(""),
-        incomeSourceType,
-        form,
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl
+      cashOrAccrualsFlag = Some(""),
+      incomeSourceType,
+      form,
+      postAction = postAction,
+      isAgent = isAgent,
+      backUrl = backUrl
     )
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(
-        cashOrAccrualsFlag = Some(""),
-        incomeSourceType,
-        form = form.withError(s"$incomeSourcePrefix", s"$incomeSourcePrefix.no-selection"),
-        postAction = postAction,
-        isAgent = isAgent,
-        backUrl = backUrl
+      cashOrAccrualsFlag = Some(""),
+      incomeSourceType,
+      form = form.withError(s"$incomeSourcePrefix", s"$incomeSourcePrefix.no-selection"),
+      postAction = postAction,
+      isAgent = isAgent,
+      backUrl = backUrl
     )
 
     lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
