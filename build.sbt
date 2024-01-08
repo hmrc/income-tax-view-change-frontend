@@ -91,6 +91,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(semanticdbVersion := scalafixSemanticdb.revision)
   .settings(scalacOptions += "-Wconf:cat=lint-multiarg-infix:silent")
   .settings(scalafixOnCompile := true)
+  .settings(scalafixConfigSettings(IntegrationTest))
   //.settings(scalacOptions += "-Xfatal-warnings")
   .settings(
     Test / Keys.fork := true,
