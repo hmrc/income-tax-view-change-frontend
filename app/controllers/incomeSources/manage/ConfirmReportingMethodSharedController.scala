@@ -19,10 +19,9 @@ package controllers.incomeSources.manage
 import audit.AuditingService
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{JourneyType, Manage}
 import exceptions.MissingSessionKey
@@ -30,12 +29,12 @@ import forms.incomeSources.manage.ConfirmReportingMethodForm
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, TaxYear}
+import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.mvc._
-import services.{CalculationListService, DateService, IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
+import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
@@ -116,7 +115,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
           case (Some(taxYearModel), Some(reportingMethod), Some(id)) =>
             user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
               case Some(latencyDetails) =>
-                if (TaxYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
+                if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {
                   val (backCall, _) = getRedirectCalls(taxYear, isAgent, changeTo, Some(id), incomeSourceType)
                   Ok(
                     confirmReportingMethod(
