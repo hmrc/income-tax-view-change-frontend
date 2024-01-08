@@ -19,7 +19,10 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
-
+@import enums.IncomeSourceJourney.IncomeSourceType
+@import enums.IncomeSourceJourney.UkProperty
+@import enums.IncomeSourceJourney.ForeignProperty
+@import enums.IncomeSourceJourney.SelfEmployment
 
 @this(
         mainTemplate: unifiedLayout,
@@ -33,11 +36,12 @@
         ceasedBusinesses: CeasedBusinesses
 )
 
+
 @(
         sources: ViewIncomeSourcesViewModel,
         isAgent: Boolean,
         backUrl: String
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)( implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
@@ -45,28 +49,8 @@
     messages(s"view-income-sources.$key", args: _*)
 }
 
-@viewSelfEmploymentDetailsURL(incomeSourceIdHash: String) = @{
-    if(isAgent) {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash).url
-    } else {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash).url
-    }
-}
-
-@viewUKPropertyDetailsURL = @{
-    if(isAgent) {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
-    } else {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkProperty().url
-    }
-}
-
-@viewForeignPropertyDetailsURL = @{
-    if(isAgent) {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
-    } else {
-        controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignProperty().url
-    }
+@incomeSourceDetailsURL(incomeSourceType: IncomeSourceType, incomeSourceIdHash: Option[String]) = @{
+    controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, incomeSourceIdHash).url
 }
 
 @ukProperty = @{
@@ -112,7 +96,7 @@
                     <td class="govuk-table__cell govuk-!-text-align-right">
                         <a class="govuk-link" id="@{
                             s"view-link-business-$index"
-                        }" href=@viewSelfEmploymentDetailsURL(business.incomeSourceId.toHash.hash)>
+                        }" href=@incomeSourceDetailsURL(SelfEmployment, Some(business.incomeSourceId.toHash.hash))>
                         @getMessage("choose")
                         </a>
                     </td>
@@ -140,7 +124,7 @@
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell" id="table-row-trading-start-date-uk">@ukProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="view-link-business-uk-property" href=@viewUKPropertyDetailsURL>
+                        <a class="govuk-link" id="view-link-business-uk-property" href=@incomeSourceDetailsURL(UkProperty, None)>
                         @getMessage("choose")
                         </a>
                     </td>
@@ -167,7 +151,7 @@
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell" id="table-row-trading-start-date-foreign">@foreignProperty.map(_.tradingStartDate.map(_.toLongDate).getOrElse(getMessage("unknown-field"))).get</td>
                     <td class="govuk-table__cell govuk-!-text-align-right">
-                        <a class="govuk-link" id="view-link-business-foreign-property" href=@viewForeignPropertyDetailsURL>
+                        <a class="govuk-link" id="view-link-business-foreign-property" href=@incomeSourceDetailsURL(ForeignProperty, None)>
                         @getMessage("choose")
                         </a>
                     </td>

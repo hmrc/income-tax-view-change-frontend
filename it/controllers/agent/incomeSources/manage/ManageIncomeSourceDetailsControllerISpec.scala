@@ -36,9 +36,9 @@ import java.time.Month.APRIL
 
 class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
-  val manageSelfEmploymentShowAgentUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId).url
-  val manageUKPropertyShowAgentUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showUkPropertyAgent().url
-  val manageForeignPropertyShowAgentUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
+  val manageSelfEmploymentShowAgentUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(testSelfEmploymentId)).url
+  val manageUKPropertyShowAgentUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None).url
+  val manageForeignPropertyShowAgentUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None).url
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = currentTaxYear
