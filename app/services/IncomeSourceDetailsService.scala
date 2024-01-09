@@ -23,7 +23,6 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import services.helpers.ActivePropertyBusinessesHelper
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -34,8 +33,7 @@ import scala.util.Try
 
 @Singleton
 class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: BusinessDetailsConnector,
-                                           implicit val ec: ExecutionContext)
-  extends ActivePropertyBusinessesHelper {
+                                           implicit val ec: ExecutionContext) {
   val cacheExpiry: Duration = Duration(1, "day")
   val emptyAddress = AddressModel(
     addressLine1 = "",
@@ -148,7 +146,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
 
   def getCheckCeaseSelfEmploymentDetailsViewModel(sources: IncomeSourceDetailsModel,
                                                   incomeSourceId: IncomeSourceId,
-                                                  businessEndDate: String)
+                                                  businessEndDate: LocalDate)
   : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = Try {
     val soleTraderBusinesses = sources.businesses.filterNot(_.isCeased)
       .find(m => mkIncomeSourceId(m.incomeSourceId) == incomeSourceId)
@@ -158,13 +156,13 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
         mkIncomeSourceId(business.incomeSourceId),
         business.tradingName,
         business.address,
-        LocalDate.parse(businessEndDate),
+        businessEndDate,
         incomeSourceType = SelfEmployment
       )
     }.get
   }.toEither
 
-  def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, businessEndDate: String, incomeSourceType: IncomeSourceType)
+  def getCheckCeasePropertyIncomeSourceDetailsViewModel(sources: IncomeSourceDetailsModel, businessEndDate: LocalDate, incomeSourceType: IncomeSourceType)
   : Either[Throwable, CheckCeaseIncomeSourceDetailsViewModel] = {
     val propertyBusiness = incomeSourceType match {
       case UkProperty => sources.properties.filterNot(_.isCeased).find(_.isUkProperty)
@@ -176,7 +174,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
           mkIncomeSourceId(business.incomeSourceId),
           tradingName = None,
           address = None,
-          LocalDate.parse(businessEndDate),
+          businessEndDate,
           incomeSourceType = incomeSourceType
         )
       }.get

@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.core.IncomeSourceId
 import models.updateIncomeSource._
 import play.api.Logger
 import play.api.http.Status.OK

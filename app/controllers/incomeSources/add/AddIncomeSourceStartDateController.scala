@@ -20,24 +20,21 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, InitialPage, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, incomeSourceAddedField}
+import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, IncomeSourceDetailsService, SessionService}
+import services.{DateService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDate
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -92,16 +89,20 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage
       }
-    }) { _ =>
+    }) { sessionData =>
       if (!isChange && incomeSourceType.equals(UkProperty) || !isChange && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = JourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType.toString).flatMap {
-          case true => Future.successful(None)
-          case false => throw new Exception("Unable to create session")
-        }
+        sessionService.createSession(journeyType.toString)
       }
 
-      getFilledForm(form(messagesPrefix), incomeSourceType, isChange).map { filledForm =>
+      val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
+      val filledForm = dateStartedOpt match {
+        case Some(date) =>
+          form(messagesPrefix).fill(DateFormElement(date))
+        case None => form(messagesPrefix)
+      }
+
+      Future.successful {
         Ok(
           addIncomeSourceStartDate(
             form = filledForm,
@@ -164,32 +165,6 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
     }
   }
 
-  private def getFilledForm(form: Form[DateFormElement],
-                            incomeSourceType: IncomeSourceType,
-                            isChange: Boolean)(implicit user: MtdItUser[_]): Future[Form[DateFormElement]] = {
-    if (isChange) {
-      getStartDate(incomeSourceType).flatMap {
-        case Some(date) =>
-          Future.successful(
-            form.fill(
-              DateFormElement(date)
-            )
-          )
-        case None =>
-          throw new Exception("Unable to retrieve start date from Mongo")
-      }
-    }
-    else Future.successful(form)
-  }
-
-  private def getStartDate(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[LocalDate]] = {
-    val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).flatMap {
-      case Right(dateOpt) => Future.successful(dateOpt)
-      case Left(ex) => Future.failed(ex)
-    }
-  }
-
   private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
     routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType)
   }
@@ -204,11 +179,11 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
 
     ((isAgent, isChange, incomeSourceType) match {
       case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-      case (_,     false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
-      case (false, false, _)              => routes.AddIncomeSourceController.show()
-      case (_,     false, _)              => routes.AddIncomeSourceController.showAgent()
-      case (false, _,     _)              => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_,     _,     _)              => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+      case (false, false, _) => routes.AddIncomeSourceController.show()
+      case (_, false, _) => routes.AddIncomeSourceController.showAgent()
+      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
   }
 }

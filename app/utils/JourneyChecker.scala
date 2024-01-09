@@ -17,7 +17,7 @@
 package utils
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
@@ -31,10 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait JourneyChecker extends IncomeSourcesUtils {
   self =>
+
   val sessionService: SessionService
 
   implicit val ec: ExecutionContext
-
 
   private lazy val isAgent: MtdItUser[_] => Boolean = (user: MtdItUser[_]) => user.userType.contains(Agent)
 
@@ -72,7 +72,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
       }
     }
 
-  private lazy val homeRedirectUrl: (JourneyType) => MtdItUser[_] => Future[Result] =
+  private lazy val journeyRestartUrl: (JourneyType) => MtdItUser[_] => Future[Result] =
     (journeyType: JourneyType) => user => {
       Future.successful {
         (journeyType.operation, isAgent(user)) match {
@@ -107,12 +107,12 @@ trait JourneyChecker extends IncomeSourcesUtils {
               codeBlock(data)
             }
           }
-          else homeRedirectUrl(journeyType)(user)
+          else journeyRestartUrl(journeyType)(user)
         case Left(ex) =>
           val agentPrefix = if (isAgent(user)) "[Agent]" else ""
           Logger("application").error(s"$agentPrefix" +
             s"[JourneyChecker][withSessionData]: Unable to retrieve Mongo data for journey type ${journeyType.toString}", ex)
-          homeRedirectUrl(journeyType)(user)
+          journeyRestartUrl(journeyType)(user)
       }
     }
   }

@@ -30,6 +30,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIn
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
@@ -45,7 +46,7 @@ class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
     None
   )(FakeRequest())
 
-  val cessationDate = "2022-07-01"
+  val cessationDate: LocalDate = LocalDate.of(2022, 7, 1)
 
   val mockUpdateIncomeSourceConnector: UpdateIncomeSourceConnector = mock(classOf[UpdateIncomeSourceConnector])
 

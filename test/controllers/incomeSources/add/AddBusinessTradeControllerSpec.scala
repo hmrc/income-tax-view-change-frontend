@@ -18,17 +18,15 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NinoPredicate, SessionTimeoutPredicate}
-import controllers.routes
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
-import forms.incomeSources.add.{BusinessNameForm, BusinessTradeForm}
+import forms.incomeSources.add.BusinessTradeForm
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockNavBarEnumFsPredicate}
 import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField, incomeSourceAddedField, journeyIsCompleteField}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify}
@@ -36,13 +34,9 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
-import services.IncomeSourceDetailsService
-import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{addedIncomeSourceUIJourneySessionData, businessesAndPropertyIncome, completedUIJourneySessionData, emptyUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import utils.AuthenticatorPredicate
 import views.html.incomeSources.add.AddBusinessTrade
 
 import scala.concurrent.Future
@@ -65,9 +59,6 @@ class AddBusinessTradeControllerSpec extends TestSupport
   val validBusinessTrade: String = "Test Business Trade"
   val validBusinessName: String = "Test Business Name"
   val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
-  val sessionDataISAdded: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
-  val sessionDataCompletedJourney: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
-  val sessionDataName: UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(businessName = Some("testBusinessName"))))
 
   object TestAddBusinessTradeController
     extends AddBusinessTradeController(
@@ -83,11 +74,6 @@ class AddBusinessTradeControllerSpec extends TestSupport
       itvcErrorHandlerAgent = app.injector.instanceOf[AgentItvcErrorHandler],
       ec = ec
     )
-
-  def authenticate(isAgent: Boolean): Unit = {
-    if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-    else setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
-  }
 
   def getRequest(isAgent: Boolean) = {
     if (isAgent) fakeRequestConfirmedClient()
@@ -118,10 +104,11 @@ class AddBusinessTradeControllerSpec extends TestSupport
             disableAllSwitches()
             enable(IncomeSources)
 
-            authenticate(isAgent)
+            setupMockAuthorisationSuccess(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             setupMockCreateSession(true)
-            setupMockGetMongo(Right(Some(sessionDataName)))
+            setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+              .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
             setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
 
             val result: Future[Result] = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
@@ -147,11 +134,12 @@ class AddBusinessTradeControllerSpec extends TestSupport
               disableAllSwitches()
               enable(IncomeSources)
 
-              authenticate(isAgent)
+              setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(validBusinessTrade)))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
+
               setupMockSetSessionKeyMongo(businessTradeField, validBusinessTrade, journeyType, Right(true))
 
 
@@ -162,7 +150,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
               status(result) mustBe SEE_OTHER
               verify(mockSessionService)
                 .setMongoKey(ArgumentMatchers.eq(businessTradeField), ArgumentMatchers.eq(validBusinessTrade), ArgumentMatchers.eq(journeyType))(any(), any())
-              redirectLocation(result) mustBe Some{
+              redirectLocation(result) mustBe Some {
                 (isChange, isAgent) match {
                   case (false, false) => controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange).url
                   case (false, true) => controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange).url
@@ -178,14 +166,14 @@ class AddBusinessTradeControllerSpec extends TestSupport
               disableAllSwitches()
               enable(IncomeSources)
 
-              authenticate(isAgent)
+              setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
               setupMockCreateSession(true)
               val businessNameAsTrade: String = "Test Name"
-              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(businessNameAsTrade)))
-              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(businessNameAsTrade)))
-
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(businessNameAsTrade),
+                  businessTrade = Some(businessNameAsTrade)))))))
               val result: Future[Result] =
                 TestAddBusinessTradeController.submit(isAgent, isChange)(postRequest(isAgent).withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> businessNameAsTrade
@@ -200,11 +188,12 @@ class AddBusinessTradeControllerSpec extends TestSupport
               enable(IncomeSources)
 
               val invalidBusinessTradeChar: String = "££"
-              authenticate(isAgent)
+              setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeChar)))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                  businessTrade = Some(invalidBusinessTradeChar)))))))
 
               val result: Future[Result] =
                 TestAddBusinessTradeController.submit(isAgent, isChange)(postRequest(isAgent).withFormUrlEncodedBody(
@@ -220,11 +209,12 @@ class AddBusinessTradeControllerSpec extends TestSupport
               enable(IncomeSources)
 
               val invalidBusinessTradeEmpty: String = ""
-              authenticate(isAgent)
+              setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeEmpty)))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                  businessTrade = Some(invalidBusinessTradeEmpty)))))))
 
               val result: Future[Result] =
                 TestAddBusinessTradeController.submit(isAgent, isChange)(postRequest(isAgent).withFormUrlEncodedBody(
@@ -240,11 +230,12 @@ class AddBusinessTradeControllerSpec extends TestSupport
               enable(IncomeSources)
 
               val invalidBusinessTradeShort: String = "A"
-              authenticate(isAgent)
+              setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeShort)))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                  businessTrade = Some(invalidBusinessTradeShort)))))))
 
               val result: Future[Result] =
                 TestAddBusinessTradeController.submit(isAgent, isChange)(postRequest(isAgent).withFormUrlEncodedBody(
@@ -260,11 +251,12 @@ class AddBusinessTradeControllerSpec extends TestSupport
               enable(IncomeSources)
 
               val invalidBusinessTradeLong: String = "This trade name is far too long to be accepted"
-              authenticate(isAgent)
+              setupMockAuthorisationSuccess(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some(invalidBusinessTradeLong)))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                  businessTrade = Some(invalidBusinessTradeLong)))))))
 
               val result: Future[Result] =
                 TestAddBusinessTradeController.submit(isAgent, isChange)(postRequest(isAgent).withFormUrlEncodedBody(
@@ -280,7 +272,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
         "when feature switch is disabled" in {
           disableAllSwitches()
 
-          authenticate(isAgent)
+          setupMockAuthorisationSuccess(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
           val result: Future[Result] = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
@@ -292,10 +284,9 @@ class AddBusinessTradeControllerSpec extends TestSupport
           "user has already completed the journey" in {
             disableAllSwitches()
             enable(IncomeSources)
-
             mockNoIncomeSources()
-            authenticate(isAgent)
-            setupMockGetMongo(Right(Some(sessionDataCompletedJourney)))
+            setupMockAuthorisationSuccess(isAgent)
+            setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
 
             val result: Future[Result] = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
             status(result) shouldBe SEE_OTHER
@@ -306,10 +297,9 @@ class AddBusinessTradeControllerSpec extends TestSupport
           "user has already added their income source" in {
             disableAllSwitches()
             enable(IncomeSources)
-
             mockNoIncomeSources()
-            authenticate(isAgent)
-            setupMockGetMongo(Right(Some(sessionDataISAdded)))
+            setupMockAuthorisationSuccess(isAgent)
+            setupMockGetMongo(Right(Some(addedIncomeSourceUIJourneySessionData(SelfEmployment))))
 
             val result: Future[Result] = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
             status(result) shouldBe SEE_OTHER

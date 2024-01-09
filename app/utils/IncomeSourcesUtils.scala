@@ -18,16 +18,14 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.{FeatureSwitching, IncomeSources}
-import enums.IncomeSourceJourney.IncomeSourceType
-import enums.JourneyType.{Add, JourneyType}
-import models.incomeSourceDetails.AddIncomeSourceData
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import models.incomeSourceDetails.PropertyDetailsModel
+import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait IncomeSourcesUtils extends FeatureSwitching {
 
@@ -39,6 +37,28 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       }
     } else {
       codeBlock
+    }
+  }
+
+  def getActiveProperty(incomeSourceType: IncomeSourceType)
+                       (implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
+
+    def selectActiveProperty(filter: PropertyDetailsModel => Boolean): Option[PropertyDetailsModel] = {
+      val activeProperty = user.incomeSources.properties.filter(p => !p.isCeased && filter(p))
+
+      activeProperty match {
+        case property :: Nil => Some(property)
+        case _ =>
+          Logger("application").error(s"[ActivePropertyBusinessesHelper][getActiveProperty]" +
+            s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
+          None
+      }
+    }
+
+    incomeSourceType match {
+      case SelfEmployment => None
+      case UkProperty => selectActiveProperty(_.isUkProperty)
+      case _ => selectActiveProperty(_.isForeignProperty)
     }
   }
 }
