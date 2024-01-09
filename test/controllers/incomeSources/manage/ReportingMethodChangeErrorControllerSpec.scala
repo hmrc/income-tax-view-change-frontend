@@ -84,7 +84,7 @@ class ReportingMethodChangeErrorControllerSpec
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
           controllers.incomeSources.manage.routes
-            .ManageIncomeSourceDetailsController.showUkProperty().url
+            .ManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None).url
         status(result) shouldBe Status.OK
       }
 
@@ -94,8 +94,7 @@ class ReportingMethodChangeErrorControllerSpec
         val document = Jsoup.parse(contentAsString(result))
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
-          controllers.incomeSources.manage.routes
-            .ManageIncomeSourceDetailsController.showUkPropertyAgent().url
+          controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None).url
         status(result) shouldBe Status.OK
       }
 
@@ -106,7 +105,7 @@ class ReportingMethodChangeErrorControllerSpec
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
           controllers.incomeSources.manage.routes
-            .ManageIncomeSourceDetailsController.showForeignProperty().url
+            .ManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None).url
         status(result) shouldBe Status.OK
       }
 
@@ -117,7 +116,7 @@ class ReportingMethodChangeErrorControllerSpec
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
           controllers.incomeSources.manage.routes
-            .ManageIncomeSourceDetailsController.showForeignPropertyAgent().url
+            .ManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None).url
         status(result) shouldBe Status.OK
       }
 
@@ -128,7 +127,7 @@ class ReportingMethodChangeErrorControllerSpec
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
           controllers.incomeSources.manage.routes
-            .ManageIncomeSourceDetailsController.showSoleTraderBusiness(testSelfEmploymentId).url
+            .ManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(testSelfEmploymentId)).url
         status(result) shouldBe Status.OK
       }
 
@@ -139,7 +138,7 @@ class ReportingMethodChangeErrorControllerSpec
 
         document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
           controllers.incomeSources.manage.routes
-            .ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(testSelfEmploymentId).url
+            .ManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(testSelfEmploymentId)).url
         status(result) shouldBe Status.OK
       }
     }

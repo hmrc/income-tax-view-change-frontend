@@ -271,26 +271,23 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {
 
-    val (backCall, successCall) = (isAgent, incomeSourceType, incomeSourceId) match {
-      case (false, SelfEmployment, Some(incomeSourceId)) =>
-        routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId.toHash.hash) ->
-          routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
-      case (_, SelfEmployment, Some(incomeSourceId)) =>
-        routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId.toHash.hash) ->
-          routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
-      case (false, UkProperty, _) =>
-        routes.ManageIncomeSourceDetailsController.showUkProperty() ->
-          routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-      case (_, UkProperty, _) =>
-        routes.ManageIncomeSourceDetailsController.showUkPropertyAgent() ->
-          routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-      case (false, _, _) =>
-        routes.ManageIncomeSourceDetailsController.showForeignProperty() ->
-          routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-      case (_, _, _) =>
-        routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent() ->
-          routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
+    val successCall = (isAgent, incomeSourceType) match {
+      case (false, SelfEmployment) =>
+        routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
+      case (_, SelfEmployment) =>
+        routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
+      case (false, UkProperty) =>
+        routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
+      case (_, UkProperty) =>
+        routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
+      case (false, _) =>
+        routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
+      case (_, _) =>
+        routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
     }
+
+    val backCallId = if (incomeSourceType == SelfEmployment) incomeSourceId.map(v => v.value) else None
+    val backCall = routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, backCallId)
 
     (backCall, successCall)
   }

@@ -95,13 +95,9 @@ class ReportingMethodChangeErrorController @Inject()(val manageIncomeSources: Ma
   private def getManageIncomeSourcesUrl(isAgent: Boolean): String = routes.ManageIncomeSourceController.show(isAgent).url
 
   private def getManageIncomeSourceDetailsUrl(incomeSourceId: IncomeSourceId, isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
-    ((isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceId.value)
-      case (_, SelfEmployment) => routes.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceId.value)
-      case (false, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkProperty()
-      case (_, UkProperty) => routes.ManageIncomeSourceDetailsController.showUkPropertyAgent()
-      case (false, _) => routes.ManageIncomeSourceDetailsController.showForeignProperty()
-      case (_, _) => routes.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
+    (incomeSourceType match {
+      case SelfEmployment => routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, Some(incomeSourceId.value))
+      case _ => routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, None)
     }).url
   }
 

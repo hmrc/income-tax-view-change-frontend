@@ -181,7 +181,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val result = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
 
         status(result) shouldBe Status.SEE_OTHER
       }
@@ -192,7 +192,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -219,7 +219,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+        val result = TestManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestConfirmedClient())
 
         status(result) shouldBe SEE_OTHER
       }
@@ -230,7 +230,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
       setupMockSetSessionKeyMongo(Right(true))
 
-      val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+      val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestConfirmedClient())
       val document: Document = Jsoup.parse(contentAsString(result))
 
       status(result) shouldBe Status.OK
@@ -254,7 +254,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -274,7 +274,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -297,7 +297,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -320,7 +320,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -351,7 +351,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -377,7 +377,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -397,7 +397,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -420,7 +420,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -443,7 +443,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -474,7 +474,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, SelfEmployment)))))
         setupMockSetSessionKeyMongo(Right(true))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(incomeSourceIdHash)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -499,7 +499,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -514,7 +514,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -534,7 +534,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -554,7 +554,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -572,7 +572,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(EXPIRED_LATENCY)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -596,7 +596,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -611,7 +611,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -631,7 +631,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -651,7 +651,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -669,7 +669,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, UkProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showUkPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -694,7 +694,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -709,7 +709,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -727,7 +727,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -745,7 +745,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -763,7 +763,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(EXPIRED_LATENCY)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -788,7 +788,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(ITSA_STATUS_MANDATORY_OR_VOLUNTARY_BUT_NO_LATENCY_INFORMATION, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -804,7 +804,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_NOT_CRYSTALLIZED, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -822,7 +822,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(FIRST_AND_SECOND_YEAR_CRYSTALLIZED, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -840,7 +840,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(NON_ELIGIBLE_ITSA_STATUS, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -858,7 +858,7 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
         mockAndBasicSetup(EXPIRED_LATENCY, isAgent = true)
         setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Manage, ForeignProperty)))))
 
-        val result: Future[Result] = TestManageIncomeSourceDetailsController.showForeignPropertyAgent(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None)(fakeRequestConfirmedClient())
         val document: Document = Jsoup.parse(contentAsString(result))
 
         status(result) shouldBe Status.OK
@@ -883,17 +883,17 @@ class ManageIncomeSourceDetailsControllerSpec extends TestSupport with MockAuthe
       "User has no income source of the called type" in {
         mockAndBasicSetup(ERROR_TESTING)
         mockUKPropertyIncomeSource()
-        val resultSE: Future[Result] = TestManageIncomeSourceDetailsController.showSoleTraderBusiness(incomeSourceIdHash)(fakeRequestWithNino)
+        val resultSE: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(incomeSourceIdHash))(fakeRequestWithNino)
         status(resultSE) shouldBe Status.INTERNAL_SERVER_ERROR
 
         mockAndBasicSetup(ERROR_TESTING)
         mockSingleBusinessIncomeSource()
-        val resultUk: Future[Result] = TestManageIncomeSourceDetailsController.showUkProperty(fakeRequestWithNino)
+        val resultUk: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None)(fakeRequestWithNino)
         status(resultUk) shouldBe Status.INTERNAL_SERVER_ERROR
 
         mockAndBasicSetup(ERROR_TESTING)
         mockSingleBusinessIncomeSource()
-        val resultFP: Future[Result] = TestManageIncomeSourceDetailsController.showForeignProperty(fakeRequestWithNino)
+        val resultFP: Future[Result] = TestManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None)(fakeRequestWithNino)
         status(resultFP) shouldBe Status.INTERNAL_SERVER_ERROR
       }
 

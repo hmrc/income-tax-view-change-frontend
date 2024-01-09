@@ -424,12 +424,12 @@ GET           /agents/income-sources/manage/error-change-reporting-method-not-sa
 GET           /income-sources/manage/error-change-reporting-method-not-saved-foreign-property           controllers.incomeSources.manage.ReportingMethodChangeErrorController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
 GET           /agents/income-sources/manage/error-change-reporting-method-not-saved-foreign-property    controllers.incomeSources.manage.ReportingMethodChangeErrorController.show(isAgent: Boolean = true,  incomeSourceType: IncomeSourceType = ForeignProperty)
 
-GET          /income-sources/manage/your-details                               controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showSoleTraderBusiness(id: String)
-GET          /agents/income-sources/manage/your-details                        controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showSoleTraderBusinessAgent(id: String)
-GET          /income-sources/manage/your-details-uk-property                   controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showUkProperty()
-GET          /agents/income-sources/manage/your-details-uk-property            controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showUkPropertyAgent()
-GET          /income-sources/manage/your-details-foreign-property              controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showForeignProperty()
-GET          /agents/income-sources/manage/your-details-foreign-property       controllers.incomeSources.manage.ManageIncomeSourceDetailsController.showForeignPropertyAgent()
+GET          /income-sources/manage/your-details                               controllers.incomeSources.manage.ManageIncomeSourceDetailsController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment, id: Option[String])
+GET          /agents/income-sources/manage/your-details                        controllers.incomeSources.manage.ManageIncomeSourceDetailsController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment, id: Option[String])
+GET          /income-sources/manage/your-details-uk-property                   controllers.incomeSources.manage.ManageIncomeSourceDetailsController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = UkProperty, id: Option[String] = None)
+GET          /agents/income-sources/manage/your-details-uk-property            controllers.incomeSources.manage.ManageIncomeSourceDetailsController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = UkProperty, id: Option[String] = None)
+GET          /income-sources/manage/your-details-foreign-property              controllers.incomeSources.manage.ManageIncomeSourceDetailsController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty, id: Option[String] = None)
+GET          /agents/income-sources/manage/your-details-foreign-property       controllers.incomeSources.manage.ManageIncomeSourceDetailsController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty, id: Option[String] = None)
 
 GET          /income-sources/manage/business-will-report                        controllers.incomeSources.manage.ManageObligationsController.showSelfEmployment(changeTo: String, taxYear: String)
 GET          /agents/income-sources/manage/business-will-report                 controllers.incomeSources.manage.ManageObligationsController.showAgentSelfEmployment(changeTo: String, taxYear: String)
