@@ -175,11 +175,11 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
               result should have(
                 httpStatus(OK),
                 pageTitleAgent("check-business-details.title"),
-                elementTextByID("business-name-value")(testBusinessName),
-                elementTextByID("start-date-value")("1 January 2023"),
-                elementTextByID("business-trade-value")(testBusinessTrade),
-                elementTextByID("business-address-value")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCode),
-                elementTextByID("business-accounting-value")(testBusinessAccountingMethodView),
+                elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testBusinessName),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")("1 January 2023"),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(testBusinessTrade),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(4) dd:nth-of-type(1)")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCode),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(5) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
                 elementTextByID("confirm-button")(continueButtonText)
               )
 
@@ -187,8 +187,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
               result should have(
                 httpStatus(OK),
                 pageTitleAgent("incomeSources.add.checkUKPropertyDetails.title"),
-                elementTextByID("start-date-value")("1 January 2023"),
-                elementTextByID("business-accounting-value")(testBusinessAccountingMethodView),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
                 elementTextByID("confirm-button")(continueButtonText)
               )
 
@@ -196,8 +196,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
               result should have(
                 httpStatus(OK),
                 pageTitleAgent("incomeSources.add.foreign-property-check-details.title"),
-                elementTextByID("start-date-value")("1 January 2023"),
-                elementTextByID("business-accounting-value")(testBusinessAccountingMethodView),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
+                elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
                 elementTextByID("confirm-button")(continueButtonText)
               )
           }

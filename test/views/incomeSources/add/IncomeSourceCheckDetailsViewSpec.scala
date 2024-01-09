@@ -98,9 +98,6 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
         }
 
         if (incomeSourceType == SelfEmployment) {
-          "render the business name from session storage" in new Setup(isAgent, incomeSourceType) {
-            document.getElementById("business-name-value").text shouldBe businessName
-          }
 
           "render the summary list" in new Setup(isAgent, incomeSourceType) {
             document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("check-business-details.business-name")

@@ -16,15 +16,13 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney._
-@import models.incomeSourceDetails.viewmodels.CheckDetailsViewModel
+@import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
-@import models.incomeSourceDetails.viewmodels.CheckBusinessDetailsViewModel
-@import models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -49,98 +47,215 @@
         origin: Option[String] = None
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
-    @import implicitDateFormatter.longDate
+@import implicitDateFormatter.longDate
 
-    @getMessage(key: String, args: String*) = @{
-        viewModel.incomeSourceType match {
-            case SelfEmployment => messages(s"check-business-details.$key", args: _*)
-            case UkProperty => messages(s"incomeSources.add.checkUKPropertyDetails.$key", args: _*)
-            case ForeignProperty => messages(s"incomeSources.add.foreign-property-check-details.$key", args: _*)
-        }
+@getMessage(key: String, args: String*) = @{
+    viewModel.incomeSourceType match {
+        case SelfEmployment => messages(s"check-business-details.$key", args: _*)
+        case UkProperty => messages(s"incomeSources.add.checkUKPropertyDetails.$key", args: _*)
+        case ForeignProperty => messages(s"incomeSources.add.foreign-property-check-details.$key", args: _*)
     }
+}
 
-    @accountingMethodMessageKey = @{
-        viewModel.getAccountingMethodMessageKey
+@accountingMethodMessageKey = @{
+    viewModel.getAccountingMethodMessageKey
+}
+
+@changeBusinessNameURL = @{
+    if(isAgent) {
+        controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
+    } else {
+        controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessName().url
     }
+}
 
-    @changeBusinessNameURL = @{
-        if(isAgent) {
-            controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
-        } else {
-            controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessName().url
-        }
+@changeBusinessTradeURL = @{
+    if(isAgent) {
+        controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = true).url
+    } else {
+        controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = true).url
     }
+}
 
-    @changeBusinessTradeURL = @{
-        if(isAgent) {
-            controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = true, isChange = true).url
-        } else {
-            controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent = false, isChange = true).url
-        }
+@changeBusinessAddressURL = @{
+    if(isAgent) {
+        controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = true).url
+    } else {
+        controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = true).url
     }
+}
 
-    @changeBusinessAddressURL = @{
-        if(isAgent) {
-            controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = true).url
-        } else {
-            controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = true).url
-        }
-    }
-
-    @getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
-        List(Some(address1),
-            address2,
-            address3,
-            address4,
-            postCode,
-            countryCode
-        ).flatten.filter(_.nonEmpty).mkString("<br>")
-    }
+@getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
+    List(Some(address1),
+        address2,
+        address3,
+        address4,
+        postCode,
+        countryCode
+    ).flatten.filter(_.nonEmpty).mkString("<br>")
+}
 
 
-    @changeStartDateURL = @{
-        controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = true, viewModel.incomeSourceType).url
-    }
+@changeStartDateURL = @{
+    controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = true, viewModel.incomeSourceType).url
+}
 
     @changeAccountingMethodURL = @{
             controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType, isAgent).url
     }
 
-    @extractName = @{
-        viewModel match {
-            case x: CheckBusinessDetailsViewModel => x.businessName.getOrElse("")
-            case _ => ""
-        }
+@extractName = @{
+    viewModel match {
+        case x: CheckBusinessDetailsViewModel => x.businessName.getOrElse("")
+        case _ => ""
     }
+}
 
-    @extractTrade = @{
-        viewModel match {
-            case x: CheckBusinessDetailsViewModel => x.businessTrade
-            case _ => ""
-        }
+@extractTrade = @{
+    viewModel match {
+        case x: CheckBusinessDetailsViewModel => x.businessTrade
+        case _ => ""
     }
+}
 
-    @extractStartDate = @{
-        viewModel match {
-            case x: CheckBusinessDetailsViewModel => x.businessStartDate.map(_.toLongDate).getOrElse("")
-            case y: CheckPropertyViewModel => y.tradingStartDate.toLongDate
-        }
+@extractStartDate = @{
+    viewModel match {
+        case x: CheckBusinessDetailsViewModel => x.businessStartDate.map(_.toLongDate).getOrElse("")
+        case y: CheckPropertyViewModel => y.tradingStartDate.toLongDate
     }
+}
 
-    @extractAddress = @{
-        viewModel match {
-            case x: CheckBusinessDetailsViewModel => HtmlFormat.raw(getLongAddressFromBusinessAddressDetails(
-                address1 = x.businessAddressLine1,
-                address2 = x.businessAddressLine2,
-                address3 = x.businessAddressLine3,
-                address4 = x.businessAddressLine4,
-                postCode = x.businessPostalCode,
-                countryCode = x.countryName,
+@extractAddress = @{
+    HtmlContent(viewModel match {
+        case x: CheckBusinessDetailsViewModel => getLongAddressFromBusinessAddressDetails(
+            address1 = x.businessAddressLine1,
+            address2 = x.businessAddressLine2,
+            address3 = x.businessAddressLine3,
+            address4 = x.businessAddressLine4,
+            postCode = x.businessPostalCode,
+            countryCode = x.countryName,
+        )
+        case _ => ""
+    })
+}
+
+@businessNameRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment) {
+        Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("business-name")),
+                ),
+                value = Value(
+                    content = Text(extractName)
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeBusinessNameURL,
+                            content = Text(getMessage("change")),
+                            attributes = Map("id" -> "change-business-name-link")
+                        )
+                    )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@businessStartDateRow = @{
+    Seq(
+        SummaryListRow(
+            key = Key(
+                content = Text(getMessage("start-date"))
+            ),
+            value = Value(
+                content = Text(extractStartDate)
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = changeStartDateURL,
+                        content = Text(getMessage("change")),
+                        attributes = Map("id" -> "change-business-start-date-link")
+                    )
+                )
             ))
-            case _ => ""
-        }
-    }
+        )
+    )
+}
 
+@businessTradeRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment) {
+        Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("business-description"))
+                ),
+                value = Value(
+                    content = Text(extractTrade)
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeBusinessTradeURL,
+                            content = Text(getMessage("change")),
+                            attributes = Map("id" -> "change-business-name-link")
+                        )
+                    )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@businessAddressRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment) {
+        Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("business-address"))
+                ),
+                value = Value(
+                    content = extractAddress
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeBusinessAddressURL,
+                            content = Text(getMessage("change")),
+                            attributes = Map("id" -> "change-business-address-link")
+                        )
+                    )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@businessAccountingMethodRow = @{
+    if(viewModel.showedAccountingMethod || viewModel.incomeSourceType != SelfEmployment) {
+        Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("accounting-method"))
+                ),
+                value = Value(
+                    content = Text(messages(accountingMethodMessageKey))
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeAccountingMethodURL,
+                            content = Text(getMessage("change")),
+                            attributes = Map("id" -> "change-accounting-method-link")
+                        )
+                    )
+                ))
+            )
+        )
+    } else Seq.empty
+}
 
 @mainTemplate(
     pageTitle = getMessage("title"),
@@ -158,69 +273,12 @@
 
     @formWithCSRF(action = postAction) {
 
-        <dl class="govuk-summary-list" id="check-details-table">
-            @if(viewModel.incomeSourceType == SelfEmployment){
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@getMessage("business-name")</dt>
-                    <dd class="govuk-summary-list__value" id="business-name-value">@{
-                        extractName
-                    }</dd>
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" href=@changeBusinessNameURL>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                </div>
-            }
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">@getMessage("start-date")</dt>
-                <dd class="govuk-summary-list__value" id="start-date-value">@{
-                    extractStartDate
-                }</dd>
-                <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                    <a class="govuk-link" id="change-start-date-link" href=@changeStartDateURL>
-                    @getMessage("change")
-                    </a>
-                </dd>
-            </div>
-            @if(viewModel.incomeSourceType == SelfEmployment){
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@getMessage("business-description")</dt>
-                    <dd class="govuk-summary-list__value" id="business-trade-value">@{
-                        extractTrade
-                    }</dd>
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" href=@changeBusinessTradeURL>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@getMessage("business-address")</dt>
-                    <dd class="govuk-summary-list__value" id="business-address-value">@{
-                        extractAddress
-                    }</dd>
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" href=@changeBusinessAddressURL>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                </div>
-            }
-            @if(viewModel.showedAccountingMethod || viewModel.incomeSourceType != SelfEmployment) {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">@getMessage("accounting-method")</dt>
-                    <dd class="govuk-summary-list__value" id="business-accounting-value">
-                    @messages(accountingMethodMessageKey)
-                    </dd>
-                    <dd class="govuk-summary-list__actions govuk-!-text-align-right govuk-!-margin-0">
-                        <a class="govuk-link" id="change-accounting-method-link" href=@changeAccountingMethodURL>
-                        @getMessage("change")
-                        </a>
-                    </dd>
-                </div>
-            }
-        </dl>
+        @govukSummaryList(SummaryList(
+            rows = {
+                businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow ++ businessAccountingMethodRow
+            },
+            attributes = Map("id" -> "check-details-table")
+        ))
 
         <br>
         <br>
