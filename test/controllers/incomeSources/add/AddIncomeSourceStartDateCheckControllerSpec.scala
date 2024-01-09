@@ -70,6 +70,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   val journeyTypeSE = JourneyType(Add, SelfEmployment)
   val journeyTypeUK = JourneyType(Add, UkProperty)
   val journeyTypeFP = JourneyType(Add, ForeignProperty)
+
   def journeyType(sourceType: IncomeSourceType) = sourceType match {
     case SelfEmployment => journeyTypeSE
     case UkProperty => journeyTypeUK
@@ -86,6 +87,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   val uiJourneySessionDataSE: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(addIncomeSourceDataSE))
   val uiJourneySessionDataUK: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-UK", Some(addIncomeSourceDataProperty))
   val uiJourneySessionDataFP: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-FP", Some(addIncomeSourceDataProperty))
+
   def uiJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = incomeSourceType match {
     case SelfEmployment => uiJourneySessionDataSE
     case UkProperty => uiJourneySessionDataUK
@@ -94,6 +96,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
 
   val UIJourneySessionDataUkWithAccSD: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-UK", Some(addIncomeSourceDataPropertyWithAccSD))
   val UIJourneySessionDataFpWithAccSD: UIJourneySessionData = UIJourneySessionData("session-123456", "ADD-FP", Some(addIncomeSourceDataPropertyWithAccSD))
+
   def dataWithAccSD(incomeSourceType: IncomeSourceType) = incomeSourceType match {
     case SelfEmployment => uiJourneySessionDataSE
     case UkProperty => UIJourneySessionDataUkWithAccSD
@@ -125,6 +128,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
   }
 
   def sessionDataCompletedJourney(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(journeyIsComplete = Some(true))))
+
   def sessionDataISAdded(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceAdded = Some(true))))
 
   def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData()))
@@ -162,23 +166,37 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
     for (incomeSourceType <- incomeSourceTypes) yield {
       for (isAgent <- Seq(true, false)) yield {
         s"return ${Status.OK}: render the custom not found error view (isAgent = $isAgent, $incomeSourceType)" when {
-          "Income Sources FS is disabled" in {showISDisabledTest(isAgent, incomeSourceType)}
+          "Income Sources FS is disabled" in {
+            showISDisabledTest(isAgent, incomeSourceType)
+          }
         }
         s"return ${Status.SEE_OTHER}: redirect to home page (isAgent = $isAgent, $incomeSourceType)" when {
-          "called with an unauthenticated user" in {showUnauthenticatedTest(isAgent, incomeSourceType)}
+          "called with an unauthenticated user" in {
+            showUnauthenticatedTest(isAgent, incomeSourceType)
+          }
         }
         s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page (isAgent = $isAgent, $incomeSourceType)" when {
-          "user has already completed the journey" in {showCompletedBackTest(isAgent, incomeSourceType)}
-          "user has already added their income source" in {showAddedBackTest(isAgent, incomeSourceType)}
+          "user has already completed the journey" in {
+            showCompletedBackTest(isAgent, incomeSourceType)
+          }
+          "user has already added their income source" in {
+            showAddedBackTest(isAgent, incomeSourceType)
+          }
         }
         s"return ${Status.INTERNAL_SERVER_ERROR} (isAgent = $isAgent, $incomeSourceType)" when {
-          s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {showSessionMissingTest(isAgent, incomeSourceType)}
+          s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
+            showSessionMissingTest(isAgent, incomeSourceType)
+          }
         }
         s"return ${Status.OK} (isAgent = $isAgent, $incomeSourceType)" when {
-          s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {showSuccessTest(isAgent, incomeSourceType)}
+          s"calling Business Start Date Check Page and session contains key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
+            showSuccessTest(isAgent, incomeSourceType)
+          }
         }
         s"return ${Status.OK}: render the Add Business Start Date Check Change page (isAgent = $isAgent, $incomeSourceType)" when {
-          "isUpdate flag set to true" in {showChangeTest(isAgent, incomeSourceType)}
+          "isUpdate flag set to true" in {
+            showChangeTest(isAgent, incomeSourceType)
+          }
         }
       }
     }
@@ -190,20 +208,26 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       authenticate(isAgent)
 
       val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
-        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
+        {
+          if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
+        })
 
       status(result) shouldBe SEE_OTHER
       val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
       redirectLocation(result) shouldBe Some(redirectUrl)
     }
+
     def showUnauthenticatedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
       val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
-        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
+        {
+          if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
+        })
 
       status(result) shouldBe Status.SEE_OTHER
       redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/sign-in")
     }
+
     def showCompletedBackTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
       enable(IncomeSources)
@@ -213,12 +237,15 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       setupMockGetMongo(Right(Some(sessionDataCompletedJourney(journeyType(incomeSourceType)))))
 
       val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
-        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
+        {
+          if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
+        })
       status(result) shouldBe SEE_OTHER
       val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
       else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
       redirectLocation(result) shouldBe Some(redirectUrl)
     }
+
     def showAddedBackTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
       enable(IncomeSources)
@@ -228,12 +255,15 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       setupMockGetMongo(Right(Some(sessionDataISAdded(journeyType(incomeSourceType)))))
 
       val result: Future[Result] = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
-        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
+        {
+          if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
+        })
       status(result) shouldBe SEE_OTHER
       val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType).url
       else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
       redirectLocation(result) shouldBe Some(redirectUrl)
     }
+
     def showSessionMissingTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
       enable(IncomeSources)
@@ -243,10 +273,13 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       setupMockGetMongo(Right(Some(sessionData(journeyType(incomeSourceType)))))
 
       val result = TestAddIncomeSourceStartDateCheckController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(
-        {if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession})
+        {
+          if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
+        })
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
     }
+
     def showSuccessTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
       enable(IncomeSources)
@@ -267,6 +300,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       document.getElementById("back").attr("href") shouldBe routes.AddIncomeSourceStartDateController.show(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false).url
       status(result) shouldBe OK
     }
+
     def showChangeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
       disableAllSwitches()
       enable(IncomeSources)
@@ -339,7 +373,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           ))
 
       status(result) shouldBe SEE_OTHER
-      val redirectUrl = if(isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
+      val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
       redirectLocation(result) shouldBe Some(redirectUrl)
     }
 
@@ -434,9 +468,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       redirectLocation(result) shouldBe Some({
         (isAgent, incomeSourceType) match {
           case (false, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
-          case (false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType)
           case (true, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
-          case (true, _) => routes.IncomeSourcesAccountingMethodController.showAgent(incomeSourceType)
+          case _ => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
         }
       }.url)
     }

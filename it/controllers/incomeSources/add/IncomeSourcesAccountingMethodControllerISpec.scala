@@ -32,9 +32,9 @@ import scala.concurrent.ExecutionContext
 
 class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
-  val addIncomeSourcesAccountingMethodShowUrlSoleTrader: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment).url
-  val addIncomeSourcesAccountingMethodShowUrlUK: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty).url
-  val addIncomeSourcesAccountingMethodShowUrlForeign: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty).url
+  val addIncomeSourcesAccountingMethodShowUrlSoleTrader: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent = false).url
+  val addIncomeSourcesAccountingMethodShowUrlUK: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty, isAgent = false).url
+  val addIncomeSourcesAccountingMethodShowUrlForeign: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty, isAgent = false).url
 
   val checkBusinessDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
   val checkUKPropertyDetailsShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty).url

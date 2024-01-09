@@ -110,12 +110,10 @@
                 content = Text(getMessage("business-address"))
             ),
             value = Value(
-                content = (
-                        getLongAddressFromBusinessAddressDetails(viewModel.address) match {
-                            case Some(x) => HtmlContent(s"""$x""")
-                            case None => Text(messages("incomeSources.generic.unknown"))
-                        }
-                        )
+                content = getLongAddressFromBusinessAddressDetails(viewModel.address) match {
+                    case Some(x) => HtmlContent(s"""$x""")
+                    case None => Text(messages("incomeSources.generic.unknown"))
+                }
             )
         )
     )

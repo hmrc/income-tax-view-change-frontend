@@ -144,8 +144,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   }
 
   private lazy val postAction: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourcesAccountingMethodController.submitAgent(incomeSourceType)
-    else routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType)
+    routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)
   }
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
@@ -186,50 +185,31 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
       errorHandler(isAgent).showInternalServerError()
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       handleRequest(
-        isAgent = false,
+        isAgent,
         incomeSourceType = incomeSourceType,
         isChange = false
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        handleRequest(
-          isAgent = true,
-          incomeSourceType = incomeSourceType,
-          isChange = false
-        )
-    }
-
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+  def submit(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
       implicit user =>
         handleSubmitRequest(
-          isAgent = false,
+          isAgent,
           incomeSourceType
         )
     }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        handleSubmitRequest(
-          isAgent = true,
-          incomeSourceType
-        )
-    }
-
-  def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+  def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
       implicit user =>
         withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
           val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
           handleRequest(
-            isAgent = false,
+            isAgent,
             incomeSourceType = incomeSourceType,
             cashOrAccrualsFlag = accountingMethodOpt,
             isChange = true
@@ -237,13 +217,13 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
         }
     }
 
-  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
+  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent = true) {
       implicit mtdItUser =>
         withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
           val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
           handleRequest(
-            isAgent = true,
+            isAgent,
             incomeSourceType = incomeSourceType,
             cashOrAccrualsFlag = accountingMethodOpt,
             isChange = true
