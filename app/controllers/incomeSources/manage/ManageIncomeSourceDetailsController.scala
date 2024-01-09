@@ -60,7 +60,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       withSessionData(JourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {
           case SelfEmployment => id match {
-            case Some(realId) => showSoleTrader(realId, isAgent)
+            case Some(realId) => handleSoleTrader(realId, isAgent)
             case None => Logger("application")
               .error(s"[ManageIncomeSourceDetailsController][show] no incomeSourceId supplied with SelfEmployment isAgent = $isAgent")
               Future.successful(if (isAgent) {
@@ -80,7 +80,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
       }
   }
 
-  def showSoleTrader(hashIdString: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleSoleTrader(hashIdString: String, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val incomeSourceIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(hashIdString)
     incomeSourceIdHash match {
       case Left(exception: Exception) => Future.failed(exception)
