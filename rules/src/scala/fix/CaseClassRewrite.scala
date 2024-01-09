@@ -8,7 +8,8 @@ class CaseClassRewrite extends SemanticRule("CaseClassRewrite") {
 
   override def fix(implicit doc: SemanticDocument): Patch = {
     doc.tree.collect {
-      case t @ Defn.Class.After_4_6_0(a, b, c, d, e) if a.toString() == "List(case)" =>
+      case t @ Defn.Class.After_4_6_0(a, className, c, constructorDef, extendParentClassOrTrait) if a.toString() == "List(case)" =>
+        //println(s"$className ==> $extendParentClassOrTrait ===> $constructorDef")
         Patch.addLeft(t, "final ")
     }.asPatch
   }
