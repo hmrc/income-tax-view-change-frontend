@@ -75,3 +75,6 @@ sbt clean coverage test it:test coverageOff coverageReport
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
 
+How to apply rewrite rule for case classes:
+
+   sbt scalafix --rules=file:rules/src/scala/fix/CaseClassRewrite.scala
