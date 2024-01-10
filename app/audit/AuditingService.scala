@@ -82,7 +82,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
       }
 
       Logger("application").warn(s"TxM event too long. <Audit type: ${extendedDataEvent.auditType}>" +
-//        s"\n+Truncation log: ${extendedDataEvent.truncationLog}" +
+        s"\n+Truncation log fields: ${extendedDataEvent.truncationLog.truncatedFields}" +
         s"\n[Event id: ${extendedDataEvent.eventId}]" +
         s"\n{Field names: $txmEventFieldNames}")
 
