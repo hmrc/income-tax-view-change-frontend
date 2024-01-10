@@ -61,7 +61,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
     val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
     Logger("application").debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
 
-    eventCheckLength(extendedDataEvent)
+    checkEventLength(extendedDataEvent)
 
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
       case Success =>
@@ -73,7 +73,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
     }
   }
 
-  private def eventCheckLength(extendedDataEvent: ExtendedDataEvent): Unit = {
+  private def checkEventLength(extendedDataEvent: ExtendedDataEvent): Unit = {
     if (extendedDataEvent.toString.length > 32665) {
 
       val txmEventFieldNames: Seq[String] = extendedDataEvent.detail match {
@@ -81,7 +81,10 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
         case _ => Seq.empty[String]
       }
 
-      Logger("application").warn(s"TxM event too long. $txmEventFieldNames")
+      Logger("application").warn(s"TxM event too long. <Audit type: ${extendedDataEvent.auditType}>" +
+//        s"\n+Truncation log: ${extendedDataEvent.truncationLog}" +
+        s"\n[Event id: ${extendedDataEvent.eventId}]" +
+        s"\n{Field names: $txmEventFieldNames}")
 
     }
   }
