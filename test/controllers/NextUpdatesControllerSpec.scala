@@ -19,7 +19,6 @@ package controllers
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import config.ItvcErrorHandler
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
