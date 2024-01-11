@@ -74,7 +74,7 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
   }
 
   private def checkEventLength(extendedDataEvent: ExtendedDataEvent): Unit = {
-    if (extendedDataEvent.toString.length > 32665) {
+    if (extendedDataEvent.toString.length > appConfig.maxAuditEventSizeInBytes) {
 
       val txmEventFieldNames: Seq[String] = extendedDataEvent.detail match {
         case obj: JsObject => obj.keys.toSeq
