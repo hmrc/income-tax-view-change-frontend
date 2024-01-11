@@ -29,8 +29,9 @@ import java.time.LocalDate
 class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
 
-  val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(LocalDate.now().minusMonths(13))
+  val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusMonths(13))
 
   def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
@@ -58,7 +59,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
         whatYouOweAllData().isChargesListEmpty shouldBe false
       }
       "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
-        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe LocalDate.now().minusMonths(13).getYear
+        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe fixedDate.minusMonths(13).getYear
         whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate.get._2 shouldBe 123456.67
       }
       "hasDunningLock should return false if there are no dunningLocks" in {
@@ -81,7 +82,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
       }
       "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
         whatYouOweFinancialDataWithoutOutstandingCharges()
-          .getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe LocalDate.now().minusDays(10).getYear
+          .getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe fixedDate.minusDays(10).getYear
         whatYouOweFinancialDataWithoutOutstandingCharges().getEarliestTaxYearAndAmountByDueDate.get._2 shouldBe 50.0
       }
     }
