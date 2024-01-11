@@ -23,25 +23,8 @@
 @this(implicitDateFormatter: ImplicitDateFormatterImpl, govukAccordion: GovukAccordion, govukTable: GovukTable)
 @(obligations: ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
     @import implicitDateFormatter.longDate
-    @* @deadlineRow(deadline: NextUpdateModelWithIncomeType) = {*@
-    @* <div class="govuk-summary-list__row">*@
-    @* <dt class="govuk-summary-list__key">*@
-    @* @{*@
-    @* if(deadline.obligation.obligationType == "Quarterly") messages("nextUpdates.quarterly")*@
-    @* }*@
-    @* @{*@
-    @* if(deadline.obligation.obligationType == "EOPS") messages("nextUpdates.eops")*@
-    @* }*@
-    @* @{*@
-    @* if(deadline.obligation.obligationType == "Crystallised") messages("nextUpdates.crystallised")*@
-    @* }*@
-    @* </dt>*@
-    @* <dd class="govuk-summary-list__value">@{*@
-    @* messages(deadline.incomeType)*@
-    @* }</dd>*@
-    @* </div>*@
-        @* }*@
-    @deadlineRow2(deadline: NextUpdateModelWithIncomeType) = @{
+
+    @deadlineRow(deadline: NextUpdateModelWithIncomeType) = @{
         Seq(
             TableRow(
                 content = Text(getObligationTypeText(deadline.obligation.obligationType))
@@ -77,23 +60,11 @@
     @summaryContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
     @getHeadingMessage(collectedObligations._1._2.head.obligation)
     }
-    @* @bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {*@
-    @* <dl class="govuk-summary-list govuk-!-margin-bottom-3">*@
-    @* <div class="govuk-summary-list__row">*@
-    @* <dt class="govuk-summary-list__key">*@
-    @* @messages("nextUpdates.table.header.type")*@
-    @* </dt>*@
-    @* <dd class="govuk-summary-list__value"><b>@messages("nextUpdates.table.header.source")</b></dd>*@
-    @* </div>*@
-    @* @for(obligation <- collectedObligations._1._2) {*@
-    @* @deadlineRow(obligation)*@
-    @* }*@
-    @* </dl>*@
-        @* }*@
-    @bodyContent2(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = @{
+
+    @bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = @{
         govukTable(Table(
             rows = {
-                for(obligation <- collectedObligations._1._2) yield deadlineRow2(obligation)
+                for(obligation <- collectedObligations._1._2) yield deadlineRow(obligation)
             },
             head = Some(Seq(
                 HeadCell(
@@ -112,7 +83,7 @@
             Section(
                 headingContent = HtmlContent(headingContent(collectedObligations)),
                 summaryContent = HtmlContent(summaryContent(collectedObligations)),
-                content = HtmlContent(bodyContent2(collectedObligations))
+                content = HtmlContent(bodyContent(collectedObligations))
             )
         )
     }
