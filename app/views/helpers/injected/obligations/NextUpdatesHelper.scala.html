@@ -20,66 +20,104 @@
 @import models.nextUpdates._
 @import java.time.LocalDate
 
-@this(implicitDateFormatter: ImplicitDateFormatterImpl, govukAccordion : GovukAccordion)
+@this(implicitDateFormatter: ImplicitDateFormatterImpl, govukAccordion: GovukAccordion, govukTable: GovukTable)
 @(obligations: ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
-@import implicitDateFormatter.longDate
+    @import implicitDateFormatter.longDate
+    @* @deadlineRow(deadline: NextUpdateModelWithIncomeType) = {*@
+    @* <div class="govuk-summary-list__row">*@
+    @* <dt class="govuk-summary-list__key">*@
+    @* @{*@
+    @* if(deadline.obligation.obligationType == "Quarterly") messages("nextUpdates.quarterly")*@
+    @* }*@
+    @* @{*@
+    @* if(deadline.obligation.obligationType == "EOPS") messages("nextUpdates.eops")*@
+    @* }*@
+    @* @{*@
+    @* if(deadline.obligation.obligationType == "Crystallised") messages("nextUpdates.crystallised")*@
+    @* }*@
+    @* </dt>*@
+    @* <dd class="govuk-summary-list__value">@{*@
+    @* messages(deadline.incomeType)*@
+    @* }</dd>*@
+    @* </div>*@
+        @* }*@
+    @deadlineRow2(deadline: NextUpdateModelWithIncomeType) = @{
+        Seq(
+            TableRow(
+                content = Text(getObligationTypeText(deadline.obligation.obligationType))
+            ),
+            TableRow(
+                content = Text(messages(deadline.incomeType))
+            )
+        )
+    }
 
-@deadlineRow(deadline: NextUpdateModelWithIncomeType) = {
-	<div class="govuk-summary-list__row">
-		<dt class="govuk-summary-list__key">
-			@{if(deadline.obligation.obligationType == "Quarterly")  messages("nextUpdates.quarterly")}
-			@{if(deadline.obligation.obligationType == "EOPS")  messages("nextUpdates.eops")}
-			@{if(deadline.obligation.obligationType == "Crystallised")  messages("nextUpdates.crystallised")}
-		</dt>
-		<dd class="govuk-summary-list__value">@{messages(deadline.incomeType)}</dd>
-	</div>
-}
+    @getObligationTypeText(obligation: String) = @{
+        obligation match {
+            case "Quarterly" => messages("nextUpdates.quarterly")
+            case "EOPS" => messages("nextUpdates.eops")
+            case _ => messages("nextUpdates.crystallised")
+        }
+    }
 
-	@dealineRow2(deadline: NextUpdateModelWithIncomeType) = @{
+    @getHeadingMessage(obligation: NextUpdateModel) = @{
+        val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.quarterly"
+        else "nextUpdates.section.heading.end-of-year"
+        messages(key)
+    }
 
-}
+    @headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
+        <span class="govuk-!-font-size-24">
+        @{
+            collectedObligations._1._1.toLongDate
+        }
+        </span>
+    }
 
-@getHeadingMessage(obligation: NextUpdateModel) = @{
-	val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.quarterly"
-		else "nextUpdates.section.heading.end-of-year"
-	messages(key)
-}
+    @summaryContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
+    @getHeadingMessage(collectedObligations._1._2.head.obligation)
+    }
+    @* @bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {*@
+    @* <dl class="govuk-summary-list govuk-!-margin-bottom-3">*@
+    @* <div class="govuk-summary-list__row">*@
+    @* <dt class="govuk-summary-list__key">*@
+    @* @messages("nextUpdates.table.header.type")*@
+    @* </dt>*@
+    @* <dd class="govuk-summary-list__value"><b>@messages("nextUpdates.table.header.source")</b></dd>*@
+    @* </div>*@
+    @* @for(obligation <- collectedObligations._1._2) {*@
+    @* @deadlineRow(obligation)*@
+    @* }*@
+    @* </dl>*@
+        @* }*@
+    @bodyContent2(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = @{
+        govukTable(Table(
+            rows = {
+                for(obligation <- collectedObligations._1._2) yield deadlineRow2(obligation)
+            },
+            head = Some(Seq(
+                HeadCell(
+                    content = Text(messages("nextUpdates.table.header.type"))
+                ),
+                HeadCell(
+                    content = Text(messages("nextUpdates.table.header.source"))
+                )
+            ))
+        )
+        )
+    }
 
-@headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<span class="govuk-!-font-size-24">
-		@{collectedObligations._1._1.toLongDate}
-	</span>
-}
+    @getItems = @{
+        obligations.obligationsByDate.zipWithIndex.map(collectedObligations =>
+            Section(
+                headingContent = HtmlContent(headingContent(collectedObligations)),
+                summaryContent = HtmlContent(summaryContent(collectedObligations)),
+                content = HtmlContent(bodyContent2(collectedObligations))
+            )
+        )
+    }
 
-@summaryContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	@getHeadingMessage(collectedObligations._1._2.head.obligation)
-}
-
-@bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-	<dl class="govuk-summary-list govuk-!-margin-bottom-3">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                @messages("nextUpdates.table.header.type")
-            </dt>
-            <dd class="govuk-summary-list__value"><b>@messages("nextUpdates.table.header.source")</b></dd>
-        </div>
-		@for(obligation <- collectedObligations._1._2) {
-			@deadlineRow(obligation)
-		}
-	</dl>
-}
-
-@getItems = @{
-	obligations.obligationsByDate.zipWithIndex.map( collectedObligations =>
-		Section(
-			headingContent = HtmlContent(headingContent(collectedObligations)),
-			summaryContent = HtmlContent(summaryContent(collectedObligations)),
-			content = HtmlContent(bodyContent(collectedObligations))
-		)
-	)
-}
-
-@govukAccordion(Accordion(
-	id = "accordion-with-summary-sections",
-	items = getItems
-))
+    @govukAccordion(Accordion(
+        id = "accordion-with-summary-sections",
+        items = getItems
+    ))
