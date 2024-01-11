@@ -705,14 +705,16 @@ nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio
 nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y Datganiad diwedd cyfnod y gwnaethoch ei hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
 nextUpdates.table.header.type									= Math o ddiweddariad
 nextUpdates.table.header.source									= Ffynhonnell incwm
+nextUpdates.section.heading.quarterly						    = Diweddariad chwarterol
+nextUpdates.section.heading.end-of-year							= Diweddariad diwedd blwyddyn
 nextUpdates.section.heading.updates								= Diweddariad ar gyfer: {0} i {1}
 nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
 
-sections.open.all												= Dangos pob un
-sections.close.all												= Cuddio pob un
+sections.open.all												= Dangos pob adran
+sections.close.all												= Cuddio pob adran
 sections.open												    = Dangos
 sections.close												    = Cuddio
 

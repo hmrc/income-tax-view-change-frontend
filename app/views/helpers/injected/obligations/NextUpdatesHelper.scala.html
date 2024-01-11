@@ -35,10 +35,14 @@
 	</div>
 }
 
+	@dealineRow2(deadline: NextUpdateModelWithIncomeType) = @{
+
+}
+
 @getHeadingMessage(obligation: NextUpdateModel) = @{
-	val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.updates"
-		else "nextUpdates.section.heading.taxYear"
-	messages(key, obligation.start.toLongDate, obligation.end.toLongDate)
+	val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.quarterly"
+		else "nextUpdates.section.heading.end-of-year"
+	messages(key)
 }
 
 @headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
@@ -53,6 +57,12 @@
 
 @bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
 	<dl class="govuk-summary-list govuk-!-margin-bottom-3">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                @messages("nextUpdates.table.header.type")
+            </dt>
+            <dd class="govuk-summary-list__value"><b>@messages("nextUpdates.table.header.source")</b></dd>
+        </div>
 		@for(obligation <- collectedObligations._1._2) {
 			@deadlineRow(obligation)
 		}
