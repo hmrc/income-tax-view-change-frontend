@@ -156,12 +156,12 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         val tbody = sectionContent.selectHead("table > tbody")
 
         tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "20 August 2021"
-        tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 1"
+        tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
         tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "£301.00"
 
         tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
-        tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 2"
+        tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
       }
@@ -190,12 +190,12 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       val tbody = sectionContent.selectHead("table > tbody")
 
       tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "20 August 2021"
-      tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 1"
+      tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
       tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
       tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "£301.00"
 
       tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
-      tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund 000000003135 Item 2"
+      tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
       tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
       tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
     }
