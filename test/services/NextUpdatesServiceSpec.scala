@@ -139,14 +139,14 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
         val result: Either[Throwable, Option[(LocalDate, Seq[LocalDate])]] = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).futureValue
-        result shouldBe a[Left[_, _]]
+        result.isLeft shouldBe true
         result.left.map(_.getMessage) shouldBe Left("Unexpected Exception getting next deadline due and Overdue Obligations")
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
         val result: Either[Throwable, Option[(LocalDate, Seq[LocalDate])]] = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).futureValue
-        result shouldBe a[Left[_, _]]
+        result.isLeft shouldBe true
         result.left.map(_.getMessage) shouldBe Left("Dummy Error Message")
       }
     }
