@@ -43,20 +43,14 @@ trait MockWhatYouOweService extends UnitSpec with BeforeAndAfterEach {
     reset(mockWhatYouOweService)
   }
 
-  def setupMockGetWhatYouOweChargesListEmpty(): Unit =
+  def setupMockGetWhatYouOweChargesList(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
     when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-      .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+      .thenReturn(Future.successful(whatYouOweChargesList))
+  }
 
-  def setupMockGetWhatYouOweChargesListEmptyFromFinancialDetails(): Unit =
+  def setupMockGetWhatYouOweChargesListFromFinancialDetails(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
     when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
-      .thenReturn(Future.successful(emptyWhatYouOweChargesList))
-
-  def setupMockGetWhatYouOweChargesListWithOne(): Unit =
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-      .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
-
-  def setupMockGetWhatYouOweChargesListWithOneFromFinancialDetails(): Unit =
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
-      .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
+      .thenReturn(Future.successful(whatYouOweChargesList))
+  }
 
 }
