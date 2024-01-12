@@ -101,7 +101,7 @@ class HomePageViewSpec extends TestSupport {
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), nextUpdate: Option[LocalDate] = Some(updateDate), overDuePaymentsCount: Option[Int] = Some(0),
               overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false, displayNextUpdates: Boolean = true) {
+              incomeSourcesEnabled: Boolean = false) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
