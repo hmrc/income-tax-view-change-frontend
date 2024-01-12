@@ -86,7 +86,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     nextUpdatesService.getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).flatMap {
       case Right(successResponse) =>
-        val latestDeadline: Option[LocalDate] = successResponse.map(_._1)
+        val nextUpdate: Option[LocalDate] = successResponse.map(_._1)
         val overdueUpdatesCount: Int = successResponse.map(_._2.size).getOrElse(0)
         val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
@@ -116,13 +116,13 @@ class HomeController @Inject()(val homeView: views.html.Home,
           auditingService.extendedAudit(HomeAudit(
             mtdItUser = user,
             paymentsDueMerged,
-            latestDeadline,
+            nextUpdate,
             overDuePaymentsCount,
             overdueUpdatesCount))
           Ok(
             view(
               paymentsDueMerged,
-              latestDeadline,
+              nextUpdate,
               Some(overDuePaymentsCount),
               Some(overdueUpdatesCount),
               dunningLockExistsValue,
