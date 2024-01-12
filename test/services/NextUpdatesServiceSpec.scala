@@ -138,14 +138,14 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        val result = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).failed.futureValue
+        val result: Throwable = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).failed.futureValue
         result shouldBe an[Exception]
         result.getMessage shouldBe "Unexpected Exception getting next deadline due and Overdue Obligations"
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        val result = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).failed.futureValue
+        val result: Throwable = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).failed.futureValue
         result shouldBe an[Exception]
         result.getMessage shouldBe "Dummy Error Message"
       }
@@ -246,7 +246,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         ).futureValue
 
         result shouldBe ObligationsModel(Seq(
-          NextUpdatesModel("idOne", List(previousObligation)),
+          NextUpdatesModel("idOne", List(previousObligation))
         ))
       }
 
@@ -310,13 +310,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       disableAllSwitches()
       enable(IncomeSources)
 
-      val day = LocalDate.of(2023, 1, 1)
+      val day: LocalDate = LocalDate.of(2023, 1, 1)
       val nextModel: NextUpdateModel = NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C")
       when(mockObligationsConnector.getNextUpdates()(any(), any())).
         thenReturn(Future(nextModel))
 
       val result = TestNextUpdatesService.getObligationDates("123")
-      result.futureValue shouldBe (Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS")))
+      result.futureValue shouldBe Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS"))
     }
     "show correct error when given a NextUpdatesErrorModel" in {
       disableAllSwitches()
@@ -340,7 +340,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         NextUpdatesModel("123", List(
-          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001"),
+          NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001")
         )),
         NextUpdatesModel("123", List(
           NextUpdateModel(day.minusYears(1), day.minusYears(1).plusDays(1), day.minusYears(1).plusDays(2), "Quarterly", None, "#001")
@@ -362,7 +362,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
             DatesModel(day.minusYears(1), day.minusYears(1).plusDays(1),
               day.minusYears(1).plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly"),
             DatesModel(day, day.plusDays(1), day.plusDays(2), "#001", isFinalDec = false, obligationType = "Quarterly")
-          ),
+          )
         ),
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "EOPS", isFinalDec = false, obligationType = "EOPS")),
         Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallised")),
