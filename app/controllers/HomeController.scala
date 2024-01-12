@@ -56,7 +56,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: Option[LocalDate], overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], displayNextUpdates: Boolean, dunningLockExists: Boolean, currentTaxYear: Int,
+                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
@@ -64,7 +64,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
       nextUpdate = nextUpdate,
       overDuePaymentsCount = overDuePaymentsCount,
       overDueUpdatesCount = overDueUpdatesCount,
-      displayNextUpdates = displayNextUpdates,
       user.saUtr,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       dunningLockExists = dunningLockExists,
@@ -87,7 +86,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     nextUpdatesService.getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).flatMap {
       case Right(successResponse) =>
-        val displayNextUpdates: Boolean = successResponse.isDefined
         val latestDeadline: Option[LocalDate] = successResponse.map(_._1)
         val overdueUpdatesCount: Int = successResponse.map(_._2.size).getOrElse(0)
         val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
@@ -127,7 +125,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
               latestDeadline,
               Some(overDuePaymentsCount),
               Some(overdueUpdatesCount),
-              displayNextUpdates,
               dunningLockExistsValue,
               incomeSourceCurrentTaxYear,
               displayCeaseAnIncome,

@@ -41,7 +41,6 @@
 	nextUpdate: Option[LocalDate],
 	overDuePaymentsCount: Option[Int],
 	overDueUpdatesCount: Option[Int],
-    displayNextUpdates: Boolean,
   	utr: Option[String],
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
@@ -229,13 +228,13 @@
 
 @updatesTile = {
 	@home_tile("updates-tile", messages("home.updates.heading")) {
-		@{overDueUpdatesCount.getOrElse(0) match {
-			case 0 => p()(updatesTileContentUpdatesDue0)
-			case 1 => p()(updatesTileContentUpdatesDue1)
-			case _ => p()(updatesTileContentUpdatesDueMany)
-		}}
+        @if(nextUpdate.isDefined) {
+            @{overDueUpdatesCount.getOrElse(0) match {
+                case 0 => p()(updatesTileContentUpdatesDue0)
+                case 1 => p()(updatesTileContentUpdatesDue1)
+                case _ => p()(updatesTileContentUpdatesDueMany)
+            }}
 
-        @if(displayNextUpdates) {
             @p(classes = "govuk-!-margin-bottom-4") {
                 @link(
                     link = nextUpdatesControllerURL,

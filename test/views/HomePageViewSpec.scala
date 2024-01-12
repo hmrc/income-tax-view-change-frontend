@@ -98,7 +98,7 @@ class HomePageViewSpec extends TestSupport {
   val overdueMessage = s"! Warning ${messages("home.overdue.message.dunningLock.false")}"
   val overdueMessageForDunningLocks = s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
 
-  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
+  class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), nextUpdate: Option[LocalDate] = Some(updateDate), overDuePaymentsCount: Option[Int] = Some(0),
               overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, displayNextUpdates: Boolean = true) {
@@ -106,10 +106,9 @@ class HomePageViewSpec extends TestSupport {
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
       nextPaymentDueDate = paymentDueDate,
-      nextUpdate = Some(updateDate),
+      nextUpdate = nextUpdate,
       overDuePaymentsCount = overDuePaymentsCount,
       overDueUpdatesCount = overDueUpdatesCount,
-      displayNextUpdates = displayNextUpdates,
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       dunningLockExists = dunningLockExists,
@@ -204,6 +203,11 @@ class HomePageViewSpec extends TestSupport {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.getNextUpdates().url)
         link.map(_.text) shouldBe Some(messages("home.updates.view"))
+      }
+      "is empty except for the title" when {
+        "user has no open obligations" in new Setup(nextUpdate = None) {
+          getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
+        }
       }
     }
 

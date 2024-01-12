@@ -83,7 +83,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
                   overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Option[Int] = None,
                   overDueUpdatesCount: Option[Int] = None,
-                  displayNextUpdates: Boolean = true,
                   utr: Option[String] = None,
                   paymentHistoryEnabled: Boolean = true,
                   ITSASubmissionIntegrationEnabled: Boolean = true,
@@ -102,7 +101,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       nextUpdate,
       overDuePaymentsCount,
       overDueUpdatesCount,
-      displayNextUpdates = displayNextUpdates,
       utr,
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,
@@ -209,6 +207,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
           link.map(_.text) shouldBe Some(messages("home.updates.view"))
+        }
+        "is empty except for the title" when {
+          "user has no open obligations" in new TestSetup(nextUpdate = None) {
+            getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
+          }
         }
       }
 
