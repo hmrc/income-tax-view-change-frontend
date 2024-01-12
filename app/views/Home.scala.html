@@ -38,9 +38,10 @@
 )
 
 @(nextPaymentDueDate: Option[LocalDate],
-	nextUpdate: LocalDate,
+	nextUpdate: Option[LocalDate],
 	overDuePaymentsCount: Option[Int],
 	overDueUpdatesCount: Option[Int],
+    displayNextUpdates: Boolean,
   	utr: Option[String],
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
@@ -233,15 +234,15 @@
 			case 1 => p()(updatesTileContentUpdatesDue1)
 			case _ => p()(updatesTileContentUpdatesDueMany)
 		}}
-            @p(classes = "govuk-!-margin-bottom-4"){
+
+        @if(displayNextUpdates) {
+            @p(classes = "govuk-!-margin-bottom-4") {
                 @link(
                     link = nextUpdatesControllerURL,
-                    messageKey = "home.updates.view"
-
-
-                )
+                    messageKey = "home.updates.view")
             }
-	}
+        }
+    }
 }
 
 @paymentHistoryTile = {
@@ -269,11 +270,13 @@
 }
 
 
-@updatesTileContentUpdatesDue0 = { @nextUpdate.toLongDate }
+@updatesTileContentUpdatesDue0 = {
+    @nextUpdate.map(_.toLongDate)
+}
 
 @updatesTileContentUpdatesDue1 = {
     <span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>
-    @{nextUpdate.toLongDate}
+    @nextUpdate.map(_.toLongDate)
 }
 
 @updatesTileContentUpdatesDueMany = {

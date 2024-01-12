@@ -55,7 +55,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
 object HomeAudit {
   def apply(mtdItUser: MtdItUser[_],
             nextPaymentDueDate: Option[LocalDate],
-            nextUpdateDueDate: LocalDate,
+            nextUpdateDueDate: Option[LocalDate],
             overduePaymentsCount: Int,
             overdueUpdatesCount: Int): HomeAudit = {
 
@@ -66,9 +66,11 @@ object HomeAudit {
     }
 
     val nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = {
-      if (overdueUpdatesCount == 0) Left(nextUpdateDueDate -> false)
-      else if (overdueUpdatesCount == 1) Left(nextUpdateDueDate -> true)
-      else Right(overdueUpdatesCount)
+      (overdueUpdatesCount, nextUpdateDueDate) match {
+        case (0, Some(dueDate)) => Left(dueDate -> false)
+        case (1, Some(dueDate)) => Left(dueDate -> true)
+        case (_, _) => Right(overdueUpdatesCount)
+      }
     }
 
     HomeAudit(

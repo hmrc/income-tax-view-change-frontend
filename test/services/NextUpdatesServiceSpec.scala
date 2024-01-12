@@ -20,18 +20,16 @@ import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear
 import mocks.connectors.MockObligationsConnector
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
-import play.api.libs.json.{JsValue, Json}
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.InternalServerException
+
 import java.time.LocalDate
 import scala.concurrent.Future
-import scala.io.{BufferedSource, Source}
 
 class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector with FeatureSwitching {
 
@@ -111,30 +109,43 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
   }
 
   "getNextDeadlineDueDate" should {
+    def assertDate(deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]], expectedDate: LocalDate): Unit = {
+      deadlineFuture.futureValue match {
+        case Right(Some((firstElementOfTuple, _))) => firstElementOfTuple shouldBe expectedDate
+        case _ => fail("The future did not contain a Right-side value with the expected date")
+      }
+    }
+
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations.futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
+        val deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled)
+        val expectedDate: LocalDate = LocalDate.of(2017, 10, 1)
+        assertDate(deadlineFuture, expectedDate)
       }
       "there is just one report deadline from an income source" in new Setup {
         setupMockNextUpdates(obligationsPropertyOnlySuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations.futureValue._1 shouldBe LocalDate.of(2017, 10, 1)
+        val deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled)
+        val expectedDate: LocalDate = LocalDate.of(2017, 10, 1)
+        assertDate(deadlineFuture, expectedDate)
       }
       "there is just a crystallisation deadline" in new Setup {
         setupMockNextUpdates(obligationsCrystallisedOnlySuccessModel)
-        getNextDeadlineDueDateAndOverDueObligations.futureValue._1 shouldBe LocalDate.of(2017, 10, 31)
+        val deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled)
+        val expectedDate: LocalDate = LocalDate.of(2017, 10, 31)
+        assertDate(deadlineFuture, expectedDate)
       }
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        val result = getNextDeadlineDueDateAndOverDueObligations.failed.futureValue
+        val result = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).failed.futureValue
         result shouldBe an[Exception]
         result.getMessage shouldBe "Unexpected Exception getting next deadline due and Overdue Obligations"
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        val result = getNextDeadlineDueDateAndOverDueObligations.failed.futureValue
+        val result = getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).failed.futureValue
         result shouldBe an[Exception]
         result.getMessage shouldBe "Dummy Error Message"
       }
@@ -373,12 +384,12 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         thenReturn(Future(nextModel))
 
       val expectedResult = ObligationsViewModel(
-              Seq.empty,
-              Seq.empty,
-              Seq.empty,
-              dateService.getCurrentTaxYearEnd(),
-              showPrevTaxYears = true
-            )
+        Seq.empty,
+        Seq.empty,
+        Seq.empty,
+        dateService.getCurrentTaxYearEnd(),
+        showPrevTaxYears = true
+      )
       val result = TestNextUpdatesService.getObligationsViewModel("123", showPreviousTaxYears = true)
       result.futureValue shouldBe expectedResult
     }

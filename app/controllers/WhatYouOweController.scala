@@ -19,22 +19,21 @@ package controllers
 import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{CodingOut, CreditsRefundsRepay, CutOverCredits, FeatureSwitching, MFACreditsAndDebits, TimeMachineAddYear, WhatYouOweCreditAmount}
 import config._
+import config.featureswitch._
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
+import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateService, DateServiceInterface, IncomeSourceDetailsService, WhatYouOweService}
+import services.{DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.AuthenticatorPredicate
 import views.html.WhatYouOwe
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import enums.GatewayPage.WhatYouOwePage
-import utils.AuthenticatorPredicate
 
 class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                                      val itvcErrorHandler: ItvcErrorHandler,
@@ -54,8 +53,8 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
-    whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)) flatMap {
+    val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
+    whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isTimeMachineEnabled).flatMap {
       whatYouOweChargesList =>
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 

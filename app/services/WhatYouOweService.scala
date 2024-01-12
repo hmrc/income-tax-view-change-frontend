@@ -53,16 +53,16 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList(isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean, isTimeMachineEnabled: Boolean)(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails(isCodingOutEnabled)
-      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isMFACreditsEnabled)
+      } yield getWhatYouOweChargesList(unpaidChanges, isCodingOutEnabled, isMFACreditsEnabled, isTimeMachineEnabled)
     }.flatten
   }
 
-  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean)
-                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[WhatYouOweChargesList] = {
+  def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel], isCodingOutEnabled: Boolean, isMFACreditsEnabled: Boolean, isTimeMachineEnabled: Boolean)
+                              (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
       case financialDetails: List[FinancialDetailsResponseModel] if financialDetails.exists(_.isInstanceOf[FinancialDetailsErrorModel]) =>

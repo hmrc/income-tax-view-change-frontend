@@ -19,7 +19,6 @@ package views.agent
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
-import controllers.routes
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
@@ -29,7 +28,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
@@ -81,20 +79,21 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
-              nextUpdate: LocalDate = nextUpdateDue,
-              overduePaymentExists: Boolean = true,
-              overDuePaymentsCount: Option[Int] = None,
-              overDueUpdatesCount: Option[Int] = None,
-              utr: Option[String] = None,
-              paymentHistoryEnabled: Boolean = true,
-              ITSASubmissionIntegrationEnabled: Boolean = true,
-              dunningLockExists: Boolean = false,
-              currentTaxYear: Int = currentTaxYear,
-              isAgent: Boolean = true,
-              displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false,
-              user: MtdItUser[_] = testMtdItUserNotMigrated
-             ) {
+                  nextUpdate: Option[LocalDate] = Some(nextUpdateDue),
+                  overduePaymentExists: Boolean = true,
+                  overDuePaymentsCount: Option[Int] = None,
+                  overDueUpdatesCount: Option[Int] = None,
+                  displayNextUpdates: Boolean = true,
+                  utr: Option[String] = None,
+                  paymentHistoryEnabled: Boolean = true,
+                  ITSASubmissionIntegrationEnabled: Boolean = true,
+                  dunningLockExists: Boolean = false,
+                  currentTaxYear: Int = currentTaxYear,
+                  isAgent: Boolean = true,
+                  displayCeaseAnIncome: Boolean = false,
+                  incomeSourcesEnabled: Boolean = false,
+                  user: MtdItUser[_] = testMtdItUserNotMigrated
+                 ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
@@ -103,6 +102,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       nextUpdate,
       overDuePaymentsCount,
       overDueUpdatesCount,
+      displayNextUpdates = displayNextUpdates,
       utr,
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,

@@ -18,7 +18,6 @@ package services
 
 import auth.MtdItUser
 import connectors._
-import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels._
 import models.nextUpdates._
@@ -33,16 +32,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
 
-  def getNextDeadlineDueDateAndOverDueObligations(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[(LocalDate, Seq[LocalDate])] = {
+  def getNextDeadlineAndOverdueObligations(isTimeMachineEnabled: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]):
+  Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val latestDeadline = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _).head
         val overdueObligations = deadlines.obligations.flatMap(_.obligations.map(_.due)).filter(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled)))
-        (latestDeadline, overdueObligations)
-      case error: NextUpdatesErrorModel => throw new Exception(s"${error.message}")
+        Right(Some((latestDeadline, overdueObligations)))
+      case error: NextUpdatesErrorModel if error.code == 404 => Right(None)
+      case error: NextUpdatesErrorModel => Left(new Exception(s"${error.message}"))
       case _ =>
-        Logger("application").error("Unexpected Exception getting next deadline due and Overdue Obligations")
-        throw new Exception("Unexpected Exception getting next deadline due and Overdue Obligations")
+        Left(new Exception("Unexpected Exception getting next deadline due and Overdue Obligations"))
     }
   }
 
@@ -93,9 +93,9 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     } yield {
       (previousObligations, openObligations) match {
         case (ObligationsModel(previous), open: ObligationsModel) =>
-          ObligationsModel( (previous ++ obligationFilter(fromDate, toDate, open) ).filter(_.obligations.nonEmpty))
+          ObligationsModel((previous ++ obligationFilter(fromDate, toDate, open)).filter(_.obligations.nonEmpty))
         case (error: NextUpdatesErrorModel, open: ObligationsModel) if error.code == 404 =>
-          ObligationsModel( obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty) )
+          ObligationsModel(obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty))
         case (error: NextUpdatesErrorModel, _) => error
         case (_, error: NextUpdatesErrorModel) => error
         case (_, _) => NextUpdatesErrorModel(500, "[NextUpdatesService][getNextUpdates] Invalid response from connector")
@@ -137,7 +137,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     } yield {
       val (finalDeclarationDates, otherObligationDates) = datesList.partition(datesModel => datesModel.isFinalDec)
 
-      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.obligationType == "Quarterly" )
+      val quarterlyDates: Seq[DatesModel] = otherObligationDates.filter(datesModel => datesModel.obligationType == "Quarterly")
         .sortBy(_.inboundCorrespondenceFrom)
 
       val obligationsGroupedByYear = quarterlyDates.groupBy(datesModel => dateService.getAccountingPeriodEndDate(datesModel.inboundCorrespondenceTo).getYear)

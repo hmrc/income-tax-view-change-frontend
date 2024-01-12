@@ -18,7 +18,6 @@ package views
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import controllers.routes
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -102,14 +101,15 @@ class HomePageViewSpec extends TestSupport {
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), overDuePaymentsCount: Option[Int] = Some(0),
               overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false) {
+              incomeSourcesEnabled: Boolean = false, displayNextUpdates: Boolean = true) {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
       nextPaymentDueDate = paymentDueDate,
-      nextUpdate = updateDate,
+      nextUpdate = Some(updateDate),
       overDuePaymentsCount = overDuePaymentsCount,
       overDueUpdatesCount = overDueUpdatesCount,
+      displayNextUpdates = displayNextUpdates,
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       dunningLockExists = dunningLockExists,
