@@ -39,17 +39,13 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
         val dueDates = DueDates(deadlines.obligations.flatMap(_.obligations.map(_.due)))
         val latestDeadline = dueDates.getLatestDeadline
         val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
-        val overdueObligations = getOverdueObligations(dueDates, currentDate)
+        val overdueObligations = dueDates.getOverdueObligations(currentDate)
         Right(Some((latestDeadline, overdueObligations)))
       case error: NextUpdatesErrorModel if error.code == 404 => Right(None)
       case error: NextUpdatesErrorModel => Left(new Exception(s"${error.message}"))
       case _ =>
         Left(new Exception("Unexpected Exception getting next deadline due and Overdue Obligations"))
     }
-  }
-
-  private def getOverdueObligations(dueDates: DueDates, currentDate: LocalDate): Seq[LocalDate] = {
-    dueDates.dueDates.filter(_.isBefore(currentDate))
   }
 
   def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[Either[(LocalDate, Boolean), Int]] = {

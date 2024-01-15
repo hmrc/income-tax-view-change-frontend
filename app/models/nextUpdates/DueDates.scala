@@ -22,4 +22,8 @@ case class DueDates(dueDates: Seq[LocalDate]) {
   def getLatestDeadline: LocalDate = {
     dueDates.sortWith(_ isBefore _).head
   }
+
+  def getOverdueObligations(currentDate: LocalDate): Seq[LocalDate] = {
+    dueDates.filter(_.isBefore(currentDate))
+  }
 }
