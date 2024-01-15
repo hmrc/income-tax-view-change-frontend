@@ -26,7 +26,6 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -38,9 +37,8 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due))
-        @unused
-        val dueDates1 = DueDates(dueDates)
-        val latestDeadline = dueDates.sortWith(_ isBefore _).head
+        val dueDatesNew = DueDates(dueDates)
+        val latestDeadline = getLatestDeadline(dueDatesNew)
         val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
         val overdueObligations = dueDates.filter(_.isBefore(currentDate))
         Right(Some((latestDeadline, overdueObligations)))
@@ -49,6 +47,10 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
       case _ =>
         Left(new Exception("Unexpected Exception getting next deadline due and Overdue Obligations"))
     }
+  }
+
+  def getLatestDeadline(dueDates: DueDates): LocalDate = {
+    dueDates.dueDates.sortWith(_ isBefore _).head
   }
 
   def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_], isTimeMachineEnabled: Boolean): Future[Either[(LocalDate, Boolean), Int]] = {
