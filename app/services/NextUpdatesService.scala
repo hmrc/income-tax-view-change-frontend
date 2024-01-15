@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -37,6 +38,8 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due))
+        @unused
+        val dueDates1 = DueDates(dueDates)
         val latestDeadline = dueDates.sortWith(_ isBefore _).head
         val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
         val overdueObligations = dueDates.filter(_.isBefore(currentDate))
