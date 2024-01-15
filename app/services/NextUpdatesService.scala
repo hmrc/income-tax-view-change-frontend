@@ -37,13 +37,18 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val dueDates = DueDates(deadlines.obligations.flatMap(_.obligations.map(_.due)))
-        val latestDeadline = dueDates.getLatestDeadline
-        val overdueObligations = dueDates.getOverdueObligations(currentDate)
-        Right(Some((latestDeadline, overdueObligations)))
-      case error: NextUpdatesErrorModel if error.code == 404 => Right(None)
+        Right(dueDates)
+      case error: NextUpdatesErrorModel if error.code == 404 => Right(DueDates(Seq.empty))
       case error: NextUpdatesErrorModel => Left(new Exception(s"${error.message}"))
       case _ =>
         Left(new Exception("Unexpected Exception getting next deadline due and Overdue Obligations"))
+    }.map {
+      case Right(dueDates: DueDates) if dueDates.dueDates.isEmpty => Right(None)
+      case Right(dueDates: DueDates) =>
+        val latestDeadline = dueDates.getLatestDeadline
+        val overdueObligations = dueDates.getOverdueObligations(currentDate)
+        Right(Some((latestDeadline, overdueObligations)))
+      case Left(error) => Left(error)
     }
   }
 
