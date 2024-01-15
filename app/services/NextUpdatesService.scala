@@ -36,11 +36,10 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
-        val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due))
-        val dueDatesNew = DueDates(dueDates)
-        val latestDeadline = getLatestDeadline(dueDatesNew)
+        val dueDates = DueDates(deadlines.obligations.flatMap(_.obligations.map(_.due)))
+        val latestDeadline = getLatestDeadline(dueDates)
         val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
-        val overdueObligations = getOverdueObligations(dueDatesNew, currentDate)
+        val overdueObligations = getOverdueObligations(dueDates, currentDate)
         Right(Some((latestDeadline, overdueObligations)))
       case error: NextUpdatesErrorModel if error.code == 404 => Right(None)
       case error: NextUpdatesErrorModel => Left(new Exception(s"${error.message}"))
