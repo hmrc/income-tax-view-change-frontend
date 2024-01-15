@@ -52,7 +52,7 @@
 @getTableHeadingMessage(obligation: NextUpdateModel) = @{
     val key = if(obligation.obligationType == "Quarterly") "nextUpdates.section.heading.updates"
     else "nextUpdates.section.heading.taxYear"
-    messages(key, obligation.start.toLongDate, obligation.end.toLongDate)
+    messages(key, obligation.start.toLongDateShort, obligation.end.toLongDateShort)
 }
 
 @headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
@@ -84,7 +84,8 @@
             if(collectedObligations._1._2.head.obligation.obligationType == "Quarterly")
                 Some(getTableHeadingMessage(collectedObligations._1._2.head.obligation)) else None
         },
-        captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2"
+        captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2",
+        attributes = Map("id"->"next-updates-table")
     )
     )
 }
