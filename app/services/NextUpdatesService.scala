@@ -32,13 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
 
-  def getNextDeadlineAndOverdueObligations(isTimeMachineEnabled: Boolean)(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]):
+  def getNextDeadlineAndOverdueObligations(currentDate: LocalDate)(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]):
   Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val dueDates = DueDates(deadlines.obligations.flatMap(_.obligations.map(_.due)))
         val latestDeadline = dueDates.getLatestDeadline
-        val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
         val overdueObligations = dueDates.getOverdueObligations(currentDate)
         Right(Some((latestDeadline, overdueObligations)))
       case error: NextUpdatesErrorModel if error.code == 404 => Right(None)

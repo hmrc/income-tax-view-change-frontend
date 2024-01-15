@@ -83,8 +83,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
     val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
+    val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
 
-    nextUpdatesService.getNextDeadlineAndOverdueObligations(isTimeMachineEnabled).flatMap {
+    nextUpdatesService.getNextDeadlineAndOverdueObligations(currentDate).flatMap {
       case Right(successResponse) =>
         val nextUpdate: Option[LocalDate] = successResponse.map(_._1)
         val overdueUpdatesCount: Int = successResponse.map(_._2.size).getOrElse(0)
