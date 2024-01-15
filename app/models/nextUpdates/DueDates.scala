@@ -18,4 +18,8 @@ package models.nextUpdates
 
 import java.time.LocalDate
 
-case class DueDates(dueDates: Seq[LocalDate])
+case class DueDates(dueDates: Seq[LocalDate]) {
+  def getLatestDeadline: LocalDate = {
+    dueDates.sortWith(_ isBefore _).head
+  }
+}
