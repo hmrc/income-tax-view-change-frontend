@@ -75,3 +75,9 @@ sbt clean coverage test it:test coverageOff coverageReport
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
 
+ScalaFix rule to rewrite imports:
+
+    scalafix --rules=file:rules/ImportRewriteRules.scala
+    
+    test:scalafix --rules=file:rules/ImportRewriteRules.scala
+
