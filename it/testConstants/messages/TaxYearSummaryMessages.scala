@@ -38,8 +38,6 @@ object TaxYearSummaryMessages {
   val quarterlyUpdate: String = messagesAPI("updateTab.updateType.quarterly")
   val annualUpdate: String = messagesAPI("updateTab.updateType.eops")
   val propertyIncome: String = messagesAPI("updateTab.obligationType.property")
-  val propertyIncomeUK: String = messagesAPI("nextUpdates.propertyIncome.UK")
-  val propertyIncomeForeign: String = messagesAPI("nextUpdates.propertyIncome.Foreign")
   val paymentHistoryHeading: String = messagesAPI("Payment refund and history")
 
 

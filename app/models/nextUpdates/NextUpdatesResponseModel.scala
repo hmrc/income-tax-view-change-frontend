@@ -29,7 +29,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] = {
     val deadlines = obligations.flatMap { deadlinesModel =>
       if (mtdItUser.incomeSources.properties.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
-        deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.${getPropertyType(deadlinesModel)}", deadline))
+        deadline => Some(NextUpdateModelWithIncomeType(getPropertyType(deadlinesModel), deadline))
       } else if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
         deadline =>
           Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
@@ -43,9 +43,11 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
     if (previous) deadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
   }
 
-  def getPropertyType(model: NextUpdatesModel)(implicit mtdItUser: MtdItUser[_]) = {
+  def getPropertyType(model: NextUpdatesModel)(implicit mtdItUser: MtdItUser[_]): String = {
     val incomeSource = mtdItUser.incomeSources.properties.filter(_.incomeSourceId == model.identification)
-    if (incomeSource.exists(x => x.incomeSourceType.contains("foreign-property"))) "Foreign" else "UK"
+    if (incomeSource.exists(x => x.incomeSourceType.contains("foreign-property"))) "nextUpdates.propertyIncome.Foreign" else {
+      if (incomeSource.exists(x => x.incomeSourceType.contains("uk-property"))) {"nextUpdates.propertyIncome.UK"} else "nextUpdates.propertyIncome"
+    }
   }
   def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
