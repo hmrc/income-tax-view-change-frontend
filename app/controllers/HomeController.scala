@@ -26,7 +26,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 
 import javax.inject.{Inject, Singleton}
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
@@ -96,17 +96,19 @@ class HomeController @Inject()(val homeView: views.html.Home,
       }
 
       val availableCredit: Future[Option[BigDecimal]] =
-        creditService.getCreditCharges() map(
-          _.headOption
-            .flatMap(
-              _.balanceDetails.getAbsoluteAvailableCreditAmount
+        if (isEnabled(CreditsRefundsRepay))
+          creditService.getCreditCharges() map(
+            _.headOption
+              .flatMap(
+                _.balanceDetails.getAbsoluteAvailableCreditAmount
+              )
             )
-          )
+        else Future(None)
 
       for {
         paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
         unpaidCharges <- unpaidChargesFuture
-        availableCredit <- if (isEnabled(CreditsRefundsRepay)) availableCredit else Future(None)
+        availableCredit <- availableCredit
         dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
         outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
