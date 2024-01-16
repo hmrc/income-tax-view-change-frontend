@@ -27,28 +27,56 @@ sealed trait NextUpdatesResponseModel
 
 case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpdatesResponseModel {
   def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] = {
-    val deadlines = obligations.flatMap { deadlinesModel =>
-      if (mtdItUser.incomeSources.properties.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
-        deadline => Some(NextUpdateModelWithIncomeType(getPropertyType(deadlinesModel), deadline))
-      } else if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
-        deadline =>
-          Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
-            .get.tradingName.getOrElse("nextUpdates.business"), deadline))
-      } else if (mtdItUser.mtditid == deadlinesModel.identification) deadlinesModel.obligations.map {
-        deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
-      } else None
+//    val deadlines = obligations.flatMap { deadlinesModel =>
+//      if (mtdItUser.incomeSources.properties.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
+//        deadline => Some(NextUpdateModelWithIncomeType(getPropertyType(deadlinesModel), deadline))
+//      } else if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
+//        deadline =>
+//          Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
+//            .get.tradingName.getOrElse("nextUpdates.business"), deadline))
+//      } else if (mtdItUser.mtditid == deadlinesModel.identification) deadlinesModel.obligations.map {
+//        deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
+//      } else None
+//
+//    }.flatten
 
+    val deadlines2 = obligations.flatMap { deadlinesModel =>
+      mtdItUser.incomeSources.properties.find(_.incomeSourceId == deadlinesModel.identification) match {
+        case Some(property) if property.incomeSourceType.contains("foreign-property") =>
+          deadlinesModel.obligations.map {
+            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.Foreign", deadline))
+          }
+        case Some(property) if property.incomeSourceType.contains("uk-property") => //
+          deadlinesModel.obligations.map {
+            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.UK", deadline))
+          }
+        case Some(_) =>
+          deadlinesModel.obligations.map {
+            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome", deadline))
+          }
+        case None =>
+          if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
+            deadline =>
+              Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
+                .get.tradingName.getOrElse("nextUpdates.business"), deadline))
+          } else if (mtdItUser.mtditid == deadlinesModel.identification) deadlinesModel.obligations.map {
+            deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
+          } else None
+      }
     }.flatten
 
-    if (previous) deadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
+    if (previous) deadlines2.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines2.sortBy(_.obligation.due.toEpochDay)
   }
 
   def getPropertyType(model: NextUpdatesModel)(implicit mtdItUser: MtdItUser[_]): String = {
     val incomeSource = mtdItUser.incomeSources.properties.filter(_.incomeSourceId == model.identification)
     if (incomeSource.exists(x => x.incomeSourceType.contains("foreign-property"))) "nextUpdates.propertyIncome.Foreign" else {
-      if (incomeSource.exists(x => x.incomeSourceType.contains("uk-property"))) {"nextUpdates.propertyIncome.UK"} else "nextUpdates.propertyIncome"
+      if (incomeSource.exists(x => x.incomeSourceType.contains("uk-property"))) {
+        "nextUpdates.propertyIncome.UK"
+      } else "nextUpdates.propertyIncome"
     }
   }
+
   def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
 
