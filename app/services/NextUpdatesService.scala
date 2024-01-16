@@ -47,8 +47,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   private def getDueDates(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, DueDates]] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
-        val dueDates = DueDates(deadlines.obligations.flatMap(_.obligations.map(_.due)))
-        Right(dueDates)
+        Right(DueDates(deadlines.obligations.flatMap(_.obligations.map(_.due))))
       case error: NextUpdatesErrorModel if error.code == 404 => Right(DueDates(Seq.empty))
       case error: NextUpdatesErrorModel => Left(new Exception(s"${error.message}"))
       case _ =>
