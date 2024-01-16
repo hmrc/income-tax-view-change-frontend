@@ -86,19 +86,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
     val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
 
-    val nextDeadlineAndOverdueObligations = nextUpdatesService.getDueDates().map {
-      case Right(dueDates: DueDates) if dueDates.dueDates.isEmpty => Right(None)
-      case Right(dueDates: DueDates) =>
-        val latestDeadline = dueDates.getLatestDeadline
-        val overdueObligations = dueDates.getOverdueObligations(currentDate)
-        Right(Some((latestDeadline, overdueObligations)))
-      case Left(error) => Left(error)
-    }
-
-    nextDeadlineAndOverdueObligations.flatMap {
-      case Right(successResponse) =>
-        val nextUpdate: Option[LocalDate] = successResponse.map(_._1)
-        val overdueUpdatesCount: Int = successResponse.map(_._2.size).getOrElse(0)
+    nextUpdatesService.getDueDates().flatMap {
+      case Right(dueDates1: DueDates) =>
+        val nextUpdate: Option[LocalDate] = if (dueDates1.dueDates.isEmpty) None else Some(dueDates1.getLatestDeadline)
+        val overdueUpdatesCount: Int = if (dueDates1.dueDates.isEmpty) 0 else dueDates1.getOverdueObligations(currentDate).length
         val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
         val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
