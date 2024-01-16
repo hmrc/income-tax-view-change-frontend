@@ -38,7 +38,7 @@
 )
 
 @(
-    availableCredit: BigDecimal,
+    availableCredit: Option[BigDecimal],
     nextPaymentDueDate: Option[LocalDate],
 	nextUpdate: LocalDate,
 	overDuePaymentsCount: Option[Int],
@@ -249,7 +249,7 @@
 @paymentHistoryTile = {
     @home_tile("payment-history-tile", if(paymentHistoryEnabled) messages("home.paymentHistoryRefund.heading") else messages("home.paymentHistory.heading")) {
         @if(creditAndRefundEnabled) {
-            @p(){@messages("home.paymentHistoryRefund.availableCredit", availableCredit.abs.toCurrencyString)}
+            @p(){@messages("home.paymentHistoryRefund.availableCredit", availableCredit.map(_.abs).getOrElse(BigDecimal(0)).toCurrencyString)}
         }
 
         @p(classes = "govuk-!-margin-bottom-4") {

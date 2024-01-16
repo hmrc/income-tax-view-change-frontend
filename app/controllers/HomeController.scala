@@ -32,7 +32,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
+import services.{CreditHistoryService, CreditService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -49,13 +49,14 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val financialDetailsService: FinancialDetailsService,
                                implicit val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
+                               creditService: CreditService,
                                auditingService: AuditingService,
                                auth: AuthenticatorPredicate)
                               (implicit val ec: ExecutionContext,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def view(availableCredit: BigDecimal,nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
+  private def view(availableCredit: Option[BigDecimal],nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
                    overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
@@ -94,18 +95,18 @@ class HomeController @Inject()(val homeView: views.html.Home,
         }.sortWith(_ isBefore _)
       }
 
-      val availableCredit: Future[BigDecimal] = financialDetailsService.getAllFinancialDetails
-        .map(
-          _.flatMap {
-            case (_, model: FinancialDetailsModel) if isEnabled(CreditsRefundsRepay) => model.balanceDetails.availableCredit
-            case _ => None
-          }.sum
-        )
+      val availableCredit: Future[Option[BigDecimal]] =
+        creditService.getCreditCharges() map(
+          _.headOption
+            .flatMap(
+              _.balanceDetails.getAbsoluteAvailableCreditAmount
+            )
+          )
 
       for {
         paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
         unpaidCharges <- unpaidChargesFuture
-        availableCredit <- availableCredit
+        availableCredit <- if (isEnabled(CreditsRefundsRepay)) availableCredit else Future(None)
         dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
         outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
