@@ -24,6 +24,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService, MockWhatYouOweService}
 import models.financialDetails._
+import models.nextUpdates.DueDates
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -55,7 +56,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val updateYear: String = "2018"
   val nextPaymentYear: String = "2019"
   val nextPaymentYear2: String = "2018"
-  val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), Seq.empty[LocalDate])
+  private val dueDates: DueDates = DueDates(Seq(LocalDate.of(2018, 1, 1)))
+  val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), dueDates.dueDates)
   val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
   val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
   val homePageTitle = s"${messages("htmlTitle", messages("home.heading"))}"
@@ -84,12 +86,10 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     val overdueWarningMessageDunningLockTrue: String = messages("home.overdue.message.dunningLock.true")
     val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
     val expectedOverDuePaymentsText1 = s"${messages("home.overdue.date")} 31 January 2019"
-    val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   }
 
   //new setup for agent
   implicit val lang: Lang = Lang("en-US")
-  val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   val javaMessagesApi: MessagesApi = inject[play.i18n.MessagesApi]
   val overdueWarningMessageDunningLockTrue: String = javaMessagesApi.get(new i18n.Lang(lang), "home.agent.overdue.message.dunningLock.true")
   val overdueWarningMessageDunningLockFalse: String = javaMessagesApi.get(new i18n.Lang(lang), "home.agent.overdue.message.dunningLock.false")
@@ -125,7 +125,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     "return ok (200)" when {
       "there is a next payment due date to display" in new Setup {
         disableAllSwitches()
-        mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+        mockGetDueDates(Right(dueDates))
         mockSingleBusinessIncomeSource()
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -148,7 +148,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "there is a next payment due date to display when getWhatYouOweChargesList contains overdue payment" in new Setup {
         disableAllSwitches()
-        mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+        mockGetDueDates(Right(dueDates))
         mockSingleBusinessIncomeSource()
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -165,7 +165,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "display number of payments due when there are multiple payment due and dunning locks" in new Setup {
         disableAllSwitches()
-        mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+        mockGetDueDates(Right(dueDates))
         mockSingleBusinessIncomeSource()
 
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -202,7 +202,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       }
 
       "display number of payments due when there are multiple payment due without dunning lock and filter out payments" in new Setup {
-        when(mockNextUpdatesService.getNextDeadlineAndOverdueObligations(any())(any(), any(), any())) thenReturn Future.successful(Right(Some(updateDateAndOverdueObligations)))
+        mockGetDueDates(Right(dueDates))
         mockSingleBusinessIncomeSource()
 
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -246,7 +246,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       "Not display the next payment due date" when {
         "there is a problem getting financial details" in new Setup {
-          mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+          mockGetDueDates(Right(dueDates))
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -263,7 +263,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
 
         "There are no financial detail" in new Setup {
-          mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+          mockGetDueDates(Right(dueDates))
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List()))))
@@ -280,7 +280,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
 
         "All financial detail bill are paid" in new Setup {
-          mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+          mockGetDueDates(Right(dueDates))
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -302,7 +302,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
       }
       "there is no update date to display - Individual" in new Setup {
-        mockNextDeadlineAndOverdueObligations(Future.successful(Right(None)))
+        mockGetDueDates(Right(DueDates(Seq.empty)))
         mockSingleBusinessIncomeSource()
         mockGetAllUnpaidFinancialDetails()
         setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
@@ -315,8 +315,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         document.select("#updates-tile").text shouldBe messages("home.updates.heading")
       }
     }
-    "there is a update date to display" in new Setup {
-      mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+    "there is an overdue update date to display" in new Setup {
+      mockGetDueDates(Right(dueDates))
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -332,12 +332,12 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       status(result) shouldBe Status.OK
       val document: Document = Jsoup.parse(contentAsString(result))
       document.title shouldBe homePageTitle
-      document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2018"
+      document.select("#updates-tile p:nth-child(2)").text() shouldBe "OVERDUE 1 January 2018"
     }
 
     "display the Income Sources tile with `Cease an income source` when user has non-ceased businesses or property" in new Setup {
       enable(IncomeSources)
-      mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+      mockGetDueDates(Right(dueDates))
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -361,7 +361,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     }
     "display the Income Sources tile without `Cease an income source` when user has ceased businesses or property" in new Setup {
       enable(IncomeSources)
-      mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligations))))
+      mockGetDueDates(Right(dueDates))
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -440,7 +440,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
           when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.now())
           mockSingleBusinessIncomeSource()
-          mockNextDeadlineAndOverdueObligations(Future.successful(Left(new InternalServerException("obligation test exception"))))
+          mockGetDueDates(Left(new Exception("obligation test exception")))
           setupMockGetWhatYouOweChargesList(emptyWhatYouOweChargesList)
 
           val result = TestHomeController.showAgent()(fakeRequestConfirmedClient())
@@ -456,7 +456,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
-            mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligationsLPI))))
+            mockGetDueDates(Right(dueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any())) thenReturn Future.failed(new InternalServerException("obligation test exception"))
             setupMockGetWhatYouOweChargesList(emptyWhatYouOweChargesList)
 
@@ -471,7 +471,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             mockSingleBusinessIncomeSource()
             when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.now())
-            mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligationsLPI))))
+            mockGetDueDates(Right(dueDates))
+
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(dueDateValue = Some(LocalDate.of(2021, 5, 15).toString)))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
@@ -490,7 +491,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             mockSingleBusinessIncomeSource()
             when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.now())
-            mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligationsLPI))))
+            mockGetDueDates(Right(dueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dueDateValue = None))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
@@ -508,7 +509,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
-            mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligationsLPI))))
+            mockGetDueDates(Right(dueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
@@ -527,7 +528,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
-            mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligationsLPI))))
+            mockGetDueDates(Right(dueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order")),
                 financialDetailsModel(testTaxYear))))
@@ -547,7 +548,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
-            mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligationsLPI))))
+            mockGetDueDates(Right(dueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = Some("Stand over order"), dueDateValue = None))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
@@ -566,7 +567,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             when(mockDateService.getCurrentDate(any())).thenReturn(LocalDate.now())
             mockSingleBusinessIncomeSource()
-            mockNextDeadlineAndOverdueObligations(Future.successful(Right(Some(updateDateAndOverdueObligationsLPI))))
+            mockGetDueDates(Right(dueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dunningLock = None, dueDateValue = None))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
@@ -583,7 +584,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
         "there is no update date to display - Agent" in new Setup {
           setupMockAuthorisationSuccess(true)
-          mockNextDeadlineAndOverdueObligations(Future.successful(Right(None)))
+          mockGetDueDates(Right(DueDates(Seq.empty)))
           mockSingleBusinessIncomeSource()
           mockGetAllUnpaidFinancialDetails()
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)

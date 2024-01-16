@@ -34,7 +34,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   def getNextDeadlineAndOverdueObligations(currentDate: LocalDate)(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]):
   Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = {
-    getDueDates.map {
+    getDueDates().map {
       case Right(dueDates: DueDates) if dueDates.dueDates.isEmpty => Right(None)
       case Right(dueDates: DueDates) =>
         val latestDeadline = dueDates.getLatestDeadline
@@ -44,7 +44,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     }
   }
 
-  private def getDueDates(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, DueDates]] = {
+  def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, DueDates]] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         Right(DueDates(deadlines.obligations.flatMap(_.obligations.map(_.due))))

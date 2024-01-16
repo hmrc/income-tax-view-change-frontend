@@ -23,6 +23,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.nextUpdates.DueDates
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -85,7 +86,16 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
     val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
 
-    nextUpdatesService.getNextDeadlineAndOverdueObligations(currentDate).flatMap {
+    val nextDeadlineAndOverdueObligations = nextUpdatesService.getDueDates().map {
+      case Right(dueDates: DueDates) if dueDates.dueDates.isEmpty => Right(None)
+      case Right(dueDates: DueDates) =>
+        val latestDeadline = dueDates.getLatestDeadline
+        val overdueObligations = dueDates.getOverdueObligations(currentDate)
+        Right(Some((latestDeadline, overdueObligations)))
+      case Left(error) => Left(error)
+    }
+
+    nextDeadlineAndOverdueObligations.flatMap {
       case Right(successResponse) =>
         val nextUpdate: Option[LocalDate] = successResponse.map(_._1)
         val overdueUpdatesCount: Int = successResponse.map(_._2.size).getOrElse(0)
