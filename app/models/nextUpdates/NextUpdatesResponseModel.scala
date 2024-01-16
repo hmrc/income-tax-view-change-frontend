@@ -37,11 +37,11 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
           deadlinesModel.obligations.map {
             deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.UK", deadline))
           }
-        case Some(_) =>
+        case Some(_: PropertyDetailsModel) =>
           deadlinesModel.obligations.map {
             deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome", deadline))
           }
-        case None =>
+        case _ =>
           if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
             deadline =>
               Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
