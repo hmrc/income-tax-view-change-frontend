@@ -55,7 +55,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def view(availableCredit: Option[BigDecimal],nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
+  private def view(availableCredit: BigDecimal,nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
                    overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
@@ -94,12 +94,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
         }.sortWith(_ isBefore _)
       }
 
-      val availableCredit: Future[Option[BigDecimal]] = financialDetailsService.getAllFinancialDetails
+      val availableCredit: Future[BigDecimal] = financialDetailsService.getAllFinancialDetails
         .map(
           _.flatMap {
             case (_, model: FinancialDetailsModel) if isEnabled(CreditsRefundsRepay) => model.balanceDetails.availableCredit
             case _ => None
-          }.headOption
+          }.sum
         )
 
       for {
