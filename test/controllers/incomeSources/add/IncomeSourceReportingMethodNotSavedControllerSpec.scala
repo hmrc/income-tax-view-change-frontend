@@ -18,7 +18,6 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.SessionTimeoutPredicate
 import controllers.routes
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import mocks.MockItvcErrorHandler
@@ -31,7 +30,7 @@ import org.scalatest.matchers.must.Matchers._
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
+import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, ukPlusForeignPropertyAndSoleTraderNoLatency}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
@@ -144,7 +143,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
 
         s"return 303 and redirect to the sign in for <incomeSourceType: $incomeSourceType>" when {
           "the user is not authenticated" in {
-            if(isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+            if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
             val result = if (isAgent) TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
             else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithActiveSession)
 
@@ -155,9 +154,9 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
 
         s"redirect to the session timeout page for <incomeSourceType: $incomeSourceType>" when {
           "the user has timed out" in {
-            if(isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+            if (isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired())
             else setupMockAuthorisationException()
-            val result = if(isAgent) TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClientTimeout())
+            val result = if (isAgent) TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClientTimeout())
             else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithTimeoutSession)
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -176,7 +175,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
             else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithActiveSession)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) mustBe (if(isAgent) Some(routes.HomeController.showAgent.url) else Some(routes.HomeController.show().url))
+            redirectLocation(result) mustBe (if (isAgent) Some(routes.HomeController.showAgent.url) else Some(routes.HomeController.show().url))
           }
         }
       }
