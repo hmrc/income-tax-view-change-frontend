@@ -99,7 +99,7 @@ class HomePageViewSpec extends TestSupport {
   val overdueMessageForDunningLocks = s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), nextUpdate: Option[LocalDate] = Some(updateDate), overDuePaymentsCount: Option[Int] = Some(0),
-              overDueUpdatesCount: Option[Int] = Some(0), utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
+              overDueUpdatesCount: Int = 0, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false) {
 
@@ -193,10 +193,10 @@ class HomePageViewSpec extends TestSupport {
       "has the date of the next update due" in new Setup {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
       }
-      "display an overdue tag when a single update is overdue" in new Setup(overDueUpdatesCount = Some(1)) {
+      "display an overdue tag when a single update is overdue" in new Setup(overDueUpdatesCount = 1) {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("OVERDUE " + updateDateLongDate)
       }
-      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDueUpdatesCount = Some(3)) {
+      "has the correct number of overdue updates when three updates are overdue" in new Setup(overDueUpdatesCount = 3) {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverdueUpdates)
       }
       "has a link to view updates" in new Setup {

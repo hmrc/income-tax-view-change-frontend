@@ -82,7 +82,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
                   nextUpdate: Option[LocalDate] = Some(nextUpdateDue),
                   overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Option[Int] = None,
-                  overDueUpdatesCount: Option[Int] = None,
+                  overDueUpdatesCount: Int = 0,
                   utr: Option[String] = None,
                   paymentHistoryEnabled: Boolean = true,
                   ITSASubmissionIntegrationEnabled: Boolean = true,
@@ -193,13 +193,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages("home.updates.heading"))
         }
         "has content of the next update due" which {
-          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(1)) {
+          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = 1) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January $year2018")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue)) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January $year2018")
           }
-          "is a count of overdue updates" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(2)) {
+          "is a count of overdue updates" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = 2) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE UPDATES")
           }
         }

@@ -40,7 +40,7 @@
 @(nextPaymentDueDate: Option[LocalDate],
 	nextUpdate: Option[LocalDate],
 	overDuePaymentsCount: Option[Int],
-	overDueUpdatesCount: Option[Int],
+	overDueUpdatesCount: Int,
   	utr: Option[String],
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
@@ -229,7 +229,7 @@
 @updatesTile = {
 	@home_tile("updates-tile", messages("home.updates.heading")) {
         @if(nextUpdate.isDefined) {
-            @{overDueUpdatesCount.getOrElse(0) match {
+            @{overDueUpdatesCount match {
                 case 0 => p()(updatesTileContentUpdatesDue0)
                 case 1 => p()(updatesTileContentUpdatesDue1)
                 case _ => p()(updatesTileContentUpdatesDueMany)
@@ -279,7 +279,7 @@
 }
 
 @updatesTileContentUpdatesDueMany = {
-    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdatesCount.getOrElse(throw MissingFieldException("Over Due Updates Count")))}</span>
+    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdatesCount)}</span>
 }
 
 
