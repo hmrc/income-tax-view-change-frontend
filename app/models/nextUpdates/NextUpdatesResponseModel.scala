@@ -27,30 +27,6 @@ sealed trait NextUpdatesResponseModel
 
 case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpdatesResponseModel {
   def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] = {
-//    val deadlines = obligations.flatMap { deadlinesModel =>
-//      mtdItUser.incomeSources.properties.find(_.incomeSourceId == deadlinesModel.identification) match {
-//        case Some(property) if property.incomeSourceType.contains("foreign-property") =>
-//          deadlinesModel.obligations.map {
-//            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.Foreign", deadline))
-//          }
-//        case Some(property) if property.incomeSourceType.contains("uk-property") => //
-//          deadlinesModel.obligations.map {
-//            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.UK", deadline))
-//          }
-//        case Some(_: PropertyDetailsModel) =>
-//          deadlinesModel.obligations.map {
-//            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome", deadline))
-//          }
-//        case _ =>
-//          if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
-//            deadline =>
-//              Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
-//                .get.tradingName.getOrElse("nextUpdates.business"), deadline))
-//          } else if (mtdItUser.mtditid == deadlinesModel.identification) deadlinesModel.obligations.map {
-//            deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
-//          } else None
-//      }
-//    }.flatten
 
     def toOptionModels(deadlinesModel: NextUpdatesModel, propertyTypeRes: String): List[Some[NextUpdateModelWithIncomeType]] = {
       deadlinesModel.obligations.map {
