@@ -267,7 +267,8 @@ object NextUpdatesTestConstants {
   val crystallisedDeadlineSuccess: NextUpdatesModel = NextUpdatesModel(testMtditid, List(openCrystObligation))
 
   val obligationsDataErrorModel = NextUpdatesErrorModel(testErrorStatus, testErrorMessage)
-  val obligations4xxDataErrorModel = NextUpdatesErrorModel(404, testErrorMessage)
+
+  def nextUpdatesErrorModel(status: Int) = NextUpdatesErrorModel(status, testErrorMessage)
 
   val obligationsDataErrorJson = Json.obj(
     "code" -> testErrorStatus,

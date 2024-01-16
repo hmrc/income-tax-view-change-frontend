@@ -108,7 +108,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     }
   }
 
-  "getNextDeadlineDueDate" should {
+  "getNextDeadlineDueDateAndOverdueObligations" should {
     def assertDate(deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]], expectedDate: LocalDate): Unit = {
       deadlineFuture.futureValue match {
         case Right(Some((firstElementOfTuple, _))) => firstElementOfTuple shouldBe expectedDate
@@ -148,6 +148,14 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         val result: Either[Throwable, Option[(LocalDate, Seq[LocalDate])]] = getNextDeadlineAndOverdueObligations(fixedDate).futureValue
         result.isLeft shouldBe true
         result.left.map(_.getMessage) shouldBe Left("Dummy Error Message")
+      }
+    }
+    "return None" when {
+      "404 response from getNextUpdates" in new Setup {
+        setupMockNextUpdates(nextUpdatesErrorModel(NOT_FOUND))
+        val result: Either[Throwable, Option[(LocalDate, Seq[LocalDate])]] = getNextDeadlineAndOverdueObligations(fixedDate).futureValue
+        result.isRight shouldBe true
+        result shouldBe Right(None)
       }
     }
   }
