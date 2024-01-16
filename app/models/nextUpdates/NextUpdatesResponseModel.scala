@@ -18,6 +18,7 @@ package models.nextUpdates
 
 import java.time.LocalDate
 import auth.MtdItUser
+import models.incomeSourceDetails.{Calendar, Standard}
 import play.api.libs.json._
 import services.DateService
 
@@ -53,6 +54,26 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
 
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
+
+  def groupByQuarterPeriod(obligations: Seq[NextUpdateModelWithIncomeType]): Map[String, Seq[NextUpdateModelWithIncomeType]] = {
+    obligations.groupBy { obligation =>
+        obligation.obligation.obligationType match {
+          case "Quarterly" =>
+            val dayOfMonth = obligation.obligation.start.getDayOfMonth
+            if (dayOfMonth < 6) Calendar.value else Standard.value
+          case _ => "Default"
+        }
+      }.view
+      .mapValues(_.sortBy(_.obligation.start))
+      .toSeq
+      .sortBy { case (period, _) => period } // Sort by period
+      .map { case (period, obligations) =>
+        // Sort obligations within each period by start date
+        val sortedObligations = obligations.sortBy(_.obligation.start)
+        (period, sortedObligations)
+      }
+      .toMap
+  }
 }
 
 object ObligationsModel {

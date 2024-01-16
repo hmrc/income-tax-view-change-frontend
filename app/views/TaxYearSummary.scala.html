@@ -262,7 +262,7 @@
     .reverse.groupBy[LocalDate]{nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due}
     .toList
     .collect {
-        case (due, dueObligations) => (due, dueObligations.distinct)
+        case (due, dueObligations) => (due, obligations.groupByQuarterPeriod(dueObligations.distinct))
     }
     .sortBy(_._1)
 }
@@ -277,27 +277,34 @@
             @messages("updateTab.due", due.toLongDate)
             </span>
         </h3>
-        <table class="govuk-table">
-            <caption class="govuk-table__caption" style="margin-bottom: 0px;">@messages("updateTab.dateToDate", dueObligations.head.obligation.start.toLongDate, dueObligations.head.obligation.end.toLongDate)</caption>
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">@messages("updateTab.updateType")</th>
-                    <th class="govuk-table__header" scope="col">@messages("updateTab.incomeSource")</th>
-                    <th class="govuk-table__header" scope="col">@messages("updateTab.dateSubmitted")</th>
-                </tr>
-            </thead>
-            <tbody>
-            @dueObligations.map { nextUpdateWithIncomeType =>
-                <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
-                        <div>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</div>
-                    </th>
-                    <td class="govuk-table__cell">@obligationsTypeHelper@{messages(nextUpdateWithIncomeType.incomeType)}</td>
-                    <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+        @dueObligations.map { case (period, obligations) =>
+            <table class="govuk-table">
+                <caption class="govuk-table__caption" style="margin-bottom: 0px;">
+                    @if(period == "Default") {
+                        @messages("paymentDue.tax-year", obligations.head.obligation.start.getYear.toString, obligations.head.obligation.end.getYear.toString)</caption>
+                    } else {
+                        @messages("updateTab.quarterlyDateToDate", obligations.head.obligation.start.toLongDateShort, obligations.head.obligation.end.toLongDateShort)</caption>
+                    }
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">@messages("updateTab.updateType")</th>
+                        <th class="govuk-table__header" scope="col">@messages("updateTab.incomeSource")</th>
+                        <th class="govuk-table__header" scope="col">@messages("updateTab.dateSubmitted")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @obligations.map { nextUpdateWithIncomeType =>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
+                            <div>@updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType)</div>
+                        </th>
+                        <td class="govuk-table__cell">@obligationsTypeHelper@{messages(nextUpdateWithIncomeType.incomeType)}</td>
+                        <td class="govuk-table__cell">@nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
     </div>
     }
 }
