@@ -27,10 +27,12 @@
 @deadlineRow(deadline: NextUpdateModelWithIncomeType) = @{
     Seq(
         TableRow(
-            content = Text(getObligationTypeText(deadline.obligation.obligationType))
+            content = Text(getObligationTypeText(deadline.obligation.obligationType)),
+            classes = "govuk-!-width-two-third"
         ),
         TableRow(
-            content = Text(messages(deadline.incomeType))
+            content = Text(messages(deadline.incomeType)),
+            classes = "govuk-!-width-one-third"
         )
     )
 }
