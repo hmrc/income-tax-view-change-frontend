@@ -34,6 +34,17 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
   def getNextDeadlineAndOverdueObligations(currentDate: LocalDate)(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]):
   Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = {
+    getDueDates.map {
+      case Right(dueDates: DueDates) if dueDates.dueDates.isEmpty => Right(None)
+      case Right(dueDates: DueDates) =>
+        val latestDeadline = dueDates.getLatestDeadline
+        val overdueObligations = dueDates.getOverdueObligations(currentDate)
+        Right(Some((latestDeadline, overdueObligations)))
+      case Left(error) => Left(error)
+    }
+  }
+
+  private def getDueDates(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, DueDates]] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         val dueDates = DueDates(deadlines.obligations.flatMap(_.obligations.map(_.due)))
@@ -42,13 +53,6 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
       case error: NextUpdatesErrorModel => Left(new Exception(s"${error.message}"))
       case _ =>
         Left(new Exception("Unexpected Exception getting next deadline due and Overdue Obligations"))
-    }.map {
-      case Right(dueDates: DueDates) if dueDates.dueDates.isEmpty => Right(None)
-      case Right(dueDates: DueDates) =>
-        val latestDeadline = dueDates.getLatestDeadline
-        val overdueObligations = dueDates.getOverdueObligations(currentDate)
-        Right(Some((latestDeadline, overdueObligations)))
-      case Left(error) => Left(error)
     }
   }
 
