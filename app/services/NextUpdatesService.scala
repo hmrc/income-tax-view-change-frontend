@@ -31,19 +31,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
-
-  def getNextDeadlineAndOverdueObligations(currentDate: LocalDate)(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]):
-  Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = {
-    getDueDates().map {
-      case Right(dueDates: DueDates) if dueDates.dueDates.isEmpty => Right(None)
-      case Right(dueDates: DueDates) =>
-        val latestDeadline = dueDates.getLatestDeadline
-        val overdueObligations = dueDates.getOverdueObligations(currentDate)
-        Right(Some((latestDeadline, overdueObligations)))
-      case Left(error) => Left(error)
-    }
-  }
-
   def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, DueDates]] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
