@@ -350,6 +350,16 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.title shouldBe homePageTitle
       document.select("#updates-tile p:nth-child(2)").text() shouldBe "OVERDUE 1 January 2018"
     }
+    "there are no updates to display" in new Setup {
+      setupNextUpdatesTests(DueDates(Seq()))
+
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.title shouldBe homePageTitle
+      document.select("#updates-tile").text() shouldBe messages("home.updates.heading")
+    }
 
     "display the Income Sources tile with `Cease an income source` when user has non-ceased businesses or property" in new Setup {
       enable(IncomeSources)
