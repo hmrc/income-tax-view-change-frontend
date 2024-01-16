@@ -373,7 +373,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
           ),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(propertyIncome),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(propertyIncomeUK),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
@@ -446,7 +446,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
           ),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(propertyIncome),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(propertyIncomeUK),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
@@ -560,7 +560,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             expectedValue = s"${getCurrentTaxYearEnd.minusMonths(3).toLongDate} to ${getCurrentTaxYearEnd.toLongDate}"
           ),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
-          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(propertyIncome),
+          elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(propertyIncomeUK),
           elementTextBySelectorList("#updates", "div", "table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")(
             expectedValue = s"${getCurrentTaxYearEnd.minusDays(1).toLongDateShort}"
           ),
