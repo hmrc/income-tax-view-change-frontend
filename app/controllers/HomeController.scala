@@ -97,7 +97,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val availableCredit: Future[Option[BigDecimal]] = financialDetailsService.getAllFinancialDetails
         .map(
           _.flatMap {
-            case (_, model: FinancialDetailsModel) => model.balanceDetails.availableCredit
+            case (_, model: FinancialDetailsModel) if isEnabled(CreditsRefundsRepay) => model.balanceDetails.availableCredit
             case _ => None
           }.headOption
         )
@@ -105,7 +105,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       for {
         paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
         unpaidCharges <- unpaidChargesFuture
-        availableCredit <- if(isEnabled(CreditsRefundsRepay)) availableCredit else Future(None)
+        availableCredit <- availableCredit
         dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
         outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
