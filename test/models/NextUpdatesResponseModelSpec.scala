@@ -198,10 +198,10 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       "calling .allDeadlinesWithSource" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allDeadlinesWithSource()(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome.UK", overdueEOPSObligation),
           NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
           NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome.UK", openEOPSObligation),
           NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )
       }
@@ -213,7 +213,7 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
         NextUpdatesTestConstants.obligationsAllDeadlinesWithDateReceivedSuccessModel.allDeadlinesWithSource(previous = true)(
           BaseTestConstants.testMtdItUser) shouldBe List(
           NextUpdateModelWithIncomeType("nextUpdates.business", openObligation.copy(dateReceived = Some(mockedCurrentTime20171031.plusDays(1)))),
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome.UK", overdueEOPSObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(3)))),
           NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation.copy(dateReceived = Some(mockedCurrentTime20171031.minusDays(6))))
         )
       }
@@ -240,8 +240,8 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
       "calling .allEops" in {
         NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.allEops(
           BaseTestConstants.testMtdItUser) shouldBe List(
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
-          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation)
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome.UK", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome.UK", openEOPSObligation)
         )
       }
 
