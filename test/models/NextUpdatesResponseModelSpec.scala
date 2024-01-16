@@ -251,6 +251,27 @@ class NextUpdatesResponseModelSpec extends TestSupport with Matchers with Implic
           NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
         )
       }
+
+      "calling .groupByQuarterPeriod" in {
+        val nextUpdateModelWithIncomeTypeList: Seq[NextUpdateModelWithIncomeType] = List(
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", overdueEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", overdueObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.business", openObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", openEOPSObligation),
+          NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", crystallisedObligation)
+        )
+
+        NextUpdatesTestConstants.obligationsAllDeadlinesSuccessModel.groupByQuarterPeriod(
+          nextUpdateModelWithIncomeTypeList) shouldBe Map(
+          "CALENDAR" -> List(
+            NextUpdateModelWithIncomeType("nextUpdates.business",NextUpdateModel("2017-07-01","2017-09-30","2017-10-30","Quarterly",None,"#002")),
+            NextUpdateModelWithIncomeType("nextUpdates.business",NextUpdateModel("2017-07-01","2017-09-30","2017-10-31","Quarterly",None,"#003"))),
+          "Default" -> List(
+            NextUpdateModelWithIncomeType("nextUpdates.propertyIncome",NextUpdateModel("2017-04-06","2018-04-05","2017-10-01","EOPS",None,"#002")),
+            NextUpdateModelWithIncomeType("nextUpdates.propertyIncome",NextUpdateModel("2017-04-06","2018-04-05","2017-10-31","EOPS",None,"#003")),
+            NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll",NextUpdateModel("2017-10-01","2018-10-30","2017-10-31","Crystallised",None,"")))
+        )
+      }
     }
   }
 }
