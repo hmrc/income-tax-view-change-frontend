@@ -19,7 +19,7 @@ package services
 import config.featureswitch.{FeatureSwitching, IncomeSources, TimeMachineAddYear}
 import mocks.connectors.MockObligationsConnector
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.nextUpdates.{NextUpdateModel, NextUpdatesErrorModel, NextUpdatesModel, ObligationsModel}
+import models.nextUpdates._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
@@ -109,43 +109,34 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
   }
 
   "getNextDeadlineDueDateAndOverdueObligations" should {
-    def assertDate(deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]], expectedDate: LocalDate): Unit = {
-      deadlineFuture.futureValue match {
-        case Right(Some((firstElementOfTuple, _))) => firstElementOfTuple shouldBe expectedDate
-        case _ => fail("The future did not contain a Right-side value with the expected date")
-      }
-    }
-
     "return the next report deadline due date" when {
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
-        val deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = getNextDeadlineAndOverdueObligations(fixedDate)
-        val expectedDate: LocalDate = LocalDate.of(2017, 10, 1)
-        assertDate(deadlineFuture, expectedDate)
+        getDueDates().futureValue shouldBe
+          Right(DueDates(Seq(LocalDate.of(2017, 10, 30),
+            LocalDate.of(2017, 10, 31), LocalDate.of(2017, 10, 1),
+            LocalDate.of(2017, 10, 31), LocalDate.of(2017, 10, 31))))
       }
       "there is just one report deadline from an income source" in new Setup {
         setupMockNextUpdates(obligationsPropertyOnlySuccessModel)
-        val deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = getNextDeadlineAndOverdueObligations(fixedDate)
-        val expectedDate: LocalDate = LocalDate.of(2017, 10, 1)
-        assertDate(deadlineFuture, expectedDate)
+        getDueDates().futureValue shouldBe
+          Right(DueDates(List(LocalDate.of(2017, 10, 1), LocalDate.of(2017, 10, 31))))
       }
       "there is just a crystallisation deadline" in new Setup {
         setupMockNextUpdates(obligationsCrystallisedOnlySuccessModel)
-        val deadlineFuture: Future[Either[Throwable, Option[(LocalDate, Seq[LocalDate])]]] = getNextDeadlineAndOverdueObligations(fixedDate)
-        val expectedDate: LocalDate = LocalDate.of(2017, 10, 31)
-        assertDate(deadlineFuture, expectedDate)
+        getDueDates().futureValue shouldBe Right(DueDates(Seq(LocalDate.of(2017, 10, 31))))
       }
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        val result: Either[Throwable, Option[(LocalDate, Seq[LocalDate])]] = getNextDeadlineAndOverdueObligations(fixedDate).futureValue
+        val result: Either[Exception, DueDates] = getDueDates().futureValue
         result.isLeft shouldBe true
         result.left.map(_.getMessage) shouldBe Left("Unexpected Exception getting next deadline due and Overdue Obligations")
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        val result: Either[Throwable, Option[(LocalDate, Seq[LocalDate])]] = getNextDeadlineAndOverdueObligations(fixedDate).futureValue
+        val result: Either[Exception, DueDates] = getDueDates().futureValue
         result.isLeft shouldBe true
         result.left.map(_.getMessage) shouldBe Left("Dummy Error Message")
       }
@@ -153,9 +144,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     "return None" when {
       "404 response from getNextUpdates" in new Setup {
         setupMockNextUpdates(nextUpdatesErrorModel(NOT_FOUND))
-        val result: Either[Throwable, Option[(LocalDate, Seq[LocalDate])]] = getNextDeadlineAndOverdueObligations(fixedDate).futureValue
-        result.isRight shouldBe true
-        result shouldBe Right(None)
+        getDueDates().futureValue shouldBe Right(DueDates(Seq()))
       }
     }
   }
