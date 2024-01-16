@@ -57,22 +57,22 @@
     messages(key, obligation.start.toLongDateShort, obligation.end.toLongDateShort)
 }
 
-@headingContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
+@headingContent(date: LocalDate)= {
     <span class="govuk-!-font-size-24">
     @{
-        collectedObligations._1._1.toLongDate
+        date.toLongDate
     }
     </span>
 }
 
-@summaryContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = {
-@getSectionHeadingMessage(collectedObligations._1._2.head.obligation)
+@summaryContent(obligations: Seq[NextUpdateModelWithIncomeType]) = {
+@getSectionHeadingMessage(obligations.head.obligation)
 }
 
-@bodyContent(collectedObligations: ((LocalDate, Seq[NextUpdateModelWithIncomeType]), Int)) = @{
+@bodyContent(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
     govukTable(Table(
         rows = {
-            for(obligation <- collectedObligations._1._2) yield deadlineRow(obligation)
+            for(obligation <- collectedObligations) yield deadlineRow(obligation)
         },
         head = Some(Seq(
             HeadCell(
@@ -83,8 +83,8 @@
             )
         )),
         caption = {
-            if(collectedObligations._1._2.head.obligation.obligationType == "Quarterly")
-                Some(getTableHeadingMessage(collectedObligations._1._2.head.obligation)) else None
+            if(collectedObligations.head.obligation.obligationType == "Quarterly")
+                Some(getTableHeadingMessage(collectedObligations.head.obligation)) else None
         },
         captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2",
         attributes = Map("id"->"next-updates-table")
@@ -93,13 +93,13 @@
 }
 
 @getItems = @{
-    obligations.obligationsByDate.zipWithIndex.map(collectedObligations =>
+    obligations.obligationsByDate.map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
         Section(
-            headingContent = HtmlContent(headingContent(collectedObligations)),
-            summaryContent = HtmlContent(summaryContent(collectedObligations)),
-            content = HtmlContent(bodyContent(collectedObligations))
+            headingContent = HtmlContent(headingContent(date)),
+            summaryContent = HtmlContent(summaryContent(obligations)),
+            content = HtmlContent(bodyContent(obligations))
         )
-    )
+    }
 }
 
 @govukAccordion(Accordion(
