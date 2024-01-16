@@ -55,11 +55,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
+  private def view(availableCredit: Option[BigDecimal],nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
                    overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
+      availableCredit = availableCredit,
       nextPaymentDueDate = nextPaymentDueDate,
       nextUpdate = nextUpdate,
       overDuePaymentsCount = overDuePaymentsCount,
@@ -93,9 +94,18 @@ class HomeController @Inject()(val homeView: views.html.Home,
         }.sortWith(_ isBefore _)
       }
 
+      val availableCredit: Future[Option[BigDecimal]] = financialDetailsService.getAllFinancialDetails
+        .map(
+          _.flatMap {
+            case (_, model: FinancialDetailsModel) => model.balanceDetails.availableCredit
+            case _ => None
+          }.headOption
+        )
+
       for {
         paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
         unpaidCharges <- unpaidChargesFuture
+        availableCredit <- if(isEnabled(CreditsRefundsRepay)) availableCredit else Future(None)
         dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
         outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
@@ -118,6 +128,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           overDueUpdatesCount))
         Ok(
           view(
+            availableCredit,
             paymentsDueMerged,
             latestDeadlineDate._1,
             Some(overDuePaymentsCount),

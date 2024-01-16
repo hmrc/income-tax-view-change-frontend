@@ -28,6 +28,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
+  def getAvailableCredit: Option[BigDecimal] = balanceDetails.availableCredit
   def getDueDateForFinancialDetail(financialDetail: FinancialDetail): Option[LocalDate] = {
     financialDetail.items.flatMap(_.headOption.flatMap(_.dueDate))
   }
