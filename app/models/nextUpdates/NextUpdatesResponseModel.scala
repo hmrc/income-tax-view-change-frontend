@@ -55,12 +55,15 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
+  def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): String = {
+    val dayOfMonth = obligation.obligation.start.getDayOfMonth
+    if (dayOfMonth < 6) Calendar.value else Standard.value
+  }
+
   def groupByQuarterPeriod(obligations: Seq[NextUpdateModelWithIncomeType]): Map[String, Seq[NextUpdateModelWithIncomeType]] = {
     obligations.groupBy { obligation =>
         obligation.obligation.obligationType match {
-          case "Quarterly" =>
-            val dayOfMonth = obligation.obligation.start.getDayOfMonth
-            if (dayOfMonth < 6) Calendar.value else Standard.value
+          case "Quarterly" => getPeriodForQuarterly(obligation)
           case _ => "Default"
         }
       }.view
@@ -74,6 +77,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
       }
       .toMap
   }
+
 }
 
 object ObligationsModel {
