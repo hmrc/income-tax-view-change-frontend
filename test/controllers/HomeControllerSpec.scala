@@ -17,7 +17,7 @@
 package controllers
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.predicates.{NavBarPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
@@ -38,7 +38,7 @@ import play.api.test.Helpers._
 import play.api.test.Injecting
 import play.i18n
 import play.i18n.MessagesApi
-import services.{DateService, FinancialDetailsService, NextUpdatesService, WhatYouOweService}
+import services.{CreditService, DateService, FinancialDetailsService, NextUpdatesService, WhatYouOweService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, businessesAndPropertyIncomeCeased}
@@ -73,6 +73,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     val NextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
     val financialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
     val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
+    val creditService: CreditService = mock(classOf[CreditService])
 
     val controller = new HomeController(
       app.injector.instanceOf[views.html.Home],
@@ -84,6 +85,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       financialDetailsService,
       mockDateService,
       whatYouOweService,
+      creditService,
       mockAuditingService,
       testAuthenticator)(
       ec,
@@ -95,6 +97,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     val overdueWarningMessageDunningLockTrue: String = messages("home.overdue.message.dunningLock.true")
     val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
     val expectedOverDuePaymentsText1 = s"${messages("home.overdue.date")} 31 January 2019"
+    val expectedAvailableCreditText: String => String = (amount: String) => messages(amount, "home.paymentHistoryRefund.availableCredit")
     val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   }
 
@@ -118,6 +121,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     mockFinancialDetailsService,
     mockDateService,
     mockWhatYouOweService,
+    mock(classOf[CreditService]),
     mockAuditingService,
     testAuthenticator)(
     ec,
@@ -385,6 +389,29 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url
       document.select("#income-sources-tile > div > p:nth-child(4) > a").text() should not be messages("home.incomeSources.ceaseIncomeSource.view")
       document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
+    }
+    "display the available credit when CreditsAndRefundsRepay FS is enabled" in new Setup {
+      enable(IncomeSources)
+      enable(CreditsRefundsRepay)
+      when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+      mockNoIncomeSources()
+      when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+            transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
+
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText
     }
   }
 

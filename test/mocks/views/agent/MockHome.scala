@@ -41,6 +41,7 @@ trait MockHome extends BeforeAndAfterEach {
                 dunningLockExists: Boolean = false)(response: Html): Unit = {
     when(
       home.apply(
+        any(),
         matches(nextPaymentOrOverdue),
         matches(nextUpdateOrOverdue),
         any(),
