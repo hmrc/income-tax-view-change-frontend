@@ -34,6 +34,7 @@ import testConstants.BaseTestConstants
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, ukPlusForeignPropertyAndSoleTraderNoLatency}
 import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 
 import scala.concurrent.Future
@@ -154,7 +155,8 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
 
         s"redirect to the session timeout page for <incomeSourceType: $incomeSourceType>" when {
           "the user has timed out" in {
-            if(isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
+            if(isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired())
+            else setupMockAuthorisationException()
             val result = if(isAgent) TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClientTimeout())
             else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithTimeoutSession)
             status(result) shouldBe SEE_OTHER
