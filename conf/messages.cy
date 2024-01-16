@@ -615,6 +615,8 @@ nextUpdates.eops            									= Datganiad diwedd cyfnod
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
+nextUpdates.propertyIncome.UK                                   = Eiddo yn y DU
+nextUpdates.propertyIncome.Foreign                              = Eiddo tramor
 nextUpdates.business            							    = Incwm busnes
 
 ## Previous Obligations ##

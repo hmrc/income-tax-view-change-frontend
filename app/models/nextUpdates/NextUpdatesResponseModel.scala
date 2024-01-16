@@ -18,6 +18,7 @@ package models.nextUpdates
 
 import java.time.LocalDate
 import auth.MtdItUser
+import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json._
 import services.DateService
 
@@ -28,7 +29,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
   def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] = {
     val deadlines = obligations.flatMap { deadlinesModel =>
       if (mtdItUser.incomeSources.properties.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
-        deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", deadline))
+        deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.${getPropertyType(deadlinesModel)}", deadline))
       } else if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
         deadline =>
           Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
@@ -42,6 +43,10 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
     if (previous) deadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
   }
 
+  def getPropertyType(model: NextUpdatesModel)(implicit mtdItUser: MtdItUser[_]) = {
+    val incomeSource = mtdItUser.incomeSources.properties.filter(_.incomeSourceId == model.identification)
+    if (incomeSource.exists(x => x.incomeSourceType.contains("foreign-property"))) "Foreign" else "UK"
+  }
   def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Quarterly")
 
