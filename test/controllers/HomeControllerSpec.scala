@@ -316,8 +316,9 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         document.select("#updates-tile").text shouldBe messages("home.updates.heading")
       }
     }
-    "there is a future update date to display" in new Setup {
-      mockGetDueDates(Right(futureDueDates))
+
+    def setupNextUpdatesTests(dueDates: DueDates): Unit = {
+      mockGetDueDates(Right(dueDates))
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -327,6 +328,10 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
             items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
         ))))
       setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+    }
+
+    "there is a future update date to display" in new Setup {
+      setupNextUpdatesTests(futureDueDates)
 
       val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -336,16 +341,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2100"
     }
     "there is an overdue update date to display" in new Setup {
-      mockGetDueDates(Right(overdueDueDates))
-      mockSingleBusinessIncomeSource()
-      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-        .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
-          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
-          financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
-            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
-        ))))
-      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+      setupNextUpdatesTests(overdueDueDates)
 
       val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
