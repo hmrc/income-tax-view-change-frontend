@@ -391,10 +391,10 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     }
     "display the available credit when CreditsAndRefundsRepay FS is enabled" in new Setup {
-      enable(IncomeSources)
+      disableAllSwitches()
       enable(CreditsRefundsRepay)
       when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-      mockNoIncomeSources()
+      mockSingleBusinessIncomeSource()
       when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
           balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None),
