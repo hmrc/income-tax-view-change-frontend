@@ -22,19 +22,19 @@ sealed trait QuarterReportingType {
   val value: String
 }
 
-object Standard extends QuarterReportingType {
+case object QuarterTypeStandard extends QuarterReportingType {
   val value: String = "STANDARD"
 }
 
-object Calendar extends QuarterReportingType {
+case object QuarterTypeCalendar extends QuarterReportingType {
   val value: String = "CALENDAR"
 }
 
 case class QuarterTypeElection(quarterReportingType: String, taxYearofElection: String) {
   val isStandardQuarterlyReporting: Option[QuarterReportingType] = {
     quarterReportingType match {
-      case Standard.value => Some(Standard)
-      case Calendar.value => Some(Calendar)
+      case QuarterTypeStandard.value => Some(QuarterTypeStandard)
+      case QuarterTypeCalendar.value => Some(QuarterTypeCalendar)
       case _ => None
     }
   }

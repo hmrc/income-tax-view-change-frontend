@@ -22,7 +22,7 @@ import models.btaNavBar.{NavContent, NavLinks}
 import models.core.{AddressModel, IncomeSourceId}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{LatencyDetails, QuarterTypeElection, Standard}
+import models.incomeSourceDetails.{LatencyDetails, QuarterTypeElection, QuarterTypeStandard}
 import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -147,7 +147,7 @@ object BaseIntegrationTestConstants {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
-    quarterReportingType = Some(Standard)
+    quarterReportingType = Some(QuarterTypeStandard)
   )
 
   val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -161,7 +161,7 @@ object BaseIntegrationTestConstants {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
-    quarterReportingType = Some(Standard)
+    quarterReportingType = Some(QuarterTypeStandard)
   )
 
   val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
