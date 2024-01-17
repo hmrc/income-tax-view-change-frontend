@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch._
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -33,6 +34,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
 
 import java.time.{LocalDate, Month}
+import scala.annotation.unused
 import scala.util.Try
 
 class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
@@ -78,11 +80,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)))
+  @unused
+  private val viewModelOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)))
+
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   nextUpdate: Option[LocalDate] = Some(nextUpdateDue),
                   overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Option[Int] = None,
                   overDueUpdatesCount: Int = 0,
+                  nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   utr: Option[String] = None,
                   paymentHistoryEnabled: Boolean = true,
                   ITSASubmissionIntegrationEnabled: Boolean = true,
@@ -101,6 +108,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       nextUpdate,
       overDuePaymentsCount,
       overDueUpdatesCount,
+      nextUpdatesTileViewModel,
       utr,
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,

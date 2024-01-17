@@ -19,6 +19,7 @@ package views
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -31,6 +32,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.Home
 
 import java.time.LocalDate
+import scala.annotation.unused
 import scala.util.Random
 
 
@@ -97,9 +99,12 @@ class HomePageViewSpec extends TestSupport {
   val multipleOverduePayments = s"${messages("home.updates.overdue.payments", "3")}"
   val overdueMessage = s"! Warning ${messages("home.overdue.message.dunningLock.false")}"
   val overdueMessageForDunningLocks = s"! Warning ${messages("home.overdue.message.dunningLock.true")}"
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)))
+  @unused
+  private val viewModelOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)))
 
   class Setup(paymentDueDate: Option[LocalDate] = Some(nextPaymentDueDate), nextUpdate: Option[LocalDate] = Some(updateDate), overDuePaymentsCount: Option[Int] = Some(0),
-              overDueUpdatesCount: Int = 0, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
+              overDueUpdatesCount: Int = 0, nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false) {
 
@@ -109,6 +114,7 @@ class HomePageViewSpec extends TestSupport {
       nextUpdate = nextUpdate,
       overDuePaymentsCount = overDuePaymentsCount,
       overDueUpdatesCount = overDueUpdatesCount,
+      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       dunningLockExists = dunningLockExists,

@@ -20,6 +20,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import exceptions.MissingFieldException
+@import models.nextUpdates.NextUpdatesTileViewModel
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -41,6 +42,7 @@
 	nextUpdate: Option[LocalDate],
 	overDuePaymentsCount: Option[Int],
 	overDueUpdatesCount: Int,
+    nextUpdatesTileViewModel: NextUpdatesTileViewModel,
   	utr: Option[String],
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
