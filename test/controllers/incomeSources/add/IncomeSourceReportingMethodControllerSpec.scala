@@ -204,337 +204,148 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
     setupMockGetSessionKeyMongoTyped[String](key = AddIncomeSourceData.incomeSourceIdField, journeyType = JourneyType(Add, incomeSourceType), result = Right(Some(testSelfEmploymentId)))
   }
 
-  "IncomeSourceReportingMethodController.show" should {
-    def checkContent(isAgent: Boolean, incomeSourceType: IncomeSourceType, scenario: Scenario): Assertion = {
-      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
-      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
-      val document: Document = Jsoup.parse(contentAsString(result))
-
-      status(result) shouldBe OK
-      if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
-      document.select("h1:nth-child(1)").text shouldBe heading
-      document.getElementsByClass("govuk-body").get(1).text shouldBe description2
-      document.getElementsByClass("govuk-body").get(2).text shouldBe description3
-      document.select("ul").get(1).text shouldBe description4
-      document.select("h1").get(1).text shouldBe chooseReport
-      scenario match {
-        case FIRST_YEAR_CRYSTALLISED =>
-          document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
-          document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
-          document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
-          document.getElementsByClass("govuk-form-group").size() shouldBe 3
-        case CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS =>
-          document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
-          document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2024
-          document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2023"
-          document.getElementsByTag("legend").get(1).text shouldBe taxYear_2024
-          document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2024"
-          document.getElementsByClass("govuk-form-group").size() shouldBe 7
-        case _ =>
-          document.getElementsByTag("legend").get(0).text shouldBe taxYear_2022
-          document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
-          document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
-          document.getElementsByTag("legend").get(1).text shouldBe taxYear_2023
-          document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
-          document.getElementsByClass("govuk-form-group").size() shouldBe 7
-      }
+  def getTestTitleIncomeSourceType(incomeSourceType: IncomeSourceType): String = {
+    incomeSourceType match {
+      case SelfEmployment => "Self Employment"
+      case UkProperty => "UK Property"
+      case ForeignProperty => "Foreign Property"
     }
+  }
 
-    def checkRedirect(isAgent: Boolean, incomeSourceType: IncomeSourceType, expectedRedirectUrl: String): Assertion = {
-      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
-      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
+  val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
 
-      status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-    }
+  for (isAgent <- Seq(true, false)) yield {
+    for (incomeSourceType <- incomeSourceTypes) yield {
+      s"IncomeSourceReportingMethodController.${if (isAgent) "showAgent" else "show"}" should {
+        def checkContent(isAgent: Boolean, incomeSourceType: IncomeSourceType, scenario: Scenario): Assertion = {
+          val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+          else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
+          val document: Document = Jsoup.parse(contentAsString(result))
 
-    def checkISE(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
-      val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
-      else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
+          status(result) shouldBe OK
+          if (isAgent) document.title shouldBe titleAgent else document.title shouldBe title
+          document.select("h1:nth-child(1)").text shouldBe heading
+          document.getElementsByClass("govuk-body").get(1).text shouldBe description2
+          document.getElementsByClass("govuk-body").get(2).text shouldBe description3
+          document.select("ul").get(1).text shouldBe description4
+          document.select("h1").get(1).text shouldBe chooseReport
+          scenario match {
+            case FIRST_YEAR_CRYSTALLISED =>
+              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
+              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
+              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
+              document.getElementsByClass("govuk-form-group").size() shouldBe 3
+            case CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS =>
+              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2023
+              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2024
+              document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2023"
+              document.getElementsByTag("legend").get(1).text shouldBe taxYear_2024
+              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2024"
+              document.getElementsByClass("govuk-form-group").size() shouldBe 7
+            case _ =>
+              document.getElementsByTag("legend").get(0).text shouldBe taxYear_2022
+              document.getElementsByClass("govuk-body").get(0).text shouldBe description1_2023
+              document.getElementById("new_tax_year_1_reporting_method_tax_year").`val`() shouldBe "2022"
+              document.getElementsByTag("legend").get(1).text shouldBe taxYear_2023
+              document.getElementById("new_tax_year_2_reporting_method_tax_year").`val`() shouldBe "2023"
+              document.getElementsByClass("govuk-form-group").size() shouldBe 7
+          }
+        }
 
-      status(result) shouldBe INTERNAL_SERVER_ERROR
-    }
+        def checkRedirect(isAgent: Boolean, incomeSourceType: IncomeSourceType, expectedRedirectUrl: String): Assertion = {
+          val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+          else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
-    "return 200 OK with reporting method selection for only tax year 2" when {
-      "navigating to the UK Property page in 2nd year of latency with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = UkProperty, FIRST_YEAR_CRYSTALLISED)
-        checkContent(isAgent = false, incomeSourceType = UkProperty, FIRST_YEAR_CRYSTALLISED)
-      }
-      "navigating to the UK Property page in 2nd year of latency with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = UkProperty, FIRST_YEAR_CRYSTALLISED)
-        checkContent(isAgent = true, incomeSourceType = UkProperty, FIRST_YEAR_CRYSTALLISED)
-      }
-      "navigating to the Foreign Property page in 2nd year of latency with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, FIRST_YEAR_CRYSTALLISED)
-        checkContent(isAgent = false, incomeSourceType = ForeignProperty, FIRST_YEAR_CRYSTALLISED)
-      }
-      "navigating to the Foreign Property page in 2nd year of latency with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, FIRST_YEAR_CRYSTALLISED)
-        checkContent(isAgent = true, incomeSourceType = ForeignProperty, FIRST_YEAR_CRYSTALLISED)
-      }
-      "navigating to the Self Employment page in 2nd year of latency with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, FIRST_YEAR_CRYSTALLISED)
-        checkContent(isAgent = false, incomeSourceType = SelfEmployment, FIRST_YEAR_CRYSTALLISED)
-      }
-      "navigating to the Self Employment page in 2nd year of latency with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, FIRST_YEAR_CRYSTALLISED)
-        checkContent(isAgent = true, incomeSourceType = SelfEmployment, FIRST_YEAR_CRYSTALLISED)
-      }
-    }
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+        }
 
+        def checkISE(isAgent: Boolean, incomeSourceType: IncomeSourceType): Assertion = {
+          val result = if (isAgent) TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+          else TestIncomeSourceReportingMethodController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
-    "return 200 OK with reporting method selection for tax years 1 and 2" when {
-      "navigating to the UK Property page within latency period (before 2024) with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        checkContent(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-      }
-      "navigating to the UK Property page within latency period (before 2024) with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        checkContent(isAgent = true, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-      }
-      "navigating to the Foreign Property page within latency period (before 2024) with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        checkContent(isAgent = false, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-      }
-      "navigating to the Foreign Property page within latency period (before 2024) with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        checkContent(isAgent = true, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-      }
-      "navigating to the Self Employment page within latency period (before 2024) with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        checkContent(isAgent = false, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-      }
-      "navigating to the Self Employment page within latency period (before 2024) with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        checkContent(isAgent = true, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-      }
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+        }
 
+        "return 200 OK with reporting method selection for only tax year 2" when {
+          s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page in 2nd year of latency with FS enabled" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, FIRST_YEAR_CRYSTALLISED)
+            checkContent(isAgent = isAgent, incomeSourceType = incomeSourceType, FIRST_YEAR_CRYSTALLISED)
+          }
+        }
 
-      "navigating to the UK Property page within latency period (after 2024) with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-        checkContent(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-      }
-      "navigating to the UK Property page within latency period (after 2024) with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-        checkContent(isAgent = true, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-      }
-      "navigating to the Foreign Property page within latency period (after 2024) with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-        checkContent(isAgent = false, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-      }
-      "navigating to the Foreign Property page within latency period (after 2024) with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-        checkContent(isAgent = true, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-      }
-      "navigating to the Self Employment page within latency period (after 2024) with FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-        checkContent(isAgent = false, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-      }
-      "navigating to the Self Employment page within latency period (after 2024) with FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-        checkContent(isAgent = true, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
-      }
-    }
+        "return 200 OK with reporting method selection for tax years 1 and 2" when {
+          s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page within latency period (before 2024) with FS enabled" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+            checkContent(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+          }
 
+          s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page within latency period (after 2024) with FS enabled" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+            checkContent(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+          }
+        }
 
-    "return 303 SEE_OTHER and redirect to Obligations page" when {
-      "navigating to the UK Property page with expired latency period and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = UkProperty, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
-        checkRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
-      }
-      "navigating to the UK Property page with expired latency period and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = UkProperty, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
-        checkRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
-      }
-      "navigating to the Foreign Property page with expired latency period and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
-        checkRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
-      }
-      "navigating to the Foreign Property page with expired latency period and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
-        checkRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
-      }
-      "navigating to the Self Employment page with expired latency period and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
-        checkRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
-      }
-      "navigating to the Self Employment page with expired latency period and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, LATENCY_PERIOD_EXPIRED)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
-        checkRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
-      }
+        "return 303 SEE_OTHER and redirect to Obligations page" when {
+          s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with expired latency period and FS enabled" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, LATENCY_PERIOD_EXPIRED)
 
+            val expectedRedirectUrl = if(isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
 
-      "navigating to the UK Property page with no latency period and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = UkProperty, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
-        checkRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
-      }
-      "navigating to the UK Property page with no latency period and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = UkProperty, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
-        checkRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
-      }
-      "navigating to the Foreign Property page with no latency period and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
-        checkRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
-      }
-      "navigating to the Foreign Property page with no latency period and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
-        checkRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
-      }
-      "navigating to the Self Employment page with no latency period and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
-        checkRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
-      }
-      "navigating to the Self Employment page with no latency period and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, NO_LATENCY)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
-        checkRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
-      }
+            checkRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
+          }
 
+          s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with no latency period and FS enabled" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, NO_LATENCY)
 
-      "navigating to the UK Property page with non-mandated/voluntary ITSA status and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = UkProperty, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
-        checkRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
-      }
-      "navigating to the UK Property page with non-mandated/voluntary ITSA status and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = UkProperty, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
-        checkRedirect(isAgent = true, incomeSourceType = UkProperty, expectedRedirectUrl)
-      }
-      "navigating to the Foreign Property page with non-mandated/voluntary ITSA status and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
-        checkRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
-      }
-      "navigating to the Foreign Property page with non-mandated/voluntary ITSA status and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
-        checkRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedRedirectUrl)
-      }
-      "navigating to the Self Employment page with non-mandated/voluntary ITSA status and FS enabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
-        checkRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
-      }
-      "navigating to the Self Employment page with non-mandated/voluntary ITSA status and FS enabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, NON_ELIGIBLE_ITSA_STATUS)
-        val expectedRedirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
-        checkRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedRedirectUrl)
-      }
-    }
+            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
 
+            checkRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
+          }
 
-    "return 303 SEE_OTHER and redirect to home page" when {
-      val expectedRedirectUrl = controllers.routes.HomeController.show().url
-      val expectedAgentRedirectUrl = controllers.routes.HomeController.showAgent.url
+          s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with non-mandated/voluntary ITSA status and FS enabled" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, NON_ELIGIBLE_ITSA_STATUS)
 
-      "navigating to the UK Property page with FS disabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        disable(IncomeSources)
-        checkRedirect(isAgent = false, incomeSourceType = UkProperty, expectedRedirectUrl)
-      }
-      "navigating to the UK Property page with FS disabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        disable(IncomeSources)
-        checkRedirect(isAgent = true, incomeSourceType = UkProperty, expectedAgentRedirectUrl)
-      }
-      "navigating to the Foreign Property page with FS disabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        disable(IncomeSources)
-        checkRedirect(isAgent = false, incomeSourceType = ForeignProperty, expectedRedirectUrl)
-      }
-      "navigating to the Foreign Property page with FS disabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        disable(IncomeSources)
-        checkRedirect(isAgent = true, incomeSourceType = ForeignProperty, expectedAgentRedirectUrl)
-      }
-      "navigating to the Self Employment page with FS disabled - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        disable(IncomeSources)
-        checkRedirect(isAgent = false, incomeSourceType = SelfEmployment, expectedRedirectUrl)
-      }
-      "navigating to the Self Employment page with FS disabled - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        disable(IncomeSources)
-        checkRedirect(isAgent = true, incomeSourceType = SelfEmployment, expectedAgentRedirectUrl)
-      }
-    }
+            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
 
-    "return 303 SEE_OTHER and redirect to the You Cannot Go Back Page" when {
-      "user has already visited the obligations page - SE - Individual" in {
-        setupMockCalls(isAgent = false, SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
-        checkRedirect(false, SelfEmployment, expectedBackErrorRedirectUrl)
-      }
-      "user has already visited the obligations page - Uk - Individual" in {
-        setupMockCalls(isAgent = false, UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, UkProperty)))))
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(UkProperty).url
-        checkRedirect(false, UkProperty, expectedBackErrorRedirectUrl)
-      }
-      "user has already visited the obligations page - FP - Individual" in {
-        setupMockCalls(isAgent = false, ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, ForeignProperty)))))
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(ForeignProperty).url
-        checkRedirect(false, ForeignProperty, expectedBackErrorRedirectUrl)
-      }
-      "user has already visited the obligations page - SE - Agent" in {
-        setupMockCalls(isAgent = true, SelfEmployment, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
-        checkRedirect(true, SelfEmployment, expectedBackErrorRedirectUrl)
-      }
-      "user has already visited the obligations page - Uk - Agent" in {
-        setupMockCalls(isAgent = true, UkProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, UkProperty)))))
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(UkProperty).url
-        checkRedirect(true, UkProperty, expectedBackErrorRedirectUrl)
-      }
-      "user has already visited the obligations page - FP - Agent" in {
-        setupMockCalls(isAgent = true, ForeignProperty, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-        setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, ForeignProperty)))))
-        val expectedBackErrorRedirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(ForeignProperty).url
-        checkRedirect(true, ForeignProperty, expectedBackErrorRedirectUrl)
-      }
-    }
+            checkRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
+          }
+        }
 
+        "return 303 SEE_OTHER and redirect to home page" when {
+          s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with FS disabled" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+            disable(IncomeSources)
 
-    "return 500 INTERNAL_SERVER_ERROR" when {
-      "navigating to the UK Property page and ITSA status returns an error - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = UkProperty, ITSA_STATUS_ERROR)
-        checkISE(isAgent = false, incomeSourceType = UkProperty)
-      }
-      "navigating to the UK Property page and ITSA status returns an error - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = UkProperty, ITSA_STATUS_ERROR)
-        checkISE(isAgent = true, incomeSourceType = UkProperty)
-      }
-      "navigating to the Foreign Property page and ITSA status returns an error - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = ForeignProperty, ITSA_STATUS_ERROR)
-        checkISE(isAgent = false, incomeSourceType = ForeignProperty)
-      }
-      "navigating to the Foreign Property page and ITSA status returns an error - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = ForeignProperty, ITSA_STATUS_ERROR)
-        checkISE(isAgent = true, incomeSourceType = ForeignProperty)
-      }
-      "navigating to the Self Employment page and ITSA status returns an error - Individual" in {
-        setupMockCalls(isAgent = false, incomeSourceType = SelfEmployment, ITSA_STATUS_ERROR)
-        checkISE(isAgent = false, incomeSourceType = SelfEmployment)
-      }
-      "navigating to the Self Employment page and ITSA status returns an error - Agent" in {
-        setupMockCalls(isAgent = true, incomeSourceType = SelfEmployment, ITSA_STATUS_ERROR)
-        checkISE(isAgent = true, incomeSourceType = SelfEmployment)
+            val expectedRedirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
+            else controllers.routes.HomeController.show().url
+
+            checkRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
+          }
+        }
+
+        "return 303 SEE_OTHER and redirect to the You Cannot Go Back Page" when {
+          s"user has already visited the obligations page for ${getTestTitleIncomeSourceType(incomeSourceType)}" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
+            setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
+            val expectedBackErrorRedirectUrl = if (isAgent)
+              controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
+            else
+              controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+
+            checkRedirect(isAgent, incomeSourceType, expectedBackErrorRedirectUrl)
+          }
+        }
+
+        "return 500 INTERNAL_SERVER_ERROR" when {
+          s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page and ITSA status returns an error" in {
+            setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, ITSA_STATUS_ERROR)
+            checkISE(isAgent = isAgent, incomeSourceType = incomeSourceType)
+          }
+        }
       }
     }
   }
