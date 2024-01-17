@@ -69,6 +69,7 @@
 @getSectionHeadingMessage(obligations.head.obligation)
 }
 
+
 @bodyContent(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
     govukTable(Table(
         rows = {
@@ -86,8 +87,7 @@
             if(collectedObligations.head.obligation.obligationType == "Quarterly")
                 Some(getTableHeadingMessage(collectedObligations.head.obligation)) else None
         },
-        captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2",
-        attributes = Map("id"->"next-updates-table")
+        captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2"
     )
     )
 }
