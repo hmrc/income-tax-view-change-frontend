@@ -1040,6 +1040,7 @@ updateTab.updateType                                            = Math o ddiwedd
 updateTab.incomeSource                                          = Ffynhonnell incwm
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.dateToDate                                            = {0} i {1}
+updateTab.quarterlyDateToDate                                   = Cyfnod chwarterol o {0} i {1}
 updateTab.obligationType.property                               = Incwm o eiddo
 updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm

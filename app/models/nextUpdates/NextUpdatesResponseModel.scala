@@ -16,11 +16,12 @@
 
 package models.nextUpdates
 
-import java.time.LocalDate
 import auth.MtdItUser
-import models.incomeSourceDetails.PropertyDetailsModel
+import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
+import models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
 import play.api.libs.json._
-import services.DateService
+
+import java.time.LocalDate
 
 
 sealed trait NextUpdatesResponseModel
@@ -66,6 +67,30 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
 
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
+
+  def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
+    val dayOfMonth = obligation.obligation.start.getDayOfMonth
+    if (dayOfMonth < 6) QuarterTypeCalendar else QuarterTypeStandard
+  }
+
+  def groupByQuarterPeriod(obligations: Seq[NextUpdateModelWithIncomeType]): Map[Option[QuarterReportingType], Seq[NextUpdateModelWithIncomeType]] = {
+    obligations.groupBy { obligation =>
+        obligation.obligation.obligationType match {
+          case "Quarterly" => Some(getPeriodForQuarterly(obligation))
+          case _ => None //"Default"
+        }
+      }.view
+      .mapValues(_.sortBy(_.obligation.start))
+      .toSeq
+      .sortBy { case (period, _) => period } // Sort by period
+      .map { case (period, obligations) =>
+        // Sort obligations within each period by start date
+        val sortedObligations = obligations.sortBy(_.obligation.start)
+        (period, sortedObligations)
+      }
+      .toMap
+  }
+
 }
 
 object ObligationsModel {

@@ -1068,6 +1068,7 @@ updateTab.updateType                                            = Update type
 updateTab.incomeSource                                          = Income source
 updateTab.dateSubmitted                                         = Date submitted
 updateTab.dateToDate                                            = {0} to {1}
+updateTab.quarterlyDateToDate                                   = Quarterly period from {0} to {1}
 updateTab.obligationType.property                               = Property income
 updateTab.obligationType.business                               = Business
 updateTab.obligationType.crystallised                           = All income sources
