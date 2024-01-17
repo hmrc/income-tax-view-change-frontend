@@ -19,7 +19,7 @@ package models.nextUpdates
 import java.time.LocalDate
 
 case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate]) {
-  def getLatestDeadline: Option[LocalDate] = {
+  def getNextDeadline: Option[LocalDate] = {
     dueDates.sortWith(_ isBefore _).headOption
   }
 
