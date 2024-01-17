@@ -19,7 +19,7 @@ package mocks.services
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
-import models.nextUpdates.{DueDates, NextUpdatesErrorModel, NextUpdatesResponseModel}
+import models.nextUpdates.{NextUpdatesTileViewModel, NextUpdatesErrorModel, NextUpdatesResponseModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -80,7 +80,7 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())) thenReturn Future.successful(response)
   }
 
-  def mockGetDueDates(response: Either[Exception, DueDates]): Unit = {
+  def mockGetDueDates(response: Either[Exception, NextUpdatesTileViewModel]): Unit = {
     when(mockNextUpdatesService.getDueDates()(any(), any())) thenReturn Future.successful(response)
   }
 

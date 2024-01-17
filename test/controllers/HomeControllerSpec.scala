@@ -24,7 +24,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
 import mocks.services.{MockFinancialDetailsService, MockIncomeSourceDetailsService, MockNextUpdatesService, MockWhatYouOweService}
 import models.financialDetails._
-import models.nextUpdates.DueDates
+import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -56,8 +56,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
   val updateYear: String = "2018"
   val nextPaymentYear: String = "2019"
   val nextPaymentYear2: String = "2018"
-  private val futureDueDates: DueDates = DueDates(Seq(LocalDate.of(2100, 1, 1)))
-  private val overdueDueDates: DueDates = DueDates(Seq(LocalDate.of(2018, 1, 1)))
+  private val futureDueDates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)))
+  private val overdueDueDates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)))
   val updateDateAndOverdueObligations: (LocalDate, Seq[LocalDate]) = (LocalDate.of(updateYear.toInt, Month.JANUARY, 1), futureDueDates.dueDates)
   val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
   val nextPaymentDate2: LocalDate = LocalDate.of(nextPaymentYear2.toInt, Month.JANUARY, 31)
@@ -303,7 +303,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
       }
       "there is no update date to display - Individual" in new Setup {
-        mockGetDueDates(Right(DueDates(Seq.empty)))
+        mockGetDueDates(Right(NextUpdatesTileViewModel(Seq.empty)))
         mockSingleBusinessIncomeSource()
         mockGetAllUnpaidFinancialDetails()
         setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
@@ -317,7 +317,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       }
     }
 
-    def setupNextUpdatesTests(dueDates: DueDates): Unit = {
+    def setupNextUpdatesTests(dueDates: NextUpdatesTileViewModel): Unit = {
       mockGetDueDates(Right(dueDates))
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -351,7 +351,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.select("#updates-tile p:nth-child(2)").text() shouldBe "OVERDUE 1 January 2018"
     }
     "there are no updates to display" in new Setup {
-      setupNextUpdatesTests(DueDates(Seq()))
+      setupNextUpdatesTests(NextUpdatesTileViewModel(Seq()))
 
       val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -610,7 +610,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         }
         "there is no update date to display - Agent" in new Setup {
           setupMockAuthorisationSuccess(true)
-          mockGetDueDates(Right(DueDates(Seq.empty)))
+          mockGetDueDates(Right(NextUpdatesTileViewModel(Seq.empty)))
           mockSingleBusinessIncomeSource()
           mockGetAllUnpaidFinancialDetails()
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)

@@ -113,30 +113,30 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "there are income sources from property, business with crystallisation" in new Setup {
         setupMockNextUpdates(obligationsAllDeadlinesSuccessModel)
         getDueDates().futureValue shouldBe
-          Right(DueDates(Seq(LocalDate.of(2017, 10, 30),
+          Right(NextUpdatesTileViewModel(Seq(LocalDate.of(2017, 10, 30),
             LocalDate.of(2017, 10, 31), LocalDate.of(2017, 10, 1),
             LocalDate.of(2017, 10, 31), LocalDate.of(2017, 10, 31))))
       }
       "there is just one report deadline from an income source" in new Setup {
         setupMockNextUpdates(obligationsPropertyOnlySuccessModel)
         getDueDates().futureValue shouldBe
-          Right(DueDates(List(LocalDate.of(2017, 10, 1), LocalDate.of(2017, 10, 31))))
+          Right(NextUpdatesTileViewModel(List(LocalDate.of(2017, 10, 1), LocalDate.of(2017, 10, 31))))
       }
       "there is just a crystallisation deadline" in new Setup {
         setupMockNextUpdates(obligationsCrystallisedOnlySuccessModel)
-        getDueDates().futureValue shouldBe Right(DueDates(Seq(LocalDate.of(2017, 10, 31))))
+        getDueDates().futureValue shouldBe Right(NextUpdatesTileViewModel(Seq(LocalDate.of(2017, 10, 31))))
       }
 
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
-        val result: Either[Exception, DueDates] = getDueDates().futureValue
+        val result: Either[Exception, NextUpdatesTileViewModel] = getDueDates().futureValue
         result.isLeft shouldBe true
         result.left.map(_.getMessage) shouldBe Left("Unexpected Exception getting next deadline due and Overdue Obligations")
       }
 
       "the Next Updates returned back an error model" in new Setup {
         setupMockNextUpdates(obligationsDataErrorModel)
-        val result: Either[Exception, DueDates] = getDueDates().futureValue
+        val result: Either[Exception, NextUpdatesTileViewModel] = getDueDates().futureValue
         result.isLeft shouldBe true
         result.left.map(_.getMessage) shouldBe Left("Dummy Error Message")
       }
@@ -144,7 +144,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     "return None" when {
       "404 response from getNextUpdates" in new Setup {
         setupMockNextUpdates(nextUpdatesErrorModel(NOT_FOUND))
-        getDueDates().futureValue shouldBe Right(DueDates(Seq()))
+        getDueDates().futureValue shouldBe Right(NextUpdatesTileViewModel(Seq()))
       }
     }
   }
