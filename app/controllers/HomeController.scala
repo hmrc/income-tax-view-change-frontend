@@ -55,7 +55,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def view(availableCredit: Option[BigDecimal],nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
+  private def view(availableCredit: Option[BigDecimal], nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
                    overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
@@ -80,7 +80,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   }
 
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
 
@@ -88,8 +88,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
       latestDeadlineDate <- nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
       paymentsDue = unpaidCharges
-        .collectFirst { case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates }
-        .getOrElse(List.empty[LocalDate])
+        .flatMap {
+          case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+          case _ => List.empty[LocalDate]
+        }
         .sortWith(_ isBefore _)
         .sortBy(_.toEpochDay())
       availableCredit = unpaidCharges
@@ -132,11 +134,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
       )
     }) recover {
       case ex =>
-        Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage} - ${ex.getCause}")
+        Logger("application")
+          .error(s"[HomeController][Home] Downstream error, ${ex.getMessage} - ${ex.getCause}")
         itvcErrorHandler.showInternalServerError()
     }
   }
-
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
