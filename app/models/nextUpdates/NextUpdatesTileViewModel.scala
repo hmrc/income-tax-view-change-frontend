@@ -19,12 +19,12 @@ package models.nextUpdates
 import java.time.LocalDate
 
 case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate]) {
-  def getLatestDeadline: LocalDate = {
-    dueDates.sortWith(_ isBefore _).head
+  def getLatestDeadline: Option[LocalDate] = {
+    dueDates.sortWith(_ isBefore _).headOption
   }
 
-  def getOverdueObligations(currentDate: LocalDate): Seq[LocalDate] = {
-    dueDates.filter(_.isBefore(currentDate))
+  def getNumberOfOverdueObligations(currentDate: LocalDate): Int = {
+    dueDates.count(_.isBefore(currentDate))
   }
 
   def showNextUpdatesTileContent: Boolean = dueDates.nonEmpty

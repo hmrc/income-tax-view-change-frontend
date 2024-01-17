@@ -91,9 +91,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
         val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates)
-        val dueDatesOption = Option(nextUpdatesTileViewModel).filter(_.showNextUpdatesTileContent)
-        val nextUpdate: Option[LocalDate] = dueDatesOption.map(_.getLatestDeadline)
-        val overdueUpdatesCount: Int = dueDatesOption.map(_.getOverdueObligations(currentDate).size).getOrElse(0)
+        val nextUpdate: Option[LocalDate] = nextUpdatesTileViewModel.getLatestDeadline
+        val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations(currentDate)
         val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
         val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
