@@ -26,4 +26,7 @@ case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate]) {
   def getOverdueObligations(currentDate: LocalDate): Seq[LocalDate] = {
     dueDates.filter(_.isBefore(currentDate))
   }
+
+  def showNextUpdatesTileContent: Boolean = dueDates.nonEmpty
+
 }
