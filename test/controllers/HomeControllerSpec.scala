@@ -411,6 +411,29 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       val document: Document = Jsoup.parse(contentAsString(result))
       document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£786.00")
     }
+    "display £0.00 available credit when available credit is None" in new Setup {
+      disableAllSwitches()
+      enable(CreditsRefundsRepay)
+      when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
+      mockSingleBusinessIncomeSource()
+      when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+            transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(emptyWhatYouOweChargesListIndividual))
+
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£0.00")
+    }
     "not display the available credit when CreditsAndRefundsRepay FS is disabled" in new Setup {
       disable(CreditsRefundsRepay)
       when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
