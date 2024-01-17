@@ -18,6 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
+import models.nextUpdates.NextUpdatesTileViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
 
@@ -55,9 +56,11 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
 object HomeAudit {
   def apply(mtdItUser: MtdItUser[_],
             nextPaymentDueDate: Option[LocalDate],
-            nextUpdateDueDate: Option[LocalDate],
             overduePaymentsCount: Int,
-            overdueUpdatesCount: Int): HomeAudit = {
+            nextUpdatesTileViewModel: NextUpdatesTileViewModel): HomeAudit = {
+
+    val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations
+    val nextUpdateDueDate: Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
 
     val nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = nextPaymentDueDate.map { date =>
       if (overduePaymentsCount == 0) Left(date -> false)
