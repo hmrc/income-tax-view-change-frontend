@@ -85,7 +85,6 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       financialDetailsService,
       mockDateService,
       whatYouOweService,
-      creditService,
       mockAuditingService,
       testAuthenticator)(
       ec,
@@ -97,7 +96,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     val overdueWarningMessageDunningLockTrue: String = messages("home.overdue.message.dunningLock.true")
     val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
     val expectedOverDuePaymentsText1 = s"${messages("home.overdue.date")} 31 January 2019"
-    val expectedAvailableCreditText: String => String = (amount: String) => messages(amount, "home.paymentHistoryRefund.availableCredit")
+    lazy val expectedAvailableCreditText: String => String = (amount: String) => messages("home.paymentHistoryRefund.availableCredit", amount)
     val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   }
 
@@ -121,7 +120,6 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     mockFinancialDetailsService,
     mockDateService,
     mockWhatYouOweService,
-    mock(classOf[CreditService]),
     mockAuditingService,
     testAuthenticator)(
     ec,
@@ -394,7 +392,6 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       disableAllSwitches()
       enable(CreditsRefundsRepay)
       when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-      when(creditService.getCreditCharges()) thenReturn Future.successful(Some(786))
       mockSingleBusinessIncomeSource()
       when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -412,13 +409,11 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       status(result) shouldBe Status.OK
       val document: Document = Jsoup.parse(contentAsString(result))
-      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText
+      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£786.00")
     }
     "not display the available credit when CreditsAndRefundsRepay FS is disabled" in new Setup {
-      disableAllSwitches()
       disable(CreditsRefundsRepay)
       when(NextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(updateDateAndOverdueObligations)
-      when(creditService.getCreditCharges()) thenReturn Future.successful(Some(786))
       mockSingleBusinessIncomeSource()
       when(financialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -436,7 +431,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
       status(result) shouldBe Status.OK
       val document: Document = Jsoup.parse(contentAsString(result))
-      document.getElementById("available-credit").text.isEmpty shouldBe true
+      Option(document.getElementById("available-credit")).isDefined shouldBe false
     }
   }
 

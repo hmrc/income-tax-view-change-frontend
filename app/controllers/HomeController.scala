@@ -49,7 +49,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val financialDetailsService: FinancialDetailsService,
                                implicit val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
-                               creditService: CreditService,
                                auditingService: AuditingService,
                                auth: AuthenticatorPredicate)
                               (implicit val ec: ExecutionContext,
@@ -97,12 +96,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val availableCredit: Future[Option[BigDecimal]] =
         if (isEnabled(CreditsRefundsRepay))
-          creditService.getCreditCharges() map(
-            _.headOption
-              .flatMap(
-                _.balanceDetails.getAbsoluteAvailableCreditAmount
-              )
-            )
+          unpaidChargesFuture map {
+            _.flatMap {
+              case fdm: FinancialDetailsModel => fdm.balanceDetails.getAbsoluteAvailableCreditAmount
+              case _ => None
+            }.headOption
+          }
         else Future(None)
 
       for {
