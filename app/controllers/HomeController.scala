@@ -26,13 +26,13 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 
 import javax.inject.{Inject, Singleton}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{CreditHistoryService, CreditService, DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
+import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -80,76 +80,63 @@ class HomeController @Inject()(val homeView: views.html.Home,
   }
 
   def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
-    nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations.flatMap { latestDeadlineDate =>
 
-      val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
-
-      val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
-        _.flatMap {
-          case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-          case _ => List.empty[LocalDate]
-        }.sortWith(_ isBefore _)
-      }
-
-      val availableCredit: Future[Option[BigDecimal]] =
-        if (isEnabled(CreditsRefundsRepay))
-          unpaidChargesFuture map {
-            _.flatMap {
-              case fdm: FinancialDetailsModel => fdm.balanceDetails.getAbsoluteAvailableCreditAmount
-              case _ => None
-            }.headOption
-          }
-        else Future(None)
-
-      for {
-        paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
-        unpaidCharges <- unpaidChargesFuture
-        availableCredit <- availableCredit
-        dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
-        outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
+    (for {
+      latestDeadlineDate <- nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations
+      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
+      paymentsDue = unpaidCharges
+        .collectFirst { case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates }
+        .getOrElse(List.empty[LocalDate])
+        .sortWith(_ isBefore _)
+        .sortBy(_.toEpochDay())
+      availableCredit = unpaidCharges
+        .collectFirst { case fdm: FinancialDetailsModel if isEnabled(CreditsRefundsRepay) => fdm.balanceDetails.getAbsoluteAvailableCreditAmount }.flatten
+      dunningLockExistsValue = unpaidCharges
+        .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+      outstandingChargesModel <- whatYouOweService
+        .getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits))
+        .map(_.outstandingChargesModel match {
           case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
           case _ => Nil
         })
-        outstandingChargesDueDate = outstandingChargesModel.flatMap {
-          case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
-          case _ => Nil
-        }
-        overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
-        overDueUpdatesCount = latestDeadlineDate._2.size
-        paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-        displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
-      } yield {
-        auditingService.extendedAudit(HomeAudit(
-          mtdItUser = user,
+      outstandingChargesDueDate = outstandingChargesModel.flatMap {
+        case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
+        case _ => Nil
+      }
+      overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
+      overDueUpdatesCount = latestDeadlineDate._2.size
+      paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+      displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
+    } yield {
+      auditingService.extendedAudit(HomeAudit(
+        mtdItUser = user,
+        paymentsDueMerged,
+        latestDeadlineDate._1,
+        overDuePaymentsCount,
+        overDueUpdatesCount))
+      Ok(
+        view(
+          availableCredit,
           paymentsDueMerged,
           latestDeadlineDate._1,
-          overDuePaymentsCount,
-          overDueUpdatesCount))
-        Ok(
-          view(
-            availableCredit,
-            paymentsDueMerged,
-            latestDeadlineDate._1,
-            Some(overDuePaymentsCount),
-            Some(overDueUpdatesCount),
-            dunningLockExistsValue,
-            incomeSourceCurrentTaxYear,
-            displayCeaseAnIncome,
-            isAgent = isAgent
-          )
+          Some(overDuePaymentsCount),
+          Some(overDueUpdatesCount),
+          dunningLockExistsValue,
+          incomeSourceCurrentTaxYear,
+          displayCeaseAnIncome,
+          isAgent = isAgent
         )
-      }
-
-    }.recover {
+      )
+    }) recover {
       case ex =>
-        Logger("application")
-          .error(s"[HomeController][Home] Downstream error, ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"[HomeController][Home] Downstream error, ${ex.getMessage} - ${ex.getCause}")
         itvcErrorHandler.showInternalServerError()
     }
   }
+
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
