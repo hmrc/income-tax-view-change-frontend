@@ -1,9 +1,9 @@
 
 package connectors
 
-import helpers.ComponentSpecBase
-import helpers.servicemocks.BtaNavBarPartialConnectorStub
-import helpers.servicemocks.BtaNavBarPartialConnectorStub.testNavLinkJson
+import _root_.helpers.ComponentSpecBase
+import _root_.helpers.servicemocks.BtaNavBarPartialConnectorStub
+import _root_.helpers.servicemocks.BtaNavBarPartialConnectorStub.testNavLinkJson
 import models.btaNavBar.{NavContent, NavLinks}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
