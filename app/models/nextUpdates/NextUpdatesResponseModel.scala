@@ -21,7 +21,7 @@ import auth.MtdItUser
 import models.incomeSourceDetails.{QuarterTypeCalendar, PropertyDetailsModel, QuarterReportingType, QuarterTypeStandard}
 import play.api.libs.json._
 import services.DateService
-
+import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
 
 sealed trait NextUpdatesResponseModel
 
@@ -81,7 +81,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
       }.view
       .mapValues(_.sortBy(_.obligation.start))
       .toSeq
-      //.sortBy { case (period, _) => period } // Sort by period
+      .sortBy { case (period, _) => period } // Sort by period
       .map { case (period, obligations) =>
         // Sort obligations within each period by start date
         val sortedObligations = obligations.sortBy(_.obligation.start)

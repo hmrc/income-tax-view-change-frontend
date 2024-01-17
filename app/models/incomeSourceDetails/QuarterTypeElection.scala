@@ -42,4 +42,6 @@ case class QuarterTypeElection(quarterReportingType: String, taxYearofElection: 
 
 object QuarterTypeElection {
   implicit val format: Format[QuarterTypeElection] = Json.format[QuarterTypeElection]
+
+  implicit val orderingByTypeName: Ordering[Option[QuarterReportingType]] = Ordering.by(e => e.map(_.value))
 }
