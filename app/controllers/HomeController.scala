@@ -56,16 +56,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def view(nextPaymentDueDate: Option[LocalDate], nextUpdate: Option[LocalDate], overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Int, nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-                   dunningLockExists: Boolean, currentTaxYear: Int,
-                   displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
+  private def view(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+                   dunningLockExists: Boolean, currentTaxYear: Int, displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
-      nextUpdate = nextUpdate,
       overDuePaymentsCount = overDuePaymentsCount,
-      overDueUpdatesCount = overDueUpdatesCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
       user.saUtr,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
@@ -90,9 +86,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
-        val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates)
+        val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
         val nextUpdate: Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
-        val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations(currentDate)
+        val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations
         val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
         val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
@@ -127,9 +123,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           Ok(
             view(
               paymentsDueMerged,
-              nextUpdate,
               Some(overDuePaymentsCount),
-              overdueUpdatesCount,
               nextUpdatesTileViewModel,
               dunningLockExistsValue,
               incomeSourceCurrentTaxYear,

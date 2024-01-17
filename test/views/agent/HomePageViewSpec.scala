@@ -34,7 +34,6 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
 
 import java.time.{LocalDate, Month}
-import scala.annotation.unused
 import scala.util.Try
 
 class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
@@ -76,19 +75,20 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   val year2018: Int = 2018
   val year2019: Int = 2019
 
-  val nextUpdateDue: LocalDate = LocalDate.of(year2018, Month.JANUARY, 1)
+  val nextUpdateDue: LocalDate = LocalDate.of(2100, Month.JANUARY, 1)
 
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)))
-  @unused
-  private val viewModelOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)))
+  val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate)
+  private val viewModelTwoOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
+    LocalDate.of(2018, 2, 1)), currentDate)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate)
 
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
-                  nextUpdate: Option[LocalDate] = Some(nextUpdateDue),
                   overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Option[Int] = None,
-                  overDueUpdatesCount: Int = 0,
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   utr: Option[String] = None,
                   paymentHistoryEnabled: Boolean = true,
@@ -105,9 +105,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     val view: HtmlFormat.Appendable = agentHome(
       nextPaymentDueDate,
-      nextUpdate,
       overDuePaymentsCount,
-      overDueUpdatesCount,
       nextUpdatesTileViewModel,
       utr,
       ITSASubmissionIntegrationEnabled,
@@ -201,13 +199,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages("home.updates.heading"))
         }
         "has content of the next update due" which {
-          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = 1) {
+          "is overdue" in new TestSetup(nextUpdatesTileViewModel = viewModelOneOverdue) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January $year2018")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue)) {
-            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January $year2018")
+            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January 2100")
           }
-          "is a count of overdue updates" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = 2) {
+          "is a count of overdue updates" in new TestSetup(nextUpdatesTileViewModel = viewModelTwoOverdue) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE UPDATES")
           }
         }
@@ -217,7 +215,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           link.map(_.text) shouldBe Some(messages("home.updates.view"))
         }
         "is empty except for the title" when {
-          "user has no open obligations" in new TestSetup(nextUpdate = None) {
+          "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
             getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
           }
         }

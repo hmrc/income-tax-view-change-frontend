@@ -18,12 +18,12 @@ package models.nextUpdates
 
 import java.time.LocalDate
 
-case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate]) {
+case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate], currentDate: LocalDate) {
   def getNextDeadline: Option[LocalDate] = {
     dueDates.sortWith(_ isBefore _).headOption
   }
 
-  def getNumberOfOverdueObligations(currentDate: LocalDate): Int = {
+  def getNumberOfOverdueObligations: Int = {
     dueDates.count(_.isBefore(currentDate))
   }
 
