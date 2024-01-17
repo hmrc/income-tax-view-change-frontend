@@ -230,7 +230,7 @@
 
 @updatesTile = {
 	@home_tile("updates-tile", messages("home.updates.heading")) {
-        @if(nextUpdate.isDefined) {
+        @if(nextUpdatesTileViewModel.showNextUpdatesTileContent) {
             @{overDueUpdatesCount match {
                 case 0 => p()(updatesTileContentUpdatesDue0)
                 case 1 => p()(updatesTileContentUpdatesDue1)
