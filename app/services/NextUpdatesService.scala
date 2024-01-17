@@ -31,11 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnector)(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
-  def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, NextUpdatesTileViewModel]] = {
+  def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
-        Right(NextUpdatesTileViewModel(deadlines.obligations.flatMap(_.obligations.map(_.due))))
-      case error: NextUpdatesErrorModel if error.code == 404 => Right(NextUpdatesTileViewModel(Seq.empty))
+        Right(deadlines.obligations.flatMap(_.obligations.map(_.due)))
+      case error: NextUpdatesErrorModel if error.code == 404 => Right(Seq.empty)
       case error: NextUpdatesErrorModel => Left(new Exception(s"${error.message}"))
       case _ =>
         Left(new Exception("Unexpected Exception getting next deadline due and Overdue Obligations"))
