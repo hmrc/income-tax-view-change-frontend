@@ -99,7 +99,7 @@
 
 @bodyContent(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
     if (collectedObligations.head.obligation.obligationType == "Quarterly") {
-        val obligations = collectedObligations.sortWith((x, y) => x.obligation.start.isAfter(y.obligation.start)).partition(ob => ob.obligation.start == collectedObligations.head.obligation.start)
+        val obligations = collectedObligations.partition(ob => ob.obligation.start == collectedObligations.head.obligation.start)
         obligations match {
             case (x: Seq[NextUpdateModelWithIncomeType], y: Seq[NextUpdateModelWithIncomeType]) if x.nonEmpty && y.nonEmpty =>
                 val quartersInOrder = if (x.head.obligation.start.isBefore(y.head.obligation.start)) Seq(x,y) else Seq(y,x)
