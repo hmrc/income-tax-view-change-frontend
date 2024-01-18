@@ -113,9 +113,10 @@ class NextUpdatesViewSpec extends TestSupport {
     s"have the correct TradeName" in new Setup(obligationsModel) {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
 
-      section.select("dl").size() shouldBe 1
-      section.select("dl dt").text() shouldBe "End of period statement"
-      section.select("dl dd").text() shouldBe messages(testTradeName)
+      val table = section.select(".govuk-table")
+
+      table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe "End of period statement"
+      table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe messages(testTradeName)
     }
   }
 }

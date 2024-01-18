@@ -20,7 +20,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.AddressModel
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.incomeSourceDetails.{Calendar, Standard}
+import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -78,7 +78,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
-    quarterReportingType = Some(Standard)
+    quarterReportingType = Some(QuarterTypeStandard)
   )
 
   val viewModel2: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -106,7 +106,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
-    quarterReportingType = Some(Calendar)
+    quarterReportingType = Some(QuarterTypeCalendar)
   )
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -134,7 +134,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
     taxYearTwoCrystallised = Some(false),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
-    quarterReportingType = Some(Calendar)
+    quarterReportingType = Some(QuarterTypeCalendar)
   )
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(

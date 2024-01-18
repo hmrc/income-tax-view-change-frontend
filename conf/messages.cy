@@ -616,6 +616,8 @@ nextUpdates.eops            									= Datganiad diwedd cyfnod
 nextUpdates.crystallised            							= Datganiad terfynol
 nextUpdates.crystallisedAll            							= Pob ffynhonnell incwm
 nextUpdates.propertyIncome            							= Incwm o eiddo
+nextUpdates.propertyIncome.UK                                   = Eiddo yn y DU
+nextUpdates.propertyIncome.Foreign                              = Eiddo tramor
 nextUpdates.business            							    = Incwm busnes
 
 ## Previous Obligations ##
@@ -698,19 +700,24 @@ nextUpdates.dropdown.info                                       = Beth yw’r ma
 nextUpdates.info                                       			= Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
 nextUpdates.dropdown.quarterlyReturn.text                       = Diweddariad chwarterol yw cofnod o’ch holl incwm busnes mewn cyfnod 3 mis.
 nextUpdates.dropdown.quarterlyReturn.text.lin2                  = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon 4 diweddariad chwarterol yn y flwyddyn ar gyfer pob ffynhonnell incwm.
-nextUpdates.dropdown.annualReturn.text                          = Mewn Datganiad diwedd cyfnod, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
-nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un Datganiad diwedd cyfnod ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
-nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y Datganiad diwedd cyfnod y gwnaethoch ei hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
+nextUpdates.dropdown.quarterlyReturn.text.lin3                  = Mae’n bosibl y byddwch yn gallu dewis eich cyfnod chwarterol yn eich meddalwedd. Er enghraifft, mae chwarterau safonol yn adrodd o 6 Ebrill i 5 Gorffennaf ond mae chwarterau calendr yn adrodd o 1 Ebrill i 30 Mehefin.
+nextUpdates.dropdown.quarterlyReturn.link.text                  = Dysgwch ragor am gyfnodau chwarterol
+nextUpdates.dropdown.quarterlyReturn.link.link                  = https://www.gov.uk/guidance/using-making-tax-digital-for-income-tax.cy#anfon-diweddariadau-chwarterol
+nextUpdates.dropdown.annualReturn.text                          = Mewn datganiad diwedd cyfnod, mae angen i chi ddatgan bod y 4 diweddariad chwarterol y gwnaethoch eu hanfon yn gywir. Gallwch hefyd newid unrhyw wallau blaenorol.
+nextUpdates.dropdown.annualReturn.text.lin2                     = Gan ddefnyddio’ch meddalwedd cadw cofnodion, mae’n rhaid i chi anfon un datganiad diwedd cyfnod ar gyfer pob ffynhonnell incwm ar ddiwedd pob cyfnod cyfrifyddu.
+nextUpdates.dropdown.finalDeclaration.text                      = Mae’ch datganiad terfynol yn cadarnhau bod y datganiad diwedd cyfnod y gwnaethoch ei hanfon yn gywir a’ch bod wedi cyflwyno pob ffynhonnell incwm a phob ffynhonnell treuliau, hyd eithaf eich gwybodaeth. Caiff hyn ei wneud gan ddefnyddio’ch meddalwedd cadw cofnodion.
 nextUpdates.table.header.type									= Math o ddiweddariad
 nextUpdates.table.header.source									= Ffynhonnell incwm
-nextUpdates.section.heading.updates								= Diweddariad ar gyfer: {0} i {1}
+nextUpdates.section.heading.quarterly						    = Diweddariad chwarterol
+nextUpdates.section.heading.end-of-year							= Diweddariad diwedd blwyddyn
+nextUpdates.section.heading.updates								= Cyfnod chwarterol o {0} i {1}
 nextUpdates.section.heading.taxYear								= Blwyddyn dreth: {0} i {1}
 nextUpdates.previousYears.textOne								= I weld diweddariadau a gyflwynwyd yn flaenorol, ewch i
 nextUpdates.previousYears.textTwo								= dudalen.
 nextUpdates.previousYears.link									= blynyddoedd treth
 
-sections.open.all												= Dangos pob un
-sections.close.all												= Cuddio pob un
+sections.open.all												= Dangos pob adran
+sections.close.all												= Cuddio pob adran
 sections.open												    = Dangos
 sections.close												    = Cuddio
 
@@ -1034,6 +1041,7 @@ updateTab.updateType                                            = Math o ddiwedd
 updateTab.incomeSource                                          = Ffynhonnell incwm
 updateTab.dateSubmitted                                         = Dyddiad cyflwyno
 updateTab.dateToDate                                            = {0} i {1}
+updateTab.quarterlyDateToDate                                   = Cyfnod chwarterol o {0} i {1}
 updateTab.obligationType.property                               = Incwm o eiddo
 updateTab.obligationType.business                               = Busnes
 updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm

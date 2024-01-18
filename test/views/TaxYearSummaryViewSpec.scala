@@ -773,7 +773,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
               val divAccordion = sectionContent.selectHead(s"div:nth-of-type($index)")
 
               divAccordion.selectHead("caption").text shouldBe
-                messages("updateTab.dateToDate", testObligation.obligation.start.toLongDate, testObligation.obligation.end.toLongDate)
+                "Quarterly period from " + messages("updateTab.dateToDate", testObligation.obligation.start.toLongDateShort, testObligation.obligation.end.toLongDateShort)
               divAccordion.selectHead("thead").selectNth("th", 1).text shouldBe updateType
               divAccordion.selectHead("thead").selectNth("th", 2).text shouldBe updateIncomeSource
               divAccordion.selectHead("thead").selectNth("th", 3).text shouldBe updateDateSubmitted
