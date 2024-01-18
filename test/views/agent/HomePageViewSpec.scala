@@ -99,6 +99,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     val agentHome: Home = app.injector.instanceOf[Home]
 
     val view: HtmlFormat.Appendable = agentHome(
+      None,
       nextPaymentDueDate,
       nextUpdate,
       overDuePaymentsCount,

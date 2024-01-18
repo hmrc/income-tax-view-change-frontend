@@ -106,6 +106,7 @@ class HomePageViewSpec extends TestSupport {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
+      availableCredit = Some(0),
       nextPaymentDueDate = paymentDueDate,
       nextUpdate = updateDate,
       overDuePaymentsCount = overDuePaymentsCount,
