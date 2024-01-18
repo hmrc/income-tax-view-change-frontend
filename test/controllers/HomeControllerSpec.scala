@@ -17,7 +17,7 @@
 package controllers
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.{FeatureSwitching, IncomeSources}
+import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -86,6 +86,8 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     val overdueWarningMessageDunningLockTrue: String = messages("home.overdue.message.dunningLock.true")
     val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
     val expectedOverDuePaymentsText1 = s"${messages("home.overdue.date")} 31 January 2019"
+    lazy val expectedAvailableCreditText: String => String = (amount: String) => messages("home.paymentHistoryRefund.availableCredit", amount)
+    val updateDateAndOverdueObligationsLPI: (LocalDate, Seq[LocalDate]) = (LocalDate.of(2021, Month.MAY, 15), Seq.empty[LocalDate])
   }
 
   //new setup for agent
@@ -407,6 +409,71 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.select("#income-sources-tile > div > p:nth-child(3) > a").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false).url
       document.select("#income-sources-tile > div > p:nth-child(4) > a").text() should not be messages("home.incomeSources.ceaseIncomeSource.view")
       document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
+    }
+    "display the available credit when CreditsAndRefundsRepay FS is enabled" in new Setup {
+      disableAllSwitches()
+      enable(CreditsRefundsRepay)
+      mockGetDueDates(Right(Seq.empty))
+      mockSingleBusinessIncomeSource()
+      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+            transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£786.00")
+    }
+    "display £0.00 available credit when available credit is None" in new Setup {
+      disableAllSwitches()
+      enable(CreditsRefundsRepay)
+      mockGetDueDates(Right(Seq.empty))
+      mockSingleBusinessIncomeSource()
+      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+            transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£0.00")
+    }
+    "not display the available credit when CreditsAndRefundsRepay FS is disabled" in new Setup {
+      disable(CreditsRefundsRepay)
+      mockGetDueDates(Right(Seq.empty))
+      mockSingleBusinessIncomeSource()
+      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
+            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+            transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      Option(document.getElementById("available-credit")).isDefined shouldBe false
     }
   }
 

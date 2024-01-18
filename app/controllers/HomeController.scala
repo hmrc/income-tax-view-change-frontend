@@ -56,10 +56,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def view(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+  private def view(availableCredit: Option[BigDecimal], nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
                    dunningLockExists: Boolean, currentTaxYear: Int, displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
+      availableCredit = availableCredit,
       nextPaymentDueDate = nextPaymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -99,6 +100,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
         for {
           paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
           unpaidCharges <- unpaidChargesFuture
+          availableCredit = unpaidCharges
+            .collectFirst { case fdm: FinancialDetailsModel if isEnabled(CreditsRefundsRepay) => fdm.balanceDetails.getAbsoluteAvailableCreditAmount }.flatten
           dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
           outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(TimeMachineAddYear)).map(_.outstandingChargesModel match {
             case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
@@ -119,6 +122,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             nextUpdatesTileViewModel))
           Ok(
             view(
+              availableCredit,
               paymentsDueMerged,
               Some(overDuePaymentsCount),
               nextUpdatesTileViewModel,

@@ -16,10 +16,12 @@
 
 package models.nextUpdates
 
-import java.time.LocalDate
 import auth.MtdItUser
+import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
+import models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
 import play.api.libs.json._
-import services.DateService
+
+import java.time.LocalDate
 
 
 sealed trait NextUpdatesResponseModel
@@ -27,16 +29,28 @@ sealed trait NextUpdatesResponseModel
 case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpdatesResponseModel {
   def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[NextUpdateModelWithIncomeType] = {
     val deadlines = obligations.flatMap { deadlinesModel =>
-      if (mtdItUser.incomeSources.properties.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
-        deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.propertyIncome", deadline))
-      } else if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
-        deadline =>
-          Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
-            .get.tradingName.getOrElse("nextUpdates.business"), deadline))
-      } else if (mtdItUser.mtditid == deadlinesModel.identification) deadlinesModel.obligations.map {
-        deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
-      } else None
-
+      mtdItUser.incomeSources.properties.find(_.incomeSourceId == deadlinesModel.identification) match {
+        case Some(property) if property.incomeSourceType.contains("foreign-property") =>
+          deadlinesModel.obligations.map {
+            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.Foreign", deadline))
+          }
+        case Some(property) if property.incomeSourceType.contains("uk-property") => //
+          deadlinesModel.obligations.map {
+            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.UK", deadline))
+          }
+        case Some(_: PropertyDetailsModel) =>
+          deadlinesModel.obligations.map {
+            deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome", deadline))
+          }
+        case _ =>
+          if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == deadlinesModel.identification)) deadlinesModel.obligations.map {
+            deadline =>
+              Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
+                .get.tradingName.getOrElse("nextUpdates.business"), deadline))
+          } else if (mtdItUser.mtditid == deadlinesModel.identification) deadlinesModel.obligations.map {
+            deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
+          } else None
+      }
     }.flatten
 
     if (previous) deadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
@@ -53,6 +67,30 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
 
   def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[NextUpdateModelWithIncomeType])] =
     allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
+
+  def getPeriodForQuarterly(obligation: NextUpdateModelWithIncomeType): QuarterReportingType = {
+    val dayOfMonth = obligation.obligation.start.getDayOfMonth
+    if (dayOfMonth < 6) QuarterTypeCalendar else QuarterTypeStandard
+  }
+
+  def groupByQuarterPeriod(obligations: Seq[NextUpdateModelWithIncomeType]): Map[Option[QuarterReportingType], Seq[NextUpdateModelWithIncomeType]] = {
+    obligations.groupBy { obligation =>
+        obligation.obligation.obligationType match {
+          case "Quarterly" => Some(getPeriodForQuarterly(obligation))
+          case _ => None //"Default"
+        }
+      }.view
+      .mapValues(_.sortBy(_.obligation.start))
+      .toSeq
+      .sortBy { case (period, _) => period } // Sort by period
+      .map { case (period, obligations) =>
+        // Sort obligations within each period by start date
+        val sortedObligations = obligations.sortBy(_.obligation.start)
+        (period, sortedObligations)
+      }
+      .toMap
+  }
+
 }
 
 object ObligationsModel {

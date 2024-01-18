@@ -114,6 +114,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
+      availableCredit = Some(0),
       nextPaymentDueDate = paymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
