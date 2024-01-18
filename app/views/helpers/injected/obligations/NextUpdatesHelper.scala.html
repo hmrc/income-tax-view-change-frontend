@@ -98,9 +98,17 @@
 }
 
 @bodyContent(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
-    val (obligationsType1, obligationsType2) = collectedObligations.partition(ob => ob.obligation.start == collectedObligations.head.obligation.start)
-    val validTables = Seq(makeTable(obligationsType1), makeTable(obligationsType2)).filter(x => x != HtmlFormat.empty)
-    validTables.fold(HtmlFormat.empty)((html1, html2) => Html(html1.toString() + html2.toString()))
+    if (collectedObligations.head.obligation.obligationType == "Quarterly") {
+        val obligations = collectedObligations.sortWith((x, y) => x.obligation.start.isAfter(y.obligation.start)).partition(ob => ob.obligation.start == collectedObligations.head.obligation.start)
+        obligations match {
+            case (x: Seq[NextUpdateModelWithIncomeType], y: Seq[NextUpdateModelWithIncomeType]) if x.nonEmpty && y.nonEmpty =>
+                val quartersInOrder = if (x.head.obligation.start.isBefore(y.head.obligation.start)) Seq(x,y) else Seq(y,x)
+                val validTables = quartersInOrder.map(makeTable).filter(list => list != HtmlFormat.empty)
+                validTables.fold(HtmlFormat.empty)((html1, html2) => Html(html1.toString() + html2.toString()))
+            case (validObligations, emptyObligations) => makeTable(validObligations)
+        }
+    }
+    else makeTable(collectedObligations)
 }
 
 @getItems = @{
