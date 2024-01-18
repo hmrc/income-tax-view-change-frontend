@@ -114,6 +114,7 @@ home.your-returns.description                                   = Defnyddiwch y 
 home.tax-years.view                                             = Bwrw golwg dros bob blwyddyn dreth
 home.paymentHistory.heading                                     = Hanes taliadau
 home.paymentHistory.view                                        = Hanes taliadau
+home.paymentHistoryRefund.availableCredit                       = Mae {0} yn eich cyfrif
 home.paymentHistoryRefund.heading                               = Hanes taliadau ac ad-daliadau
 home.paymentHistoryRefund.view                                  = Hanes taliadau ac ad-daliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
