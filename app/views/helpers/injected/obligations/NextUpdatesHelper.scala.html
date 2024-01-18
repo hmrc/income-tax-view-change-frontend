@@ -1,19 +1,18 @@
 @*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
+* Copyright 2023 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 @import implicits.ImplicitDateFormatterImpl
 @import models.nextUpdates.NextUpdateModelWithIncomeType
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -72,10 +71,10 @@
 
 @makeTable(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
     collectedObligations match {
-        case x :Seq[NextUpdateModelWithIncomeType] if x.nonEmpty =>
+        case validObligations: Seq[NextUpdateModelWithIncomeType] if validObligations.nonEmpty =>
             govukTable(Table(
                 rows = {
-                    for(obligation <- x) yield deadlineRow(obligation)
+                    for(obligation <- validObligations) yield deadlineRow(obligation)
                 },
                 head = Some(Seq(
                     HeadCell(
@@ -86,8 +85,8 @@
                     )
                 )),
                 caption = {
-                    if(x.head.obligation.obligationType == "Quarterly")
-                        Some(getTableHeadingMessage(x.head.obligation)) else None
+                    if(validObligations.head.obligation.obligationType == "Quarterly")
+                        Some(getTableHeadingMessage(validObligations.head.obligation)) else None
                 },
                 captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2"
             )
@@ -98,10 +97,9 @@
 }
 
 @bodyContent(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
-    val (obligationsType1, obligationsType2) = collectedObligations.partition(x => x.obligation.start == collectedObligations.head.obligation.start)
-    val x = Seq(makeTable(obligationsType1), makeTable(obligationsType2)).filter(x => x != HtmlFormat.empty)
-    x.fold(HtmlFormat.empty)((a,b) => Html(a.toString() + b.toString()))
-
+    val (obligationsType1, obligationsType2) = collectedObligations.partition(ob => ob.obligation.start == collectedObligations.head.obligation.start)
+    val validTables = Seq(makeTable(obligationsType1), makeTable(obligationsType2)).filter(x => x != HtmlFormat.empty)
+    validTables.fold(HtmlFormat.empty)((html1, html2) => Html(html1.toString() + html2.toString()))
 }
 
 @getItems = @{
