@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.nextUpdates._
 @import java.time.LocalDate
+@import play.twirl.api.HtmlFormat
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl, govukAccordion: GovukAccordion, govukTable: GovukTable)
 @(obligations: ObligationsModel)(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -57,7 +58,7 @@
     messages(key, obligation.start.toLongDateShort, obligation.end.toLongDateShort)
 }
 
-@headingContent(date: LocalDate)= {
+@headingContent(date: LocalDate) = {
     <span class="govuk-!-font-size-24">
     @{
         date.toLongDate
@@ -69,27 +70,38 @@
 @getSectionHeadingMessage(obligations.head.obligation)
 }
 
+@makeTable(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
+    collectedObligations match {
+        case x :Seq[NextUpdateModelWithIncomeType] if x.nonEmpty =>
+            govukTable(Table(
+                rows = {
+                    for(obligation <- x) yield deadlineRow(obligation)
+                },
+                head = Some(Seq(
+                    HeadCell(
+                        content = Text(messages("nextUpdates.table.header.type"))
+                    ),
+                    HeadCell(
+                        content = Text(messages("nextUpdates.table.header.source"))
+                    )
+                )),
+                caption = {
+                    if(x.head.obligation.obligationType == "Quarterly")
+                        Some(getTableHeadingMessage(x.head.obligation)) else None
+                },
+                captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2"
+            )
+            )
+        case _ => HtmlFormat.empty
+    }
+
+}
 
 @bodyContent(collectedObligations: Seq[NextUpdateModelWithIncomeType]) = @{
-    govukTable(Table(
-        rows = {
-            for(obligation <- collectedObligations) yield deadlineRow(obligation)
-        },
-        head = Some(Seq(
-            HeadCell(
-                content = Text(messages("nextUpdates.table.header.type"))
-            ),
-            HeadCell(
-                content = Text(messages("nextUpdates.table.header.source"))
-            )
-        )),
-        caption = {
-            if(collectedObligations.head.obligation.obligationType == "Quarterly")
-                Some(getTableHeadingMessage(collectedObligations.head.obligation)) else None
-        },
-        captionClasses = "govuk-table__caption  govuk-!-padding-bottom-2"
-    )
-    )
+    val (obligationsType1, obligationsType2) = collectedObligations.partition(x => x.obligation.start == collectedObligations.head.obligation.start)
+    val x = Seq(makeTable(obligationsType1), makeTable(obligationsType2)).filter(x => x != HtmlFormat.empty)
+    x.fold(HtmlFormat.empty)((a,b) => Html(a.toString() + b.toString()))
+
 }
 
 @getItems = @{
