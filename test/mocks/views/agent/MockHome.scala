@@ -37,13 +37,12 @@ trait MockHome extends BeforeAndAfterEach {
 
   def mockHome(
                 nextPaymentOrOverdue: Option[LocalDate],
-                nextUpdateOrOverdue: LocalDate,
                 dunningLockExists: Boolean = false)(response: Html): Unit = {
     when(
       home.apply(
         any(),
         matches(nextPaymentOrOverdue),
-        matches(nextUpdateOrOverdue),
+        any(),
         any(),
         any(),
         any(),

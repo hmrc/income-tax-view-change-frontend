@@ -76,12 +76,12 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
       .thenReturn(Future.successful(response))
   }
 
-  def mockNextDeadlineDueDateAndOverDueObligations()(response: (LocalDate, Seq[LocalDate])): Unit = {
-    when(mockNextUpdatesService.getNextDeadlineDueDateAndOverDueObligations(any(), any(), any(), any())) thenReturn Future.successful(response)
-  }
-
   def mockGetObligationsViewModel(response: ObligationsViewModel): Unit = {
     when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())) thenReturn Future.successful(response)
+  }
+
+  def mockGetDueDates(response: Either[Exception, Seq[LocalDate]]): Unit = {
+    when(mockNextUpdatesService.getDueDates()(any(), any())) thenReturn Future.successful(response)
   }
 
 }

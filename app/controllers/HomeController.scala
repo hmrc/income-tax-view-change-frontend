@@ -16,55 +16,54 @@
 
 package controllers
 
-import java.time.LocalDate
 import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-
-import javax.inject.{Inject, Singleton}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
-import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService, NextUpdatesService, WhatYouOweService}
+import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
                                val authorisedFunctions: AuthorisedFunctions,
                                val nextUpdatesService: NextUpdatesService,
-                               val itvcErrorHandler: ItvcErrorHandler,
-                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
-                               implicit val dateService: DateServiceInterface,
+                               val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
                                auditingService: AuditingService,
                                auth: AuthenticatorPredicate)
                               (implicit val ec: ExecutionContext,
+                               implicit val itvcErrorHandler: ItvcErrorHandler,
+                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  private def view(availableCredit: Option[BigDecimal], nextPaymentDueDate: Option[LocalDate], nextUpdate: LocalDate, overDuePaymentsCount: Option[Int],
-                   overDueUpdatesCount: Option[Int], dunningLockExists: Boolean, currentTaxYear: Int,
-                   displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+  private def view(availableCredit: Option[BigDecimal], nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+                   dunningLockExists: Boolean, currentTaxYear: Int, displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       availableCredit = availableCredit,
       nextPaymentDueDate = nextPaymentDueDate,
-      nextUpdate = nextUpdate,
       overDuePaymentsCount = overDuePaymentsCount,
-      overDueUpdatesCount = overDueUpdatesCount,
+      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
       user.saUtr,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       dunningLockExists = dunningLockExists,
@@ -79,83 +78,82 @@ class HomeController @Inject()(val homeView: views.html.Home,
     )
   }
 
-  def handleShowRequest(itvcErrorHandler: ShowInternalServerError, isAgent: Boolean, incomeSourceCurrentTaxYear: Int, origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+  def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    implicit val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
+    val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
+    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
+    val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
 
-    (for {
-      latestDeadlineDate <- nextUpdatesService.getNextDeadlineDueDateAndOverDueObligations
-      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
-      paymentsDue = unpaidCharges
-        .flatMap {
-          case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-          case _ => List.empty[LocalDate]
+    nextUpdatesService.getDueDates().flatMap {
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
+        val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
+        val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
+
+        val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
+          _.flatMap {
+            case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+            case _ => List.empty[LocalDate]
+          }.sortWith(_ isBefore _)
         }
-        .sortWith(_ isBefore _)
-        .sortBy(_.toEpochDay())
-      availableCredit = unpaidCharges
-        .collectFirst { case fdm: FinancialDetailsModel if isEnabled(CreditsRefundsRepay) => fdm.balanceDetails.getAbsoluteAvailableCreditAmount }.flatten
-      dunningLockExistsValue = unpaidCharges
-        .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
-      outstandingChargesModel <- whatYouOweService
-        .getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits))
-        .map(_.outstandingChargesModel match {
-          case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
-          case _ => Nil
-        })
-      outstandingChargesDueDate = outstandingChargesModel.flatMap {
-        case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
-        case _ => Nil
-      }
-      overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
-      overDueUpdatesCount = latestDeadlineDate._2.size
-      paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-      displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
-    } yield {
-      auditingService.extendedAudit(HomeAudit(
-        mtdItUser = user,
-        paymentsDueMerged,
-        latestDeadlineDate._1,
-        overDuePaymentsCount,
-        overDueUpdatesCount))
-      Ok(
-        view(
-          availableCredit,
-          paymentsDueMerged,
-          latestDeadlineDate._1,
-          Some(overDuePaymentsCount),
-          Some(overDueUpdatesCount),
-          dunningLockExistsValue,
-          incomeSourceCurrentTaxYear,
-          displayCeaseAnIncome,
-          isAgent = isAgent
-        )
-      )
-    }) recover {
+
+        for {
+          paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
+          unpaidCharges <- unpaidChargesFuture
+          availableCredit = unpaidCharges
+            .collectFirst { case fdm: FinancialDetailsModel if isEnabled(CreditsRefundsRepay) => fdm.balanceDetails.getAbsoluteAvailableCreditAmount }.flatten
+          dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+          outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(TimeMachineAddYear)).map(_.outstandingChargesModel match {
+            case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
+            case _ => Nil
+          })
+          outstandingChargesDueDate = outstandingChargesModel.flatMap {
+            case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
+            case _ => Nil
+          }
+          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
+          paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+          displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
+        } yield {
+          auditingService.extendedAudit(HomeAudit(
+            mtdItUser = user,
+            paymentsDueMerged,
+            overDuePaymentsCount,
+            nextUpdatesTileViewModel))
+          Ok(
+            view(
+              availableCredit,
+              paymentsDueMerged,
+              Some(overDuePaymentsCount),
+              nextUpdatesTileViewModel,
+              dunningLockExistsValue,
+              incomeSourceCurrentTaxYear,
+              displayCeaseAnIncome,
+              isAgent = isAgent
+            )
+          )
+        }
+      case Left(ex) =>
+        Logger("application")
+          .error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+        Future.successful {
+          errorHandler(isAgent).showInternalServerError()
+        }
+    }.recover {
       case ex =>
         Logger("application")
-          .error(s"[HomeController][Home] Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        itvcErrorHandler.showInternalServerError()
+          .error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
+        errorHandler(isAgent).showInternalServerError()
     }
   }
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      handleShowRequest(
-        itvcErrorHandler = itvcErrorHandler,
-        isAgent = false,
-        dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)),
-        origin = origin
-      )
+      handleShowRequest(isAgent = false, origin)
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleShowRequest(
-        itvcErrorHandler = itvcErrorHandlerAgent,
-        isAgent = true,
-        dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-      )
+      handleShowRequest(isAgent = true)
   }
 }

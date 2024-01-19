@@ -21,6 +21,8 @@
 @import views.html.components._
 @import exceptions.MissingFieldException
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import models.nextUpdates.NextUpdatesTileViewModel
+
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 
@@ -40,9 +42,8 @@
 @(
     availableCredit: Option[BigDecimal],
     nextPaymentDueDate: Option[LocalDate],
-	nextUpdate: LocalDate,
 	overDuePaymentsCount: Option[Int],
-	overDueUpdatesCount: Option[Int],
+    nextUpdatesTileViewModel: NextUpdatesTileViewModel,
   	utr: Option[String],
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
@@ -230,20 +231,20 @@
 
 @updatesTile = {
 	@home_tile("updates-tile", messages("home.updates.heading")) {
-		@{overDueUpdatesCount.getOrElse(0) match {
-			case 0 => p()(updatesTileContentUpdatesDue0)
-			case 1 => p()(updatesTileContentUpdatesDue1)
-			case _ => p()(updatesTileContentUpdatesDueMany)
-		}}
-            @p(classes = "govuk-!-margin-bottom-4"){
+        @if(nextUpdatesTileViewModel.showNextUpdatesTileContent) {
+            @{nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
+                case 0 => p()(updatesTileContentUpdatesDue0)
+                case 1 => p()(updatesTileContentUpdatesDue1)
+                case _ => p()(updatesTileContentUpdatesDueMany)
+            }}
+
+            @p(classes = "govuk-!-margin-bottom-4") {
                 @link(
                     link = nextUpdatesControllerURL,
-                    messageKey = "home.updates.view"
-
-
-                )
+                    messageKey = "home.updates.view")
             }
-	}
+        }
+    }
 }
 
 @paymentHistoryTile = {
@@ -275,15 +276,17 @@
 }
 
 
-@updatesTileContentUpdatesDue0 = { @nextUpdate.toLongDate }
+@updatesTileContentUpdatesDue0 = {
+    @nextUpdatesTileViewModel.getNextDeadline.map(_.toLongDate)
+}
 
 @updatesTileContentUpdatesDue1 = {
     <span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>
-    @{nextUpdate.toLongDate}
+    @nextUpdatesTileViewModel.getNextDeadline.map(_.toLongDate)
 }
 
 @updatesTileContentUpdatesDueMany = {
-    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", overDueUpdatesCount.getOrElse(throw MissingFieldException("Over Due Updates Count")))}</span>
+    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>
 }
 
 

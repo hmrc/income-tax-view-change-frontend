@@ -19,9 +19,9 @@ package views.agent
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
-import controllers.routes
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -29,7 +29,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
@@ -76,34 +75,39 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   val year2018: Int = 2018
   val year2019: Int = 2019
 
-  val nextUpdateDue: LocalDate = LocalDate.of(year2018, Month.JANUARY, 1)
+  val nextUpdateDue: LocalDate = LocalDate.of(2100, Month.JANUARY, 1)
 
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
+  val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate)
+  private val viewModelTwoOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
+    LocalDate.of(2018, 2, 1)), currentDate)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate)
+
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
-              nextUpdate: LocalDate = nextUpdateDue,
-              overduePaymentExists: Boolean = true,
-              overDuePaymentsCount: Option[Int] = None,
-              overDueUpdatesCount: Option[Int] = None,
-              utr: Option[String] = None,
-              paymentHistoryEnabled: Boolean = true,
-              ITSASubmissionIntegrationEnabled: Boolean = true,
-              dunningLockExists: Boolean = false,
-              currentTaxYear: Int = currentTaxYear,
-              isAgent: Boolean = true,
-              displayCeaseAnIncome: Boolean = false,
-              incomeSourcesEnabled: Boolean = false,
-              user: MtdItUser[_] = testMtdItUserNotMigrated
-             ) {
+                  overduePaymentExists: Boolean = true,
+                  overDuePaymentsCount: Option[Int] = None,
+                  nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
+                  utr: Option[String] = None,
+                  paymentHistoryEnabled: Boolean = true,
+                  ITSASubmissionIntegrationEnabled: Boolean = true,
+                  dunningLockExists: Boolean = false,
+                  currentTaxYear: Int = currentTaxYear,
+                  isAgent: Boolean = true,
+                  displayCeaseAnIncome: Boolean = false,
+                  incomeSourcesEnabled: Boolean = false,
+                  user: MtdItUser[_] = testMtdItUserNotMigrated
+                 ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
     val view: HtmlFormat.Appendable = agentHome(
       None,
       nextPaymentDueDate,
-      nextUpdate,
       overDuePaymentsCount,
-      overDueUpdatesCount,
+      nextUpdatesTileViewModel,
       utr,
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,
@@ -196,13 +200,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages("home.updates.heading"))
         }
         "has content of the next update due" which {
-          "is overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(1)) {
+          "is overdue" in new TestSetup(nextUpdatesTileViewModel = viewModelOneOverdue) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"OVERDUE 1 January $year2018")
           }
           "is not overdue" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue)) {
-            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January $year2018")
+            getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"1 January 2100")
           }
-          "is a count of overdue updates" in new TestSetup(nextPaymentDueDate = Some(nextUpdateDue), overDueUpdatesCount = Some(2)) {
+          "is a count of overdue updates" in new TestSetup(nextUpdatesTileViewModel = viewModelTwoOverdue) {
             getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(s"2 OVERDUE UPDATES")
           }
         }
@@ -210,6 +214,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
           link.map(_.text) shouldBe Some(messages("home.updates.view"))
+        }
+        "is empty except for the title" when {
+          "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
+            getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
+          }
         }
       }
 

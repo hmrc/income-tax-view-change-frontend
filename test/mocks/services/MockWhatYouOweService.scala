@@ -21,7 +21,6 @@ import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import org.mockito.Mockito.mock
 import services.WhatYouOweService
 import testUtils.UnitSpec
 
@@ -44,19 +43,14 @@ trait MockWhatYouOweService extends UnitSpec with BeforeAndAfterEach {
     reset(mockWhatYouOweService)
   }
 
-  def setupMockGetWhatYouOweChargesListEmpty(): Unit =
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
-      .thenReturn(Future.successful(emptyWhatYouOweChargesList))
+  def setupMockGetWhatYouOweChargesList(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
+    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+      .thenReturn(Future.successful(whatYouOweChargesList))
+  }
 
-  def setupMockGetWhatYouOweChargesListEmptyFromFinancialDetails(): Unit =
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(),any())(any(), any(), any()))
-      .thenReturn(Future.successful(emptyWhatYouOweChargesList))
-
-  def setupMockGetWhatYouOweChargesListWithOne(): Unit =
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(),any())(any(), any(),any()))
-      .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
-  def setupMockGetWhatYouOweChargesListWithOneFromFinancialDetails(): Unit =
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(),any())(any(), any(), any()))
-      .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
+  def setupMockGetWhatYouOweChargesListFromFinancialDetails(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
+    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+      .thenReturn(Future.successful(whatYouOweChargesList))
+  }
 
 }
