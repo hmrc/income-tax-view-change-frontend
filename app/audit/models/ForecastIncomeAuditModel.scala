@@ -33,7 +33,6 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
   private val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome
   private val incomeSource: Option[List[IncomeSource]] = endOfYearEstimate.incomeSource
 
-  private var profitFromIncomeType: List[JsObject] = List()
   private var payFromIncomeType: List[JsObject] = List()
 
   private val incomeTypeValues = Map(
@@ -64,9 +63,6 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
     incomeSources.map(incomeSource => {
       val amount = incomeSource.taxableIncome
       incomeSource.incomeSourceType match {
-        case "01" =>
-          val incomeType = incomeSource.incomeSourceName.getOrElse("self-employment")
-          profitFromIncomeType = profitFromIncomeType.appended(Json.obj("name" -> incomeType , "amount" -> amount))
         case "05" =>
           val incomeType = incomeSource.incomeSourceName.getOrElse("employment")
           payFromIncomeType = payFromIncomeType.appended(Json.obj("name" -> incomeType , "amount" -> amount))
@@ -74,6 +70,25 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
       }
     })
   })
+
+  private def getProfitFromIncome: List[JsObject] = {
+    incomeSource match {
+      case Some(incomeSources) =>
+        incomeSources.foldLeft( List(Json.obj()) ) { ( acc, current) =>
+          current.incomeSourceType match {
+            case "01"  =>
+              val amount = current.taxableIncome
+              val incomeType = current.incomeSourceName.getOrElse("self-employment")
+              acc :+ Json.obj("name" -> incomeType , "amount" -> amount)
+            case _ =>
+              acc
+          }
+        }
+      case None =>
+        List.empty
+    }
+  }
+
 
   private def getAllOtherIncomeType: JsObject = {
     incomeSource match {
@@ -95,7 +110,7 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
     userAuditDetails(user) ++
       Json.obj() ++
       ("totalForecastIncome", totalEstimatedIncome) ++
-      Json.obj("profitFrom" -> profitFromIncomeType) ++
+      Json.obj("profitFrom" -> getProfitFromIncome) ++
       Json.obj("payFrom" -> payFromIncomeType) ++
       getAllOtherIncomeType
   }
