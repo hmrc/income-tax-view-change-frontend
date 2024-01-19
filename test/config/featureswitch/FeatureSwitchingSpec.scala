@@ -33,10 +33,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
     "fold depending on its state, calling the respective branch only" when {
       trait FoldSetup {
         val aValue = 123987
-        var hasBeenCalled = false
 
         def expectedBranch(): Int = {
-          hasBeenCalled = true
           aValue
         }
 
@@ -44,11 +42,15 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
       }
 
       "a feature is disabled" in new FoldSetup {
-        switches.foreach(switch => disable(switch))
-        expectedDisabledFeatures.head.fold(
-          ifEnabled = unexpectedBranch(),
-          ifDisabled = expectedBranch()) shouldBe aValue
-        hasBeenCalled shouldBe true
+        switches.forall{ featureSwitch =>
+          disable(featureSwitch)
+          val result = expectedDisabledFeatures.headOption match {
+            case Some(fs) =>
+              fs.fold(ifEnabled = unexpectedBranch(), ifDisabled = expectedBranch())
+            case _ => -1
+          }
+          result == aValue
+        } shouldBe true
       }
     }
 
