@@ -33,7 +33,6 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
   private val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome
   private val incomeSource: Option[List[IncomeSource]] = endOfYearEstimate.incomeSource
 
-  private var allOtherIncomeType: JsObject = Json.obj()
   private var profitFromIncomeType: List[JsObject] = List()
   private var payFromIncomeType: List[JsObject] = List()
 
@@ -71,10 +70,26 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
         case "05" =>
           val incomeType = incomeSource.incomeSourceName.getOrElse("employment")
           payFromIncomeType = payFromIncomeType.appended(Json.obj("name" -> incomeType , "amount" -> amount))
-        case _ => allOtherIncomeType = allOtherIncomeType + (incomeTypeValues.getOrElse(incomeSource.incomeSourceType , "") -> JsNumber(amount))
+        case _ =>
       }
     })
   })
+
+  private def getAllOtherIncomeType: JsObject = {
+    incomeSource match {
+      case Some(incomeSources) =>
+        incomeSources.foldLeft( Json.obj() ) { ( acc, current) =>
+          current.incomeSourceType match {
+            case "01" | "05" =>
+              acc
+            case _ =>
+              val amount = current.taxableIncome
+              acc + (incomeTypeValues.getOrElse(current.incomeSourceType , "") -> JsNumber(amount))
+          }
+        }
+      case None => Json.obj()
+    }
+  }
 
   override val detail: JsValue = {
     userAuditDetails(user) ++
@@ -82,7 +97,7 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
       ("totalForecastIncome", totalEstimatedIncome) ++
       Json.obj("profitFrom" -> profitFromIncomeType) ++
       Json.obj("payFrom" -> payFromIncomeType) ++
-      allOtherIncomeType
+      getAllOtherIncomeType
   }
 
 }
