@@ -41,7 +41,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching {
         def unexpectedBranch(): Int = throw new IllegalStateException
       }
 
-      "a feature is disabled - altered" in new FoldSetup {
+      "a feature is disabled" in new FoldSetup {
         switches.forall{ featureSwitch =>
           disable(featureSwitch)
           val result = expectedDisabledFeatures.headOption match {
