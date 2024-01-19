@@ -22,6 +22,7 @@ import models.liabilitycalculation.ReliefsClaimed
 import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation.viewmodels._
 import play.api.libs.json._
+import predicates.Predicate.{Discard, Keep}
 import utils.Utilities._
 
 
@@ -254,11 +255,14 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
     if (optDetail == Json.obj()) None else Some(optDetail)
   }
 
-
+import predicates.SeqOps._
   private val calculationMessagesDetail: Option[Seq[JsObject]] = optDetail(allowedCalcMessages.map(calcMessagesJson))
 
-  private val payPensionsProfitDetail: Option[Seq[JsObject]] = optDetail(viewModel.payPensionsProfitBands.getOrElse(Seq.empty)
-    .filter(_.income > 0).map(taxBandRateMessageJson))
+  private val payPensionsProfitDetail: Option[Seq[JsObject]] = optDetail(
+    viewModel.payPensionsProfitBands.getOrElse(Seq.empty)
+    .filterBy { e =>
+      if (e.income > 0) Discard else Keep
+    }.map(taxBandRateMessageJson))
 
   private val savingsDetail: Option[Seq[JsObject]] = optDetail(viewModel.savingsAndGainsBands.getOrElse(Seq.empty)
     .filter(_.income > 0).map(taxBandRateMessageJson))
