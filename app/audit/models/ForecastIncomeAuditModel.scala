@@ -74,7 +74,7 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
   private def getProfitFromIncome: List[JsObject] = {
     incomeSource match {
       case Some(incomeSources) =>
-        incomeSources.foldLeft( List(Json.obj()) ) { ( acc, current) =>
+        incomeSources.foldLeft[List[JsObject]]( List.empty ) { ( acc, current) =>
           current.incomeSourceType match {
             case "01"  =>
               val amount = current.taxableIncome
