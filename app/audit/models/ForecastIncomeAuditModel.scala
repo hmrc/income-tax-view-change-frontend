@@ -33,8 +33,6 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
   private val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome
   private val incomeSource: Option[List[IncomeSource]] = endOfYearEstimate.incomeSource
 
-  private var payFromIncomeType: List[JsObject] = List()
-
   private val incomeTypeValues = Map(
     "02" -> "profitFromUKLandandProperty",
     "03" -> "profitFromEEAholidayPropertyLettings",
@@ -59,27 +57,15 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
     "98" -> "giftAidAndPayrollGiving"
   )
 
-  incomeSource.map(incomeSources => {
-    incomeSources.map(incomeSource => {
-      val amount = incomeSource.taxableIncome
-      incomeSource.incomeSourceType match {
-        case "05" =>
-          val incomeType = incomeSource.incomeSourceName.getOrElse("employment")
-          payFromIncomeType = payFromIncomeType.appended(Json.obj("name" -> incomeType , "amount" -> amount))
-        case _ =>
-      }
-    })
-  })
-
-  private def getProfitFromIncome: List[JsObject] = {
+  private def getPayFromIncomeType: List[JsObject] = {
     incomeSource match {
       case Some(incomeSources) =>
         incomeSources.foldLeft[List[JsObject]]( List.empty ) { ( acc, current) =>
           current.incomeSourceType match {
-            case "01"  =>
-              val amount = current.taxableIncome
-              val incomeType = current.incomeSourceName.getOrElse("self-employment")
-              acc :+ Json.obj("name" -> incomeType , "amount" -> amount)
+            case "05"  =>
+              acc :+ Json.obj(
+                "name" -> current.incomeSourceName.getOrElse("employment"),
+                "amount" -> current.taxableIncome)
             case _ =>
               acc
           }
@@ -89,6 +75,23 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
     }
   }
 
+  private def getProfitFromIncome: List[JsObject] = {
+    incomeSource match {
+      case Some(incomeSources) =>
+        incomeSources.foldLeft[List[JsObject]]( List.empty ) { ( acc, current) =>
+          current.incomeSourceType match {
+            case "01"  =>
+              acc :+ Json.obj(
+                "name" -> current.incomeSourceName.getOrElse("self-employment"),
+                "amount" -> current.taxableIncome)
+            case _ =>
+              acc
+          }
+        }
+      case None =>
+        List.empty
+    }
+  }
 
   private def getAllOtherIncomeType: JsObject = {
     incomeSource match {
@@ -98,8 +101,7 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
             case "01" | "05" =>
               acc
             case _ =>
-              val amount = current.taxableIncome
-              acc + (incomeTypeValues.getOrElse(current.incomeSourceType , "") -> JsNumber(amount))
+              acc + (incomeTypeValues.getOrElse(current.incomeSourceType , "") -> JsNumber(current.taxableIncome))
           }
         }
       case None => Json.obj()
@@ -111,7 +113,7 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
       Json.obj() ++
       ("totalForecastIncome", totalEstimatedIncome) ++
       Json.obj("profitFrom" -> getProfitFromIncome) ++
-      Json.obj("payFrom" -> payFromIncomeType) ++
+      Json.obj("payFrom" -> getPayFromIncomeType) ++
       getAllOtherIncomeType
   }
 
