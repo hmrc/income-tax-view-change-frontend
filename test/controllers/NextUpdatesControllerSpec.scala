@@ -25,7 +25,7 @@ import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockNextUpdates
-import models.nextUpdates.{NextUpdateModel, NextUpdatesModel, NextUpdatesResponseModel, ObligationsModel}
+import models.nextUpdates.{DeadlineViewModel, EopsObligation, NextUpdateModel, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesResponseModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{mock, when}
@@ -91,6 +91,15 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
     NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(date, date, date, "Quarterly", Some(date), "#001"))),
     NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(date, date, date, "EOPS", Some(date), "EOPS")))
   ))
+
+  val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
+    NextUpdatesModel(BaseTestConstants.testSelfEmploymentId, List(NextUpdateModel(date, date, date, "Quarterly", Some(date), "#001"))),
+    NextUpdatesModel(BaseTestConstants.testPropertyIncomeId, List(NextUpdateModel(date, date, date, "EOPS", Some(date), "EOPS")))
+  )).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)})
+  private def getQuarterType(string: String) = {
+    if (string == "Quarterly") QuarterlyObligation else EopsObligation
+  }
 
   def mockObligations: OngoingStubbing[Future[NextUpdatesResponseModel]] = {
     when(NextUpdatesService.getNextUpdates(matches(true))(any(), any()))
@@ -354,7 +363,7 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         mockSingleBusinessIncomeSourceWithDeadlines()
         mockSingleBusinessIncomeSource()
         mockObligations
-        mockNextUpdates(obligationsModel, controllers.routes.HomeController.showAgent.url, true)(HtmlFormat.empty)
+        mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent.url, true)(HtmlFormat.empty)
 
         val result: Future[Result] = controller.getNextUpdatesAgent()(fakeRequestConfirmedClient())
 

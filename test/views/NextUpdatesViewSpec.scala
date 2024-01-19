@@ -19,19 +19,21 @@ package views
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import config.FrontendAppConfig
-import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{DeadlineViewModel, EopsObligation, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
 import views.html.NextUpdates
 
+import java.time.LocalDate
+
 class NextUpdatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val nextUpdatesView: NextUpdates = app.injector.instanceOf[NextUpdates]
 
-  class Setup(currentObligations: ObligationsModel) {
+  class Setup(currentObligations: NextUpdatesViewModel) {
     val pageDocument: Document = Jsoup.parse(contentAsString(nextUpdatesView(currentObligations, "testBackURL")))
   }
 
@@ -50,10 +52,15 @@ class NextUpdatesViewSpec extends TestSupport {
     val info: String = s"${messages("nextUpdates.previousYears.textOne")} ${messages("nextUpdates.previousYears.link")} ${messages("nextUpdates.previousYears.textTwo")}"
   }
 
-  lazy val obligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
+  lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  )))
+  ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(getQuarterType(obligations.head.obligation.obligationType), standardAndCalendar = false, date, obligations, Seq.empty)})
+
+  private def getQuarterType(string: String) = {
+    if (string.contains("Quarterly")) QuarterlyObligation else EopsObligation
+  }
 
   "Next Updates page" should {
 

@@ -19,31 +19,38 @@ package views.html.helpers.injected.obligations
 import testConstants.BaseTestConstants.testMtdItUser
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
-import models.nextUpdates.{NextUpdatesModel, ObligationsModel}
+import models.nextUpdates.{DeadlineViewModel, EopsObligation, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 
+import java.time.LocalDate
+
 class  NextUpdatesHelperSpec extends TestSupport {
 
-  class Setup(currentObligations: ObligationsModel) {
+  class Setup(currentObligations: NextUpdatesViewModel) {
     val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelper]
 
     val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations)(implicitly, testMtdItUser)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
-  lazy val obligationsModel = ObligationsModel(Seq(NextUpdatesModel(
+  lazy val obligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
-  )))
+  ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(getQuarterType(obligations.head.obligation.obligationType), standardAndCalendar = false, date, obligations, Seq.empty)})
+  private def getQuarterType(string: String) = {
+    if (string == "Quarterly") QuarterlyObligation else EopsObligation
+  }
 
-  lazy val crystallisedObligationsModel = ObligationsModel(Seq(NextUpdatesModel(
+  lazy val crystallisedObligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(NextUpdatesModel(
     business1.incomeSourceId,
     List(crystallisedObligation)
-  )))
+  ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+    DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)})
 
   "Next updates helper" should {
 
@@ -76,6 +83,9 @@ class  NextUpdatesHelperSpec extends TestSupport {
 
     "display the updates under the second deadline" in new Setup(obligationsModel) {
       val section = pageDocument.select(".govuk-accordion__section:nth-of-type(2)")
+      val heading = section.select(".govuk-accordion__section-summary")
+
+      heading.text() shouldBe "End of year update"
 
       val table = section.select(".govuk-table")
 
