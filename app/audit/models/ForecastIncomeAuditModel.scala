@@ -63,9 +63,8 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
         incomeSources.foldLeft[List[JsObject]]( List.empty ) { ( acc, current) =>
           current.incomeSourceType match {
             case "05"  =>
-              acc :+ Json.obj(
-                "name" -> current.incomeSourceName.getOrElse("employment"),
-                "amount" -> current.taxableIncome)
+              val incomeType : String = current.incomeSourceName.getOrElse("employment")
+              acc :+ Json.obj("name" -> incomeType , "amount" -> current.taxableIncome)
             case _ =>
               acc
           }
@@ -81,9 +80,8 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
         incomeSources.foldLeft[List[JsObject]]( List.empty ) { ( acc, current) =>
           current.incomeSourceType match {
             case "01"  =>
-              acc :+ Json.obj(
-                "name" -> current.incomeSourceName.getOrElse("self-employment"),
-                "amount" -> current.taxableIncome)
+              val incomeType: String = current.incomeSourceName.getOrElse("self-employment")
+              acc :+ Json.obj("name" -> incomeType , "amount" -> current.taxableIncome)
             case _ =>
               acc
           }
@@ -101,7 +99,8 @@ case class ForecastIncomeAuditModel(user: MtdItUserWithNino[_], endOfYearEstimat
             case "01" | "05" =>
               acc
             case _ =>
-              acc + (incomeTypeValues.getOrElse(current.incomeSourceType , "") -> JsNumber(current.taxableIncome))
+              val amount = current.taxableIncome
+              acc + (incomeTypeValues.getOrElse(current.incomeSourceType , "") -> JsNumber(amount))
           }
         }
       case None => Json.obj()
