@@ -16,24 +16,25 @@
 
 package controllers
 
-import scala.concurrent.{ExecutionContext, Future}
-import play.api.i18n.I18nSupport
-import play.api.mvc._
-import play.twirl.api.Html
 import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicateNoCache, IncomeTaxAgentUser, NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
-
-import javax.inject.{Inject, Singleton}
-import models.nextUpdates.ObligationsModel
+import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
+import models.nextUpdates._
+import play.api.i18n.I18nSupport
+import play.api.mvc._
+import play.twirl.api.Html
 import services.{IncomeSourceDetailsService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.{NextUpdates, NoNextUpdates}
+
+import java.time.LocalDate
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
@@ -82,10 +83,21 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
       }
   }
 
+  private def getViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel{
+    obligationsModel.obligationsByDate map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+      if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
+        val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
+        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
+      }
+      else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
+    }
+  }
+
   private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     auditNextUpdates(user, isAgent, origin)
-    nextUpdatesView(currentObligations = obligationsModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
+    val viewModel = getViewModel(obligationsModel)
+    nextUpdatesView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =

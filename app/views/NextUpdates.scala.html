@@ -14,8 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.nextUpdates.ObligationsModel
-
+@import models.nextUpdates.NextUpdatesViewModel
 @import views.html.helpers.injected.obligations.NextUpdatesHelper
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
@@ -31,7 +30,7 @@
 	nextUpdatesHelper: NextUpdatesHelper
 )
 
-@(currentObligations: ObligationsModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
+@(currentObligations: NextUpdatesViewModel, backUrl: String, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, user: auth.MtdItUser[_])
 
 @mainTemplate(
 	pageTitle = messages("nextUpdates.heading"),
