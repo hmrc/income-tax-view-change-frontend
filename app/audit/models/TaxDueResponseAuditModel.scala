@@ -261,7 +261,7 @@ import predicates.SeqOps._
   private val payPensionsProfitDetail: Option[Seq[JsObject]] = optDetail(
     viewModel.payPensionsProfitBands.getOrElse(Seq.empty)
     .filterBy { e =>
-      if (e.income > 0) Discard else Keep
+      if (e.income > 0) Keep else Discard
     }.map(taxBandRateMessageJson))
 
   private val savingsDetail: Option[Seq[JsObject]] = optDetail(viewModel.savingsAndGainsBands.getOrElse(Seq.empty)
