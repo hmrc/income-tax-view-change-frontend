@@ -213,6 +213,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         link.map(_.attr("href")) shouldBe Some(controllers.routes.NextUpdatesController.getNextUpdates().url)
         link.map(_.text) shouldBe Some(messages("home.updates.view"))
       }
+
       "is empty except for the title" when {
         "user has no open obligations" in new Setup(nextUpdatesTileViewModel = viewModelNoUpdates) {
           getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
