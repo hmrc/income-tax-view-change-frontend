@@ -292,7 +292,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
         }
-
       }
 
       s"have a change client link" in new TestSetup {
