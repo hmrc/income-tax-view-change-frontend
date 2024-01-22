@@ -106,6 +106,17 @@ class IncomeSourceAddedControllerSpec extends TestSupport
     )
   }
 
+  def mockISDS(incomeSourceType: IncomeSourceType): Unit = {
+    if (incomeSourceType == SelfEmployment)
+      when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
+        Some((LocalDate.parse("2022-01-01"), Some("Business Name")))
+      )
+    else
+      when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
+        Some((LocalDate.parse("2022-01-01"), None))
+      )
+  }
+
   def mockFailure(): Unit = {
     when(mockIncomeSourceDetailsService.getIncomeSourceFromUser(any(), mkIncomeSourceId(any()))(any())).thenReturn(
       None
@@ -113,7 +124,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
   }
 
   def mockMongo(incomeSourceType: IncomeSourceType): Unit = {
-    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+    setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
     when(mockSessionService.setMongoData(any())(any(), any())).thenReturn(Future(true))
   }
 

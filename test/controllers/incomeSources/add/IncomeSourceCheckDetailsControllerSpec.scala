@@ -262,31 +262,84 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
       }
 
       s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
-        s"user has already completed the journey" in {
-          disableAllSwitches()
-          enable(IncomeSources)
+        s"user has already completed the journey" when {
+          def journeyCompletedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+            disableAllSwitches()
+            enable(IncomeSources)
 
-          mockNoIncomeSources()
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, SelfEmployment)))))
+            mockNoIncomeSources()
+            setupMockAuthorisationSuccess(isAgent)
+            setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, incomeSourceType)))))
 
-          val result: Future[Result] = TestCheckDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
-          status(result) shouldBe SEE_OTHER
-          val redirectUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
-          redirectLocation(result) shouldBe Some(redirectUrl)
+            val result: Future[Result] = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
+            else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+
+          "individual" when {
+            "Self Employment" in {
+              journeyCompletedTest(isAgent = false, SelfEmployment)
+            }
+            "Uk Property" in {
+              journeyCompletedTest(isAgent = false, UkProperty)
+            }
+            "Foreign Property" in {
+              journeyCompletedTest(isAgent = false, ForeignProperty)
+            }
+          }
+          "agent" when {
+            "Self Employment" in {
+              journeyCompletedTest(isAgent = true, SelfEmployment)
+            }
+            "Uk Property" in {
+              journeyCompletedTest(isAgent = true, UkProperty)
+            }
+            "Foreign Property" in {
+              journeyCompletedTest(isAgent = true, ForeignProperty)
+            }
+          }
         }
-        s"user has already added their income source" in {
-          disableAllSwitches()
-          enable(IncomeSources)
+        s"user has already added their income source" when {
+          def incomeSourceAddedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+            disableAllSwitches()
+            enable(IncomeSources)
 
-          mockNoIncomeSources()
-          setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
-          setupMockGetMongo(Right(Some(sessionDataISAdded(JourneyType(Add, SelfEmployment)))))
+            mockNoIncomeSources()
+            setupMockAuthorisationSuccess(isAgent)
+            setupMockGetMongo(Right(Some(sessionDataISAdded(JourneyType(Add, incomeSourceType)))))
 
-          val result: Future[Result] = TestCheckDetailsController.show(SelfEmployment)(fakeRequestWithActiveSession)
-          status(result) shouldBe SEE_OTHER
-          val redirectUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
-          redirectLocation(result) shouldBe Some(redirectUrl)
+            val result: Future[Result] = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+          "individual" when {
+            "Self Employment" in {
+              incomeSourceAddedTest(isAgent = false, SelfEmployment)
+            }
+            "Uk Property" in {
+              incomeSourceAddedTest(isAgent = false, UkProperty)
+            }
+            "Foreign Property" in {
+              incomeSourceAddedTest(isAgent = false, ForeignProperty)
+            }
+          }
+          "agent" when {
+            "Self Employment" in {
+              incomeSourceAddedTest(isAgent = true, SelfEmployment)
+            }
+            "Uk Property" in {
+              incomeSourceAddedTest(isAgent = true, UkProperty)
+            }
+            "Foreign Property" in {
+              incomeSourceAddedTest(isAgent = true, ForeignProperty)
+            }
+          }
         }
       }
 
