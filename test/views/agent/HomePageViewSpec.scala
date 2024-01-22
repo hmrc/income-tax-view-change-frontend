@@ -98,13 +98,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
                   isAgent: Boolean = true,
                   displayCeaseAnIncome: Boolean = false,
                   incomeSourcesEnabled: Boolean = false,
+                  creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated
                  ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
     val view: HtmlFormat.Appendable = agentHome(
-      None,
+      availableCredit = Some(786),
       nextPaymentDueDate,
       overDuePaymentsCount,
       nextUpdatesTileViewModel,
@@ -114,7 +115,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       currentTaxYear,
       displayCeaseAnIncome = displayCeaseAnIncome,
       isAgent,
-      creditAndRefundEnabled = false,
+      creditAndRefundEnabled = creditAndRefundEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled,
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
       incomeSourcesEnabled = incomeSourcesEnabled
@@ -276,6 +277,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
         }
 
+        s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
+          getElementById("available-credit").map(_.text) shouldBe Some("£786.00 is in your account")
+        }
+
         "has a link to the Payment and refund history page when payment history feature switch is enabled" in new TestSetup {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
@@ -287,7 +292,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
         }
-
       }
 
       s"have a change client link" in new TestSetup {
