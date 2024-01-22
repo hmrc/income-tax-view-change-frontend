@@ -227,8 +227,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has the date of the next update due" in new Setup {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
       }
-      s"has the available credit " in new Setup {
-        getTextOfElementById("available-credit") shouldBe Some("£100.00")
+      s"has the available credit " in new Setup(creditAndRefundEnabled = true) {
+        getTextOfElementById("available-credit") shouldBe Some("£100.00 is in your account")
       }
       "don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0)) {
         getTextOfElementById("overdue-warning") shouldBe None

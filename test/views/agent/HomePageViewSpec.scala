@@ -98,13 +98,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
                   isAgent: Boolean = true,
                   displayCeaseAnIncome: Boolean = false,
                   incomeSourcesEnabled: Boolean = false,
+                  creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated
                  ) {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
     val view: HtmlFormat.Appendable = agentHome(
-      Some(786),
+      availableCredit = Some(786),
       nextPaymentDueDate,
       overDuePaymentsCount,
       nextUpdatesTileViewModel,
@@ -114,7 +115,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       currentTaxYear,
       displayCeaseAnIncome = displayCeaseAnIncome,
       isAgent,
-      creditAndRefundEnabled = false,
+      creditAndRefundEnabled = creditAndRefundEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled,
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
       incomeSourcesEnabled = incomeSourcesEnabled
@@ -276,8 +277,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
         }
 
-        s"has the available credit " in new TestSetup() {
-          getElementById("available-credit") shouldBe Some("786.00")
+        s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
+          getElementById("available-credit").map(_.text) shouldBe Some("£786.00 is in your account")
         }
 
         "has a link to the Payment and refund history page when payment history feature switch is enabled" in new TestSetup {
