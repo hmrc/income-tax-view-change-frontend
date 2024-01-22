@@ -104,7 +104,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     val agentHome: Home = app.injector.instanceOf[Home]
 
     val view: HtmlFormat.Appendable = agentHome(
-      None,
+      Some(786),
       nextPaymentDueDate,
       overDuePaymentsCount,
       nextUpdatesTileViewModel,
@@ -274,6 +274,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
         "has payment history heading when payment history feature switch is disabled" in new TestSetup(paymentHistoryEnabled = false) {
           getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
+        }
+
+        s"has the available credit " in new TestSetup() {
+          getElementById("available-credit") shouldBe Some("786.00")
         }
 
         "has a link to the Payment and refund history page when payment history feature switch is enabled" in new TestSetup {

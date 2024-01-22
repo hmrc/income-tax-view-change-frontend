@@ -114,7 +114,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
-      availableCredit = Some(0),
+      availableCredit = Some(100),
       nextPaymentDueDate = paymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -227,7 +227,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has the date of the next update due" in new Setup {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
       }
-
+      s"has the available credit " in new Setup {
+        getTextOfElementById("available-credit") shouldBe Some("£100.00")
+      }
       "don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0)) {
         getTextOfElementById("overdue-warning") shouldBe None
       }
@@ -285,6 +287,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     "have a payment history tile" which {
+
       "has a payment and history refunds heading when payment history feature switch is enabled" in new Setup {
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
       }
