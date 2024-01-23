@@ -62,9 +62,9 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(JourneyType(Add, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
-      sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
-        case Some(id) =>
+    withIncomeSourcesFS {
+      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
+        case Right(Some(id)) =>
           val incomeSourceId: IncomeSourceId = IncomeSourceId(id)
 
           incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
@@ -77,10 +77,17 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                 errorHandler(isAgent).showInternalServerError()
               }
           }
-        case None =>
+        case Right(_) =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
             s"[IncomeSourceAddedController][handleRequest]: Unable to retrieve incomeSourceId from Mongo for $incomeSourceType")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
+        case _ =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix +
+            s"[IncomeSourceAddedController][handleRequest]: Error accessing Mongo database for $incomeSourceType")
           Future.successful {
             errorHandler(isAgent).showInternalServerError()
           }

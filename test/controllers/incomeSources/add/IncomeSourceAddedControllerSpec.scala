@@ -162,6 +162,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               disableAllSwitches()
               enable(IncomeSources)
               setupMockAuthorisationSuccess(isAgent)
+              setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockIncomeSource(incomeSourceType)
               mockISDS(incomeSourceType)
 
@@ -194,21 +195,6 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
               redirectLocation(result) shouldBe Some(redirectUrl)
             }
-            s"user has already completed the journey" in {
-              disableAllSwitches()
-              enable(IncomeSources)
-
-              mockNoIncomeSources()
-              setupMockAuthorisationSuccess(isAgent)
-              setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, incomeSourceType)))))
-
-              val result: Future[Result] = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-              else TestIncomeSourceAddedController.show(incomeSourceType)(fakeRequestWithActiveSession)
-              status(result) shouldBe SEE_OTHER
-              val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
-              else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
-              redirectLocation(result) shouldBe Some(redirectUrl)
-            }
             "redirect to the session timeout page" when {
               "the user has timed out" in {
                 if (isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired()) else setupMockAuthorisationException()
@@ -235,6 +221,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               enable(IncomeSources)
               setupMockAuthorisationSuccess(isAgent)
               mockIncomeSource(incomeSourceType)
+              setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockFailure()
               mockMongo(incomeSourceType)
               val result = if (isAgent) TestIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
@@ -245,6 +232,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
               enable(IncomeSources)
               setupMockAuthorisationSuccess(isAgent)
               mockIncomeSource(incomeSourceType)
+              setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
               mockISDS(incomeSourceType)
               mockMongo(incomeSourceType)
               when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
@@ -269,6 +257,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
                   None,
                   cashOrAccruals = false
                 )), List.empty)
+                setupMockGetSessionKeyMongoTyped[String](Right(Some(testSelfEmploymentId)))
                 setupMockGetIncomeSourceDetails()(sources)
                 when(mockNextUpdatesService.getNextUpdates(any())(any(), any())).
                   thenReturn(Future(testObligationsModel))
