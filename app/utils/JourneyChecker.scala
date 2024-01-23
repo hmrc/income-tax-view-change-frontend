@@ -17,7 +17,7 @@
 package utils
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
+import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
 import enums.JourneyType.{Add, Cease, JourneyType, Manage}
 import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
@@ -120,6 +120,7 @@ trait JourneyChecker extends IncomeSourcesUtils {
   private def showCannotGoBackErrorPage(data: UIJourneySessionData, journeyType: JourneyType, journeyState: JourneyState): Boolean = {
     (journeyType.operation, journeyState) match {
       case (_, CannotGoBackPage) => false
+      case (_, AfterSubmissionPage) => false
       case (Add, BeforeSubmissionPage) | (Add, InitialPage) =>
         data.addIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false) ||
           data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
