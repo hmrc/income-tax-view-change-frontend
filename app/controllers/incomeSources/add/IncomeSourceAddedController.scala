@@ -77,10 +77,17 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                 errorHandler(isAgent).showInternalServerError()
               }
           }
-        case _ =>
+        case Right(_) =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
             s"[IncomeSourceAddedController][handleRequest]: Unable to retrieve incomeSourceId from Mongo for $incomeSourceType")
+          Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
+        case _ =>
+          val agentPrefix = if (isAgent) "[Agent]" else ""
+          Logger("application").error(agentPrefix +
+            s"[IncomeSourceAddedController][handleRequest]: Error accessing Mongo database for $incomeSourceType")
           Future.successful {
             errorHandler(isAgent).showInternalServerError()
           }
