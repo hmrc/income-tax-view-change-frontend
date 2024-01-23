@@ -40,14 +40,14 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                           val addBusinessView: AddBusinessName,
-                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          implicit val itvcErrorHandler: ItvcErrorHandler,
                                           val sessionService: SessionService,
                                           auth: AuthenticatorPredicate)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit override val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
@@ -105,6 +105,9 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
       Future.successful {
         Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
+      }
+      Future.successful {
+        logWithError("THERE IS AN ERROR")
       }
     }
   }.recover {
