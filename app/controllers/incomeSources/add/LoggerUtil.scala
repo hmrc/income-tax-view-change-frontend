@@ -43,11 +43,11 @@ trait LoggerUtil { self =>
     (if (user.isAgent) itvcErrorHandler else agentItvcErrorHandler).showInternalServerError()
   }
 
-  def logWithDebug(methodName: String)(message: String)
+  def logWithDebug(message: String)
                   (implicit user: MtdItUser[_]): Unit =
     logger.debug(formattedMessage(user.isAgent, message))
 
-  def logWithInfo(methodName: String)(message: String)
+  def logWithInfo(message: String)
                  (implicit user: MtdItUser[_]): Unit =
     logger.info(formattedMessage(user.isAgent, message))
 }
