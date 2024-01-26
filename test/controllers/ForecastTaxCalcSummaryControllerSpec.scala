@@ -84,14 +84,16 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
     }
 
     "show(taxYear) with forecast calculation fs enabled" when {
-      lazy val result = TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
+      lazy val result = {
+        disableAllSwitches()
+        enable(ForecastCalculation)
+        mockCalculationSuccessfulNew(testMtditid)
+        TestForecastTaxCalcSummaryController.show(testTaxYear)(fakeRequestWithActiveSession)
+      }
       lazy val document = result.toHtmlDocument
 
       "given a tax year which can be found in ETMP" should {
         s"return status $OK" in {
-          disableAllSwitches()
-          enable(ForecastCalculation)
-          mockCalculationSuccessfulNew(testMtditid)
           status(result) shouldBe OK
         }
 
@@ -143,15 +145,17 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
   "agent user" when {
     "show(taxYear) with forecast calculation fs disabled" when {
 
-      lazy val result = TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
+      lazy val result = {
+        disable(ForecastCalculation)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockCalculationSuccessfulNew(testMtditidAgent)
+        TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
+      }
       lazy val document = result.toHtmlDocument
 
       "given a tax year which can be found in ETMP" should {
 
         s"return status $NOT_FOUND" in {
-          disable(ForecastCalculation)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationSuccessfulNew(testMtditidAgent)
           status(result) shouldBe NOT_FOUND
         }
 
@@ -168,15 +172,17 @@ class ForecastTaxCalcSummaryControllerSpec extends TestSupport with MockCalculat
 
     "show(taxYear) with forecast calculation fs enabled" when {
 
-      lazy val result = TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
+      lazy val result = {
+        disableAllSwitches()
+        enable(ForecastCalculation)
+        setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
+        mockCalculationSuccessfulNew(testMtditidAgent)
+        TestForecastTaxCalcSummaryController.showAgent(testTaxYear)(fakeRequestConfirmedClient("AB123456C"))
+      }
       lazy val document = result.toHtmlDocument
 
       "given a tax year which can be found in ETMP" should {
         s"return $OK" in {
-          disableAllSwitches()
-          enable(ForecastCalculation)
-          setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          mockCalculationSuccessfulNew(testMtditidAgent)
           status(result) shouldBe OK
         }
 
