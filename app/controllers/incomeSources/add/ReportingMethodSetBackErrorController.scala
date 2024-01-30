@@ -19,10 +19,11 @@ package controllers.incomeSources.add
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
+import controllers.predicates._
+import enums.IncomeSourceJourney.{CannotGoBackPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import play.api.mvc._
-import services.SessionService
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.YouCannotGoBackError
@@ -38,8 +39,7 @@ class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: A
                                                       val ec: ExecutionContext,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                      val sessionService: SessionService
-                                                     ) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
+                                                      val sessionService: SessionService) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
 
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
@@ -55,7 +55,7 @@ class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: A
         Ok(
           cannotGoBackError(
             isAgent,
-            incomeSourceType.cannotGoBack
+            messagesApi.preferred(user)(incomeSourceType.cannotGoBack)
           )
         )
       )
