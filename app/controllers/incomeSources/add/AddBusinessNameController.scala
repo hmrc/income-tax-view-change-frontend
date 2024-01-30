@@ -95,14 +95,24 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
           },
         formData => {
           sessionService.setMongoData(
-            sessionData.copy(
-              addIncomeSourceData =
-                Some(
-                  AddIncomeSourceData(
-                    businessName = Some(formData.name)
+            if (isChange)
+              sessionData.copy(
+                addIncomeSourceData =
+                    sessionData.addIncomeSourceData.map(
+                      _.copy(
+                        businessName = Some(formData.name)
+                      )
+                    )
+              )
+            else
+              sessionData.copy(
+                addIncomeSourceData =
+                  Some(
+                    AddIncomeSourceData(
+                      businessName = Some(formData.name)
+                    )
                   )
-                )
-            )
+              )
           ) flatMap {
             case true  => Future.successful(Redirect(redirectCall(isAgent, isChange)))
             case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
