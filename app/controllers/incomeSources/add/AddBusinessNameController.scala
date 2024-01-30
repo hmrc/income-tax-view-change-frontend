@@ -48,8 +48,6 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
                                           val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
-
   def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
@@ -112,6 +110,8 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
   }
+
+  private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
   private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
     ((isAgent, isChange) match {

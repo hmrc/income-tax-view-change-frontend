@@ -70,12 +70,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
         BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
 
       Future.successful {
-        Ok(addBusinessTradeView(
-          filledForm,
-          postAction(isAgent, isChange),
-          isAgent,
-          backUrl(isAgent, isChange)
-        ))
+        Ok(addBusinessTradeView(filledForm, postAction(isAgent, isChange), isAgent, backUrl(isAgent, isChange)))
       }
     }
   }.recover {
@@ -106,12 +101,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     val backURL = backUrl(isAgent, isChange)
 
     Future.successful {
-      BadRequest(addBusinessTradeView(
-        form,
-        postAction,
-        isAgent,
-        backURL
-      ))
+      BadRequest(addBusinessTradeView(form, postAction, isAgent, backURL))
     }
   }
 

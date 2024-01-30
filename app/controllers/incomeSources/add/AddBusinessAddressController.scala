@@ -83,12 +83,11 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
     }
   }
 
-  def handleSubmitRequest(id: Option[IncomeSourceId], isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_],
-                                                                                           ec: ExecutionContext, request: Request[_]): Future[Result] = {
-    val redirect = Redirect(redirectUrl(isAgent, isChange))
+  def handleSubmitRequest(id: Option[IncomeSourceId], isAgent: Boolean, isChange: Boolean)
+                         (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
-      case true => Future.successful(redirect)
+      case true => Future.successful(Redirect(redirectUrl(isAgent, isChange)))
       case false => Future.failed(new Exception("failed to set session data"))
     })
 
