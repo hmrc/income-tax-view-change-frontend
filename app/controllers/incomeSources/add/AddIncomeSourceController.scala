@@ -48,28 +48,15 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                                           implicit override val mcc: MessagesControllerComponents) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  lazy val homePageCall: Call = controllers.routes.HomeController.show()
-  lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
-
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        isAgent = false,
-        homePageCall = homePageCall,
-        sources = user.incomeSources,
-        backUrl = controllers.routes.HomeController.show().url
-      )
-  }
-
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        isAgent = true,
-        homePageCall = homePageCallAgent,
-        sources = mtdItUser.incomeSources,
-        backUrl = controllers.routes.HomeController.showAgent.url
-      )
-
+  def show(isAgent: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleRequest(
+          isAgent = isAgent,
+          homePageCall = homePageCall(isAgent),
+          sources = user.incomeSources,
+          backUrl = controllers.routes.HomeController.show().url
+        )
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel,
@@ -103,4 +90,8 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
   private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
     (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
+
+  private lazy val homePageCall: Boolean => Call = isAgent =>
+    if (isAgent) controllers.routes.HomeController.showAgent
+    else controllers.routes.HomeController.show()
 }

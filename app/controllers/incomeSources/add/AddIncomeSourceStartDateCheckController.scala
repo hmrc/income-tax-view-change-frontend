@@ -54,32 +54,24 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils with JourneyChecker {
 
-  lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
-    if (isAgent) itvcErrorHandlerAgent
-    else itvcErrorHandler
-
-  def show(isAgent: Boolean,
-           isChange: Boolean,
-           incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-
-    handleShowRequest(
-      incomeSourceType = incomeSourceType,
-      isAgent = isAgent,
-      isChange = isChange
-    )
+  def show(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleShowRequest(
+          incomeSourceType = incomeSourceType,
+          isAgent = isAgent,
+          isChange = isChange
+        )
   }
 
-  def submit(isAgent: Boolean,
-             isChange: Boolean,
-             incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-
-    handleSubmitRequest(
-      incomeSourceType = incomeSourceType,
-      isAgent = isAgent,
-      isChange = isChange
-    )
+  def submit(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleSubmitRequest(
+          incomeSourceType = incomeSourceType,
+          isAgent = isAgent,
+          isChange = isChange
+        )
   }
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,
@@ -95,9 +87,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
             Ok(
               addIncomeSourceStartDateCheckView(
                 isAgent = isAgent,
-                backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
+                backUrl = backUrl(incomeSourceType, isAgent, isChange),
                 form = form(incomeSourceType.addStartDateCheckMessagesPrefix),
-                postAction = getPostAction(incomeSourceType, isAgent, isChange),
+                postAction = postAction(incomeSourceType, isAgent, isChange),
                 incomeSourceStartDate = longDate(startDate).toLongDate
               )
             )
@@ -132,8 +124,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                     isAgent = isAgent,
                     form = formWithErrors,
                     incomeSourceStartDate = longDate(startDate).toLongDate,
-                    backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-                    postAction = getPostAction(incomeSourceType, isAgent, isChange)
+                    backUrl = backUrl(incomeSourceType, isAgent, isChange),
+                    postAction = postAction(incomeSourceType, isAgent, isChange)
                   )
                 )
               },
@@ -169,7 +161,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
-    val successUrl = getSuccessUrl(incomeSourceType, isAgent, isChange)
+    val successUrl = redirectUrl(incomeSourceType, isAgent, isChange)
 
     (formResponse, incomeSourceType) match {
       case (Some(form.responseNo), _) => removeDateFromSessionAndGoBack(incomeSourceType, isAgent, isChange, sessionData)
@@ -184,8 +176,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
   private def removeDateFromSessionAndGoBack(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean, sessionData: UIJourneySessionData)
                                             (implicit request: Request[_]): Future[Result] = {
 
-    val backUrl = getBackUrl(incomeSourceType, isAgent, isChange)
-
     sessionData.addIncomeSourceData match {
       case Some(addIncomeSourceData) =>
         val updatedAddIncomeSourceData = addIncomeSourceData.copy(
@@ -196,7 +186,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
         val journeySessionData: UIJourneySessionData =
           sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
-        sessionService.setMongoData(journeySessionData).flatMap(_ => Future.successful(Redirect(backUrl)))
+        sessionService.setMongoData(journeySessionData).flatMap(_ =>
+          Future.successful(
+            Redirect(
+              backUrl(incomeSourceType, isAgent, isChange)
+            )
+          )
+        )
 
       case None =>
         Logger("application").error("Unable to find addIncomeSourceData in session data")
@@ -239,24 +235,21 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
     }
   }
 
+  lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
+    if (isAgent) itvcErrorHandlerAgent
+    else itvcErrorHandler
 
-  private def getBackUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): String = {
+  private lazy val backUrl: (IncomeSourceType, Boolean, Boolean) => String = (incomeSourceType, isAgent, isChange) =>
     routes.AddIncomeSourceStartDateController.show(isAgent, isChange, incomeSourceType).url
-  }
 
-  private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
+  private lazy val postAction: (IncomeSourceType, Boolean, Boolean) => Call = (incomeSourceType, isAgent, isChange) =>
     routes.AddIncomeSourceStartDateCheckController.submit(isAgent, isChange, incomeSourceType)
-  }
 
-  private def getSuccessUrl(incomeSourceType: IncomeSourceType,
-                            isAgent: Boolean,
-                            isChange: Boolean): String = {
-
+  private lazy val redirectUrl: (IncomeSourceType, Boolean, Boolean) => String = (incomeSourceType, isAgent, isChange) =>
     ((isAgent, isChange, incomeSourceType) match {
       case (_, false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
       case (_, false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
       case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
       case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
-  }
 }

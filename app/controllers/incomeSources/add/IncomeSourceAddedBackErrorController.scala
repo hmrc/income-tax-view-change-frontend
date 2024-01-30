@@ -44,7 +44,19 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker{
 
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleShowRequest(isAgent, incomeSourceType)
+  }
+
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleSubmitRequest(isAgent, incomeSourceType)
+  }
+
+  def handleShowRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
     val cannotGoBackRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
     else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
@@ -58,34 +70,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType
-      )
-  }
-
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        isAgent = true,
-        incomeSourceType = incomeSourceType
-      )
-  }
-
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleSubmit(isAgent = false, incomeSourceType)
-  }
-
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleSubmit(isAgent = true, incomeSourceType)
-
-  }
-
-  private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
+  private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
     sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)) map {
       case Right(Some(_)) =>
         Redirect(controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))

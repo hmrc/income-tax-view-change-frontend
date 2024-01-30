@@ -50,7 +50,72 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+  def show(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleRequest(isAgent, isChange, incomeSourceType)
+    }
+
+  def submit(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleSubmitRequest(isAgent, isChange, incomeSourceType)
+    }
+
+  def handleRequest(isAgent: Boolean,
+                    isChange: Boolean,
+                    incomeSourceType: IncomeSourceType
+                   )
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+
+      implicit val back: String = backUrl(isAgent, isChange, incomeSourceType)
+      implicit val post: Call = postAction(isAgent, incomeSourceType)
+
+      lazy val maybeCashOrAccrualsFlag = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
+
+      (isChange, incomeSourceType) match {
+        case (true, SelfEmployment) =>
+          handleUserActiveBusinessesCashOrAccruals(isAgent, incomeSourceType, maybeCashOrAccrualsFlag)
+        case (true, _) =>
+          loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, maybeCashOrAccrualsFlag)
+        case (false, _) =>
+          loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, None)
+      }
+    }.recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
+        errorHandler(isAgent).showInternalServerError()
+    }
+
+  def handleSubmitRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+    IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
+      hasErrors => Future.successful(BadRequest(view(
+        incomeSourcesType = incomeSourceType,
+        form = hasErrors,
+        postAction = postAction(isAgent, incomeSourceType),
+        backUrl = backUrl(isAgent, isChange, incomeSourceType),
+        isAgent = isAgent
+      ))),
+      validatedInput => {
+        val accountingMethod = if (validatedInput.contains("cash")) "cash" else "accruals"
+        sessionService.setMongoKey(AddIncomeSourceData.incomeSourcesAccountingMethodField,
+          accountingMethod, JourneyType(Add, incomeSourceType)).flatMap {
+          case Right(_) => Future.successful {
+            Redirect(successCall(isAgent, incomeSourceType))
+          }
+          case Left(_) => Future.successful {
+            errorHandler(isAgent).showInternalServerError()
+          }
+        }
+      }
+    )
+  }.recover {
+    case ex =>
+      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
+      errorHandler(isAgent).showInternalServerError()
+  }
 
   def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean,
                                                incomeSourceType: IncomeSourceType,
@@ -113,31 +178,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     )))
   }
 
-  def handleRequest(isAgent: Boolean,
-                    incomeSourceType: IncomeSourceType,
-                    cashOrAccrualsFlag: Option[String] = None,
-                    isChange: Boolean)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { _ =>
-
-      val backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
-
-      {
-        if (incomeSourceType == SelfEmployment) {
-          handleUserActiveBusinessesCashOrAccruals(isAgent, incomeSourceType, cashOrAccrualsFlag)(
-            user, backUrl, postAction(isAgent, incomeSourceType))
-        } else {
-          loadIncomeSourceAccountingMethod(isAgent, incomeSourceType, cashOrAccrualsFlag)(
-            user, backUrl, postAction(isAgent, incomeSourceType))
-        }
-      }
-    }.recover {
-      case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
-    }
-
   private lazy val successCall: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
     if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
@@ -147,87 +187,14 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)
   }
 
-  private def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
+  private lazy val backUrl: (Boolean, Boolean, IncomeSourceType) => String = (isAgent, isChange, incomeSourceType) =>
     ((isAgent, isChange, incomeSourceType) match {
       case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange)
-      case (_, false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_, false, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (_,     false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_,     false, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+      case (false, _,     _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_,     _,     _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
-  }
 
-  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(view(
-        incomeSourcesType = incomeSourceType,
-        form = hasErrors,
-        postAction = postAction(isAgent, incomeSourceType),
-        backUrl = getBackUrl(isAgent, isChange = false, incomeSourceType),
-        isAgent = isAgent
-      ))),
-      validatedInput => {
-        val accountingMethod = if (validatedInput.contains("cash")) "cash" else "accruals"
-        sessionService.setMongoKey(AddIncomeSourceData.incomeSourcesAccountingMethodField,
-          accountingMethod, JourneyType(Add, incomeSourceType)).flatMap {
-          case Right(_) => Future.successful {
-            Redirect(successCall(isAgent, incomeSourceType))
-          }
-          case Left(_) => Future.successful {
-            errorHandler(isAgent).showInternalServerError()
-          }
-        }
-      }
-    )
-  }.recover {
-    case ex =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
-      errorHandler(isAgent).showInternalServerError()
-  }
-
-  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user =>
-      handleRequest(
-        isAgent,
-        incomeSourceType = incomeSourceType,
-        isChange = false
-      )
-  }
-
-  def submit(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
-      implicit user =>
-        handleSubmitRequest(
-          isAgent,
-          incomeSourceType
-        )
-    }
-
-  def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
-      implicit user =>
-        withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
-          val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
-          handleRequest(
-            isAgent,
-            incomeSourceType = incomeSourceType,
-            cashOrAccrualsFlag = accountingMethodOpt,
-            isChange = true
-          )
-        }
-    }
-
-  def changeIncomeSourcesAccountingMethodAgent(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
-          val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
-          handleRequest(
-            isAgent,
-            incomeSourceType = incomeSourceType,
-            cashOrAccrualsFlag = accountingMethodOpt,
-            isChange = true
-          )
-        }
-    }
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 }

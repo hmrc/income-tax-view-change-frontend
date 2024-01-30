@@ -43,32 +43,28 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunc
                                                               val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleRequest(isAgent, incomeSourceType)
+  }
+
+
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
 
-    val action: Call =
-      if (isAgent)
-        controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
-      else
-        controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType)
-
-    Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
-  }
-
-
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType
+    Future.successful(
+      Ok(
+        view(
+          incomeSourceType = incomeSourceType,
+          isAgent = isAgent,
+          continueAction =
+            if (isAgent)
+              controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
+            else
+              controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType)
+        )
       )
-  }
-
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        isAgent = true,
-        incomeSourceType = incomeSourceType
-      )
+    )
   }
 }

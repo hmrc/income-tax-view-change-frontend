@@ -52,15 +52,18 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
                                             )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(isAgent = false, isChange = isChange)
+  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleRequest(isAgent, isChange)
   }
 
-  def showAgent(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(isAgent = true, isChange = isChange)
+  def submit(id: Option[String], isAgent: Boolean, isChange: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent = false) {
+      implicit user =>
+        handleSubmitRequest(id.map(mkIncomeSourceId), isAgent, isChange)
   }
+
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withIncomeSourcesFS {
@@ -80,12 +83,21 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
     }
   }
 
-  def getRedirectUrl(isAgent: Boolean, isChange: Boolean): String = {
-    ((isAgent, isChange) match {
-      case (_, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
-      case (false, true) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (true, true) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }).url
+  def handleSubmitRequest(id: Option[IncomeSourceId], isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_],
+                                                                                           ec: ExecutionContext, request: Request[_]): Future[Result] = {
+    val redirect = Redirect(redirectUrl(isAgent, isChange))
+
+    addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
+      case true => Future.successful(redirect)
+      case false => Future.failed(new Exception("failed to set session data"))
+    })
+
+  }.recover {
+    case ex =>
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      Logger("application")
+        .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
+      errorHandler.showInternalServerError()
   }
 
   private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel])
@@ -107,34 +119,10 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
     }
   }
 
-
-  def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], isChange: Boolean)(implicit user: MtdItUser[_],
-                                                                                           ec: ExecutionContext, request: Request[_]): Future[Result] = {
-    val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
-    val redirect = Redirect(redirectUrl)
-
-    addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
-      case true => Future.successful(redirect)
-      case false => Future.failed(new Exception("failed to set session data"))
-    })
-
-  }.recover {
-    case ex =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application")
-        .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
-      errorHandler.showInternalServerError()
-  }
-
-  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)
-  }
-
-  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)
-  }
+  private lazy val redirectUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
+    ((isAgent, isChange) match {
+      case (_, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
+      case (false, true) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (true, true) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    }).url
 }

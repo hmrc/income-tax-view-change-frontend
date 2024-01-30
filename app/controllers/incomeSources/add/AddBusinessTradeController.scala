@@ -51,26 +51,16 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
                                            val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
-    ((isAgent, isChange) match {
-      case (_, false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }).url
+  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleRequest(isAgent, isChange)
   }
 
-  private def getSuccessURL(isAgent: Boolean, isChange: Boolean): String = {
-    ((isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessAddressController.show(isChange = false)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, false) => routes.AddBusinessAddressController.showAgent(isChange = false)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }).url
-  }
-
-  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit user =>
-      handleRequest(isAgent, isChange)
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit request =>
+        handleSubmitRequest(isAgent, isChange)
   }
 
   def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -78,11 +68,14 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
         BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
-      val backURL = getBackURL(isAgent, isChange)
-      val postAction = controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
 
       Future.successful {
-        Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL))
+        Ok(addBusinessTradeView(
+          filledForm,
+          postAction(isAgent, isChange),
+          isAgent,
+          backUrl(isAgent, isChange)
+        ))
       }
     }
   }.recover {
@@ -90,11 +83,6 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       Logger("application").error(s"[AddBusinessTradeController][handleRequest] - ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
-  }
-
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
-    implicit request =>
-      handleSubmitRequest(isAgent, isChange)
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
@@ -115,15 +103,20 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
 
   def handleFormErrors(form: Form[BusinessTradeForm], isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val postAction = routes.AddBusinessTradeController.submit(isAgent, isChange)
-    val backURL = getBackURL(isAgent, isChange)
+    val backURL = backUrl(isAgent, isChange)
 
     Future.successful {
-      BadRequest(addBusinessTradeView(form, postAction, isAgent = isAgent, backURL))
+      BadRequest(addBusinessTradeView(
+        form,
+        postAction,
+        isAgent,
+        backURL
+      ))
     }
   }
 
   def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val successURL = Redirect(getSuccessURL(isAgent, isChange))
+    val successURL = Redirect(redirectUrl(isAgent, isChange))
     val journeyType = JourneyType(Add, SelfEmployment)
 
     sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, businessTrade, journeyType).flatMap {
@@ -133,4 +126,21 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     }
   }
 
+  private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
+    ((isAgent, isChange) match {
+      case (_, false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, SelfEmployment)
+      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    }).url
+
+  private lazy val redirectUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
+    ((isAgent, isChange) match {
+      case (false, false) => routes.AddBusinessAddressController.show(isChange)
+      case (false,     _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_,     false) => routes.AddBusinessAddressController.showAgent(isChange)
+      case (_,         _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    }).url
+
+  private lazy val postAction: (Boolean, Boolean) => Call = (isAgent, isChange) =>
+    controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
 }

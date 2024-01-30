@@ -40,37 +40,27 @@ class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: Authoris
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils {
 
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleRequest(isAgent, incomeSourceType)
+  }
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-
-    val incomeSourceRedirect: Call =
-      if (isAgent)
-        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
-      else
-        controllers.incomeSources.add.routes.AddIncomeSourceController.show()
-
-    Future.successful(Ok(incomeSourceNotAddedError(
-      isAgent,
-      incomeSourceType = incomeSourceType,
-      continueAction = incomeSourceRedirect
-    )))
-  }
-
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        isAgent = false,
-        incomeSourceType = incomeSourceType
+    Future.successful(
+      Ok(
+        incomeSourceNotAddedError(
+          isAgent,
+          incomeSourceType = incomeSourceType,
+          continueAction =
+            if (isAgent)
+              controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
+            else
+              controllers.incomeSources.add.routes.AddIncomeSourceController.show()
+        )
       )
-  }
-
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        isAgent = true,
-        incomeSourceType = incomeSourceType
-      )
+    )
   }
 }
 

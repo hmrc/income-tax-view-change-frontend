@@ -56,22 +56,20 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
     else routes.IncomeSourceNotAddedController.show(incomeSourceType).url
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        incomeSourceType
-      )
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleRequest(
+          sources = user.incomeSources,
+          isAgent = isAgent,
+          incomeSourceType
+        )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        sources = mtdItUser.incomeSources,
-        isAgent = true,
-        incomeSourceType
-      )
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleSubmit(isAgent, incomeSourceType)
   }
 
   private def handleRequest(sources: IncomeSourceDetailsModel,
@@ -159,15 +157,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleSubmit(isAgent = false, incomeSourceType)
-  }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleSubmit(isAgent = true, incomeSourceType)
-  }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>

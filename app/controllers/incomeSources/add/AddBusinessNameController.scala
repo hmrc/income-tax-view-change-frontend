@@ -20,7 +20,6 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
@@ -49,62 +48,30 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
                                           val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
-  private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
-    ((isAgent, isChange) match {
-      case (false, false) => routes.AddIncomeSourceController.show()
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, false) => routes.AddIncomeSourceController.showAgent()
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }).url
-  }
-
-  private def getPostAction(isAgent: Boolean, isChange: Boolean): Call = {
-    (isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessNameController.submit()
-      case (false, _) => routes.AddBusinessNameController.submitChange()
-      case (_, false) => routes.AddBusinessNameController.submitAgent()
-      case (_, _) => routes.AddBusinessNameController.submitChangeAgent()
-    }
-  }
-
-  private def getRedirect(isAgent: Boolean, isChange: Boolean): Call = {
-    (isAgent, isChange) match {
-      case (_, false) => routes.AddIncomeSourceStartDateController.show(isAgent, isChange = false, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }
-  }
-
   private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        isAgent = false,
-        backUrl = getBackUrl(isAgent = false, isChange = false),
-        isChange = false
-      )
+  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        handleRequest(isAgent, isChange)
   }
 
-  def showAgent(): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
-      implicit mtdItUser =>
-        handleRequest(
-          isAgent = true,
-          backUrl = getBackUrl(isAgent = true, isChange = false),
-          isChange = false
-        )
-    }
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit request =>
+        handleSubmitRequest(isAgent, isChange)
+  }
 
-  def handleRequest(isAgent: Boolean, backUrl: String, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+  def handleRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     withSessionData(JourneyType(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
       val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
       val filledForm: Form[BusinessNameForm] = businessNameOpt.fold(BusinessNameForm.form)(name =>
         BusinessNameForm.form.fill(BusinessNameForm(name)))
-      val submitAction: Call = getPostAction(isAgent, isChange)
+      val submitAction: Call = postAction(isAgent, isChange)
+
 
       Future.successful {
-        Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
+        Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl(isAgent, isChange), useFallbackLink = true))
       }
     }
   }.recover {
@@ -112,27 +79,6 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application").error(s"[AddBusinessNameController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
-  }
-
-  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit request =>
-      handleSubmitRequest(isAgent = false, isChange = false)
-  }
-
-  def submitAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleSubmitRequest(isAgent = true, isChange = false)
-  }
-
-  def submitChange: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit request =>
-      handleSubmitRequest(isAgent = false, isChange = true)
-  }
-
-  def submitChangeAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleSubmitRequest(isAgent = true, isChange = true)
-
   }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -145,12 +91,12 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
           Future.successful {
             BadRequest(addBusinessView(formWithErrors,
               isAgent,
-              getPostAction(isAgent, isChange),
-              getBackUrl(isAgent, isChange),
+              postAction(isAgent, isChange),
+              backUrl(isAgent, isChange),
               useFallbackLink = true))
           },
         formData => {
-          val redirect = Redirect(getRedirect(isAgent, isChange))
+          val redirect = Redirect(redirectCall(isAgent, isChange))
           sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
             case Right(result) if result => Future.successful(redirect)
             case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
@@ -165,24 +111,28 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       .error(s"[AddBusinessNameController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
-}
+  }
 
-def changeBusinessName(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-  implicit user =>
-    handleRequest(
-      isAgent = false,
-      backUrl = getBackUrl(isAgent = false, isChange = true),
-      isChange = true
-    )
-}
+  private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
+    ((isAgent, isChange) match {
+      case (false, false) => routes.AddIncomeSourceController.show()
+      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_, false) => routes.AddIncomeSourceController.showAgent()
+      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    }).url
 
-def changeBusinessNameAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-  implicit mtdItUser =>
-    handleRequest(
-      isAgent = true,
-      backUrl = getBackUrl(isAgent = true, isChange = true),
-      isChange = true
-    )
-}
+  private lazy val postAction: (Boolean, Boolean) => Call = (isAgent, isChange) =>
+    (isAgent, isChange) match {
+      case (false, false) => routes.AddBusinessNameController.submit()
+      case (false, _) => routes.AddBusinessNameController.submitChange()
+      case (_, false) => routes.AddBusinessNameController.submitAgent()
+      case (_, _) => routes.AddBusinessNameController.submitChangeAgent()
+    }
 
+  private lazy val redirectCall: (Boolean, Boolean) => Call = (isAgent, isChange) =>
+    (isAgent, isChange) match {
+      case (_, false) => routes.AddIncomeSourceStartDateController.show(isAgent, isChange, SelfEmployment)
+      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    }
 }

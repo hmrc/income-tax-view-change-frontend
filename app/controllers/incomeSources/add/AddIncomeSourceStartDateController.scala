@@ -108,8 +108,8 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
             form = filledForm,
             isAgent = isAgent,
             messagesPrefix = messagesPrefix,
-            backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-            postAction = getPostAction(incomeSourceType, isAgent, isChange)
+            backUrl = backUrl(incomeSourceType, isAgent, isChange),
+            postAction = postAction(incomeSourceType, isAgent, isChange)
           )
         )
       }
@@ -136,8 +136,8 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
             addIncomeSourceStartDate(
               isAgent = isAgent,
               form = formWithErrors,
-              backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-              postAction = getPostAction(incomeSourceType, isAgent, isChange),
+              backUrl = backUrl(incomeSourceType, isAgent, isChange),
+              postAction = postAction(incomeSourceType, isAgent, isChange),
               messagesPrefix = messagesPrefix
             )
           )),
@@ -157,7 +157,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
     val journeyType = JourneyType(Add, incomeSourceType)
     sessionService.setMongoKey(dateStartedField, formData.date.toString, journeyType).flatMap {
       case Right(result) if result => Future.successful {
-        val successUrl = getSuccessUrl(incomeSourceType, isAgent, isChange)
+        val successUrl = redirect(incomeSourceType, isAgent, isChange)
         Redirect(successUrl)
       }
       case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
@@ -165,25 +165,19 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
     }
   }
 
-  private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
+  private lazy val postAction: (IncomeSourceType, Boolean, Boolean) => Call = (incomeSourceType, isAgent, isChange) =>
     routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType)
-  }
 
-  private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
+  private lazy val redirect: (IncomeSourceType, Boolean, Boolean) => Call = (incomeSourceType, isAgent, isChange) =>
     routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
-  }
 
-  private def getBackUrl(incomeSourceType: IncomeSourceType,
-                         isAgent: Boolean,
-                         isChange: Boolean): String = {
-
+  private lazy val backUrl: (IncomeSourceType, Boolean, Boolean) => String = (incomeSourceType, isAgent, isChange) =>
     ((isAgent, isChange, incomeSourceType) match {
       case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-      case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
-      case (false, false, _) => routes.AddIncomeSourceController.show()
-      case (_, false, _) => routes.AddIncomeSourceController.showAgent()
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+      case (_,     false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
+      case (false, false,              _) => routes.AddIncomeSourceController.show()
+      case (_,     false,              _) => routes.AddIncomeSourceController.showAgent()
+      case (false,     _,              _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+      case (_,         _,              _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
     }).url
-  }
 }
