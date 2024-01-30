@@ -70,7 +70,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
 
       implicit val back: String = backUrl(isAgent, isChange, incomeSourceType)
-      implicit val post: Call = postAction(isAgent, isChange, incomeSourceType)
+      implicit val post: Call = postAction(isAgent, incomeSourceType)
 
       lazy val maybeCashOrAccrualsFlag = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
 
@@ -90,27 +90,34 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
 
   def handleSubmitRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
-    IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
-      hasErrors => Future.successful(BadRequest(view(
-        incomeSourcesType = incomeSourceType,
-        form = hasErrors,
-        postAction = postAction(isAgent, isChange, incomeSourceType),
-        backUrl = backUrl(isAgent, isChange, incomeSourceType),
-        isAgent = isAgent
-      ))),
-      validatedInput => {
-        val accountingMethod = if (validatedInput.contains("cash")) "cash" else "accruals"
-        sessionService.setMongoKey(AddIncomeSourceData.incomeSourcesAccountingMethodField,
-          accountingMethod, JourneyType(Add, incomeSourceType)).flatMap {
-          case Right(_) => Future.successful {
-            Redirect(successCall(isAgent, incomeSourceType))
-          }
-          case Left(_) => Future.successful {
-            errorHandler(isAgent).showInternalServerError()
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+      IncomeSourcesAccountingMethodForm(incomeSourceType).bindFromRequest().fold(
+        hasErrors => Future.successful(BadRequest(view(
+          incomeSourcesType = incomeSourceType,
+          form = hasErrors,
+          postAction = postAction(isAgent, incomeSourceType),
+          backUrl = backUrl(isAgent, isChange, incomeSourceType),
+          isAgent = isAgent
+        ))),
+        validatedInput => {
+          val accountingMethod = if (validatedInput.contains("cash")) "cash" else "accruals"
+          sessionService.setMongoData(
+            sessionData.copy(
+              addIncomeSourceData =
+                sessionData.addIncomeSourceData.map(
+                  _.copy(
+                    incomeSourcesAccountingMethod =
+                      Some(accountingMethod)
+                  )
+                )
+            )
+          ) flatMap {
+            case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
+            case false => throw new Exception("Failed to set mongo data")
           }
         }
-      }
-    )
+      )
+    }
   }.recover {
     case ex =>
       Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
@@ -122,34 +129,41 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                cashOrAccrualsFlag: Option[String])
                                               (implicit user: MtdItUser[_],
                                                backUrl: String, postAction: Call): Future[Result] = {
-    val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
-    if (cashOrAccrualsRecords.distinct.size > 1) {
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        "Error multiple values for business cashOrAccruals Field found")
-    }
-    cashOrAccrualsRecords.headOption match {
-      case Some(cashOrAccrualsField) =>
-        sessionService.setMongoKey(
-          key = AddIncomeSourceData.incomeSourcesAccountingMethodField,
-          value = fromApiField(cashOrAccrualsField).name,
-          journeyType = JourneyType(Add, incomeSourceType)).flatMap {
-          case Right(_) =>
-            val successRedirectUrl = routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType).url
-            Future.successful(Redirect(successRedirectUrl))
-          case Left(ex) =>
-            Future.failed(ex)
-        }
-      case None =>
-        Future.successful(
-          Ok(view(
-            cashOrAccrualsFlag = cashOrAccrualsFlag,
-            incomeSourcesType = incomeSourceType,
-            form = IncomeSourcesAccountingMethodForm(incomeSourceType),
-            postAction = postAction,
-            isAgent = isAgent,
-            backUrl = backUrl,
-            btaNavPartial = user.btaNavPartial
-          )))
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+      val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()
+      if (cashOrAccrualsRecords.distinct.size > 1) {
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+          "Error multiple values for business cashOrAccruals Field found")
+      }
+      cashOrAccrualsRecords.headOption match {
+        case Some(cashOrAccrualsField) =>
+
+          sessionService.setMongoData(
+            sessionData.copy(
+              addIncomeSourceData =
+                sessionData.addIncomeSourceData.map(
+                  _.copy(
+                    incomeSourcesAccountingMethod =
+                      Some(fromApiField(cashOrAccrualsField).name)
+                  )
+                )
+            )
+          ) flatMap {
+            case true => Future.successful(Redirect(successCall(isAgent, incomeSourceType)))
+            case false => throw new Exception("Failed to set mongo data")
+          }
+        case None =>
+          Future.successful(
+            Ok(view(
+              cashOrAccrualsFlag = cashOrAccrualsFlag,
+              incomeSourcesType = incomeSourceType,
+              form = IncomeSourcesAccountingMethodForm(incomeSourceType),
+              postAction = postAction,
+              isAgent = isAgent,
+              backUrl = backUrl,
+              btaNavPartial = user.btaNavPartial
+            )))
+      }
     }
   }.recover {
     case ex =>
@@ -178,8 +192,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   private lazy val successCall: (Boolean, IncomeSourceType) => Call = (isAgent, incomeSourceType) =>
     routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType)
 
-  private lazy val postAction: (Boolean, Boolean, IncomeSourceType) => Call = (isAgent, isChange, incomeSourceType) =>
-    routes.IncomeSourcesAccountingMethodController.submit(isAgent, isChange, incomeSourceType)
+  private lazy val postAction: (Boolean, IncomeSourceType) => Call = (isAgent, incomeSourceType) =>
+    routes.IncomeSourcesAccountingMethodController.submit(isAgent, incomeSourceType)
 
   private lazy val backUrl: (Boolean, Boolean, IncomeSourceType) => String = (isAgent, isChange, incomeSourceType) =>
     ((isChange, incomeSourceType) match {

@@ -161,14 +161,21 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         case Some(viewModel) =>
           businessDetailsService.createRequest(viewModel).flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
-              auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
-
-              sessionService.setMongoKey(AddIncomeSourceData.incomeSourceIdField, id, JourneyType(Add, incomeSourceType)).flatMap {
-                case Right(_) =>
-                  Future.successful {
-                    Redirect(redirectUrl(isAgent, incomeSourceType))
-                  }
-                case Left(exception) => Future.failed(exception)
+              auditingService.extendedAudit(
+                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
+              )
+              sessionService.setMongoData(
+                sessionData.copy(
+                  addIncomeSourceData =
+                    sessionData.addIncomeSourceData.map(
+                      _.copy(
+                        incomeSourceId = Some(id)
+                      )
+                    )
+                )
+              ) flatMap {
+                case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
+                case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
               }
             case Left(ex) =>
               auditingService.extendedAudit(

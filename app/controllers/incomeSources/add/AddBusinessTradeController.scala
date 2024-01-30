@@ -84,10 +84,26 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     withSessionData(JourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
-      BusinessTradeForm.checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt).fold(
-        formWithErrors => handleFormErrors(formWithErrors, isAgent, isChange),
-        formData => handleSuccess(formData.trade, isAgent, isChange)
-      )
+      sessionService.setMongoData(
+        sessionData.copy(
+          addIncomeSourceData =
+            sessionData.addIncomeSourceData.map(
+              _.copy(
+                businessTrade = businessNameOpt
+              )
+            )
+        )
+      ).flatMap {
+        case true =>
+          BusinessTradeForm
+            .checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt).fold(
+              formWithErrors =>
+                handleFormErrors(formWithErrors, isAgent, isChange),
+              _ =>
+                Future.successful(Redirect(redirectUrl(isAgent, isChange)))
+          )
+        case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+      }
     }
   }.recover {
     case ex =>
@@ -97,22 +113,8 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
   }
 
   def handleFormErrors(form: Form[BusinessTradeForm], isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val postAction = routes.AddBusinessTradeController.submit(isAgent, isChange)
-    val backURL = backUrl(isAgent, isChange)
-
     Future.successful {
-      BadRequest(addBusinessTradeView(form, postAction, isAgent, backURL))
-    }
-  }
-
-  def handleSuccess(businessTrade: String, isAgent: Boolean, isChange: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val successURL = Redirect(redirectUrl(isAgent, isChange))
-    val journeyType = JourneyType(Add, SelfEmployment)
-
-    sessionService.setMongoKey(AddIncomeSourceData.businessTradeField, businessTrade, journeyType).flatMap {
-      case Right(result) if result => Future.successful(successURL)
-      case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-      case Left(exception) => Future.failed(exception)
+      BadRequest(addBusinessTradeView(form, postAction(isAgent, isChange), isAgent, backUrl(isAgent, isChange)))
     }
   }
 
@@ -127,5 +129,5 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
   }.url
 
   private lazy val postAction: (Boolean, Boolean) => Call = (isAgent, isChange) =>
-    controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
+    routes.AddBusinessTradeController.submit(isAgent, isChange)
 }

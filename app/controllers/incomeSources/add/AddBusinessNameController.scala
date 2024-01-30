@@ -94,11 +94,18 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
               useFallbackLink = true))
           },
         formData => {
-          val redirect = Redirect(redirectCall(isAgent, isChange))
-          sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
-            case Right(result) if result => Future.successful(redirect)
-            case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-            case Left(exception) => Future.failed(exception)
+          sessionService.setMongoData(
+            sessionData.copy(
+              addIncomeSourceData =
+                Some(
+                  AddIncomeSourceData(
+                    businessName = Some(formData.name)
+                  )
+                )
+            )
+          ) flatMap {
+            case true  => Future.successful(Redirect(redirectCall(isAgent, isChange)))
+            case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
           }
         }
       )
@@ -111,8 +118,6 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     errorHandler.showInternalServerError()
   }
 
-  private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
-
   private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) => {
     if (isChange) routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
     else          routes.AddBusinessNameController.submit(isAgent, isChange)
@@ -122,6 +127,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     routes.AddBusinessNameController.submit(isAgent, isChange)
 
   private lazy val redirectCall: (Boolean, Boolean) => Call = (isAgent, isChange) =>
-    if (isChange) routes.AddIncomeSourceStartDateController.show(isAgent, isChange, SelfEmployment)
-    else          routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+    if (isChange) routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+    else          routes.AddIncomeSourceStartDateController.show(isAgent, isChange, SelfEmployment)
+
 }
