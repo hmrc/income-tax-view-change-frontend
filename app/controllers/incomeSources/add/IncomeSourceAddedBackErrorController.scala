@@ -58,14 +58,14 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
 
   def handleShowRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = CannotGoBackPage) { data =>
-    val cannotGoBackRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
-    else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
+
+    val cannotGoBackRedirectUrl = routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType)
+
     if (data.addIncomeSourceData.exists(addData => addData.journeyIsComplete.contains(true))) {
       Future.successful(Redirect(cannotGoBackRedirectUrl))
     }
     else {
-      val postAction = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
-      else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
+      val postAction = routes.IncomeSourceAddedBackErrorController.submit(isAgent, incomeSourceType)
       Future.successful(Ok(cannotGoBackError(isAgent, incomeSourceType, postAction)))
     }
   }

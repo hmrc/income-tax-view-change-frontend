@@ -153,11 +153,11 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       }
     }
 
-    lazy val individualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = false).url
-    lazy val agentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = false).url
+    lazy val individualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isAgent = false, isChange = false).url
+    lazy val agentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isAgent = true, isChange = false).url
 
-    lazy val changeIndividualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = true).url
-    lazy val changeAgentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = true).url
+    lazy val changeIndividualContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isAgent = false, isChange = true).url
+    lazy val changeAgentContinueUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isAgent = true, isChange = true).url
 
     lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show.url
     lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent.url

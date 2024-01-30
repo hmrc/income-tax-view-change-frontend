@@ -51,18 +51,14 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunc
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = withIncomeSourcesFS {
+                   (implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
 
     Future.successful(
       Ok(
         view(
           incomeSourceType = incomeSourceType,
           isAgent = isAgent,
-          continueAction =
-            if (isAgent)
-              controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
-            else
-              controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType)
+          continueAction = routes.IncomeSourceAddedController.show(isAgent, incomeSourceType)
         )
       )
     )

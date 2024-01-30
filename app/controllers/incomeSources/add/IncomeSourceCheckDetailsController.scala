@@ -50,12 +50,6 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
   with IncomeSourcesUtils with FeatureSwitching with JourneyChecker {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-  private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceNotAddedController.show(incomeSourceType).url
-
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
     auth.authenticatedAction(isAgent) {
       implicit user =>
@@ -76,18 +70,15 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-    val backUrl: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
-    val postAction: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
-      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
-    }
+
     getViewModel(incomeSourceType, sessionData)(user) match {
       case Some(viewModel) =>
         Future.successful {
           Ok(checkDetailsView(
             viewModel,
-            postAction = postAction,
+            postAction = postAction(isAgent, incomeSourceType),
             isAgent,
-            backUrl = backUrl
+            backUrl = backUrl(isAgent, false, incomeSourceType)
           ))
         }
       case None =>
@@ -111,8 +102,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     if (incomeSourceType == SelfEmployment) getBusinessModel(sessionData) else getPropertyModel(incomeSourceType, sessionData)
   }
 
-  private def getPropertyModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData)
-                              (implicit user: MtdItUser[_]): Option[CheckPropertyViewModel] = {
+  private def getPropertyModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData): Option[CheckPropertyViewModel] = {
     val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
     val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
     (dateStartedOpt, accountingMethodOpt) match {
@@ -200,4 +190,15 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
       Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: ${ex.getMessage}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType))
   }
+
+  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+  private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+    routes.IncomeSourceNotAddedController.show(isAgent, incomeSourceType).url
+
+  private lazy val backUrl: (Boolean, Boolean, IncomeSourceType) => String = (isAgent, isChange, incomeSourceType) =>
+    routes.IncomeSourcesAccountingMethodController.show(isAgent, isChange, incomeSourceType).url
+
+  private lazy val postAction: (Boolean, IncomeSourceType) => Call = (isAgent, incomeSourceType) =>
+    routes.IncomeSourceCheckDetailsController.submit(isAgent, incomeSourceType)
 }

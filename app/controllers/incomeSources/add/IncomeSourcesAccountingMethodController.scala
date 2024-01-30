@@ -134,10 +134,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
           value = fromApiField(cashOrAccrualsField).name,
           journeyType = JourneyType(Add, incomeSourceType)).flatMap {
           case Right(_) =>
-            val successRedirectUrl = {
-              if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
-              else routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
-            }
+            val successRedirectUrl = routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType).url
             Future.successful(Redirect(successRedirectUrl))
           case Left(ex) =>
             Future.failed(ex)
@@ -178,22 +175,17 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     )))
   }
 
-  private lazy val successCall: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
-    else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-  }
+  private lazy val successCall: (Boolean, IncomeSourceType) => Call = (isAgent, incomeSourceType) =>
+    routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType)
 
-  private lazy val postAction: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>
-    routes.IncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)
-  }
+  private lazy val postAction: (Boolean, IncomeSourceType) => Call = (isAgent, incomeSourceType) =>
+    routes.IncomeSourcesAccountingMethodController.submit(isAgent, incomeSourceType)
 
   private lazy val backUrl: (Boolean, Boolean, IncomeSourceType) => String = (isAgent, isChange, incomeSourceType) =>
-    ((isAgent, isChange, incomeSourceType) match {
-      case (false, false, SelfEmployment) => routes.AddBusinessAddressController.show(isChange)
-      case (_,     false, SelfEmployment) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_,     false, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
-      case (false, _,     _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_,     _,     _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+    ((isChange, incomeSourceType) match {
+      case (false, SelfEmployment) => routes.AddBusinessAddressController             .show(isAgent, isChange)
+      case (false, _)              => routes.AddIncomeSourceStartDateCheckController  .show(isAgent, isChange, incomeSourceType)
+      case (_,     _)              => routes.IncomeSourceCheckDetailsController       .show(isAgent, incomeSourceType)
     }).url
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

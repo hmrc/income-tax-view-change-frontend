@@ -53,11 +53,7 @@ class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: Authoris
         incomeSourceNotAddedError(
           isAgent,
           incomeSourceType = incomeSourceType,
-          continueAction =
-            if (isAgent)
-              controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
-            else
-              controllers.incomeSources.add.routes.AddIncomeSourceController.show()
+          continueAction = routes.AddIncomeSourceController.show(isAgent)
         )
       )
     )

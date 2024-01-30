@@ -281,22 +281,17 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    (isAgent, incomeSourceType.equals(SelfEmployment)) match {
-      case (false, true) => routes.AddBusinessAddressController.show(false).url
-      case (true, true) => routes.AddBusinessAddressController.showAgent(false).url
-      case (_, _) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, incomeSourceType).url
-    }
+  lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent, incomeSourceType) => {
+    if (incomeSourceType == SelfEmployment) routes.AddBusinessAddressController.show(isAgent, isChange = false)
+    else routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange = false, incomeSourceType)
+  }.url
 
   lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
+    routes.IncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType).url
 
   lazy val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceAddedController.show(incomeSourceType).url
+    routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
 
   lazy val submitUrl: (Boolean, IncomeSourceType) => Call = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
-
 }

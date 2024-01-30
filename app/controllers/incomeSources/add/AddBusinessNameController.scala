@@ -113,26 +113,15 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
   private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
 
-  private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
-    ((isAgent, isChange) match {
-      case (false, false) => routes.AddIncomeSourceController.show()
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, false) => routes.AddIncomeSourceController.showAgent()
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }).url
+  private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) => {
+    if (isChange) routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+    else          routes.AddBusinessNameController.submit(isAgent, isChange)
+  }.url
 
   private lazy val postAction: (Boolean, Boolean) => Call = (isAgent, isChange) =>
-    (isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessNameController.submit()
-      case (false, _) => routes.AddBusinessNameController.submitChange()
-      case (_, false) => routes.AddBusinessNameController.submitAgent()
-      case (_, _) => routes.AddBusinessNameController.submitChangeAgent()
-    }
+    routes.AddBusinessNameController.submit(isAgent, isChange)
 
   private lazy val redirectCall: (Boolean, Boolean) => Call = (isAgent, isChange) =>
-    (isAgent, isChange) match {
-      case (_, false) => routes.AddIncomeSourceStartDateController.show(isAgent, isChange, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }
+    if (isChange) routes.AddIncomeSourceStartDateController.show(isAgent, isChange, SelfEmployment)
+    else          routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
 }

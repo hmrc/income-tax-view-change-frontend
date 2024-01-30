@@ -268,7 +268,7 @@ POST         /agents/income-sources/add/business-accounting-method            co
 
 #Check details / Change
 GET          /income-sources/add/business-check-details                     controllers.incomeSources.add.IncomeSourceCheckDetailsController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
-GET          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.IncomeSourceCheckDetailsController.show(isAgent: Boolean = true, isincomeSourceType: IncomeSourceType = SelfEmployment)
+GET          /agents/income-sources/add/business-check-details              controllers.incomeSources.add.IncomeSourceCheckDetailsController.show(isAgent: Boolean = true,  incomeSourceType: IncomeSourceType = SelfEmployment)
 
 GET          /income-sources/add/change-business-name                       controllers.incomeSources.add.AddBusinessNameController.show(isAgent: Boolean = false, isChange: Boolean = true)
 GET          /agents/income-sources/add/change-business-name                controllers.incomeSources.add.AddBusinessNameController.show(isAgent: Boolean = true, isChange: Boolean = true)

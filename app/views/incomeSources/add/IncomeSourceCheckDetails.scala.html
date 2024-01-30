@@ -62,11 +62,8 @@
 }
 
 @changeBusinessNameURL = @{
-    if(isAgent) {
-        controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
-    } else {
-        controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessName().url
-    }
+    controllers.incomeSources.add.routes.AddBusinessNameController.show(isAgent, isChange = true).url
+
 }
 
 @changeBusinessTradeURL = @{
@@ -78,11 +75,7 @@
 }
 
 @changeBusinessAddressURL = @{
-    if(isAgent) {
-        controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = true).url
-    } else {
-        controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange = true).url
-    }
+    controllers.incomeSources.add.routes.AddBusinessAddressController.show(isAgent, isChange = true).url
 }
 
 @getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
@@ -100,9 +93,9 @@
     controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = true, viewModel.incomeSourceType).url
 }
 
-    @changeAccountingMethodURL = @{
-            controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType, isAgent).url
-    }
+@changeAccountingMethodURL = @{
+    controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(isAgent, isChange = true, viewModel.incomeSourceType).url
+}
 
 @extractName = @{
     viewModel match {

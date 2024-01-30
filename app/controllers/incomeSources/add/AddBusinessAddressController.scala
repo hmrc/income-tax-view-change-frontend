@@ -118,10 +118,8 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
     }
   }
 
-  private lazy val redirectUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
-    ((isAgent, isChange) match {
-      case (_, false) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
-      case (false, true) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (true, true) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }).url
+  private lazy val redirectUrl: (Boolean, Boolean) => String = (isAgent, isChange) => {
+    if (isChange) routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+    else routes.IncomeSourcesAccountingMethodController.show(isAgent, isChange, SelfEmployment)
+  }.url
 }

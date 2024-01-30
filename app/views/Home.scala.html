@@ -345,11 +345,7 @@
 }
 
 @addIncomeSourceControllerURL = @{
-    if(isAgent) {
-        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
-    } else {
-        controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
-    }
+    controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent).url
 }
 
 @ceaseIncomeSourceControllerURL = @{

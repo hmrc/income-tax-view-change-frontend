@@ -116,20 +116,15 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     }
   }
 
-  private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
-    ((isAgent, isChange) match {
-      case (_, false) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_,     _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }).url
+  private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) => {
+    if (isChange) routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+    else          routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, SelfEmployment)
+  }.url
 
-  private lazy val redirectUrl: (Boolean, Boolean) => String = (isAgent, isChange) =>
-    ((isAgent, isChange) match {
-      case (false, false) => routes.AddBusinessAddressController.show(isChange)
-      case (false,     _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_,     false) => routes.AddBusinessAddressController.showAgent(isChange)
-      case (_,         _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    }).url
+  private lazy val redirectUrl: (Boolean, Boolean) => String = (isAgent, isChange) => {
+    if (isChange) routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+    else          routes.AddBusinessAddressController.show(isAgent, isChange)
+  }.url
 
   private lazy val postAction: (Boolean, Boolean) => Call = (isAgent, isChange) =>
     controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)

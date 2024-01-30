@@ -246,10 +246,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
     routes.AddIncomeSourceStartDateCheckController.submit(isAgent, isChange, incomeSourceType)
 
   private lazy val redirectUrl: (IncomeSourceType, Boolean, Boolean) => String = (incomeSourceType, isAgent, isChange) =>
-    ((isAgent, isChange, incomeSourceType) match {
-      case (_, false, SelfEmployment) => routes.AddBusinessTradeController.show(isAgent, isChange)
-      case (_, false, _) => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
-      case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-      case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+    ((isChange, incomeSourceType) match {
+      case (false, SelfEmployment) => routes.AddBusinessTradeController               .show(isAgent, isChange)
+      case (false, _)              => routes.IncomeSourcesAccountingMethodController  .show(isAgent, isChange, incomeSourceType)
+      case (_,     _)              => routes.IncomeSourceCheckDetailsController       .show(isAgent, incomeSourceType)
     }).url
 }
