@@ -23,6 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
+import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.UIJourneySessionData
@@ -164,9 +165,9 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
     val successUrl = redirectUrl(incomeSourceType, isAgent, isChange)
 
     (formResponse, incomeSourceType) match {
-      case (Some(form.responseNo), _) => removeDateFromSessionAndGoBack(incomeSourceType, isAgent, isChange, sessionData)
-      case (Some(form.responseYes), SelfEmployment) => updateAccountingPeriodForSE(incomeSourceStartDate, successUrl, isAgent, sessionData)
-      case (Some(form.responseYes), _) => Future.successful(Redirect(successUrl))
+      case (Some(`responseYes`), SelfEmployment) => updateAccountingPeriodForSE(incomeSourceStartDate, successUrl, isAgent, sessionData)
+      case (Some(`responseYes`),              _) => Future.successful(Redirect(successUrl))
+      case (Some(`responseNo`),               _) => removeDateFromSessionAndGoBack(incomeSourceType, isAgent, isChange, sessionData)
       case _ =>
         Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
         Future.successful(showInternalServerError(isAgent))
@@ -237,7 +238,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
-    else itvcErrorHandler
+    else         itvcErrorHandler
 
   private lazy val backUrl: (IncomeSourceType, Boolean, Boolean) => String = (incomeSourceType, isAgent, isChange) =>
     routes.AddIncomeSourceStartDateController.show(isAgent, isChange, incomeSourceType).url
