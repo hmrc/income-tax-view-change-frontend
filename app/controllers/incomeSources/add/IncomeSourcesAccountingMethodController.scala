@@ -70,7 +70,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
 
       implicit val back: String = backUrl(isAgent, isChange, incomeSourceType)
-      implicit val post: Call = postAction(isAgent, incomeSourceType)
+      implicit val post: Call = postAction(isAgent, isChange, incomeSourceType)
 
       lazy val maybeCashOrAccrualsFlag = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
 
@@ -94,7 +94,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
       hasErrors => Future.successful(BadRequest(view(
         incomeSourcesType = incomeSourceType,
         form = hasErrors,
-        postAction = postAction(isAgent, incomeSourceType),
+        postAction = postAction(isAgent, isChange, incomeSourceType),
         backUrl = backUrl(isAgent, isChange, incomeSourceType),
         isAgent = isAgent
       ))),
@@ -178,8 +178,8 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   private lazy val successCall: (Boolean, IncomeSourceType) => Call = (isAgent, incomeSourceType) =>
     routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType)
 
-  private lazy val postAction: (Boolean, IncomeSourceType) => Call = (isAgent, incomeSourceType) =>
-    routes.IncomeSourcesAccountingMethodController.submit(isAgent, incomeSourceType)
+  private lazy val postAction: (Boolean, Boolean, IncomeSourceType) => Call = (isAgent, isChange, incomeSourceType) =>
+    routes.IncomeSourcesAccountingMethodController.submit(isAgent, isChange, incomeSourceType)
 
   private lazy val backUrl: (Boolean, Boolean, IncomeSourceType) => String = (isAgent, isChange, incomeSourceType) =>
     ((isChange, incomeSourceType) match {

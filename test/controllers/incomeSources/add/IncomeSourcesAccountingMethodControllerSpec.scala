@@ -98,11 +98,11 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   }
 
   def showResult(incomeSourceType: IncomeSourceType, isAgent: Boolean = false): Future[Result] = {
-    TestIncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)(getRequest(isAgent))
+    TestIncomeSourcesAccountingMethodController.show(isAgent, isChange = false, incomeSourceType)(getRequest(isAgent))
   }
 
   def changeResult(incomeSourceType: IncomeSourceType, isAgent: Boolean = false, cashOrAccrualsFlag: Option[String] = None): Future[Result] = {
-    TestIncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType, isAgent)(getRequest(isAgent))
+    TestIncomeSourcesAccountingMethodController.show(isAgent, isChange = true, incomeSourceType)(getRequest(isAgent))
   }
 
   def setupMockAuth(isAgent: Boolean = false): Unit = {
@@ -113,16 +113,12 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
   }
 
   def submitResult(incomeSourceType: IncomeSourceType, accountingMethod: String, isAgent: Boolean = false): Future[Result] = {
-    TestIncomeSourcesAccountingMethodController.submit(incomeSourceType, isAgent)(postRequest(isAgent)
+    TestIncomeSourcesAccountingMethodController.submit(isAgent, isChange = false, incomeSourceType)(postRequest(isAgent)
       .withFormUrlEncodedBody(businessResponseRoute(incomeSourceType) -> accountingMethod))
   }
 
-  def getRedirectUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean = false): String = {
-    if (isAgent)
-      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
-    else
-      controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
-  }
+  def getRedirectUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean = false): String =
+    controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType).url
 
   object TestIncomeSourcesAccountingMethodController extends IncomeSourcesAccountingMethodController(
     mockAuthService,
@@ -234,8 +230,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
         status(result) shouldBe SEE_OTHER
-        val expectedUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType)
-        else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType)
+        val expectedUrl = controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType)
         redirectLocation(result) shouldBe Some(expectedUrl.url)
       }
       s"user has already added their income source" in {
@@ -248,8 +243,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends TestSupport with MockA
 
         val result: Future[Result] = showResult(incomeSourceType, isAgent)
         status(result) shouldBe SEE_OTHER
-        val expectedUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType)
-        else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType)
+        val expectedUrl = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType)
         redirectLocation(result) shouldBe Some(expectedUrl.url)
       }
     }
