@@ -16,10 +16,14 @@
 
 package models.incomeSourceDetails
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{Format, Json, OFormat, __}
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
+import uk.gov.hmrc.crypto.Sensitive.SensitiveString
+import uk.gov.hmrc.crypto.json.JsonEncryption
 
 case class Address(
-                    lines: Seq[String],
+                    lines:    Seq[String],
                     postcode: Option[String]
                   ) {
 
@@ -29,4 +33,22 @@ case class Address(
 
 object Address {
   implicit val format: OFormat[Address] = Json.format[Address]
+}
+
+case class SensitiveAddress(
+                             lines:    Seq[SensitiveString],
+                             postcode: Option[SensitiveString]
+                           )
+
+object SensitiveAddress {
+
+  implicit def sensitiveStringFormat(implicit crypto: Encrypter with Decrypter): Format[SensitiveString] =
+    JsonEncryption.sensitiveEncrypterDecrypter(SensitiveString.apply)
+
+  implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddress] = {
+        ((__ \ "lines"    ).format[Seq[SensitiveString]]
+      ~  (__ \ "postcode" ).formatNullable[SensitiveString]
+      )(SensitiveAddress.apply, unlift(SensitiveAddress.unapply)
+    )
+  }
 }
