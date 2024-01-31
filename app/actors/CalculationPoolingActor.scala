@@ -75,7 +75,7 @@ class CalculationPoolingActor(val calculationService: CalculationService)
       pipe(futureResult) to self
 
     case GetCalculationResponse(responseCode, origin, originalSender) if retryableStatusCodes.contains(responseCode) =>
-      logger.info(s"[CalculationPoolingActor][GetCalculationRequest] - re-try")
+      logger.info(s"[CalculationPoolingActor][GetCalculationResponse] - re-try")
       // TODO: set up timeout(2) ???
       implicit val timeout : Timeout = 1.second
       pipe({
