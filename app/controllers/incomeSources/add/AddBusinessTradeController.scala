@@ -84,24 +84,23 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     withSessionData(JourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
-      sessionService.setMongoData(
-        sessionData.copy(
-          addIncomeSourceData =
-            sessionData.addIncomeSourceData.map(
-              _.copy(
-                businessTrade = businessNameOpt
+      BusinessTradeForm
+        .checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt).fold(
+          formWithErrors =>
+            handleFormErrors(formWithErrors, isAgent, isChange),
+          validForm =>
+            sessionService.setMongoData(
+              sessionData.copy(
+                addIncomeSourceData =
+                  sessionData.addIncomeSourceData.map(
+                    _.copy(
+                      businessTrade = Some(validForm.trade)
+                    )
+                  )
               )
-            )
         )
       ).flatMap {
-        case true =>
-          BusinessTradeForm
-            .checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt).fold(
-              formWithErrors =>
-                handleFormErrors(formWithErrors, isAgent, isChange),
-              _ =>
-                Future.successful(Redirect(redirectUrl(isAgent, isChange)))
-          )
+        case true  => Future.successful(Redirect(redirectUrl(isAgent, isChange)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
       }
     }
