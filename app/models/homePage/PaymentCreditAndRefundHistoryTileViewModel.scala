@@ -16,6 +16,12 @@
 
 package models.homePage
 
+import play.api.i18n.Messages
+
 case class PaymentCreditAndRefundHistoryTileViewModel(creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean) {
+  def title()(implicit messages: Messages): String = (creditsRefundsRepayEnabled, paymentHistoryRefundsEnabled) match {
+    case (_, true) => messages("home.paymentHistoryRefund.heading")
+    case (_, false) => messages("home.paymentHistory.heading")
+  }
 
 }
