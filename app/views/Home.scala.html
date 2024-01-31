@@ -22,6 +22,7 @@
 @import exceptions.MissingFieldException
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import models.nextUpdates.NextUpdatesTileViewModel
+@import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -44,6 +45,7 @@
     nextPaymentDueDate: Option[LocalDate],
 	overDuePaymentsCount: Option[Int],
     nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel,
   	utr: Option[String],
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,

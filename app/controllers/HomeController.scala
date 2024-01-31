@@ -23,6 +23,7 @@ import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
@@ -57,13 +58,15 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   private def view(availableCredit: Option[BigDecimal], nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-                   dunningLockExists: Boolean, currentTaxYear: Int, displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
+                   paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
+                   displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
       availableCredit = availableCredit,
       nextPaymentDueDate = nextPaymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       user.saUtr,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       dunningLockExists = dunningLockExists,
@@ -97,6 +100,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
           }.sortWith(_ isBefore _)
         }
 
+        val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
+          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay),
+          paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds)
+        )
+
         for {
           paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
           unpaidCharges <- unpaidChargesFuture
@@ -126,6 +134,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
               paymentsDueMerged,
               Some(overDuePaymentsCount),
               nextUpdatesTileViewModel,
+              paymentCreditAndRefundHistoryTileViewModel,
               dunningLockExistsValue,
               incomeSourceCurrentTaxYear,
               displayCeaseAnIncome,

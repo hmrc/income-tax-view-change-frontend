@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
 import exceptions.MissingFieldException
+import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
@@ -109,6 +110,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       nextPaymentDueDate,
       overDuePaymentsCount,
       nextUpdatesTileViewModel,
+      paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(creditAndRefundEnabled, paymentHistoryEnabled),
       utr,
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,

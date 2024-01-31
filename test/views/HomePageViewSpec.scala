@@ -19,6 +19,7 @@ package views
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
@@ -118,6 +119,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       nextPaymentDueDate = paymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+      paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(creditAndRefundEnabled, paymentHistoryEnabled),
       Some("1234567890"),
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       dunningLockExists = dunningLockExists,
