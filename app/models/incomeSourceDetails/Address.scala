@@ -18,11 +18,15 @@ package models.incomeSourceDetails
 
 import play.api.libs.json.{Json, OFormat}
 
-case class BusinessAddressModel(
-                                 auditRef: String,
-                                 address: Address
-                               )
+case class Address(
+                    lines: Seq[String],
+                    postcode: Option[String]
+                  ) {
 
-object BusinessAddressModel {
-  implicit val format: OFormat[BusinessAddressModel] = Json.format[BusinessAddressModel]
+  override def toString: String =
+    s"${lines.mkString(", ")}${postcode.map(stringValue => s", $stringValue").getOrElse("")}"
+}
+
+object Address {
+  implicit val format: OFormat[Address] = Json.format[Address]
 }
