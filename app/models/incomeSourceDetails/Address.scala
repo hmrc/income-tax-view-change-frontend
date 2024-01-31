@@ -27,6 +27,13 @@ case class Address(
                     postcode: Option[String]
                   ) {
 
+  def encrypted: SensitiveAddress =
+    SensitiveAddress(
+      lines     .map(SensitiveString),
+      postcode  .map(SensitiveString)
+    )
+
+
   override def toString: String =
     s"${lines.mkString(", ")}${postcode.map(stringValue => s", $stringValue").getOrElse("")}"
 }
@@ -38,7 +45,14 @@ object Address {
 case class SensitiveAddress(
                              lines:    Seq[SensitiveString],
                              postcode: Option[SensitiveString]
-                           )
+                           ) {
+
+  def decrypted: Address =
+    Address(
+      lines     .map(_.decryptedValue),
+      postcode  .map(_.decryptedValue)
+    )
+}
 
 object SensitiveAddress {
 
