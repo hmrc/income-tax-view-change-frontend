@@ -129,8 +129,8 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }
 
   private lazy val backUrl: (Boolean, Boolean) => String = (isAgent, isChange) => {
-    if (isChange) routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
-    else          routes.AddBusinessNameController.submit(isAgent, isChange)
+    if (isChange) routes.IncomeSourceCheckDetailsController .show(isAgent, SelfEmployment)
+    else          routes.AddBusinessNameController          .submit(isAgent, isChange)
   }.url
 
   private lazy val postAction: (Boolean, Boolean) => Call = (isAgent, isChange) =>

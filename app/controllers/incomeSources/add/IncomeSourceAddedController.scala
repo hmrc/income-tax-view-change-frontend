@@ -32,6 +32,7 @@ import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -64,42 +65,32 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withIncomeSourcesFS {
-      sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)).flatMap {
-        case Right(Some(id)) =>
-          val incomeSourceId: IncomeSourceId = IncomeSourceId(id)
-
-          incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceId) match {
-            case Some((startDate, businessName)) =>
-              val showPreviousTaxYears: Boolean = startDate.isBefore(dateService.getCurrentTaxYearStart())
-              handleSuccess(incomeSourceId, incomeSourceType, businessName, showPreviousTaxYears, isAgent)
-            case None => Logger("application").error(
-              s"${if (isAgent) "[Agent]"}" + s"[IncomeSourceAddedController][handleRequest] - unable to find incomeSource by id: $incomeSourceId, IncomeSourceType: $incomeSourceType")
-              Future.successful {
-                errorHandler(isAgent).showInternalServerError()
-              }
-          }
-        case Right(_) =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"[IncomeSourceAddedController][handleRequest]: Unable to retrieve incomeSourceId from Mongo for $incomeSourceType")
-          Future.successful {
-            errorHandler(isAgent).showInternalServerError()
-          }
-        case _ =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"[IncomeSourceAddedController][handleRequest]: Error accessing Mongo database for $incomeSourceType")
-          Future.successful {
-            errorHandler(isAgent).showInternalServerError()
-          }
+    withSessionData(JourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
+      (for {
+        incomeSourceIdModel        <- sessionData.addIncomeSourceData.flatMap(_.incomeSourceId.map(IncomeSourceId(_)))
+        (startDate, businessName)  <- incomeSourceDetailsService.getIncomeSourceFromUser(incomeSourceType, incomeSourceIdModel)
+      } yield {
+        handleSuccess(
+          isAgent = isAgent,
+          businessName = businessName,
+          incomeSourceType = incomeSourceType,
+          incomeSourceId = incomeSourceIdModel,
+          showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart())
+        )
+      }) getOrElse {
+        Logger("application").error(
+          s"${if (isAgent) "[Agent]" else ""}" + s"[IncomeSourceAddedController][handleRequest] - " +
+            s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
+        Future.successful {
+          errorHandler(isAgent).showInternalServerError()
+        }
       }
+    } recover {
+      case ex: Exception =>
+        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+          s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
+        errorHandler(isAgent).showInternalServerError()
     }
-  }.recover {
-    case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
-      errorHandler(isAgent).showInternalServerError()
   }
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
