@@ -17,20 +17,20 @@
 package services
 
 import actors.CalculationPoolingActor
-import actors.CalculationPoolingActor.{GetCalculationRequest, GetCalculationResponse, OriginalParams, WaitForMeBlank}
+import actors.CalculationPoolingActor.{GetCalculationRequest, GetCalculationResponse, OriginalParams}
 import config.FrontendAppConfig
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.pattern.ask
 import org.apache.pekko.util.Timeout
 import play.api.Logger
 import play.api.http.Status
+import services.helpers.CalculationServiceHelper
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.{Duration, DurationInt, MILLISECONDS}
-import scala.concurrent.{Await, ExecutionContext, Future, blocking}
+import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
@@ -38,9 +38,9 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                           val mongoLockRepository: MongoLockRepository,
                                           val calculationService: CalculationService,
                                           system: ActorSystem)
-                                         (implicit ec: ExecutionContext) {
+                                         (implicit ec: ExecutionContext) extends CalculationServiceHelper {
 
-  private lazy val calculationPoolingActor = system.actorOf( CalculationPoolingActor.props(calculationService),
+  private lazy val calculationPoolingActor = system.actorOf(CalculationPoolingActor.props(calculationService),
     "CalculationPoolingActor-actor")
 
   lazy val lockService: LockService = LockService(
@@ -51,8 +51,6 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
 
   def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, taxYear: Int, mtditid: String)
                                                       (implicit headerCarrier: HeaderCarrier): Future[Any] = {
-
-
     val endTimeInMillis: Long = System.currentTimeMillis() + frontendAppConfig.calcPollSchedulerTimeout
     //Acquire Mongo lock and call Calculation service
     //To avoid wait time for first call, calling getCalculationResponse with end time as current time
@@ -69,41 +67,14 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     }
   }
 
-  //Waits for polling interval time to complete and responds with response code from calculation service
-  private def getCalculationResponse(endTimeForEachInterval: Long,
-                                     endTimeInMillis: Long,
-                                     calcId: String,
-                                     nino: String,
-                                     taxYear: Int,
-                                     mtditid: String
-                                    )
-                                    (implicit hc: HeaderCarrier): Future[Int] = {
-
-    Logger("application").debug(s"[CalculationPollingService][getCalculationResponse] " +
-      s"Starting polling for  calcId: $calcId and nino: $nino")
-
-    implicit val timeout : Timeout = 1.second
-    for {
-      _ <- ask(calculationPoolingActor, WaitForMeBlank).mapTo[Unit]
-      result <-
-        calculationService.getLatestCalculation(mtditid, nino, calcId, taxYear).map {
-          case _: LiabilityCalculationResponse => Status.OK
-          case error: LiabilityCalculationError =>
-            if (System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
-            else error.status
-        }
-    } yield result
-  }
-
   private def pollCalcInIntervals(calcId: String,
                                   nino: String,
                                   taxYear: Int,
                                   mtditid: String,
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
-    // TODO: main timeout???
-    implicit val timeout : Timeout = 25.second
-    val originalParams = OriginalParams(
+    implicit val timeout: Timeout = 25.second
+    val params = OriginalParams(
       endTimeForEachInterval = System.currentTimeMillis() + frontendAppConfig.calcPollSchedulerInterval,
       endTimeInMillis = endTimeInMillis,
       calcId = calcId,
@@ -111,8 +82,12 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       taxYear = taxYear,
       mtditid = mtditid,
       hc = hc)
-    (calculationPoolingActor ? GetCalculationRequest(originalParams))
+    (calculationPoolingActor ? GetCalculationRequest(params))
+      .recover { // TODO: intercept only timeouts?
+        _ => GetCalculationResponse(Status.BAD_GATEWAY, originalParams = params, calculationPoolingActor)
+      }
       .mapTo[GetCalculationResponse]
       .map(response => response.responseCode)
   }
+
 }
