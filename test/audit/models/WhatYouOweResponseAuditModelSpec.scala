@@ -129,7 +129,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport {
             "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
-            "overDue" -> false
+            "overDue" -> true
           ),
           Json.obj("accruingInterest" -> 12.67,
             "chargeType" -> "Remaining balance",
