@@ -29,7 +29,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
 object CalculationPoolingActor {
-  def props: Props = Props[CalculationPoolingActor]()
+  def props(calculationService: CalculationService)
+           (implicit ec: ExecutionContext): Props = Props(new CalculationPoolingActor(calculationService))
 
   // TODO: check if these are required at all ?
   case object WaitForMeBlank
@@ -49,8 +50,8 @@ object CalculationPoolingActor {
 
 import org.apache.pekko.pattern.{ ask, pipe }
 
-class CalculationPoolingActor(implicit ec: ExecutionContext,
-                              val calculationService: CalculationService) extends Actor {
+class CalculationPoolingActor(val calculationService: CalculationService)
+                             (implicit ec: ExecutionContext) extends Actor {
   import CalculationPoolingActor._
 
   private var counter : Int = 1
@@ -70,12 +71,16 @@ class CalculationPoolingActor(implicit ec: ExecutionContext,
         // TODO: set up timeout
         logger.info(s"[CalculationPoolingActor][GetCalculationRequest] - call counter => $counter")
         counter += 1
-        val futureResult = getCalculationResponse(origin.endTimeForEachInterval,
-          origin.endTimeInMillis,
-          origin.calcId,
-          origin.nino,
-          origin.taxYear,
-          origin.mtditid)(origin.hc)
+        val futureResult = {
+          getCalculationResponse(origin.endTimeForEachInterval,
+            origin.endTimeInMillis,
+            origin.calcId,
+            origin.nino,
+            origin.taxYear,
+            origin.mtditid)(origin.hc)
+        }.recover { _ =>
+            Status.BAD_GATEWAY
+          }
           .map(code => GetCalculationResponse(responseCode = code,
             originalParams = origin, originalSender.getOrElse(sender())) )
       pipe(futureResult) to self

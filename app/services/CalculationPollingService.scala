@@ -40,9 +40,13 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                           system: ActorSystem)
                                          (implicit ec: ExecutionContext) {
 
-  private val calculationPoolingActor = system.actorOf(CalculationPoolingActor.props, "CalculationPoolingActor-actor")
+  private lazy val calculationPoolingActor = system.actorOf( CalculationPoolingActor.props(calculationService),
+    "CalculationPoolingActor-actor")
 
-  lazy val lockService = LockService(mongoLockRepository, lockId = "calc-poller", ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
+  lazy val lockService: LockService = LockService(
+    mongoLockRepository, lockId = "calc-poller",
+    ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
+
   private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND)
 
   def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, taxYear: Int, mtditid: String)
