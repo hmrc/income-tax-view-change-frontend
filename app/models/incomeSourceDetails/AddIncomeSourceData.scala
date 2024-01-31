@@ -80,7 +80,7 @@ case class SensitiveAddIncomeSourceData(
                                          accountingPeriodStartDate:     Option[SensitiveInstant] = None,
                                          accountingPeriodEndDate:       Option[SensitiveInstant] = None,
                                          incomeSourceId:                Option[SensitiveString]  = None,
-                                         address:                       Option[Address]          = None,
+                                         address:                       Option[SensitiveAddress] = None,
                                          countryCode:                   Option[SensitiveString]  = None,
                                          incomeSourcesAccountingMethod: Option[SensitiveString]  = None,
                                          incomeSourceAdded:             Option[SensitiveBoolean] = None,
@@ -95,7 +95,7 @@ case class SensitiveAddIncomeSourceData(
       accountingPeriodStartDate     .map(_.decryptedValue.atZone(ZoneOffset.UTC).toLocalDate()),
       accountingPeriodEndDate       .map(_.decryptedValue.atZone(ZoneOffset.UTC).toLocalDate()),
       incomeSourceId                .map(_.decryptedValue),
-      address,
+      address                       .map(_.decrypted),
       countryCode                   .map(_.decryptedValue),
       incomeSourcesAccountingMethod .map(_.decryptedValue),
       incomeSourceAdded             .map(_.decryptedValue),
@@ -122,7 +122,7 @@ object SensitiveAddIncomeSourceData {
       ~ (__ \ "accountingPeriodStartDate"    ).formatNullable[SensitiveInstant]
       ~ (__ \ "accountingPeriodEndDate"      ).formatNullable[SensitiveInstant]
       ~ (__ \ "incomeSourceId"               ).formatNullable[SensitiveString]
-      ~ (__ \ "address"                      ).formatNullable[Address]
+      ~ (__ \ "address"                      ).formatNullable[SensitiveAddress]
       ~ (__ \ "countryCode"                  ).formatNullable[SensitiveString]
       ~ (__ \ "incomeSourcesAccountingMethod").formatNullable[SensitiveString]
       ~ (__ \ "incomeSourceAdded"            ).formatNullable[SensitiveBoolean]
