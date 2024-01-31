@@ -98,11 +98,11 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
                     )
                   )
               )
+            ) flatMap {
+              case true  => Future.successful(Redirect(redirectUrl(isAgent, isChange)))
+              case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+            }
         )
-      ).flatMap {
-        case true  => Future.successful(Redirect(redirectUrl(isAgent, isChange)))
-        case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
-      }
     }
   }.recover {
     case ex =>
