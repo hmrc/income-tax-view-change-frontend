@@ -46,7 +46,7 @@ case class AddIncomeSourceData(
       accountingPeriodStartDate     .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
       accountingPeriodEndDate       .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
       incomeSourceId                .map(SensitiveString),
-      address,
+      address                       .map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString), postcode.map(SensitiveString)) },
       countryCode                   .map(SensitiveString),
       incomeSourcesAccountingMethod .map(SensitiveString),
       incomeSourceAdded             .map(SensitiveBoolean),
