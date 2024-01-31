@@ -127,8 +127,7 @@ object SensitiveAddIncomeSourceData {
       ~ (__ \ "incomeSourcesAccountingMethod").formatNullable[SensitiveString]
       ~ (__ \ "incomeSourceAdded"            ).formatNullable[SensitiveBoolean]
       ~ (__ \ "journeyIsComplete"            ).formatNullable[SensitiveBoolean]
-      )(
-      SensitiveAddIncomeSourceData.apply, unlift(SensitiveAddIncomeSourceData.unapply)
+      )(SensitiveAddIncomeSourceData.apply, unlift(SensitiveAddIncomeSourceData.unapply)
     )
   }
 }

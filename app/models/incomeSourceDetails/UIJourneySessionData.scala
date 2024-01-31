@@ -53,8 +53,7 @@ object UIJourneySessionData {
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
       ~ (__ \ "ceaseIncomeSourceData" ).formatNullable[CeaseIncomeSourceData]
       ~ (__ \ "lastUpdated"           ).format(MongoJavatimeFormats.instantFormat)
-      )(
-      UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
+       )(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
     )
   }
 }
@@ -83,13 +82,12 @@ object SensitiveUIJourneySessionData {
 
   implicit def format(implicit crypto: Encrypter with Decrypter): OFormat[SensitiveUIJourneySessionData] =
 
-    ((__ \ "sessionId").format[String]
-      ~ (__ \ "journeyType").format[String]
-      ~ (__ \ "addIncomeSourceData").formatNullable[SensitiveAddIncomeSourceData]
+       ((__ \ "sessionId"             ).format[String]
+      ~ (__ \ "journeyType"           ).format[String]
+      ~ (__ \ "addIncomeSourceData"   ).formatNullable[SensitiveAddIncomeSourceData]
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
-      ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
-      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      ) (
-      SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
+      ~ (__ \ "ceaseIncomeSourceData" ).formatNullable[CeaseIncomeSourceData]
+      ~ (__ \ "lastUpdated"           ).format(MongoJavatimeFormats.instantFormat)
+       )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
     )
 }
