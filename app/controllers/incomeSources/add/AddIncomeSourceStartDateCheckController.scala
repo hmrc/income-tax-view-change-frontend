@@ -104,7 +104,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                                   isChange: Boolean)
                                  (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
-      val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       sessionData.addIncomeSourceData.flatMap(_.dateStarted) match {
         case Some(startDate) =>
           val messagesPrefix = incomeSourceType.addStartDateCheckMessagesPrefix

@@ -123,7 +123,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authorisedFunctions:
   }
 
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    sessionService.getMongo(JourneyType(Cease, incomeSourceType).toString).flatMap {
+    sessionService.getMongo(JourneyType(Cease, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
         val oldCeaseIncomeSourceSessionData = sessionData.ceaseIncomeSourceData.getOrElse(CeaseIncomeSourceData(incomeSourceId = Some(CeaseIncomeSourceData.incomeSourceIdField), endDate = None, ceasePropertyDeclare = None, journeyIsComplete = None))
         val updatedCeaseIncomeSourceSessionData = oldCeaseIncomeSourceSessionData.copy(journeyIsComplete = Some(true))
