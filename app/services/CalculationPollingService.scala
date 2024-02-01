@@ -16,15 +16,13 @@
 
 package services
 
-import actors.CalculationPoolingActor
-import actors.CalculationPoolingActor.{GetCalculationRequestAwait, GetCalculationResponse, OriginalParams}
 import config.FrontendAppConfig
-import org.apache.pekko.actor.ActorSystem
-import org.apache.pekko.pattern.ask
-import org.apache.pekko.util.Timeout
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import org.apache.pekko.actor.{ActorSystem, Scheduler}
+import org.apache.pekko.pattern.retry
 import play.api.Logger
 import play.api.http.Status
-import services.helpers.CalculationServiceHelper
+import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 
@@ -38,16 +36,13 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                           val mongoLockRepository: MongoLockRepository,
                                           val calculationService: CalculationService,
                                           system: ActorSystem)
-                                         (implicit ec: ExecutionContext) extends CalculationServiceHelper {
-
-  private lazy val calculationPoolingActor = system.actorOf(CalculationPoolingActor.props(calculationService),
-    "CalculationPoolingActor-actor")
+                                         (implicit ec: ExecutionContext) {
 
   lazy val lockService: LockService = LockService(
     mongoLockRepository, lockId = "calc-poller",
     ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
 
-  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND) //, NO_CONTENT)
+  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND, NO_CONTENT)
 
   def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, taxYear: Int, mtditid: String)
                                                       (implicit headerCarrier: HeaderCarrier): Future[Any] = {
@@ -69,27 +64,57 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     }
   }
 
+  private def getCalculationResponse(endTimeForEachInterval: Long,
+                                     endTimeInMillis: Long,
+                                     calcId: String,
+                                     nino: String,
+                                     taxYear: Int,
+                                     mtditid: String
+                                    )
+                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Int] = {
+    for {
+      result <-
+        calculationService.getLatestCalculation(mtditid, nino, calcId, taxYear).map {
+          case _: LiabilityCalculationResponse => Status.OK
+          case error: LiabilityCalculationError =>
+            if (System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
+            else error.status
+        }
+    } yield result
+  }
+
   private def pollCalcInIntervals(calcId: String,
                                   nino: String,
                                   taxYear: Int,
                                   mtditid: String,
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
-    implicit val timeout: Timeout = 5.second
-    val params = OriginalParams(
-      endTimeForEachInterval = System.currentTimeMillis() + frontendAppConfig.calcPollSchedulerInterval,
-      endTimeInMillis = endTimeInMillis,
-      calcId = calcId,
-      nino = nino,
-      taxYear = taxYear,
-      mtditid = mtditid,
-      hc = hc)
-    (calculationPoolingActor ? GetCalculationRequestAwait(params))
-      .recover { // TODO: intercept only timeouts?
-        _ => GetCalculationResponse(Status.BAD_GATEWAY, originalParams = params, calculationPoolingActor)
-      }
-      .mapTo[GetCalculationResponse]
-      .map(response => response.responseCode)
+    Logger("application").info(s"[CalculationPollingService][pollCalcInIntervals] - A ${Thread.currentThread().getId}")
+    implicit val scheduler: Scheduler = system.scheduler
+
+    // http://localhost:9081/report-quarterly/income-and-expenses/view/calculation/2023/submitted
+    def futureToAttempt(): Future[Int] = {
+      Logger("application").info(s"[CalculationPollingService][futureToAttempt] - B - ${Thread.currentThread().getId}")
+      for {
+        statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
+        res <- {
+          if (!retryableStatusCodes.contains(statusCode))
+            Future.successful {
+              statusCode
+            }
+          else
+            Future.failed {
+              new RuntimeException(s"$statusCode")
+            }
+        }
+      } yield res
+    }
+
+    // TODO: move setting into config ???
+    // V1: fixed delay between calls
+    //retry(() => futureToAttempt(), attempts = 10, 800.milliseconds)
+    // V2: with backOff
+    retry(() => futureToAttempt(), attempts = 10, minBackoff = 1.second,  maxBackoff = 10.seconds, randomFactor = 0.5)
   }
 
 }
