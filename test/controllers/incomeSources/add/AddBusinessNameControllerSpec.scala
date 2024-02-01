@@ -18,7 +18,7 @@ package controllers.incomeSources.add
 
 import config.featureswitch.{FeatureSwitching, IncomeSources}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import mocks.MockItvcErrorHandler
@@ -29,7 +29,7 @@ import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, verify}
+import org.mockito.Mockito.{mock, verify, when}
 import org.scalatest.matchers.must.Matchers._
 import play.api.http.Status
 import play.api.mvc.{Call, MessagesControllerComponents, Result}
@@ -83,8 +83,6 @@ class AddBusinessNameControllerSpec extends TestSupport
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             if (isChange) {
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
-              setupMockGetSessionKeyMongoTyped[String](businessNameField, journeyType, Right(Some(validBusinessName)))
-              setupMockGetSessionKeyMongoTyped[String](businessTradeField, journeyType, Right(Some("Test Business Trade")))
             }
             else {
               setupMockCreateSession(true)
@@ -201,23 +199,25 @@ class AddBusinessNameControllerSpec extends TestSupport
             setupMockAuthorisationSuccess(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             setupMockCreateSession(true)
-            setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+            setupMockSetMongoData(true)
 
             val (result, redirectUrl) = (isChange, isAgent) match {
-              case (false, false) => (TestAddBusinessNameController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+              case (false, false) => (TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
                 BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = isChange).url)
-              case (false, true) => (TestAddBusinessNameController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+              case (false, true) => (TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                 BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = isChange).url)
-              case (true, false) => (TestAddBusinessNameController.submit(isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
-                BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent = false, SelfEmployment).url)
-              case (true, true) => (TestAddBusinessNameController.submit(isAgent = true, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
-                BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent = true, SelfEmployment).url)
+              case (true, false) => (TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                BusinessNameForm.businessName -> validBusinessName)), controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent = isAgent, SelfEmployment).url)
+              case (true, true) =>
+                (TestAddBusinessNameController
+                  .submit(isAgent = isAgent, isChange = isChange)(
+                    fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                      BusinessNameForm.businessName -> validBusinessName)
+                  ), controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent = isAgent, SelfEmployment).url)
             }
 
             status(result) mustBe SEE_OTHER
-            verify(mockSessionService)
-              .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
             redirectLocation(result) mustBe Some(redirectUrl)
           }
 
@@ -232,13 +232,13 @@ class AddBusinessNameControllerSpec extends TestSupport
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
 
               val result: Future[Result] = (isChange, isAgent) match {
-                case (false, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                case (false, false) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameEmpty))
-                case (false, true) => TestAddBusinessNameController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                case (false, true) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameEmpty))
-                case (true, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                case (true, false) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameEmpty))
-                case (true, true) => TestAddBusinessNameController.submit(isAgent = true, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                case (true, true) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameEmpty))
               }
 
@@ -255,15 +255,16 @@ class AddBusinessNameControllerSpec extends TestSupport
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+              setupMockSetMongoData(true)
 
               val result: Future[Result] = (isChange, isAgent) match {
-                case (false, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                case (false, false) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameLength))
-                case (false, true) => TestAddBusinessNameController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                case (false, true) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameLength))
-                case (true, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                case (true, false) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameLength))
-                case (true, true) => TestAddBusinessNameController.submit(isAgent = true, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                case (true, true) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameLength))
               }
 
@@ -281,13 +282,13 @@ class AddBusinessNameControllerSpec extends TestSupport
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
 
               val result: Future[Result] = (isChange, isAgent) match {
-                case (false, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = false)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                case (false, false) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameEmpty))
-                case (false, true) => TestAddBusinessNameController.submit(isAgent = true, isChange = false)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                case (false, true) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameEmpty))
-                case (true, false) => TestAddBusinessNameController.submit(isAgent = false, isChange = true)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
+                case (true, false) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameEmpty))
-                case (true, true) => TestAddBusinessNameController.submit(isAgent = true, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                case (true, true) => TestAddBusinessNameController.submit(isAgent = isAgent, isChange = isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> invalidBusinessNameEmpty))
               }
 
@@ -306,9 +307,10 @@ class AddBusinessNameControllerSpec extends TestSupport
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(businessName),
                     businessTrade = Some(businessName)))))))
 
-                val result: Future[Result] = if (isAgent) TestAddBusinessNameController.submit(isAgent = true, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+
+                val result: Future[Result] = if (isAgent) TestAddBusinessNameController.submit(isAgent, isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> businessName))
-                else TestAddBusinessNameController.submit(isAgent = false, isChange = true)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
+                else TestAddBusinessNameController.submit(isAgent, isChange)(fakePostRequestConfirmedClient().withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> businessName))
 
                 status(result) mustBe BAD_REQUEST
