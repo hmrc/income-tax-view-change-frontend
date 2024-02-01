@@ -20,6 +20,7 @@ import org.apache.pekko.actor.{Actor, ActorRef, Props}
 import org.apache.pekko.event.Logging
 import org.apache.pekko.util.Timeout
 import play.api.http.Status
+import play.api.http.Status.{BAD_GATEWAY, NOT_FOUND, NO_CONTENT}
 import services.CalculationService
 import services.helpers.CalculationServiceHelper
 import uk.gov.hmrc.http.HeaderCarrier
@@ -38,7 +39,9 @@ object CalculationPoolingActor {
                             taxYear: Int,
                             mtditid: String, hc: HeaderCarrier)
 
-  case class GetCalculationRequest(originalParams: OriginalParams, originalSender: Option[ActorRef] = None)
+  case class GetCalculationRequestAwait(originalParams: OriginalParams, originalSender: Option[ActorRef] = None)
+
+  case class GetCalculationRequest(originalParams: OriginalParams, originalSender: ActorRef)
 
   case class GetCalculationResponse(responseCode: Int, originalParams: OriginalParams, originalSender: ActorRef)
 }
@@ -51,12 +54,19 @@ class CalculationPoolingActor(val calculationService: CalculationService)
 
   private var counter : Int = 1
 
-  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND)
+  private lazy val retryableStatusCodes: List[Int] = List(BAD_GATEWAY, NOT_FOUND) //,  NO_CONTENT )
   private val logger = Logging(context.system, this)
 
   def receive: Receive = {
+    case GetCalculationRequestAwait(origin, originalSender) =>
+      logger.debug(s"[CalculationPoolingActor][GetCalculationRequestAwait] - ${Thread.currentThread().getId}")
+      logger.info(s"[CalculationPoolingActor][GetCalculationRequestAwait]")
+      val scheduledMessage = GetCalculationRequest(originalParams = origin, originalSender = originalSender.getOrElse(sender()))
+      context.system.scheduler.scheduleOnce(1500.milliseconds, self, scheduledMessage)
+
     case GetCalculationRequest(origin, originalSender) =>
         // TODO: set up timeout
+        logger.debug(s"[CalculationPoolingActor][GetCalculationRequest] - ${Thread.currentThread().getId}")
         logger.info(s"[CalculationPoolingActor][GetCalculationRequest] - call counter => $counter")
         counter += 1
         val futureResult = {
@@ -67,21 +77,22 @@ class CalculationPoolingActor(val calculationService: CalculationService)
             origin.taxYear,
             origin.mtditid)(origin.hc, ec)
         }.recover { ex =>
-            logger.debug(s"[CalculationPoolingActor][GetCalculationRequest] - failed => ${ex.getCause}")
+            logger.info(s"[CalculationPoolingActor][GetCalculationRequest] - failed => ${ex.getCause}")
             Status.BAD_GATEWAY
           }
           .map(code => GetCalculationResponse(responseCode = code,
-            originalParams = origin, originalSender.getOrElse(sender())) )
+            originalParams = origin, originalSender) )
       pipe(futureResult) to self
 
-    case GetCalculationResponse(responseCode, origin, originalSender) if retryableStatusCodes.contains(responseCode) =>
+    case GetCalculationResponse(responseCode, origin, originalSender) if retryableStatusCodes.contains(responseCode) && counter < 10 =>
+      logger.debug(s"[CalculationPoolingActor] - ${Thread.currentThread().getId}")
       logger.info(s"[CalculationPoolingActor][GetCalculationResponse] - re-try")
       // TODO: set up timeout(2) ???
       implicit val timeout : Timeout = 1.second
       pipe({
-        self ? GetCalculationRequest(origin)
+        self ? GetCalculationRequestAwait(origin, Some(originalSender)) // retry with await
       }.recover{ ex => // attempt to intercept Future timeout
-        logger.debug(s"[CalculationPoolingActor][GetCalculationResponse] - failed => ${ex.getCause}")
+        logger.info(s"[CalculationPoolingActor][GetCalculationResponse] - failed => ${ex.getCause}")
         GetCalculationResponse(
           responseCode = Status.BAD_GATEWAY,
           originalParams = origin,
@@ -89,6 +100,7 @@ class CalculationPoolingActor(val calculationService: CalculationService)
       }) to self
 
     case GetCalculationResponse(responseCode, originalParams, originalSender) =>
+      logger.debug(s"[CalculationPoolingActor][GetCalculationRequest] - ${Thread.currentThread().getId}")
       logger.info(s"[CalculationPoolingActor][GetCalculationRequest] - job done")
       originalSender ! GetCalculationResponse(
         responseCode = responseCode,

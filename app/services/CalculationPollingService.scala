@@ -17,7 +17,7 @@
 package services
 
 import actors.CalculationPoolingActor
-import actors.CalculationPoolingActor.{GetCalculationRequest, GetCalculationResponse, OriginalParams}
+import actors.CalculationPoolingActor.{GetCalculationRequestAwait, GetCalculationResponse, OriginalParams}
 import config.FrontendAppConfig
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.pattern.ask
@@ -47,7 +47,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     mongoLockRepository, lockId = "calc-poller",
     ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
 
-  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND)
+  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND) //, NO_CONTENT)
 
   def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, taxYear: Int, mtditid: String)
                                                       (implicit headerCarrier: HeaderCarrier): Future[Any] = {
@@ -58,11 +58,13 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
     } flatMap {
       case Some(statusCode) =>
-        Logger("application").debug("[CalculationPollingService] Response received from Calculation service")
+        Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId}")
+        Logger("application").info(s"[CalculationPollingService] Response received from Calculation service: $statusCode")
         if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
         else pollCalcInIntervals(calcId, nino, taxYear, mtditid, endTimeInMillis)
       case None =>
-        Logger("application").debug("[CalculationPollingService] Failed to acquire Mongo lock")
+        Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId}")
+        Logger("application").info("[CalculationPollingService] Failed to acquire Mongo lock")
         Future.successful(Status.INTERNAL_SERVER_ERROR)
     }
   }
@@ -73,7 +75,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                   mtditid: String,
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
-    implicit val timeout: Timeout = 25.second
+    implicit val timeout: Timeout = 5.second
     val params = OriginalParams(
       endTimeForEachInterval = System.currentTimeMillis() + frontendAppConfig.calcPollSchedulerInterval,
       endTimeInMillis = endTimeInMillis,
@@ -82,7 +84,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       taxYear = taxYear,
       mtditid = mtditid,
       hc = hc)
-    (calculationPoolingActor ? GetCalculationRequest(params))
+    (calculationPoolingActor ? GetCalculationRequestAwait(params))
       .recover { // TODO: intercept only timeouts?
         _ => GetCalculationResponse(Status.BAD_GATEWAY, originalParams = params, calculationPoolingActor)
       }
