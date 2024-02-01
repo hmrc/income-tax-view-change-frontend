@@ -27,8 +27,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
 
-  def getMongo(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
-    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+  def getMongo(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType.toString) map {
       case Some(data: UIJourneySessionData) =>
         Right(Some(data))
       case None => Right(None)

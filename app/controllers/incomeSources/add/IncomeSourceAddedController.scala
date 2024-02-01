@@ -95,7 +95,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
 
   def handleSuccess(incomeSourceId: IncomeSourceId, incomeSourceType: IncomeSourceType, businessName: Option[String],
                     showPreviousTaxYears: Boolean, isAgent: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    sessionService.getMongo(JourneyType(Add, incomeSourceType).toString).flatMap {
+    sessionService.getMongo(JourneyType(Add, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
         val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
         val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(journeyIsComplete = Some(true))

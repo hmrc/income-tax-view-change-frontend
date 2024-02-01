@@ -95,7 +95,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
     case ex =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       Logger("application")
-        .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
+        .error(s"[AddBusinessAddressController][handleSubmitRequest] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
       errorHandler.showInternalServerError()
   }
 
@@ -103,8 +103,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
                           (implicit request: Request[_]): Future[Boolean] = {
     addressLookUpResult match {
       case Right(value) =>
-        val journeyType = JourneyType(Add, SelfEmployment)
-        sessionService.getMongo(journeyType.toString).flatMap {
+        sessionService.getMongo(JourneyType(Add, SelfEmployment)).flatMap {
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
             val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
@@ -112,7 +111,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
 
             sessionService.setMongoData(uiJourneySessionData)
 
-          case _ => Future.failed(new Exception(s"failed to retrieve session data for ${journeyType.toString}"))
+          case _ => Future.failed(new Exception(s"failed to retrieve session data for ${JourneyType(Add, SelfEmployment).toString}"))
         }
       case Left(ex) => Future.failed(ex)
     }

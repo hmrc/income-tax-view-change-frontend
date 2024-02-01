@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, IncomeSourceType}
 import enums.JourneyType.{Add, JourneyType}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
@@ -70,15 +70,18 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
     }
   }
 
-  private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = withIncomeSourcesFS {
-    sessionService.getMongoKeyTyped[String](AddIncomeSourceData.incomeSourceIdField, JourneyType(Add, incomeSourceType)) map {
-      case Right(Some(_)) =>
-        Redirect(routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))
-      case _ => Logger("application").error(
-        "[IncomeSourceAddedBackErrorController][handleSubmit] - Error: Unable to find id in session")
-        if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
-        else itvcErrorHandler.showInternalServerError()
-    }
+  private def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] =
+    withSessionData(JourneyType(Add, incomeSourceType), CannotGoBackPage) {
+      _.addIncomeSourceData.map(_.incomeSourceId) match {
+        case Some(_) =>
+          Future.successful {
+            Redirect(routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))
+          }
+        case None => Logger("application").error(
+          "[IncomeSourceAddedBackErrorController][handleSubmit] - Error: Unable to find id in session")
+          Future.successful {
+            (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
+          }
+      }
   }
 }
-

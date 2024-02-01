@@ -26,10 +26,10 @@ import java.time.Instant
 case class UIJourneySessionData(
                                  sessionId:               String,
                                  journeyType:             String,
-                                 addIncomeSourceData:     Option[AddIncomeSourceData] = None,
+                                 addIncomeSourceData:     Option[AddIncomeSourceData]    = None,
                                  manageIncomeSourceData:  Option[ManageIncomeSourceData] = None,
-                                 ceaseIncomeSourceData:   Option[CeaseIncomeSourceData] = None,
-                                 lastUpdated:             Instant = Instant.now
+                                 ceaseIncomeSourceData:   Option[CeaseIncomeSourceData]  = None,
+                                 lastUpdated:             Instant                        = Instant.now
                                ) {
 
   def encrypted: SensitiveUIJourneySessionData =
@@ -61,10 +61,10 @@ object UIJourneySessionData {
 case class SensitiveUIJourneySessionData(
                                           sessionId:              String,
                                           journeyType:            String,
-                                          addIncomeSourceData:    Option[SensitiveAddIncomeSourceData] = None,
-                                          manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
-                                          ceaseIncomeSourceData:  Option[CeaseIncomeSourceData] = None,
-                                          lastUpdated:            Instant = Instant.now
+                                          addIncomeSourceData:    Option[SensitiveAddIncomeSourceData]  = None,
+                                          manageIncomeSourceData: Option[ManageIncomeSourceData]        = None,
+                                          ceaseIncomeSourceData:  Option[CeaseIncomeSourceData]         = None,
+                                          lastUpdated:            Instant                               = Instant.now
                                         ) {
 
   def decrypted: UIJourneySessionData =
