@@ -40,26 +40,26 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val postAction: Call = {
       if (isChange) {
         if (isAgent) {
-          controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent()
+          controllers.incomeSources.add.routes.AddBusinessNameController.submit(isAgent, isChange)
         } else {
-          controllers.incomeSources.add.routes.AddBusinessNameController.submitChange()
+          controllers.incomeSources.add.routes.AddBusinessNameController.submit(isAgent, isChange)
         }
       } else {
-        if (isAgent) controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent() else
-          controllers.incomeSources.add.routes.AddBusinessNameController.submit()
+        if (isAgent) controllers.incomeSources.add.routes.AddBusinessNameController.submit(isAgent, isChange) else
+          controllers.incomeSources.add.routes.AddBusinessNameController.submit(isAgent, isChange)
       }
     }
 
     val backUrl: String = {
       if (isChange) {
         if (isAgent) {
-          controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+          controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment).url
         } else {
-          controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+          controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment).url
         }
       } else {
-        if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url else
-          controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
+        if (isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent).url else
+          controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent).url
       }
     }
 

@@ -31,8 +31,8 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
 
-    lazy val postCall: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
-    else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
+    lazy val postCall: Call = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(isAgent, incomeSourceType)
+    else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.submit(isAgent, incomeSourceType)
     lazy val view: HtmlFormat.Appendable = errorView(isAgent, incomeSourceType, postCall)
     lazy val document: Document = Jsoup.parse(contentAsString(view))
   }

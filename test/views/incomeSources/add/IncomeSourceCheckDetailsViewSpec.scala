@@ -55,7 +55,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
   )
 
   def postAction(incomeSourceType: IncomeSourceType): Call = {
-    controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
+    controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submit(isAgent = false, incomeSourceType)
   }
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {

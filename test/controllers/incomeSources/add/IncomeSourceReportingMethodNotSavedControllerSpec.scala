@@ -49,7 +49,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
   with MockSessionService {
 
   val view: IncomeSourceReportingMethodNotSaved = app.injector.instanceOf[IncomeSourceReportingMethodNotSaved]
-  val postAction: Call = controllers.incomeSources.add.routes.AddBusinessNameController.submit()
 
   def authenticate(isAgent: Boolean): Unit = {
     if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
@@ -97,13 +96,13 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
     val paragraphTextUkProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", ukProperty)
     val paragraphTextForeignProperty: String = messages("incomeSources.add.error.reportingMethodNotSaved.p1", foreignProperty)
 
-    val selfEmploymentAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(SelfEmployment).url
-    val ukPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(UkProperty).url
-    val foreignPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(ForeignProperty).url
+    val selfEmploymentAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent = false, SelfEmployment).url
+    val ukPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent = false, UkProperty).url
+    val foreignPropertyAddedUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent = false, ForeignProperty).url
 
-    val selfEmploymentAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
-    val ukPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
-    val foreignPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
+    val selfEmploymentAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent = true, SelfEmployment).url
+    val ukPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent = true, UkProperty).url
+    val foreignPropertyAddedAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent = true, ForeignProperty).url
   }
 
   object TestIncomeSourceReportingMethodNotSavedController
@@ -130,8 +129,8 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
             setupMockGetIncomeSourceDetails()(ukPlusForeignPropertyAndSoleTraderNoLatency)
 
             val result: Future[Result] = if (isAgent)
-              TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+              TestIncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
             val document: Document = Jsoup.parse(contentAsString(result))
             status(result) mustBe OK
@@ -144,8 +143,8 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
         s"return 303 and redirect to the sign in for <incomeSourceType: $incomeSourceType>" when {
           "the user is not authenticated" in {
             if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
-            val result = if (isAgent) TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestIncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
@@ -156,8 +155,8 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
           "the user has timed out" in {
             if (isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired())
             else setupMockAuthorisationException()
-            val result = if (isAgent) TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClientTimeout())
-            else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithTimeoutSession)
+            val result = if (isAgent) TestIncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClientTimeout())
+            else TestIncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType)(fakeRequestWithTimeoutSession)
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
           }
@@ -171,8 +170,8 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends TestSupport
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
             val result: Future[Result] = if (isAgent)
-              TestIncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestIncomeSourceReportingMethodNotSavedController.show(incomeSourceType)(fakeRequestWithActiveSession)
+              TestIncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) mustBe (if (isAgent) Some(routes.HomeController.showAgent.url) else Some(routes.HomeController.show().url))

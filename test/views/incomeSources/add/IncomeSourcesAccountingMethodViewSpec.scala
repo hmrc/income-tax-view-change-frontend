@@ -56,11 +56,11 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
 
     val (backUrl, postAction) = incomeSourceType match {
       case SelfEmployment =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(SelfEmployment, isAgent))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(isAgent, SelfEmployment))
       case UkProperty =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(UkProperty, isAgent))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(isAgent, UkProperty))
       case _ =>
-        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(ForeignProperty, isAgent))
+        (controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = isAgent, isChange = false).url, controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.submit(isAgent, ForeignProperty))
     }
 
     lazy val view: HtmlFormat.Appendable = incomeSourcesAccountingMethodView(

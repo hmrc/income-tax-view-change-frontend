@@ -290,8 +290,8 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
           s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with expired latency period and FS enabled" in {
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, LATENCY_PERIOD_EXPIRED)
 
-            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
+            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
 
             checkRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
           }
@@ -299,8 +299,8 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
           s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with no latency period and FS enabled" in {
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, NO_LATENCY)
 
-            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
+            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
 
             checkRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
           }
@@ -308,8 +308,8 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
           s"navigating to the ${getTestTitleIncomeSourceType(incomeSourceType)} page with non-mandated/voluntary ITSA status and FS enabled" in {
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, NON_ELIGIBLE_ITSA_STATUS)
 
-            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
+            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
 
             checkRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
           }
@@ -332,9 +332,9 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
             setupMockCalls(isAgent = isAgent, incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
             setupMockGetMongo(Right(Some(completedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
             val expectedBackErrorRedirectUrl = if (isAgent)
-              controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
+              controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType).url
             else
-              controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+              controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType).url
 
             checkRedirect(isAgent, incomeSourceType, expectedBackErrorRedirectUrl)
           }
@@ -367,8 +367,8 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
         "return 303 SEE_OTHER and redirect to Obligations page" when {
           s"completing the ${getTestTitleIncomeSourceType(incomeSourceType)} form and updates send successfully" in {
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
-            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
+            val expectedRedirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(isAgent, incomeSourceType).url
             setupMockUpdateIncomeSourceCall(2)
             checkSubmitRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
           }
@@ -379,16 +379,16 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
             setupMockUpdateIncomeSourceCall(1)
             val expectedRedirectUrl = if (isAgent)
-              controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
+              controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType).url
             checkSubmitRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)
           }
 
           s"completing the ${getTestTitleIncomeSourceType(incomeSourceType)} form and both updates fail" in {
             setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, CURRENT_TAX_YEAR_IN_LATENCY_YEARS)
             val expectedRedirectUrl = if (isAgent)
-              controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(incomeSourceType).url
+              controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.show(isAgent, incomeSourceType).url
 
             setupMockUpdateIncomeSourceCall(0)
             checkSubmitRedirect(isAgent = isAgent, incomeSourceType = incomeSourceType, expectedRedirectUrl)

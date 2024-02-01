@@ -81,7 +81,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
           isDisabled(IncomeSources)
           mockSingleBISWithCurrentYearAsMigrationYear()
           authenticate(isAgent)
-          val result: Future[Result] = if (isAgent) controller.showAgent()(fakeRequestConfirmedClient()) else controller.show()(fakeRequestWithActiveSession)
+          val result: Future[Result] = if (isAgent) controller.show(isAgent)(fakeRequestConfirmedClient()) else controller.show(isAgent)(fakeRequestWithActiveSession)
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe {
             if (isAgent) Some(controllers.routes.HomeController.showAgent.url) else Some(controllers.routes.HomeController.show().url)
@@ -107,7 +107,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
               foreignProperty = None,
               ceasedBusinesses = Nil)))
 
-          val result = if(isAgent) controller.showAgent()(fakeRequestConfirmedClient("AB123456C")) else controller.show()(fakeRequestWithActiveSession)
+          val result = if(isAgent) controller.show(isAgent)(fakeRequestConfirmedClient("AB123456C")) else controller.show(isAgent)(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
         }
       }
@@ -126,8 +126,8 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
         when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
           .thenReturn(Success(AddIncomeSourcesViewModel(Nil, None, None, Nil)))
 
-        val result = controller.show()(fakeRequestWithActiveSession)
-        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+        val result = controller.show(isAgent = false)(fakeRequestWithActiveSession)
+        val resultAgent = controller.show(isAgent = true)(fakeRequestConfirmedClient("AB123456C"))
 
         val doc: Document = Jsoup.parse(contentAsString(result))
         val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
@@ -163,8 +163,8 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
             foreignProperty = Some(foreignPropertyDetailsViewModel),
             ceasedBusinesses = List(ceasedBusinessDetailsViewModel))))
 
-        val result = controller.show()(fakeRequestWithActiveSession)
-        val resultAgent = controller.showAgent()(fakeRequestConfirmedClient("AB123456C"))
+        val result = controller.show(isAgent = false)(fakeRequestWithActiveSession)
+        val resultAgent = controller.show(isAgent = true)(fakeRequestConfirmedClient("AB123456C"))
 
         val doc: Document = Jsoup.parse(contentAsString(result))
         val docAgent: Document = Jsoup.parse(contentAsString(resultAgent))
@@ -197,7 +197,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
         when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any()))
           .thenReturn(Failure(new Exception("UnknownError")))
 
-        val result = if (isAgent) controller.showAgent()(fakeRequestConfirmedClient("AB123456C")) else controller.show()(fakeRequestWithActiveSession)
+        val result = if (isAgent) controller.show(isAgent)(fakeRequestConfirmedClient("AB123456C")) else controller.show(isAgent)(fakeRequestWithActiveSession)
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }

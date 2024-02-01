@@ -78,8 +78,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val validCallWithData: Html = view(viewModelWithAllData, isAgent = false, SelfEmployment, Some("Test Name"))
   val validAgentCallWithData: Html = view(viewModelWithAllData, isAgent = true, SelfEmployment, Some("Test Name"))
 
-  val addIncomeSourceShowURL = controllers.incomeSources.add.routes.AddIncomeSourceController.show().url
-  val addIncomeSourceShowAgentURL = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+  val addIncomeSourceShowURL = controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent = false).url
+  val addIncomeSourceShowAgentURL = controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent = true).url
 
   "Income Source Added Obligations - Individual" should {
     "Display the correct banner message and heading" when {

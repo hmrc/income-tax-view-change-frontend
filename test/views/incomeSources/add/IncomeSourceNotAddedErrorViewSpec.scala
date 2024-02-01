@@ -29,8 +29,8 @@ class IncomeSourceNotAddedErrorViewSpec extends TestSupport {
   val incomeSourceNotAddedErrorView: IncomeSourceNotAddedError = app.injector.instanceOf[IncomeSourceNotAddedError]
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
 
-    val continueAction = if(isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent() else
-      controllers.incomeSources.add.routes.AddIncomeSourceController.show()
+    val continueAction = if(isAgent) controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent) else
+      controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent)
 
     lazy val view: HtmlFormat.Appendable = incomeSourceNotAddedErrorView(isAgent = isAgent, incomeSourceType = incomeSourceType, continueAction = continueAction)
     lazy val document: Document = Jsoup.parse(contentAsString(view))

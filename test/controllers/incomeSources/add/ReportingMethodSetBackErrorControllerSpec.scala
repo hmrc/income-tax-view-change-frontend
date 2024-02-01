@@ -94,8 +94,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
           "the user is not authenticated" should {
             "redirect them to sign in" in {
               if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
-              val result = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-              else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)
+              val result = if (isAgent) TestReportingMethodSetBackController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+              else TestReportingMethodSetBackController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
             }
@@ -109,8 +109,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
             authenticate(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-            val result: Future[Result] = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result: Future[Result] = if (isAgent) TestReportingMethodSetBackController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestReportingMethodSetBackController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe SEE_OTHER
             val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
             redirectLocation(result) shouldBe Some(homeUrl)
@@ -127,8 +127,8 @@ class ReportingMethodSetBackErrorControllerSpec extends TestSupport with MockAut
 
             mockMongo(JourneyType(Add, incomeSourceType))
 
-            val result = if (isAgent) TestReportingMethodSetBackController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestReportingMethodSetBackController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestReportingMethodSetBackController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestReportingMethodSetBackController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
             val document = Jsoup.parse(contentAsString(result))
 
             status(result) shouldBe OK

@@ -241,8 +241,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
         })
       status(result) shouldBe SEE_OTHER
-      val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
-      else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+      val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType).url
+      else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType).url
       redirectLocation(result) shouldBe Some(redirectUrl)
     }
 
@@ -259,8 +259,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
           if (isAgent) fakeRequestConfirmedClient() else fakeRequestWithActiveSession
         })
       status(result) shouldBe SEE_OTHER
-      val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType).url
-      else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
+      val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType).url
+      else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType).url
       redirectLocation(result) shouldBe Some(redirectUrl)
     }
 
@@ -469,7 +469,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
         (isAgent, incomeSourceType) match {
           case (false, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
           case (true, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessTradeController.show(isAgent, isChange = false)
-          case _ => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
+          case _ => routes.IncomeSourcesAccountingMethodController.show(isAgent, isChange = false, incomeSourceType)
         }
       }.url)
     }
@@ -495,7 +495,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends TestSupport
       status(result) shouldBe SEE_OTHER
       if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
       redirectLocation(result) shouldBe Some({
-        if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType) else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+        if (isAgent) routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType) else routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType)
       }.url)
     }
   }

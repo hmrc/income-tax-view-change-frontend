@@ -37,7 +37,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return the correct session value for given key" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE")
           mockRepositoryGet(Some(sessionData))
-          TestSessionService.getMongo("ADD-SE")(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
+          TestSessionService.getMongo(JourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some(sessionData))
         }
       }
       "getMongoKey method " should {

@@ -88,8 +88,8 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
           authenticate(isAgent)
           setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-          val result: Future[Result] = if (isAgent) TestIncomeSourceAddedBackErrorController.showAgent(ForeignProperty)(fakeRequestConfirmedClient())
-          else TestIncomeSourceAddedBackErrorController.show(UkProperty)(fakeRequestWithActiveSession)
+          val result: Future[Result] = if (isAgent) TestIncomeSourceAddedBackErrorController.show(isAgent, ForeignProperty)(fakeRequestConfirmedClient())
+          else TestIncomeSourceAddedBackErrorController.show(isAgent, UkProperty)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some({
             if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
@@ -115,8 +115,8 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockMongo(JourneyType(Add, SelfEmployment))
 
-            val result = if (isAgent) TestIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestIncomeSourceAddedBackErrorController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestIncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestIncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
             val document = Jsoup.parse(contentAsString(result))
 
             status(result) shouldBe OK
@@ -139,8 +139,8 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             mockMongo(JourneyType(Add, incomeSourceType))
 
-            val result = if (isAgent) TestIncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)(postRequest(isAgent))
-            else TestIncomeSourceAddedBackErrorController.submit(incomeSourceType)(postRequest(isAgent))
+            val result = if (isAgent) TestIncomeSourceAddedBackErrorController.submit(isAgent, incomeSourceType)(postRequest(isAgent))
+            else TestIncomeSourceAddedBackErrorController.submit(isAgent, incomeSourceType)(postRequest(isAgent))
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url)
@@ -152,7 +152,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends TestSupport with MockAuth
       "the user is not authenticated" should {
         "redirect them to sign in" in {
           setupMockAuthorisationException()
-          val result = TestIncomeSourceAddedBackErrorController.show(SelfEmployment)(fakeRequestWithActiveSession)
+          val result = TestIncomeSourceAddedBackErrorController.show(isAgent = false, SelfEmployment)(fakeRequestWithActiveSession)
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
         }

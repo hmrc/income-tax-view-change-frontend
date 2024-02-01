@@ -97,23 +97,23 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   def getBackUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, UkProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.show()
-      case (true, UkProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
-      case (false, ForeignProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.show()
-      case (true, ForeignProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
-      case (false, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessNameController.show()
-      case (true, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessNameController.showAgent()
+      case (false, UkProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent)
+      case (true, UkProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent)
+      case (false, ForeignProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent)
+      case (true, ForeignProperty) => controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent)
+      case (false, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessNameController.show(isAgent, isChange = false)
+      case (true, SelfEmployment) => controllers.incomeSources.add.routes.AddBusinessNameController.show(isAgent, isChange = false)
     }).url
   }
 
   def getBackUrlChange(isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, UkProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(UkProperty)
-      case (true, UkProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
-      case (false, ForeignProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
-      case (true, ForeignProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
-      case (false, SelfEmployment) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (true, SelfEmployment) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (false, UkProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, UkProperty)
+      case (true, UkProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, UkProperty)
+      case (false, ForeignProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, ForeignProperty)
+      case (true, ForeignProperty) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, ForeignProperty)
+      case (false, SelfEmployment) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+      case (true, SelfEmployment) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
     }).url
   }
 

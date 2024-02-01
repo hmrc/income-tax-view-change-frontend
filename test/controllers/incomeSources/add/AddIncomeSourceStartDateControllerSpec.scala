@@ -86,16 +86,16 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
   }
 
   def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = ((isAgent, isChange, incomeSourceType) match {
-    case (false, false, SelfEmployment) => routes.AddBusinessNameController.show()
-    case (_, false, SelfEmployment) => routes.AddBusinessNameController.showAgent()
-    case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-    case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-    case (false, false, _) => routes.AddIncomeSourceController.show()
-    case (_, false, _) => routes.AddIncomeSourceController.showAgent()
-    case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(UkProperty)
-    case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
-    case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
-    case (_, _, _) => routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
+    case (false, false, SelfEmployment) => routes.AddBusinessNameController.show(isAgent, isChange)
+    case (_, false, SelfEmployment) => routes.AddBusinessNameController.show(isAgent, isChange)
+    case (false, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+    case (_, _, SelfEmployment) => routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment)
+    case (false, false, _) => routes.AddIncomeSourceController.show(isAgent)
+    case (_, false, _) => routes.AddIncomeSourceController.show(isAgent)
+    case (false, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(isAgent, UkProperty)
+    case (_, _, UkProperty) => routes.IncomeSourceCheckDetailsController.show(isAgent, UkProperty)
+    case (false, _, _) => routes.IncomeSourceCheckDetailsController.show(isAgent, ForeignProperty)
+    case (_, _, _) => routes.IncomeSourceCheckDetailsController.show(isAgent, ForeignProperty)
   }).url
 
   def getRedirectUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): String = (incomeSourceType, isAgent, isChange) match {
@@ -208,8 +208,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages(s"${incomeSourceType.startDateMessagesPrefix}.heading"))
             document.getElementById("back").attr("href") shouldBe {
-              if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
-              else routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
+              if (isAgent) routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType).url
+              else routes.IncomeSourceCheckDetailsController.show(isAgent, incomeSourceType).url
             }
             document.getElementById("income-source-start-date.day").attr("value") shouldBe "1"
             document.getElementById("income-source-start-date.month").attr("value") shouldBe "1"
@@ -228,8 +228,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
             val result: Future[Result] = TestAddIncomeSourceStartDateController.show(isAgent, isChange = false, incomeSourceType)(getRequest(isAgent))
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
           s"user has already added their income source (${incomeSourceType.key})" in {
@@ -242,8 +242,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
             val result: Future[Result] = TestAddIncomeSourceStartDateController.show(isAgent, isChange = false, incomeSourceType)(getRequest(isAgent))
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }

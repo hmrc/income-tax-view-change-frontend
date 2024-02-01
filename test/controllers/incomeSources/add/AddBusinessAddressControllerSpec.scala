@@ -53,10 +53,10 @@ class AddBusinessAddressControllerSpec extends TestSupport
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
-  val postAction: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = false)
-  val postActionChange: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = true)
-  val redirectAction: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-  val redirectActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+  val postAction: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isAgent = false, isChange = false)
+  val postActionChange: Call = controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isAgent = false, isChange = true)
+  val redirectAction: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent = false, SelfEmployment)
+  val redirectActionAgent: Call = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent = true, SelfEmployment)
   val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
 
   object TestAddBusinessAddressController
@@ -99,8 +99,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
           "the individual is not authenticated" should {
             "redirect them to sign in" in {
               if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
-              val result = if (isAgent) TestAddBusinessAddressController.showAgent(isChange)(fakeRequestConfirmedClient())
-              else TestAddBusinessAddressController.show(isChange)(fakeRequestWithActiveSession)
+              val result = if (isAgent) TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestConfirmedClient())
+              else TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn.url)
             }
@@ -110,8 +110,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
           "redirect to the session timeout page" in {
             if (isAgent) setupMockAgentAuthorisationException(exception = BearerTokenExpired()) else setupMockAuthorisationException()
 
-            val result = if (isAgent) TestAddBusinessAddressController.agentSubmit(None, isChange)(fakeRequestWithClientDetails)
-            else TestAddBusinessAddressController.submit(None, isChange)(fakeRequestWithTimeoutSession)
+            val result = if (isAgent) TestAddBusinessAddressController.submit(None, isAgent, isChange)(fakeRequestWithClientDetails)
+            else TestAddBusinessAddressController.submit(None, isAgent, isChange)(fakeRequestWithTimeoutSession)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -129,8 +129,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
-              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.showAgent(isChange)(fakeRequestConfirmedClient())
-              else TestAddBusinessAddressController.show(isChange)(fakeRequestWithActiveSession)
+              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestConfirmedClient())
+              else TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) mustBe Some("Sample location")
             }
@@ -142,8 +142,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
               authenticate(isAgent)
               setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.showAgent(isChange)(fakeRequestConfirmedClient())
-              else TestAddBusinessAddressController.show(isChange)(fakeRequestWithActiveSession)
+              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestConfirmedClient())
+              else TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER
               val homeUrl = if (isAgent) controllers.routes.HomeController.showAgent.url else controllers.routes.HomeController.show().url
               redirectLocation(result) shouldBe Some(homeUrl)
@@ -159,8 +159,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(None)))
 
-              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.showAgent(isChange)(fakeRequestConfirmedClient())
-              else TestAddBusinessAddressController.show(isChange)(fakeRequestWithActiveSession)
+              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestConfirmedClient())
+              else TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
 
@@ -173,8 +173,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
 
-              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.showAgent(isChange)(fakeRequestConfirmedClient())
-              else TestAddBusinessAddressController.show(isChange)(fakeRequestWithActiveSession)
+              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestConfirmedClient())
+              else TestAddBusinessAddressController.show(isAgent, isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
           }
@@ -194,8 +194,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
               when(mockAddressLookupService.fetchAddress(any())(any()))
                 .thenReturn(Future(Right(testBusinessAddressModel)))
 
-              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.agentSubmit(Some("123"), isChange)(fakeRequestConfirmedClient())
-              else TestAddBusinessAddressController.submit(Some("123"), isChange)(fakeRequestWithActiveSession)
+              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.submit(Some("123"), isAgent, isChange)(fakeRequestConfirmedClient())
+              else TestAddBusinessAddressController.submit(Some("123"), isAgent, isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe SEE_OTHER
               verifySetMongoData()
 
@@ -212,8 +212,8 @@ class AddBusinessAddressControllerSpec extends TestSupport
               when(mockAddressLookupService.fetchAddress(any())(any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
 
-              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.agentSubmit(Some("123"), isChange)(fakeRequestConfirmedClient())
-              else TestAddBusinessAddressController.submit(Some("123"), isChange)(fakeRequestWithActiveSession)
+              val result: Future[Result] = if (isAgent) TestAddBusinessAddressController.submit(Some("123"), isAgent, isChange)(fakeRequestConfirmedClient())
+              else TestAddBusinessAddressController.submit(Some("123"), isAgent, isChange)(fakeRequestWithActiveSession)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
           }

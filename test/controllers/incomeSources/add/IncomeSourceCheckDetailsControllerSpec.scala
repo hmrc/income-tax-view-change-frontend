@@ -148,8 +148,8 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockCreateSession(true)
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
 
-            val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
             val document: Document = Jsoup.parse(contentAsString(result))
             val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
@@ -194,8 +194,8 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockCreateSession(true)
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
 
-            val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
             val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent.url
             else controllers.routes.HomeController.show().url
@@ -231,8 +231,8 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
         "called with an unauthenticated user" when {
           def runUnauthorisedTest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
             if (isAgent) setupMockAgentAuthorisationException() else setupMockAuthorisationException()
-            val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe SEE_OTHER
           }
 
@@ -271,11 +271,11 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockAuthorisationSuccess(isAgent)
             setupMockGetMongo(Right(Some(sessionDataCompletedJourney(JourneyType(Add, incomeSourceType)))))
 
-            val result: Future[Result] = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result: Future[Result] = if (isAgent) TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent, incomeSourceType).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
 
@@ -311,11 +311,11 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockAuthorisationSuccess(isAgent)
             setupMockGetMongo(Right(Some(sessionDataISAdded(JourneyType(Add, incomeSourceType)))))
 
-            val result: Future[Result] = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result: Future[Result] = if (isAgent) TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent, incomeSourceType).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
           "individual" when {
@@ -354,8 +354,8 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockCreateSession(true)
             setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
 
-            val result = if (isAgent) TestCheckDetailsController.showAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestCheckDetailsController.show(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.show(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
@@ -405,8 +405,8 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockSetSessionKeyMongo(Right(true))
             when(mockSessionService.deleteMongoData(any())(any())).thenReturn(Future(true))
 
-            val result = if (isAgent) TestCheckDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestCheckDetailsController.submit(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.submit(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
             val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
               routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
@@ -454,11 +454,11 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
             when(mockSessionService.deleteMongoData(any())(any())).thenReturn(Future(true))
 
-            val result = if (isAgent) TestCheckDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient())
-            else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
+            val result = if (isAgent) TestCheckDetailsController.submit(isAgent, incomeSourceType)(fakeRequestConfirmedClient())
+            else TestCheckDetailsController.submit(isAgent, incomeSourceType)(fakeRequestWithActiveSession)
 
-            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
-            else controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(incomeSourceType).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(isAgent, incomeSourceType).url
+            else controllers.incomeSources.add.routes.IncomeSourceNotAddedController.show(isAgent, incomeSourceType).url
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)

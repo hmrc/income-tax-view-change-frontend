@@ -152,10 +152,10 @@ class AddBusinessTradeControllerSpec extends TestSupport
                 .setMongoKey(ArgumentMatchers.eq(businessTradeField), ArgumentMatchers.eq(validBusinessTrade), ArgumentMatchers.eq(journeyType))(any(), any())
               redirectLocation(result) mustBe Some {
                 (isChange, isAgent) match {
-                  case (false, false) => controllers.incomeSources.add.routes.AddBusinessAddressController.show(isChange).url
-                  case (false, true) => controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange).url
-                  case (true, false) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-                  case (true, true) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+                  case (false, false) => controllers.incomeSources.add.routes.AddBusinessAddressController.show(isAgent, isChange).url
+                  case (false, true) => controllers.incomeSources.add.routes.AddBusinessAddressController.show(isAgent, isChange).url
+                  case (true, false) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment).url
+                  case (true, true) => controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.show(isAgent, SelfEmployment).url
                 }
               }
             }
@@ -290,8 +290,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
             val result: Future[Result] = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
-            else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent = true, SelfEmployment).url
+            else controllers.incomeSources.add.routes.ReportingMethodSetBackErrorController.show(isAgent = false, SelfEmployment).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
           "user has already added their income source" in {
@@ -303,8 +303,8 @@ class AddBusinessTradeControllerSpec extends TestSupport
 
             val result: Future[Result] = TestAddBusinessTradeController.show(isAgent, isChange)(getRequest(isAgent))
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
-            else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
+            val redirectUrl = if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent = true, SelfEmployment).url
+            else controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController.show(isAgent = false, SelfEmployment).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
