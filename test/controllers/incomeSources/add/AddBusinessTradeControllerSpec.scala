@@ -139,17 +139,13 @@ class AddBusinessTradeControllerSpec extends TestSupport
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(JourneyType(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
-
-              setupMockSetSessionKeyMongo(businessTradeField, validBusinessTrade, journeyType, Right(true))
-
+              setupMockSetMongoData(true)
 
               val result: Future[Result] =
                 TestAddBusinessTradeController.submit(isAgent, isChange)(postRequest(isAgent).withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> validBusinessTrade
                 ))
               status(result) mustBe SEE_OTHER
-              verify(mockSessionService)
-                .setMongoKey(ArgumentMatchers.eq(businessTradeField), ArgumentMatchers.eq(validBusinessTrade), ArgumentMatchers.eq(journeyType))(any(), any())
               redirectLocation(result) mustBe Some {
                 (isChange, isAgent) match {
                   case (false, false) => controllers.incomeSources.add.routes.AddBusinessAddressController.show(isAgent, isChange).url
