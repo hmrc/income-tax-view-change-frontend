@@ -45,7 +45,7 @@ object AddIncomeSourceStartDateForm extends CustomConstraints {
     val monthInputFieldName: String = "month"
     val yearInputFieldName: String = "year"
 
-    val maximumAllowableDate: LocalDate = dateService.getCurrentDate().plusWeeks(1)
+    val maximumAllowableDate: LocalDate = dateService.getCurrentDate().plusWeeks(1).minusDays(1)
     val maximumAllowableDatePlusOneDay: LocalDate = maximumAllowableDate.plusDays(1)
     val futureErrorMessage: String = dateFormatter.longDate(maximumAllowableDatePlusOneDay).toLongDate
     def dateMustNotBeInTheFuture(date: String): String = messages(dateMustNotBeTooFarInFuture, date)
