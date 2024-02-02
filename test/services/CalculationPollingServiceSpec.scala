@@ -63,7 +63,8 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
   object TestCalculationPollingService extends CalculationPollingService(
     frontendAppConfig,
     mockMongoLockRepository,
-    mockCalculationService
+    mockCalculationService,
+    actorSystem
   )
 
   "The CalculationPollingService.initiateCalculationPollingSchedulerWithMongoLock method" when {
@@ -137,7 +138,8 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
         object TestCalculationPollingServiceWithFailedMongoLock extends CalculationPollingService(
           frontendAppConfig,
           mockMongoLockRepository,
-          mockCalculationService
+          mockCalculationService,
+          actorSystem
         ) {
           override lazy val lockService: LockService =
             new LockServiceDidNotAcquireMongoLock

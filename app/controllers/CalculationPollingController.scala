@@ -90,6 +90,7 @@ class CalculationPollingController @Inject()(authenticate: AuthenticationPredica
           taxYear = taxYear,
           isAgent = false,
           successfulPollRedirect = successfulPollRedirect,
+          // TODO: revert this change / testing only
           calculationId = Some("calcId")//user.session.get(SessionKeys.calculationId)
         )
     }

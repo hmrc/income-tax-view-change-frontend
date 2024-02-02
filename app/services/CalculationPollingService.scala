@@ -38,6 +38,8 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                           system: ActorSystem)
                                          (implicit ec: ExecutionContext) {
 
+  implicit val scheduler: Scheduler = system.scheduler
+
   lazy val lockService: LockService = LockService(
     mongoLockRepository, lockId = "calc-poller",
     ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
@@ -53,13 +55,20 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
     } flatMap {
       case Some(statusCode) =>
-        Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId}")
-        Logger("application").info(s"[CalculationPollingService] Response received from Calculation service: $statusCode")
+        Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId} - Response received from Calculation service: $statusCode")
         if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
-        else pollCalcInIntervals(calcId, nino, taxYear, mtditid, endTimeInMillis)
+        else {
+          // V1: fixed delay between calls
+          retry(() => attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis), attempts = 10, 800.milliseconds)
+
+          // V2: with backOff
+          //retry(() => futureToAttempt(), attempts = 10, minBackoff = 1.second,  maxBackoff = 10.seconds, randomFactor = 0.5)
+
+          // V0: Original version
+          //attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis)
+        }
       case None =>
-        Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId}")
-        Logger("application").info("[CalculationPollingService] Failed to acquire Mongo lock")
+        Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId} - Failed to acquire Mongo lock")
         Future.successful(Status.INTERNAL_SERVER_ERROR)
     }
   }
@@ -83,38 +92,29 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     } yield result
   }
 
-  private def pollCalcInIntervals(calcId: String,
+  // TODO: how to test =>
+  // http://localhost:9081/report-quarterly/income-and-expenses/view/calculation/2023/submitted
+  private def attemptToPollCalc(calcId: String,
                                   nino: String,
                                   taxYear: Int,
                                   mtditid: String,
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
-    Logger("application").info(s"[CalculationPollingService][pollCalcInIntervals] - A ${Thread.currentThread().getId}")
-    implicit val scheduler: Scheduler = system.scheduler
-
-    // http://localhost:9081/report-quarterly/income-and-expenses/view/calculation/2023/submitted
-    def futureToAttempt(): Future[Int] = {
-      Logger("application").info(s"[CalculationPollingService][futureToAttempt] - B - ${Thread.currentThread().getId}")
-      for {
-        statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
-        res <- {
-          if (!retryableStatusCodes.contains(statusCode))
-            Future.successful {
-              statusCode
-            }
-          else
-            Future.failed {
-              new RuntimeException(s"$statusCode")
-            }
-        }
-      } yield res
-    }
-
-    // TODO: move setting into config ???
-    // V1: fixed delay between calls
-    //retry(() => futureToAttempt(), attempts = 10, 800.milliseconds)
-    // V2: with backOff
-    retry(() => futureToAttempt(), attempts = 10, minBackoff = 1.second,  maxBackoff = 10.seconds, randomFactor = 0.5)
+    Logger("application")
+      .info(s"[CalculationPollingService][attemptToPollCalc] - ${Thread.currentThread().getId}")
+    for {
+      statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
+      resultFuture <- {
+        if (!retryableStatusCodes.contains(statusCode))
+          Future.successful {
+            statusCode
+          }
+        else // fail future in order to trigger retry
+          Future.failed {
+            new RuntimeException(s"Fail to evaluate cal response: $statusCode")
+          }
+      }
+    } yield resultFuture
   }
 
 }
