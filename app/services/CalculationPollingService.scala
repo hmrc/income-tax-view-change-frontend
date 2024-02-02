@@ -62,7 +62,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
 
           // Ref: https://pekko.apache.org/docs/pekko/current/futures.html
           // V1: apply retry with a fixed delay between calls
-          retry(() => attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis), attempts = 10, 100.milliseconds)
+          retry(() => attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis), attempts = 10, delay = 500.milliseconds)
 
           // V2: apply retry with with backOff strategy
           //retry(() => futureToAttempt(), attempts = 10, minBackoff = 1.second,  maxBackoff = 10.seconds, randomFactor = 0.5)
