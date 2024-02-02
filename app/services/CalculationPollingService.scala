@@ -93,8 +93,6 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     } yield result
   }
 
-  // TODO: how to test locally =>
-  // http://localhost:9081/report-quarterly/income-and-expenses/view/calculation/2023/submitted
   private def attemptToPollCalc(calcId: String,
                                   nino: String,
                                   taxYear: Int,
