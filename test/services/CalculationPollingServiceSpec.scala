@@ -52,6 +52,8 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
     override def getInt(key: String): Int = key match {
       case "calculation-polling.interval" => interval
       case "calculation-polling.timeout" => timeout
+      case "calculation-polling.attempts" => 10
+      case "calculation-polling.delayBetweenAttemptInMilliseconds" => 500
     }
   }
 
