@@ -87,6 +87,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
         calculationService.getLatestCalculation(mtditid, nino, calcId, taxYear).map {
           case _: LiabilityCalculationResponse => Status.OK
           case error: LiabilityCalculationError =>
+            // TODO: remove next line in the future, atm this cause tests to fail
             if (System.currentTimeMillis() > endTimeInMillis) Status.INTERNAL_SERVER_ERROR
             else error.status
         }
