@@ -45,29 +45,27 @@ object AddIncomeSourceStartDateForm extends CustomConstraints {
     val monthInputFieldName: String = "month"
     val yearInputFieldName: String = "year"
 
-    val maximumAllowableDate: LocalDate = dateService.getCurrentDate().plusWeeks(1).minusDays(1)
+    val maximumAllowableDate: LocalDate = dateService.getCurrentDate().plusDays(6)
     val maximumAllowableDatePlusOneDay: LocalDate = maximumAllowableDate.plusDays(1)
     val futureErrorMessage: String = dateFormatter.longDate(maximumAllowableDatePlusOneDay).toLongDate
+
     def dateMustNotBeInTheFuture(date: String): String = messages(dateMustNotBeTooFarInFuture, date)
 
-    def checkRequiredFields: Constraint[(String, String, String)] = Constraint("constraints.requiredFields") {
-      case (day, month, year) if day.trim.isEmpty && month.trim.isEmpty && year.trim.isEmpty =>
-        Invalid(Seq(ValidationError(dateMustBeEntered)))
-      case (day, month, year) if day.trim.isEmpty && month.trim.nonEmpty && year.trim.isEmpty =>
-        Invalid(Seq(ValidationError(dayAndYearRequired)))
-      case (day, month, year) if day.trim.isEmpty && month.trim.isEmpty && year.trim.nonEmpty =>
-        Invalid(Seq(ValidationError(dayAndMonthRequired)))
-      case (day, month, year) if day.trim.nonEmpty && month.trim.isEmpty && year.trim.isEmpty =>
-        Invalid(Seq(ValidationError(monthAndYearRequired)))
-      case (day, month, year) if day.trim.isEmpty && month.trim.nonEmpty && year.trim.nonEmpty =>
-        Invalid(Seq(ValidationError(dayRequired)))
-      case (day, month, year) if day.trim.nonEmpty && month.trim.isEmpty && year.trim.nonEmpty =>
-        Invalid(Seq(ValidationError(monthRequired)))
-      case (day, month, year) if day.trim.nonEmpty && month.trim.nonEmpty && year.trim.isEmpty =>
-        Invalid(Seq(ValidationError(yearRequired)))
-      case _ =>
-        Valid
-    }
+    def checkRequiredFields: Constraint[(String, String, String)] = Constraint("constraints.requiredFields")(date => {
+      val (day, month, year) = date
+      val Empty = true
+      val NonEmpty = false
+      (day.trim.isEmpty, month.trim.isEmpty, year.trim.isEmpty) match {
+        case (Empty, Empty, Empty) => Invalid(Seq(ValidationError(dateMustBeEntered)))
+        case (Empty, NonEmpty, Empty) => Invalid(Seq(ValidationError(dayAndYearRequired)))
+        case (Empty, Empty, NonEmpty) => Invalid(Seq(ValidationError(dayAndMonthRequired)))
+        case (NonEmpty, Empty, Empty) => Invalid(Seq(ValidationError(monthAndYearRequired)))
+        case (Empty, NonEmpty, NonEmpty) => Invalid(Seq(ValidationError(dayRequired)))
+        case (NonEmpty, Empty, NonEmpty) => Invalid(Seq(ValidationError(monthRequired)))
+        case (NonEmpty, NonEmpty, Empty) => Invalid(Seq(ValidationError(yearRequired)))
+        case _ => Valid
+      }
+    })
 
     Form(
       mapping("income-source-start-date" -> tuple(
