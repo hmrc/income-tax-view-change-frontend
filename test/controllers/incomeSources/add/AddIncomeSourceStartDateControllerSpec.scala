@@ -34,6 +34,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers._
 import services.DateService
 import testConstants.BaseTestConstants.testSessionId
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 import testUtils.TestSupport
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDate
@@ -307,8 +308,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
-            setupMockCreateSession(true)
-            setupMockSetSessionKeyMongo(Right(true))
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+            setupMockSetMongoData(true)
 
             val result = TestAddIncomeSourceStartDateController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = false)(postRequest(isAgent).withFormUrlEncodedBody(
               dayField -> "12",
@@ -327,8 +328,8 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
             mockNoIncomeSources()
             setupMockAuthorisationSuccess(isAgent)
-            setupMockCreateSession(true)
-            setupMockSetSessionKeyMongo(Right(true))
+            setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
+            setupMockSetMongoData(true)
 
             val result = TestAddIncomeSourceStartDateController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, isChange = true)(postRequest(isAgent).withFormUrlEncodedBody(
               dayField -> testDay,
