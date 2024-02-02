@@ -110,7 +110,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
           }
         else // fail future in order to trigger retry
           Future.failed {
-            new RuntimeException(s"Fail to evaluate cal response: $statusCode")
+            new RuntimeException(s"Fail to evaluate calc response: $statusCode")
           }
       }
     } yield resultFuture
