@@ -100,16 +100,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
           }.sortWith(_ isBefore _)
         }
 
-        val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
-          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay),
-          paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds)
-        )
-
         for {
           paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
           unpaidCharges <- unpaidChargesFuture
-          availableCredit = unpaidCharges
-            .collectFirst { case fdm: FinancialDetailsModel if isEnabled(CreditsRefundsRepay) => fdm.balanceDetails.getAbsoluteAvailableCreditAmount }.flatten
           dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
           outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(TimeMachineAddYear)).map(_.outstandingChargesModel match {
             case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
@@ -128,9 +121,16 @@ class HomeController @Inject()(val homeView: views.html.Home,
             paymentsDueMerged,
             overDuePaymentsCount,
             nextUpdatesTileViewModel))
+
+          val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
+            unpaidCharges,
+            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay),
+            paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds)
+          )
+
           Ok(
             view(
-              availableCredit,
+              paymentCreditAndRefundHistoryTileViewModel.availableCredit,
               paymentsDueMerged,
               Some(overDuePaymentsCount),
               nextUpdatesTileViewModel,

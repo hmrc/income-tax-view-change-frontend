@@ -16,9 +16,14 @@
 
 package models.homePage
 
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.i18n.Messages
 
-case class PaymentCreditAndRefundHistoryTileViewModel(creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean) {
+case class PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges: List[FinancialDetailsResponseModel],
+                                                      creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean) {
+  val availableCredit: Option[BigDecimal] = unpaidCharges.collectFirst {
+    case fdm: FinancialDetailsModel if creditsRefundsRepayEnabled => fdm.balanceDetails.getAbsoluteAvailableCreditAmount
+  }.flatten
   def title()(implicit messages: Messages): String = (creditsRefundsRepayEnabled, paymentHistoryRefundsEnabled) match {
     case (_, true) => messages("home.paymentHistoryRefund.heading")
     case (_, _) => messages("home.paymentHistory.heading")

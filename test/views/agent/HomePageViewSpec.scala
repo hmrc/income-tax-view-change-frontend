@@ -30,6 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
+import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
@@ -105,12 +106,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled)
+
     val view: HtmlFormat.Appendable = agentHome(
-      availableCredit = Some(786),
+      availableCredit = paymentCreditAndRefundHistoryTileViewModel.availableCredit,
       nextPaymentDueDate,
       overDuePaymentsCount,
       nextUpdatesTileViewModel,
-      paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(creditAndRefundEnabled, paymentHistoryEnabled),
+      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       utr,
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,
@@ -280,7 +283,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         }
 
         s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
-          getElementById("available-credit").map(_.text) shouldBe Some("£786.00 is in your account")
+          getElementById("available-credit").map(_.text) shouldBe Some("£100.00 is in your account")
         }
 
         "has a link to the Payment and refund history page when payment history feature switch is enabled" in new TestSetup {
