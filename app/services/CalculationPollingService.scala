@@ -22,7 +22,6 @@ import org.apache.pekko.actor.{ActorSystem, Scheduler}
 import org.apache.pekko.pattern.retry
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 
@@ -38,13 +37,13 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                           system: ActorSystem)
                                          (implicit ec: ExecutionContext) {
 
-  implicit val scheduler: Scheduler = system.scheduler
+  private implicit val scheduler: Scheduler = system.scheduler
 
   lazy val lockService: LockService = LockService(
     mongoLockRepository, lockId = "calc-poller",
     ttl = Duration.create(frontendAppConfig.calcPollSchedulerTimeout, MILLISECONDS))
 
-  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND, NO_CONTENT)
+  private lazy val retryableStatusCodes: List[Int] = List(Status.BAD_GATEWAY, Status.NOT_FOUND)
 
   def initiateCalculationPollingSchedulerWithMongoLock(calcId: String, nino: String, taxYear: Int, mtditid: String)
                                                       (implicit headerCarrier: HeaderCarrier): Future[Any] = {
@@ -58,14 +57,15 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
         Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId} - Response received from Calculation service: $statusCode")
         if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
         else {
-          // V1: fixed delay between calls
-          retry(() => attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis), attempts = 10, 800.milliseconds)
+          // V0: Original version
+          //attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis)
+
+          // Ref: https://pekko.apache.org/docs/pekko/current/futures.html
+          // V1: use fixed delay between calls
+          retry(() => attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis), attempts = 20, 100.milliseconds)
 
           // V2: with backOff
           //retry(() => futureToAttempt(), attempts = 10, minBackoff = 1.second,  maxBackoff = 10.seconds, randomFactor = 0.5)
-
-          // V0: Original version
-          //attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis)
         }
       case None =>
         Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId} - Failed to acquire Mongo lock")
@@ -92,7 +92,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     } yield result
   }
 
-  // TODO: how to test =>
+  // TODO: how to test locally =>
   // http://localhost:9081/report-quarterly/income-and-expenses/view/calculation/2023/submitted
   private def attemptToPollCalc(calcId: String,
                                   nino: String,
