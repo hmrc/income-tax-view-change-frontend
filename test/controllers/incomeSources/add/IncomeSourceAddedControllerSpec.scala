@@ -294,7 +294,7 @@ class IncomeSourceAddedControllerSpec extends TestSupport
         setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestIncomeSourceAddedController.submit(isAgent = false)(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestIncomeSourceAddedController.submit(isAgent = true)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.incomeSources.add.routes.AddIncomeSourceController.show(isAgent = true).url)
       }
