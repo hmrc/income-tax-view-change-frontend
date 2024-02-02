@@ -54,21 +54,21 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
       getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
     } flatMap {
       case Some(statusCode) =>
-        Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId} - Response received from Calculation service: $statusCode")
+        Logger("application").debug(s"[CalculationPollingService] - Response received from Calculation service: $statusCode")
         if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
         else {
           // V0: Original version
           //attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis)
 
           // Ref: https://pekko.apache.org/docs/pekko/current/futures.html
-          // V1: use fixed delay between calls
-          retry(() => attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis), attempts = 20, 100.milliseconds)
+          // V1: apply retry with a fixed delay between calls
+          retry(() => attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis), attempts = 10, 100.milliseconds)
 
-          // V2: with backOff
+          // V2: apply retry with with backOff strategy
           //retry(() => futureToAttempt(), attempts = 10, minBackoff = 1.second,  maxBackoff = 10.seconds, randomFactor = 0.5)
         }
       case None =>
-        Logger("application").info(s"[CalculationPollingService] - ${Thread.currentThread().getId} - Failed to acquire Mongo lock")
+        Logger("application").info(s"[CalculationPollingService] - Failed to acquire Mongo lock")
         Future.successful(Status.INTERNAL_SERVER_ERROR)
     }
   }
@@ -101,7 +101,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
     Logger("application")
-      .info(s"[CalculationPollingService][attemptToPollCalc] - ${Thread.currentThread().getId}")
+      .info("[CalculationPollingService][attemptToPollCalc]")
     for {
       statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
       resultFuture <- {
