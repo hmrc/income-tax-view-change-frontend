@@ -81,6 +81,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                      mtditid: String
                                     )
                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Int] = {
+    Logger("application").debug(s"[CalculationPollingService][getCalculationResponse] Starting polling for calcId: $calcId and nino: $nino")
     for {
       result <-
         calculationService.getLatestCalculation(mtditid, nino, calcId, taxYear).map {
