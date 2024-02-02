@@ -58,7 +58,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
         if (!retryableStatusCodes.contains(statusCode)) Future.successful(statusCode)
         else {
           // V0: Original version
-          //attemptToPollCalc(calcId, nino, taxYear, mtditid, endTimeInMillis)
+          //pollCalcInIntervals(calcId, nino, taxYear, mtditid, endTimeInMillis)
 
           // Ref: https://pekko.apache.org/docs/pekko/current/futures.html
           // V1: apply retry with a fixed delay between calls
