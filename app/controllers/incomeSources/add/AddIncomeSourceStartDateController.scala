@@ -25,7 +25,6 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
-import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -154,14 +153,25 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
 
   def handleValidFormData(formData: DateFormElement, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
-    val journeyType = JourneyType(Add, incomeSourceType)
-    sessionService.setMongoKey(dateStartedField, formData.date.toString, journeyType).flatMap {
-      case Right(result) if result => Future.successful {
-        val successUrl = getSuccessUrl(incomeSourceType, isAgent, isChange)
-        Redirect(successUrl)
+    withSessionData(JourneyType(Add, incomeSourceType), journeyState = {
+      incomeSourceType match {
+        case SelfEmployment => BeforeSubmissionPage
+        case _ => InitialPage
       }
-      case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-      case Left(exception) => Future.failed(exception)
+    }) { sessionData =>
+      sessionService.setMongoData(
+        sessionData.copy(
+          addIncomeSourceData =
+            sessionData.addIncomeSourceData.map(
+              _.copy(
+                dateStarted = Some(formData.date)
+              )
+            )
+        )
+      ) flatMap {
+        case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
+        case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+      }
     }
   }
 

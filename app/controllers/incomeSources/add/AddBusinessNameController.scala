@@ -75,8 +75,6 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     }
   }
 
-  private lazy val journeyType: JourneyType = JourneyType(Add, SelfEmployment)
-
   def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(
@@ -150,11 +148,30 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
               useFallbackLink = true))
           },
         formData => {
-          val redirect = Redirect(getRedirect(isAgent, isChange))
-          sessionService.setMongoKey(AddIncomeSourceData.businessNameField, formData.name, journeyType).flatMap {
-            case Right(result) if result => Future.successful(redirect)
-            case Right(_) => Future.failed(new Exception("Mongo update call was not acknowledged"))
-            case Left(exception) => Future.failed(exception)
+          sessionService.setMongoData(
+            sessionData.addIncomeSourceData match {
+              case Some(_) =>
+                sessionData.copy(
+                  addIncomeSourceData =
+                    sessionData.addIncomeSourceData.map(
+                      _.copy(
+                        businessName = Some(formData.name)
+                      )
+                    )
+                )
+              case None =>
+                sessionData.copy(
+                  addIncomeSourceData =
+                    Some(
+                      AddIncomeSourceData(
+                        businessName = Some(formData.name)
+                      )
+                    )
+                )
+            }
+          ) flatMap {
+            case true  => Future.successful(Redirect(getRedirect(isAgent, isChange)))
+            case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
           }
         }
       )
