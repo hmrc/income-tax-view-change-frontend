@@ -33,6 +33,7 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
         Right(Some(data))
       case None => Right(None)
     }
+
   }
 
   def createSession(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
