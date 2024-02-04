@@ -85,21 +85,21 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
     uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
-//  def setMongoKey(key: String, value: String, journeyType: JourneyType)
-//                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-//    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
-//    val jsonAccessorPath = journeyType.operation match {
-//      case Add => AddIncomeSourceData.getJSONKeyPath(key)
-//      case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
-//      case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
-//    }
-//    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
-//      result => result.wasAcknowledged() match {
-//        case true => Right(true)
-//        case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
-//      }
-//    )
-//  }
+  def setMongoKey(key: String, value: String, journeyType: JourneyType)
+                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
+    val uiJourneySessionData = UIJourneySessionData(hc.sessionId.get.value, journeyType.toString)
+    val jsonAccessorPath = journeyType.operation match {
+      case Add => AddIncomeSourceData.getJSONKeyPath(key)
+      case Manage => ManageIncomeSourceData.getJSONKeyPath(key)
+      case Cease => CeaseIncomeSourceData.getJSONKeyPath(key)
+    }
+    uiJourneySessionDataRepository.updateData(uiJourneySessionData, jsonAccessorPath, value).map(
+      result => result.wasAcknowledged() match {
+        case true => Right(true)
+        case false => Left(new Exception("Mongo Save data operation was not acknowledged"))
+      }
+    )
+  }
 
   def deleteMongoData(journeyType: JourneyType)
                      (implicit hc: HeaderCarrier): Future[Boolean] = {
