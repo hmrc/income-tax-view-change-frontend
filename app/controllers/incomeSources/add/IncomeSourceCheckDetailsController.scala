@@ -71,7 +71,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                             incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_]): Future[Result] = withSessionData(JourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
 
-    getViewModel(incomeSourceType, sessionData)(user) match {
+    getViewModel(incomeSourceType, sessionData) match {
       case Some(viewModel) =>
         Future.successful {
           Ok(checkDetailsView(
@@ -152,9 +152,6 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
 
-      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-        routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
-
       val viewModel = getViewModel(incomeSourceType, sessionData)
 
       viewModel match {
@@ -208,4 +205,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
   private lazy val postAction: (Boolean, IncomeSourceType) => Call = (isAgent, incomeSourceType) =>
     routes.IncomeSourceCheckDetailsController.submit(isAgent, incomeSourceType)
+
+  private lazy val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
+    routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
 }

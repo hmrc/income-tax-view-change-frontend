@@ -30,7 +30,7 @@ import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UI
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
+import services.{AddressLookupService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
 
@@ -59,7 +59,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
   }
 
   def submit(id: Option[String], isAgent: Boolean, isChange: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    auth.authenticatedAction(isAgent) {
       implicit user =>
         handleSubmitRequest(id.map(mkIncomeSourceId), isAgent, isChange)
   }
