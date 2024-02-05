@@ -402,7 +402,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
               })
             setupMockCreateSession(true)
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, incomeSourceType)))))
-            setupMockSetSessionKeyMongo(Right(true))
+            setupMockSetMongoData(true)
             when(mockSessionService.deleteMongoData(any())(any())).thenReturn(Future(true))
 
             val result = if (isAgent) TestCheckDetailsController.submitAgent(incomeSourceType)(fakeRequestConfirmedClient())
@@ -444,8 +444,10 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             enable(IncomeSources)
 
             mockNoIncomeSources()
-            if (isAgent) setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
-            setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
+            if (isAgent)
+              setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
+            else
+              setupMockAuthRetrievalSuccess(BaseTestConstants.testIndividualAuthSuccessWithSaUtrResponse())
             when(mockBusinessDetailsService.createRequest(any())(any(), any(), any()))
               .thenReturn(Future {
                 Left(new Error("Test Error"))
