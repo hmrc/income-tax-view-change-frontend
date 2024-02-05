@@ -22,35 +22,22 @@ trait TaxCalcFallBackBackLink {
     if (isAgent) {
       if(isSubmission(calcPageBackLink)) {
         if (isCrystallised) {
-          if (true) {
-            controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
-          } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
+          controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
         } else {
-          if (true) {
-            controllers.routes.InYearTaxCalculationController.showAgent.url
-          } else controllers.routes.InYearTaxCalculationController.show(origin).url
+          controllers.routes.InYearTaxCalculationController.showAgent.url
         }
       } else {
-        if(true) {
-          controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
-        } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
-      }
+        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url      }
     }
     else {
       if(isSubmission(calcPageBackLink)) {
         if (isCrystallised) {
-          if (false) {
-            controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
-          } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
+          controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
         } else {
-          if (false) {
-            controllers.routes.InYearTaxCalculationController.showAgent.url
-          } else controllers.routes.InYearTaxCalculationController.show(origin).url
+          controllers.routes.InYearTaxCalculationController.show(origin).url
         }
       } else {
-        if(false) {
-          controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
-        } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
+        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
       }
     }
 
