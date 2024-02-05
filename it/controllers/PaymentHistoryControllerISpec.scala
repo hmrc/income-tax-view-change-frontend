@@ -123,7 +123,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       result should have(
         httpStatus(OK),
         pageTitleIndividual("paymentHistory.paymentAndRefundHistory.heading"),
-        elementTextBySelector("h1")("paymentHistory.paymentAndRefundHistory.heading")
+        elementTextBySelector("h1")(messagesAPI("paymentHistory.paymentAndRefundHistory.heading"))
       )
 
 
@@ -146,7 +146,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("paymentHistory.heading"),
-          elementTextBySelector("h1")("paymentHistory.heading")
+          elementTextBySelector("h1")(messagesAPI("paymentHistory.heading"))
         )
       }
     }
