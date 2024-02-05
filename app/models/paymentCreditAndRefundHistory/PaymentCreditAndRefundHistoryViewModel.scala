@@ -16,13 +16,13 @@
 
 package models.paymentCreditAndRefundHistory
 
+import play.api.i18n.Messages
+
 case class PaymentCreditAndRefundHistoryViewModel(creditsRefundsRepayEnabled: Boolean, paymentHistoryAndRefundsEnabled: Boolean) {
-
-  PaymentCreditAndRefundHistoryViewModel.paymentHistoryAndRefundsEnabled = paymentHistoryAndRefundsEnabled
-
-
-}
-
-object PaymentCreditAndRefundHistoryViewModel {
-  var paymentHistoryAndRefundsEnabled: Boolean = false
+  def title()(implicit messages: Messages): String = (creditsRefundsRepayEnabled, paymentHistoryAndRefundsEnabled) match {
+    case (false, true) => messages("paymentHistory.paymentAndRefundHistory.heading")
+    case (true, false) => messages("paymentHistory.paymentAndCreditHistory")
+    case (true, true) => messages("paymentHistory.paymentCreditAndRefundHistory.heading")
+    case (false, false) => messages("paymentHistory.heading")
+  }
 }

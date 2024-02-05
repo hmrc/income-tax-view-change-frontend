@@ -100,19 +100,14 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @mainTemplate(
-    pageTitle = messages(if(viewModel.paymentHistoryAndRefundsEnabled) "paymentHistory.paymentAndRefundHistory.heading" else "paymentHistory.heading"),
+    pageTitle = viewModel.title(),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true
 ) {
 
-    @if(viewModel.paymentHistoryAndRefundsEnabled){
-        @h1(msg = "paymentHistory.paymentAndRefundHistory.heading")
-    } else {
-        @h1(msg = "paymentHistory.heading")
-    }
-
+    @h1(msg = viewModel.title())
 
     @if(groupedPayments.nonEmpty) {
         @govukAccordion(Accordion(
