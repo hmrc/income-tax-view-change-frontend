@@ -25,6 +25,7 @@ import org.mongodb.scala.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.Configuration
 import play.api.libs.json.Format
+import services.Encryption
 import uk.gov.hmrc.crypto.SymmetricCryptoFactory
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -39,15 +40,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class UIJourneySessionDataRepository @Inject()(
                                                 mongoComponent: MongoComponent,
                                                 appConfig: FrontendAppConfig,
-                                                config: Configuration,
+                                                encryption: Encryption,
                                                 clock: Clock
                                               )(implicit ec: ExecutionContext)
   extends PlayMongoRepository[SensitiveUIJourneySessionData](
     collectionName = "ui-journey-session-data",
     mongoComponent = mongoComponent,
-    domainFormat = SensitiveUIJourneySessionData.format(
-      SymmetricCryptoFactory.aesCryptoFromConfig("encryption", config.underlying)
-    ),
+    domainFormat = SensitiveUIJourneySessionData.format(encryption.crypto),
     indexes = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),

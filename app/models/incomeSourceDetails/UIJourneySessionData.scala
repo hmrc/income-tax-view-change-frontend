@@ -65,7 +65,7 @@ case class SensitiveUIJourneySessionData(
                                           manageIncomeSourceData: Option[ManageIncomeSourceData]        = None,
                                           ceaseIncomeSourceData:  Option[CeaseIncomeSourceData]         = None,
                                           lastUpdated:            Instant                               = Instant.now
-                                        ) {
+                                        ) extends {
 
   def decrypted: UIJourneySessionData =
     UIJourneySessionData(
