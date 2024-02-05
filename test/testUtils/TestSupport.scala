@@ -23,6 +23,7 @@ import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.utils
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
@@ -51,6 +52,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
   this: Suite =>
 
   import play.twirl.api.Html
+
+  implicit val actorSystem: ActorSystem = ActorSystem()
 
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {
