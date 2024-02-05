@@ -20,27 +20,40 @@ trait TaxCalcFallBackBackLink {
 
   def getFallbackUrl(calcPageBackLink: Option[String], isAgent: Boolean, isCrystallised: Boolean, taxYear: Int, origin: Option[String]): String = {
     if (isAgent) {
-
+      if(isSubmission(calcPageBackLink)) {
+        if (isCrystallised) {
+          if (isAgent) {
+            controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
+          } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
+        } else {
+          if (isAgent) {
+            controllers.routes.InYearTaxCalculationController.showAgent.url
+          } else controllers.routes.InYearTaxCalculationController.show(origin).url
+        }
+      } else {
+        if(isAgent) {
+          controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
+        } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
+      }
     }
     else {
-
-    }
-
-    if(isSubmission(calcPageBackLink)) {
-      if (isCrystallised) {
-        if (isAgent) {
-          controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
-        } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
+      if(isSubmission(calcPageBackLink)) {
+        if (isCrystallised) {
+          if (isAgent) {
+            controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
+          } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
+        } else {
+          if (isAgent) {
+            controllers.routes.InYearTaxCalculationController.showAgent.url
+          } else controllers.routes.InYearTaxCalculationController.show(origin).url
+        }
       } else {
-        if (isAgent) {
-          controllers.routes.InYearTaxCalculationController.showAgent.url
-        } else controllers.routes.InYearTaxCalculationController.show(origin).url
+        if(isAgent) {
+          controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
+        } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
       }
-    } else {
-      if(isAgent) {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
-      } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
     }
+
   }
 
   private def isSubmission(calcPageBackLink: Option[String]): Boolean = calcPageBackLink match {
