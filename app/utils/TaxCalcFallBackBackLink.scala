@@ -20,25 +20,24 @@ trait TaxCalcFallBackBackLink {
 
   def getFallbackUrl(calcPageBackLink: Option[String], isAgent: Boolean, isCrystallised: Boolean, taxYear: Int, origin: Option[String]): String = {
     if (isAgent) {
-      if(isSubmission(calcPageBackLink)) {
-        if (isCrystallised) {
+      if (isSubmission(calcPageBackLink)) {
+        if (isCrystallised)
           controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
-        } else {
+        else
           controllers.routes.InYearTaxCalculationController.showAgent.url
-        }
-      } else {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url      }
+      }
+      else
+        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
     }
     else {
-      if(isSubmission(calcPageBackLink)) {
-        if (isCrystallised) {
+      if (isSubmission(calcPageBackLink)) {
+        if (isCrystallised)
           controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
-        } else {
+        else
           controllers.routes.InYearTaxCalculationController.show(origin).url
-        }
-      } else {
-        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
       }
+      else
+        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
     }
 
   }
