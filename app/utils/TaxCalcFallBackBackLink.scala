@@ -19,6 +19,13 @@ package utils
 trait TaxCalcFallBackBackLink {
 
   def getFallbackUrl(calcPageBackLink: Option[String], isAgent: Boolean, isCrystallised: Boolean, taxYear: Int, origin: Option[String]): String = {
+    if (isAgent) {
+
+    }
+    else {
+
+    }
+
     if(isSubmission(calcPageBackLink)) {
       if (isCrystallised) {
         if (isAgent) {
