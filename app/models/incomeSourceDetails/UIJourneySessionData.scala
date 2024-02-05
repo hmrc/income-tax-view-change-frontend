@@ -47,7 +47,7 @@ object UIJourneySessionData {
 
   implicit val format: OFormat[UIJourneySessionData] = {
 
-    ((__ \ "sessionId"             ).format[String]
+       ((__ \ "sessionId"             ).format[String]
       ~ (__ \ "journeyType"           ).format[String]
       ~ (__ \ "addIncomeSourceData"   ).formatNullable[AddIncomeSourceData]
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
@@ -82,7 +82,7 @@ object SensitiveUIJourneySessionData {
 
   implicit def format(implicit crypto: Encrypter with Decrypter): OFormat[SensitiveUIJourneySessionData] =
 
-    ((__ \ "sessionId"             ).format[String]
+       ((__ \ "sessionId"             ).format[String]
       ~ (__ \ "journeyType"           ).format[String]
       ~ (__ \ "addIncomeSourceData"   ).formatNullable[SensitiveAddIncomeSourceData]
       ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
