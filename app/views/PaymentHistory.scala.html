@@ -28,6 +28,7 @@
 
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -39,7 +40,7 @@
     govukAccordion : GovukAccordion
 )
 
-@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], viewModel: PaymentCreditAndRefundHistoryViewModel, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
@@ -99,14 +100,14 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @mainTemplate(
-    pageTitle = messages(if(paymentHistoryAndRefundsEnabled) "paymentHistory.paymentAndRefundHistory.heading" else "paymentHistory.heading"),
+    pageTitle = messages(if(viewModel.paymentHistoryAndRefundsEnabled) "paymentHistory.paymentAndRefundHistory.heading" else "paymentHistory.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true
 ) {
 
-    @if(paymentHistoryAndRefundsEnabled){
+    @if(viewModel.paymentHistoryAndRefundsEnabled){
         @h1(msg = "paymentHistory.paymentAndRefundHistory.heading")
     } else {
         @h1(msg = "paymentHistory.heading")
