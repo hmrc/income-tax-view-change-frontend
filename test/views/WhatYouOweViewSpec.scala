@@ -405,7 +405,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val poa2Table: Element = pageDocument.select("tr").get(3)
           poa2Table.select("td").first().text() shouldBe fixedDate.plusDays(50).toLongDateShort
-          poa2Table.select("td").get(1).text() shouldBe poa2Text + s" 2"
+          poa2Table.select("td").get(1).text() shouldBe "OVERDUE " + poa2Text + s" 2"
           poa2Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2Table.select("td").last().text() shouldBe "£75.00"
