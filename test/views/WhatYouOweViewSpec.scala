@@ -405,7 +405,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val poa2Table: Element = pageDocument.select("tr").get(3)
           poa2Table.select("td").first().text() shouldBe fixedDate.plusDays(50).toLongDateShort
-          poa2Table.select("td").get(1).text() shouldBe poa2Text + s" 2"
+          poa2Table.select("td").get(1).text() shouldBe "OVERDUE " + poa2Text + s" 2"
           poa2Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2Table.select("td").last().text() shouldBe "£75.00"
@@ -488,9 +488,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have POA data in same table as balancing payment " in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
-
-          println(s"Here is a document: ${whatYouOweDataWithDataDueIn30Days()}")
-
           val poa1Table: Element = pageDocument.select("tr").get(2)
           poa1Table.select("td").first().text() shouldBe fixedDate.toLongDateShort
           poa1Table.select("td").get(1).text() shouldBe poa1Text + s" 1"
