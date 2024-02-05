@@ -18,7 +18,7 @@ package views
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, TimeMachineAddYear}
 import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.nextUpdates.NextUpdatesTileViewModel
@@ -118,7 +118,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
-      availableCredit = paymentCreditAndRefundHistoryTileViewModel.availableCredit,
+      paymentCreditAndRefundHistoryTileViewModel.availableCredit,
       nextPaymentDueDate = paymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,

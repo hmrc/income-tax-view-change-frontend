@@ -21,9 +21,14 @@ import play.api.i18n.Messages
 
 case class PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges: List[FinancialDetailsResponseModel],
                                                       creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean) {
-  val availableCredit: Option[BigDecimal] = unpaidCharges.collectFirst {
-    case fdm: FinancialDetailsModel if creditsRefundsRepayEnabled => fdm.balanceDetails.getAbsoluteAvailableCreditAmount
-  }.flatten
+  val availableCredit: Option[BigDecimal] =
+    if (creditsRefundsRepayEnabled) {
+      Some(unpaidCharges.collectFirst {
+        case fdm: FinancialDetailsModel =>
+          fdm.balanceDetails.getAbsoluteAvailableCreditAmount.getOrElse(BigDecimal(0.00))
+      }.getOrElse(BigDecimal(0.00)))
+    } else None
+
   def title()(implicit messages: Messages): String = (creditsRefundsRepayEnabled, paymentHistoryRefundsEnabled) match {
     case (_, true) => messages("home.paymentHistoryRefund.heading")
     case (_, _) => messages("home.paymentHistory.heading")
