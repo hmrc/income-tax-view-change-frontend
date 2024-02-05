@@ -47,9 +47,8 @@ object AddIncomeSourceStartDateForm extends CustomConstraints {
 
     val maximumAllowableDate: LocalDate = dateService.getCurrentDate().plusDays(6)
     val earliestInvalidDate: LocalDate = maximumAllowableDate.plusDays(1)
-    val futureErrorMessage: String = dateFormatter.longDate(earliestInvalidDate).toLongDate
-
-    def dateMustNotBeInTheFuture(date: String): String = messages(dateMustNotBeTooFarInFuture, date)
+    val earliestLongInvalidDate: String = dateFormatter.longDate(earliestInvalidDate).toLongDate
+    val invalidFutureDateErrorMessage = messages(dateMustNotBeTooFarInFuture, earliestLongInvalidDate)
 
     def checkRequiredFields: Constraint[(String, String, String)] = Constraint("constraints.requiredFields")(date => {
       val (day, month, year) = date
@@ -81,7 +80,7 @@ object AddIncomeSourceStartDateForm extends CustomConstraints {
           },
           date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
         )
-        .verifying(maxDate(maximumAllowableDate, dateMustNotBeInTheFuture(futureErrorMessage)))
+        .verifying(maxDate(maximumAllowableDate, invalidFutureDateErrorMessage))
       )(DateFormElement.apply)(DateFormElement.unapply))
   }
 }
