@@ -132,6 +132,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Calculation Polling config
   lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
   lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
+  lazy val calcPollNumberOfAttempts: Int = servicesConfig.getInt("calculation-polling.attempts")
+  lazy val calcPollDelayBetweenAttempts: Int = servicesConfig.getInt("calculation-polling.delayBetweenAttemptInMilliseconds")
 
   // Submission service
   // This URL has a set year and environment. Please use submissionFrontendTaxOverviewUrl instead.

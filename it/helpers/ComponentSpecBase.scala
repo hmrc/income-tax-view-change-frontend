@@ -137,6 +137,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.income-tax-calculation.port" -> mockPort,
     "calculation-polling.interval" -> "500",
     "calculation-polling.timeout" -> "3000",
+    "calculation-polling.attempts" -> "10",
+    "calculation-polling.delayBetweenAttemptInMilliseconds" -> "500",
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
     "microservice.services.address-lookup-frontend.port" -> mockPort,
