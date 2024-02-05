@@ -57,12 +57,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  private def view(availableCredit: Option[BigDecimal], nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+  private def view(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
                    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     homeView(
-      availableCredit = availableCredit,
       nextPaymentDueDate = nextPaymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
@@ -130,7 +129,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
           Ok(
             view(
-              paymentCreditAndRefundHistoryTileViewModel.availableCredit,
               paymentsDueMerged,
               Some(overDuePaymentsCount),
               nextUpdatesTileViewModel,

@@ -109,7 +109,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled)
 
     val view: HtmlFormat.Appendable = agentHome(
-      paymentCreditAndRefundHistoryTileViewModel.availableCredit,
       nextPaymentDueDate,
       overDuePaymentsCount,
       nextUpdatesTileViewModel,
