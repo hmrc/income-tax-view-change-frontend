@@ -19,14 +19,13 @@ package views
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
+import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.appConfig.saForAgents
 import testUtils.ViewSpec
 import views.html.PaymentHistory
-
-import java.time.LocalDate
 
 
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
@@ -87,15 +86,15 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   class PaymentHistorySetup(testPayments: List[(Int, List[PaymentHistoryEntry])], saUtr: Option[String] = Some("1234567890"), isAgent: Boolean = false) extends Setup(
-    paymentHistoryView(testPayments ,paymentHistoryAndRefundsEnabled = true , "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
+    paymentHistoryView(testPayments ,PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = true, creditsRefundsRepayEnabled = false), "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
   )
 
   class PaymentHistorySetup1(paymentsnotFull: List[(Int, List[PaymentHistoryEntry])], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(paymentsnotFull, paymentHistoryAndRefundsEnabled = false ,"testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
+    paymentHistoryView(paymentsnotFull, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false),"testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
   )
 
   class PaymentHistorySetupMFA(testPayments: List[(Int, List[PaymentHistoryEntry])], MFACreditsEnabled: Boolean, saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(testPayments,paymentHistoryAndRefundsEnabled = false ,"testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
+    paymentHistoryView(testPayments,PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false),"testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
   )
 
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
@@ -202,7 +201,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   class PaymentHistorySetupWhenAgentView(testPayments: List[(Int, List[PaymentHistoryEntry])], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(paymentEntriesMFA, paymentHistoryAndRefundsEnabled = false,"testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
+    paymentHistoryView(paymentEntriesMFA, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = true, creditsRefundsRepayEnabled = false),"testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
   )
 
   "The payments history view with payment response model" should {

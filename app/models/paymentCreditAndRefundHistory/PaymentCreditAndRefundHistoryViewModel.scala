@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-
 package models.paymentCreditAndRefundHistory
 
-case class PaymentCreditAndRefundHistoryViewModel(creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean) {
+case class PaymentCreditAndRefundHistoryViewModel(creditsRefundsRepayEnabled: Boolean, paymentHistoryAndRefundsEnabled: Boolean) {
 
+  PaymentCreditAndRefundHistoryViewModel.paymentHistoryAndRefundsEnabled = paymentHistoryAndRefundsEnabled
+
+
+}
+
+object PaymentCreditAndRefundHistoryViewModel {
+  var paymentHistoryAndRefundsEnabled: Boolean = false
 }
