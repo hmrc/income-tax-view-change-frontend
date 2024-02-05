@@ -22,16 +22,16 @@ trait TaxCalcFallBackBackLink {
     if (isAgent) {
       if(isSubmission(calcPageBackLink)) {
         if (isCrystallised) {
-          if (isAgent) {
+          if (true) {
             controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
           } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
         } else {
-          if (isAgent) {
+          if (true) {
             controllers.routes.InYearTaxCalculationController.showAgent.url
           } else controllers.routes.InYearTaxCalculationController.show(origin).url
         }
       } else {
-        if(isAgent) {
+        if(true) {
           controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
         } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
       }
@@ -39,16 +39,16 @@ trait TaxCalcFallBackBackLink {
     else {
       if(isSubmission(calcPageBackLink)) {
         if (isCrystallised) {
-          if (isAgent) {
+          if (false) {
             controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
           } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
         } else {
-          if (isAgent) {
+          if (false) {
             controllers.routes.InYearTaxCalculationController.showAgent.url
           } else controllers.routes.InYearTaxCalculationController.show(origin).url
         }
       } else {
-        if(isAgent) {
+        if(false) {
           controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
         } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
       }
