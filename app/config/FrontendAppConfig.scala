@@ -173,5 +173,5 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val encryptionKey: String = servicesConfig.getString("encryption.key")
 
-  lazy val encryptionIsEnabled: Boolean = servicesConfig.getBoolean("useEncryption")
+  lazy val encryptionIsEnabled: Boolean = servicesConfig.getBoolean("encryption.useEncryption")
 }
