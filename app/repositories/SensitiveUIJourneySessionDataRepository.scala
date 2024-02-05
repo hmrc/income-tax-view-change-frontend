@@ -46,7 +46,7 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
     collectionName = "ui-journey-session-data",
     mongoComponent = mongoComponent,
     domainFormat = SensitiveUIJourneySessionData.format(
-      SymmetricCryptoFactory.aesCryptoFromConfig("encryption", config.underlying)
+      SymmetricCryptoFactory.aesCryptoFromConfig(appConfig.encryptionKey, config.underlying)
     ),
     indexes = Seq(
       IndexModel(
