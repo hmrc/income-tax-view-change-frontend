@@ -16,20 +16,17 @@
 
 package services
 
-import controllers.agent.utils
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
 import testUtils.TestSupport
 
 import java.time.LocalDate
 
 class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
-  object TestSessionService extends SessionService(mockUIJourneySessionDataRepository)
+  object TestSessionService extends SessionService(mockFrontendAppConfig, mockUIJourneySessionDataRepository, mockSensitiveUIJourneySessionDataRepository)
 
   "sessionService " when {
     "mongo" when {
