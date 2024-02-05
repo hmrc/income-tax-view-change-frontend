@@ -54,5 +54,4 @@ class UserRepository @Inject()(val mongoComponent: MongoComponent, implicit val 
     collection.deleteMany(empty()).toFuture()
   }
 
-
 }

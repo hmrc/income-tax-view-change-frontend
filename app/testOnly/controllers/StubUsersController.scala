@@ -86,7 +86,7 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
 
   val deleteUsers: Action[AnyContent] = Action.async { implicit request =>
     userRepository.removeAll().flatMap( _ =>
-      Future.successful(Ok("Deleted all user data from FE user collection"))
+      Future.successful(Ok("\nDeleted all mongo data from FE user collection"))
     )
   }
 
