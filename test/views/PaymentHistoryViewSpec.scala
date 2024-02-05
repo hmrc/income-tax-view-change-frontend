@@ -218,7 +218,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   class PaymentHistorySetupWhenAgentView(testPayments: List[(Int, List[PaymentHistoryEntry])], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(paymentEntriesMFA, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = true, creditsRefundsRepayEnabled = false),"testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
+    paymentHistoryView(paymentEntriesMFA, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false),"testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
   )
 
   "The payments history view with payment response model" should {
