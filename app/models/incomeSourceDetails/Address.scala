@@ -60,7 +60,7 @@ object SensitiveAddress {
     JsonEncryption.sensitiveEncrypterDecrypter(SensitiveString.apply)
 
   implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddress] = {
-    ((__ \ "lines"    ).format[Seq[SensitiveString]]
+        ((__ \ "lines"    ).format[Seq[SensitiveString]]
       ~  (__ \ "postcode" ).formatNullable[SensitiveString]
       )(SensitiveAddress.apply, unlift(SensitiveAddress.unapply)
     )
