@@ -29,9 +29,17 @@ case class PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges: List[Financ
       }.getOrElse(BigDecimal(0.00)))
     } else None
 
-  def title()(implicit messages: Messages): String = (creditsRefundsRepayEnabled, paymentHistoryRefundsEnabled) match {
-    case (_, true) => messages("home.paymentHistoryRefund.heading")
-    case (_, _) => messages("home.paymentHistory.heading")
+  def title()(implicit messages: Messages): String = if (paymentHistoryRefundsEnabled) {
+    messages("home.paymentHistoryRefund.heading")
+  } else {
+    messages("home.paymentHistory.heading")
+  }
+
+  def paymentCreditRefundHistoryMessageKey(): String = (creditsRefundsRepayEnabled, paymentHistoryRefundsEnabled) match {
+    case (false, true) => "home.paymentHistoryRefund.view"
+    case (true, false) => "home.paymentCreditHistory.view"
+    case (true, true) => "home.paymentCreditRefundHistory.view"
+    case (false, false) => "home.paymentHistory.view"
   }
 
 }

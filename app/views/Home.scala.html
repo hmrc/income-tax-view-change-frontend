@@ -259,7 +259,7 @@
         <p class="govuk-!-margin-bottom-4">
             @link(
                 link = paymentHistoryControllerURL,
-                messageKey = if(paymentHistoryEnabled) "home.paymentHistoryRefund.view" else "home.paymentHistory.view"
+                messageKey = paymentCreditAndRefundHistoryTileViewModel.paymentCreditRefundHistoryMessageKey()
             )
         </p>
 
