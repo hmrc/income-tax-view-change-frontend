@@ -113,8 +113,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     if (incomeSourceType == SelfEmployment) getBusinessModel(sessionData) else getPropertyModel(incomeSourceType, sessionData)
   }
 
-  private def getPropertyModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData)
-                              (implicit user: MtdItUser[_]): Option[CheckPropertyViewModel] = {
+  private def getPropertyModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData): Option[CheckPropertyViewModel] = {
     val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
     val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
     (dateStartedOpt, accountingMethodOpt) match {
@@ -179,16 +178,23 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
       viewModel match {
         case Some(viewModel) =>
-          businessDetailsService.createRequest(viewModel).flatMap {
+          businessDetailsService.createRequest(viewModel) flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
-              auditingService.extendedAudit(CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id))))
-
-              sessionService.setMongoKey(AddIncomeSourceData.incomeSourceIdField, id, JourneyType(Add, incomeSourceType)).flatMap {
-                case Right(_) =>
-                  Future.successful {
-                    Redirect(redirectUrl(isAgent, incomeSourceType))
-                  }
-                case Left(exception) => Future.failed(exception)
+              auditingService.extendedAudit(
+                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
+              )
+              sessionService.setMongoData(
+                sessionData.copy(
+                  addIncomeSourceData =
+                    sessionData.addIncomeSourceData.map(
+                      _.copy(
+                        incomeSourceId = Some(id)
+                      )
+                    )
+                )
+              ) flatMap {
+                case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
+                case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
               }
             case Left(ex) =>
               auditingService.extendedAudit(

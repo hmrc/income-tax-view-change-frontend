@@ -16,23 +16,36 @@
 
 package services
 
+import config.FrontendAppConfig
 import enums.JourneyType._
-import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, UIJourneySessionData}
-import repositories.UIJourneySessionDataRepository
+import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData, SensitiveUIJourneySessionData, UIJourneySessionData}
+import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionDataRepository) {
+class SessionService @Inject()(
+                                uiJourneySessionDataRepository: UIJourneySessionDataRepository,
+                                sensitiveUIJourneySessionDataRepository: SensitiveUIJourneySessionDataRepository,
+                                config: FrontendAppConfig
+                              ) {
 
   def getMongo(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
-    uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
-      case Some(data: UIJourneySessionData) =>
-        Right(Some(data))
-      case None => Right(None)
-    }
+    if (config.encryptionIsEnabled)
+      sensitiveUIJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+        case Some(data: UIJourneySessionData) =>
+          Right(Some(data))
+        case None => Right(None)
+      }
+    else
+      uiJourneySessionDataRepository.get(hc.sessionId.get.value, journeyType) map {
+        case Some(data: UIJourneySessionData) =>
+          Right(Some(data))
+        case None => Right(None)
+      }
+
   }
 
   def createSession(journeyType: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
@@ -81,7 +94,10 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   def setMongoData(uiJourneySessionData: UIJourneySessionData)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    uiJourneySessionDataRepository.set(uiJourneySessionData)
+    if (config.encryptionIsEnabled)
+      sensitiveUIJourneySessionDataRepository.set(uiJourneySessionData)
+    else
+      uiJourneySessionDataRepository.set(uiJourneySessionData)
   }
 
   def setMongoKey(key: String, value: String, journeyType: JourneyType)
@@ -102,10 +118,16 @@ class SessionService @Inject()(uiJourneySessionDataRepository: UIJourneySessionD
 
   def deleteMongoData(journeyType: JourneyType)
                      (implicit hc: HeaderCarrier): Future[Boolean] = {
-    uiJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
+    if (config.encryptionIsEnabled)
+      sensitiveUIJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
+    else
+      uiJourneySessionDataRepository.deleteOne(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString))
   }
 
   def deleteSession(operation: Operation)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    uiJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
+    if (config.encryptionIsEnabled)
+      sensitiveUIJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
+    else
+      uiJourneySessionDataRepository.deleteJourneySession(hc.sessionId.get.value, operation)
   }
 }

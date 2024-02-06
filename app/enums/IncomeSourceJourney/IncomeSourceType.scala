@@ -67,13 +67,4 @@ object IncomeSourceType {
   implicit def writes[T <: IncomeSourceType]: Writes[T] = Writes {
     incomeSourceType => JsString(incomeSourceType.toString)
   }
-
-  def getJourneyTypeJsonObj(incomeSourceType: IncomeSourceType): JsObject = {
-    val journey = incomeSourceType match {
-      case SelfEmployment => "SE"
-      case UkProperty => "UKPROPERTY"
-      case ForeignProperty => "FOREIGNPROPERTY"
-    }
-    Json.obj("journeyType" -> journey)
-  }
 }

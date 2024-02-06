@@ -108,8 +108,8 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
   }
 
 
-  def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], isChange: Boolean)(implicit user: MtdItUser[_],
-                                                                                           ec: ExecutionContext, request: Request[_]): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], isChange: Boolean)
+                         (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     val redirectUrl = getRedirectUrl(isAgent = isAgent, isChange = isChange)
     val redirect = Redirect(redirectUrl)
 
