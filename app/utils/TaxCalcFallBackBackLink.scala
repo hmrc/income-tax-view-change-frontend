@@ -19,21 +19,32 @@ package utils
 trait TaxCalcFallBackBackLink {
 
   def getFallbackUrl(calcPageBackLink: Option[String], isAgent: Boolean, isCrystallised: Boolean, taxYear: Int, origin: Option[String]): String = {
-    if(isSubmission(calcPageBackLink)) {
-      if (isCrystallised) {
-        if (isAgent) {
-          controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
-        } else controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
-      } else {
-        if (isAgent) {
-          controllers.routes.InYearTaxCalculationController.showAgent.url
-        } else controllers.routes.InYearTaxCalculationController.show(origin).url
-      }
-    } else {
-      if(isAgent) {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
-      } else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
+    if (isAgent)
+      fallbackUrlForAgent(calcPageBackLink, isCrystallised, taxYear)
+    else
+      fallbackUrlForIndividual(calcPageBackLink, isCrystallised, taxYear, origin)
+  }
+
+  private def fallbackUrlForAgent(calcPageBackLink: Option[String], isCrystallised: Boolean, taxYear: Int) = {
+    if (isSubmission(calcPageBackLink)) {
+      if (isCrystallised)
+        controllers.routes.FinalTaxCalculationController.showAgent(taxYear).url
+      else
+        controllers.routes.InYearTaxCalculationController.showAgent.url
     }
+    else
+      controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
+  }
+
+  private def fallbackUrlForIndividual(calcPageBackLink: Option[String], isCrystallised: Boolean, taxYear: Int, origin: Option[String]) = {
+    if (isSubmission(calcPageBackLink)) {
+      if (isCrystallised)
+        controllers.routes.FinalTaxCalculationController.show(taxYear, origin).url
+      else
+        controllers.routes.InYearTaxCalculationController.show(origin).url
+    }
+    else
+      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url
   }
 
   private def isSubmission(calcPageBackLink: Option[String]): Boolean = calcPageBackLink match {

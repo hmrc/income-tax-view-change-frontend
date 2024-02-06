@@ -26,7 +26,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.{ReplaceOptions, UpdateOptions}
-import org.mongodb.scala.result.UpdateResult
+import org.mongodb.scala.result.{DeleteResult, UpdateResult}
 import uk.gov.hmrc.mongo.transaction.{TransactionConfiguration, Transactions}
 
 @Singleton
@@ -49,4 +49,9 @@ class UserRepository @Inject()(val mongoComponent: MongoComponent, implicit val 
     collection.replaceOne(equal("nino", userRecord.nino), userRecord,
       options = ReplaceOptions().upsert(true)).toFuture()
   }
+
+  def removeAll(): Future[DeleteResult] = {
+    collection.deleteMany(empty()).toFuture()
+  }
+
 }
