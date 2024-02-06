@@ -74,7 +74,7 @@ class UIJourneySessionDataRepository @Inject()(
         update = Updates.set("lastUpdated", Instant.now(clock))
       )
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
 
   def get(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
     val data = UIJourneySessionData(sessionId, journeyType)
@@ -97,7 +97,7 @@ class UIJourneySessionDataRepository @Inject()(
         options = ReplaceOptions().upsert(true)
       )
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
   }
 
   def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
@@ -111,11 +111,11 @@ class UIJourneySessionDataRepository @Inject()(
     collection
       .deleteOne(dataFilter(data))
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
 
   def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
     collection
       .deleteOne(sessionFilter(sessionId, operation))
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
 }

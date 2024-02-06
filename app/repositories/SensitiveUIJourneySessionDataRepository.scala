@@ -78,7 +78,7 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
         update = Updates.set("lastUpdated", Instant.now(clock))
       )
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
 
   def get(sessionId: String, journeyType: String): Future[Option[UIJourneySessionData]] = {
     val data = SensitiveUIJourneySessionData(sessionId, journeyType)
@@ -102,7 +102,7 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
         options = ReplaceOptions().upsert(true)
       )
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
   }
 
   def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
@@ -116,11 +116,11 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
     collection
       .deleteOne(dataFilter(data.encrypted))
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
 
   def deleteJourneySession(sessionId: String, operation: Operation): Future[Boolean] =
     collection
       .deleteOne(sessionFilter(sessionId, operation))
       .toFuture()
-      .map(_ => true)
+      .map(_.wasAcknowledged())
 }
