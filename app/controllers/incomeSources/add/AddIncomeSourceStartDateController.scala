@@ -58,7 +58,6 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-    println("\nCALLED AddIncomeSourceStartDateController.show\n")
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
@@ -71,7 +70,6 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-    println("\nCALLED AddIncomeSourceStartDateController.submit\n")
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
