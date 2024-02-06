@@ -47,6 +47,8 @@ POST        /report-quarterly/income-and-expenses/view/test-only/add-user       
 
 + nocsrf
 POST        /report-quarterly/income-and-expenses/view/test-only/add-user/proxy                       testOnly.controllers.StubUsersController.stubUsers
+
++ nocsrf
 DELETE      /report-quarterly/income-and-expenses/view/test-only/delete-all-users/proxy               testOnly.controllers.StubUsersController.deleteUsers
 
 GET         /report-quarterly/income-and-expenses/view/test-only/feature-switch                       testOnly.controllers.FeatureSwitchController.show
