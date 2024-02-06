@@ -84,6 +84,12 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
     )
   }
 
+  val deleteUsers: Action[AnyContent] = Action.async { implicit request =>
+    userRepository.removeAll().flatMap( _ =>
+      Future.successful(Ok("\nDeleted all mongo data from FE user collection"))
+    )
+  }
+
   def view(form: Form[UserModel], result: Option[String] = None)(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
     stubUsersView(form, testOnly.controllers.routes.StubUsersController.submit, result)
   }
