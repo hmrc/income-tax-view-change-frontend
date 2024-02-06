@@ -25,6 +25,7 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -52,10 +53,12 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
                                                    val ec: ExecutionContext)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
+
   def show(isAgent: Boolean,
            isChange: Boolean,
            incomeSourceType: IncomeSourceType
           ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+    println("\nCALLED AddIncomeSourceStartDateController.show\n")
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
@@ -68,6 +71,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
              isChange: Boolean,
              incomeSourceType: IncomeSourceType
             ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+    println("\nCALLED AddIncomeSourceStartDateController.submit\n")
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
@@ -160,14 +164,26 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       }
     }) { sessionData =>
       sessionService.setMongoData(
-        sessionData.copy(
-          addIncomeSourceData =
-            sessionData.addIncomeSourceData.map(
-              _.copy(
-                dateStarted = Some(formData.date)
-              )
+        sessionData.addIncomeSourceData match {
+          case Some(_) =>
+            sessionData.copy(
+              addIncomeSourceData =
+                sessionData.addIncomeSourceData.map(
+                  _.copy(
+                    dateStarted = Some(formData.date)
+                  )
+                )
             )
-        )
+          case None =>
+            sessionData.copy(
+              addIncomeSourceData =
+                Some(
+                  AddIncomeSourceData(
+                    dateStarted = Some(formData.date)
+                  )
+                )
+            )
+        }
       ) flatMap {
         case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, isChange)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
