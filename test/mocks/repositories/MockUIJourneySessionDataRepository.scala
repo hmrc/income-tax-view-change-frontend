@@ -16,6 +16,7 @@
 
 package mocks.repositories
 
+import config.FrontendAppConfig
 import enums.JourneyType.Operation
 import models.incomeSourceDetails.UIJourneySessionData
 import org.bson.BsonValue
@@ -23,7 +24,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import repositories.UIJourneySessionDataRepository
+import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -31,6 +32,10 @@ import scala.concurrent.Future
 trait MockUIJourneySessionDataRepository extends UnitSpec with BeforeAndAfterEach {
 
   val mockUIJourneySessionDataRepository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
+
+  val mockSensitiveUIJourneySessionDataRepository: SensitiveUIJourneySessionDataRepository = mock(classOf[SensitiveUIJourneySessionDataRepository])
+
+  val mockFrontendAppConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
