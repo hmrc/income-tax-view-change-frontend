@@ -178,7 +178,6 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 1).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
         tbody.selectNth("tr", 2).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
         tbody.selectNth("tr", 3).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
-
       }
     }
   }
