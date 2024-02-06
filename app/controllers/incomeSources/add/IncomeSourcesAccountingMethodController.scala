@@ -105,6 +105,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                backUrl: String,
                                                postAction: Call
                                               ): Future[Result] = {
+
     Future.successful(Ok(view(
       cashOrAccrualsFlag = cashOrAccrualsFlag,
       incomeSourcesType = incomeSourceType,
