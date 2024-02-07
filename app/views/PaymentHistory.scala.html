@@ -56,6 +56,10 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     }
 }
 
+@getMessage(key: String, args: String*) = @{
+    messages(s"paymentHistory.$key", args: _*)
+}
+
 @headingContent(year: Int) = {
     <span id="accordion-with-summary-sections-heading-@year">
         @year.toString
@@ -82,7 +86,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                         <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span>
                     </a>
                 </td>
-                <td class="govuk-table__cell numeric govuk-table__cell--numeric"> @payment.amount.map(_.abs.toCurrency)</td>
+                <td class="govuk-table__cell numeric govuk-table__cell--numeric"> @payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown"))</td>
             </tr>
         }
         </tbody>

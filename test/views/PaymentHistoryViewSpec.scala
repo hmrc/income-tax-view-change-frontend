@@ -75,7 +75,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val groupedRepayments = List(
     (2021, List(PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
-      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)))
+      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
+      PaymentHistoryEntry("2021-08-22", "paymentHistory.refund", None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)))
   )
 
   val expectedDatesOrder = List("13 April 2020", "25 December 2020", "25 April 2019", "25 September 2019", "25 December 2019", "25 April 2018")
@@ -180,6 +181,11 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
+
+        tbody.selectNth("tr", 3).selectNth("td", 1).text() shouldBe "22 August 2021"
+        tbody.selectNth("tr", 3).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 3"
+        tbody.selectNth("tr", 3).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
+        tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "Unknown"
       }
       s"should have a amount column right aligned" in new PaymentHistorySetup(groupedRepayments) {
         val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
@@ -187,6 +193,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
         tbody.selectNth("tr", 1).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
         tbody.selectNth("tr", 2).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
+        tbody.selectNth("tr", 3).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
       }
     }
   }

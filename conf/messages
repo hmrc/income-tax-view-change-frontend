@@ -1034,6 +1034,7 @@ PaymentHistory.classicSA                                        = To view your p
 paymentHistory.paymentAndRefundHistory.heading                  = Payment and refund history
 paymentHistory.paymentAndCreditHistory                          = Payment and credit history
 paymentHistory.paymentCreditAndRefundHistory.heading            = Payment, credit and refund history
+paymentHistory.unknown                                          = Unknown
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC

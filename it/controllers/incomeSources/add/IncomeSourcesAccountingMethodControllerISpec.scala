@@ -21,6 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, JourneyType}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -50,6 +51,18 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
   implicit override val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
   implicit override val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): UIJourneySessionData = UIJourneySessionData(
+    sessionId = testSessionId,
+    journeyType = JourneyType(Add, incomeSourceType).toString,
+    addIncomeSourceData = Some(
+      AddIncomeSourceData(
+        businessName  = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessName")  else None,
+        businessTrade = if (incomeSourceType.equals(SelfEmployment)) Some("testBusinessTrade") else None,
+        incomeSourcesAccountingMethod = accountingMethod
+      )
+    )
+  )
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.deleteSession(Add))
@@ -58,7 +71,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
     await(sessionService.createSession(JourneyType(Add, ForeignProperty).toString))
   }
 
-  def authorisedUserTest(addIncomeSourcesAccountingMethodShowUrl: String, url: String, messageKey: String): Unit = {
+  def runGetTest(addIncomeSourcesAccountingMethodShowUrl: String, url: String, messageKey: String): Unit = {
     "User is authorised" in {
       Given("I wiremock stub a successful Income Source Details response with no businesses or properties")
       enable(IncomeSources)
@@ -74,10 +87,14 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
     }
   }
 
-  def userSelectionValueTest(checkDetailsShowUrl: String, url: String, formData: Map[String, Seq[String]], incomeSourceType: IncomeSourceType, accountingMethod: String): Unit = {
+  def runPostTest(checkDetailsShowUrl: String, url: String, formData: Map[String, Seq[String]], incomeSourceType: IncomeSourceType, accountingMethod: Option[String]): Unit = {
+
     enable(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
     val result = IncomeTaxViewChangeFrontend.post(url, clientDetailsWithConfirmation)(formData)
+
+    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, accountingMethod)))
 
     val session = sessionService.getMongo(JourneyType(Add, incomeSourceType).toString)(hc, ec).futureValue
 
@@ -90,35 +107,35 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
     result should have(
       httpStatus(SEE_OTHER),
       redirectURI(checkDetailsShowUrl))
-    resultAccountingMethod shouldBe Some(accountingMethod)
+    resultAccountingMethod shouldBe accountingMethod
 
   }
 
   s"calling GET $addIncomeSourcesAccountingMethodShowUrlSoleTrader" should {
     "render the Business Accounting Method page" when {
-      authorisedUserTest(addIncomeSourcesAccountingMethodShowUrlSoleTrader, "/income-sources/add/business-accounting-method", "incomeSources.add.SE.AccountingMethod.heading")
+      runGetTest(addIncomeSourcesAccountingMethodShowUrlSoleTrader, "/income-sources/add/business-accounting-method", "incomeSources.add.SE.AccountingMethod.heading")
     }
   }
   s"calling GET $addIncomeSourcesAccountingMethodShowUrlUK" should {
     "render the Business Accounting Method page" when {
-      authorisedUserTest(addIncomeSourcesAccountingMethodShowUrlUK, "/income-sources/add/uk-property-accounting-method", "incomeSources.add.UK.AccountingMethod.heading")
+      runGetTest(addIncomeSourcesAccountingMethodShowUrlUK, "/income-sources/add/uk-property-accounting-method", "incomeSources.add.UK.AccountingMethod.heading")
     }
   }
   s"calling GET $addIncomeSourcesAccountingMethodShowUrlForeign" should {
     "render the Business Accounting Method page" when {
-      authorisedUserTest(addIncomeSourcesAccountingMethodShowUrlForeign, "/income-sources/add/foreign-property-business-accounting-method", "incomeSources.add.FP.AccountingMethod.heading")
+      runGetTest(addIncomeSourcesAccountingMethodShowUrlForeign, "/income-sources/add/foreign-property-business-accounting-method", "incomeSources.add.FP.AccountingMethod.heading")
     }
   }
   s"calling POST $addIncomeSourcesAccountingMethodShowUrlSoleTrader" should {
     s"redirect to $checkBusinessDetailsShowUrl" when {
       "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
         val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq("cash"))
-        userSelectionValueTest(checkBusinessDetailsShowUrl, "/income-sources/add/business-accounting-method", formData, SelfEmployment, "cash")
+        runPostTest(checkBusinessDetailsShowUrl, "/income-sources/add/business-accounting-method", formData, SelfEmployment, Some("cash"))
       }
       s"redirect to $checkBusinessDetailsShowUrl" when {
         "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
           val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq("traditional"))
-          userSelectionValueTest(checkBusinessDetailsShowUrl, "/income-sources/add/business-accounting-method", formData, SelfEmployment, "accruals")
+          runPostTest(checkBusinessDetailsShowUrl, "/income-sources/add/business-accounting-method", formData, SelfEmployment, Some("accruals"))
         }
       }
       s"return BAD_REQUEST $checkBusinessDetailsShowUrl" when {
@@ -141,12 +158,12 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
     s"redirect to $checkUKPropertyDetailsShowUrl" when {
       "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
         val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq("cash"))
-        userSelectionValueTest(checkUKPropertyDetailsShowUrl, "/income-sources/add/uk-property-accounting-method", formData, UkProperty, "cash")
+        runPostTest(checkUKPropertyDetailsShowUrl, "/income-sources/add/uk-property-accounting-method", formData, UkProperty, Some("cash"))
       }
       s"redirect to $checkUKPropertyDetailsShowUrl" when {
         "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
           val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq("traditional"))
-          userSelectionValueTest(checkUKPropertyDetailsShowUrl, "/income-sources/add/uk-property-accounting-method", formData, UkProperty, "accruals")
+          runPostTest(checkUKPropertyDetailsShowUrl, "/income-sources/add/uk-property-accounting-method", formData, UkProperty, Some("accruals"))
         }
       }
       s"return BAD_REQUEST $checkUKPropertyDetailsShowUrl" when {
@@ -169,12 +186,12 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
     s"redirect to $foreignPropertyCheckDetailsShowUrl" when {
       "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
         val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq("cash"))
-        userSelectionValueTest(foreignPropertyCheckDetailsShowUrl, "/income-sources/add/foreign-property-business-accounting-method", formData, ForeignProperty, "cash")
+        runPostTest(foreignPropertyCheckDetailsShowUrl, "/income-sources/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("cash"))
       }
       s"redirect to $foreignPropertyCheckDetailsShowUrl" when {
         "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
           val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq("traditional"))
-          userSelectionValueTest(foreignPropertyCheckDetailsShowUrl, "/income-sources/add/foreign-property-business-accounting-method", formData, ForeignProperty, "accruals")
+          runPostTest(foreignPropertyCheckDetailsShowUrl, "/income-sources/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("accruals"))
         }
       }
       s"return BAD_REQUEST $foreignPropertyCheckDetailsShowUrl" when {

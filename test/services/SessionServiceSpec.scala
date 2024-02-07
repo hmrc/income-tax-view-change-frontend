@@ -29,7 +29,11 @@ import java.time.LocalDate
 
 class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataRepository {
 
-  object TestSessionService extends SessionService(mockUIJourneySessionDataRepository)
+  object TestSessionService extends SessionService(
+    mockUIJourneySessionDataRepository,
+    mockSensitiveUIJourneySessionDataRepository,
+    mockFrontendAppConfig
+  )
 
   "sessionService " when {
     "mongo" when {

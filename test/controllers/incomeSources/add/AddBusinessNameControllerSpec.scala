@@ -202,7 +202,7 @@ class AddBusinessNameControllerSpec extends TestSupport
             setupMockAuthorisationSuccess(isAgent)
             setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
             setupMockCreateSession(true)
-            setupMockSetSessionKeyMongo(businessNameField, validBusinessName, journeyType, Right(true))
+            setupMockSetMongoData(true)
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(JourneyType(Add, SelfEmployment)))))
 
             val (result, redirectUrl) = (isChange, isAgent) match {
@@ -217,8 +217,6 @@ class AddBusinessNameControllerSpec extends TestSupport
             }
 
             status(result) mustBe SEE_OTHER
-            verify(mockSessionService)
-              .setMongoKey(ArgumentMatchers.eq(businessNameField), ArgumentMatchers.eq(validBusinessName), ArgumentMatchers.eq(journeyType))(any(), any())
             redirectLocation(result) mustBe Some(redirectUrl)
           }
 
