@@ -51,10 +51,12 @@
 }
 
 @updateReturnLink(year: Int) = {
-    <a class="govuk-link" id="updateReturn-link-@year" href="@appConfig.submissionFrontendTaxYearsPage(year)">
-        @messages("taxYears.updateReturn")
-        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
-    </a>
+    @if(year > 2022) {
+        <a class="govuk-link" id="updateReturn-link-@year" href="@appConfig.submissionFrontendTaxYearsPage(year)">
+            @messages("taxYears.updateReturn")
+            <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+        </a>
+    }
 }
 
 @taxYearRow(year: Int) = {
@@ -63,7 +65,7 @@
         @if(itsaSubmissionIntegrationEnabled) {
             <dd class="govuk-summary-list__actions">@updateReturnLink(year)</dd>
         }
-        <dd class="govuk-summary-list__actions">@viewReturnLink(year)</dd>
+        <dd class="govuk-summary-list__actions govuk-!-text-align-right">@viewReturnLink(year)</dd>
     </div>
 }
 
