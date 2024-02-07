@@ -57,8 +57,8 @@ def it(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope,
-  "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope
-  //caffeine
+  "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope,
+  caffeine
 )
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
