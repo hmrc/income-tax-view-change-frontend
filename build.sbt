@@ -99,19 +99,13 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= appDependencies,
     retrieveManaged := true
   )
-  //.configs(IntegrationTest)
-  //.settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
     Test / Keys.fork := true,
     scalaVersion := currentScalaVersion,
     scalacOptions += "-Wconf:src=routes/.*:s",
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
-  //.configs(IntegrationTest)
   .settings(
-    //IntegrationTest / Keys.fork := false,
-    //IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
-    //addTestReportOption(IntegrationTest, "int-test-reports"),
-    //IntegrationTest / parallelExecution := false,
+    Keys.fork := false,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
@@ -131,36 +125,11 @@ lazy val it = project
   .settings(
     publish / skip := true
   )
-  //.settings(playSettings: _*)
-  //.settings(scalaSettings: _*)
   .settings(scalaVersion := currentScalaVersion)
-  //.settings(scoverageSettings: _*)
-  //.settings(defaultSettings(): _*)
   .settings(majorVersion := 1)
-  //.settings(DefaultBuildSettings.itSettings())
-  //.settings(
-   // Keys.fork := false
-    //unmanagedSourceDirectories := baseDirectory (base => Seq(base / "it")).value
-    //addTestReportOption(IntegrationTest, "int-test-reports"),
-    //parallelExecution := false
-  //)
+  .settings(
+    testForkedParallel := true
+  )
   .settings(
     libraryDependencies ++= appDependenciesIt
-    //retrieveManaged := true
   )
-
-/*
-  Project("it", file("."))
-  .enablePlugins(PlayScala)
-  .dependsOn(microservice % "test->test")
-  .settings(
-    Keys.fork := false,
-    unmanagedSourceDirectories := baseDirectory (base => Seq(base / "it")).value,
-    addTestReportOption(IntegrationTest, "int-test-reports"),
-    parallelExecution := false
-  )
-  //.settings(DefaultBuildSettings: _*)
-  //.settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
-  .settings(libraryDependencies ++= it())
-
- */
