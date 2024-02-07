@@ -1,9 +1,9 @@
 
 import play.sbt.routes.RoutesKeys
-import sbt._
+import sbt.*
 import sbt.Keys.libraryDependencySchemes
-import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.SbtAutoBuildPlugin
+import uk.gov.hmrc.DefaultBuildSettings.*
+import uk.gov.hmrc.{DefaultBuildSettings, SbtAutoBuildPlugin}
 import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
@@ -50,7 +50,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "7.6.0"
 )
 
-def it(scope: String = "it"): Seq[ModuleID] = Seq(
+def it(scope: String = "test, it"): Seq[ModuleID] = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
@@ -61,7 +61,8 @@ def it(scope: String = "it"): Seq[ModuleID] = Seq(
   caffeine
 )
 
-lazy val appDependencies: Seq[ModuleID] = compile ++ test() ++ it()
+lazy val appDependencies: Seq[ModuleID] = compile ++ test()
+lazy val appDependenciesIt: Seq[ModuleID] = it()
 
 lazy val plugins: Seq[Plugins] = Seq.empty
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
@@ -98,19 +99,13 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= appDependencies,
     retrieveManaged := true
   )
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
     Test / Keys.fork := true,
     scalaVersion := currentScalaVersion,
     scalacOptions += "-Wconf:src=routes/.*:s",
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
-  .configs(IntegrationTest)
   .settings(
-    IntegrationTest / Keys.fork := false,
-    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
-    addTestReportOption(IntegrationTest, "int-test-reports"),
-    IntegrationTest / parallelExecution := false,
+    Keys.fork := false,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
@@ -122,3 +117,19 @@ lazy val microservice = Project(appName, file("."))
   .settings(resolvers ++= Seq(
     Resolver.jcenterRepo
   ))
+
+lazy val it = project
+  .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings.head)
+  .enablePlugins(play.sbt.PlayScala)
+  .settings(
+    publish / skip := true
+  )
+  .settings(scalaVersion := currentScalaVersion)
+  .settings(majorVersion := 1)
+  .settings(
+    testForkedParallel := true
+  )
+  .settings(
+    libraryDependencies ++= appDependenciesIt
+  )
