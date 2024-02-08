@@ -43,6 +43,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                    val itvcErrorHandler: AgentItvcErrorHandler
                                   ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
+  private val earliestSubmissionTaxYear = 2023
   def handleRequest(backUrl: String,
                     isAgent: Boolean,
                     origin: Option[String] = None)
@@ -54,7 +55,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       isAgent = isAgent,
       utr = user.saUtr,
       itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      earliestSubmissionTaxYear = 2023,
+      earliestSubmissionTaxYear = earliestSubmissionTaxYear,
       btaNavPartial = user.btaNavPartial,
       origin = origin)))
   }
