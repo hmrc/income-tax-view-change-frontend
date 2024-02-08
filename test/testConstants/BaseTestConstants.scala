@@ -66,6 +66,8 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testYearPlusTwo = 2020
   val testYearPlusThree = 2021
   val testYearPlusFour = 2022
+  val testYearPlusFive = 2023
+  val testYearPlusSix = 2024
   val testUserName = "Albert Einstein"
   val testRetrievedUserName: Name = Name(Some(testUserName), None)
   val testPaymentRedirectUrl = "http://localhost:9081/report-quarterly/income-and-expenses/view"
