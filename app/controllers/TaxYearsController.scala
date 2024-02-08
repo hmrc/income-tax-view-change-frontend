@@ -54,6 +54,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       isAgent = isAgent,
       utr = user.saUtr,
       itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+      earliestSubmissionTaxYear = 2023,
       btaNavPartial = user.btaNavPartial,
       origin = origin)))
   }
