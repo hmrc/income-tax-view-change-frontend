@@ -50,7 +50,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "7.6.0"
 )
 
-def it(scope: String = "test, it"): Seq[ModuleID] = Seq(
+def it(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
   "org.pegdown" % "pegdown" % pegdownVersion % scope,
