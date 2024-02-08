@@ -42,30 +42,30 @@
     }
 }
 
-@viewReturnLink(year: Int) = {
-    <a class="govuk-link" id="viewSummary-link-@year"
-    href="@getReturnHref(year)">
+@viewReturnLink(taxYear: Int) = {
+    <a class="govuk-link" id="viewSummary-link-@taxYear"
+    href="@getReturnHref(taxYear)">
         @messages("taxYears.viewSummary")
-        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</span>
     </a>
 }
 
-@updateReturnLink(year: Int) = {
-    @if(year > 2022) {
-        <a class="govuk-link" id="updateReturn-link-@year" href="@appConfig.submissionFrontendTaxYearsPage(year)">
+@updateReturnLink(taxYear: Int) = {
+    @if(taxYear > 2022) {
+        <a class="govuk-link" id="updateReturn-link-@taxYear" href="@appConfig.submissionFrontendTaxYearsPage(taxYear)">
             @messages("taxYears.updateReturn")
-            <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</span>
+            <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</span>
         </a>
     }
 }
 
-@taxYearRow(year: Int) = {
+@taxYearRow(taxYear: Int) = {
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__value">@messages("taxYears.taxYears", s"${year - 1}", s"$year")</dt>
+        <dt class="govuk-summary-list__value">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</dt>
         @if(itsaSubmissionIntegrationEnabled) {
-            <dd class="govuk-summary-list__actions">@updateReturnLink(year)</dd>
+            <dd class="govuk-summary-list__actions">@updateReturnLink(taxYear)</dd>
         }
-        <dd class="govuk-summary-list__actions">@viewReturnLink(year)</dd>
+        <dd class="govuk-summary-list__actions">@viewReturnLink(taxYear)</dd>
     </div>
 }
 
