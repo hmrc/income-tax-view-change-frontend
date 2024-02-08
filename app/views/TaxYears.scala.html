@@ -50,8 +50,10 @@
     </a>
 }
 
+@earliestSubmissionTaxYear = {2023}
+
 @updateReturnLink(taxYear: Int) = {
-    @if(taxYear > 2022) {
+    @if(taxYear >= earliestSubmissionTaxYear) {
         <a class="govuk-link" id="updateReturn-link-@taxYear" href="@appConfig.submissionFrontendTaxYearsPage(taxYear)">
             @messages("taxYears.updateReturn")
             <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</span>
