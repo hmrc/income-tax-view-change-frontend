@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.CreditSummaryAuditing.{CreditsSummaryModel, toCreditSummaryDetailsSeq}
 import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.{MtdItUserOptionNino, MtdItUserWithNino}
+import auth.MtdItUserOptionNino
 import config.featureswitch.{CutOverCredits, MFACreditsAndDebits}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import helpers.{ComponentSpecBase, CreditsSummaryDataHelper}

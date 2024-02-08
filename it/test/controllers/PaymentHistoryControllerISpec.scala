@@ -19,7 +19,7 @@ package controllers
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import config.featureswitch.{CutOverCredits, MFACreditsAndDebits, PaymentHistoryRefunds}
-import helpers.{ComponentSpecBase, servicemocks}
+import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.Payment
@@ -28,7 +28,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.{TaxYearSummaryMessages, paymentAndRefundHistoryHeading}
+import testConstants.messages.paymentAndRefundHistoryHeading
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate

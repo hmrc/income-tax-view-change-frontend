@@ -31,7 +31,6 @@ import testConstants.NewCalcBreakdownItTestConstants._
 import testConstants.PropertyDetailsIntegrationTestConstants.{propertyIncomeType, propertyTradingStartDate}
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext
 
 class CalculationPollingControllerISpec extends ComponentSpecBase {
   val (taxYear, month, dayOfMonth) = (2018, 5, 6)

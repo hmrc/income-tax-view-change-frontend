@@ -18,7 +18,7 @@ package helpers.agent
 
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.ws.{WSCookie, WSResponse}
-import uk.gov.hmrc.crypto.{CompositeSymmetricCrypto, Crypted, SymmetricCryptoFactory}
+import uk.gov.hmrc.crypto.{Crypted, SymmetricCryptoFactory}
 
 trait SessionCookieCrumbler {
 

@@ -21,7 +21,6 @@ import helpers.ComponentSpecBase
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.mongodb.scala.bson.BsonDocument
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import java.time.Instant
 
 class UIJourneySessionDataISpec extends ComponentSpecBase {
   private val repository = app.injector.instanceOf[UIJourneySessionDataRepository]

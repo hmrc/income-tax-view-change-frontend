@@ -17,9 +17,8 @@
 package controllers.agent
 
 import config.featureswitch.FeatureSwitching
-import controllers.agent.utils.SessionKeys
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleThereIsAProblem}
+import helpers.servicemocks.AuthStub.titleInternalServer
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 

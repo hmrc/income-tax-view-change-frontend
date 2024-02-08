@@ -40,7 +40,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.LocalDate
-import java.time.Month.{APRIL, SEPTEMBER}
+import java.time.Month.APRIL
 
 sealed trait ReportingMethodScenario {
   def isLegacy: Boolean

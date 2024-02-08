@@ -127,6 +127,10 @@ lazy val it = project
   )
   .settings(scalaVersion := currentScalaVersion)
   .settings(majorVersion := 1)
+  .settings(scalacOptions += "-Xfatal-warnings")
+//  .settings(semanticdbEnabled := true) // enable SemanticDB
+//  .settings(semanticdbVersion := scalafixSemanticdb.revision)
+//  .settings(scalafixOnCompile := true)
   .settings(
     testForkedParallel := true
   )
