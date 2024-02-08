@@ -25,7 +25,6 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 
 import play.api.test.Injecting
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.duration._
 import scala.concurrent.Future

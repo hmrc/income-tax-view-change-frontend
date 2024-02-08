@@ -32,7 +32,6 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.UIJourneySessionDataRepository
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
@@ -41,7 +40,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
-import java.time.Month.{APRIL, SEPTEMBER}
+import java.time.Month.APRIL
 
 sealed trait ReportingMethodScenario {
   def isLegacy: Boolean

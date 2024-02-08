@@ -21,11 +21,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.scalatest._
 import org.scalatest.matchers._
-import play.api.i18n.Messages.implicitMessagesProviderToMessages
-import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Reads
 import play.api.libs.ws.WSResponse
-import play.api.test.FakeRequest
 
 import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._

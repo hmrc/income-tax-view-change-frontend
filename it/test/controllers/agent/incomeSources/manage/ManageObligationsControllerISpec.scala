@@ -16,25 +16,20 @@
 
 package controllers.agent.incomeSources.manage
 
-import auth.MtdItUser
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.UkProperty
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino, testSaUtr, testSessionId}
-import testConstants.BusinessDetailsIntegrationTestConstants.{business1, business2, business3}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testSessionId}
+import testConstants.BusinessDetailsIntegrationTestConstants.business1
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
-import testConstants.PropertyDetailsIntegrationTestConstants.{foreignProperty, ukProperty}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
-import java.time.LocalDate
 
 class ManageObligationsControllerISpec extends ComponentSpecBase {
 

@@ -30,7 +30,6 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.NewCalcDataIntegrationTestConstants._
 import testConstants.messages.TaxDueSummaryMessages.{additionCharges, nonVoluntaryClass2Nics, postgraduatePlan, studentPlan, voluntaryClass2Nics}
-import testConstants.messages.{TaxDueSummaryMessages => messages}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 
