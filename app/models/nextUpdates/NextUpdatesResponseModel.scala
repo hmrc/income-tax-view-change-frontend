@@ -47,7 +47,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
             deadline =>
               Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
                 .get.tradingName.getOrElse("nextUpdates.business"), deadline))
-          } else if (deadlinesModel.obligations.exists(ob => ob.obligationType == "Crystallised"))
+          } else if (deadlinesModel.obligations.forall(ob => ob.obligationType == "Crystallised"))
             deadlinesModel.obligations.map {
             deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
           } else None
