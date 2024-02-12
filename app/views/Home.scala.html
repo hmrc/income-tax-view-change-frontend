@@ -22,6 +22,7 @@
 @import exceptions.MissingFieldException
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import models.nextUpdates.NextUpdatesTileViewModel
+@import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
@@ -40,10 +41,10 @@
 )
 
 @(
-    availableCredit: Option[BigDecimal],
     nextPaymentDueDate: Option[LocalDate],
 	overDuePaymentsCount: Option[Int],
     nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel,
   	utr: Option[String],
   	ITSASubmissionIntegrationEnabled: Boolean,
 	dunningLockExists: Boolean = false,
@@ -248,17 +249,20 @@
 }
 
 @paymentHistoryTile = {
-    @home_tile("payment-history-tile", if(paymentHistoryEnabled) messages("home.paymentHistoryRefund.heading") else messages("home.paymentHistory.heading")) {
-        @if(creditAndRefundEnabled) {
-            @p(id = Some("available-credit")){@messages("home.paymentHistoryRefund.availableCredit", availableCredit.getOrElse(BigDecimal(0)).toCurrencyString)}
+    @home_tile("payment-history-tile", paymentCreditAndRefundHistoryTileViewModel.title()) {
+        @paymentCreditAndRefundHistoryTileViewModel.availableCredit.map { amount =>
+            <p id="available-credit">
+                @messages("home.paymentHistoryRefund.availableCredit", amount.toCurrencyString)
+            </p>
         }
 
-        @p(classes = "govuk-!-margin-bottom-4") {
+        <p class="govuk-!-margin-bottom-4">
             @link(
                 link = paymentHistoryControllerURL,
-                messageKey = if(paymentHistoryEnabled) "home.paymentHistoryRefund.view" else "home.paymentHistory.view"
+                messageKey = paymentCreditAndRefundHistoryTileViewModel.paymentCreditRefundHistoryMessageKey()
             )
-        }
+        </p>
+
         @if(creditAndRefundEnabled) {
             @if(isUserMigrated) {
                 @link(

@@ -120,6 +120,8 @@ home.paymentHistory.view                                        = Payment histor
 home.paymentHistoryRefund.availableCredit                       = {0} is in your account
 home.paymentHistoryRefund.heading                               = Payment history and refunds
 home.paymentHistoryRefund.view                                  = Payment and refund history
+home.paymentCreditHistory.view                                  = Payment and credit history
+home.paymentCreditRefundHistory.view                            = Payment, credit and refund history
 home.overdue.date.payment.count                                 = {0} OVERDUE PAYMENTS
 home.overdue.date.update.count                                  = {0} OVERDUE UPDATES
 home.overdue.date                                               = OVERDUE
@@ -1030,6 +1032,8 @@ paymentHistory.table.header.description                         = Description
 paymentHistory.table.header.amount                              = Amount
 PaymentHistory.classicSA                                        = To view your payment history from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
 paymentHistory.paymentAndRefundHistory.heading                  = Payment and refund history
+paymentHistory.paymentAndCreditHistory                          = Payment and credit history
+paymentHistory.paymentCreditAndRefundHistory.heading            = Payment, credit and refund history
 paymentHistory.unknown                                          = Unknown
 
 ## Payment Allocation ##
