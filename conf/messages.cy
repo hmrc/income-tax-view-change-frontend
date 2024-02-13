@@ -1021,6 +1021,9 @@ paymentHistory.table.header.amount                              = Swm
 PaymentHistory.classicSA                                        = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 paymentHistory.paymentAndRefundHistory.heading                  = Hanes taliadau ac ad-daliadau
 paymentHistory.unknown                                          = Anhysbys
+paymentHistory.check-refund-1                                   = Gallwch
+paymentHistory.check-refund-2                                   = wirio cynnydd cais
+paymentHistory.check-refund-3                                   = a wnaethoch am ad-daliad ar unrhyw adeg.
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?

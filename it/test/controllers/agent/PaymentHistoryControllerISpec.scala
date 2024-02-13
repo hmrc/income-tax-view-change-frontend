@@ -153,7 +153,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleAgent("paymentHistory.heading")
+        pageTitleAgent("paymentHistory.heading"),
+        elementTextBySelector("#refundstatus")(""),
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = true,
