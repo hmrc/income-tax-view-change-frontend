@@ -251,7 +251,7 @@
 @paymentHistoryTile = {
     @home_tile("payment-history-tile", paymentCreditAndRefundHistoryTileViewModel.title()) {
         @paymentCreditAndRefundHistoryTileViewModel.availableCredit.map { amount =>
-            <p class ="govuk-body" id="available-credit">
+            <p class="govuk-body" id="available-credit">
                 @messages("home.paymentHistoryRefund.availableCredit", amount.toCurrencyString)
             </p>
         }
