@@ -107,8 +107,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
               Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
             case Left(_)
             =>
-              Logger("application")
-                .error(s"[EnterClientsUTRController] Unexpected response received")
+              Logger("application").error(s"[Agent][EnterClientsUTRController]: Error response received from API")
               Future.successful(itvcErrorHandler.showInternalServerError())
           }
         }

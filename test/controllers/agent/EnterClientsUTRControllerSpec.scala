@@ -259,7 +259,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess, withClientPredicate = false)
           mockClientDetails(validUTR)(
-            response = Left(UnexpectedResponse)
+            response = Left(APIError)
           )
 
           val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(

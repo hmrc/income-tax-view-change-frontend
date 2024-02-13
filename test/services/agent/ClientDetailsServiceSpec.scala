@@ -19,7 +19,7 @@ package services.agent
 import mocks.connectors._
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, UnexpectedResponse}
+import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, APIError}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 
@@ -66,7 +66,7 @@ class ClientDetailsServiceSpec extends TestSupport
       }
     }
 
-    "return a UnexpectedResponse" when {
+    "return an APIError" when {
       "a successful citizen details response contains a nino" when {
         "an income source details error is returned and the code is 500" in {
 
@@ -75,7 +75,7 @@ class ClientDetailsServiceSpec extends TestSupport
 
           val result = TestClientDetailsService.checkClientDetails("testSaUtr").futureValue
 
-          result shouldBe Left(UnexpectedResponse)
+          result shouldBe Left(APIError)
         }
       }
     }
@@ -102,14 +102,14 @@ class ClientDetailsServiceSpec extends TestSupport
 
     }
 
-    "return a UnexpectedResponse" when {
+    "return an APIError" when {
       "an citizen details error is returned and the code is 500" in {
 
         setupMockCitizenDetails("testSaUtr")(Future.successful(CitizenDetailsErrorModel(500, "internal server error")))
 
         val result = (TestClientDetailsService.checkClientDetails("testSaUtr")).futureValue
 
-        result shouldBe Left(UnexpectedResponse)
+        result shouldBe Left(APIError)
       }
 
     }

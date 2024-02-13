@@ -41,14 +41,14 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
             Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
           case IncomeSourceDetailsError(NOT_FOUND, _) => Future.successful(Left(BusinessDetailsNotFound))
           case _ =>
-            Logger("application").error("[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Business Details")
-            Future.successful(Left(UnexpectedResponse))
+            Logger("application").error(s"[ClientDetailsService][checkClientDetails] - error response from Income Source Details")
+            Future.successful(Left(APIError))
         }
       case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(NOT_FOUND, _) => Future.successful(Left(CitizenDetailsNotFound))
-      case err =>
-        Logger("application").error("[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Citizen Details" + err)
-        Future.successful(Left(UnexpectedResponse))
+      case _=>
+        Logger("application").error("[ClientDetailsService][checkClientDetails] - error response from Citizen Details")
+        Future.successful(Left(APIError))
     }
 }
 
@@ -62,6 +62,8 @@ object ClientDetailsService {
 
   case object UnexpectedResponse extends ClientDetailsFailure
 
-  case class ClientDetails(firstName: Option[String], lastName: Option[String], nino: String, mtdItId: String)
+  final case object APIError extends ClientDetailsFailure
+
+  final case class ClientDetails(firstName: Option[String], lastName: Option[String], nino: String, mtdItId: String)
 
 }
