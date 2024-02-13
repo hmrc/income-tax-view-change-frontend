@@ -26,6 +26,7 @@ import controllers.predicates._
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
+import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -83,7 +84,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                 MFACreditsEnabled = MFACreditsEnabled))
               val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, repayments, isAgent,
                 MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-              Ok(paymentHistoryView(paymentHistoryEntries, viewModel, backUrl, user.saUtr,
+              Ok(paymentHistoryView(paymentHistoryEntries, viewModel, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
                 btaNavPartial = user.btaNavPartial, isAgent = isAgent)
               ).addingToSession(gatewayPage -> PaymentHistoryPage.name)
             case Left(_) => itvcErrorHandler.showInternalServerError()
@@ -94,7 +95,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
             MFACreditsEnabled = MFACreditsEnabled))
           val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, List(), isAgent,
             MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-          Future(Ok(paymentHistoryView(paymentHistoryEntries, viewModel, backUrl, user.saUtr,
+          Future(Ok(paymentHistoryView(paymentHistoryEntries, viewModel, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
             btaNavPartial = user.btaNavPartial, isAgent = isAgent)
           ).addingToSession(gatewayPage -> PaymentHistoryPage.name))
         }

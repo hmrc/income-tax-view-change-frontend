@@ -29,6 +29,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
+@import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -40,7 +41,7 @@
     govukAccordion : GovukAccordion
 )
 
-@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], viewModel: PaymentCreditAndRefundHistoryViewModel, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], viewModel: PaymentCreditAndRefundHistoryViewModel, paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
