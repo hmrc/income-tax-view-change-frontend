@@ -1157,6 +1157,19 @@ credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
 credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
+credit-and-refund.subHeading-source                               = O ble ddaeth yr arian hwn?
+credit-and-refund.credit-from-balancing-charge-prt-1              = o ordaliad treth -
+credit-and-refund.credit-from-balancing-charge-prt-2              =
+credit-and-refund.tax-year                                        = blwyddyn dreth {0} i {1}
+credit-and-refund.credit-from-adjustment-prt-1                    =
+credit-and-refund.credit-from-adjustment-prt-2                    = o ganlyniad i addasiad gan CThEF –
+
+credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
+credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
+credit-and-refund.credit-from                                     = Credyd o
+
+
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
