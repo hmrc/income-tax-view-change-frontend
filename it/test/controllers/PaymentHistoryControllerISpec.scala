@@ -28,7 +28,6 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.paymentAndRefundHistoryHeading
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
@@ -124,7 +123,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       result should have(
         httpStatus(OK),
         pageTitleIndividual("paymentHistory.paymentAndRefundHistory.heading"),
-        elementTextBySelector("h1")(paymentAndRefundHistoryHeading.paymentHistoryHeading)
+        elementTextBySelector("h1")(messagesAPI("paymentHistory.paymentAndRefundHistory.heading"))
       )
 
 
@@ -147,7 +146,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("paymentHistory.heading"),
-          elementTextBySelector("h1")(paymentAndRefundHistoryHeading.paymentHistoryHeadingFSOff)
+          elementTextBySelector("h1")(messagesAPI("paymentHistory.heading"))
         )
       }
     }

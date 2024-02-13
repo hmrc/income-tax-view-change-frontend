@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch._
 import exceptions.MissingFieldException
+import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
@@ -29,6 +30,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
+import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.Home
@@ -104,11 +106,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
     val agentHome: Home = app.injector.instanceOf[Home]
 
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled)
+
     val view: HtmlFormat.Appendable = agentHome(
-      availableCredit = Some(786),
       nextPaymentDueDate,
       overDuePaymentsCount,
       nextUpdatesTileViewModel,
+      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       utr,
       ITSASubmissionIntegrationEnabled,
       dunningLockExists,
@@ -277,20 +281,29 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
           getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
         }
 
-        s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
-          getElementById("available-credit").map(_.text) shouldBe Some("£786.00 is in your account")
-        }
-
-        "has a link to the Payment and refund history page when payment history feature switch is enabled" in new TestSetup {
+        "has payment and refund history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = false, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
         }
-
-        "has a link to the payment history page when payment history feature switch is disabled" in new TestSetup(paymentHistoryEnabled = false) {
+        "has payment and credit history link when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = false) {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
+          link.map(_.text) shouldBe Some(messages("home.paymentCreditHistory.view"))
+        }
+        "has payment, credit and refund history link when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = true) {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
+          link.map(_.text) shouldBe Some(messages("home.paymentCreditRefundHistory.view"))
+        }
+        "has payment history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in new TestSetup(paymentHistoryEnabled = false, creditAndRefundEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent.url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
+        }
+
+        s"has the available credit " in new TestSetup(creditAndRefundEnabled = true) {
+          getElementById("available-credit").map(_.text) shouldBe Some("£100.00 is in your account")
         }
       }
 

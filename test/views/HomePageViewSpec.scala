@@ -18,7 +18,8 @@ package views
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds, TimeMachineAddYear}
+import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import org.jsoup.Jsoup
@@ -28,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
+import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.Home
@@ -112,13 +114,15 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, isAgent: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false) {
 
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled)
+
     val home: Home = app.injector.instanceOf[Home]
     lazy val page: HtmlFormat.Appendable = home(
-      availableCredit = Some(100),
       nextPaymentDueDate = paymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-      Some("1234567890"),
+      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
+      utr = utr,
       ITSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled,
       dunningLockExists = dunningLockExists,
       displayCeaseAnIncome = displayCeaseAnIncome,
@@ -228,9 +232,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has the date of the next update due" in new Setup {
         getElementById("payments-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(paymentDateLongDate)
       }
-      s"has the available credit " in new Setup(creditAndRefundEnabled = true) {
-        getTextOfElementById("available-credit") shouldBe Some("£100.00 is in your account")
-      }
       "don't display an overdue warning message when no payment is overdue" in new Setup(overDuePaymentsCount = Some(0)) {
         getTextOfElementById("overdue-warning") shouldBe None
       }
@@ -289,26 +290,36 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     "have a payment history tile" which {
 
-      "has a payment and history refunds heading when payment history feature switch is enabled" in new Setup {
+      "has a payment and history refunds heading when payment history feature switch is enabled" in new Setup(paymentHistoryEnabled = true, creditAndRefundEnabled = false) {
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistoryRefund.heading"))
       }
-      "have a payment history tile" which {
-        "has a payment history heading when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
-          getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
-        }
+      "has a payment history heading when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false, creditAndRefundEnabled = false) {
+        disable(PaymentHistoryRefunds)
+        getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some(messages("home.paymentHistory.heading"))
       }
       "has a link to the payment and refund history page" which {
-        "has a payment and refund history link when payment history feature switch is enabled" in new Setup() {
+        "has payment and refund history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in new Setup(creditAndRefundEnabled = false, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistoryRefund.view"))
         }
-      }
-      "has a link to the payment history page" which {
-        "has a payment history link when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false) {
+        "has payment and credit history link when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in new Setup(creditAndRefundEnabled = true, paymentHistoryEnabled = false) {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+          link.map(_.text) shouldBe Some(messages("home.paymentCreditHistory.view"))
+        }
+        "has payment, credit and refund history link when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in new Setup(creditAndRefundEnabled = true, paymentHistoryEnabled = true) {
+          val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
+          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
+          link.map(_.text) shouldBe Some(messages("home.paymentCreditRefundHistory.view"))
+        }
+        "has payment history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in new Setup(creditAndRefundEnabled = false, paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
           link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.show().url)
           link.map(_.text) shouldBe Some(messages("home.paymentHistory.view"))
+        }
+        s"has the available credit " in new Setup(creditAndRefundEnabled = true) {
+          getTextOfElementById("available-credit") shouldBe Some("£100.00 is in your account")
         }
       }
       "has an link to the 'How to claim a refund' for not migrated user" in new Setup(user = testMtdItUserNotMigrated()) {
