@@ -45,8 +45,11 @@ class CalculationListConnector @Inject()(val http: HttpClient,
   }
 
   def getOverwriteCalculationListUrl(nino: String, taxYearRange: String, crystallisationStatus: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
+    s"${appConfig.itvcDynamicStubUrl}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
   }
+
+  // itvcDynamicStubUrl
+  // /income-tax/view/calculations/liability/$taxYearRange<[0-9]{2}-[0-9]{2}>/:nino/overwrite/:crystallisationStatus
 
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
@@ -107,7 +110,7 @@ class CalculationListConnector @Inject()(val http: HttpClient,
   }
 
   def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Result] = {
+                              (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, Result]] = {
 
     // TODO: remove
     val url = getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus)
@@ -120,14 +123,14 @@ class CalculationListConnector @Inject()(val http: HttpClient,
     ) map { response =>
       response.status match {
         case OK =>
-          Ok("Overwrite successful")
+          Right(Ok("Overwrite successful"))
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
           } else {
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
           }
-          InternalServerError("Overwrite unsuccessful")
+          Left(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
       }
     }
   }

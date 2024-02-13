@@ -20,8 +20,10 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import connectors.ITSAStatusConnector
+import models.core.Nino
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
+import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -48,6 +50,13 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
         Logger("application").error(s"[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] $error")
         Future.failed(new Exception("[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] - Failed to retrieve ITSAStatus"))
     }
+  }
+
+  def overwriteItsaStatus(nino: Nino, taxYearRange: String, crystallisationStatus: String)
+                              (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, Result]] = {
+    Logger("application").debug("[ITSAStatusService][overwriteItsaStatus] - " +
+      s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
+    itsaStatusConnector.overwriteItsaStatus(nino, taxYearRange, crystallisationStatus)
   }
 
 }

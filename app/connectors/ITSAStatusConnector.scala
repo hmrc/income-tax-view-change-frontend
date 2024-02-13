@@ -22,6 +22,8 @@ import models.core.Nino
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.mvc.Result
+import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -49,18 +51,49 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[List[ITSAStatusResponseModel]].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getITSAStatusDetail] - Json validation error parsing repayment response, error $invalid")
+              Logger("application").error(s"[ITSAStatusConnector][getITSAStatusDetail] - Json validation error parsing repayment response, error $invalid")
               Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing ITSA Status response"))
             },
             valid => Right(valid)
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"[ITSAStatusConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"[ITSAStatusConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
           }
           Left(ITSAStatusResponseError(response.status, response.body))
+      }
+    }
+  }
+
+  def getOverwriteItsaStatusUrl(nino: String, taxYearRange: String, itsaStatus: String): String = {
+    s"${appConfig.itvcDynamicStubUrl}/income-tax-view-change/itsa-status/$nino/$taxYearRange/overwrite/$itsaStatus"
+  }
+
+
+  def overwriteItsaStatus(nino: Nino, taxYearRange: String, itsaStatus: String)
+                              (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, Result]] = {
+
+    // TODO: remove
+    val url = getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus)
+    println("BBBBBBBBBB" + url)
+
+    http.GET[HttpResponse](getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus))(
+      httpReads,
+      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
+      ec
+    ) map { response =>
+      response.status match {
+        case OK =>
+          Right(Ok("Overwrite successful"))
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger("application").error(s"[ITSAStatusConnector][overwriteItsaStatus] - Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger("application").warn(s"[ITSAStatusConnector][overwriteItsaStatus] - Response status: ${response.status}, body: ${response.body}")
+          }
+          Left(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
       }
     }
   }

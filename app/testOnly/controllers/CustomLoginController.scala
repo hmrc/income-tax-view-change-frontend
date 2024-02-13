@@ -18,22 +18,21 @@ package testOnly.controllers
 
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
-import play.api.data.Form
+import models.core.{CrystallisationStatus, ItsaStatusCyMinusOne}
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
-import services.{CalculationListService, DateService, DateServiceInterface}
+import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.{Nino, PostedUser}
 import testOnly.utils.UserRepository
+import testOnly.views.html.LoginPage
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import testOnly.views.html.LoginPage
 
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
@@ -46,6 +45,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val dynamicStubConnector: DynamicStubConnector,
                                       val customAuthConnector: CustomAuthConnector,
                                       val calculationListService: CalculationListService,
+                                      val ITSAStatusService: ITSAStatusService,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       dateService: DateServiceInterface
@@ -63,9 +63,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       formWithErrors =>
         Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
       (postedUser: PostedUser) => {
+
         userRepository.findUser(postedUser.nino).flatMap(
           user =>
-            customAuthConnector.login(Nino(user.nino), postedUser.isAgent).map {
+            customAuthConnector.login(Nino(user.nino), postedUser.isAgent).flatMap {
               case (authExchange, _) =>
                 val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
                 val redirectURL = if (postedUser.isAgent)
@@ -74,25 +75,26 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                updateTestDataForOptOut(user.nino, dateService.getCurrentTaxYearMinusOneRange(), postedUser.cyMinusOneCrystallisationStatus)
-
-                Redirect(homePage)
-                  .withSession(
-                    SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-                      sessionAuthorityUri = auth)))
+                updateTestDataForOptOut(user.nino, CrystallisationStatus(appConfig)(postedUser.cyMinusOneCrystallisationStatus),
+                  ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus), postedUser.cyItsaStatus, postedUser.cyPlusOneItsaStatus).map{
+                  case Left(ex) =>
+                    val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                    Logger("application")
+                      .error(s"[CustomLoginController][postLogin] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                    errorHandler.showInternalServerError()
+                  case Right(_) =>
+                    Redirect(homePage)
+                      .withSession(
+                        SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+                          sessionAuthorityUri = auth)))
+                }
 
               case code =>
-                InternalServerError("something went wrong.." + code)
-            }.recover {
-              case ex =>
-                val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-                Logger("application")
-                  .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
-                errorHandler.showInternalServerError()
+                Future.successful(InternalServerError("something went wrong.." + code))
             }
         )
-      })
-
+      }
+    )
   }
 
   val showCss: Action[AnyContent] = Action.async { implicit request =>
@@ -104,16 +106,42 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     )
   }
 
-  def updateTestDataForOptOut(nino: String, taxYearRange: String, crystallisationStatus: String)(implicit hc: HeaderCarrier): Future[Result] = {
+  private def updateTestDataForOptOut(nino: String, crystallisationStatus: CrystallisationStatus, cyMinusOneItsaStatus: ItsaStatusCyMinusOne,
+                                      cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier)
+  : Future[Either[Throwable, Unit]] = {
 
-    // TODO: make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
+    // TODO: maybe make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
 
-    calculationListService.overwriteCalculationList(models.core.Nino(nino), taxYearRange, crystallisationStatus).flatMap { result =>
-      result.header.status match {
-        case OK => Future.successful(Ok(result.body.toString))
-        case _ => Future.failed(new Exception(result.body.toString))
+    println(cyItsaStatus + cyPlusOneItsaStatus)
+
+
+    val ninoObj = models.core.Nino(nino)
+    val crystallisationStatusResult = crystallisationStatus.uploadData(nino = ninoObj)
+    val itsaStatusCyMinusOneResult = cyMinusOneItsaStatus.uploadData(nino = ninoObj)
+
+    for {
+      result1 <- crystallisationStatusResult
+      result2 <- itsaStatusCyMinusOneResult
+    } yield {
+      val aggregatedResult: Either[Throwable, Unit] = for {
+        _ <- result1
+        _ <- result2
+      } yield ()
+
+      aggregatedResult match {
+        case Left(ex: Throwable) => Left(ex)
+        case Right(_) => Right(Logger("application").info("[CustomLoginController][updateTestDataForOptOut] - Data was updated successfully"))
       }
+
     }
+
+
+
+//    crystallisationStatus.uploadData(nino = models.core.Nino(nino)).map {
+//      case Left(ex: Throwable) =>
+//        Left(ex)
+//      case Right(_) => Right(Logger("application").info("[CustomLoginController][updateTestDataForOptOut] - Data was updated successfully"))
+//    }
   }
 
 }
