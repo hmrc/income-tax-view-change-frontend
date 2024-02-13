@@ -46,14 +46,15 @@ object UserRecord {
   implicit val formats: OFormat[UserRecord] = Json.format[UserRecord]
 }
 
-case class PostedUser(nino: String, isAgent: Boolean)
+case class PostedUser(nino: String, isAgent: Boolean, cyMinusOneCrystallisationStatus: String)
 
 object PostedUser {
     val form: Form[PostedUser] =
       Form(
         mapping(
           "nino" -> text,
-          "Agent" -> boolean
+          "Agent" -> boolean,
+          "cyMinusOneCrystallisationStatus" -> text
         )(PostedUser.apply)(PostedUser.unapply)
       )
 }

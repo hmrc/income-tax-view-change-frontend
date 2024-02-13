@@ -23,6 +23,8 @@ import models.createIncomeSource._
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsError, JsValue, Json}
+import play.api.mvc.Result
+import play.api.mvc.Results.{InternalServerError, Ok}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -32,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CalculationListConnector @Inject()(val http: HttpClient,
                                          val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                        )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getLegacyCalculationListUrl(nino: String, taxYearEnd: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd"
@@ -40,6 +42,10 @@ class CalculationListConnector @Inject()(val http: HttpClient,
 
   def getCalculationListUrl(nino: String, taxYearRange: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange"
+  }
+
+  def getOverwriteCalculationListUrl(nino: String, taxYearRange: String, crystallisationStatus: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
   }
 
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
@@ -96,6 +102,32 @@ class CalculationListConnector @Inject()(val http: HttpClient,
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][getCalculationList] - Response status: ${response.status}, body: ${response.body}")
           }
           CalculationListErrorModel(response.status, response.body)
+      }
+    }
+  }
+
+  def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
+                              (implicit headerCarrier: HeaderCarrier): Future[Result] = {
+
+    // TODO: remove
+    val url = getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus)
+    println("BBBBBBBBBB" + url)
+
+    http.GET[HttpResponse](getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus))(
+      httpReads,
+      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
+      ec
+    ) map { response =>
+      response.status match {
+        case OK =>
+          Ok("Overwrite successful")
+        case status =>
+          if (status >= INTERNAL_SERVER_ERROR) {
+            Logger("application").error(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger("application").warn(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
+          }
+          InternalServerError("Overwrite unsuccessful")
       }
     }
   }

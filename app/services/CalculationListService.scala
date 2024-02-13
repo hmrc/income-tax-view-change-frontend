@@ -21,6 +21,7 @@ import connectors.CalculationListConnector
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
 import play.api.Logger
+import play.api.mvc.Result
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import javax.inject.{Inject, Singleton}
@@ -74,5 +75,12 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
       case (_, true) => getLegacyCrystallisationResult(user, taxYear)
       case (_, false) => getTYSCrystallisationResult(user, taxYear)
     }
+  }
+
+  def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
+                              (implicit headerCarrier: HeaderCarrier): Future[Result] = {
+    Logger("application").debug("[CalculationService][overwriteCalculationList] - " +
+      s"Overwriting calculation list (1896) data via the backend with nino / taxYearRange: ${nino.value} - $taxYearRange")
+    calculationListConnector.overwriteCalculationList(nino, taxYearRange, crystallisationStatus)
   }
 }

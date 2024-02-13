@@ -16,17 +16,20 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
 import play.api.data.Form
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc._
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Logger}
+import services.CalculationListService
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.{Nino, PostedUser}
-import testOnly.utils.{UserRepository}
+import testOnly.utils.UserRepository
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +44,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       userRepository: UserRepository,
                                       loginPage: LoginPage,
                                       val dynamicStubConnector: DynamicStubConnector,
-                                      val customAuthConnector: CustomAuthConnector
+                                      val customAuthConnector: CustomAuthConnector,
+                                      val calculationListService: CalculationListService,
+                                      val itvcErrorHandler: ItvcErrorHandler,
+                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      ) extends BaseController with AuthRedirects with I18nSupport {
 
   // Logging page functionality
@@ -67,6 +73,8 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
+                updateTestDataForOptOut(user.nino, "22-23", postedUser.cyMinusOneCrystallisationStatus)
+
                 Redirect(homePage)
                   .withSession(
                     SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
@@ -87,6 +95,18 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
         case _ => InternalServerError(response.body)
       }
     )
+  }
+
+  def updateTestDataForOptOut(nino: String, taxYearRange: String, crystallisationStatus: String)(implicit hc: HeaderCarrier): Future[Result] = {
+
+    // TODO: make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
+
+    calculationListService.overwriteCalculationList(models.core.Nino(nino), taxYearRange, crystallisationStatus).flatMap { result =>
+      result.header.status match {
+        case OK => Future.successful(Ok(result.body.toString))
+        case _ => Future.failed(new Exception(result.body.toString))
+      }
+    }
   }
 
 }

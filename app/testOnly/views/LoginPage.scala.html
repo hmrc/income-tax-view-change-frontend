@@ -62,6 +62,23 @@
             )
         ))
 
+        @govukSelect(Select(
+            id = "cyMinusOneCrystallisationStatus",
+            name = "cyMinusOneCrystallisationStatus",
+            items =
+                Seq(
+                    SelectItem(
+                    value = Some("Crystallised"),
+                    text = "Crystallised"
+                ),
+                    SelectItem(
+                    value = Some("NonCrystallised"),
+                    text = "NonCrystallised"
+                )),
+            label = Label(
+                content = Text("cyMinusOneCrystallisationStatus"))
+        ))
+
         @govukButton(Button(
             content = Text("Login")
         ))
