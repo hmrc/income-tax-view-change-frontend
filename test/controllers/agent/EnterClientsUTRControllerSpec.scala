@@ -47,7 +47,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
     enterClientsUTR,
     mockClientDetailsService,
     mockAuthService,
-    mockAuditingService,
+    mockAuditingService
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
