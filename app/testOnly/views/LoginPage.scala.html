@@ -19,17 +19,17 @@
 @import views.html.layouts.unifiedLayout
 
 @this(
-    layout: unifiedLayout,
-    govukButton : GovukButton,
-    govukSelect : GovukSelect,
-    govukCheckboxes : GovukCheckboxes,
-    form: FormWithCSRF
+        layout: unifiedLayout,
+        govukButton: GovukButton,
+        govukSelect: GovukSelect,
+        govukCheckboxes: GovukCheckboxes,
+        form: FormWithCSRF
 )
 
-@(postAction: Call, users: Seq[UserRecord])(implicit request : Request[_], messages: Messages)
+@(postAction: Call, users: Seq[UserRecord])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
-<link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
+    <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
 
     <h1 class="govuk-heading-l">Select Nino/User</h1>
 
@@ -38,10 +38,10 @@
         @govukSelect(Select(
             id = "nino",
             name = "nino",
-            items = users.map{ user =>
+            items = users.map { user =>
                 SelectItem(
-                value = Some(user.nino),
-                text = s"${user.nino} - ${user.description}"
+                    value = Some(user.nino),
+                    text = s"${user.nino} - ${user.description}"
                 )
             },
             label = Label(
@@ -68,15 +68,106 @@
             items =
                 Seq(
                     SelectItem(
-                    value = Some("Crystallised"),
-                    text = "Crystallised"
-                ),
+                        value = Some("Default"),
+                        text = "Default"
+                    ),
                     SelectItem(
-                    value = Some("NonCrystallised"),
-                    text = "NonCrystallised"
-                )),
+                        value = Some("Crystallised"),
+                        text = "Crystallised"
+                    ),
+                    SelectItem(
+                        value = Some("NonCrystallised"),
+                        text = "NonCrystallised"
+                    )),
             label = Label(
                 content = Text("cyMinusOneCrystallisationStatus"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyMinusOneItsaStatus",
+            name = "cyMinusOneItsaStatus",
+            items =
+                Seq(
+                    SelectItem(
+                        value = Some("Default"),
+                        text = "Default"
+                    ),
+                    SelectItem(
+                        value = Some("NotSet"),
+                        text = "Not Set"
+                    ),
+                    SelectItem(
+                        value = Some("Voluntary"),
+                        text = "Voluntary"
+                    ),
+                    SelectItem(
+                        value = Some("Mandatory"),
+                        text = "Mandatory"
+                    ),
+                    SelectItem(
+                        value = Some("Annual"),
+                        text = "Annual"
+                    )),
+            label = Label(
+                content = Text("cyMinusOneItsaStatus"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyItsaStatus",
+            name = "cyItsaStatus",
+            items =
+                Seq(
+                    SelectItem(
+                        value = Some("Default"),
+                        text = "Default"
+                    ),
+                    SelectItem(
+                        value = Some("NotSet"),
+                        text = "Not Set"
+                    ),
+                    SelectItem(
+                        value = Some("Voluntary"),
+                        text = "Voluntary"
+                    ),
+                    SelectItem(
+                        value = Some("Mandatory"),
+                        text = "Mandatory"
+                    ),
+                    SelectItem(
+                        value = Some("Annual"),
+                        text = "Annual"
+                    )),
+            label = Label(
+                content = Text("cyItsaStatus"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyPlusOneItsaStatus",
+            name = "cyPlusOneItsaStatus",
+            items =
+                Seq(
+                    SelectItem(
+                        value = Some("Default"),
+                        text = "Default"
+                    ),
+                    SelectItem(
+                        value = Some("NotSet"),
+                        text = "Not Set"
+                    ),
+                    SelectItem(
+                        value = Some("Voluntary"),
+                        text = "Voluntary"
+                    ),
+                    SelectItem(
+                        value = Some("Mandatory"),
+                        text = "Mandatory"
+                    ),
+                    SelectItem(
+                        value = Some("Annual"),
+                        text = "Annual"
+                    )),
+            label = Label(
+                content = Text("cyPlusOneItsaStatus"))
         ))
 
         @govukButton(Button(

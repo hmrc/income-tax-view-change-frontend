@@ -23,7 +23,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
-import services.CalculationListService
+import services.{CalculationListService, DateService, DateServiceInterface}
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.{Nino, PostedUser}
 import testOnly.utils.UserRepository
@@ -48,6 +48,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val calculationListService: CalculationListService,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                      dateService: DateServiceInterface
                                      ) extends BaseController with AuthRedirects with I18nSupport {
 
   // Logging page functionality
@@ -73,7 +74,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                updateTestDataForOptOut(user.nino, "22-23", postedUser.cyMinusOneCrystallisationStatus)
+                updateTestDataForOptOut(user.nino, dateService.getCurrentTaxYearMinusOneRange(), postedUser.cyMinusOneCrystallisationStatus)
 
                 Redirect(homePage)
                   .withSession(
@@ -82,6 +83,12 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
               case code =>
                 InternalServerError("something went wrong.." + code)
+            }.recover {
+              case ex =>
+                val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                Logger("application")
+                  .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
+                errorHandler.showInternalServerError()
             }
         )
       })
