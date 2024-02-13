@@ -17,10 +17,10 @@
 package controllers.agent
 
 import audit.models.EnterClientUTRAuditModel
+import config.AgentItvcErrorHandler
 import config.featureswitch.FeatureSwitching
 import controllers.agent.utils.SessionKeys
 import forms.agent.ClientsUTRForm
-import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.MockAuthenticationPredicate
 import mocks.services.MockClientDetailsService
@@ -35,13 +35,11 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgent
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, Enrolment, InsufficientEnrolments}
-import uk.gov.hmrc.http.InternalServerException
 
 class EnterClientsUTRControllerSpec extends TestSupport
   with MockAuthenticationPredicate
   with MockEnterClientsUTR
   with MockFrontendAuthorisedFunctions
-  with MockItvcErrorHandler
   with MockClientDetailsService
   with FeatureSwitching {
 
@@ -53,7 +51,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
   )(
     app.injector.instanceOf[MessagesControllerComponents],
     appConfig,
-    mockItvcErrorHandler,
+    app.injector.instanceOf[AgentItvcErrorHandler],
     ec
   )
 
@@ -267,8 +265,7 @@ class EnterClientsUTRControllerSpec extends TestSupport
           val result = TestEnterClientsUTRController.submit(fakePostRequestWithActiveSession.withFormUrlEncodedBody(
             ClientsUTRForm.utr -> validUTR
           ))
-          result.failed.futureValue shouldBe an[InternalServerException]
-          result.failed.futureValue.getMessage shouldBe "[EnterClientsUTRController][submit] - Unexpected response received"
+          status(result) shouldBe INTERNAL_SERVER_ERROR
         }
       }
     }

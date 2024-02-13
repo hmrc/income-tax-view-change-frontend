@@ -21,6 +21,7 @@ import connectors.agent.CitizenDetailsConnector
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import play.api.Logger
+import play.api.http.Status.NOT_FOUND
 import services.agent.ClientDetailsService._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,13 +39,13 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
         businessDetailsConnector.getBusinessDetails(nino) flatMap {
           case IncomeSourceDetailsModel(_, mtdbsa, _, _, _) =>
             Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
-          case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
+          case IncomeSourceDetailsError(NOT_FOUND, _) => Future.successful(Left(BusinessDetailsNotFound))
           case _ =>
             Logger("application").error("[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Business Details")
             Future.successful(Left(UnexpectedResponse))
         }
       case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
-      case CitizenDetailsErrorModel(code, _) if code == 404 => Future.successful(Left(CitizenDetailsNotFound))
+      case CitizenDetailsErrorModel(NOT_FOUND, _) => Future.successful(Left(CitizenDetailsNotFound))
       case err =>
         Logger("application").error("[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Citizen Details" + err)
         Future.successful(Left(UnexpectedResponse))
