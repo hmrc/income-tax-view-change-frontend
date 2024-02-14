@@ -41,7 +41,7 @@ sbt "run 9081 -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"
 To test the application execute:
 
 ```
-sbt clean scalastyle coverage test it:test coverageOff coverageReport
+sbt clean scalastyle coverage test it/test coverageOff coverageReport
 ```
 
 ## How to run sbt-scoverage plugin for the application
@@ -55,13 +55,13 @@ sbt clean coverage test coverageOff coverageReport
 To generate scoverage report for the integration tests execute:
 
 ```
-sbt clean coverage it:test coverageOff coverageReport
+sbt clean coverage it/test coverageOff coverageReport
 ```
 
 To generate aggregated scoverage report for the unit and integration tests in one go execute:
 
 ```
-sbt clean coverage test it:test coverageOff coverageReport
+sbt clean coverage test it/test coverageOff coverageReport
 ```
 
 ## How to check for missing English/Welsh message keys

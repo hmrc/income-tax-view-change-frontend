@@ -84,7 +84,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
@@ -111,7 +111,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
 
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
@@ -164,7 +164,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a eops SE income obligation only" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
@@ -190,7 +190,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 

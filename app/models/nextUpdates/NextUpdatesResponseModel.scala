@@ -34,7 +34,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
           deadlinesModel.obligations.map {
             deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.Foreign", deadline))
           }
-        case Some(property) if property.incomeSourceType.contains("uk-property") => //
+        case Some(property) if property.incomeSourceType.contains("uk-property") =>
           deadlinesModel.obligations.map {
             deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.UK", deadline))
           }

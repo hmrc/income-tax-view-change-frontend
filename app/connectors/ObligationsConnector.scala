@@ -40,12 +40,12 @@ class ObligationsConnector @Inject()(val http: HttpClient,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines"
   }
 
-  def getPreviousObligationsUrl(nino: String): String = {
+  def getFulfilledObligationsUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines"
   }
 
-  def getPreviousObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines/from/$fromDate/to/$toDate"
+  private def getAllObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines/from/$fromDate/to/$toDate"
   }
 
   def getNextUpdates()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
@@ -84,9 +84,9 @@ class ObligationsConnector @Inject()(val http: HttpClient,
     }
   }
 
-  def getPreviousObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
+  def getFulfilledObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
-    val url = getPreviousObligationsUrl(mtdUser.nino)
+    val url = getFulfilledObligationsUrl(mtdUser.nino)
     Logger("application").debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
@@ -121,10 +121,10 @@ class ObligationsConnector @Inject()(val http: HttpClient,
 
   }
 
-  def getPreviousObligations(fromDate: LocalDate, toDate: LocalDate)
-                            (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
+  def getAllObligations(fromDate: LocalDate, toDate: LocalDate)
+                       (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
-    val url = getPreviousObligationsUrl(fromDate, toDate, mtdUser.nino)
+    val url = getAllObligationsUrl(fromDate, toDate, mtdUser.nino)
     Logger("application").debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>

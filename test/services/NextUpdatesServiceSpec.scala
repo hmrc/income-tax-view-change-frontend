@@ -159,7 +159,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       }
 
       "return a valid list of previous Next Updates" in {
-        setupMockPreviousObligations(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
+        setupMockFulfilledObligations(ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel)))
         TestNextUpdatesService.getNextUpdates(previous = true).futureValue shouldBe ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
       }
     }
@@ -172,7 +172,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       }
 
       "return the error for previous deadlines" in {
-        setupMockPreviousObligations(obligationsDataErrorModel)
+        setupMockFulfilledObligations(obligationsDataErrorModel)
         TestNextUpdatesService.getNextUpdates(previous = true).futureValue shouldBe obligationsDataErrorModel
       }
     }
@@ -183,15 +183,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     "it receives a fromDate and toDate" should {
       "valid current and previous obligations are returned" should {
         "return all obligations" in {
-          setupMockPreviousObligationsWithDates(
+
+          setupMockAllObligationsWithDates(
             from = fixedDate.minusDays(1),
             to = fixedDate.plusDays(2)
           )(ObligationsModel(Seq(
             NextUpdatesModel("idOne", List(previousObligation))
           )))
-          setupMockNextUpdates(ObligationsModel(Seq(
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
-          )))
 
           val result = TestNextUpdatesService.getNextUpdates(
             fromDate = fixedDate.minusDays(1),
@@ -199,35 +197,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           ).futureValue
 
           result shouldBe ObligationsModel(Seq(
-            NextUpdatesModel("idOne", List(previousObligation)),
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
-          ))
-        }
-      }
-
-      "valid current obligations are returned but there are no previous obligations" should {
-        "return the current obligations" in {
-          setupMockPreviousObligationsWithDates(
-            from = fixedDate.minusDays(1),
-            to = fixedDate.plusDays(2)
-          )(NextUpdatesErrorModel(NOT_FOUND, "not found"))
-          setupMockNextUpdates(ObligationsModel(Seq(
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
-          )))
-
-          val result = TestNextUpdatesService.getNextUpdates(
-            fromDate = fixedDate.minusDays(1),
-            toDate = fixedDate.plusDays(2)
-          ).futureValue
-
-          result shouldBe ObligationsModel(Seq(
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
+            NextUpdatesModel("idOne", List(previousObligation))
           ))
         }
       }
 
       "valid obligations are returned but current obligations are not in the correct time period" in {
-        setupMockPreviousObligationsWithDates(
+        setupMockAllObligationsWithDates(
           from = fixedDate.minusDays(1),
           to = fixedDate.plusDays(1)
         )(ObligationsModel(Seq(
@@ -248,31 +224,11 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       }
 
       "return an error" when {
-        "an error is returned from current obligations" in {
-          setupMockPreviousObligationsWithDates(
-            from = fixedDate.minusDays(1),
-            to = fixedDate.plusDays(1)
-          )(ObligationsModel(Seq(
-            NextUpdatesModel("idOne", List(previousObligation))
-          )))
-          setupMockNextUpdates(NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error"))
-
-          val result = TestNextUpdatesService.getNextUpdates(
-            fromDate = fixedDate.minusDays(1),
-            toDate = fixedDate.plusDays(1)
-          ).futureValue
-
-          result shouldBe NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "error")
-        }
-
-        "an error is returned from the previous obligations" in {
-          setupMockPreviousObligationsWithDates(
+        "an error is returned from  getAllObligations" in {
+          setupMockAllObligationsWithDates(
             from = fixedDate.minusDays(1),
             to = fixedDate.plusDays(2)
           )(NextUpdatesErrorModel(INTERNAL_SERVER_ERROR, "not found"))
-          setupMockNextUpdates(ObligationsModel(Seq(
-            NextUpdatesModel("idTwo", List(currentObligation(fixedDate.plusDays(1))))
-          )))
 
           val result = TestNextUpdatesService.getNextUpdates(
             fromDate = fixedDate.minusDays(1),
