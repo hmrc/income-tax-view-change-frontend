@@ -320,11 +320,6 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         messageKey = "credit-and-refund.claim-refund-btn", classes = "govuk-button", role=Some("button"))
                 }
             }
-
-            @link(link =  s"${controllers.routes.CreditAndRefundController.refundStatus().url}",
-                messageKey = "credit-and-refund.check-refund-btn", classes = "govuk-button govuk-button--secondary",
-                role=Some("button")
-            )
         </div>
     }
 }

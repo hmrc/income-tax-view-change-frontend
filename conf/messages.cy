@@ -1025,6 +1025,9 @@ paymentHistory.paymentAndRefundHistory.heading                  = Hanes taliadau
 paymentHistory.unknown                                          = Anhysbys
 paymentHistory.paymentAndCreditHistory                          = Hanes taliadau a chredyd
 paymentHistory.paymentCreditAndRefundHistory.heading            = Hanes taliadau, credyd ac ad-daliadau
+paymentHistory.check-refund-1                                   = Gallwch
+paymentHistory.check-refund-2                                   = wirio cynnydd cais
+paymentHistory.check-refund-3                                   = a wnaethoch am ad-daliad ar unrhyw adeg.
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?

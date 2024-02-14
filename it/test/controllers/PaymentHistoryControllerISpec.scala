@@ -101,7 +101,8 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       Then("The Payment History page is returned to the user")
       result should have(
         httpStatus(OK),
-        pageTitleIndividual("paymentHistory.heading")
+        pageTitleIndividual("paymentHistory.heading"),
+        elementTextBySelector("#refundstatus")(""),
       )
 
       verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser, payments, CutOverCreditsEnabled = false,
@@ -123,7 +124,9 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
       result should have(
         httpStatus(OK),
         pageTitleIndividual("paymentHistory.paymentAndRefundHistory.heading"),
-        elementTextBySelector("h1")(messagesAPI("paymentHistory.paymentAndRefundHistory.heading"))
+        elementTextBySelector("h1")(messagesAPI("paymentHistory.paymentAndRefundHistory.heading")),
+        elementTextBySelector("#refundstatus")(messagesAPI("paymentHistory.check-refund-1") + " " +
+          messagesAPI("paymentHistory.check-refund-2") + " " + messagesAPI("paymentHistory.check-refund-3")),
       )
 
 

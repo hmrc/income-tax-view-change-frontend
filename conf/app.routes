@@ -95,6 +95,7 @@ GET         /language/:lang                                               contro
 #Payment history
 GET         /payment-refund-history                                       controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
 GET         /agents/payment-refund-history                                controllers.PaymentHistoryController.showAgent
+GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus(isAgent: Boolean = false)
 
 
 #InYear Tax
@@ -129,7 +130,6 @@ GET         /agents/:taxYear/forecast-tax-calculation                     contro
 GET          /claim-refund                                                controllers.CreditAndRefundController.show(origin: Option[String] ?= None)
 GET          /agents/claim-refund                                         controllers.CreditAndRefundController.showAgent()
 GET          /start-refund                                                controllers.CreditAndRefundController.startRefund()
-GET          /refund-status                                                controllers.CreditAndRefundController.refundStatus()
 
 
 #Credits

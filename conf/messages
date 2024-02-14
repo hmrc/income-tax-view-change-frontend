@@ -1035,6 +1035,9 @@ paymentHistory.paymentAndRefundHistory.heading                  = Payment and re
 paymentHistory.paymentAndCreditHistory                          = Payment and credit history
 paymentHistory.paymentCreditAndRefundHistory.heading            = Payment, credit and refund history
 paymentHistory.unknown                                          = Unknown
+paymentHistory.check-refund-1                                   = You can
+paymentHistory.check-refund-2                                   = check the progress of a refund request
+paymentHistory.check-refund-3                                   = you’ve made at any time.
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment made to HMRC
