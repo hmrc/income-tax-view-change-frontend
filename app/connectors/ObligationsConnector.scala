@@ -44,7 +44,7 @@ class ObligationsConnector @Inject()(val http: HttpClient,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines"
   }
 
-  private def getAllObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
+  def getAllObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines/from/$fromDate/to/$toDate"
   }
 
