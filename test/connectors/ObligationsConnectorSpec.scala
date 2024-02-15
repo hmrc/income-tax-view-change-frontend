@@ -36,8 +36,9 @@ import audit.mocks.MockAuditingService
 import audit.models._
 import config.FrontendAppConfig
 import mocks.MockHttp
-import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel}
+import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
 import play.api.Configuration
+import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants._
@@ -52,6 +53,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
 
   trait Setup {
     val baseUrl = "http://localhost:9999"
+
     def getAppConfig(): FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
@@ -76,6 +78,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
 
     val successResponse = HttpResponse(status = Status.OK, json = obligationsDataFromJson, headers = Map.empty)
     val successResponseBadJson = HttpResponse(status = Status.OK, json = Json.parse("{}"), headers = Map.empty)
+    val emptyResponse = HttpResponse(status = Status.NOT_FOUND, json = Json.parse("{}"), headers = Map.empty)
     val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
     val getNextUpdatesTestUrl = s"http://localhost:9999/income-tax-view-change/$testNino/report-deadlines"
@@ -111,6 +114,12 @@ class ObligationsConnectorSpec extends TestSupport with MockHttp with MockAuditi
       val result: Future[NextUpdatesResponseModel] = connector.getNextUpdates()
       result.futureValue shouldBe NextUpdatesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, unknown error")
 
+    }
+
+    s"return a empty SuccessResponse when ${NOT_FOUND} or ${FORBIDDEN}" in new Setup {
+      setupMockHttpGet(getNextUpdatesTestUrl)(emptyResponse)
+      val result: Future[NextUpdatesResponseModel] = connector.getNextUpdates()
+      result.futureValue shouldBe ObligationsModel(Seq.empty)
     }
 
   }
