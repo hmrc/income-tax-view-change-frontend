@@ -41,13 +41,13 @@ trait MockObligationsConnector extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPreviousObligations(response: NextUpdatesResponseModel): Unit = {
-    when(mockObligationsConnector.getPreviousObligations()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+  def setupMockFulfilledObligations(response: NextUpdatesResponseModel): Unit = {
+    when(mockObligationsConnector.getFulfilledObligations()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupMockPreviousObligationsWithDates(from: LocalDate, to: LocalDate)(response: NextUpdatesResponseModel): Unit = {
-    when(mockObligationsConnector.getPreviousObligations(
+  def setupMockAllObligationsWithDates(from: LocalDate, to: LocalDate)(response: NextUpdatesResponseModel): Unit = {
+    when(mockObligationsConnector.getAllObligations(
       fromDate = matches(from), toDate = matches(to))(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
   }
