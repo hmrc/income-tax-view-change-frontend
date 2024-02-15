@@ -1141,11 +1141,17 @@ credit-and-refund.no-credit                                       = You have no 
 credit-and-refund.agent.no-credit                                 = Your client has no money in their account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
-credit-and-refund.credit-from-hmrc-title-prt-1                    = from a
-credit-and-refund.credit-from-hmrc-title-prt-2                    = credit from HMRC adjustment
-credit-and-refund.credit-from-balancing-charge-prt-1              = from a
-credit-and-refund.credit-from-balancing-charge-prt-2              = balancing charge credit
-credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year
+credit-and-refund.credit-from-hmrc-title                          = credit from HMRC adjustment
+
+credit-and-refund.subHeading-source                               = Where has this money come from?
+credit-and-refund.credit-from-balancing-charge-prt-1              = credit from overpaid tax -
+credit-and-refund.credit-from-balancing-charge-prt-2              =
+credit-and-refund.tax-year                                        = {0} to {1} tax year
+credit-and-refund.credit-from-adjustment-prt-1                    = credit from HMRC adjustment -
+credit-and-refund.credit-from-adjustment-prt-2                    =
+credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year -
+credit-and-refund.payment                                         = from a payment you made to HMRC on
+credit-and-refund.credit                                          =
 
 #######################################################################################################################
 ## Income Sources - Add ##

@@ -30,6 +30,7 @@ import testUtils.{TestSupport, ViewSpec}
 import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOnePayment, UnallocatedCreditFromSingleCreditItem}
 import views.html.CreditAndRefunds
+import testConstants.BaseTestConstants.testTaxYearTo
 
 
 import java.time.LocalDate
@@ -51,8 +52,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val claimBtn: String = messages("credit-and-refund.claim-refund-btn")
   val creditAndRefundHeadingWithTitleServiceNameGovUk: String = messages("htmlTitle", creditAndRefundHeading)
   val creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent: String = messages("htmlTitle.agent", creditAndRefundHeading)
-  val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-  val creditAndRefundFromHMRCTitlePart2: String = messages("credit-and-refund.credit-from-hmrc-title-prt-2")
+  val creditAndRefundFromHMRCTitlePart1: String = messages("credit-and-refund.credit-from-adjustment-prt-1")
   val creditAndRefundFromBalancingChargePart1: String = messages("credit-and-refund.credit-from-balancing-charge-prt-1")
   val creditAndRefundFromBalancingChargePart2: String = messages("credit-and-refund.credit-from-balancing-charge-prt-2")
   val creditAndRefundPaymentFromEarlierYearLinkText: String = messages("credit-and-refund.credit-from-earlier-tax-year")
@@ -97,7 +97,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         layoutContent.select("h2").first().text() shouldBe s"$subHeadingWithCreditsPart1 £7.00 $subHeadingWithCreditsPart2"
         document.select("p").get(2).text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
-        document.select("p").get(2).select("a").attr("href") shouldBe linkPaymentMadeToHmrc
         document.select("p").eachText().contains("Total") shouldBe false
 
         document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
@@ -109,7 +108,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         layoutContent.select("h2").first().text() shouldBe s"$subHeadingWithCreditsPart1 £7.00 $subHeadingWithCreditsPart2"
         document.select("p").get(2).text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
-        document.select("p").get(2).select("a").attr("href") shouldBe linkPaymentMadeToHmrc
         document.select("p").eachText().contains("Total") shouldBe false
 
         document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
@@ -126,7 +124,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
           document.select("p").get(2).text() shouldBe s"£6.00 $paymentText 15 May 2019"
-          document.select("p").get(2).select("a").attr("href") shouldBe linkPaymentMadeToHmrc
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
@@ -154,8 +151,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
           document.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 0"
-          document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPage
+            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1" + " " + testTaxYearTo
           document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
@@ -174,8 +170,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
           document.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 0"
-          document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPageMFAPreviousYear
+            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1" + " " + testTaxYearTo
           document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
@@ -195,10 +190,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
           document.select("ul#credits-list li:nth-child(1)").text() shouldBe
-            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 0"
+            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1" + " " + testTaxYearTo
           document.select("ul#credits-list li:nth-child(2)").text() shouldBe
-            s"£1,000.00 $creditAndRefundFromHMRCTitlePart1 $creditAndRefundFromHMRCTitlePart2 1"
-          document.select("p").get(2).select("a").attr("href") shouldBe linkCreditsSummaryPage
+            s"£1,000.00 $creditAndRefundFromHMRCTitlePart1" + " " + testTaxYearTo
           document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
@@ -218,7 +212,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             s"£1,400.00 $paymentText 15 May 2019"
           document.select("p").get(3).select("p:nth-child(1)").first().text() shouldBe
             s"£1,000.00 $paymentText 15 May 2019"
-          document.select("p").get(2).select("a").attr("href") shouldBe linkPaymentMadeToHmrc
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
@@ -242,7 +235,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text() shouldBe subHeadingWithUnallocatedCreditsOnePayment + " 12 January 2022."
           layoutContent.select("h2").first().select("a").text() shouldBe "12 January 2022"
-          layoutContent.select("h2").first().select("a").attr("href") shouldBe linkPaymentMadeToHmrc
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
           document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
@@ -270,8 +262,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-          layoutContent.select("h2").first().text() shouldBe s"$subHeadingWithUnallocatedCreditsSingleCredit $creditAndRefundFromHMRCTitlePart2."
-          layoutContent.select("h2").first().select("a").text() shouldBe creditAndRefundFromHMRCTitlePart2
+          layoutContent.select("h2").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCredit
           layoutContent.select("h2").first().select("a").attr("href") shouldBe linkCreditsSummaryPage
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
@@ -349,7 +340,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
         layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
         document.select("p").get(2).text() shouldBe s"£1,400.00 $paymentText 15 May 2019"
-        document.select("p").get(2).select("a").attr("href") shouldBe linkAgentPaymentMadeToHmrc
 
         document.select("#main-content .govuk-button").isEmpty shouldBe true
         document.getElementsByClass("govuk-button govuk-button--secondary").isEmpty shouldBe true
@@ -378,7 +368,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text() shouldBe s"$subHeadingWithUnallocatedCreditsOnePaymentAgent 12 January 2022."
           layoutContent.select("h2").first().select("a").text() shouldBe "12 January 2022"
-          layoutContent.select("h2").first().select("a").attr("href") shouldBe linkAgentPaymentMadeToHmrc
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
           document.select("#main-content .govuk-button").isEmpty shouldBe true
@@ -406,9 +395,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         ) {
           document.title() shouldBe creditAndRefundHeadingAgentWithTitleServiceNameGovUkAgent
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-          layoutContent.select("h2").first().text() shouldBe s"$subHeadingWithUnallocatedCreditsSingleCreditAgent $creditAndRefundFromHMRCTitlePart2."
-          layoutContent.select("h2").first().select("a").text() shouldBe creditAndRefundFromHMRCTitlePart2
-          layoutContent.select("h2").first().select("a").attr("href") shouldBe linkAgentCreditsSummaryPage
+          layoutContent.select("h2").first().text() shouldBe subHeadingWithUnallocatedCreditsSingleCreditAgent
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
@@ -439,7 +426,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text() shouldBe s"$subHeadingWithUnallocatedCreditsSingleCreditAgent $creditAndRefundPaymentFromEarlierYearLinkText."
           layoutContent.select("h2").first().select("a").text() shouldBe creditAndRefundPaymentFromEarlierYearLinkText
-          layoutContent.select("h2").first().select("a").attr("href") shouldBe linkAgentCreditsSummaryPage
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
@@ -469,7 +455,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text() shouldBe s"$subHeadingWithUnallocatedCreditsSingleCreditAgent $creditAndRefundFromBalancingChargePart2."
           layoutContent.select("h2").first().select("a").text() shouldBe creditAndRefundFromBalancingChargePart2
-          layoutContent.select("h2").first().select("a").attr("href") shouldBe linkAgentCreditsSummaryPage
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
