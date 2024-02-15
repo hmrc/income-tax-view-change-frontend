@@ -88,14 +88,13 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     <li>
         <p class="govuk-heading-s">
             <span class="govuk-body">
-                @messages("credit-and-refund.credit-from")
+                @messages("credit-and-refund.credit")
             </span>
             @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
             <span class="govuk-body">
                  @messages("credit-and-refund.credit-from-balancing-charge-prt-1")
                  @messages("credit-and-refund.credit-from-balancing-charge-prt-2")
                  @messages("credit-and-refund.tax-year", taxYearFrom.toString, taxYearTo)
-                 @messages("credit-and-refund.tax-year-text")
             </span>
         </p>
     </li>
@@ -107,7 +106,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 
             <p class="govuk-heading-s">
                 <span class="govuk-body">
-                    @messages("credit-and-refund.credit-from")
+                    @messages("credit-and-refund.credit")
                 </span>
                 @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                 <span class="govuk-body">
@@ -125,7 +124,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             <li>
                 <p class="govuk-heading-s">
                     <span class="govuk-body">
-                        @messages("credit-and-refund.credit-from")
+                        @messages("credit-and-refund.credit")
                     </span>
                     @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                     <span class="govuk-body">
@@ -154,9 +153,11 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     .flatten.sorted(Ordering.BigDecimal.reverse)
 }
 
+@sortedCreditCharges = @{creditCharges.sortBy(_._2.taxYear)}
+
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
-        @for((credit, index) <- creditCharges.zipWithIndex) {
+        @for((credit, index) <- sortedCreditCharges.zipWithIndex) {
             @if(credit._2.getCreditType == Some(BalancingChargeCreditType)) {
                 @getBalancingChargeCreditContent(credit, index)
             } else if(credit._2.getCreditType == Some(MfaCreditType)) {
@@ -184,6 +185,12 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     @h1(msg = "credit-and-refund.heading")
 
     @if(balance.isDefined){
+        <h2 class="govuk-heading-s">
+            <span class="govuk-body">@messages("credit-and-refund.subHeading.has-credits-1") </span>
+            @maybeAvailableCredit.toCurrency
+            <span class="govuk-body">@messages("credit-and-refund.subHeading.has-credits-2")</span>
+        </h2>
+
         <details class="govuk-details">
             <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text">
