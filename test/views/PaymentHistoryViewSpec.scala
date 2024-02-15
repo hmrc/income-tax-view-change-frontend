@@ -19,14 +19,13 @@ package views
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
+import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.appConfig.saForAgents
 import testUtils.ViewSpec
 import views.html.PaymentHistory
-
-import java.time.LocalDate
 
 
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
@@ -77,7 +76,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   val groupedRepayments = List(
     (2021, List(PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
       PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
-      PaymentHistoryEntry("2021-08-22", "paymentHistory.refund", None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber))),
+      PaymentHistoryEntry("2021-08-22", "paymentHistory.refund", None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)))
   )
 
   val expectedDatesOrder = List("13 April 2020", "25 December 2020", "25 April 2019", "25 September 2019", "25 December 2019", "25 April 2018")
@@ -87,27 +86,44 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       linkUrl = "link1", visuallyHiddenText = "hidden-text1")))
   )
 
-  class PaymentHistorySetup(testPayments: List[(Int, List[PaymentHistoryEntry])], saUtr: Option[String] = Some("1234567890"), isAgent: Boolean = false) extends Setup(
-    paymentHistoryView(testPayments ,paymentHistoryAndRefundsEnabled = true , "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
+  val viewModel = PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false)
+
+  class PaymentHistorySetup(testPayments: List[(Int, List[PaymentHistoryEntry])] = groupedRepayments, paymentCreditAndRefundHistoryViewModel: PaymentCreditAndRefundHistoryViewModel = viewModel, saUtr: Option[String] = Some("1234567890"), isAgent: Boolean = false) extends Setup(
+    paymentHistoryView(testPayments, paymentCreditAndRefundHistoryViewModel, paymentHistoryAndRefundsEnabled = true, "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
   )
 
   class PaymentHistorySetup1(paymentsnotFull: List[(Int, List[PaymentHistoryEntry])], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(paymentsnotFull, paymentHistoryAndRefundsEnabled = false ,"testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
+    paymentHistoryView(paymentsnotFull, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false), paymentHistoryAndRefundsEnabled = false, "testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
   )
 
   class PaymentHistorySetupMFA(testPayments: List[(Int, List[PaymentHistoryEntry])], MFACreditsEnabled: Boolean, saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(testPayments,paymentHistoryAndRefundsEnabled = false ,"testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
+    paymentHistoryView(testPayments, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false), paymentHistoryAndRefundsEnabled = false, "testBackURL", saUtr, isAgent = false)(FakeRequest(), implicitly)
   )
 
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
   "The payments history view with payment response model" should {
     "when the user has payment history for a single Year" should {
-      s"have the title '${PaymentHistoryMessages.title}'" in new PaymentHistorySetup(paymentEntriesMFA) {
-        document.title() shouldBe PaymentHistoryMessages.titlePaymentRefundEnabled
-        layoutContent.selectHead("h1").text shouldBe PaymentHistoryMessages.paymentHistoryRefundHeading
-        layoutContent.selectHead("h2").text.contains(PaymentHistoryMessages.partialH2Heading)
-      }
+      "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
+        new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, true)) {
+          document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentAndRefundHistory.heading"))
+          layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentAndRefundHistory.heading")
+        }
+      "has payment and credit history title when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in
+        new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(true, false)) {
+          document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentAndCreditHistory"))
+          layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentAndCreditHistory")
+        }
+      "has payment, credit and refund history title when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in
+        new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(true, true)) {
+          document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentCreditAndRefundHistory.heading"))
+          layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentCreditAndRefundHistory.heading")
+        }
+      "has payment history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in
+        new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, false)) {
+          document.title() shouldBe messages("htmlTitle", messages("paymentHistory.heading"))
+          layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.heading")
+        }
 
 
       s"has a table of payment history" which {
@@ -132,7 +148,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectFirst(Selectors.p).hasCorrectLink(PaymentHistoryMessages.saLink, "http://localhost:8930/self-assessment/ind/1234567890/account")
       }
 
-      s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, None) {
+      s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, saUtr = None) {
         layoutContent.select("#payment-history-info").text should not be PaymentHistoryMessages.info
       }
 
@@ -188,11 +204,11 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       layoutContent.selectFirst(Selectors.p).hasCorrectLink(s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}", saForAgents)
     }
 
-    s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, None, isAgent = true) {
+    s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, saUtr = None, isAgent = true) {
       layoutContent.select("#payment-history-info").text should not be paymentHistoryMessageInfo
     }
 
-    s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments, None, isAgent = true) {
+    s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments, saUtr = None, isAgent = true) {
       val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
       val tbody = sectionContent.selectHead("table > tbody")
 
@@ -209,7 +225,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   class PaymentHistorySetupWhenAgentView(testPayments: List[(Int, List[PaymentHistoryEntry])], saUtr: Option[String] = Some("1234567890")) extends Setup(
-    paymentHistoryView(paymentEntriesMFA, paymentHistoryAndRefundsEnabled = false,"testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
+    paymentHistoryView(paymentEntriesMFA, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false), paymentHistoryAndRefundsEnabled = false, "testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
   )
 
   "The payments history view with payment response model" should {

@@ -117,6 +117,8 @@ home.paymentHistory.view                                        = Hanes taliadau
 home.paymentHistoryRefund.availableCredit                       = Mae {0} yn eich cyfrif
 home.paymentHistoryRefund.heading                               = Hanes taliadau ac ad-daliadau
 home.paymentHistoryRefund.view                                  = Hanes taliadau ac ad-daliadau
+home.paymentCreditHistory.view                                  = Hanes taliadau a chredyd
+home.paymentCreditRefundHistory.view                            = Hanes taliadau, credyd ac ad-daliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
 home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
@@ -1021,6 +1023,11 @@ paymentHistory.table.header.amount                              = Swm
 PaymentHistory.classicSA                                        = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 paymentHistory.paymentAndRefundHistory.heading                  = Hanes taliadau ac ad-daliadau
 paymentHistory.unknown                                          = Anhysbys
+paymentHistory.paymentAndCreditHistory                          = Hanes taliadau a chredyd
+paymentHistory.paymentCreditAndRefundHistory.heading            = Hanes taliadau, credyd ac ad-daliadau
+paymentHistory.check-refund-1                                   = Gallwch
+paymentHistory.check-refund-2                                   = wirio cynnydd cais
+paymentHistory.check-refund-3                                   = a wnaethoch am ad-daliad ar unrhyw adeg.
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?
