@@ -17,6 +17,7 @@
 package utils
 
 import config.featureswitch.FeatureSwitching
+import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 
@@ -26,6 +27,7 @@ trait OptOutCustomDataUploadHelper {
 
   def handleDefaultValues(status: String)(codeBlock: => Future[Either[Throwable, Result]]): Future[Either[Throwable, Result]] = {
     if (status == "Default") {
+      Logger("application").info(s"Default was chosen by the user. There is nothing to overwrite. < Status: $status >")
       Future.successful(Right(Ok(s"Default was chosen by the user. There is nothing to overwrite. < Status: $status >")))
     } else {
       codeBlock

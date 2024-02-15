@@ -116,8 +116,8 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
 
     val ninoObj = models.core.Nino(nino)
-    val crystallisationStatusResult = crystallisationStatus.uploadData(nino = ninoObj)
-    val itsaStatusCyMinusOneResult = cyMinusOneItsaStatus.uploadData(nino = ninoObj)
+    val crystallisationStatusResult: Future[Either[Throwable, Result]] = crystallisationStatus.uploadData(nino = ninoObj)
+    val itsaStatusCyMinusOneResult: Future[Either[Throwable, Result]] = cyMinusOneItsaStatus.uploadData(nino = ninoObj)
 
     for {
       result1 <- crystallisationStatusResult

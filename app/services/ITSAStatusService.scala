@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import connectors.ITSAStatusConnector
-import models.core.Nino
+import models.core.{ItsaStatus, Nino}
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import play.api.mvc.Result
@@ -49,6 +49,23 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
       case Left(error) =>
         Logger("application").error(s"[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] $error")
         Future.failed(new Exception("[ITSAStatusService][hasMandatedOrVoluntaryStatusCurrentYear] - Failed to retrieve ITSAStatus"))
+    }
+  }
+
+  def getITSAStatusDetail(itsaStatus: ItsaStatus, nino: String)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext, dateService: DateServiceInterface): Future[ITSAStatusResponseModel] = {
+
+    itsaStatusConnector.getITSAStatusDetail(
+      nino = nino,
+      taxYear = itsaStatus.taxYearRange,
+      futureYears = false,
+      history = false
+    ).flatMap {
+      case Right(itsaStatus: List[ITSAStatusResponseModel]) =>
+        Future.successful(itsaStatus.head)
+      case Left(error) =>
+        Logger("application").error(s"[ITSAStatusService][getITSAStatusDetail] $error")
+        Future.failed(new Exception("[ITSAStatusService][getITSAStatusDetail] - Failed to retrieve ITSAStatus"))
     }
   }
 

@@ -20,6 +20,10 @@ import play.api.libs.json.{Format, Json}
 
 sealed trait CalculationListResponseModel
 
+object CalculationListResponseModel {
+  implicit val format: Format[CalculationListResponseModel] = Json.format[CalculationListResponseModel]
+}
+
 case class CalculationListModel(calculationId: String,
                                 calculationTimestamp: String,
                                 calculationType: String,
@@ -29,4 +33,10 @@ object CalculationListModel {
   implicit val format: Format[CalculationListModel] = Json.format[CalculationListModel]
 }
 
+
+
 case class CalculationListErrorModel(code: Int, message: String) extends CalculationListResponseModel
+
+object CalculationListErrorModel {
+  implicit val format: Format[CalculationListErrorModel] = Json.format[CalculationListErrorModel]
+}

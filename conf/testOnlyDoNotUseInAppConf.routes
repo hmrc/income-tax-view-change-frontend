@@ -63,9 +63,10 @@ GET        /report-quarterly/income-and-expenses/view/test-only/calc-id-to-sessi
 
 GET        /report-quarterly/income-and-expenses/view/test-only/showSession                          testOnly.controllers.SessionStorageController.show
 
-
 GET       /report-quarterly/income-and-expenses/view/test-only/upsertSession                         testOnly.controllers.SessionStorageController.upsert(key: Option[String], value: Option[String])
 
 GET         /report-quarterly/income-and-expenses/view/test-only/message-check                       testOnly.controllers.MessageCheckController.show
 
 GET         /report-quarterly/income-and-expenses/view/test-only/message-check-welsh                 testOnly.controllers.MessageCheckController.showWelsh
+
+GET         /report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData               testOnly.controllers.OptOutTestDataController.show

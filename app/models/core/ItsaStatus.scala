@@ -29,18 +29,20 @@ import utils.OptOutCustomDataUploadHelper
 import javax.inject.Inject
 import scala.concurrent.Future
 
-sealed trait ItsaStatus
+sealed trait ItsaStatus{
+  def taxYearRange(implicit dateService: DateServiceInterface): String
+}
 
 case class ItsaStatusCyMinusOne @Inject()(appConfig: FrontendAppConfig)(status: String) extends ItsaStatus with OptOutCustomDataUploadHelper
   with FeatureSwitching {
 
-  private def currentTaxYearMinusOneRange(implicit dateService: DateServiceInterface): String =
+  override def taxYearRange(implicit dateService: DateServiceInterface): String =
     dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
 
   def uploadData(nino: Nino)(implicit itsaStatusService: ITSAStatusService, hc: HeaderCarrier, dateService: DateServiceInterface)
   : Future[Either[Throwable, Result]] = {
     handleDefaultValues(status = status) {
-      itsaStatusService.overwriteItsaStatus(nino = nino, taxYearRange = currentTaxYearMinusOneRange, crystallisationStatus = status)
+      itsaStatusService.overwriteItsaStatus(nino = nino, taxYearRange = taxYearRange, crystallisationStatus = status)
     }
   }
 
