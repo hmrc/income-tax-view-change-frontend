@@ -70,7 +70,7 @@ class ObligationsConnector @Inject()(val http: HttpClient,
             }
           )
         case NOT_FOUND | FORBIDDEN =>
-          Logger("application").error(s"[ObligationsConnector][getNextUpdates] - Status: ${response.status}, body: ${response.body}")
+          Logger("application").warn(s"[ObligationsConnector][getNextUpdates] - Status: ${response.status}, body: ${response.body}")
           ObligationsModel(Seq.empty)
         case status =>
           if (status >= 500) {
@@ -108,6 +108,9 @@ class ObligationsConnector @Inject()(val http: HttpClient,
               valid
             }
           )
+        case NOT_FOUND | FORBIDDEN =>
+          Logger("application").warn(s"[ObligationsConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+          ObligationsModel(Seq.empty)
         case status =>
           if (status >= 500) {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
@@ -147,7 +150,7 @@ class ObligationsConnector @Inject()(val http: HttpClient,
             }
           )
         case NOT_FOUND | FORBIDDEN =>
-          Logger("application").error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+          Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
           ObligationsModel(Seq.empty)
         case status =>
           if (status >= 500) {
