@@ -74,6 +74,7 @@
     collectedObligations match {
         case validObligations: Seq[NextUpdateModelWithIncomeType] if validObligations.nonEmpty =>
             govukTable(Table(
+                classes = "govuk-body govuk-!-margin-bottom-8",
                 rows = {
                     for(obligation <- validObligations) yield deadlineRow(obligation)
                 },
