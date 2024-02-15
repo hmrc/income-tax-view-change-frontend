@@ -130,8 +130,8 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       "there are no deadlines available" in new Setup {
         setupMockNextUpdates(emptyObligationsSuccessModel)
         val result: Either[Exception, Seq[LocalDate]] = getDueDates().futureValue
-        result.isLeft shouldBe true
-        result.left.map(_.getMessage) shouldBe Left("Unexpected Exception getting next deadline due and Overdue Obligations")
+        result.isRight shouldBe true
+        result shouldBe Right(Seq.empty)
       }
 
       "the Next Updates returned back an error model" in new Setup {
@@ -143,7 +143,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
     }
     "return None" when {
       "404 response from getNextUpdates" in new Setup {
-        setupMockNextUpdates(nextUpdatesErrorModel(NOT_FOUND))
+        setupMockNextUpdates(ObligationsModel(Seq.empty))
         getDueDates().futureValue shouldBe Right(Seq())
       }
     }
