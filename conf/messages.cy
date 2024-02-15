@@ -1012,7 +1012,7 @@ paymentHistory.textLink1                                        = gwasanaeth Hun
 paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
-paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEF
+paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
 paymentHistory.balancingChargeCredit                            = Credyd tâl mantoli
 paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
 paymentHistory.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
@@ -1071,7 +1071,7 @@ getpagehelp.linkText                                            = Help gyda’r 
 pagehelp.opensInNewTabText                                      = (yn agor tab newydd)
 
 ## Payment Allocation ##
-paymentAllocation.heading                                       = Taliad a wnaed i CThEF
+paymentAllocation.heading                                       = Taliad roeddech wedi’i wneud i CThEF
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
