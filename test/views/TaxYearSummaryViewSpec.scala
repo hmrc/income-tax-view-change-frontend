@@ -752,12 +752,12 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
       "display the Balancing payment on the payments table when coding out is enabled and a zero amount" in new Setup(testBalancingPaymentChargeWithZeroValueView(codingOutEnabled = false)) {
         val paymentTypeText: Element = layoutContent.getElementById("paymentTypeText-0")
-        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        val paymentTypeLinkOption: Option[Element] = Option(layoutContent.getElementById("paymentTypeLink-0"))
         val paymentTabRow: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
         paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
         paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(0).toCurrencyString
         paymentTypeText.text shouldBe remainingBalance
-        paymentTypeLink shouldBe null
+        paymentTypeLinkOption shouldBe empty
       }
 
       "display updates by due-date" in new Setup(estimateView()) {
