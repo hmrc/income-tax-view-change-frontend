@@ -24,8 +24,7 @@ import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.financialDetails.BalanceDetails
 import play.api.http.Status.OK
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.BaseTestConstants.testTaxYearTo
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYearTo}
 import testConstants.FinancialDetailsIntegrationTestConstants.documentDetailWithDueDateFinancialDetailListModel
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -80,21 +79,18 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
         res should have(
           httpStatus(OK),
 
-          elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-1") + " " + messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-2") + testTaxYearTo),
+          elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-1") + " " + testTaxYearTo),
 
-          elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " + messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-2") + " 1"),
+          elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " + messagesAPI("credit-and-refund.credit-from-adjustment-prt-1") + " " + testTaxYearTo),
 
           elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " 2"),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " " + testTaxYearTo),
 
           elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " 3"),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " " + testTaxYearTo),
 
           elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2,000.00 " +
-            messagesAPI("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " 4"),
+            messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + " " + testTaxYearTo),
 
           elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£3.00 "
             + messagesAPI("credit-and-refund.refundProgress-prt-2")),

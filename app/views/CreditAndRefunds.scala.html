@@ -282,6 +282,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         </h2>
                     }
                     case None => {
+                        @getAvailableCreditContent
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                             <span class="govuk-details__summary-text">
@@ -289,7 +290,6 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                                             </span>
                             </summary>
                             <div class="govuk-details__text">
-                                @getAvailableCreditContent
                                 @getListOfCreditsAndRefunds
                             </div>
                         </details>

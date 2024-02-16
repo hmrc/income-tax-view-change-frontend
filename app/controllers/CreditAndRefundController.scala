@@ -145,8 +145,9 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   def sortCreditsByMonetaryValue(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
   : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
     credits
-      .sortBy(_._1.documentDetail.paymentOrChargeCredit).reverse
+      .sortBy(credit => (credit._2.taxYear ,credit._1.documentDetail.paymentOrChargeCredit)).reverse
   }
+
 
   def showAgent(): Action[AnyContent] = {
     auth.authenticatedAction(isAgent = true) {
