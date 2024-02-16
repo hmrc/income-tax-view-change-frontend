@@ -220,6 +220,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     .flatten.sorted(Ordering.BigDecimal.reverse)
 }
 
+
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
         @for((credit, index) <- creditCharges.zipWithIndex) {
@@ -294,8 +295,6 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         </details>
                     }
                 }
-            </div>
-        </details>
 
         @if(maybeAvailableCredit != 0){
             @p(){
