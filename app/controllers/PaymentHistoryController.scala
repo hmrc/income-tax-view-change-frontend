@@ -55,7 +55,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val repaymentService: RepaymentService,
                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate)
                                         (implicit val appConfig: FrontendAppConfig,
-                                         dateService: DateService,
+                                         dateService: DateServiceInterface,
                                          val languageUtils: LanguageUtils,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext,

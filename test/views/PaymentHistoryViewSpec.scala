@@ -23,7 +23,7 @@ import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewMod
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
-import services.DateService
+import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.appConfig.saForAgents
 import testUtils.{TestSupport, ViewSpec}
 import views.html.PaymentHistory
@@ -32,12 +32,12 @@ import java.time.LocalDate
 import java.time.Month.APRIL
 
 
-class PaymentHistoryViewSpec extends TestSupport with ViewSpec with ImplicitDateFormatter {
+class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   lazy val paymentHistoryView: PaymentHistory = app.injector.instanceOf[PaymentHistory]
 
-  override implicit val dateService: DateService = new DateService {
+  implicit val dateServiceInterface: DateServiceInterface = new DateServiceInterface {
 
     override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = fixedDate
 
@@ -84,32 +84,32 @@ class PaymentHistoryViewSpec extends TestSupport with ViewSpec with ImplicitDate
 
   val paymentEntriesMFA = List(
     (2020, List(PaymentHistoryEntry(date = "2020-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
+      linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
       PaymentHistoryEntry(date = "2020-04-13", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1"))),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
     (2021, List(PaymentHistoryEntry(date = "2019-04-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
+      linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
       PaymentHistoryEntry(date = "2018-04-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1"))),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
     (2022, List(PaymentHistoryEntry(date = "2019-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
+      linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
       PaymentHistoryEntry(date = "2019-09-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")))
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
   )
 
   val repaymentRequestNumber = "000000003135"
 
   val groupedRepayments = List(
-    (2021, List(PaymentHistoryEntry("2021-08-22", "paymentHistory.refund", None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
-      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
-      PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)))
+    (2021, List(PaymentHistoryEntry("2021-08-22", "paymentHistory.refund", None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface)))
   )
 
   val expectedDatesOrder = List("25 December 2020", "13 April 2020", "25 December 2019", "25 September 2019", "25 April 2019", "25 April 2018")
 
   val emptyPayments = List(
     (2021, List(PaymentHistoryEntry(date = "2019-09-25", description = "desc1", amount = None, transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1")))
+      linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
   )
 
   val viewModel = PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false)

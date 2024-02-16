@@ -22,7 +22,7 @@ import play.api.i18n.Messages
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import play.api.Logger
 import play.api.libs.json.Json
-import services.DateService
+import services.DateServiceInterface
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
@@ -63,7 +63,7 @@ object RepaymentHistoryUtils {
 
   def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean,
                                    MFACreditsEnabled: Boolean, CutOverCreditsEnabled: Boolean, languageUtils: LanguageUtils
-                                  )(implicit messages: Messages, dateService: DateService): List[(Int, List[PaymentHistoryEntry])] = {
+                                  )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[(Int, List[PaymentHistoryEntry])] = {
     val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent,
       MFACreditsEnabled, CutOverCreditsEnabled, languageUtils
     )
@@ -76,11 +76,11 @@ object RepaymentHistoryUtils {
                                         MFACreditsEnabled: Boolean,
                                         CutOverCreditsEnabled: Boolean,
                                         languageUtils: LanguageUtils
-                                       )(implicit messages: Messages, dateService: DateService): List[PaymentHistoryEntry] = {
+                                       )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[PaymentHistoryEntry] = {
 
     val filteredPayments = payments.flatMap(payment => filterPayment(payment, isAgent, MFACreditsEnabled, CutOverCreditsEnabled))
 
-    val filteredRepayments = repayments.map(repayment => filterRepayment(repayment)(messages, languageUtils, dateService))
+    val filteredRepayments = repayments.map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
 
     filteredPayments ++ filteredRepayments
   }
@@ -89,7 +89,7 @@ object RepaymentHistoryUtils {
                             isAgent: Boolean,
                             MFACreditsEnabled: Boolean,
                             CutOverCreditsEnabled: Boolean
-                           )(implicit messages: Messages, dateservice: DateService): Option[PaymentHistoryEntry] = {
+                           )(implicit messages: Messages, dateservice: DateServiceInterface): Option[PaymentHistoryEntry] = {
     val isBCC = payment.isBalancingChargeCredit
     val isCutover = payment.isCutOverCredit
     val isMFA = payment.isMFACredit
@@ -105,7 +105,7 @@ object RepaymentHistoryUtils {
 
   }
 
-  private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateService: DateService): PaymentHistoryEntry = {
+  private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     Logger("application").info("[RepaymentHistoryUtils][combinePaymentHistoryData][paymentToHMRCEntry], json:" + Json.prettyPrint(Json.toJson(payment)))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
@@ -117,7 +117,7 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def mfaCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateService: DateService): PaymentHistoryEntry = {
+  private def mfaCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
       date = payment.documentDate,
       description = "paymentHistory.mfaCredit",
@@ -127,7 +127,7 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def cutOverCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateService: DateService): PaymentHistoryEntry = {
+  private def cutOverCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date - Cutover credit")),
       description = "paymentHistory.paymentFromEarlierYear",
@@ -137,7 +137,7 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def balancingChargeCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateService: DateService): PaymentHistoryEntry = {
+  private def balancingChargeCreditEntry(payment: Payment, isAgent: Boolean)(implicit messages: Messages, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date - Balancing Charge credit")),
       description = "paymentHistory.balancingChargeCredit",
@@ -147,7 +147,7 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def filterRepayment(repayment: RepaymentHistory)(implicit messages: Messages, languageUtils: LanguageUtils, dateService: DateService): PaymentHistoryEntry = {
+  private def filterRepayment(repayment: RepaymentHistory)(implicit messages: Messages, languageUtils: LanguageUtils, dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
       date = LocalDate.parse(languageUtils.Dates.shortDate(repayment.estimatedRepaymentDate.getOrElse(throw MissingFieldException("Estimated Repayment Date")))(messages)),
       description = "paymentHistory.refund",
