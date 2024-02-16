@@ -58,7 +58,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val paymentEntriesMFA = List(
     (2020, List(PaymentHistoryEntry(date = "2020-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
+      linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
       PaymentHistoryEntry(date = "2020-04-13", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1"))),
     (2021, List(PaymentHistoryEntry(date = "2019-04-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
@@ -68,7 +68,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     (2022, List(PaymentHistoryEntry(date = "2019-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
       linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
       PaymentHistoryEntry(date = "2019-09-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1")))
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")))
   )
 
   val repaymentRequestNumber = "000000003135"
@@ -161,7 +161,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
               row.selectNth("td", 1).text shouldBe payment.date.toLongDate
-              row.selectNth("td", 2).text shouldBe s"desc1 hidden-text1 Item ${index + 1} ${payment.getTaxYearEndYear-1} to ${payment.getTaxYearEndYear} tax year"
+              row.selectNth("td", 2).text shouldBe s"desc1 hidden-text1 Item ${index + 1} ${payment.getTaxYearEndYear - 1} to ${payment.getTaxYearEndYear} tax year"
               row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
               row.selectNth("td", 3).text shouldBe payment.amount.get.abs.toCurrencyString
           }

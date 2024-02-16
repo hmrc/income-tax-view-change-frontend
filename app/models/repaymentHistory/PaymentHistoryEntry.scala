@@ -33,7 +33,7 @@ case class PaymentHistoryEntry(date: LocalDate,
     if (date.isBefore(accountingPeriodEndDate) || date.isEqual(accountingPeriodEndDate)) {
       startDateYear
     } else {
-      startDateYear+1
+      startDateYear + 1
     }
   }
 }
