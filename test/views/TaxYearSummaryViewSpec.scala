@@ -757,7 +757,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
         paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(0).toCurrencyString
         paymentTypeText.text shouldBe remainingBalance
-        paymentTypeLinkOption shouldBe empty
+        paymentTypeLinkOption.isEmpty shouldBe true
       }
 
       "display updates by due-date" in new Setup(estimateView()) {
