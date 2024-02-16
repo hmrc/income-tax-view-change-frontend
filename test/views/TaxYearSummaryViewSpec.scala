@@ -214,8 +214,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
-  def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), documentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+  def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
+    testYear, Some(modelComplete(Some(false))), documentDetailsWithDueDates, obligations, "testBackURL", isAgent, codingOutEnabled = false)
 
   def class2NicsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, Some(modelComplete(Some(false))), class2NicsChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = codingOutEnabled)
@@ -798,6 +798,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         }
 
         expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
+      }
+
+      "display empty updates table when no obligations are there" in new Setup(estimateView(obligations = ObligationsModel(Seq.empty))) {
+        document.getElementById("updates").text() shouldBe ""
       }
     }
     "the user is an agent" should {

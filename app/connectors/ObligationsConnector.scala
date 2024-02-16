@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import models.nextUpdates.{NextUpdatesErrorModel, NextUpdatesResponseModel, ObligationsModel}
 import play.api.Logger
 import play.api.http.Status
-import play.api.http.Status.OK
+import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import java.time.LocalDate
@@ -34,18 +34,18 @@ import scala.concurrent.{ExecutionContext, Future}
 class ObligationsConnector @Inject()(val http: HttpClient,
                                      val auditingService: AuditingService,
                                      val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                    )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getReportDeadlinesUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines"
   }
 
-  def getPreviousObligationsUrl(nino: String): String = {
+  def getFulfilledObligationsUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines"
   }
 
-  def getPreviousObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-report-deadlines/from/$fromDate/to/$toDate"
+  def getAllObligationsUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/report-deadlines/from/$fromDate/to/$toDate"
   }
 
   def getNextUpdates()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
@@ -69,6 +69,9 @@ class ObligationsConnector @Inject()(val http: HttpClient,
               valid
             }
           )
+        case NOT_FOUND | FORBIDDEN =>
+          Logger("application").warn(s"[ObligationsConnector][getNextUpdates] - Status: ${response.status}, body: ${response.body}")
+          ObligationsModel(Seq.empty)
         case status =>
           if (status >= 500) {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][getNextUpdates] - RESPONSE status: ${response.status}, body: ${response.body}")
@@ -84,9 +87,9 @@ class ObligationsConnector @Inject()(val http: HttpClient,
     }
   }
 
-  def getPreviousObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
+  def getFulfilledObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
-    val url = getPreviousObligationsUrl(mtdUser.nino)
+    val url = getFulfilledObligationsUrl(mtdUser.nino)
     Logger("application").debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
@@ -105,6 +108,9 @@ class ObligationsConnector @Inject()(val http: HttpClient,
               valid
             }
           )
+        case NOT_FOUND | FORBIDDEN =>
+          Logger("application").warn(s"[ObligationsConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+          ObligationsModel(Seq.empty)
         case status =>
           if (status >= 500) {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
@@ -121,10 +127,10 @@ class ObligationsConnector @Inject()(val http: HttpClient,
 
   }
 
-  def getPreviousObligations(fromDate: LocalDate, toDate: LocalDate)
-                            (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
+  def getAllObligations(fromDate: LocalDate, toDate: LocalDate)
+                       (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
-    val url = getPreviousObligationsUrl(fromDate, toDate, mtdUser.nino)
+    val url = getAllObligationsUrl(fromDate, toDate, mtdUser.nino)
     Logger("application").debug(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - GET $url")
 
     http.GET[HttpResponse](url)(httpReads, headerCarrier, implicitly) map { response =>
@@ -143,6 +149,9 @@ class ObligationsConnector @Inject()(val http: HttpClient,
               valid
             }
           )
+        case NOT_FOUND | FORBIDDEN =>
+          Logger("application").warn(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")
+          ObligationsModel(Seq.empty)
         case status =>
           if (status >= 500) {
             Logger("application").error(s"[IncomeTaxViewChangeConnector][getPreviousObligations] - Status: ${response.status}, body: ${response.body}")

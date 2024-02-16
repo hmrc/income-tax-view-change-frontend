@@ -176,23 +176,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         }
     }
 
-  def refundStatus(): Action[AnyContent] =
-    (checkSessionTimeout andThen authenticate
-      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async {
-      implicit user =>
-        user.userType match {
-          case _ if isDisabled(CreditsRefundsRepay) =>
-            Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-          case Some(Agent) => Future.successful(itvcErrorHandlerAgent.showInternalServerError())
-          case _ =>
-            handleStatusRefundRequest(
-              backUrl = "", // TODO: do we need a backUrl
-              itvcErrorHandler = itvcErrorHandler,
-              isAgent = false
-            )
-        }
-    }
-
   private def handleRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getCreditCharges()(implicitly, user) flatMap {
@@ -210,19 +193,6 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
       case _ => Logger("application").error("[CreditAndRefundController][handleRefundRequest]")
         Future.successful(itvcErrorHandler.showInternalServerError())
     }
-  }
-
-  private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
-                                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    repaymentService.view(user.nino).flatMap {
-      case _ if isDisabled(CreditsRefundsRepay) =>
-        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
-      case Right(nextUrl) =>
-        Future.successful(Redirect(nextUrl))
-      case Left(_) =>
-        Future.successful(itvcErrorHandler.showInternalServerError())
-    }
-
   }
 
   private def auditClaimARefund(balanceDetails: Option[BalanceDetails], creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)])
