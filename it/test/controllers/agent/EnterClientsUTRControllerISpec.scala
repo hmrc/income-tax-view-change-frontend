@@ -19,7 +19,7 @@ package controllers.agent
 import audit.models.EnterClientUTRAuditModel
 import config.featureswitch.FeatureSwitching
 import helpers.agent.ComponentSpecBase
-import helpers.servicemocks.AuthStub.{titleInternalServer, titleTechError}
+import helpers.servicemocks.AuthStub.titleInternalServer
 import helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxViewChangeStub}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -261,7 +261,7 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
       }
     }
 
-    s"return $INTERNAL_SERVER_ERROR with technical difficulties" when {
+    s"return $INTERNAL_SERVER_ERROR ISE page" when {
       "there was an unexpected response retrieving the client details" in {
         val validUTR: String = "1234567890"
 
@@ -273,10 +273,10 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
 
-        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        Then(s"ISE is shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError, isErrorPage = true)
+          pageTitleIndividual(titleInternalServer, isErrorPage = true)
         )
       }
       "there was an unexpected response retrieving the business details" in {
@@ -298,10 +298,10 @@ class EnterClientsUTRControllerISpec extends ComponentSpecBase with FeatureSwitc
 
         val result: WSResponse = IncomeTaxViewChangeFrontend.postEnterClientsUTR(Some(validUTR))
 
-        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+        Then(s"ISE is shown with status $INTERNAL_SERVER_ERROR")
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
-          pageTitleIndividual(titleTechError, isErrorPage = true)
+          pageTitleIndividual(titleInternalServer, isErrorPage = true)
         )
       }
 
