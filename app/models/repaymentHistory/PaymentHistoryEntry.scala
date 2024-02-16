@@ -16,6 +16,7 @@
 
 package models.repaymentHistory
 
+import models.incomeSourceDetails.TaxYear
 import services.DateServiceInterface
 
 import java.time.LocalDate
@@ -27,7 +28,8 @@ case class PaymentHistoryEntry(date: LocalDate,
                                linkUrl: String,
                                visuallyHiddenText: String)(implicit val dateService: DateServiceInterface) {
 
-  def getTaxYearEndYear: Int = {
-    dateService.getAccountingPeriodEndDate(date).getYear
+  def getTaxYearEndYear: TaxYear = {
+    val endYear = dateService.getAccountingPeriodEndDate(date).getYear
+    TaxYear(endYear-1, endYear)
   }
 }
