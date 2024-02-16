@@ -28,6 +28,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import cats.instances.string._
 @import cats.syntax.eq._
+@import models.creditsandrefunds.CreditAndRefundViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -39,7 +40,7 @@
     link: link,
     govukInsetText : GovukInsetText
 )
-@(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
+@(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], viewModel: CreditAndRefundViewModel, balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
     isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 

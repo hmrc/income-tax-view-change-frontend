@@ -19,6 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
+import models.creditsandrefunds.CreditAndRefundViewModel
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -31,7 +32,6 @@ import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.{UnallocatedCreditFromOnePayment, UnallocatedCreditFromSingleCreditItem}
 import views.html.CreditAndRefunds
 import testConstants.BaseTestConstants.testTaxYearTo
-
 
 import java.time.LocalDate
 
@@ -83,6 +83,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(
         creditCharges,
+        CreditAndRefundViewModel(creditCharges),
         balance,
         creditAndRefundType,
         isAgent = isAgent,

@@ -38,6 +38,7 @@ import utils.CreditAndRefundUtils.UnallocatedCreditType
 import utils.CreditAndRefundUtils.UnallocatedCreditType.maybeUnallocatedCreditType
 import views.html.CreditAndRefunds
 import views.html.errorPages.CustomNotFoundError
+import models.creditsandrefunds.CreditAndRefundViewModel
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -92,7 +93,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         auditClaimARefund(balance, credits)
 
 
-        Ok(view(credits, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
+        Ok(view(credits, CreditAndRefundViewModel(creditCharges = credits), balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()

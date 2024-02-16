@@ -16,13 +16,9 @@
 
 package models.creditsandrefunds
 
-import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
 
 
-
-case class CreditAndRefundViewModel(balance: BalanceDetails,
-                                    creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)])
-
-case class CreditAndRefundError(status: Option[Int] = None)
+case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)])
 
 
