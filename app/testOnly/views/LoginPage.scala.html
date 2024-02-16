@@ -58,7 +58,7 @@
             <label class="govuk-label" for="sort">
                 NINO
             </label>
-            <select class="govuk-select" id="sortTest" name="sort" onchange="enableOptOutDropdowns(this)">
+            <select class="govuk-select" id="nino" name="nino" onchange="enableOptOutDropdowns(this)">
             @for(user <- users) {
                 <option value="@user.nino">@{user.nino} - @{user.description}</option>
             }
