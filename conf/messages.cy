@@ -1016,6 +1016,7 @@ paymentHistory.paymentToHmrc                                    = Taliad roeddec
 paymentHistory.balancingChargeCredit                            = Credyd tâl mantoli
 paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
 paymentHistory.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
+paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
 paymentHistory.balancingChargeCredit                            = Credyd tâl mantoli
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
