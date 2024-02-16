@@ -43,22 +43,6 @@
     isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
-@getControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
-    if(isAgent) {
-        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(credit.transactionId)
-    } else {
-        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(credit.transactionId)
-    }
-}
-
-@getCreditsSummaryControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
-    if(isAgent) {
-        controllers.routes.CreditsSummaryController.showAgentCreditsSummary(credit.taxYear.toInt)
-    } else {
-        controllers.routes.CreditsSummaryController.showCreditsSummary(credit.taxYear.toInt)
-    }
-}
-
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
         controllers.routes.WhatYouOweController.showAgent.url
@@ -89,35 +73,10 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     maybeBalancesDetails.getAbsoluteAvailableCreditAmount.getOrElse(BigDecimal(0))
 }
 
-@getCreditsSummaryLink = {
-    @if(maybeCreditChargesHead._2.getCreditType == Some(MfaCreditType)) {
-        @link(
-            link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
-            outerMessage = ".",
-            messageKey = messages("credit-and-refund.credit-from-hmrc-title"),
-            classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
-        )
-    } else if(maybeCreditChargesHead._2.getCreditType == Some(CutOverCreditType)) {
-        @link(
-            link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
-            outerMessage = ".",
-            messageKey = messages("credit-and-refund.credit-from-earlier-tax-year"),
-            classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
-        )
-    } else if(maybeCreditChargesHead._2.getCreditType == Some(BalancingChargeCreditType)) {
-        @link(
-            link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
-            outerMessage = ".",
-            messageKey = messages("credit-and-refund.credit-from-balancing-charge-prt-2"),
-            classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
-        )
-    } else {
-        throw MissingFieldException("Credit type")
-    }
-}
 
 @taxYearFrom = @{(creditCharges.head._2.taxYear.toInt - 1)}
-@taxYearTo = @{creditCharges.head._2.taxYear}
+@taxYearTo = @{(creditCharges.head._2.taxYear)}
+
 
 @getAvailableCreditContent = {
     @if(maybeAvailableCredit != 0) {
@@ -134,7 +93,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         else
                             true
                     }).size
-                if( listSize != 0 || balance.get.firstPendingAmountRequested != None || balance.get.secondPendingAmountRequested != None){
+                if( listSize != 1 || balance.get.firstPendingAmountRequested != None || balance.get.secondPendingAmountRequested != None){
                     <span class="govuk-body">{messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")}</span>
                 }else{
                     <span class="govuk-body">{messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-3" else "credit-and-refund.subHeading.has-credits-3")}</span>
@@ -220,10 +179,10 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     .flatten.sorted(Ordering.BigDecimal.reverse)
 }
 
-
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
         @for((credit, index) <- creditCharges.zipWithIndex) {
+
             @if(credit._2.getCreditType == Some(BalancingChargeCreditType)) {
                 @getBalancingChargeCreditContent(credit, index)
             } else if(credit._2.getCreditType == Some(MfaCreditType)) {
@@ -251,50 +210,40 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     @h1(msg = "credit-and-refund.heading")
 
     @if(balance.isDefined){
+        @getAvailableCreditContent
+
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                  @messages("credit-and-refund.subHeading-source")
+                </span>
+            </summary>
+            <div class="govuk-details__text">
                 @creditAndRefundType match {
                     case Some(UnallocatedCreditFromOnePayment) => {
                         <h2 class="govuk-heading-s">
-                            <span class="govuk-body">
-                                @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")
+                            <span class="govuk-body" id="unallocated-payment">
                                 <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                                @messages(if(isAgent) "credit-and-refund.agent.unallocated-credits-one-payment-2" else "credit-and-refund.subHeading.unallocated-credits-one-payment-2")
-                            </span>
-                            <span class="govuk-body">
-                                @link(
-                                    link = s"${getControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
-                                    outerMessage = ".",
-                                    messageKey = maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate,
-                                    classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
-                                )
+                                @messages("credit-and-refund.payment")
+                                @maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
                             </span>
                         </h2>
                     }
                     case Some(UnallocatedCreditFromSingleCreditItem) => {
                         <h2 class="govuk-heading-s">
-                            <span class="govuk-body">
-                                @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")
+                            <span class="govuk-body" id="unallocated-single-credit">
                                 <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                                    @messages(if(isAgent) "credit-and-refund.agent.unallocated-credits-single-credit-2" else "credit-and-refund.subHeading.unallocated-credits-single-credit-2")
-                                </span>
-                            <span class="govuk-body">
-                              @getCreditsSummaryLink
+                                @messages("credit-and-refund.credit-from-adjustment-prt-1")
+                                @messages("credit-and-refund.tax-year", taxYearFrom.toString, taxYearTo)
                             </span>
                         </h2>
                     }
                     case None => {
-                        @getAvailableCreditContent
-                        <details class="govuk-details">
-                            <summary class="govuk-details__summary">
-                                            <span class="govuk-details__summary-text">
-                                              @messages("credit-and-refund.subHeading-source")
-                                            </span>
-                            </summary>
-                            <div class="govuk-details__text">
-                                @getListOfCreditsAndRefunds
-                            </div>
-                        </details>
+                        @getListOfCreditsAndRefunds
                     }
                 }
+            </div>
+        </details>
 
         @if(maybeAvailableCredit != 0){
             @p(){

@@ -1150,6 +1150,8 @@ credit-and-refund.tax-year                                        = {0} to {1} t
 credit-and-refund.credit-from-adjustment-prt-1                    = credit from HMRC adjustment -
 credit-and-refund.credit-from-adjustment-prt-2                    =
 credit-and-refund.credit-from-earlier-tax-year                    = credit from an earlier tax year -
+credit-and-refund.credit-from-earlier-tax-year-2                  = credit from an earlier tax year
+
 credit-and-refund.payment                                         = from a payment you made to HMRC on
 credit-and-refund.credit                                          =
 
