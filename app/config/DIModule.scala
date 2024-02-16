@@ -17,14 +17,17 @@
 package config
 
 import auth.FrontendAuthorisedFunctions
-import com.google.inject.AbstractModule
+import com.google.inject.{AbstractModule}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.mongo.metrix.MetricOrchestrator
 
 import java.time.{Clock, ZoneOffset}
+
 
 class DIModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[AuthorisedFunctions]).to(classOf[FrontendAuthorisedFunctions]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
+    bind(classOf[MetricOrchestrator]).toProvider(classOf[MetricOrchestratorProvider]).asEagerSingleton()
   }
 }

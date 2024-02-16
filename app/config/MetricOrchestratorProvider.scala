@@ -24,6 +24,7 @@ import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import javax.inject.{Inject, Provider, Singleton}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Random
 
 @Singleton
 class MetricOrchestratorProvider @Inject() (
@@ -39,23 +40,23 @@ class MetricOrchestratorProvider @Inject() (
 
   private val metricRegistry = metrics.defaultRegistry
 
-//  private val source = new MetricSource {
-//    override def metrics(implicit ec: ExecutionContext): Future[Map[String, Int]] =
-//      for {
-//        countOfSubmitted <- submissionItemRepository.countByStatus(SubmissionItemStatus.Submitted)
-//        countOfForwarded <- submissionItemRepository.countByStatus(SubmissionItemStatus.Forwarded)
+  private val source = new MetricSource {
+    override def metrics(implicit ec: ExecutionContext): Future[Map[String, Int]] =
+      for {
+        countOfSubmitted <- Future.successful( Random.nextInt(100) )
+        countOfForwarded <- Future.successful( Random.nextInt(100) )
 //        countOfFailed    <- submissionItemRepository.countByStatus(SubmissionItemStatus.Failed)
 //        countOfCompleted <- submissionItemRepository.countByStatus(SubmissionItemStatus.Completed)
-//      } yield Map(
-//        "submission-item.submitted.count" -> countOfSubmitted.toInt,
-//        "submission-item.forwarded.count" -> countOfForwarded.toInt,
+      } yield Map(
+        "submission-item.submitted.count" -> countOfSubmitted,
+        "submission-item.forwarded.count" -> countOfForwarded
 //        "submission-item.failed.count"    -> countOfFailed.toInt,
 //        "submission-item.completed.count" -> countOfCompleted.toInt,
-//      )
-//  }
+      )
+  }
 
   override def get(): MetricOrchestrator =  new MetricOrchestrator(
-    metricSources    = List.empty, //List(source),
+    metricSources    = List(source),
     lockService      = lockService,
     metricRepository = metricRepository,
     metricRegistry   = metricRegistry
