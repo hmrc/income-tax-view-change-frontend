@@ -1024,6 +1024,7 @@ paymentHistory.paymentToHmrc                                    = Payment you ma
 paymentHistory.balancingChargeCredit                            = Balancing charge credit
 paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
+paymentHistory.taxYear                                          = {0} to {1} tax year
 paymentHistory.balancingChargeCredit                            = Balancing charge credit
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.refund                                           = Refund issued
