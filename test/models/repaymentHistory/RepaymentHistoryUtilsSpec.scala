@@ -28,6 +28,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
 
   val repaymentRequestNumber: String = "000000003135"
 
+
   val payments: List[Payment] = List(
     Payment(reference = Some("mfa1"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("mfa1"), lot = None, lotItem = None, dueDate = None,
@@ -119,31 +120,31 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       "both payments and repayments are present" in {
         getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
-        )(messages) shouldBe groupedRepayments() ++ groupedPayments()
+        )(messages, dateService ) shouldBe groupedRepayments() ++ groupedPayments()
       }
 
       "only payments are present" in {
         getGroupedPaymentHistoryData(payments, List(), isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
-        )(messages) shouldBe groupedPayments()
+        )(messages, dateService) shouldBe groupedPayments()
       }
 
       "only repayments are present" in {
         getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
-        )(messages) shouldBe groupedRepayments()
+        )(messages, dateService) shouldBe groupedRepayments()
       }
 
       "cutover credits are NOT present when switch is OFF" in {
         getGroupedPaymentHistoryData(payments, List(), isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = false, languageUtils
-        )(messages) shouldBe groupedPayments(false, true)
+        )(messages, dateService) shouldBe groupedPayments(false, true)
       }
 
       "mfa credits are NOT present when switch is OFF" in {
         getGroupedPaymentHistoryData(payments, List(), isAgent = false,
           MFACreditsEnabled = false, CutOverCreditsEnabled = true, languageUtils
-        )(messages) shouldBe groupedPayments(true, false)
+        )(messages, dateService) shouldBe groupedPayments(true, false)
       }
     }
   }

@@ -16,24 +16,18 @@
 
 package models.repaymentHistory
 
+import services.DateServiceInterface
+
 import java.time.LocalDate
-import java.time.Month.APRIL
 
 case class PaymentHistoryEntry(date: LocalDate,
                                description: String,
                                amount: Option[BigDecimal],
                                transactionId: Option[String] = None,
                                linkUrl: String,
-                               visuallyHiddenText: String) {
+                               visuallyHiddenText: String)(implicit val dateService: DateServiceInterface) {
 
   def getTaxYearEndYear: Int = {
-    val startDateYear = date.getYear
-    val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
-
-    if (date.isBefore(accountingPeriodEndDate) || date.isEqual(accountingPeriodEndDate)) {
-      startDateYear
-    } else {
-      startDateYear + 1
-    }
+    dateService.getAccountingPeriodEndDate(date).getYear
   }
 }

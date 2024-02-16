@@ -23,15 +23,41 @@ import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewMod
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
+import services.DateService
 import testConstants.BaseTestConstants.appConfig.saForAgents
-import testUtils.ViewSpec
+import testUtils.{TestSupport, ViewSpec}
 import views.html.PaymentHistory
 
+import java.time.LocalDate
+import java.time.Month.APRIL
 
-class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
+
+class PaymentHistoryViewSpec extends TestSupport with ViewSpec with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   lazy val paymentHistoryView: PaymentHistory = app.injector.instanceOf[PaymentHistory]
+
+  override implicit val dateService: DateService = new DateService {
+
+    override def getCurrentDate(isTimeMachineEnabled: Boolean): LocalDate = fixedDate
+
+    override def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean): Int = fixedDate.getYear + 1
+
+    override def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = LocalDate.of(2023, 4, 6)
+
+    override def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean = false
+
+    override def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate =  {
+      val startDateYear = startDate.getYear
+      val accountingPeriodEndDate = LocalDate.of(startDateYear, APRIL, 5)
+
+      if (startDate.isBefore(accountingPeriodEndDate) || startDate.isEqual(accountingPeriodEndDate)) {
+        accountingPeriodEndDate
+      } else {
+        accountingPeriodEndDate.plusYears(1)
+      }
+    }
+  }
 
   object PaymentHistoryMessages {
     val heading: String = messages("paymentHistory.heading")

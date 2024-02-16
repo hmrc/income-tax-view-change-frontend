@@ -30,7 +30,7 @@ import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewMod
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
+import services.{DateService, DateServiceInterface, PaymentHistoryService, RepaymentService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -55,7 +55,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val repaymentService: RepaymentService,
                                          val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate)
                                         (implicit val appConfig: FrontendAppConfig,
-                                         dateService: DateServiceInterface,
+                                         dateService: DateService,
                                          val languageUtils: LanguageUtils,
                                          mcc: MessagesControllerComponents,
                                          val ec: ExecutionContext,
