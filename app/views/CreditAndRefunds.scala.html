@@ -183,7 +183,6 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
         @for((credit, index) <- creditCharges.zipWithIndex) {
-
             @if(credit._2.getCreditType == Some(BalancingChargeCreditType)) {
                 @getBalancingChargeCreditContent(credit, index)
             } else if(credit._2.getCreditType == Some(MfaCreditType)) {
