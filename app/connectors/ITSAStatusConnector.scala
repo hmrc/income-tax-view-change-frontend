@@ -49,7 +49,6 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
     ) map { response =>
       response.status match {
         case OK =>
-          println("PPPPPPPP" + response.json)
           response.json.validate[List[ITSAStatusResponseModel]].fold(
             invalid => {
               Logger("application").error(s"[ITSAStatusConnector][getITSAStatusDetail] - Json validation error parsing repayment response, error $invalid")
@@ -76,9 +75,6 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
   def overwriteItsaStatus(nino: Nino, taxYearRange: String, itsaStatus: String)
                               (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, Result]] = {
 
-    // TODO: remove
-    val url = getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus)
-    println("BBBBBBBBBB" + url)
 
     http.GET[HttpResponse](getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus))(
       httpReads,

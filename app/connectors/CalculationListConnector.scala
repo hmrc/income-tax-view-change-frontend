@@ -112,10 +112,6 @@ class CalculationListConnector @Inject()(val http: HttpClient,
   def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
                               (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, Result]] = {
 
-    // TODO: remove
-    val url = getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus)
-    println("BBBBBBBBBB" + url)
-
     http.GET[HttpResponse](getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
