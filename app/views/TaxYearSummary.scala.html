@@ -209,7 +209,7 @@
                             (documentDetailWithDueDate.isLatePaymentInterest && !documentDetailWithDueDate.documentDetail.interestIsPaid))) {
                             <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
                         }
-                        <div>
+                        <div id="paymentTypeText-@{index}">
                             @if(documentDetailWithDueDate.documentDetail.originalAmount.getOrElse(throw MissingFieldException("Original Amount")) == 0) {
                                 @getChargeSummaryMessage(documentDetailWithDueDate)
                             } else {
