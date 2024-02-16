@@ -31,22 +31,40 @@
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
     <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script type="text/javascript">
+            function enableOptOutDropdowns(answer) {
+                console.log(answer.value);
+                if (answer.value === "OP000001A") {
+                    document.getElementById("TESTING").classList.remove("d-none");
+                } else {
+                    document.getElementById("TESTING").classList.add("d-none");
+                }
+            }
+    </script>
+
+    <style>
+            .d-none {
+                display: none;
+            }
+    </style>
+
     <h1 class="govuk-heading-l">Select Nino/User</h1>
 
     @form(postAction) {
 
-        @govukSelect(Select(
-            id = "nino",
-            name = "nino",
-            items = users.map { user =>
-                SelectItem(
-                    value = Some(user.nino),
-                    text = s"${user.nino} - ${user.description}"
-                )
-            },
-            label = Label(
-                content = Text("NINO"))
-        ))
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="sort">
+                NINO
+            </label>
+            <select class="govuk-select" id="sortTest" name="sort" onchange="enableOptOutDropdowns(this)">
+            @for(user <- users) {
+                <option value="@user.nino">@{user.nino} - @{user.description}</option>
+            }
+            </select>
+        </div>
+
 
         @govukCheckboxes(Checkboxes(
             fieldset = Some(Fieldset(
@@ -62,6 +80,7 @@
             )
         ))
 
+        <div class="d-none" id="TESTING">
         @govukSelect(Select(
             id = "cyMinusOneCrystallisationStatus",
             name = "cyMinusOneCrystallisationStatus",
@@ -169,6 +188,7 @@
             label = Label(
                 content = Text("cyPlusOneItsaStatus"))
         ))
+        </div>
 
         @govukButton(Button(
             content = Text("Login")
