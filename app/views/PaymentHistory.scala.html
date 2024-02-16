@@ -88,7 +88,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                     </a>
                     <br>
                     <a class="govuk-text">
-                        @messages("paymentHistory.taxYear", payment.getTaxYearEndYear.startYear.toString, payment.getTaxYearEndYear.endYear.toString)
+                        @messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)
                     </a>
                 </td>
                 <td class="govuk-table__cell numeric govuk-table__cell--numeric"> @payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown"))</td>

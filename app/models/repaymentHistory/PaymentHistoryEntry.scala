@@ -28,7 +28,7 @@ case class PaymentHistoryEntry(date: LocalDate,
                                linkUrl: String,
                                visuallyHiddenText: String)(implicit val dateService: DateServiceInterface) {
 
-  def getTaxYearEndYear: TaxYear = {
+  def getTaxYear: TaxYear = {
     val endYear = dateService.getAccountingPeriodEndDate(date).getYear
     TaxYear(endYear-1, endYear)
   }
