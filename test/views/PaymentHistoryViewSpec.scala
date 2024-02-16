@@ -57,29 +57,29 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   }
 
   val paymentEntriesMFA = List(
-    (2020, List(PaymentHistoryEntry(date = "2020-04-13", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
-      PaymentHistoryEntry(date = "2020-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    (2020, List(PaymentHistoryEntry(date = "2020-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
+      PaymentHistoryEntry(date = "2020-04-13", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1"))),
     (2021, List(PaymentHistoryEntry(date = "2019-04-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
       linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
       PaymentHistoryEntry(date = "2018-04-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1"))),
-    (2022, List(PaymentHistoryEntry(date = "2019-09-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    (2022, List(PaymentHistoryEntry(date = "2019-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
       linkUrl = "link1", visuallyHiddenText = "hidden-text1"),
-      PaymentHistoryEntry(date = "2019-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")))
+      PaymentHistoryEntry(date = "2019-09-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
+      linkUrl = "link1", visuallyHiddenText = "hidden-text1")))
   )
 
   val repaymentRequestNumber = "000000003135"
 
   val groupedRepayments = List(
-    (2021, List(PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
+    (2021, List(PaymentHistoryEntry("2021-08-22", "paymentHistory.refund", None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
       PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
-      PaymentHistoryEntry("2021-08-22", "paymentHistory.refund", None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)))
+      PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)))
   )
 
-  val expectedDatesOrder = List("13 April 2020", "25 December 2020", "25 April 2019", "25 September 2019", "25 December 2019", "25 April 2018")
+  val expectedDatesOrder = List("25 December 2020", "13 April 2020", "25 December 2019", "25 September 2019", "25 April 2019", "25 April 2018")
 
   val emptyPayments = List(
     (2021, List(PaymentHistoryEntry(date = "2019-09-25", description = "desc1", amount = None, transactionId = Some("TRANS123"),
@@ -161,7 +161,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             case (payment, index) =>
               val row = tbody.selectNth("tr", index + 1)
               row.selectNth("td", 1).text shouldBe payment.date.toLongDate
-              row.selectNth("td", 2).text shouldBe s"desc1 hidden-text1 Item ${index + 1}"
+              row.selectNth("td", 2).text shouldBe s"desc1 hidden-text1 Item ${index + 1} ${payment.getTaxYearEndYear-1} to ${payment.getTaxYearEndYear} tax year"
               row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
               row.selectNth("td", 3).text shouldBe payment.amount.get.abs.toCurrencyString
           }
@@ -172,20 +172,20 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
         val tbody = sectionContent.selectHead("table > tbody")
 
-        tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "20 August 2021"
-        tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
+        tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 August 2021"
+        tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1 2021 to 2022 tax year"
         tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "£301.00"
+        tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "Unknown"
 
         tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
-        tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
+        tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2 2021 to 2022 tax year"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
 
-        tbody.selectNth("tr", 3).selectNth("td", 1).text() shouldBe "22 August 2021"
-        tbody.selectNth("tr", 3).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 3"
+        tbody.selectNth("tr", 3).selectNth("td", 1).text() shouldBe "20 August 2021"
+        tbody.selectNth("tr", 3).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 3 2021 to 2022 tax year"
         tbody.selectNth("tr", 3).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "Unknown"
+        tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "£301.00"
       }
       s"should have a amount column right aligned" in new PaymentHistorySetup(groupedRepayments) {
         val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
@@ -212,13 +212,12 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
       val tbody = sectionContent.selectHead("table > tbody")
 
-      tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "20 August 2021"
-      tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
+      tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 August 2021"
+      tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1 2021 to 2022 tax year"
       tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-      tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "£301.00"
 
       tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
-      tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
+      tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2 2021 to 2022 tax year"
       tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
       tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
     }
