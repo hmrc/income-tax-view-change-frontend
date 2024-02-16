@@ -23,9 +23,9 @@ import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewMod
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
-import services.{DateService, DateServiceInterface}
+import services.DateServiceInterface
 import testConstants.BaseTestConstants.appConfig.saForAgents
-import testUtils.{TestSupport, ViewSpec}
+import testUtils.ViewSpec
 import views.html.PaymentHistory
 
 import java.time.LocalDate
