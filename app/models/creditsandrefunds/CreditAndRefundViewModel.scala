@@ -28,8 +28,7 @@ case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDa
   private val cutOverCredit = "CutOver"
   private val payment = "Payment"
 
-  def sortCreditsByTypeAndMonetaryValue(credits: List[(DocumentDetailWithDueDate, FinancialDetail)])
-  : List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+  def sortCreditsByTypeAndMonetaryValue: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
 
     val creditTypeSortingOrder = Map(
       balancingChargeCredit -> 1,
@@ -38,7 +37,7 @@ case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDa
       payment -> 4
     )
 
-    val sortedCredits = credits.groupBy[String] {
+    val sortedCredits = creditCharges.groupBy[String] {
       credits => {
         getCreditType(credits)
       }
@@ -50,6 +49,9 @@ case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDa
     }
     sortedCredits
   }
+
+  val sortedCreditCharges = sortCreditsByTypeAndMonetaryValue
+
 
   def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
     val creditType: Option[CreditType] = credit._2.getCreditType

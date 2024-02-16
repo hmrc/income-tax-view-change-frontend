@@ -63,7 +63,7 @@
 }
 
 @maybeCreditChargesHead = @{
-    creditCharges.headOption.getOrElse(throw MissingFieldException("Credit Charges"))
+    viewModel.creditCharges.headOption.getOrElse(throw MissingFieldException("Credit Charges"))
 }
 
 @maybeBalancesDetails = @{
@@ -75,8 +75,8 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 }
 
 
-@taxYearFrom = @{(creditCharges.head._2.taxYear.toInt - 1)}
-@taxYearTo = @{(creditCharges.head._2.taxYear)}
+@taxYearFrom = @{(viewModel.sortedCreditCharges.head._2.taxYear.toInt - 1)}
+@taxYearTo = @{(viewModel.sortedCreditCharges.head._2.taxYear)}
 
 
 @getAvailableCreditContent = {
@@ -86,7 +86,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             @maybeAvailableCredit.toCurrency
             <!--Checks if there are any items in the list, depending on that ":" or "." message is used.-->
             @{
-                val listSize = creditCharges.filter(x => {
+                val listSize = viewModel.creditCharges.filter(x => {
                         if(x._2.getCreditType == Some(MfaCreditType))
                             isMFACreditsAndDebitsEnabled
                         else if(x._2.getCreditType == Some(CutOverCreditType))
@@ -182,7 +182,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
-        @for((credit, index) <- creditCharges.zipWithIndex) {
+        @for((credit, index) <- viewModel.sortedCreditCharges.zipWithIndex) {
             @if(credit._2.getCreditType == Some(BalancingChargeCreditType)) {
                 @getBalancingChargeCreditContent(credit, index)
             } else if(credit._2.getCreditType == Some(MfaCreditType)) {

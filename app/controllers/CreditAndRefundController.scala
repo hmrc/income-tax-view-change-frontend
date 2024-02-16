@@ -85,15 +85,15 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
         val balance: Option[BalanceDetails] = financialDetailsModel.headOption.map(balance => balance.balanceDetails)
 
         val credits: List[(DocumentDetailWithDueDate, FinancialDetail)] = financialDetailsModel.flatMap(
-          financialDetailsModel => sortCreditsByTypeAndMonetaryValue(financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails())
+          financialDetailsModel => financialDetailsModel.getAllDocumentDetailsWithDueDatesAndFinancialDetails()
         )
 
+        val viewModel = CreditAndRefundViewModel(credits)
         val creditAndRefundType: Option[UnallocatedCreditType] = maybeUnallocatedCreditType(credits, balance, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)
 
         auditClaimARefund(balance, credits)
 
-
-        Ok(view(credits, CreditAndRefundViewModel(creditCharges = credits), balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
+        Ok(view(credits, viewModel, balance, creditAndRefundType, isAgent, backUrl, isMFACreditsAndDebitsEnabled, isCutOverCreditsEnabled)(user, user, messages))
       case _ => Logger("application").error(
         s"${if (isAgent) "[Agent]"}[CreditAndRefundController][show] Invalid response from financial transactions")
         itvcErrorHandler.showInternalServerError()
