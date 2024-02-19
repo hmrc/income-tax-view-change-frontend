@@ -86,12 +86,6 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
           Future.successful((): Unit)
         case _ =>
           Future.failed(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
-//          if (status >= INTERNAL_SERVER_ERROR) {
-//            Logger("application").error(s"[ITSAStatusConnector][overwriteItsaStatus] - Response status: ${response.status}, body: ${response.body}")
-//          } else {
-//            Logger("application").warn(s"[ITSAStatusConnector][overwriteItsaStatus] - Response status: ${response.status}, body: ${response.body}")
-//          }
-//          Left(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
       }
     }
   }

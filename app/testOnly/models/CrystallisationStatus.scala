@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package models.core
+package testOnly.models
 
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import play.api.mvc.Result
+import models.core.Nino
 import services.{CalculationListService, DateServiceInterface}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptOutCustomDataUploadHelper

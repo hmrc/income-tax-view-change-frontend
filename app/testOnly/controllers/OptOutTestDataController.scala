@@ -32,9 +32,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.Inject
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
-import models.core.{CrystallisationStatus, ItsaStatusCyMinusOne}
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.libs.json.Json
+import testOnly.models.{CrystallisationStatus, ItsaStatusCyMinusOne}
 
 
 class OptOutTestDataController @Inject()(

@@ -48,9 +48,6 @@ class CalculationListConnector @Inject()(val http: HttpClient,
     s"${appConfig.itvcDynamicStubUrl}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
   }
 
-  // itvcDynamicStubUrl
-  // /income-tax/view/calculations/liability/$taxYearRange<[0-9]{2}-[0-9]{2}>/:nino/overwrite/:crystallisationStatus
-
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
@@ -121,14 +118,6 @@ class CalculationListConnector @Inject()(val http: HttpClient,
         case OK =>
           Future.successful((): Unit)
         case _ => Future.failed(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
-
-        //        case status =>
-//          if (status >= INTERNAL_SERVER_ERROR) {
-//            Logger("application").error(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
-//          } else {
-//            Logger("application").warn(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
-//          }
-//          Left(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
       }
     }
   }

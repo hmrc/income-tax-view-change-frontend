@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package models.core
+package testOnly.models
 
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import play.api.Configuration
-import play.api.mvc.Result
-import play.api.mvc.Results.Ok
-import services.{CalculationListService, DateService, DateServiceInterface, ITSAStatusService}
+import models.core.Nino
+import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.OptOutCustomDataUploadHelper
 
 import javax.inject.Inject
