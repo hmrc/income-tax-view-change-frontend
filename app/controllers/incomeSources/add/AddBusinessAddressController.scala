@@ -69,8 +69,8 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
       ) map {
         case Right(Some(location)) =>
           Redirect(location)
-        case Right(None) => logWithError("No redirect location returned from connector")
-        case Left(_)     => logWithError("Unexpected response")
+        case Right(None) => logWithError("handleRequest")("No redirect location returned from connector")
+        case Left(_)     => logWithError("handleRequest")("Unexpected response")
       }
     }
   }
@@ -115,7 +115,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
 
   }.recover {
     case ex =>
-      logWithError(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
+      logWithError("handleSubmitRequest")(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
   }
 
   def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
