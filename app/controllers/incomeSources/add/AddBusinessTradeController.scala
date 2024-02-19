@@ -24,12 +24,11 @@ import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessTradeForm
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.incomeSources.add.AddBusinessTrade
 
 import javax.inject.{Inject, Singleton}
@@ -47,7 +46,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
   private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
@@ -84,10 +83,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       }
     }
   }.recover {
-    case ex =>
-      Logger("application").error(s"[AddBusinessTradeController][handleRequest] - ${ex.getMessage} - ${ex.getCause}")
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      errorHandler.showInternalServerError()
+    case ex => logWithError(s"${ex.getMessage} - ${ex.getCause}")
   }
 
   def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
@@ -129,9 +125,6 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
         )
     }
   }.recover {
-    case ex =>
-      Logger("application").error(s"[AddBusinessTradeController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      errorHandler.showInternalServerError()
+    case ex => logWithError(s"${ex.getMessage} - ${ex.getCause}")
   }
 }

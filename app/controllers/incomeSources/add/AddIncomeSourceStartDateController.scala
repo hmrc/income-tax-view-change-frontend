@@ -26,12 +26,11 @@ import forms.incomeSources.add.{AddIncomeSourceStartDateForm => form}
 import forms.models.DateFormElement
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.AddIncomeSourceData
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.AddIncomeSourceStartDate
 
@@ -51,7 +50,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
                                                    implicit val dateService: DateService,
                                                    implicit override val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
 
   def show(isAgent: Boolean,
@@ -115,10 +114,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         )
       }
     }.recover {
-      case ex =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
-        errorHandler.showInternalServerError()
+      case ex => logWithError(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
     }
   }
 
@@ -146,11 +142,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       )
     }
   }.recover {
-    case ex =>
-      Logger("application")
-        .error(s"[AddIncomeSourceStartDateController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      errorHandler.showInternalServerError()
+    case ex => logWithError(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
   }
 
   def handleValidFormData(formData: DateFormElement, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)

@@ -30,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.errorPages.CustomNotFoundError
 import views.html.incomeSources.add.IncomeSourcesAccountingMethod
 
@@ -48,7 +48,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -94,8 +94,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleUserActiveBusinessesCashOrAccruals] - ${ex.getMessage} - ${ex.getCause}")
-      errorHandler(isAgent).showInternalServerError()
+      logWithError(s"${ex.getMessage} - ${ex.getCause}")
   }
 
   private def loadIncomeSourceAccountingMethod(isAgent: Boolean,
@@ -137,9 +136,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-          s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
+        logWithError(s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
     }
 
 
@@ -174,8 +171,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"[IncomeSourcesAccountingMethodController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
-      errorHandler(isAgent).showInternalServerError()
+      logWithError(s"${ex.getMessage} - ${ex.getCause}")
   }
 
   private lazy val successCall: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>

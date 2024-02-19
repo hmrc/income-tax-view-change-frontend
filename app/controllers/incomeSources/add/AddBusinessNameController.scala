@@ -20,18 +20,16 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates._
 import enums.IncomeSourceJourney.{InitialPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.BusinessNameForm
 import models.incomeSourceDetails.AddIncomeSourceData
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.incomeSources.add.AddBusinessName
 
 import javax.inject.{Inject, Singleton}
@@ -40,14 +38,14 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                           val addBusinessView: AddBusinessName,
-                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          implicit val itvcErrorHandler: ItvcErrorHandler,
                                           val sessionService: SessionService,
                                           auth: AuthenticatorPredicate)
                                          (implicit val appConfig: FrontendAppConfig,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit override val mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
@@ -106,10 +104,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       }
     }
   }.recover {
-    case ex =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"[AddBusinessNameController][handleRequest] ${ex.getMessage} - ${ex.getCause}")
-      errorHandler.showInternalServerError()
+    case ex => logWithError(s"${ex.getMessage} - ${ex.getCause}")
   }
 
   def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
@@ -177,11 +172,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       )
     }
   }.recover {
-  case ex =>
-    Logger("application")
-      .error(s"[AddBusinessNameController][handleSubmitRequest] - ${ex.getMessage} - ${ex.getCause}")
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    errorHandler.showInternalServerError()
+  case ex => logWithError(s"${ex.getMessage} - ${ex.getCause}")
 }
 
 def changeBusinessName(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {

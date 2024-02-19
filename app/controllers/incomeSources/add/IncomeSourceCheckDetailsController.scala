@@ -27,11 +27,10 @@ import enums.JourneyType.{Add, JourneyType}
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessDetailsModel, IncomeSourceDetailsModel, UIJourneySessionData}
-import play.api.Logger
 import play.api.mvc._
 import services.{CreateBusinessDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.incomeSources.add.IncomeSourceCheckDetails
 
 import javax.inject.Inject
@@ -48,7 +47,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                                                    implicit val sessionService: SessionService,
                                                    implicit val itvcErrorHandler: ItvcErrorHandler,
                                                    implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController
-  with IncomeSourcesUtils with FeatureSwitching with JourneyChecker {
+  with IncomeSourcesUtils with FeatureSwitching with JourneyChecker with LoggerUtil {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -93,19 +92,13 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           ))
         }
       case None =>
-        val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix +
-          s"[IncomeSourceCheckDetailsController][handleRequest]: Unable to construct view model for $incomeSourceType")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          logWithError(s"Unable to construct view model for $incomeSourceType")
         }
     }
   }.recover {
     case ex: Throwable =>
-      val agentPrefix = if (isAgent) "[Agent]" else ""
-      Logger("application").error(agentPrefix +
-        s"[IncomeSourceCheckDetailsController][handleRequest]: Unexpected exception ${ex.getMessage} - ${ex.getCause}")
-      errorHandler(isAgent).showInternalServerError()
+      logWithError(s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def getViewModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData)
@@ -203,17 +196,13 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               Future.failed(ex)
           }
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"[IncomeSourceCheckDetailsController][handleSubmit]: Unable to construct view model for $incomeSourceType")
           Future.successful {
-            Redirect(errorRedirectUrl(isAgent, incomeSourceType))
+            logWithError(s"Unable to construct view model for $incomeSourceType")
           }
       }
     }
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"[IncomeSourceCheckDetailsController][handleSubmit]: ${ex.getMessage}")
-      Redirect(errorRedirectUrl(isAgent, incomeSourceType))
+      logWithError(s"${ex.getMessage}", Some(Redirect(errorRedirectUrl(isAgent, incomeSourceType))))
   }
 }

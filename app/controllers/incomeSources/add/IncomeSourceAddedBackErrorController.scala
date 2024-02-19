@@ -21,11 +21,10 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{CannotGoBackPage, IncomeSourceType}
 import enums.JourneyType.{Add, JourneyType}
-import play.api.Logger
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.incomeSources.add.IncomeSourceAddedBackError
 
 import javax.inject.Inject
@@ -39,7 +38,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
                                                      mcc: MessagesControllerComponents,
                                                      val ec: ExecutionContext,
                                                      val itvcErrorHandler: ItvcErrorHandler,
-                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker{
+                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
@@ -90,10 +89,9 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
           Future.successful {
             Redirect(routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType))
           }
-        case None => Logger("application").error(
-          "[IncomeSourceAddedBackErrorController][handleSubmit] - Error: Unable to find id in session")
+        case None =>
           Future.successful {
-            (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
+            logWithError("Error: Unable to find id in session")
           }
       }
     }

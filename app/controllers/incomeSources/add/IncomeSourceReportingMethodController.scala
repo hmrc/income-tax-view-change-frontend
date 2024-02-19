@@ -35,7 +35,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.incomeSources.add.IncomeSourceReportingMethod
 
 import javax.inject.Inject
@@ -55,7 +55,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
                                                       val ec: ExecutionContext,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
+                                                     ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -89,19 +89,13 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"[IncomeSourceReportingMethodController][handleSubmit]: Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
           Future.successful {
-            errorHandler(isAgent).showInternalServerError()
+            logWithError("Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
           }
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(
-          "[UKPropertyReportingMethodController][handleRequest]:" +
-            s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
+        logWithError(s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
     }
   }
 
@@ -110,10 +104,9 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
                                                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     updateIncomeSourceAsAdded(sessionData).flatMap {
-      case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
-        s"[ReportingMethodController][handleRequest] Error retrieving data from session, IncomeSourceType: $incomeSourceType")
+      case false =>
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          logWithError(s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         }
       case true =>
         itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -171,7 +164,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
             }
         }
       case _ =>
-        Logger("application").info("[IncomeSourceReportingMethodController][getUKPropertyReportingMethodDetails]: Latency details not available")
+        logWithInfo("Latency details not available")
         Future.successful(None)
     }
   }
@@ -189,11 +182,8 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
           invalid => handleInvalidForm(invalid, incomeSourceType, IncomeSourceId(id), isAgent),
           valid => handleValidForm(valid, incomeSourceType, IncomeSourceId(id), isAgent))
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"[IncomeSourceReportingMethodController][handleSubmit]: Could not find an incomeSourceId in session data for $incomeSourceType")
           Future.successful {
-            errorHandler(isAgent).showInternalServerError()
+            logWithError(s"Could not find an incomeSourceId in session data for $incomeSourceType")
           }
       }
     }
@@ -278,7 +268,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
   }
 
   private def handleUpdateResults(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: IncomeSourceId,
-                                  updateResults: Future[Seq[UpdateIncomeSourceResponse]]): Future[Result] = {
+                                  updateResults: Future[Seq[UpdateIncomeSourceResponse]])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     updateResults.map { results =>
       val successCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseModel])
@@ -286,13 +276,13 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
       val prefix = "[IncomeSourceReportingMethodController][handleUpdateResults]: "
 
       if (successCount == results.length) {
-        Logger("application").info(prefix + s"Successfully updated all new selected reporting methods for $incomeSourceType")
+        logWithInfo(s"Successfully updated all new selected reporting methods for $incomeSourceType")
         Redirect(redirectUrl(isAgent, incomeSourceType))
       } else if (errorCount == results.length) {
-        Logger("application").info(prefix + s"Unable to update all new selected reporting methods for $incomeSourceType")
+        logWithInfo(s"Unable to update all new selected reporting methods for $incomeSourceType")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       } else {
-        Logger("application").info(prefix + s"Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
+        logWithInfo("Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       }
     }

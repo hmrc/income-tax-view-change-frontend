@@ -26,13 +26,12 @@ import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.UIJourneySessionData
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
 
 import java.time.LocalDate
@@ -52,7 +51,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                                                         val ec: ExecutionContext,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with ImplicitDateFormatter with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
@@ -103,16 +102,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
             )
           }
         case None =>
-          Logger("application").error("[AddIncomeSourceStartDateCheckController][handleRequest]: " +
-            "Failed to get income source start date from session")
-          Future.successful(showInternalServerError(isAgent))
+          Future.successful(
+            logWithError("Failed to get income source start date from session")
+          )
       }
     }
   }.recover {
-    case ex =>
-      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleShowRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      errorHandler.showInternalServerError()
+    case ex => logWithError(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
@@ -148,16 +144,13 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
               )
           )
         case None =>
-          Logger("application").error("[AddIncomeSourceStartDateCheckController][handleSubmitRequest]: " +
-            "Failed to get income source start date from session")
-          Future.successful(showInternalServerError(isAgent))
+          Future.successful(
+            logWithError("Failed to get income source start date from session")
+          )
       }
     }
   }.recover {
-    case ex =>
-      Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      errorHandler.showInternalServerError()
+    case ex => logWithError(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def handleValidForm(validForm: form,
@@ -176,13 +169,14 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
       case (Some(form.responseYes), SelfEmployment) => updateAccountingPeriodForSE(incomeSourceStartDate, successUrl, isAgent, sessionData)
       case (Some(form.responseYes), _) => Future.successful(Redirect(successUrl))
       case _ =>
-        Logger("application").error(s"[AddIncomeSourceStartDateCheckController][handleValidForm] - Unexpected response, isAgent = $isAgent")
-        Future.successful(showInternalServerError(isAgent))
+        Future.successful {
+          logWithError("Unexpected response")
+        }
     }
   }
 
   private def removeDateFromSessionAndGoBack(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean, sessionData: UIJourneySessionData)
-                                            (implicit request: Request[_]): Future[Result] = {
+                                            (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val backUrl = getBackUrl(incomeSourceType, isAgent, isChange)
 
@@ -199,20 +193,19 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
         sessionService.setMongoData(journeySessionData).flatMap(_ => Future.successful(Redirect(backUrl)))
 
       case None =>
-        Logger("application").error("Unable to find addIncomeSourceData in session data")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          logWithError("Unable to find addIncomeSourceData in session data")
+
         }
       case _ =>
-        Logger("application").error("Unable to retrieve session data from Mongo")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          logWithError("Unable to retrieve session data from Mongo")
         }
     }
   }
 
   private def updateAccountingPeriodForSE(incomeSourceStartDate: LocalDate, successUrl: String, isAgent: Boolean, sessionData: UIJourneySessionData)
-                                         (implicit request: Request[_]): Future[Result] = {
+                                         (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     sessionData.addIncomeSourceData match {
       case Some(addIncomeSourceData) =>
@@ -227,14 +220,12 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
         sessionService.setMongoData(journeySessionData).flatMap(_ => Future.successful(Redirect(successUrl)))
 
       case None =>
-        Logger("application").error("Unable to find addIncomeSourceData in session data")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          logWithError("Unable to find addIncomeSourceData in session data")
         }
       case _ =>
-        Logger("application").error("Unable to retrieve session data from Mongo")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          logWithError("Unable to retrieve session data from Mongo")
         }
     }
   }

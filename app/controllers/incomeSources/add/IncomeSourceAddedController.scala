@@ -24,19 +24,18 @@ import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, SelfEmp
 import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker, LoggerUtil}
 import views.html.incomeSources.add.IncomeSourceAddedObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedFunctions,
-                                            val itvcErrorHandler: ItvcErrorHandler,
+                                            implicit val itvcErrorHandler: ItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: IncomeSourceAddedObligations,
                                             nextUpdatesService: NextUpdatesService,
@@ -47,7 +46,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                                             implicit val sessionService: SessionService,
                                             val ec: ExecutionContext,
                                             dateService: DateServiceInterface)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -75,18 +74,13 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
           showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart())
         )
       }) getOrElse {
-        Logger("application").error(
-          s"${if (isAgent) "[Agent]" else ""}" + s"[IncomeSourceAddedController][handleRequest] - " +
-            s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          logWithError("could not find incomeSource for IncomeSourceType: $incomeSourceType")
         }
       }
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
-          s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
-        errorHandler(isAgent).showInternalServerError()
+        logWithError(s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
     }
   }
 
@@ -109,11 +103,8 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
           }
         }
       case _ =>
-        val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix +
-          s"[IncomeSourceAddedController][handleSuccess]: Unable to retrieve Mongo session data for $incomeSourceType")
         Future.successful {
-          errorHandler(isAgent).showInternalServerError()
+          logWithError(s"Unable to retrieve Mongo session data for $incomeSourceType")
         }
     }
   }

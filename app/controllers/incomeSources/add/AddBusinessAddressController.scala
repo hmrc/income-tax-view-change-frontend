@@ -27,12 +27,11 @@ import enums.JourneyType.{Add, JourneyType}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, LoggerUtil}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,17 +39,17 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AddBusinessAddressController @Inject()(val authorisedFunctions: AuthorisedFunctions,
                                              val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                             val itvcErrorHandler: ItvcErrorHandler,
+                                             implicit val itvcErrorHandler: ItvcErrorHandler,
                                              addressLookupService: AddressLookupService,
                                              auth: AuthenticatorPredicate)
                                             (implicit
                                              val appConfig: FrontendAppConfig,
                                              val ec: ExecutionContext,
-                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                             implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                              mcc: MessagesControllerComponents,
                                              val sessionService: SessionService
                                             )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with LoggerUtil {
 
   def show(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
@@ -70,12 +69,8 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
       ) map {
         case Right(Some(location)) =>
           Redirect(location)
-        case Right(None) =>
-          Logger("application").error("[AddBusinessAddressController][handleRequest] - No redirect location returned from connector")
-          itvcErrorHandler.showInternalServerError()
-        case Left(_) =>
-          Logger("application").error("[AddBusinessAddressController][handleRequest] - Unexpected response")
-          itvcErrorHandler.showInternalServerError()
+        case Right(None) => logWithError("No redirect location returned from connector")
+        case Left(_)     => logWithError("Unexpected response")
       }
     }
   }
@@ -121,9 +116,7 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
   }.recover {
     case ex =>
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application")
-        .error(s"[AddBusinessAddressController][fetchAddress] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} ")
-      errorHandler.showInternalServerError()
+      logWithError(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
   }
 
   def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {

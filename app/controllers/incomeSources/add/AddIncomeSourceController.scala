@@ -23,11 +23,10 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.JourneyType.{Add, JourneyType}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.Logger
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, LoggerUtil}
 import views.html.incomeSources.add.AddIncomeSources
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +44,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
                                           implicit val itvcErrorHandler: ItvcErrorHandler,
                                           implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           implicit val sessionService: SessionService,
-                                          implicit override val mcc: MessagesControllerComponents) extends ClientConfirmedController
+                                          implicit override val mcc: MessagesControllerComponents) extends ClientConfirmedController with LoggerUtil
   with FeatureSwitching with IncomeSourcesUtils {
 
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
@@ -90,12 +89,12 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
             ))
           } recover {
             case ex: Exception =>
-              Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Session Error: ${ex.getMessage} - ${ex.getCause}")
-              showInternalServerError(isAgent)
+              logWithError(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
           }
         case Failure(ex) =>
-          Logger("application").error(s"[AddIncomeSourceController][handleRequest] - Error: ${ex.getMessage} - ${ex.getCause}")
-          Future(showInternalServerError(isAgent))
+          Future.successful {
+            logWithError(s"Error: ${ex.getMessage} - ${ex.getCause}")
+          }
       }
     }
   }
