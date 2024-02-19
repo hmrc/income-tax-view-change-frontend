@@ -78,13 +78,17 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         </tr>
         </thead>
         <tbody>
-        @for((payment, index) <- yearPayments.zipWithIndex) {
+        @for((payment, index) <- yearPayments.sortBy(x => x.date).reverse.zipWithIndex) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@payment.date.toLongDate</td>
                 <td class="govuk-table__cell">
                     <a class="govuk-link" href="@payment.linkUrl">
                         @messages(payment.description)
                         <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span>
+                    </a>
+                    <br>
+                    <a class="govuk-text">
+                        @messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)
                     </a>
                 </td>
                 <td class="govuk-table__cell numeric govuk-table__cell--numeric"> @payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown"))</td>
