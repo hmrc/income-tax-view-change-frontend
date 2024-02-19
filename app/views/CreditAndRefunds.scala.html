@@ -52,6 +52,9 @@
     }
 }
 
+@taxYearFrom = @{(viewModel.sortedCreditCharges.head._2.taxYear.toInt - 1)}
+@taxYearTo = @{(viewModel.sortedCreditCharges.head._2.taxYear)}
+
 @creditAndRefundRefundProgressHtml(amount: BigDecimal) = {
         <li>
             <p class="govuk-heading-s">
@@ -73,11 +76,6 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 @maybeAvailableCredit = @{
     maybeBalancesDetails.getAbsoluteAvailableCreditAmount.getOrElse(BigDecimal(0))
 }
-
-
-@taxYearFrom = @{(viewModel.sortedCreditCharges.head._2.taxYear.toInt - 1)}
-@taxYearTo = @{(viewModel.sortedCreditCharges.head._2.taxYear)}
-
 
 @getAvailableCreditContent = {
     @if(maybeAvailableCredit != 0) {
@@ -122,7 +120,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             <span class="govuk-body">
                 @messages("credit-and-refund.credit-from-balancing-charge-prt-1")
                 @messages("credit-and-refund.credit-from-balancing-charge-prt-2")
-                @messages("credit-and-refund.tax-year", taxYearFrom.toString, taxYearTo)
+                @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
             </span>
         </p>
     </li>
@@ -139,7 +137,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                 <span class="govuk-body">
                     @messages("credit-and-refund.credit-from-adjustment-prt-1")
                     @messages("credit-and-refund.credit-from-adjustment-prt-2")
-                    @messages("credit-and-refund.tax-year", taxYearFrom.toString, taxYearTo)
+                @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
                  </span>
             </p>
         </li>
@@ -156,7 +154,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                     <span class="govuk-body">
                         @messages("credit-and-refund.credit-from-earlier-tax-year")
-                        @messages("credit-and-refund.tax-year", taxYearFrom.toString, taxYearTo)
+                @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
                     </span>
                 </p>
             </li>

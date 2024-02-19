@@ -182,7 +182,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
         }
 
-      "a user has a Multiple Credit from HMRC adjustment sorted in descending of credit and tax year" in
+      "a user has a Multiple Credit from HMRC adjustment sorted in tax year" in
         new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModelMFA(),
           documentDetailWithDueDateFinancialDetailListModelMFA(outstandingAmount = Some(-1000.0))),
           balance = Some(balanceDetailsModel(
@@ -192,20 +192,19 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           isMFACreditsAndDebitsEnabled = true
         ) {
 
-          Console.println(document)
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart2) shouldBe false
           document.select("ul#credits-list li:nth-child(1)").text() shouldBe
-            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1" + " " + testTaxYearTo
-          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
             s"£1,000.00 $creditAndRefundFromHMRCTitlePart1" + " " + testTaxYearTo
+          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
+            s"£1,400.00 $creditAndRefundFromHMRCTitlePart1" + " " + testTaxYearTo
           document.select("p").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
         }
 
-      "a user has a multiple Refund claimed for full amount show sorted in descending of amount" in
+      "a user has a multiple Refund claimed for full amount" in
         new TestSetup(creditCharges = List(documentDetailWithDueDateFinancialDetailListModel(),
           documentDetailWithDueDateFinancialDetailListModel(Some(-1000.0))),
           balance = Some(balanceDetailsModel(availableCredit = Some(0))),
@@ -216,9 +215,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
           layoutContent.select("h2").first().text().contains(subHeadingWithCreditsPart1 + subHeadingWithCreditsPart3) shouldBe false
           document.select("p").get(2).select("p:nth-child(1)").first().text() shouldBe
-            s"£1,400.00 $paymentText 15 May 2019"
-          document.select("p").get(3).select("p:nth-child(1)").first().text() shouldBe
             s"£1,000.00 $paymentText 15 May 2019"
+          document.select("p").get(3).select("p:nth-child(1)").first().text() shouldBe
+            s"£1,400.00 $paymentText 15 May 2019"
           document.select("dt").eachText().contains("Total") shouldBe false
           document.select("govuk-list govuk-list--bullet").isEmpty shouldBe true
 
