@@ -53,29 +53,5 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     }
   }
 
-  def getITSAStatusDetail(itsaStatus: ItsaStatus, nino: String)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext, dateService: DateServiceInterface): Future[ITSAStatusResponseModel] = {
-
-    itsaStatusConnector.getITSAStatusDetail(
-      nino = nino,
-      taxYear = itsaStatus.taxYearRange,
-      futureYears = false,
-      history = false
-    ).flatMap {
-      case Right(itsaStatus: List[ITSAStatusResponseModel]) =>
-        Future.successful(itsaStatus.head)
-      case Left(error) =>
-        Logger("application").error(s"[ITSAStatusService][getITSAStatusDetail] $error")
-        Future.failed(new Exception("[ITSAStatusService][getITSAStatusDetail] - Failed to retrieve ITSAStatus"))
-    }
-  }
-
-  def overwriteItsaStatus(nino: Nino, taxYearRange: String, crystallisationStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("[ITSAStatusService][overwriteItsaStatus] - " +
-      s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
-    itsaStatusConnector.overwriteItsaStatus(nino, taxYearRange, crystallisationStatus)
-  }
-
 }
 

@@ -44,10 +44,6 @@ class CalculationListConnector @Inject()(val http: HttpClient,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange"
   }
 
-  def getOverwriteCalculationListUrl(nino: String, taxYearRange: String, crystallisationStatus: String): String = {
-    s"${appConfig.itvcDynamicStubUrl}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
-  }
-
   def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
@@ -102,22 +98,6 @@ class CalculationListConnector @Inject()(val http: HttpClient,
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][getCalculationList] - Response status: ${response.status}, body: ${response.body}")
           }
           CalculationListErrorModel(response.status, response.body)
-      }
-    }
-  }
-
-  def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-
-    http.GET[HttpResponse](getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus))(
-      httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
-      ec
-    ) flatMap { response =>
-      response.status match {
-        case OK =>
-          Future.successful((): Unit)
-        case _ => Future.failed(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
       }
     }
   }

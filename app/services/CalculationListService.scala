@@ -77,10 +77,4 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
     }
   }
 
-  def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("[CalculationService][overwriteCalculationList] - " +
-      s"Overwriting calculation list (1896) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
-    calculationListConnector.overwriteCalculationList(nino, taxYearRange, crystallisationStatus)
-  }
 }

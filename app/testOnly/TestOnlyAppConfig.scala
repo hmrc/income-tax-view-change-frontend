@@ -18,7 +18,7 @@ package testOnly
 
 import config.FrontendAppConfig
 import javax.inject.{Inject, Singleton}
-import play.api.{Configuration}
+import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
@@ -28,5 +28,7 @@ class TestOnlyAppConfig @Inject()(servicesConfig: ServicesConfig, config: Config
   lazy val desSimulatorUrl: String = servicesConfig.baseUrl("des-simulator")
 
   lazy val matchingStubUrl: String = servicesConfig.baseUrl("matching-stub")
+
+  lazy val optOutUserPrefixes: Seq[String] = config.get[Seq[String]]("optOutNinoPrefix")
 
 }

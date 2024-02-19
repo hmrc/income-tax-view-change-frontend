@@ -22,8 +22,10 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
+import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.{CrystallisationStatus, ItsaStatusCyMinusOne, Nino, PostedUser}
+import testOnly.services.DynamicStubService
 import testOnly.utils.UserRepository
 import testOnly.views.html.LoginPage
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
+                                      val testOnlyAppConfig: TestOnlyAppConfig,
                                       override val config: Configuration,
                                       override val env: Environment,
                                       implicit val mcc: MessagesControllerComponents,
@@ -45,6 +48,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val dynamicStubConnector: DynamicStubConnector,
                                       val customAuthConnector: CustomAuthConnector,
                                       val calculationListService: CalculationListService,
+                                      val dynamicStubService: DynamicStubService,
                                       val ITSAStatusService: ITSAStatusService,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
@@ -54,7 +58,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin, userRecords))
+      Ok(loginPage(routes.CustomLoginController.postLogin, userRecords, testOnlyAppConfig.optOutUserPrefixes.head))
     )
   }
 
@@ -113,7 +117,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
     // TODO: maybe make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
 
-    val ninoObj = models.core.Nino(nino)
+    val ninoObj = Nino(nino)
     val crystallisationStatusResult: Future[Unit] = crystallisationStatus.uploadData(nino = ninoObj)
     val itsaStatusCyMinusOneResult: Future[Unit] = cyMinusOneItsaStatus.uploadData(nino = ninoObj)
 

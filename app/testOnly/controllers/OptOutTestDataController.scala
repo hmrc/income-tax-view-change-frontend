@@ -16,32 +16,32 @@
 
 package testOnly.controllers
 
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import controllers.BaseController
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.calculationList.CalculationListResponseModel
 import models.core.Nino
-import play.api.{Configuration, Logger}
+import models.itsaStatus.ITSAStatusResponseModel
+import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, RequestHeader, Result}
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
+import play.api.libs.json.Json
+import play.api.mvc._
+import services.{CalculationListService, DateServiceInterface}
+import testOnly.models.ItsaStatusCyMinusOne
+import testOnly.services.DynamicStubService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.AuthenticatorPredicate
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-import models.itsaStatus.ITSAStatusResponseModel
-import play.api.libs.json.Json
-import testOnly.models.{CrystallisationStatus, ItsaStatusCyMinusOne}
 
 
 class OptOutTestDataController @Inject()(
                                           val auth: AuthenticatorPredicate,
                                           val appConfig: FrontendAppConfig,
                                           val calculationListService: CalculationListService,
-                                          val itsaStatusService: ITSAStatusService,
+                                          val dynamicStubService: DynamicStubService,
                                           implicit val dateService: DateServiceInterface,
                                           implicit val mcc: MessagesControllerComponents,
                                           val itvcErrorHandler: ItvcErrorHandler,
@@ -54,7 +54,7 @@ class OptOutTestDataController @Inject()(
     val cyMinusOneTaxYearRange = dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
 
     val crystallisationStatusResult: Future[CalculationListResponseModel] = calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = cyMinusOneTaxYearRange)
-    val itsaStatusCyMinusOneResult: Future[ITSAStatusResponseModel] = itsaStatusService.getITSAStatusDetail(ItsaStatusCyMinusOne(appConfig)(""), nino)
+    val itsaStatusCyMinusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(ItsaStatusCyMinusOne(appConfig)(""), nino)
 
 
     val combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel)] = for {

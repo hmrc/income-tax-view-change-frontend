@@ -18,8 +18,8 @@ package testOnly.models
 
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import models.core.Nino
 import services.{DateServiceInterface, ITSAStatusService}
+import testOnly.services.DynamicStubService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptOutCustomDataUploadHelper
 
@@ -36,10 +36,10 @@ case class ItsaStatusCyMinusOne @Inject()(appConfig: FrontendAppConfig)(status: 
   override def taxYearRange(implicit dateService: DateServiceInterface): String =
     dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
 
-  def uploadData(nino: Nino)(implicit itsaStatusService: ITSAStatusService, hc: HeaderCarrier, dateService: DateServiceInterface)
+  def uploadData(nino: Nino)(implicit dynamicStubService: DynamicStubService, hc: HeaderCarrier, dateService: DateServiceInterface)
   : Future[Unit] = {
     handleDefaultValues(status = status) {
-      itsaStatusService.overwriteItsaStatus(nino = nino, taxYearRange = taxYearRange, crystallisationStatus = status)
+      dynamicStubService.overwriteItsaStatus(nino = nino, taxYearRange = taxYearRange, crystallisationStatus = status)
     }
   }
 

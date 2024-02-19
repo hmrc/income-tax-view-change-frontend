@@ -66,27 +66,4 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
       }
     }
   }
-
-  def getOverwriteItsaStatusUrl(nino: String, taxYearRange: String, itsaStatus: String): String = {
-    s"${appConfig.itvcDynamicStubUrl}/income-tax-view-change/itsa-status/$nino/$taxYearRange/overwrite/$itsaStatus"
-  }
-
-
-  def overwriteItsaStatus(nino: Nino, taxYearRange: String, itsaStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-
-
-    http.GET[HttpResponse](getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus))(
-      httpReads,
-      headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
-      ec
-    ) flatMap { response =>
-      response.status match {
-        case OK =>
-          Future.successful((): Unit)
-        case _ =>
-          Future.failed(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
-      }
-    }
-  }
 }
