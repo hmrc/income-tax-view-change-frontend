@@ -40,7 +40,7 @@
     link: link,
     govukInsetText : GovukInsetText
 )
-@(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], viewModel: CreditAndRefundViewModel, balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
+@(viewModel: CreditAndRefundViewModel, balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
     isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
 

@@ -82,7 +82,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               isCutOverCreditsEnabled: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(
-        creditCharges,
         CreditAndRefundViewModel(creditCharges),
         balance,
         creditAndRefundType,
