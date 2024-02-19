@@ -33,7 +33,7 @@ trait LoggerUtil { self =>
     }
 
   private val formattedMessage = (isAgent: Boolean, message: String) =>
-    s"${if (isAgent) "[Agent]" else ""}[$fileName][$methodName] - $message"
+    s"[TEST]${if (isAgent) "[Agent]" else ""}[$fileName][$methodName] - $message"
 
   def logWithError(message: String, redirectCall: Option[Result] = None)
                   (implicit user: MtdItUser[_],
