@@ -121,7 +121,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         latencyDetails match {
           case Some(latencyDetails: LatencyDetails) =>
             val quarterIndicator = "Q"
-            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString
+            val currentTaxYearEnd = dateService.getCurrentTaxYearEnd.toString
             val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
             val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
             val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd

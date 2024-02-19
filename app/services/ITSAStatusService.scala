@@ -33,7 +33,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   def hasMandatedOrVoluntaryStatusCurrentYear(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    val yearEnd = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)).toString.substring(2).toInt
+    val yearEnd = dateService.getCurrentTaxYearEnd.toString.substring(2).toInt
     val yearStart = yearEnd - 1
 
     itsaStatusConnector.getITSAStatusDetail(

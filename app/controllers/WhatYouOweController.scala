@@ -64,10 +64,10 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
           creditCharges =>
 
             Ok(whatYouOwe(
-              currentDate = dateService.getCurrentDate(isTimeMachineEnabled),
+              currentDate = dateService.getCurrentDate,
               creditCharges,
               whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningBlock = whatYouOweChargesList.hasLpiWithDunningBlock,
-              currentTaxYear = dateService.getCurrentTaxYearEnd(isTimeMachineEnabled), backUrl = backUrl, utr = user.saUtr,
+              currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
               btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock,
               codingOutEnabled = codingOutEnabled,

@@ -151,7 +151,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
 
   private def getViewModel(incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId)
                           (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[IncomeSourceReportingMethodViewModel]] = {
-    val currentTaxYear = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
+    val currentTaxYear = dateService.getCurrentTaxYearEnd
     val latencyDetails = getLatencyDetails(incomeSourceType, incomeSourceId.value)
 
 

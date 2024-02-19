@@ -47,7 +47,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
       case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) =>
         val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
-        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate(isTimeMachineEnabled))
+        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate)
         val nextDueDates = dueDates.diff(overdueDates)
         val overdueDatesCount = overdueDates.size
 
@@ -125,7 +125,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
 
       val finalDecDates: Seq[DatesModel] = finalDeclarationDates.distinct.sortBy(_.inboundCorrespondenceFrom)
 
-      ObligationsViewModel(sortedObligationsByYear, eopsDates, finalDecDates, dateService.getCurrentTaxYearEnd(), showPrevTaxYears = showPreviousTaxYears)
+      ObligationsViewModel(sortedObligationsByYear, eopsDates, finalDecDates, dateService.getCurrentTaxYearEnd, showPrevTaxYears = showPreviousTaxYears)
     }
     processingRes
   }

@@ -61,7 +61,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
-    println(s"This is data: ${dateService.getCurrentDate(false)}")
+    println(s"This is data: ${dateService.getCurrentDate}")
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
@@ -84,9 +84,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
-    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-    val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
+    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd
+    val currentDate = dateService.getCurrentDate
 
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
@@ -112,7 +111,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
             case _ => Nil
           }
-          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
+          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
           paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
           displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
         } yield {

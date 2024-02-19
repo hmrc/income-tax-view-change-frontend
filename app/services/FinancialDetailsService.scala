@@ -44,7 +44,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
       case _ => List.empty[LocalDate]
     }.sortWith(_ isBefore _)
 
-    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate(isTimeMachineEnabled))
+    val overdueDates: List[LocalDate] = chargeDueDates.filter(_ isBefore dateService.getCurrentDate)
     val nextDueDates: List[LocalDate] = chargeDueDates.diff(overdueDates)
 
     (overdueDates, nextDueDates) match {
