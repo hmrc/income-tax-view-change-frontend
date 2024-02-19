@@ -115,7 +115,6 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
 
   }.recover {
     case ex =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       logWithError(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
   }
 

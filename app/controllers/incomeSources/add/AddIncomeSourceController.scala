@@ -98,8 +98,4 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
       }
     }
   }
-
-  private def showInternalServerError(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
-  }
 }

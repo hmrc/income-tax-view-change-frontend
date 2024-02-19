@@ -50,8 +50,6 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
   def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean,
                                                incomeSourceType: IncomeSourceType,
                                                cashOrAccrualsFlag: Option[String])

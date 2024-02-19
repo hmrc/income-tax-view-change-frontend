@@ -57,8 +57,6 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                                      ) extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
   lazy val backUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
     (isAgent, incomeSourceType.equals(SelfEmployment)) match {
       case (false, true) => routes.AddBusinessAddressController.show(false).url
@@ -90,7 +88,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
         case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
         case None =>
           Future.successful {
-            logWithError("Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
+            logWithError(s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
           }
       }
     }.recover {
@@ -273,7 +271,6 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     updateResults.map { results =>
       val successCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseModel])
       val errorCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseError])
-      val prefix = "[IncomeSourceReportingMethodController][handleUpdateResults]: "
 
       if (successCount == results.length) {
         logWithInfo(s"Successfully updated all new selected reporting methods for $incomeSourceType")
@@ -282,7 +279,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
         logWithInfo(s"Unable to update all new selected reporting methods for $incomeSourceType")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       } else {
-        logWithInfo("Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
+        logWithInfo(s"Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       }
     }

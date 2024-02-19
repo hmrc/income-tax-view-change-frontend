@@ -48,8 +48,6 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
                                             dateService: DateServiceInterface)
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker with LoggerUtil {
 
-  private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       handleRequest(isAgent = false, incomeSourceType)
@@ -75,7 +73,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
         )
       }) getOrElse {
         Future.successful {
-          logWithError("could not find incomeSource for IncomeSourceType: $incomeSourceType")
+          logWithError(s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
         }
       }
     } recover {
