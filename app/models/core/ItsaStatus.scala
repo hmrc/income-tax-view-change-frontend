@@ -40,7 +40,7 @@ case class ItsaStatusCyMinusOne @Inject()(appConfig: FrontendAppConfig)(status: 
     dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
 
   def uploadData(nino: Nino)(implicit itsaStatusService: ITSAStatusService, hc: HeaderCarrier, dateService: DateServiceInterface)
-  : Future[Either[Throwable, Result]] = {
+  : Future[Unit] = {
     handleDefaultValues(status = status) {
       itsaStatusService.overwriteItsaStatus(nino = nino, taxYearRange = taxYearRange, crystallisationStatus = status)
     }

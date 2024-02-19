@@ -73,24 +73,25 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
 
 
   def overwriteItsaStatus(nino: Nino, taxYearRange: String, itsaStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, Result]] = {
+                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
 
     http.GET[HttpResponse](getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
-    ) map { response =>
+    ) flatMap { response =>
       response.status match {
         case OK =>
-          Right(Ok("Overwrite successful"))
-        case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[ITSAStatusConnector][overwriteItsaStatus] - Response status: ${response.status}, body: ${response.body}")
-          } else {
-            Logger("application").warn(s"[ITSAStatusConnector][overwriteItsaStatus] - Response status: ${response.status}, body: ${response.body}")
-          }
-          Left(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
+          Future.successful((): Unit)
+        case _ =>
+          Future.failed(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
+//          if (status >= INTERNAL_SERVER_ERROR) {
+//            Logger("application").error(s"[ITSAStatusConnector][overwriteItsaStatus] - Response status: ${response.status}, body: ${response.body}")
+//          } else {
+//            Logger("application").warn(s"[ITSAStatusConnector][overwriteItsaStatus] - Response status: ${response.status}, body: ${response.body}")
+//          }
+//          Left(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
       }
     }
   }

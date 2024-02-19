@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.impl.Promise
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -76,17 +77,18 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
                 updateTestDataForOptOut(user.nino, CrystallisationStatus(appConfig)(postedUser.cyMinusOneCrystallisationStatus),
-                  ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus), postedUser.cyItsaStatus, postedUser.cyPlusOneItsaStatus).map{
-                  case Left(ex) =>
-                    val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-                    Logger("application")
-                      .error(s"[CustomLoginController][postLogin] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
-                    errorHandler.showInternalServerError()
-                  case Right(_) =>
+                  ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus), postedUser.cyItsaStatus, postedUser.cyPlusOneItsaStatus).map {
+                  case _ =>
                     Redirect(homePage)
                       .withSession(
                         SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
                           sessionAuthorityUri = auth)))
+                }.recover {
+                  case ex =>
+                    val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                    Logger("application")
+                      .error(s"[CustomLoginController][postLogin] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                    errorHandler.showInternalServerError()
                 }
 
               case code =>
@@ -108,40 +110,19 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: CrystallisationStatus, cyMinusOneItsaStatus: ItsaStatusCyMinusOne,
                                       cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier)
-  : Future[Either[Throwable, Unit]] = {
+  : Future[Unit] = {
 
     // TODO: maybe make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
 
-    println(cyItsaStatus + cyPlusOneItsaStatus)
-
-
     val ninoObj = models.core.Nino(nino)
-    val crystallisationStatusResult: Future[Either[Throwable, Result]] = crystallisationStatus.uploadData(nino = ninoObj)
-    val itsaStatusCyMinusOneResult: Future[Either[Throwable, Result]] = cyMinusOneItsaStatus.uploadData(nino = ninoObj)
+    val crystallisationStatusResult: Future[Unit] = crystallisationStatus.uploadData(nino = ninoObj)
+    val itsaStatusCyMinusOneResult: Future[Unit] = cyMinusOneItsaStatus.uploadData(nino = ninoObj)
 
     for {
-      result1 <- crystallisationStatusResult
-      result2 <- itsaStatusCyMinusOneResult
-    } yield {
-      val aggregatedResult: Either[Throwable, Unit] = for {
-        _ <- result1
-        _ <- result2
-      } yield ()
+      _ <- crystallisationStatusResult
+      _ <- itsaStatusCyMinusOneResult
+    } yield ()
 
-      aggregatedResult match {
-        case Left(ex: Throwable) => Left(ex)
-        case Right(_) => Right(Logger("application").info("[CustomLoginController][updateTestDataForOptOut] - Data was updated successfully"))
-      }
-
-    }
-
-
-
-//    crystallisationStatus.uploadData(nino = models.core.Nino(nino)).map {
-//      case Left(ex: Throwable) =>
-//        Left(ex)
-//      case Right(_) => Right(Logger("application").info("[CustomLoginController][updateTestDataForOptOut] - Data was updated successfully"))
-//    }
   }
 
 }

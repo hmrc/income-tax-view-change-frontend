@@ -25,10 +25,10 @@ import scala.concurrent.Future
 
 trait OptOutCustomDataUploadHelper {
 
-  def handleDefaultValues(status: String)(codeBlock: => Future[Either[Throwable, Result]]): Future[Either[Throwable, Result]] = {
+  def handleDefaultValues(status: String)(codeBlock: => Future[Unit]): Future[Unit] = {
     if (status == "Default") {
       Logger("application").info(s"Default was chosen by the user. There is nothing to overwrite. < Status: $status >")
-      Future.successful(Right(Ok(s"Default was chosen by the user. There is nothing to overwrite. < Status: $status >")))
+      Future.successful(Ok(s"Default was chosen by the user. There is nothing to overwrite. < Status: $status >"))
     } else {
       codeBlock
     }

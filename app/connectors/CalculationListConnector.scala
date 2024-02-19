@@ -110,23 +110,25 @@ class CalculationListConnector @Inject()(val http: HttpClient,
   }
 
   def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, Result]] = {
+                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
     http.GET[HttpResponse](getOverwriteCalculationListUrl(nino.value, taxYearRange, crystallisationStatus))(
       httpReads,
       headerCarrier.withExtraHeaders("Accept" -> "application/vnd.hmrc.2.0+json"),
       ec
-    ) map { response =>
+    ) flatMap { response =>
       response.status match {
         case OK =>
-          Right(Ok("Overwrite successful"))
-        case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
-          } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
-          }
-          Left(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
+          Future.successful((): Unit)
+        case _ => Future.failed(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
+
+        //        case status =>
+//          if (status >= INTERNAL_SERVER_ERROR) {
+//            Logger("application").error(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
+//          } else {
+//            Logger("application").warn(s"[IncomeTaxViewChangeConnector][overwriteCalculationList] - Response status: ${response.status}, body: ${response.body}")
+//          }
+//          Left(new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >"))
       }
     }
   }

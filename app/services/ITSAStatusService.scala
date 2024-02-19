@@ -70,7 +70,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   }
 
   def overwriteItsaStatus(nino: Nino, taxYearRange: String, crystallisationStatus: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[Either[Throwable, Result]] = {
+                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     Logger("application").debug("[ITSAStatusService][overwriteItsaStatus] - " +
       s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
     itsaStatusConnector.overwriteItsaStatus(nino, taxYearRange, crystallisationStatus)

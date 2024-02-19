@@ -31,7 +31,7 @@ case class CrystallisationStatus @Inject()(appConfig: FrontendAppConfig)(status:
   private def currentTaxYearRange(implicit dateService: DateServiceInterface): String = dateService.getCurrentTaxYearRange(isEnabled(TimeMachineAddYear))
 
   def uploadData(nino: Nino)(implicit calculationListService: CalculationListService, hc: HeaderCarrier, dateService: DateServiceInterface)
-  : Future[Either[Throwable, Result]] = {
+  : Future[Unit] = {
     handleDefaultValues(status = status) {
       calculationListService.overwriteCalculationList(nino = nino, taxYearRange = currentTaxYearRange, crystallisationStatus = status)
     }
