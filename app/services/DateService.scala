@@ -19,20 +19,29 @@ package services
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 
-import java.time.LocalDate
+import java.time.{Clock, Duration, LocalDate, ZoneOffset}
 import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface {
 
+  // TODO: instantiate clock depending on the configuration settings
+  val timeMachineIsOn: Boolean = frontendAppConfig.timeMachineAddYears.nonEmpty
+
+  lazy val clock: Clock = if (timeMachineIsOn) {
+    Clock.offset(Clock.systemDefaultZone.withZone(ZoneOffset.UTC), Duration.ofDays(100))
+  } else {
+    Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
+  }
+
   def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = {
     if (isTimeMachineEnabled) {
       frontendAppConfig
         .timeMachineAddYears.map(LocalDate.now().plusYears(_))
-        .getOrElse(LocalDate.now())
+        .getOrElse(LocalDate.now(clock))
     } else {
-      LocalDate.now()
+      LocalDate.now(clock)
     }
   }
 

@@ -61,6 +61,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
+    println(s"This is data: ${dateService.getCurrentDate(false)}")
     homeView(
       nextPaymentDueDate = nextPaymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
