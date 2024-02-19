@@ -91,7 +91,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
           }
         case None =>
           Future.successful {
-            logWithError("Error: Unable to find id in session")
+            logAndShowError("handleSubmit")("Error: Unable to find id in session")
           }
       }
     }

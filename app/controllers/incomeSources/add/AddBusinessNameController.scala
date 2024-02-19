@@ -104,7 +104,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       }
     }
   }.recover {
-    case ex => logWithError(s"${ex.getMessage} - ${ex.getCause}")
+    case ex => logAndShowError("handleRequest")(s"${ex.getMessage} - ${ex.getCause}")
   }
 
   def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
@@ -172,7 +172,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       )
     }
   }.recover {
-  case ex => logWithError(s"${ex.getMessage} - ${ex.getCause}")
+  case ex => logAndShowError("handleSubmitRequest")(s"${ex.getMessage} - ${ex.getCause}")
 }
 
 def changeBusinessName(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {

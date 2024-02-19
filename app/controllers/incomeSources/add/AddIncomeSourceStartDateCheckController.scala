@@ -103,12 +103,12 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
           }
         case None =>
           Future.successful(
-            logWithError("Failed to get income source start date from session")
+            logAndShowError("handleShowRequest")("Failed to get income source start date from session")
           )
       }
     }
   }.recover {
-    case ex => logWithError(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+    case ex => logAndShowError("handleShowRequest")(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
@@ -145,12 +145,12 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
           )
         case None =>
           Future.successful(
-            logWithError("Failed to get income source start date from session")
+            logAndShowError("handleSubmitRequest")("Failed to get income source start date from session")
           )
       }
     }
   }.recover {
-    case ex => logWithError(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+    case ex => logAndShowError("handleSubmitRequest")(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def handleValidForm(validForm: form,
@@ -170,7 +170,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
       case (Some(form.responseYes), _) => Future.successful(Redirect(successUrl))
       case _ =>
         Future.successful {
-          logWithError("Unexpected response")
+          logAndShowError("handleValidForm")("Unexpected response")
         }
     }
   }
@@ -194,12 +194,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
 
       case None =>
         Future.successful {
-          logWithError("Unable to find addIncomeSourceData in session data")
-
+          logAndShowError("removeDateFromSessionAndGoBack")("Unable to find addIncomeSourceData in session data")
         }
       case _ =>
         Future.successful {
-          logWithError("Unable to retrieve session data from Mongo")
+          logAndShowError("removeDateFromSessionAndGoBack")("Unable to retrieve session data from Mongo")
         }
     }
   }
@@ -221,11 +220,11 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
 
       case None =>
         Future.successful {
-          logWithError("Unable to find addIncomeSourceData in session data")
+          logAndShowError("updateAccountingPeriodForSE")("Unable to find addIncomeSourceData in session data")
         }
       case _ =>
         Future.successful {
-          logWithError("Unable to retrieve session data from Mongo")
+          logAndShowError("updateAccountingPeriodForSE")("Unable to retrieve session data from Mongo")
         }
     }
   }

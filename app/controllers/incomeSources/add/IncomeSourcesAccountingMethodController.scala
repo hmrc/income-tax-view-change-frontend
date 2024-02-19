@@ -92,7 +92,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
   }.recover {
     case ex =>
-      logWithError(s"${ex.getMessage} - ${ex.getCause}")
+      logAndShowError("handleUserActiveBusinessesCashOrAccruals")(s"${ex.getMessage} - ${ex.getCause}")
   }
 
   private def loadIncomeSourceAccountingMethod(isAgent: Boolean,
@@ -134,7 +134,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
       }
     }.recover {
       case ex: Exception =>
-        logWithError(s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
+        logAndShowError("handleUserActiveBusinessesCashOrAccruals")(s"Error getting BusinessEndDate page: - ${ex.getMessage} - ${ex.getCause}")
     }
 
 
@@ -169,7 +169,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
   }.recover {
     case ex =>
-      logWithError(s"${ex.getMessage} - ${ex.getCause}")
+      logAndShowError("handleSubmitRequest")(s"${ex.getMessage} - ${ex.getCause}")
   }
 
   private lazy val successCall: (Boolean, IncomeSourceType) => Call = { (isAgent, incomeSourceType) =>

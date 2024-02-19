@@ -73,12 +73,12 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
         )
       }) getOrElse {
         Future.successful {
-          logWithError(s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
+          logAndShowError("handleRequest")(s"could not find incomeSource for IncomeSourceType: $incomeSourceType")
         }
       }
     } recover {
       case ex: Exception =>
-        logWithError(s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
+        logAndShowError("handleRequest")(s"Error getting IncomeSourceAdded page: - ${ex.getMessage} - ${ex.getCause}, IncomeSourceType: $incomeSourceType")
     }
   }
 
@@ -102,7 +102,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
         }
       case _ =>
         Future.successful {
-          logWithError(s"Unable to retrieve Mongo session data for $incomeSourceType")
+          logAndShowError("handleSuccess")(s"Unable to retrieve Mongo session data for $incomeSourceType")
         }
     }
   }

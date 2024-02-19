@@ -83,7 +83,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       }
     }
   }.recover {
-    case ex => logWithError(s"${ex.getMessage} - ${ex.getCause}")
+    case ex => logAndShowError("handleRequest")(s"${ex.getMessage} - ${ex.getCause}")
   }
 
   def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
@@ -125,6 +125,6 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
         )
     }
   }.recover {
-    case ex => logWithError(s"${ex.getMessage} - ${ex.getCause}")
+    case ex => logAndShowError("handleSubmitRequest")(s"${ex.getMessage} - ${ex.getCause}")
   }
 }

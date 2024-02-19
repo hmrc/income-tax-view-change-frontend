@@ -91,12 +91,12 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         }
       case None =>
         Future.successful {
-          logWithError(s"Unable to construct view model for $incomeSourceType")
+          logAndShowError("handleRequest")(s"Unable to construct view model for $incomeSourceType")
         }
     }
   }.recover {
     case ex: Throwable =>
-      logWithError(s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
+      logAndShowError("handleRequest")(s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
   }
 
   private def getViewModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData)
@@ -195,12 +195,12 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
           }
         case None =>
           Future.successful {
-            logWithError(s"Unable to construct view model for $incomeSourceType")
+            logAndShowError("handleSubmit")(s"Unable to construct view model for $incomeSourceType")
           }
       }
     }
   }.recover {
     case ex: Exception =>
-      logWithError(s"${ex.getMessage}", Some(Redirect(errorRedirectUrl(isAgent, incomeSourceType))))
+      logAndShowError("handleSubmit")(s"${ex.getMessage}", Some(Redirect(errorRedirectUrl(isAgent, incomeSourceType))))
   }
 }

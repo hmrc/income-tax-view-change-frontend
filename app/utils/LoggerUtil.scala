@@ -21,37 +21,31 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import play.api.i18n.Lang.logger
 import play.api.mvc.{Call, Result}
 
-trait LoggerUtil { self =>
+trait LoggerUtil {
+  self =>
 
   val fileName: String = self.getClass.getSimpleName
 
-
-  lazy val methodName: String =
-    Thread.currentThread.getStackTrace()(14).getMethodName.split('$').toList.reverse match {
-      case List(_, methodName, _*) => methodName
-      case _ => "COULD NOT EXTRACT METHOD NAME"
-    }
-
-  private val formattedMessage = (isAgent: Boolean, message: String) =>
+  private val formattedMessage = (isAgent: Boolean, methodName: String, message: String) =>
     s"[TEST]${if (isAgent) "[Agent]" else ""}[$fileName][$methodName] - $message"
 
-  def logWithError(message: String, redirectCall: Option[Result] = None)
-                  (implicit user: MtdItUser[_],
-                   itvcErrorHandler: ItvcErrorHandler,
-                   agentItvcErrorHandler: AgentItvcErrorHandler): Result = {
+  def logAndShowError(methodName: String)(message: String, redirect: Option[Result] = None)
+                     (implicit user: MtdItUser[_],
+                      itvcErrorHandler: ItvcErrorHandler,
+                      agentItvcErrorHandler: AgentItvcErrorHandler): Result = {
 
-    logger.error(formattedMessage(user.isAgent, message))
-    redirectCall
+    logger.error(formattedMessage(user.isAgent, methodName, message))
+    redirect
       .getOrElse(
         (if (user.isAgent) itvcErrorHandler else agentItvcErrorHandler).showInternalServerError()
       )
   }
 
-  def logWithDebug(message: String)
+  def logWithDebug(message: String)(methodName: String)
                   (implicit user: MtdItUser[_]): Unit =
-    logger.debug(formattedMessage(user.isAgent, message))
+    logger.debug(formattedMessage(user.isAgent, methodName, message))
 
-  def logWithInfo(message: String)
+  def logWithInfo(message: String)(methodName: String)
                  (implicit user: MtdItUser[_]): Unit =
-    logger.info(formattedMessage(user.isAgent, message))
+    logger.info(formattedMessage(user.isAgent, methodName, message))
 }

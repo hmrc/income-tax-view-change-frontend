@@ -89,11 +89,11 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
             ))
           } recover {
             case ex: Exception =>
-              logWithError(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+              logAndShowError("handleRequest")(s"Session Error: ${ex.getMessage} - ${ex.getCause}")
           }
         case Failure(ex) =>
           Future.successful {
-            logWithError(s"Error: ${ex.getMessage} - ${ex.getCause}")
+            logAndShowError("handleRequest")(s"Error: ${ex.getMessage} - ${ex.getCause}")
           }
       }
     }

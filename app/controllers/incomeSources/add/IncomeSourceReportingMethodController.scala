@@ -88,12 +88,12 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
         case Some(id) => handleIncomeSourceIdRetrievalSuccess(incomeSourceType, id, sessionData, isAgent = isAgent)
         case None =>
           Future.successful {
-            logWithError(s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
+            logAndShowError("handleRequest")(s"Unable to retrieve incomeSourceId from session data for for $incomeSourceType")
           }
       }
     }.recover {
       case ex: Exception =>
-        logWithError(s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
+        logAndShowError("handleRequest")(s"Unable to display IncomeSourceReportingMethod page for $incomeSourceType: ${ex.getMessage} ${ex.getCause}")
     }
   }
 
@@ -104,7 +104,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     updateIncomeSourceAsAdded(sessionData).flatMap {
       case false =>
         Future.successful {
-          logWithError(s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
+          logAndShowError("handleIncomeSourceIdRetrievalSuccess")(s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         }
       case true =>
         itsaStatusService.hasMandatedOrVoluntaryStatusCurrentYear.flatMap {
@@ -162,7 +162,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
             }
         }
       case _ =>
-        logWithInfo("Latency details not available")
+        logWithInfo("getViewModel")("Latency details not available")
         Future.successful(None)
     }
   }
@@ -181,7 +181,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
           valid => handleValidForm(valid, incomeSourceType, IncomeSourceId(id), isAgent))
         case None =>
           Future.successful {
-            logWithError(s"Could not find an incomeSourceId in session data for $incomeSourceType")
+            logAndShowError("handleSubmit")(s"Could not find an incomeSourceId in session data for $incomeSourceType")
           }
       }
     }
@@ -273,13 +273,13 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
       val errorCount = results.count(_.isInstanceOf[UpdateIncomeSourceResponseError])
 
       if (successCount == results.length) {
-        logWithInfo(s"Successfully updated all new selected reporting methods for $incomeSourceType")
+        logWithInfo("handleUpdateResults")(s"Successfully updated all new selected reporting methods for $incomeSourceType")
         Redirect(redirectUrl(isAgent, incomeSourceType))
       } else if (errorCount == results.length) {
-        logWithInfo(s"Unable to update all new selected reporting methods for $incomeSourceType")
+        logWithInfo("handleUpdateResults")(s"Unable to update all new selected reporting methods for $incomeSourceType")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       } else {
-        logWithInfo(s"Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
+        logWithInfo("handleUpdateResults")(s"Successfully updated one new selected reporting method for $incomeSourceType, the other one failed")
         Redirect(errorRedirectUrl(isAgent, incomeSourceType))
       }
     }

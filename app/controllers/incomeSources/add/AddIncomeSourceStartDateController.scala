@@ -114,7 +114,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         )
       }
     }.recover {
-      case ex => logWithError(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+      case ex => logAndShowError("handleShowRequest")(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
     }
   }
 
@@ -142,7 +142,7 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
       )
     }
   }.recover {
-    case ex => logWithError(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
+    case ex => logAndShowError("handleSubmitRequest")(s"${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
   }
 
   def handleValidFormData(formData: DateFormElement, incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean)
