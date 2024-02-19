@@ -47,6 +47,7 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
 
     val mockCreditService: CreditService = mock(classOf[CreditService])
     val mockRepaymentService: RepaymentService = mock(classOf[RepaymentService])
+    val taxYear = "2017 to 2018 tax year"
 
     val controller = new CreditAndRefundController(
       authorisedFunctions = mockAuthService,
@@ -137,28 +138,28 @@ class CreditAndRefundControllerSpec extends MockAuthenticationPredicate with Moc
         val doc: Document = Jsoup.parse(contentAsString(result))
         doc.select("#main-content").select("li:nth-child(1)")
           .select("p").first().text() shouldBe "£250.00 " + messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
-          messages("credit-and-refund.credit-from-balancing-charge-prt-2") + " 0"
+          taxYear
         doc.select("#main-content").select("li:nth-child(2)")
           .select("p").first().text() shouldBe "£125.00 " + messages("credit-and-refund.credit-from-balancing-charge-prt-1") + " " +
-          messages("credit-and-refund.credit-from-balancing-charge-prt-2") + " 1"
+          taxYear
         doc.select("#main-content").select("li:nth-child(3)")
-          .select("p").first().text() shouldBe "£1,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 2"
+          .select("p").first().text() shouldBe "£1,000.00 " + messages("credit-and-refund.credit-from-adjustment-prt-1") + " " +
+          taxYear
         doc.select("#main-content").select("li:nth-child(4)")
-          .select("p").first().text() shouldBe "£800.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 3"
+          .select("p").first().text() shouldBe "£800.00 " + messages("credit-and-refund.credit-from-adjustment-prt-1") + " " +
+          taxYear
         doc.select("#main-content").select("li:nth-child(5)")
-          .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-hmrc-title-prt-2") + " 4"
+          .select("p").first().text() shouldBe "£100.00 " + messages("credit-and-refund.credit-from-adjustment-prt-1") + " " +
+          taxYear
         doc.select("#main-content").select("li:nth-child(6)")
-          .select("p").first().text() shouldBe "£2,000.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-earlier-tax-year") + " 5"
+          .select("p").first().text() shouldBe "£2,000.00 " +
+          messages("credit-and-refund.credit-from-earlier-tax-year") + " " + taxYear
         doc.select("#main-content").select("li:nth-child(7)")
-          .select("p").first().text() shouldBe "£700.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-earlier-tax-year") + " 6"
+          .select("p").first().text() shouldBe "£700.00 " +
+          messages("credit-and-refund.credit-from-earlier-tax-year") + " " + taxYear
         doc.select("#main-content").select("li:nth-child(8)")
-          .select("p").first().text() shouldBe "£200.00 " + messages("credit-and-refund.credit-from-hmrc-title-prt-1") + " " +
-          messages("credit-and-refund.credit-from-earlier-tax-year") + " 7"
+          .select("p").first().text() shouldBe "£200.00 " +
+          messages("credit-and-refund.credit-from-earlier-tax-year") + " " + taxYear
         doc.select("#main-content").select("li:nth-child(9)")
           .select("p").first().text() shouldBe "£500.00 " + messages("credit-and-refund.payment") + " 15 June 2018"
         doc.select("#main-content").select("li:nth-child(10)")
