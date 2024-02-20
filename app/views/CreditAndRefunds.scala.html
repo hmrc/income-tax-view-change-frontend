@@ -28,6 +28,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import cats.instances.string._
 @import cats.syntax.eq._
+@import models.creditsandrefunds.CreditAndRefundViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -39,25 +40,9 @@
     link: link,
     govukInsetText : GovukInsetText
 )
-@(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)], balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
+@(viewModel: CreditAndRefundViewModel, balance: Option[BalanceDetails], creditAndRefundType: Option[UnallocatedCreditType],
     isAgent: Boolean = false, backUrl: String, isMFACreditsAndDebitsEnabled: Boolean = false, isCutOverCreditsEnabled: Boolean = false)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 @import implicitDateFormatter.longDate
-
-@getControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
-    if(isAgent) {
-        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(credit.transactionId)
-    } else {
-        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(credit.transactionId)
-    }
-}
-
-@getCreditsSummaryControllerHref(credit: DocumentDetail, isAgent: Boolean) = @{
-    if(isAgent) {
-        controllers.routes.CreditsSummaryController.showAgentCreditsSummary(credit.taxYear.toInt)
-    } else {
-        controllers.routes.CreditsSummaryController.showCreditsSummary(credit.taxYear.toInt)
-    }
-}
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
@@ -66,6 +51,9 @@
         controllers.routes.WhatYouOweController.show().url
     }
 }
+
+@taxYearFrom = @{(viewModel.sortedCreditCharges.head._2.taxYear.toInt - 1)}
+@taxYearTo = @{(viewModel.sortedCreditCharges.head._2.taxYear)}
 
 @creditAndRefundRefundProgressHtml(amount: BigDecimal) = {
         <li>
@@ -78,7 +66,7 @@
 }
 
 @maybeCreditChargesHead = @{
-    creditCharges.headOption.getOrElse(throw MissingFieldException("Credit Charges"))
+    viewModel.creditCharges.headOption.getOrElse(throw MissingFieldException("Credit Charges"))
 }
 
 @maybeBalancesDetails = @{
@@ -89,33 +77,6 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     maybeBalancesDetails.getAbsoluteAvailableCreditAmount.getOrElse(BigDecimal(0))
 }
 
-@getCreditsSummaryLink = {
-    @if(maybeCreditChargesHead._2.getCreditType == Some(MfaCreditType)) {
-        @link(
-            link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
-            outerMessage = ".",
-            messageKey = messages("credit-and-refund.credit-from-hmrc-title-prt-2"),
-            classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
-        )
-    } else if(maybeCreditChargesHead._2.getCreditType == Some(CutOverCreditType)) {
-        @link(
-            link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
-            outerMessage = ".",
-            messageKey = messages("credit-and-refund.credit-from-earlier-tax-year"),
-            classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
-        )
-    } else if(maybeCreditChargesHead._2.getCreditType == Some(BalancingChargeCreditType)) {
-        @link(
-            link = s"${getCreditsSummaryControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
-            outerMessage = ".",
-            messageKey = messages("credit-and-refund.credit-from-balancing-charge-prt-2"),
-            classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
-        )
-    } else {
-        throw MissingFieldException("Credit type")
-    }
-}
-
 @getAvailableCreditContent = {
     @if(maybeAvailableCredit != 0) {
         <h2 class="govuk-heading-s">
@@ -123,7 +84,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
             @maybeAvailableCredit.toCurrency
             <!--Checks if there are any items in the list, depending on that ":" or "." message is used.-->
             @{
-                val listSize = creditCharges.filter(x => {
+                val listSize = viewModel.creditCharges.filter(x => {
                         if(x._2.getCreditType == Some(MfaCreditType))
                             isMFACreditsAndDebitsEnabled
                         else if(x._2.getCreditType == Some(CutOverCreditType))
@@ -131,7 +92,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         else
                             true
                     }).size
-                if( listSize != 0 || balance.get.firstPendingAmountRequested != None || balance.get.secondPendingAmountRequested != None){
+                if( listSize != 1 || balance.get.firstPendingAmountRequested != None || balance.get.secondPendingAmountRequested != None){
                     <span class="govuk-body">{messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-2" else "credit-and-refund.subHeading.has-credits-2")}</span>
                 }else{
                     <span class="govuk-body">{messages(if(isAgent) "credit-and-refund.agent.subHeading.has-credits-3" else "credit-and-refund.subHeading.has-credits-3")}</span>
@@ -152,13 +113,14 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 @getBalancingChargeCreditContent(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
     <li>
         <p class="govuk-heading-s">
-            @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
             <span class="govuk-body">
-                 @messages("credit-and-refund.credit-from-balancing-charge-prt-1")
-                 <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)" class="govuk-link">
-                    @messages("credit-and-refund.credit-from-balancing-charge-prt-2")
-                    <span class="govuk-visually-hidden"> @index</span>
-                 </a>
+                @messages("credit-and-refund.credit")
+            </span>
+                @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+            <span class="govuk-body">
+                @messages("credit-and-refund.credit-from-balancing-charge-prt-1")
+                @messages("credit-and-refund.credit-from-balancing-charge-prt-2")
+                @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
             </span>
         </p>
     </li>
@@ -168,13 +130,14 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     @if(isMFACreditsAndDebitsEnabled) {
         <li>
             <p class="govuk-heading-s">
-                @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
                 <span class="govuk-body">
-                     @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                     <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)" class="govuk-link">
-                        @messages("credit-and-refund.credit-from-hmrc-title-prt-2")
-                        <span class="govuk-visually-hidden"> @index</span>
-                     </a>
+                    @messages("credit-and-refund.credit")
+                </span>
+                    @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                <span class="govuk-body">
+                    @messages("credit-and-refund.credit-from-adjustment-prt-1")
+                    @messages("credit-and-refund.credit-from-adjustment-prt-2")
+                @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
                  </span>
             </p>
         </li>
@@ -185,12 +148,13 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     @if(credit._2.getCreditType == Some(CutOverCreditType) && isCutOverCreditsEnabled) {
             <li>
                 <p class="govuk-heading-s">
-                    @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
-                    <span class="govuk-body"> @messages("credit-and-refund.credit-from-hmrc-title-prt-1")
-                        <a id="credit-and-refund-@index" href="@getCreditsSummaryControllerHref(credit._1.documentDetail, isAgent)"
-                            class="govuk-link">@messages("credit-and-refund.credit-from-earlier-tax-year")
-                            <span class="govuk-visually-hidden"> @index</span>
-                        </a>
+                    <span class="govuk-body">
+                        @messages("credit-and-refund.credit")
+                    </span>
+                        @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
+                    <span class="govuk-body">
+                        @messages("credit-and-refund.credit-from-earlier-tax-year")
+                @messages("credit-and-refund.tax-year", (credit._2.taxYear.toInt - 1).toString, credit._2.taxYear)
                     </span>
                 </p>
             </li>
@@ -202,9 +166,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         <p class="govuk-heading-s">
             @credit._1.documentDetail.paymentOrChargeCredit.getOrElse(throw MissingFieldException("Payment Or Charge Credit")).toCurrencyString
             <span class="govuk-body">@messages("credit-and-refund.payment")
-                <a href="@getControllerHref(credit._1.documentDetail, isAgent)"
-                   class="govuk-link">@credit._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
-                </a>
+                @credit._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
             </span>
         </p>
     </li>
@@ -218,7 +180,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
 
 @getListOfCreditsAndRefunds = {
     <ul class="govuk-list govuk-list--bullet" id="credits-list">
-        @for((credit, index) <- creditCharges.zipWithIndex) {
+        @for((credit, index) <- viewModel.sortedCreditCharges.zipWithIndex) {
             @if(credit._2.getCreditType == Some(BalancingChargeCreditType)) {
                 @getBalancingChargeCreditContent(credit, index)
             } else if(credit._2.getCreditType == Some(MfaCreditType)) {
@@ -246,41 +208,40 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     @h1(msg = "credit-and-refund.heading")
 
     @if(balance.isDefined){
-        @creditAndRefundType match {
-            case Some(UnallocatedCreditFromOnePayment) => {
-                <h2 class="govuk-heading-s">
-                    <span class="govuk-body">
-                        @messages("credit-and-refund.subHeading.unallocated-credits-one-payment-1")
-                        <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                        @messages(if(isAgent) "credit-and-refund.agent.unallocated-credits-one-payment-2" else "credit-and-refund.subHeading.unallocated-credits-one-payment-2")
-                    </span>
-                    <span class="govuk-body">
-                        @link(
-                            link = s"${getControllerHref(maybeCreditChargesHead._1.documentDetail, isAgent)}",
-                            outerMessage = ".",
-                            messageKey = maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate,
-                            classes = "govuk-body govuk-!-font-weight-bold govuk-link--no-visited-state"
-                        )
-                    </span>
-                </h2>
-            }
-            case Some(UnallocatedCreditFromSingleCreditItem) => {
-                <h2 class="govuk-heading-s">
-                    <span class="govuk-body">
-                        @messages("credit-and-refund.subHeading.unallocated-credits-single-credit-1")
-                        <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
-                            @messages(if(isAgent) "credit-and-refund.agent.unallocated-credits-single-credit-2" else "credit-and-refund.subHeading.unallocated-credits-single-credit-2")
-                        </span>
-                    <span class="govuk-body">
-                      @getCreditsSummaryLink
-                    </span>
-                </h2>
-            }
-            case None => {
-              @getAvailableCreditContent
-              @getListOfCreditsAndRefunds
-            }
-        }
+        @getAvailableCreditContent
+
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                  @messages("credit-and-refund.subHeading-source")
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                @creditAndRefundType match {
+                    case Some(UnallocatedCreditFromOnePayment) => {
+                        <h2 class="govuk-heading-s">
+                            <span class="govuk-body" id="unallocated-payment">
+                                <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
+                                @messages("credit-and-refund.payment")
+                                @maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                            </span>
+                        </h2>
+                    }
+                    case Some(UnallocatedCreditFromSingleCreditItem) => {
+                        <h2 class="govuk-heading-s">
+                            <span class="govuk-body" id="unallocated-single-credit">
+                                <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
+                                @messages("credit-and-refund.credit-from-adjustment-prt-1")
+                                @messages("credit-and-refund.tax-year", taxYearFrom.toString, taxYearTo)
+                            </span>
+                        </h2>
+                    }
+                    case None => {
+                        @getListOfCreditsAndRefunds
+                    }
+                }
+            </div>
+        </details>
 
         @if(maybeAvailableCredit != 0){
             @p(){
@@ -294,10 +255,10 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                     @p(){
                         @messages(if(isAgent)"credit-and-refund.agent.bullet-one-prt-1" else "credit-and-refund.bullet-one-prt-1")
                         @link(link = getWhatYouOwe(isAgent),
-                            messageKey = (if(isAgent)"credit-and-refund.agent.bullet-one-link" else "credit-and-refund.bullet-one-link"),
-                            target = None)
+                        messageKey = (if(isAgent)"credit-and-refund.agent.bullet-one-link" else "credit-and-refund.bullet-one-link"),
+                        target = None)
                         @messages("credit-and-refund.bullet-one-prt-2")
-                        }
+                    }
                 </li>
                 <li>
                     @messages("credit-and-refund.bullet-two-prt-1")
