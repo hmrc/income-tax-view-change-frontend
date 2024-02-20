@@ -32,4 +32,10 @@ case class PaymentHistoryEntry(date: LocalDate,
     val endYear = dateService.getAccountingPeriodEndDate(date).getYear
     TaxYear(endYear-1, endYear)
   }
+
+  def isCredit: Boolean = {
+    description == "paymentHistory.mfaCredit" ||
+      description == "paymentHistory.balancingChargeCredit" ||
+      description == "paymentHistory.paymentFromEarlierYear"
+  }
 }
