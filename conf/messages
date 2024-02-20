@@ -1021,7 +1021,6 @@ paymentHistory.info.2                                           = This will be a
 paymentHistory.textLink1                                        = Self Assessment service
 paymentHistory.button                                           = {0} payments
 paymentHistory.paymentToHmrc                                    = Payment you made to HMRC
-paymentHistory.balancingChargeCredit                            = Balancing charge credit
 paymentHistory.paymentFromEarlierYear                           = Credit from an earlier tax year
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
 paymentHistory.taxYear                                          = {0} to {1} tax year
