@@ -28,6 +28,8 @@ import utils.AuthenticatorPredicate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
+
+//THIS CONTROLLER IS A PLACEHOLDER FOR THE PAGE TO BE BUILT IN MISUV-7077 (new income sources landing page)
 class NewIncomeSourcesHomePageController @Inject()(auth: AuthenticatorPredicate,
                                              val authorisedFunctions: FrontendAuthorisedFunctions,
                                              val checkSessionTimeout: SessionTimeoutPredicate)
