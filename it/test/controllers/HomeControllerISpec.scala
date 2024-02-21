@@ -157,9 +157,9 @@ class HomeControllerISpec extends ComponentSpecBase {
 
         When(s"I call GET /report-quarterly/income-and-expenses/view")
         val res = IncomeTaxViewChangeFrontend.get("/")
-        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250" +
-          "&completionURL=http://localhost:9081/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=" +
-          "http://localhost:9081/report-quarterly/income-and-expenses/view/cannot-view-page"
+//        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250" +
+//          "&completionURL=http://localhost:9081/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=" +
+//          "http://localhost:9081/report-quarterly/income-and-expenses/view/cannot-view-page"
         Then("the http response for an unauthorised user is returned")
 
         res should have(
