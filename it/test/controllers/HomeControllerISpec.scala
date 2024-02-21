@@ -18,10 +18,10 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.{IncomeSources, IncomeSourcesNewJourney, NavBarFs}
+import config.featureswitch.{IncomeSources, IncomeSourcesNewJourney, IvUplift, NavBarFs}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuthStub, IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
 import play.api.test.FakeRequest
@@ -148,23 +148,25 @@ class HomeControllerISpec extends ComponentSpecBase {
       }
     }
 
-// Test unstable due to lazy router eval behaving differently in different environments
-// eg sometimes the reverse route url has the route prefix (but in prod, it does not)
-//    "low confidence level user" should {
-//      "redirect to ivuplift service" in {
-//        enable(IvUplift)
-//        AuthStub.stubAuthorised(Some(50))
-//
-//        When(s"I call GET /report-quarterly/income-and-expenses/view")
-//        val res = IncomeTaxViewChangeFrontend.get("/")
-//        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250&completionURL=/report-quarterly/income-and-expenses/view/uplift-success&failureURL=/report-quarterly/income-and-expenses/view/cannot-view-page"
-//        Then("the http response for an unauthorised user is returned")
-//        res should have(
-//          httpStatus(SEE_OTHER),
-//          redirectURI(expectedRedirectUrl)
-//        )
-//      }
-//    }
+    "low confidence level user" should {
+      "redirect to ivuplift service" in {
+        enable(IvUplift)
+        AuthStub.stubAuthorised(Some(50))
+
+        When(s"I call GET /report-quarterly/income-and-expenses/view")
+        val res = IncomeTaxViewChangeFrontend.get("/")
+        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250" +
+          "&completionURL=http://localhost:9081/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=" +
+          "http://localhost:9081/report-quarterly/income-and-expenses/view/cannot-view-page"
+        Then("the http response for an unauthorised user is returned")
+
+        //println(expectedRedirectUrl)
+        res should have(
+          httpStatus(SEE_OTHER),
+          redirectURI(expectedRedirectUrl)
+        )
+      }
+    }
     unauthorisedTest("")
   }
 
