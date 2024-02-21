@@ -635,7 +635,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               pageTitleAgent("home.agent.heading"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
-              elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your Businesses")
+              elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
             )
           }
         }
