@@ -466,3 +466,7 @@ GET          /income-sources/add/foreign-property-accounting-method             
 GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
+
+
+GET          /manage-your-businesses                                    controllers.incomeSources.NewIncomeSourcesHomePageController.show()
+GET          /agents/manage-your-businesses                             controllers.incomeSources.NewIncomeSourcesHomePageController.showAgent()
