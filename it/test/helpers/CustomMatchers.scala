@@ -292,7 +292,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         redirectLocation.contains(expectedValue),
         "redirectURI",
         expectedValue,
-        redirectLocation.map(_.replaceAll("http://localhost:9948/", "")).getOrElse("")
+        redirectLocation.getOrElse("")
       )
     }
   }
