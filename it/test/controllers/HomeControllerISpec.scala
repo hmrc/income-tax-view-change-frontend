@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
 import auth.MtdItUser
-import config.featureswitch.NavBarFs
+import config.featureswitch.{IncomeSources, IncomeSourcesNewJourney, NavBarFs}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -42,6 +42,7 @@ class HomeControllerISpec extends ComponentSpecBase {
     "Authorised" should {
       "render the home page with the payment due date" in {
         disable(NavBarFs)
+        enable(IncomeSources)
         Given("I wiremock stub a successful Income Source Details response with multiple business and property")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
@@ -74,7 +75,8 @@ class HomeControllerISpec extends ComponentSpecBase {
           httpStatus(OK),
           pageTitleIndividual("home.heading"),
           elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates("4")),
-          elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments("6"))
+          elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments("6")),
+          elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
         )
 
         verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(6)), Right(4)).detail)
@@ -82,6 +84,46 @@ class HomeControllerISpec extends ComponentSpecBase {
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, otherTestSelfEmploymentId, singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testPropertyId, singleObligationOverdueModel(testPropertyId).obligations).detail)
         verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, testMtditid, singleObligationCrystallisationModel.obligations).detail)
+      }
+      "render the home page with Your Business tile when new IS journey FS enabled" in {
+        disable(NavBarFs)
+        enable(IncomeSources)
+        enable(IncomeSourcesNewJourney)
+        Given("I wiremock stub a successful Income Source Details response with multiple business and property")
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+
+        val currentObligations: ObligationsModel = ObligationsModel(Seq(
+          singleObligationQuarterlyReturnModel(testSelfEmploymentId),
+          singleObligationQuarterlyReturnModel(otherTestSelfEmploymentId),
+          singleObligationOverdueModel(testPropertyId),
+          singleObligationCrystallisationModel
+        ))
+
+        And("I wiremock stub obligation responses")
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, currentObligations)
+
+        And("I stub a successful financial details response")
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2017-04-06", "2018-04-05")(OK,
+          testValidFinancialDetailsModelJson(3400.00, 2000.00))
+        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2018-04-06", "2019-04-05")(OK,
+          testValidFinancialDetailsModelJson(3400.00, 1000.00, "2019"))
+
+        When("I call GET /report-quarterly/income-and-expenses/view")
+        val res = IncomeTaxViewChangeFrontend.getHome
+
+        verifyIncomeSourceDetailsCall(testMtditid)
+
+        verifyNextUpdatesCall(testNino)
+
+        Then("the result should have a HTTP status of OK (200) and the Income Tax home page")
+
+        res should have(
+          httpStatus(OK),
+          pageTitleIndividual("home.heading"),
+          elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates("4")),
+          elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments("6")),
+          elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
+        )
       }
 
       "render the ISE page when receive an error from the backend" in {
@@ -105,6 +147,7 @@ class HomeControllerISpec extends ComponentSpecBase {
         )
       }
     }
+
 // Test unstable due to lazy router eval behaving differently in different environments
 // eg sometimes the reverse route url has the route prefix (but in prod, it does not)
 //    "low confidence level user" should {
