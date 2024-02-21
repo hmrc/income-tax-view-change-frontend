@@ -25,7 +25,7 @@ import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
-import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
+import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

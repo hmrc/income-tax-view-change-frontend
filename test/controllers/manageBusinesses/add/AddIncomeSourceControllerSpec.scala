@@ -53,7 +53,7 @@ class AddIncomeSourceControllerSpec extends MockAuthenticationPredicate
   with TestSupport {
 
   val controller = new AddIncomeSourceController(
-    app.injector.instanceOf[views.html.incomeSources.add.AddIncomeSources],
+    app.injector.instanceOf[views.html.manageBusinesses.add.AddIncomeSources],
     app.injector.instanceOf[SessionTimeoutPredicate],
     mockAuthService,
     mockIncomeSourceDetailsService,

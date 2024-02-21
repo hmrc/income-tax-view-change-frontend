@@ -31,7 +31,7 @@ import play.api.mvc._
 import services.{SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
-import views.html.incomeSources.manage.{ManageIncomeSources, ReportingMethodChangeError}
+import views.html.manageBusinesses.manage.{ManageIncomeSources, ReportingMethodChangeError}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -36,7 +36,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.incomeSources.add.IncomeSourceReportingMethod
+import views.html.manageBusinesses.add.IncomeSourceReportingMethod
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

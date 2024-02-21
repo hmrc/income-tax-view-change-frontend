@@ -33,7 +33,7 @@ import services.{DateService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
+import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheck
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}

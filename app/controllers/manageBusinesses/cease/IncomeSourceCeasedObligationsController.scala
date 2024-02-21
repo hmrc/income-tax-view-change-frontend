@@ -33,7 +33,7 @@ import services.{DateServiceInterface, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.incomeSources.cease.IncomeSourceCeasedObligations
+import views.html.manageBusinesses.cease.IncomeSourceCeasedObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

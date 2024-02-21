@@ -30,7 +30,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.TestSupport
-import views.html.incomeSources.YouCannotGoBackError
+import views.html.manageBusinesses.YouCannotGoBackError
 
 import scala.concurrent.Future
 

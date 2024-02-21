@@ -42,7 +42,7 @@ import testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
+import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetails
 
 import java.time.LocalDate
 import scala.concurrent.Future

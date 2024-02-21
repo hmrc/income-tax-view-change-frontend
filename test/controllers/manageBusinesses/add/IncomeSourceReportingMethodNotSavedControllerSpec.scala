@@ -34,7 +34,7 @@ import testConstants.BaseTestConstants.testAgentAuthRetrievalSuccess
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, ukPlusForeignPropertyAndSoleTraderNoLatency}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
+import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
 
 import scala.concurrent.Future
 

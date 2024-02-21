@@ -39,7 +39,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesA
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import testUtils.TestSupport
 import utils.IncomeSourcesUtils
-import views.html.incomeSources.manage.ManageObligations
+import views.html.manageBusinesses.manage.ManageObligations
 
 import java.time.LocalDate
 import scala.concurrent.Future

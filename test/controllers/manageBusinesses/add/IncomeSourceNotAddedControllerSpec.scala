@@ -30,7 +30,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.HttpClient
-import views.html.incomeSources.add.IncomeSourceNotAddedError
+import views.html.manageBusinesses.add.IncomeSourceNotAddedError
 
 import scala.concurrent.Future
 

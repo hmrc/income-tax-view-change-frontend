@@ -37,7 +37,7 @@ import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 import testUtils.TestSupport
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.AddIncomeSourceStartDate
+import views.html.manageBusinesses.add.AddIncomeSourceStartDate
 
 import java.time.LocalDate
 import scala.concurrent.Future

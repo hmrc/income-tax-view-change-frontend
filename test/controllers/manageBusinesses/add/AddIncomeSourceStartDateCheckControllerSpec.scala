@@ -41,7 +41,7 @@ import play.api.test.Helpers._
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSessionId}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.incomeSources.add.AddIncomeSourceStartDateCheck
+import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheck
 
 import java.time.LocalDate
 import scala.concurrent.Future

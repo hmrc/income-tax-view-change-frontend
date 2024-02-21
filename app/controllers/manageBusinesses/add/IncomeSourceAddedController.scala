@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.incomeSources.add.IncomeSourceAddedObligations
+import views.html.manageBusinesses.add.IncomeSourceAddedObligations
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

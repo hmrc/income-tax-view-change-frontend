@@ -34,7 +34,7 @@ import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{addedIncomeSourceUIJourneySessionData, businessesAndPropertyIncome, completedUIJourneySessionData, emptyUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import views.html.incomeSources.add.AddBusinessTrade
+import views.html.manageBusinesses.add.AddBusinessTrade
 
 import scala.concurrent.Future
 

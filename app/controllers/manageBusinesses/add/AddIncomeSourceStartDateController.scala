@@ -33,7 +33,7 @@ import services.{DateService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.AddIncomeSourceStartDate
+import views.html.manageBusinesses.add.AddIncomeSourceStartDate
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

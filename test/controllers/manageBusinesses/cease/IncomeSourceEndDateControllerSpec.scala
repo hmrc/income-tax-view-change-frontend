@@ -38,7 +38,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.incomeSources.cease.IncomeSourceEndDate
+import views.html.manageBusinesses.cease.IncomeSourceEndDate
 
 import scala.concurrent.Future
 

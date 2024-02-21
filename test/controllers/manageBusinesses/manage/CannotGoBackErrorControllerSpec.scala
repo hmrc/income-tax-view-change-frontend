@@ -28,7 +28,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
 import testUtils.TestSupport
-import views.html.incomeSources.YouCannotGoBackError
+import views.html.manageBusinesses.YouCannotGoBackError
 
 class CannotGoBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockSessionService {
 

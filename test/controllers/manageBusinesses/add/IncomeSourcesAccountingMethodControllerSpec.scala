@@ -38,7 +38,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompleted
 import testUtils.TestSupport
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.IncomeSourcesAccountingMethod
+import views.html.manageBusinesses.add.IncomeSourcesAccountingMethod
 
 import scala.concurrent.Future
 

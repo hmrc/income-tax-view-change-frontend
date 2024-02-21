@@ -31,7 +31,7 @@ import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.errorPages.CustomNotFoundError
-import views.html.incomeSources.add.IncomeSourcesAccountingMethod
+import views.html.manageBusinesses.add.IncomeSourcesAccountingMethod
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

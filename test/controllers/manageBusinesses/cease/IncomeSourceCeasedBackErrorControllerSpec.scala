@@ -25,7 +25,7 @@ import org.scalatest.Assertion
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import testUtils.TestSupport
-import views.html.incomeSources.cease.IncomeSourceCeasedBackError
+import views.html.manageBusinesses.cease.IncomeSourceCeasedBackError
 
 class IncomeSourceCeasedBackErrorControllerSpec extends TestSupport with MockAuthenticationPredicate with MockIncomeSourceDetailsPredicate with MockSessionService {
 

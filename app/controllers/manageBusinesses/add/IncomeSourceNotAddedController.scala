@@ -24,7 +24,7 @@ import play.api.mvc._
 import services.CreateBusinessDetailsService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
-import views.html.incomeSources.add.IncomeSourceNotAddedError
+import views.html.manageBusinesses.add.IncomeSourceNotAddedError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

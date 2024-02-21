@@ -30,7 +30,7 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.incomeSources.cease.DeclarePropertyCeased
+import views.html.manageBusinesses.cease.DeclarePropertyCeased
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

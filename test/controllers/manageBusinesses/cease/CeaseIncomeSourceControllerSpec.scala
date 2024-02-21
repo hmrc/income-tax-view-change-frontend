@@ -44,7 +44,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthenticationPredicate with M
   with MockSessionService {
 
   val controller = new CeaseIncomeSourceController(
-    app.injector.instanceOf[views.html.incomeSources.cease.CeaseIncomeSources],
+    app.injector.instanceOf[views.html.manageBusinesses.cease.CeaseIncomeSources],
     mockAuthService,
     app.injector.instanceOf[ItvcErrorHandler],
     app.injector.instanceOf[AgentItvcErrorHandler],

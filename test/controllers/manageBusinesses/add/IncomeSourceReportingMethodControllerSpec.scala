@@ -39,7 +39,7 @@ import services.{CalculationListService, DateService, ITSAStatusService, UpdateI
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
-import views.html.incomeSources.add.IncomeSourceReportingMethod
+import views.html.manageBusinesses.add.IncomeSourceReportingMethod
 
 import scala.concurrent.Future
 

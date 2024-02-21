@@ -25,7 +25,7 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.incomeSources.cease.IncomeSourceCeasedBackError
+import views.html.manageBusinesses.cease.IncomeSourceCeasedBackError
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

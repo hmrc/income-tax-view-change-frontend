@@ -37,7 +37,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpClient
-import views.html.incomeSources.cease.DeclarePropertyCeased
+import views.html.manageBusinesses.cease.DeclarePropertyCeased
 
 import scala.concurrent.Future
 

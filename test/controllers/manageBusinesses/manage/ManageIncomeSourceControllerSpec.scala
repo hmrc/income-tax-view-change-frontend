@@ -33,7 +33,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndiv
 import testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
 import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 import testUtils.TestSupport
-import views.html.incomeSources.manage.ManageIncomeSources
+import views.html.manageBusinesses.manage.ManageIncomeSources
 
 import scala.concurrent.Future
 

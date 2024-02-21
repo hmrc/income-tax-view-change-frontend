@@ -37,7 +37,7 @@ import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
+import views.html.manageBusinesses.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

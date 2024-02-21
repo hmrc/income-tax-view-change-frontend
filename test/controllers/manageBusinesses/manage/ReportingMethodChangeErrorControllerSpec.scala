@@ -28,7 +28,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testIndividualAuthSuccessWithSaUtrResponse, testSelfEmploymentId}
-import views.html.incomeSources.manage.{ManageIncomeSources, ReportingMethodChangeError}
+import views.html.manageBusinesses.manage.{ManageIncomeSources, ReportingMethodChangeError}
 
 import scala.concurrent.Future
 

@@ -36,7 +36,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.UpdateIncomeSourceService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
-import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
+import views.html.manageBusinesses.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import scala.concurrent.Future
 

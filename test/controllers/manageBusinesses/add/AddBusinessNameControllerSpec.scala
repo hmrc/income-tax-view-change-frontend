@@ -35,7 +35,7 @@ import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import views.html.incomeSources.add.AddBusinessName
+import views.html.manageBusinesses.add.AddBusinessName
 
 import scala.concurrent.Future
 

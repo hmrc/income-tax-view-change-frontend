@@ -549,6 +549,352 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/income-sources/manage/manage-foreign-property-cannot-go-back")
   }
 
+
+  // TODO: Replace IncomeTaxViewChangeFrontend with this implementation
+  object IncomeTaxViewChangeFrontendManageBusinesses {
+    def get(uri: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      When(s"I call GET /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies), "X-Session-ID" -> testSessionId)
+        .get().futureValue
+    }
+
+    def getWithHeaders(uri: String, headers: (String, String)*): WSResponse = {
+      buildClient(uri)
+        .withHttpHeaders(headers: _*)
+        .get().futureValue
+    }
+
+    def post(uri: String, additionalCookies: Map[String, String] = Map.empty)(body: Map[String, Seq[String]]): WSResponse = {
+      When(s"I call POST /report-quarterly/income-and-expenses/view" + uri)
+      buildClient(uri)
+        .withFollowRedirects(false)
+        .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),
+          "Csrf-Token" -> "nocheck",
+          "X-Session-ID" -> testSessionId)
+        .post(body).futureValue
+    }
+
+    def getCreditAndRefunds(): WSResponse = get("/claim-refund")
+
+    def getTaxYears: WSResponse = get("/tax-years")
+
+    def getTaxYearSummary(year: String): WSResponse = get(s"/tax-year-summary/$year")
+
+    def getCalculationPoller(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse =
+      getWithCalcIdInSession(s"${if (isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
+
+    def getFinalTaxCalculationPoller(taxYear: String, additionalCookies: Map[String, String], isAgent: Boolean = false): WSResponse = {
+      val agentString = if (isAgent) "/agents" else ""
+      getWithCalcIdInSession(s"$agentString/$taxYear/final-tax-overview/calculate", additionalCookies)
+    }
+
+    def getCalculationPollerWithoutAwait(year: String, additionalCookies: Map[String, String], isAgent: Boolean = false): Future[WSResponse] =
+      getWithCalcIdInSessionAndWithoutAwait(s"${if (isAgent) "/agents" else ""}/calculation/$year/submitted", additionalCookies)
+
+    def getIncomeSummary(year: String): WSResponse = get(s"/$year/income")
+
+    def getForecastIncomeSummary(year: String): WSResponse = get(s"/$year/forecast-income")
+
+    def getTaxDueSummary(year: String): WSResponse = get(s"/$year/tax-calculation")
+
+    def getForecastTaxCalcSummary(year: String): WSResponse = get(s"/$year/forecast-tax-calculation")
+
+    def getDeductionsSummary(year: String): WSResponse = get(s"/$year/allowances-and-deductions")
+
+    def getNextUpdates: WSResponse = get(s"/next-updates")
+
+    def getPreviousObligations: WSResponse = get(s"/previous-obligations")
+
+    def getBtaPartial: WSResponse = get(s"/partial")
+
+    def getHome: WSResponse = get("/")
+
+    def getPaymentsDue: WSResponse = get("/what-you-owe?origin=PTA")
+
+    def getChargeSummary(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id")
+
+    def getChargeSummaryLatePayment(taxYear: String, id: String): WSResponse = get(s"/tax-years/$taxYear/charge?id=$id&latePaymentCharge=true")
+
+    def getPay(amountInPence: BigDecimal): WSResponse = get(s"/payment?amountInPence=$amountInPence")
+
+    def getPaymentHistory: WSResponse = get(s"/payment-refund-history")
+
+    def getMessagesCheck: WSResponse = get(s"/test-only/message-check")
+
+    def getPaymentAllocationCharges(docNumber: String): WSResponse = get(s"/payment-made-to-hmrc?documentNumber=$docNumber")
+
+    def getCreditsSummary(calendarYear: String): WSResponse = get(s"/credits-from-hmrc/$calendarYear")
+
+    def getRefundToTaxPayer(repaymentRequestNumber: String): WSResponse = get(s"/refund-to-taxpayer/$repaymentRequestNumber ")
+
+    def getCeaseUKProperty: WSResponse = get("/manage-your-businesses/cease/uk-property-declare")
+
+    def getCeaseIncomeSourcesIndividual: WSResponse = get("/manage-your-businesses/cease/cease-an-income-source")
+
+    def postCeaseUKProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/uk-property-declare")(
+      answer.fold(Map.empty[String, Seq[String]])(
+        declaration => DeclarePropertyCeasedForm.form(UkProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+      )
+    )
+
+    def getBusinessEndDate: WSResponse = get(s"/manage-your-businesses/cease/business-end-date?id=$testSelfEmploymentIdHashed")
+
+    def getUKPropertyEndDate: WSResponse = get("/manage-your-businesses/cease/uk-property-end-date")
+
+    def getCeaseForeignProperty: WSResponse = get("/manage-your-businesses/cease/foreign-property-declare")
+
+    def postCeaseForeignProperty(answer: Option[String]): WSResponse = post("/manage-your-businesses/cease/foreign-property-declare")(
+      answer.fold(Map.empty[String, Seq[String]])(
+        declaration => DeclarePropertyCeasedForm.form(ForeignProperty).fill(DeclarePropertyCeasedForm(Some(declaration), "csrfToken")).data.map { case (k, v) => (k, Seq(v)) }
+      )
+    )
+
+    def getForeignPropertyEndDate: WSResponse = get("/manage-your-businesses/cease/foreign-property-end-date")
+
+    def getForeignPropertyAddedObligations: WSResponse = {
+      get(
+        uri = s"/manage-your-businesses/add/foreign-property-added"
+      )
+    }
+
+
+    def getAddBusinessStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/manage-your-businesses/add/change-business-start-date-check", additionalCookies
+      )
+    }
+
+    def getAddForeignPropertyStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/manage-your-businesses/add/change-foreign-property-start-date-check", additionalCookies
+      )
+    }
+
+    def getAddUKPropertyStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/manage-your-businesses/add/change-uk-property-start-date-check", additionalCookies
+      )
+    }
+
+    def postForeignPropertyAddedObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/add/foreign-property-added", additionalCookies)(Map.empty)
+    }
+
+    def getAddBusinessName: WSResponse = getWithHeaders("/manage-your-businesses/add/business-name",
+      "X-Session-ID" -> testSessionId)
+
+    def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/add/business-name", additionalCookies)(Map.empty)
+    }
+
+    def getAddBusinessTrade: WSResponse = getWithHeaders("/manage-your-businesses/add/business-trade",
+      "X-Session-ID" -> testSessionId)
+
+    def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/add/business-trade", additionalCookies)(Map.empty)
+    }
+
+    def getChangeAddBusinessTrade: WSResponse = getWithHeaders("/manage-your-businesses/add/change-business-trade",
+      "X-Session-ID" -> testSessionId)
+
+    def getAddBusinessStartDate: WSResponse = get("/manage-your-businesses/add/business-start-date")
+
+    def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(
+        uri = "/manage-your-businesses/add/business-start-date-check", additionalCookies
+      )
+    }
+
+    def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/add/business-start-date-check",
+        additionalCookies = additionalCookies)(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(SelfEmployment.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddForeignPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/manage-your-businesses/add/foreign-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(ForeignProperty.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddBusinessStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/manage-your-businesses/add/change-business-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(SelfEmployment.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddUKPropertyStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/manage-your-businesses/add/change-uk-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(UkProperty.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddForeignPropertyStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/manage-your-businesses/add/change-foreign-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(ForeignProperty.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def postAddUKPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(
+        uri = s"/manage-your-businesses/add/uk-property-start-date-check",
+        additionalCookies = additionalCookies
+      )(
+        answer.fold(Map.empty[String, Seq[String]])(
+          selection => AddIncomeSourceStartDateCheckForm(UkProperty.addStartDateCheckMessagesPrefix)
+            .fill(AddIncomeSourceStartDateCheckForm(Some(selection))).data.map { case (k, v) => (k, Seq(v)) }
+        )
+      )
+    }
+
+    def getAddBusinessObligations: WSResponse = {
+      get(
+        uri = s"/manage-your-businesses/add/business-added"
+      )
+    }
+
+    def postAddedBusinessObligations(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/add/business-added", additionalCookies)(Map.empty)
+    }
+
+    def getCheckCeaseUKPropertyDetails: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/uk-property-check-details")
+
+    def postCheckCeaseUKPropertyDetails: WSResponse =
+      post("/manage-your-businesses/cease/uk-property-check-details")(Map.empty)
+
+    def getManageIncomeSource: WSResponse = get("/manage-your-businesses/manage/view-and-manage-income-sources")
+
+    def getConfirmSoleTraderBusinessReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/confirm-you-want-to-report?id=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)
+    }
+
+    def getConfirmUKPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/confirm-you-want-to-report-uk-property?taxYear=$taxYear&changeTo=$changeTo", additionalCookies)
+    }
+
+    def getConfirmForeignPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/confirm-you-want-to-report-foreign-property?taxYear=$taxYear&changeTo=$changeTo", additionalCookies)
+    }
+
+    def postConfirmSoleTraderBusinessReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/manage-your-businesses/manage/confirm-you-want-to-report?id=$testSelfEmploymentId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+    }
+
+    def postConfirmUKPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/manage-your-businesses/manage/confirm-you-want-to-report-uk-property?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+    }
+
+    def postConfirmForeignPropertyReportingMethod(taxYear: String, changeTo: String, additionalCookies: Map[String, String] = Map.empty)(formData: Map[String, Seq[String]]): WSResponse = {
+      post(s"/manage-your-businesses/manage/confirm-you-want-to-report-foreign-property?id=$testPropertyIncomeId&taxYear=$taxYear&changeTo=$changeTo", additionalCookies)(formData)
+    }
+
+    def getManageSEObligations(changeTo: String, taxYear: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      get(s"/manage-your-businesses/manage/business-will-report?changeTo=$changeTo&taxYear=$taxYear", additionalCookies)
+    }
+
+    def getManageUKObligations(changeTo: String, taxYear: String): WSResponse = {
+      get(s"/manage-your-businesses/manage/uk-property-will-report?changeTo=$changeTo&taxYear=$taxYear")
+    }
+
+    def getManageFPObligations(changeTo: String, taxYear: String): WSResponse = {
+      get(s"/manage-your-businesses/manage/foreign-property-will-report?changeTo=$changeTo&taxYear=$taxYear")
+    }
+
+    def postManageObligations(mode: String, additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      post(s"/manage-your-businesses/manage/$mode-will-report", additionalCookies)(Map.empty)
+    }
+
+    def getCheckCeaseForeignPropertyDetails: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/foreign-property-check-details")
+
+    def postCheckCeaseForeignPropertyDetails: WSResponse =
+      post(s"/manage-your-businesses/cease/foreign-property-check-details/")(Map.empty)
+
+
+    def postAddBusinessReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/manage-your-businesses/add/business-reporting-method?id=$testSelfEmploymentId", additionalCookies = additionalCookies)(formData)
+    }
+
+    def postAddUKPropertyReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/manage-your-businesses/add/uk-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
+    }
+
+    def postAddForeignPropertyReportingMethod(form: IncomeSourceReportingMethodForm)(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
+      val formData = form.toFormMap.map { case (k, v) => (k -> Seq(v.getOrElse(""))) }
+      post(s"/manage-your-businesses/add/foreign-property-reporting-method?id=$testPropertyIncomeId", additionalCookies = additionalCookies)(formData)
+    }
+
+    def getCheckCeaseBusinessDetails: WSResponse =
+      getWithClientDetailsInSession("/manage-your-businesses/cease/business-check-details")
+
+    def postCheckCeaseBusinessDetails: WSResponse =
+      post("/manage-your-businesses/cease/business-check-details")(Map.empty)
+
+    def getForeignPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-foreign-property-success", session)
+
+    def getUkPropertyCeasedObligations(session: Map[String, String]): WSResponse = get(uri = "/manage-your-businesses/cease/cease-uk-property-success", session)
+
+    def getBusinessCeasedObligations: WSResponse = get(uri = "/manage-your-businesses/cease/cease-business-success")
+
+    def getAddChangeBusinessAddress: WSResponse =
+      get("/manage-your-businesses/add/change-business-address-lookup")
+
+    def getAddBusinessAddress: WSResponse =
+      get("/manage-your-businesses/add/business-address")
+
+    def getSEReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-business-reporting-method-not-saved", session)
+
+    def getUkPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-uk-property-reporting-method-not-saved", session)
+
+    def getForeignPropertyReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-foreign-property-reporting-method-not-saved", session)
+
+    def getAddIncomeSource(): WSResponse = get(uri = s"/manage-your-businesses/add/new-income-sources")
+
+    def getCeaseSECannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-business-cannot-go-back")
+
+    def getCeaseUKCannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-uk-property-cannot-go-back")
+
+    def getCeaseFPCannotGoBack(): WSResponse = get("/manage-your-businesses/cease/cease-foreign-property-cannot-go-back")
+
+    def getManageSECannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-business-cannot-go-back")
+
+    def getManageUKPropertyCannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-uk-property-cannot-go-back")
+
+    def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-foreign-property-cannot-go-back")
+  }
+
   def unauthorisedTest(uri: String): Unit = {
     "unauthorised" should {
 
@@ -557,7 +903,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
         isAuthorisedUser(false)
 
         When(s"I call GET /report-quarterly/income-and-expenses/view$uri")
-        val res = IncomeTaxViewChangeFrontend.get(uri)
+        val res = IncomeTaxViewChangeFrontendManageBusinesses.get(uri)
 
         Then("the http response for an unauthorised user is returned")
         res should have(

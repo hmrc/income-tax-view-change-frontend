@@ -31,7 +31,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.incomeSources.cease.CeaseCheckIncomeSourceDetails
+import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetails
 
 import java.time.LocalDate
 import javax.inject.Inject

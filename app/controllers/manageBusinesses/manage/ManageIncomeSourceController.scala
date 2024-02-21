@@ -27,7 +27,7 @@ import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import utils.{AuthenticatorPredicate, IncomeSourcesUtils}
-import views.html.incomeSources.manage.ManageIncomeSources
+import views.html.manageBusinesses.manage.ManageIncomeSources
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

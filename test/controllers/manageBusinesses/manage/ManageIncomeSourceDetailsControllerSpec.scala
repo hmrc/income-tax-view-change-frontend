@@ -40,7 +40,7 @@ import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testSelfE
 import testConstants.BusinessDetailsTestConstants.address
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
 import testUtils.TestSupport
-import views.html.incomeSources.manage.ManageIncomeSourceDetails
+import views.html.manageBusinesses.manage.ManageIncomeSourceDetails
 
 import scala.concurrent.Future
 
