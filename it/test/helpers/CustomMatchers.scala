@@ -283,7 +283,8 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
       }
     }
 
-  def redirectURI(expectedValue: String): HavePropertyMatcher[WSResponse, String] = new HavePropertyMatcher[WSResponse, String] {
+  def redirectURI(expectedValue: String,
+                  replacePrefix: Boolean = false): HavePropertyMatcher[WSResponse, String] = new HavePropertyMatcher[WSResponse, String] {
     def apply(response: WSResponse) = {
       val redirectLocation: Option[String] = response.header("Location")
       Then(s"the redirect location should be '$expectedValue'")

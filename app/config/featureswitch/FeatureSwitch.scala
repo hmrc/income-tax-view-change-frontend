@@ -41,7 +41,8 @@ object FeatureSwitch {
     PaymentHistoryRefunds,
     TimeMachineAddYear,
     IncomeSources,
-    CalendarQuarterTypes
+    CalendarQuarterTypes,
+    IncomeSourcesNewJourney
   )
 
   def apply(str: String): FeatureSwitch =
@@ -127,4 +128,10 @@ case object IncomeSources extends FeatureSwitch {
 case object CalendarQuarterTypes extends FeatureSwitch {
   override val name = s"$prefix.enable-calendar-quarter-types"
   override val displayText = "Calendar Quarter Types"
+}
+
+
+case object IncomeSourcesNewJourney extends FeatureSwitch {
+  override val name = s"$prefix.enable-income-sources-new-journey"
+  override val displayText = "Income Sources New Journey"
 }

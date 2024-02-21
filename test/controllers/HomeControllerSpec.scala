@@ -17,7 +17,7 @@
 package controllers
 
 import audit.mocks.MockAuditingService
-import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, IncomeSources}
+import config.featureswitch.{CreditsRefundsRepay, FeatureSwitching, IncomeSources, IncomeSourcesNewJourney}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
@@ -410,6 +410,28 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       document.select("#income-sources-tile > div > p:nth-child(4) > a").text() should not be messages("home.incomeSources.ceaseIncomeSource.view")
       document.select("#income-sources-tile > div > p:nth-child(4) > a").attr("href") should not be controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     }
+    "display the Income Sources tile with title Your Businesses and new link when new journey FS is enabled" in new Setup {
+      enable(IncomeSources)
+      enable(IncomeSourcesNewJourney)
+      mockGetDueDates(Right(futureDueDates))
+      setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
+      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
+        .thenReturn(Future.successful(List(FinancialDetailsModel(
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
+          financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
+            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
+        ))))
+      setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
+      val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+      status(result) shouldBe Status.OK
+      val document: Document = Jsoup.parse(contentAsString(result))
+      document.title shouldBe homePageTitle
+      document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
+      document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.newJourney.view")
+      document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.incomeSources.routes.NewIncomeSourcesHomePageController.show().url
+    }
+
     "display the available credit when CreditsAndRefundsRepay FS is enabled" in new Setup {
       disableAllSwitches()
       enable(CreditsRefundsRepay)
