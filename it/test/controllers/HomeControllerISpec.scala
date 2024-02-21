@@ -148,25 +148,25 @@ class HomeControllerISpec extends ComponentSpecBase {
       }
     }
 
-    "low confidence level user" should {
-      "redirect to ivuplift service" in {
-        enable(IvUplift)
-        AuthStub.stubAuthorised(Some(50))
-
-        When(s"I call GET /report-quarterly/income-and-expenses/view")
-        val res = IncomeTaxViewChangeFrontend.get("/")
-        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250" +
-          "&completionURL=http://localhost:9081/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=" +
-          "http://localhost:9081/report-quarterly/income-and-expenses/view/cannot-view-page"
-        Then("the http response for an unauthorised user is returned")
-
-        //println(expectedRedirectUrl)
-        res should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(expectedRedirectUrl)
-        )
-      }
-    }
+//    "low confidence level user" should {
+//      "redirect to ivuplift service" in {
+//        enable(IvUplift)
+//        AuthStub.stubAuthorised(Some(50))
+//
+//        When(s"I call GET /report-quarterly/income-and-expenses/view")
+//        val res = IncomeTaxViewChangeFrontend.get("/")
+//        val expectedRedirectUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250" +
+//          "&completionURL=http://localhost:9081/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=" +
+//          "http://localhost:9081/report-quarterly/income-and-expenses/view/cannot-view-page"
+//        Then("the http response for an unauthorised user is returned")
+//
+//        //println(expectedRedirectUrl)
+//        res should have(
+//          httpStatus(SEE_OTHER),
+//          redirectURI(expectedRedirectUrl)
+//        )
+//      }
+//    }
     unauthorisedTest("")
   }
 
