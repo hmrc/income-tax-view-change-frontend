@@ -33,9 +33,8 @@ case class PaymentHistoryEntry(date: LocalDate,
     TaxYear(endYear-1, endYear)
   }
 
-  def isCredit: Boolean = {
-    description == "paymentHistory.mfaCredit" ||
-      description == "paymentHistory.balancingChargeCredit" ||
-      description == "paymentHistory.paymentFromEarlierYear"
-  }
+  private val creditDescriptions = Seq("paymentHistory.mfaCredit",
+    "paymentHistory.balancingChargeCredit", "paymentHistory.paymentFromEarlierYear")
+
+  def isCredit: Boolean = creditDescriptions.contains(description)
 }
