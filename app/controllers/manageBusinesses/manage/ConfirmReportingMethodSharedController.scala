@@ -36,7 +36,7 @@ import play.api.mvc._
 import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.incomeSources.manage.{ConfirmReportingMethod, ManageIncomeSources}
 
 import javax.inject.Inject
@@ -55,7 +55,7 @@ class ConfirmReportingMethodSharedController @Inject()(val manageIncomeSources: 
                                                        override implicit val mcc: MessagesControllerComponents,
                                                        implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                        implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
-  with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   def show(taxYear: String,
            changeTo: String,

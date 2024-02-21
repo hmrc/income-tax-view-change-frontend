@@ -24,7 +24,7 @@ import enums.JourneyType.{Add, JourneyType}
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.incomeSources.YouCannotGoBackError
 
 import javax.inject.Inject
@@ -38,7 +38,7 @@ class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: A
                                                       val ec: ExecutionContext,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                      val sessionService: SessionService) extends ClientConfirmedController with IncomeSourcesUtils with JourneyChecker {
+                                                      val sessionService: SessionService) extends ClientConfirmedController with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)

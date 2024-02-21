@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.incomeSources.cease.DeclarePropertyCeased
 
 import javax.inject.Inject
@@ -45,16 +45,16 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
                                                 val itvcErrorHandler: ItvcErrorHandler,
                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                                )
-  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
-      val backUrl: String = if (isAgent) controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url else
-        controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
-      val postAction: Call = if (isAgent) controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType) else
-        controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
+      val backUrl: String = if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url else
+        controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
+      val postAction: Call = if (isAgent) controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType) else
+        controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
 
       Future.successful(Ok(view(
         declarePropertyCeasedForm = DeclarePropertyCeasedForm.form(incomeSourceType),

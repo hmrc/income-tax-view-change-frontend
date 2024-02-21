@@ -45,9 +45,9 @@ class IncomeSourceNotAddedController @Inject()(val authorisedFunctions: Authoris
 
     val incomeSourceRedirect: Call =
       if (isAgent)
-        controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent()
+        controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
       else
-        controllers.incomeSources.add.routes.AddIncomeSourceController.show()
+        controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
 
     Future.successful(Ok(incomeSourceNotAddedError(
       isAgent,

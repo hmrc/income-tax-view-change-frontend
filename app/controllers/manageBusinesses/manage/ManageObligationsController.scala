@@ -141,8 +141,8 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
   private lazy val successPostUrl = (isAgent: Boolean) => {
-    if (isAgent) controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit()
-    else controllers.incomeSources.manage.routes.ManageObligationsController.submit()
+    if (isAgent) controllers.manageBusinesses.manage.routes.ManageObligationsController.agentSubmit()
+    else controllers.manageBusinesses.manage.routes.ManageObligationsController.submit()
   }
 
   def handleRequest(incomeSourceType: IncomeSourceType, isAgent: Boolean, taxYear: String, changeTo: String, incomeSourceId: Option[IncomeSourceId])
@@ -209,11 +209,11 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
   def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit request =>
-      Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false)))
+      Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(false)))
   }
 
   def agentSubmit: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true)))
+      Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(true)))
   }
 }

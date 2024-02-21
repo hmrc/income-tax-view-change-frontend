@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.incomeSources.add.AddBusinessTrade
 
 import javax.inject.{Inject, Singleton}
@@ -47,7 +47,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
                                            implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                            implicit override val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   private def getBackURL(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
@@ -77,7 +77,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
         BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
       val backURL = getBackURL(isAgent, isChange)
-      val postAction = controllers.incomeSources.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
+      val postAction = controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(isAgent, isChange)
 
       Future.successful {
         Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL))

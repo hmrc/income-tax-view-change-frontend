@@ -32,7 +32,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyChecker}
+import utils.{AuthenticatorPredicate, IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.incomeSources.manage.ManageIncomeSourceDetails
 
 import javax.inject.{Inject, Singleton}
@@ -51,7 +51,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                                                    (implicit val ec: ExecutionContext,
                                                     implicit override val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig)
-  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
+  extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
 
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent) {
@@ -72,7 +72,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             sources = user.incomeSources,
             isAgent = isAgent,
             incomeSourceIdHashMaybe = None,
-            backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url,
+            backUrl = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url,
             incomeSourceType = incomeSourceType
           )
         }
@@ -96,7 +96,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                   case Right(_) => handleRequest(
                     sources = user.incomeSources,
                     isAgent = isAgent,
-                    backUrl = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url,
+                    backUrl = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url,
                     incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
                     incomeSourceType = SelfEmployment
                   )

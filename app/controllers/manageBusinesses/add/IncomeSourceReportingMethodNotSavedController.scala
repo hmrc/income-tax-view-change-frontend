@@ -46,9 +46,9 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunc
 
     val action: Call =
       if (isAgent)
-        controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
+        controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType)
       else
-        controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType)
+        controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType)
 
     Future.successful(Ok(view(incomeSourceType = incomeSourceType, continueAction = action, isAgent = isAgent)))
   }
