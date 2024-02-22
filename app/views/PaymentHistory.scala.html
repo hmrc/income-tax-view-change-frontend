@@ -86,10 +86,12 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                         @messages(payment.description)
                         <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span>
                     </a>
+                    @if(payment.isCredit) {
                     <br>
                     <a class="govuk-text">
                         @messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)
                     </a>
+                    }
                 </td>
                 <td class="govuk-table__cell numeric govuk-table__cell--numeric"> @payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown"))</td>
             </tr>

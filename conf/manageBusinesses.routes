@@ -1,7 +1,10 @@
 
 ########################################################################################################################################################
-#                                                               Income Sources                                                                         #
+#                                                            Manage your businesses                                                                        #
 ########################################################################################################################################################
+
+GET          /manage-your-businesses                                              controllers.incomeSources.NewIncomeSourcesHomePageController.show()
+GET          /agents/manage-your-businesses                                       controllers.incomeSources.NewIncomeSourcesHomePageController.showAgent()
 
 ##################################################################    Add    ###########################################################################
 
