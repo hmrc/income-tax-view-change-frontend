@@ -49,13 +49,18 @@ class OptOutTestDataController @Inject()(
                                         )
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  def retrieveData(nino: String)(implicit hc: HeaderCarrier, dateService: DateServiceInterface, request: Request[_]): Future[Result] = {
+  private def retrieveData(nino: String)(implicit hc: HeaderCarrier, dateService: DateServiceInterface, request: Request[_]): Future[Result] = {
 
     val cyMinusOneTaxYearRange = dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
-
-    val crystallisationStatusResult: Future[CalculationListResponseModel] = calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = cyMinusOneTaxYearRange)
+    val cyMinusOneTaxYearEnd = dateService.getCurrentTaxYearMinusOneEnd(isEnabled(TimeMachineAddYear))
+    val crystallisationStatusResult: Future[CalculationListResponseModel] = {
+      if (cyMinusOneTaxYearEnd >= 2024) {
+      calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = cyMinusOneTaxYearRange)
+      } else {
+        calculationListService.getLegacyCalculationList(nino = Nino(nino), taxYearEnd = cyMinusOneTaxYearEnd.toString)
+      }
+    }
     val itsaStatusCyMinusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(ItsaStatusCyMinusOne(appConfig)(""), nino)
-
 
     val combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel)] = for {
       crystallisationStatusResponse <- crystallisationStatusResult

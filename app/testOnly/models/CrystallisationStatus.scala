@@ -28,12 +28,12 @@ import scala.concurrent.Future
 
 case class CrystallisationStatus @Inject()(appConfig: FrontendAppConfig)(status: String) extends OptOutCustomDataUploadHelper with FeatureSwitching {
 
-  private def currentTaxYearRange(implicit dateService: DateServiceInterface): String = dateService.getCurrentTaxYearRange(isEnabled(TimeMachineAddYear))
+  private def currentTaxYearMinusOneRange(implicit dateService: DateServiceInterface): String = dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
 
   def uploadData(nino: Nino)(implicit dynamicStubService: DynamicStubService, hc: HeaderCarrier, dateService: DateServiceInterface)
   : Future[Unit] = {
     handleDefaultValues(status = status) {
-      dynamicStubService.overwriteCalculationList(nino = nino, taxYearRange = currentTaxYearRange, crystallisationStatus = status)
+      dynamicStubService.overwriteCalculationList(nino = nino, taxYearRange = currentTaxYearMinusOneRange, crystallisationStatus = status)
     }
   }
 }

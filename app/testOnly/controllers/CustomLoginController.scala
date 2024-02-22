@@ -79,19 +79,20 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                updateTestDataForOptOut(user.nino, CrystallisationStatus(appConfig)(postedUser.cyMinusOneCrystallisationStatus),
-                  ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus), postedUser.cyItsaStatus, postedUser.cyPlusOneItsaStatus).map {
-                  case _ =>
-                    Redirect(homePage)
-                      .withSession(
-                        SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-                          sessionAuthorityUri = auth)))
-                }.recover {
-                  case ex =>
-                    val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-                    Logger("application")
-                      .error(s"[CustomLoginController][postLogin] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
-                    errorHandler.showInternalServerError()
+                if (postedUser.cyItsaStatus.isDefined) {
+                  updateTestDataForOptOut(user.nino, CrystallisationStatus(appConfig)(postedUser.cyMinusOneCrystallisationStatus.get),
+                    ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus.get), postedUser.cyItsaStatus.get, postedUser.cyPlusOneItsaStatus.get).map {
+                    _ =>
+                      successRedirect(bearer, auth, homePage)
+                  }.recover {
+                    case ex =>
+                      val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                      Logger("application")
+                        .error(s"[CustomLoginController][postLogin] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                      errorHandler.showInternalServerError()
+                  }
+                } else {
+                  Future.successful(successRedirect(bearer, auth, homePage))
                 }
 
               case code =>
@@ -100,6 +101,13 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
         )
       }
     )
+  }
+
+  private def successRedirect(bearer: String, auth: String, homePage: String): Result = {
+    Redirect(homePage)
+      .withSession(
+        SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+          sessionAuthorityUri = auth)))
   }
 
   val showCss: Action[AnyContent] = Action.async { implicit request =>

@@ -53,6 +53,14 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
         accountingPeriodEndDate.plusYears(1)
       }
     }
+
+    override def getCurrentTaxYearMinusOneEnd(isTimeMachineEnabled: Boolean): Int = ???
+
+    override def getCurrentTaxYearRange(isTimeMachineEnabled: Boolean): String = ???
+
+    override def getCurrentTaxYearMinusOneRange(isTimeMachineEnabled: Boolean): String = ???
+
+    override def getCurrentTaxYearPlusOneRange(isTimeMachineEnabled: Boolean): String = ???
   }
 
   val ukPropertyFormFactory = new UKPropertyEndDateForm(testDateService)

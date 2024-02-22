@@ -16,7 +16,7 @@
 
 package testOnly.models
 
-import play.api.data.Forms.{boolean, mapping, text}
+import play.api.data.Forms.{boolean, mapping, optional, text}
 import play.api.data.{Form, Mapping}
 import play.api.libs.json.{Json, OFormat}
 
@@ -48,10 +48,10 @@ object UserRecord {
 
 case class PostedUser(nino: String,
                       isAgent: Boolean,
-                      cyMinusOneCrystallisationStatus: String,
-                      cyMinusOneItsaStatus: String,
-                      cyItsaStatus: String,
-                      cyPlusOneItsaStatus: String
+                      cyMinusOneCrystallisationStatus: Option[String],
+                      cyMinusOneItsaStatus: Option[String],
+                      cyItsaStatus: Option[String],
+                      cyPlusOneItsaStatus: Option[String]
                      )
 
 object PostedUser {
@@ -60,10 +60,10 @@ object PostedUser {
         mapping(
           "nino" -> text,
           "Agent" -> boolean,
-          "cyMinusOneCrystallisationStatus" -> text,
-          "cyMinusOneItsaStatus" -> text,
-          "cyItsaStatus" -> text,
-          "cyPlusOneItsaStatus" -> text
+          "cyMinusOneCrystallisationStatus" -> optional(text),
+          "cyMinusOneItsaStatus" -> optional(text),
+          "cyItsaStatus" -> optional(text),
+          "cyPlusOneItsaStatus" -> optional(text)
         )(PostedUser.apply)(PostedUser.unapply)
       )
 }

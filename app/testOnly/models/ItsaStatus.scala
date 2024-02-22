@@ -18,7 +18,7 @@ package testOnly.models
 
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
-import services.{DateServiceInterface, ITSAStatusService}
+import services.DateServiceInterface
 import testOnly.services.DynamicStubService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.OptOutCustomDataUploadHelper

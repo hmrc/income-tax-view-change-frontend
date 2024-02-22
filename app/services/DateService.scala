@@ -41,6 +41,11 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     if (isBeforeLastDayOfTaxYear(isTimeMachineEnabled)) currentDate.getYear else currentDate.getYear + 1
   }
 
+  def getCurrentTaxYearMinusOneEnd(isTimeMachineEnabled: Boolean): Int = {
+    val currentDate = getCurrentDate(isTimeMachineEnabled)
+    if (isBeforeLastDayOfTaxYear(isTimeMachineEnabled)) currentDate.getYear - 1 else currentDate.getYear
+  }
+
   def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean): LocalDate = {
     val currentDate = getCurrentDate(isTimeMachineEnabled)
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, APRIL, 6))) LocalDate.of(currentDate.getYear - 1, APRIL, 6)
@@ -103,6 +108,8 @@ trait DateServiceInterface {
 
   def getCurrentTaxYearEnd(isTimeMachineEnabled: Boolean = false): Int
 
+  def getCurrentTaxYearMinusOneEnd(isTimeMachineEnabled: Boolean = false): Int
+
   def getCurrentTaxYearStart(isTimeMachineEnabled: Boolean = false): LocalDate
 
   def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean
@@ -112,7 +119,6 @@ trait DateServiceInterface {
   def getCurrentTaxYearRange(isTimeMachineEnabled: Boolean = false): String
 
   def getCurrentTaxYearMinusOneRange(isTimeMachineEnabled: Boolean = false): String
-
 
   def getCurrentTaxYearPlusOneRange(isTimeMachineEnabled: Boolean = false): String
 

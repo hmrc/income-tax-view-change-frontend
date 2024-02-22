@@ -52,7 +52,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Income tax calculation service
   lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
 
-  //ITVC/Dynamic Stub URL
+  //ITVC / Dynamic Stub URL
   lazy val itvcDynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
 
   //Address lookup service
