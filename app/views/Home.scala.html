@@ -55,6 +55,7 @@
     creditAndRefundEnabled: Boolean,
     paymentHistoryEnabled: Boolean,
     incomeSourcesEnabled: Boolean,
+    incomeSourcesNewJourneyEnabled: Boolean,
     isUserMigrated: Boolean = false
 )(
   	implicit request: Request[_],
@@ -332,16 +333,24 @@
 
 @incomeSourcesTile = {
     @if(incomeSourcesEnabled) {
-        @home_tile("income-sources-tile", messages("home.incomeSources.heading")) {
-            @p(classes = "govuk-!-margin-bottom-4") {
-                @link(link = addIncomeSourceControllerURL, messageKey = "home.incomeSources.addIncomeSource.view")
-            }
-            @p(classes = "govuk-!-margin-bottom-4") {
-                @link(link = manageIncomeSourceControllerURL, messageKey = "home.incomeSources.manageIncomeSource.view")
-            }
-            @if(displayCeaseAnIncome) {
+        @if(incomeSourcesNewJourneyEnabled) {
+            @home_tile("income-sources-tile", messages("home.incomeSources.newJourneyHeading")) {
                 @p(classes = "govuk-!-margin-bottom-4") {
-                    @link(link = ceaseIncomeSourceControllerURL, messageKey = "home.incomeSources.ceaseIncomeSource.view")
+                    @link(link = newIncomeSourceControllerURL, messageKey = "home.incomeSources.newJourney.view")
+                }
+            }
+        }else{
+            @home_tile("income-sources-tile", messages("home.incomeSources.heading")) {
+                @p(classes = "govuk-!-margin-bottom-4") {
+                    @link(link = addIncomeSourceControllerURL, messageKey = "home.incomeSources.addIncomeSource.view")
+                }
+                @p(classes = "govuk-!-margin-bottom-4") {
+                    @link(link = manageIncomeSourceControllerURL, messageKey = "home.incomeSources.manageIncomeSource.view")
+                }
+                @if(displayCeaseAnIncome) {
+                    @p(classes = "govuk-!-margin-bottom-4") {
+                        @link(link = ceaseIncomeSourceControllerURL, messageKey = "home.incomeSources.ceaseIncomeSource.view")
+                    }
                 }
             }
         }
@@ -366,6 +375,14 @@
 
 @manageIncomeSourceControllerURL = @{
     controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
+}
+
+@newIncomeSourceControllerURL = @{
+    if(isAgent) {
+        controllers.incomeSources.routes.NewIncomeSourcesHomePageController.showAgent().url
+    } else {
+        controllers.incomeSources.routes.NewIncomeSourcesHomePageController.show().url
+    }
 }
 
 @layout(

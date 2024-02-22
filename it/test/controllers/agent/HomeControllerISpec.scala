@@ -499,6 +499,145 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
             }
           }
+          "display the page with Income Sources tile" when {
+            "IncomeSources feature switch is enabled" in {
+              stubAuthorisedAgentUser(authorised = true)
+              enable(IncomeSources)
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                status = OK,
+                response = incomeSourceDetailsModel
+              )
+
+              val currentObligations: ObligationsModel = ObligationsModel(Seq(
+                NextUpdatesModel(
+                  identification = "testId",
+                  obligations = List(
+                    NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey")
+                  ))
+              ))
+
+              IncomeTaxViewChangeStub.stubGetNextUpdates(
+                nino = testNino,
+                deadlines = currentObligations
+              )
+
+              IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                nino = testNino,
+                from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                to = getCurrentTaxYearEnd.toString
+              )(
+                status = OK,
+                response = Json.toJson(FinancialDetailsModel(
+                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                  documentDetails = List(
+                    DocumentDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear,
+                      transactionId = "testTransactionId",
+                      documentDescription = Some("ITSA- POA 1"),
+                      documentText = Some("documentText"),
+                      outstandingAmount = Some(500.00),
+                      originalAmount = Some(1000.00),
+                      documentDate = LocalDate.of(2018, 3, 29),
+                      effectiveDateOfPayment = Some(currentDate),
+                      documentDueDate = Some(currentDate)
+                    )
+                  ),
+                  financialDetails = List(
+                    FinancialDetail(
+                      taxYear = getCurrentTaxYearEnd.getYear.toString,
+                      mainType = Some("SA Payment on Account 1"),
+                      transactionId = Some("testTransactionId"),
+                      items = Some(Seq(SubItem(Some(currentDate))))
+                    )
+                  )
+                ))
+              )
+
+              IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+              val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
+
+              result should have(
+                httpStatus(OK),
+                pageTitleAgent("home.agent.heading"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
+              )
+            }
+          }
+        }
+        "display the page with Your Businesses tile" when {
+          "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
+            stubAuthorisedAgentUser(authorised = true)
+            enable(IncomeSources)
+            enable(IncomeSourcesNewJourney)
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              status = OK,
+              response = incomeSourceDetailsModel
+            )
+
+            val currentObligations: ObligationsModel = ObligationsModel(Seq(
+              NextUpdatesModel(
+                identification = "testId",
+                obligations = List(
+                  NextUpdateModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", None, "testPeriodKey")
+                ))
+            ))
+
+            IncomeTaxViewChangeStub.stubGetNextUpdates(
+              nino = testNino,
+              deadlines = currentObligations
+            )
+
+            IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+              nino = testNino,
+              from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+              to = getCurrentTaxYearEnd.toString
+            )(
+              status = OK,
+              response = Json.toJson(FinancialDetailsModel(
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                documentDetails = List(
+                  DocumentDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear,
+                    transactionId = "testTransactionId",
+                    documentDescription = Some("ITSA- POA 1"),
+                    documentText = Some("documentText"),
+                    outstandingAmount = Some(500.00),
+                    originalAmount = Some(1000.00),
+                    documentDate = LocalDate.of(2018, 3, 29),
+                    effectiveDateOfPayment = Some(currentDate),
+                    documentDueDate = Some(currentDate)
+                  )
+                ),
+                financialDetails = List(
+                  FinancialDetail(
+                    taxYear = getCurrentTaxYearEnd.getYear.toString,
+                    mainType = Some("SA Payment on Account 1"),
+                    transactionId = Some("testTransactionId"),
+                    items = Some(Seq(SubItem(Some(currentDate))))
+                  )
+                )
+              ))
+            )
+
+            IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+              "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+            val result = IncomeTaxViewChangeFrontend.getAgentHome(clientDetailsWithConfirmation)
+
+            result should have(
+              httpStatus(OK),
+              pageTitleAgent("home.agent.heading"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
+            )
+          }
         }
         "retrieving the client's charges was unsuccessful" in {
 

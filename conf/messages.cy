@@ -131,9 +131,11 @@ home.self-assessment.description                                = Defnyddiwch y 
 home.credAndRefund.view                                         = Hawlio ad-daliad
 home.credAndRefund_howToClaim.view                              = Sut i hawlio ad-daliad
 home.incomeSources.heading                                      = Ffynonellau incwm
+home.incomeSources.newJourneyHeading                            = Eich busnesau
 home.incomeSources.addIncomeSource.view                         = Ychwanegu unig fasnachwr neu incwm o eiddo newydd
 home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
+home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
 
 ## Recruitment Banner ##

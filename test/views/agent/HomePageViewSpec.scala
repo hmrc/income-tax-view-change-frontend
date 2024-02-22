@@ -100,6 +100,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
                   isAgent: Boolean = true,
                   displayCeaseAnIncome: Boolean = false,
                   incomeSourcesEnabled: Boolean = false,
+                  incomeSourcesNewJourneyEnabled: Boolean = false,
                   creditAndRefundEnabled: Boolean = false,
                   user: MtdItUser[_] = testMtdItUserNotMigrated
                  ) {
@@ -122,7 +123,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
       creditAndRefundEnabled = creditAndRefundEnabled,
       paymentHistoryEnabled = paymentHistoryEnabled,
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
-      incomeSourcesEnabled = incomeSourcesEnabled
+      incomeSourcesEnabled = incomeSourcesEnabled,
+      incomeSourcesNewJourneyEnabled = incomeSourcesNewJourneyEnabled
     )(FakeRequest(), implicitly, user, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
@@ -356,6 +358,17 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
         "has a link to ManageIncomeSourceController.showAgent()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true) {
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").text()) shouldBe Some(messages("home.incomeSources.manageIncomeSource.view"))
           getElementById("income-sources-tile").map(_.select("div > p:nth-child(3) > a").attr("href")) shouldBe Some(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url)
+        }
+      }
+      "have a Your Businesses tile" when {
+        "the new income sources journey FS is enabled" which {
+          "has a heading" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
+            getElementById("income-sources-tile").map(_.select("h2").first().text()) shouldBe Some(messages("home.incomeSources.newJourneyHeading"))
+          }
+          "has a link to AddIncomeSourceController.show()" in new TestSetup(user = testMtdItUserMigrated, incomeSourcesEnabled = true, incomeSourcesNewJourneyEnabled = true) {
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.newJourney.view"))
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.incomeSources.routes.NewIncomeSourcesHomePageController.showAgent().url)
+          }
         }
       }
     }
