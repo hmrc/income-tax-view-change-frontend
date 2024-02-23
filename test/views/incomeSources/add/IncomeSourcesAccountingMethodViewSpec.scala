@@ -50,7 +50,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
   )(fakeRequestWithNinoAndOrigin("pta"))
 
 
-  class Setup(isAgent: Boolean, incomeSourcePrefix: String, incomeSourceType: IncomeSourceType, error: Boolean = false) extends TestSupport {
+  class Setup(isAgent: Boolean, incomeSourcePrefix: String, incomeSourceType: IncomeSourceType, error: Boolean = false) {
 
     val form: Form[_] = IncomeSourcesAccountingMethodForm(incomeSourceType)
 
