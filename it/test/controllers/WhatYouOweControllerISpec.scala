@@ -88,6 +88,14 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         accountingPeriodEndDate.plusYears(1)
       }
     }
+
+    override def getCurrentTaxYearMinusOneEnd(isTimeMachineEnabled: Boolean): Int = 1
+
+    override def getCurrentTaxYearRange(isTimeMachineEnabled: Boolean): String = ""
+
+    override def getCurrentTaxYearMinusOneRange(isTimeMachineEnabled: Boolean): String = ""
+
+    override def getCurrentTaxYearPlusOneRange(isTimeMachineEnabled: Boolean): String = ""
   }
 
   "Navigating to /report-quarterly/income-and-expenses/view/payments-owed" when {

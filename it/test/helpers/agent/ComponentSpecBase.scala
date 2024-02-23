@@ -71,6 +71,14 @@ class TestDateService extends DateServiceInterface {
       accountingPeriodEndDate.plusYears(1)
     }
   }
+
+  override def getCurrentTaxYearMinusOneEnd(isTimeMachineEnabled: Boolean): Int = 1
+
+  override def getCurrentTaxYearRange(isTimeMachineEnabled: Boolean): String = "1"
+
+  override def getCurrentTaxYearMinusOneRange(isTimeMachineEnabled: Boolean): String = "1"
+
+  override def getCurrentTaxYearPlusOneRange(isTimeMachineEnabled: Boolean): String = "1"
 }
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
