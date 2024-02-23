@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.{CalculationListService, DateServiceInterface}
-import testOnly.models.ItsaStatusCyMinusOne
+import testOnly.models.{ItsaStatusCyMinusOne, ItsaStatusCyPlusOne, ItsaStatusCy}
 import testOnly.services.DynamicStubService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -52,25 +52,24 @@ class OptOutTestDataController @Inject()(
   private def retrieveData(nino: String, isAgent: Boolean)
                           (implicit hc: HeaderCarrier, dateService: DateServiceInterface, request: Request[_]): Future[Result] = {
 
-    val cyMinusOneTaxYearRange = dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
-    val cyMinusOneTaxYearEnd = dateService.getCurrentTaxYearMinusOneEnd(isEnabled(TimeMachineAddYear))
-    val crystallisationStatusResult: Future[CalculationListResponseModel] = {
-      if (cyMinusOneTaxYearEnd >= 2024) {
-      calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = cyMinusOneTaxYearRange)
-      } else {
-        calculationListService.getLegacyCalculationList(nino = Nino(nino), taxYearEnd = cyMinusOneTaxYearEnd.toString)
-      }
-    }
+    val result: Future[CalculationListResponseModel] = cyMinusOneCrystallisationStatusResult(nino)
     val itsaStatusCyMinusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(ItsaStatusCyMinusOne(appConfig)(""), nino)
+    val itsaStatusCyResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(ItsaStatusCy(appConfig)(""), nino)
+    val itsaStatusCyPlusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(ItsaStatusCyPlusOne(appConfig)(""), nino)
 
-    val combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel)] = for {
-      crystallisationStatusResponse <- crystallisationStatusResult
-      itsaStatusResponse <- itsaStatusCyMinusOneResult
-    } yield (crystallisationStatusResponse, itsaStatusResponse)
+    val combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel)] = for {
+      crystallisationStatusResponse <- result
+      itsaStatusResponseCyMinusOne <- itsaStatusCyMinusOneResult
+      itsaStatusResponseCy <- itsaStatusCyResult
+      itsaStatusResponseCyPlusOne <- itsaStatusCyPlusOneResult
+    } yield (crystallisationStatusResponse, itsaStatusResponseCyMinusOne, itsaStatusResponseCy, itsaStatusResponseCyPlusOne)
 
     combinedResults.map { seqResult =>
       Ok(s"Crystallisation Status:    ${Json.toJson(seqResult._1)}\n" +
-         s"ITSA Status:               ${Json.toJson(seqResult._2)}")
+         s"ITSA Status CY-1:          ${Json.toJson(seqResult._2)}\n" +
+         s"ITSA Status CY:            ${Json.toJson(seqResult._3)}\n" +
+         s"ITSA Status CY+1:          ${Json.toJson(seqResult._4)}")
+
     }.recover {
       case ex: Throwable =>
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -79,6 +78,18 @@ class OptOutTestDataController @Inject()(
         errorHandler.showInternalServerError()
     }
 
+  }
+
+  private def cyMinusOneCrystallisationStatusResult(nino: String)
+                                                   (implicit hc: HeaderCarrier, dateService: DateServiceInterface): Future[CalculationListResponseModel] = {
+    val cyMinusOneTaxYearRange = dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
+    val cyMinusOneTaxYearEnd = dateService.getCurrentTaxYearMinusOneEnd(isEnabled(TimeMachineAddYear))
+
+    if (cyMinusOneTaxYearEnd >= 2024) {
+      calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = cyMinusOneTaxYearRange)
+    } else {
+      calculationListService.getLegacyCalculationList(nino = Nino(nino), taxYearEnd = cyMinusOneTaxYearEnd.toString)
+    }
   }
 
   val show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {

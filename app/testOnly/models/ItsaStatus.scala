@@ -26,15 +26,42 @@ import utils.OptOutCustomDataUploadHelper
 import javax.inject.Inject
 import scala.concurrent.Future
 
-sealed trait ItsaStatus{
+sealed trait ItsaStatus extends OptOutCustomDataUploadHelper with FeatureSwitching {
   def taxYearRange(implicit dateService: DateServiceInterface): String
 }
 
-case class ItsaStatusCyMinusOne @Inject()(appConfig: FrontendAppConfig)(status: String) extends ItsaStatus with OptOutCustomDataUploadHelper
-  with FeatureSwitching {
+case class ItsaStatusCyMinusOne @Inject()(appConfig: FrontendAppConfig)(status: String) extends ItsaStatus {
 
   override def taxYearRange(implicit dateService: DateServiceInterface): String =
     dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
+
+  def uploadData(nino: Nino)(implicit dynamicStubService: DynamicStubService, hc: HeaderCarrier, dateService: DateServiceInterface)
+  : Future[Unit] = {
+    handleDefaultValues(status = status) {
+      dynamicStubService.overwriteItsaStatus(nino = nino, taxYearRange = taxYearRange, crystallisationStatus = status)
+    }
+  }
+
+}
+
+case class ItsaStatusCy @Inject()(appConfig: FrontendAppConfig)(status: String) extends ItsaStatus {
+
+  override def taxYearRange(implicit dateService: DateServiceInterface): String =
+    dateService.getCurrentTaxYearRange(isEnabled(TimeMachineAddYear))
+
+  def uploadData(nino: Nino)(implicit dynamicStubService: DynamicStubService, hc: HeaderCarrier, dateService: DateServiceInterface)
+  : Future[Unit] = {
+    handleDefaultValues(status = status) {
+      dynamicStubService.overwriteItsaStatus(nino = nino, taxYearRange = taxYearRange, crystallisationStatus = status)
+    }
+  }
+
+}
+
+case class ItsaStatusCyPlusOne @Inject()(appConfig: FrontendAppConfig)(status: String) extends ItsaStatus {
+
+  override def taxYearRange(implicit dateService: DateServiceInterface): String =
+    dateService.getCurrentTaxYearPlusOneRange(isEnabled(TimeMachineAddYear))
 
   def uploadData(nino: Nino)(implicit dynamicStubService: DynamicStubService, hc: HeaderCarrier, dateService: DateServiceInterface)
   : Future[Unit] = {

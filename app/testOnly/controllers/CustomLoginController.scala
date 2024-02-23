@@ -24,7 +24,7 @@ import play.api.{Configuration, Environment, Logger}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
-import testOnly.models.{CrystallisationStatus, ItsaStatusCyMinusOne, Nino, PostedUser}
+import testOnly.models.{CrystallisationStatus, ItsaStatusCy, ItsaStatusCyMinusOne, ItsaStatusCyPlusOne, Nino, PostedUser}
 import testOnly.services.DynamicStubService
 import testOnly.utils.UserRepository
 import testOnly.views.html.LoginPage
@@ -79,9 +79,14 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                if (postedUser.cyItsaStatus.isDefined) {
-                  updateTestDataForOptOut(user.nino, CrystallisationStatus(appConfig)(postedUser.cyMinusOneCrystallisationStatus.get),
-                    ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus.get), postedUser.cyItsaStatus.get, postedUser.cyPlusOneItsaStatus.get).map {
+                if (testOnlyAppConfig.optOutUserPrefixes.contains(postedUser.nino.take(2))) {
+                  updateTestDataForOptOut(
+                    nino = user.nino,
+                    crystallisationStatus = CrystallisationStatus(appConfig)(postedUser.cyMinusOneCrystallisationStatus.get),
+                    cyMinusOneItsaStatus = ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus.get),
+                    cyItsaStatus = ItsaStatusCy(appConfig)(postedUser.cyItsaStatus.get),
+                    cyPlusOneItsaStatus = ItsaStatusCyPlusOne(appConfig)(postedUser.cyPlusOneItsaStatus.get),
+                  ).map {
                     _ =>
                       successRedirect(bearer, auth, homePage)
                   }.recover {
@@ -120,7 +125,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: CrystallisationStatus, cyMinusOneItsaStatus: ItsaStatusCyMinusOne,
-                                      cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier)
+                                      cyItsaStatus: ItsaStatusCy, cyPlusOneItsaStatus: ItsaStatusCyPlusOne)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
 
     // TODO: maybe make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
@@ -128,10 +133,14 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     val ninoObj = Nino(nino)
     val crystallisationStatusResult: Future[Unit] = crystallisationStatus.uploadData(nino = ninoObj)
     val itsaStatusCyMinusOneResult: Future[Unit] = cyMinusOneItsaStatus.uploadData(nino = ninoObj)
+    val itsaStatusCyResult: Future[Unit] = cyItsaStatus.uploadData(nino = ninoObj)
+    val itsaStatusCyPlusOneResult: Future[Unit] = cyPlusOneItsaStatus.uploadData(nino = ninoObj)
 
     for {
       _ <- crystallisationStatusResult
       _ <- itsaStatusCyMinusOneResult
+      _ <- itsaStatusCyResult
+      _ <- itsaStatusCyPlusOneResult
     } yield ()
 
   }
