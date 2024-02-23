@@ -17,9 +17,9 @@
 package audit.models
 
 
-import models.repaymentHistory._
-import play.api.libs.json.Json
+import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, RepaymentItem, RepaymentSupplementItem}
 import testUtils.TestSupport
+import play.api.libs.json.Json
 
 import java.time.LocalDate
 
@@ -57,8 +57,7 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
           )
         )
       )),
-      Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
-      status = RepaymentHistoryStatus("A"))
+      Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135")
     )
   )
 

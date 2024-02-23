@@ -70,8 +70,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       )),
       estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
       creationDate = Some(LocalDate.parse("2021-07-21")),
-      repaymentRequestNumber = repaymentRequestNumber,
-      status = RepaymentHistoryStatus("A")
+      repaymentRequestNumber = repaymentRequestNumber
     ),
     RepaymentHistory(
       amountApprovedforRepayment = Some(100.0),
@@ -93,31 +92,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       )),
       estimatedRepaymentDate = Some(LocalDate.parse("2021-08-20")),
       creationDate = Some(LocalDate.parse("2021-07-21")),
-      repaymentRequestNumber = repaymentRequestNumber,
-      status = RepaymentHistoryStatus("A")
-    ),
-    RepaymentHistory(
-      amountApprovedforRepayment = Some(100.0),
-      amountRequested = 200.0,
-      repaymentMethod = Some("BACD"),
-      totalRepaymentAmount = Some(304.0),
-      repaymentItems = Some(Seq[RepaymentItem](
-        RepaymentItem(repaymentSupplementItem =
-          Seq(
-            RepaymentSupplementItem(
-              parentCreditReference = Some("002420002233"),
-              amount = Some(400.0),
-              fromDate = Some(LocalDate.parse("2021-07-23")),
-              toDate = Some(LocalDate.parse("2021-08-23")),
-              rate = Some(12.12)
-            )
-          )
-        )
-      )),
-      estimatedRepaymentDate = Some(LocalDate.parse("2021-08-20")),
-      creationDate = Some(LocalDate.parse("2021-07-21")),
-      repaymentRequestNumber = repaymentRequestNumber,
-      status = RepaymentHistoryStatus("I")
+      repaymentRequestNumber = repaymentRequestNumber
     ))
 
   private def groupedRepayments(isAgent: Boolean = false) = List(
@@ -141,7 +116,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
   }
 
   "RepaymentHistoryUtils" should {
-    "getGroupedPaymentHistoryData should combine payments and approved repayments and group by year" when {
+    "getGroupedPaymentHistoryData should combine payments and repayments and group by year" when {
       "both payments and repayments are present" in {
         getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
@@ -154,7 +129,7 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
         )(messages, dateService) shouldBe groupedPayments()
       }
 
-      "only approved repayments are present" in {
+      "only repayments are present" in {
         getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false,
           MFACreditsEnabled = true, CutOverCreditsEnabled = true, languageUtils
         )(messages, dateService) shouldBe groupedRepayments()

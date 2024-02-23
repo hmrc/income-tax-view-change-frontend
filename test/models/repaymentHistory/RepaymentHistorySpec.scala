@@ -17,8 +17,8 @@
 package models.repaymentHistory
 
 import org.scalatest.matchers.should.Matchers
-import play.api.libs.json.{JsSuccess, JsValue, Json}
 import testUtils.UnitSpec
+import play.api.libs.json.{JsSuccess, JsValue, Json}
 
 import java.time.LocalDate
 
@@ -44,8 +44,7 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
     )),
     estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
     creationDate = Some(LocalDate.parse("2021-07-21")),
-    repaymentRequestNumber = "000000003135",
-    status = RepaymentHistoryStatus("A")
+    repaymentRequestNumber = "000000003135"
   )
 
   val repaymentHistoryOneRSIJson: JsValue = Json.obj(
@@ -68,8 +67,7 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
     )),
     "estimatedRepaymentDate" -> Some(LocalDate.parse("2021-08-21")),
     "creationDate" -> Some(LocalDate.parse("2021-07-21")),
-    "repaymentRequestNumber" -> "000000003135",
-    "status" -> "A"
+    "repaymentRequestNumber" -> "000000003135"
   )
 
   "RepaymentHistory" should {
@@ -81,31 +79,6 @@ class RepaymentHistorySpec extends UnitSpec with Matchers {
       "be able to parse a JSON into the Model" in {
         Json.fromJson[RepaymentHistory](repaymentHistoryOneRSIJson) shouldBe JsSuccess(repaymentHistoryOneRSI)
       }
-    }
-  }
-
-  "RepaymentHistoryStatus" should {
-    "return Approved object" when {
-      "called with 'A' indicator" in {
-        RepaymentHistoryStatus("A").isInstanceOf[Approved] shouldBe true
-      }
-      "called with 'M' indicator" in {
-        RepaymentHistoryStatus("M").isInstanceOf[Approved] shouldBe true
-      }
-    }
-
-    "return SentForRisking object" in {
-      RepaymentHistoryStatus("I") shouldBe SentForRisking
-    }
-
-    "return Rejected object" in {
-      RepaymentHistoryStatus("C").isInstanceOf[Rejected] shouldBe true
-      RepaymentHistoryStatus("Any other string").isInstanceOf[Rejected] shouldBe true
-    }
-
-    "have methods to check method of approval" in {
-      RepaymentHistoryStatus("A").asInstanceOf[Approved].isApprovedByRisking shouldBe true
-      RepaymentHistoryStatus("M").asInstanceOf[Approved].isApprovedManually shouldBe true
     }
   }
 }

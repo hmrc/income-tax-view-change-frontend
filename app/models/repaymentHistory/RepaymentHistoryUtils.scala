@@ -17,10 +17,10 @@
 package models.repaymentHistory
 
 import exceptions.MissingFieldException
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails.Payment
-import play.api.Logger
 import play.api.i18n.Messages
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import play.api.Logger
 import play.api.libs.json.Json
 import services.DateServiceInterface
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -80,7 +80,7 @@ object RepaymentHistoryUtils {
 
     val filteredPayments = payments.flatMap(payment => filterPayment(payment, isAgent, MFACreditsEnabled, CutOverCreditsEnabled))
 
-    val filteredRepayments = repayments.filter(_.status.isInstanceOf[Approved]).map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
+    val filteredRepayments = repayments.map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
 
     filteredPayments ++ filteredRepayments
   }
