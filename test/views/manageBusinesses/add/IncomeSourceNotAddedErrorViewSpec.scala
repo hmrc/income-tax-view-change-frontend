@@ -27,7 +27,7 @@ import views.html.manageBusinesses.add.IncomeSourceNotAddedError
 class IncomeSourceNotAddedErrorViewSpec extends TestSupport {
 
   val incomeSourceNotAddedErrorView: IncomeSourceNotAddedError = app.injector.instanceOf[IncomeSourceNotAddedError]
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 
     val continueAction = if(isAgent) controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent() else
       controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
@@ -42,14 +42,14 @@ class IncomeSourceNotAddedErrorViewSpec extends TestSupport {
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.p1", "sole trader")
       document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe continueAction.url
       document.getElementById("continue-button").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.incomeSources")
-      "not render the back button" in {Option(document.getElementById("back")).isDefined shouldBe false}
+      Option(document.getElementById("back")).isDefined shouldBe false
     }
     "render UK property - error page" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.p1", "UK property")
       document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe continueAction.url
       document.getElementById("continue-button").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.incomeSources")
-      "not render the back button" in {Option(document.getElementById("back")).isDefined shouldBe false}
+      Option(document.getElementById("back")).isDefined shouldBe false
     }
 
     "render Foreign property - error page" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
@@ -57,7 +57,7 @@ class IncomeSourceNotAddedErrorViewSpec extends TestSupport {
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.p1", "foreign property")
       document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe continueAction.url
       document.getElementById("continue-button").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.incomeSources")
-      "not render the back button" in {Option(document.getElementById("back")).isDefined shouldBe false}
+      Option(document.getElementById("back")).isDefined shouldBe false
     }
   }
   "IncomeSourceNotAddedError - Agent" should {
@@ -66,21 +66,21 @@ class IncomeSourceNotAddedErrorViewSpec extends TestSupport {
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.p1", "sole trader")
       document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe continueAction.url
       document.getElementById("continue-button").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.incomeSources")
-      "not render the back button" in {Option(document.getElementById("back")).isDefined shouldBe false}
+      Option(document.getElementById("back")).isDefined shouldBe false
     }
     "render UK property error page" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.p1", "UK property")
       document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe continueAction.url
       document.getElementById("continue-button").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.incomeSources")
-      "not render the back button" in {Option(document.getElementById("back")).isDefined shouldBe false}
+      Option(document.getElementById("back")).isDefined shouldBe false
     }
     "render Foreign property error page" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
       document.getElementsByTag("h1").first().text() shouldBe messages("incomeSources.add.error.standardError")
       document.getElementById("paragraph-1").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.p1", "foreign property")
       document.getElementById("error-income-source-not-saved-form").attr("action") shouldBe continueAction.url
       document.getElementById("continue-button").text() shouldBe messages("incomeSources.add.error.incomeSourceNotSaved.incomeSources")
-      "not render the back button" in {Option(document.getElementById("back")).isDefined shouldBe false}
+      Option(document.getElementById("back")).isDefined shouldBe false
     }
   }
 }

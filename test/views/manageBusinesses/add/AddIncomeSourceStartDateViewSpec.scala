@@ -28,7 +28,7 @@ import views.html.manageBusinesses.add.AddIncomeSourceStartDate
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isChange: Boolean = false) extends TestSupport {
+  class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isChange: Boolean = false) {
 
     val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
 

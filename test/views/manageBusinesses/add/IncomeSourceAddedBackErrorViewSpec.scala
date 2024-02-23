@@ -29,7 +29,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
 
   val errorView: IncomeSourceAddedBackError = app.injector.instanceOf[IncomeSourceAddedBackError]
 
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 
     lazy val postCall: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
     else controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
@@ -45,9 +45,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
         s"${messages("cannotGoBack.soleTraderAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
-      "not render the back button" in {
-        Option(document.getElementById("back")).isDefined shouldBe false
-      }
+      Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
@@ -57,9 +55,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
         s"${messages("cannotGoBack.ukPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
-      "not render the back button" in {
-        Option(document.getElementById("back")).isDefined shouldBe false
-      }
+      Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
@@ -69,9 +65,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
         s"${messages("cannotGoBack.foreignPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
-      "not render the back button" in {
-        Option(document.getElementById("back")).isDefined shouldBe false
-      }
+      Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
   }
@@ -84,9 +78,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
         s"${messages("cannotGoBack.soleTraderAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
-      "not render the back button" in {
-        Option(document.getElementById("back")).isDefined shouldBe false
-      }
+      Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render UK property - error page" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
@@ -96,9 +88,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
         s"${messages("cannotGoBack.ukPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
-      "not render the back button" in {
-        Option(document.getElementById("back")).isDefined shouldBe false
-      }
+      Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
     "render Foreign property - error page" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
@@ -108,9 +98,7 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
         s"${messages("cannotGoBack.foreignPropertyAdded")}. ${messages("cannotGoBack.hasBeenAdded1")} ${messages("cannotGoBack.manageLink")} ${messages("cannotGoBack.hasBeenAdded2")}"
       document.getElementById("manage-link").text() shouldBe messages("cannotGoBack.manageLink")
       document.getElementById("choose-message").text() shouldBe messages("cannotGoBack.needToChoose")
-      "not render the back button" in {
-        Option(document.getElementById("back")).isDefined shouldBe false
-      }
+      Option(document.getElementById("back")).isDefined shouldBe false
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
     }
   }
