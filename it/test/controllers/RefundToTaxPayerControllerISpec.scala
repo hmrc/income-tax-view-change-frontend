@@ -18,11 +18,11 @@ package controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{PaymentHistoryRefunds}
+import config.featureswitch.PaymentHistoryRefunds
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.core.Nino
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, RepaymentItem, RepaymentSupplementItem}
+import models.repaymentHistory._
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
@@ -69,7 +69,8 @@ class RefundToTaxPayerControllerISpec extends ComponentSpecBase {
               Some(2.01))
           )
         )
-      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135")
+      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
+      status = RepaymentHistoryStatus("A"))
     )
   )
 

@@ -20,7 +20,6 @@ import audit.mocks.MockAuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
 import config.featureswitch.{FeatureSwitching, PaymentHistoryRefunds}
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.connectors.MockRepaymentHistoryConnector
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate}
@@ -87,7 +86,8 @@ class RefundToTaxPayerControllerSpec extends MockAuthenticationPredicate
               Some(2.01))
           )
         )
-      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135")
+      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
+      status = RepaymentHistoryStatus("A"))
     )
   )
 
