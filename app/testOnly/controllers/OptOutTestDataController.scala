@@ -49,7 +49,8 @@ class OptOutTestDataController @Inject()(
                                         )
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  private def retrieveData(nino: String)(implicit hc: HeaderCarrier, dateService: DateServiceInterface, request: Request[_]): Future[Result] = {
+  private def retrieveData(nino: String, isAgent: Boolean)
+                          (implicit hc: HeaderCarrier, dateService: DateServiceInterface, request: Request[_]): Future[Result] = {
 
     val cyMinusOneTaxYearRange = dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
     val cyMinusOneTaxYearEnd = dateService.getCurrentTaxYearMinusOneEnd(isEnabled(TimeMachineAddYear))
@@ -72,9 +73,9 @@ class OptOutTestDataController @Inject()(
          s"ITSA Status:               ${Json.toJson(seqResult._2)}")
     }.recover {
       case ex: Throwable =>
-        val errorHandler = if (false) itvcErrorHandlerAgent else itvcErrorHandler
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application")
-          .error(s"[OptOutTestDataController][retrieveData] - Could not retrieve Opt Out user Data, status: - ${ex.getMessage} - ${ex.getCause} - ")
+          .error(s"[OptOutTestDataController][retrieveData] ${if (isAgent) "Agent" else "Individual"} - Could not retrieve Opt Out user Data, status: - ${ex.getMessage} - ${ex.getCause} - ")
         errorHandler.showInternalServerError()
     }
 
@@ -83,7 +84,16 @@ class OptOutTestDataController @Inject()(
   val show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
       retrieveData(
-        nino = user.nino
+        nino = user.nino,
+        isAgent = false
+      )
+  }
+
+  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      retrieveData(
+        nino = mtdItUser.nino,
+        isAgent = true
       )
   }
 

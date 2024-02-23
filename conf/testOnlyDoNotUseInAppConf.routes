@@ -70,3 +70,6 @@ GET         /report-quarterly/income-and-expenses/view/test-only/message-check  
 GET         /report-quarterly/income-and-expenses/view/test-only/message-check-welsh                 testOnly.controllers.MessageCheckController.showWelsh
 
 GET         /report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData               testOnly.controllers.OptOutTestDataController.show
+
+GET         /report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData        testOnly.controllers.OptOutTestDataController.showAgent
+

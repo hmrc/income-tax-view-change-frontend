@@ -58,7 +58,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin, userRecords, testOnlyAppConfig.optOutUserPrefixes.head))
+      Ok(loginPage(routes.CustomLoginController.postLogin, userRecords, testOnlyAppConfig.optOutUserPrefixes))
     )
   }
 

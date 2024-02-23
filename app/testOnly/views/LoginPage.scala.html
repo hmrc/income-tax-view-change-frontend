@@ -27,25 +27,11 @@
         form: FormWithCSRF
 )
 
-@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: String)(implicit request: Request[_], messages: Messages)
+@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
     <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
-
-    <script type="text/javascript">
-            function enableOptOutDropdowns(answer) {
-
-                const ninoPrefix = answer.value.substring(0, 2);
-
-                const prefixes = JSON.parse('@Html(Json.toJson(optOutCustomDataUserPrefixes).toString)');
-
-                if (prefixes.includes(ninoPrefix)) {
-                    document.getElementById("OptOutCustomDataDropdowns").classList.remove("d-none");
-                } else {
-                    document.getElementById("OptOutCustomDataDropdowns").classList.add("d-none");
-                }
-            }
-    </script>
+    <script src="/report-quarterly/income-and-expenses/view/assets/javascripts/optOutCustomData.js"></script>
 
     <h1 class="govuk-heading-l">Select Nino/User</h1>
 
@@ -55,9 +41,13 @@
             <label class="govuk-label" for="sort">
                 NINO
             </label>
-            <select class="govuk-select" id="nino" name="nino" onchange="enableOptOutDropdowns(this)">
+            <select class="govuk-select" id="nino" name="nino" onchange='optOutCustomData(this, @Html(Json.toJson(optOutCustomDataUserPrefixes).toString))'>
             @for(user <- users) {
-                <option value="@user.nino">@{user.nino} - @{user.description}</option>
+                <option value="@user.nino">@{
+                    user.nino
+                } - @{
+                    user.description
+                }</option>
             }
             </select>
         </div>
@@ -77,114 +67,114 @@
             )
         ))
 
-        <div class="d-none" id="OptOutCustomDataDropdowns">
-        @govukSelect(Select(
-            id = "cyMinusOneCrystallisationStatus",
-            name = "cyMinusOneCrystallisationStatus",
-            items =
-                Seq(
-                    SelectItem(
-                        value = Some("Default"),
-                        text = "Default"
-                    ),
-                    SelectItem(
-                        value = Some("Crystallised"),
-                        text = "Crystallised"
-                    ),
-                    SelectItem(
-                        value = Some("NonCrystallised"),
-                        text = "NonCrystallised"
-                    )),
-            label = Label(
-                content = Text("cyMinusOneCrystallisationStatus"))
-        ))
+        <div class="display-none" id="OptOutCustomDataDropdowns">
+            @govukSelect(Select(
+                id = "cyMinusOneCrystallisationStatus",
+                name = "cyMinusOneCrystallisationStatus",
+                items =
+                    Seq(
+                        SelectItem(
+                            value = Some("Default"),
+                            text = "Default"
+                        ),
+                        SelectItem(
+                            value = Some("Crystallised"),
+                            text = "Crystallised"
+                        ),
+                        SelectItem(
+                            value = Some("NonCrystallised"),
+                            text = "NonCrystallised"
+                        )),
+                label = Label(
+                    content = Text("CY-1 Crystallisation"))
+            ))
 
-        @govukSelect(Select(
-            id = "cyMinusOneItsaStatus",
-            name = "cyMinusOneItsaStatus",
-            items =
-                Seq(
-                    SelectItem(
-                        value = Some("Default"),
-                        text = "Default"
-                    ),
-                    SelectItem(
-                        value = Some("NotSet"),
-                        text = "Not Set"
-                    ),
-                    SelectItem(
-                        value = Some("Voluntary"),
-                        text = "Voluntary"
-                    ),
-                    SelectItem(
-                        value = Some("Mandatory"),
-                        text = "Mandatory"
-                    ),
-                    SelectItem(
-                        value = Some("Annual"),
-                        text = "Annual"
-                    )),
-            label = Label(
-                content = Text("cyMinusOneItsaStatus"))
-        ))
+            @govukSelect(Select(
+                id = "cyMinusOneItsaStatus",
+                name = "cyMinusOneItsaStatus",
+                items =
+                    Seq(
+                        SelectItem(
+                            value = Some("Default"),
+                            text = "Default"
+                        ),
+                        SelectItem(
+                            value = Some("NotSet"),
+                            text = "Not Set"
+                        ),
+                        SelectItem(
+                            value = Some("Voluntary"),
+                            text = "Voluntary"
+                        ),
+                        SelectItem(
+                            value = Some("Mandatory"),
+                            text = "Mandatory"
+                        ),
+                        SelectItem(
+                            value = Some("Annual"),
+                            text = "Annual"
+                        )),
+                label = Label(
+                    content = Text("CY-1 ITSA Status"))
+            ))
 
-        @govukSelect(Select(
-            id = "cyItsaStatus",
-            name = "cyItsaStatus",
-            items =
-                Seq(
-                    SelectItem(
-                        value = Some("Default"),
-                        text = "Default"
-                    ),
-                    SelectItem(
-                        value = Some("NotSet"),
-                        text = "Not Set"
-                    ),
-                    SelectItem(
-                        value = Some("Voluntary"),
-                        text = "Voluntary"
-                    ),
-                    SelectItem(
-                        value = Some("Mandatory"),
-                        text = "Mandatory"
-                    ),
-                    SelectItem(
-                        value = Some("Annual"),
-                        text = "Annual"
-                    )),
-            label = Label(
-                content = Text("cyItsaStatus"))
-        ))
+            @govukSelect(Select(
+                id = "cyItsaStatus",
+                name = "cyItsaStatus",
+                items =
+                    Seq(
+                        SelectItem(
+                            value = Some("Default"),
+                            text = "Default"
+                        ),
+                        SelectItem(
+                            value = Some("NotSet"),
+                            text = "Not Set"
+                        ),
+                        SelectItem(
+                            value = Some("Voluntary"),
+                            text = "Voluntary"
+                        ),
+                        SelectItem(
+                            value = Some("Mandatory"),
+                            text = "Mandatory"
+                        ),
+                        SelectItem(
+                            value = Some("Annual"),
+                            text = "Annual"
+                        )),
+                label = Label(
+                    content = Text("CY ITSA Status"))
+            ))
 
-        @govukSelect(Select(
-            id = "cyPlusOneItsaStatus",
-            name = "cyPlusOneItsaStatus",
-            items =
-                Seq(
-                    SelectItem(
-                        value = Some("Default"),
-                        text = "Default"
-                    ),
-                    SelectItem(
-                        value = Some("NotSet"),
-                        text = "Not Set"
-                    ),
-                    SelectItem(
-                        value = Some("Voluntary"),
-                        text = "Voluntary"
-                    ),
-                    SelectItem(
-                        value = Some("Mandatory"),
-                        text = "Mandatory"
-                    ),
-                    SelectItem(
-                        value = Some("Annual"),
-                        text = "Annual"
-                    )),
-            label = Label(
-                content = Text("cyPlusOneItsaStatus"))
-        ))
+            @govukSelect(Select(
+                id = "cyPlusOneItsaStatus",
+                name = "cyPlusOneItsaStatus",
+                items =
+                    Seq(
+                        SelectItem(
+                            value = Some("Default"),
+                            text = "Default"
+                        ),
+                        SelectItem(
+                            value = Some("NotSet"),
+                            text = "Not Set"
+                        ),
+                        SelectItem(
+                            value = Some("Voluntary"),
+                            text = "Voluntary"
+                        ),
+                        SelectItem(
+                            value = Some("Mandatory"),
+                            text = "Mandatory"
+                        ),
+                        SelectItem(
+                            value = Some("Annual"),
+                            text = "Annual"
+                        )),
+                label = Label(
+                    content = Text("CY+1 ITSA Status"))
+            ))
         </div>
 
         @govukButton(Button(
