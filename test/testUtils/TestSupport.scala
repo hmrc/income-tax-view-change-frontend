@@ -53,7 +53,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterE
 
   import play.twirl.api.Html
 
-  implicit val actorSystem: ActorSystem = ActorSystem()
+  implicit val actorSystem: ActorSystem = app.actorSystem
 
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {

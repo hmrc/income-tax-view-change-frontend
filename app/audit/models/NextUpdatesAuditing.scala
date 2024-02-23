@@ -16,27 +16,32 @@
 
 package audit.models
 
+import audit.Utilities.userAuditDetails
 import auth.MtdItUser
+import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
+import play.api.libs.json.{JsValue, Json}
 
 object NextUpdatesAuditing {
 
-  val nextUpdateTransactionName = enums.TransactionName.ObligationsPageView
-  val nextUpdateAuditType: String = enums.AuditType.ObligationsPageView
+  private val nextUpdateTransactionName = enums.TransactionName.ObligationsPageView
+  private val nextUpdateAuditType: String = enums.AuditType.ObligationsPageView
 
-  case class NextUpdatesAuditModel[A](user: MtdItUser[A]) extends AuditModel {
+  case class NextUpdatesAuditModel[A](user: MtdItUser[A]) extends ExtendedAuditModel {
     override val transactionName: String = nextUpdateTransactionName
-    val business = user.incomeSources.businesses.headOption
-    val property = user.incomeSources.properties.headOption
-    override val detail: Seq[(String, String)] = Seq(
-      "mtdid" -> user.mtditid,
-      "nino" -> user.nino,
-      "hasBusiness" -> user.incomeSources.hasBusinessIncome.toString,
-      "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
-      "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
-      "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}"),
-      "propAccPeriodStart" -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
-      "propAccPeriodEnd" -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}")
-    )
+    val business: Option[BusinessDetailsModel] = user.incomeSources.businesses.headOption
+
+    val property: Option[PropertyDetailsModel] = user.incomeSources.properties.headOption
+
+    override val detail: JsValue =
+      userAuditDetails(user) ++
+        Json.obj(
+          "hasBusiness" -> user.incomeSources.hasBusinessIncome.toString,
+          "hasProperty" -> user.incomeSources.hasPropertyIncome.toString,
+          "bizAccPeriodStart" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
+          "bizAccPeriodEnd" -> business.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}"),
+          "propAccPeriodStart" -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.start)}"),
+          "propAccPeriodEnd" -> property.fold("-")(x => s"${x.accountingPeriod.map(ac => ac.end)}")
+        )
     override val auditType: String = nextUpdateAuditType
   }
 

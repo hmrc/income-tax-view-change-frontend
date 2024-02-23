@@ -19,13 +19,12 @@ package controllers
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
 import config.ItvcErrorHandler
-import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPredicate}
 import mocks.MockItvcErrorHandler
 import mocks.auth.MockFrontendAuthorisedFunctions
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockIncomeSourceDetailsService, MockNextUpdatesService}
 import mocks.views.agent.MockNextUpdates
-import models.nextUpdates.{DeadlineViewModel, EopsObligation, NextUpdateModel, NextUpdateModelWithIncomeType, NextUpdatesModel, NextUpdatesResponseModel, NextUpdatesViewModel, ObligationsModel, QuarterlyObligation}
+import models.nextUpdates._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{mock, when}
