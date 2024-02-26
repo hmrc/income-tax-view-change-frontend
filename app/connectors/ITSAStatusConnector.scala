@@ -17,13 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
-import models.core.Nino
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.mvc.Result
-import play.api.mvc.Results.Ok
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -32,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ITSAStatusConnector @Inject()(val http: HttpClient,
                                     val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                   )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getITSAStatusDetailUrl(taxableEntityId: String, taxYear: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/status/$taxableEntityId/$taxYear"

@@ -16,9 +16,7 @@
 
 package utils
 
-import config.featureswitch.FeatureSwitching
 import play.api.Logger
-import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 
 import scala.concurrent.Future

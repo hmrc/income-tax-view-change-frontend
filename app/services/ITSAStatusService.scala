@@ -20,11 +20,8 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import connectors.ITSAStatusConnector
-import models.core.Nino
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
-import play.api.mvc.Result
-import testOnly.models.ItsaStatus
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

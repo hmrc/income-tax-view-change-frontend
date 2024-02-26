@@ -24,7 +24,7 @@ import play.api.{Configuration, Environment, Logger}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
-import testOnly.models.{CrystallisationStatus, ItsaStatusCy, ItsaStatusCyMinusOne, ItsaStatusCyPlusOne, Nino, PostedUser}
+import testOnly.models._
 import testOnly.services.DynamicStubService
 import testOnly.utils.UserRepository
 import testOnly.views.html.LoginPage
@@ -33,7 +33,6 @@ import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.impl.Promise
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -85,7 +84,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     crystallisationStatus = CrystallisationStatus(appConfig)(postedUser.cyMinusOneCrystallisationStatus.get),
                     cyMinusOneItsaStatus = ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus.get),
                     cyItsaStatus = ItsaStatusCy(appConfig)(postedUser.cyItsaStatus.get),
-                    cyPlusOneItsaStatus = ItsaStatusCyPlusOne(appConfig)(postedUser.cyPlusOneItsaStatus.get),
+                    cyPlusOneItsaStatus = ItsaStatusCyPlusOne(appConfig)(postedUser.cyPlusOneItsaStatus.get)
                   ).map {
                     _ =>
                       successRedirect(bearer, auth, homePage)

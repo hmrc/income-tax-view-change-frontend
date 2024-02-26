@@ -66,9 +66,9 @@ class OptOutTestDataController @Inject()(
 
     combinedResults.map { seqResult =>
       Ok(s"Crystallisation Status:    ${Json.toJson(seqResult._1)}\n" +
-         s"ITSA Status CY-1:          ${Json.toJson(seqResult._2)}\n" +
-         s"ITSA Status CY:            ${Json.toJson(seqResult._3)}\n" +
-         s"ITSA Status CY+1:          ${Json.toJson(seqResult._4)}")
+        s"ITSA Status CY-1:          ${Json.toJson(seqResult._2)}\n" +
+        s"ITSA Status CY:            ${Json.toJson(seqResult._3)}\n" +
+        s"ITSA Status CY+1:          ${Json.toJson(seqResult._4)}")
 
     }.recover {
       case ex: Throwable =>
