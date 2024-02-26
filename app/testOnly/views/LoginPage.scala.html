@@ -29,6 +29,43 @@
 
 @(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String])(implicit request: Request[_], messages: Messages)
 
+@ITSAOptions = @{
+    Seq(
+        SelectItem(
+            value = Some("Default"),
+            text = "Default"
+        ),
+        SelectItem(
+            value = Some("NoStatus"),
+            text = "No Status"
+        ),
+        SelectItem(
+            value = Some("Mandated"),
+            text = "MTD Mandated"
+        ),
+        SelectItem(
+            value = Some("Voluntary"),
+            text = "MTD Voluntary"
+        ),
+        SelectItem(
+            value = Some("Annual"),
+            text = "Annual"
+        ),
+        SelectItem(
+            value = Some("NonDigital"),
+            text = "Non Digital"
+        ),
+        SelectItem(
+            value = Some("Dormant"),
+            text = "Dormant"
+        ),
+        SelectItem(
+            value = Some("Exempt"),
+            text = "MTD Exempt"
+        )
+    )
+}
+
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
     <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
     <script src="/report-quarterly/income-and-expenses/view/assets/javascripts/optOutCustomData.js"></script>
@@ -83,7 +120,7 @@
                         ),
                         SelectItem(
                             value = Some("NonCrystallised"),
-                            text = "NonCrystallised"
+                            text = "Non Crystallised"
                         )),
                 label = Label(
                     content = Text("CY-1 Crystallisation"))
@@ -92,28 +129,7 @@
             @govukSelect(Select(
                 id = "cyMinusOneItsaStatus",
                 name = "cyMinusOneItsaStatus",
-                items =
-                    Seq(
-                        SelectItem(
-                            value = Some("Default"),
-                            text = "Default"
-                        ),
-                        SelectItem(
-                            value = Some("NotSet"),
-                            text = "Not Set"
-                        ),
-                        SelectItem(
-                            value = Some("Voluntary"),
-                            text = "Voluntary"
-                        ),
-                        SelectItem(
-                            value = Some("Mandatory"),
-                            text = "Mandatory"
-                        ),
-                        SelectItem(
-                            value = Some("Annual"),
-                            text = "Annual"
-                        )),
+                items = ITSAOptions,
                 label = Label(
                     content = Text("CY-1 ITSA Status"))
             ))
@@ -121,28 +137,7 @@
             @govukSelect(Select(
                 id = "cyItsaStatus",
                 name = "cyItsaStatus",
-                items =
-                    Seq(
-                        SelectItem(
-                            value = Some("Default"),
-                            text = "Default"
-                        ),
-                        SelectItem(
-                            value = Some("NotSet"),
-                            text = "Not Set"
-                        ),
-                        SelectItem(
-                            value = Some("Voluntary"),
-                            text = "Voluntary"
-                        ),
-                        SelectItem(
-                            value = Some("Mandatory"),
-                            text = "Mandatory"
-                        ),
-                        SelectItem(
-                            value = Some("Annual"),
-                            text = "Annual"
-                        )),
+                items = ITSAOptions,
                 label = Label(
                     content = Text("CY ITSA Status"))
             ))
@@ -150,28 +145,7 @@
             @govukSelect(Select(
                 id = "cyPlusOneItsaStatus",
                 name = "cyPlusOneItsaStatus",
-                items =
-                    Seq(
-                        SelectItem(
-                            value = Some("Default"),
-                            text = "Default"
-                        ),
-                        SelectItem(
-                            value = Some("NotSet"),
-                            text = "Not Set"
-                        ),
-                        SelectItem(
-                            value = Some("Voluntary"),
-                            text = "Voluntary"
-                        ),
-                        SelectItem(
-                            value = Some("Mandatory"),
-                            text = "Mandatory"
-                        ),
-                        SelectItem(
-                            value = Some("Annual"),
-                            text = "Annual"
-                        )),
+                items = ITSAOptions,
                 label = Label(
                     content = Text("CY+1 ITSA Status"))
             ))
