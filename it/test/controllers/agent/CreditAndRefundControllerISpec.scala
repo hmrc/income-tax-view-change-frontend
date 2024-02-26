@@ -67,7 +67,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
 
         Then("I verify the audit event was as expected")
         AuditStub.verifyAuditEvent(ClaimARefundAuditModel(
-          balanceDetails = Some(BalanceDetails(BigDecimal(1.00), BigDecimal(2.00), BigDecimal(3.00), Some(BigDecimal(5.00)), Some(BigDecimal(3.00)), Some(BigDecimal(2.00)), None)),
+          balanceDetails = Some(BalanceDetails(BigDecimal(1.00), BigDecimal(2.00), BigDecimal(3.00), Some(BigDecimal(5.00)), Some(BigDecimal(1.00)), Some(BigDecimal(3.00)), Some(BigDecimal(2.00)), None)),
           creditDocuments = List(
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("SA Balancing Charge Credit")),
             documentDetailWithDueDateFinancialDetailListModel(taxYear = testPreviousTaxYear, originalAmount = Some(-2000), outstandingAmount = Some(-2000), mainType = Some("ITSA Cutover Credits")),

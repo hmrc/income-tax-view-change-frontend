@@ -78,7 +78,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   import implicitDateFormatter.longDate
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -105,7 +105,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     )
   )
   val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -151,7 +151,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )
 
   val financialDetailsMFADebits: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,

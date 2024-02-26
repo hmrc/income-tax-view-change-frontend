@@ -49,7 +49,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -76,7 +76,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )
 
   val immediatelyRejectedByNps: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -120,7 +120,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )
 
   val rejectedByNpsPartWay: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -166,7 +166,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )
 
   val codingOutPartiallyCollected: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
@@ -228,7 +228,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )
 
   val financialDetailsDunningLockSuccess: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(DocumentDetail(
       taxYear = getCurrentTaxYearEnd.getYear,
       transactionId = "testDunningTransactionId",
@@ -273,7 +273,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
   )
 
   val financialDetailsMFADebits: FinancialDetailsModel = FinancialDetailsModel(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
