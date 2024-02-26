@@ -339,7 +339,6 @@ object IncomeSourceIntegrationTestConstants {
   val twoInterestLocks: List[String] = List("Breathing Space Moratorium Act", "Manual RPI Signal")
 
   val id1040000123 = "1040000123"
-
   val documentText = (isClass2Nic: Boolean, otherwise: String) => {
     if (isClass2Nic) {
       CODING_OUT_CLASS2_NICS.name
