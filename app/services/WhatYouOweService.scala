@@ -70,7 +70,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None))
+          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
         val codedOutDocumentDetail = if (isCodingOutEnabled) {
           financialDetailsModelList.flatMap(fdm =>
             fdm.documentDetails.find(dd => dd.isPayeSelfAssessment

@@ -57,7 +57,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
   private def getFinancialDetailSuccess(taxYear: Int,
                                         documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel),
                                         financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel)): FinancialDetailsModel = {
-    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), documentDetails = documentDetails, financialDetails = financialDetails)
+    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), documentDetails = documentDetails, financialDetails = financialDetails)
   }
 
   private def mtdUser(numYears: Int): MtdItUser[_] = MtdItUser(
@@ -134,7 +134,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "return a single overdue date" when {
         "there is only one overdue date" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1))),
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(200.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1)))
@@ -146,7 +146,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29)),
               DocumentDetail(2018, "testTransactionId2", None, None, None, None, LocalDate.of(2018, 3, 29))
@@ -167,7 +167,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "return a single non-overdue date" when {
         "there are no overdue dates, but there are dates upcoming" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(7))),
               DocumentDetail(2018, "testTransactionId2", None, None, Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)))
@@ -179,7 +179,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", None, None, None, None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(3)), documentDueDate = Some(fixedDate.plusDays(3))),
               DocumentDetail(2018, "testTransactionId2", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), None, LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(5)), documentDueDate = Some(fixedDate.plusDays(5)))
@@ -200,7 +200,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "return the count of overdue dates" when {
         "there are more than one overdue dates" in {
           val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.minusDays(1))),
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), documentDueDate = Some(fixedDate.plusDays(1)))
@@ -212,7 +212,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           )
 
           val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(
               DocumentDetail(2018, "testTransactionId1", Some("ITSA- POA 1"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.plusDays(1)), documentDueDate = Some(fixedDate.plusDays(1))),
               DocumentDetail(2018, "testTransactionId2", Some("ITSA - POA 2"), Some("documentText"), Some(100.00), Some(0.00), LocalDate.of(2018, 3, 29), effectiveDateOfPayment = Some(fixedDate.minusDays(1)), documentDueDate = Some(fixedDate.minusDays(1)))
@@ -232,9 +232,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       }
       "return none" when {
         "there are no upcoming or overdue dates" in {
-          val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List())
+          val financialDetailsCurrentYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List())
 
-          val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List())
+          val financialDetailsLastYear: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List())
 
           val result: Option[Either[(LocalDate, Boolean), Int]] = {
             TestFinancialDetailsService.getChargeDueDates(List(financialDetailsCurrentYear, financialDetailsLastYear))(isEnabled(TimeMachineAddYear))

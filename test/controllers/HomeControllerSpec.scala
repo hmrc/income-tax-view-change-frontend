@@ -131,7 +131,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         mockSingleBusinessIncomeSource()
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(FinancialDetailsModel(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
             documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
               documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
             financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
@@ -173,19 +173,19 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(
             FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
                 documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
                 documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
             FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
                 documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
@@ -210,25 +210,25 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
           .thenReturn(Future.successful(List(
             FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
                 documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId1", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29),
                 paymentLotItem = Some("123"), paymentLot = Some("456"), documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, transactionId = Some("testId1"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
                 documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA Payment on Account 1"), transactionId = Some("testId2"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
             FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
                 documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
               financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"),
@@ -268,7 +268,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           mockGetDueDates(Right(futureDueDates))
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
-            .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List(), List()))))
+            .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List(), List()))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
 
@@ -286,7 +286,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           mockSingleBusinessIncomeSource()
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
               documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(0), None, LocalDate.of(2018, 3, 29))),
               financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
@@ -323,7 +323,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
           financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
             items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
@@ -368,7 +368,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
           financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
             items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
@@ -392,7 +392,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncomeCeased)
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
           financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
             items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
@@ -417,7 +417,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, Some(1000.00), None, LocalDate.of(2018, 3, 29))),
           financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
             items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
@@ -439,7 +439,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
             documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
           financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
@@ -461,7 +461,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
             documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
           financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
@@ -482,7 +482,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
             documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
           financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
@@ -720,7 +720,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
             documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
           financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
@@ -743,7 +743,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
             documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
           financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
@@ -765,7 +765,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       mockSingleBusinessIncomeSource()
       when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
         .thenReturn(Future.successful(List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None),
+          balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None),
           documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), Some(1000.00), None, LocalDate.of(2018, 3, 29),
             documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
           financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),

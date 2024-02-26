@@ -104,7 +104,7 @@ class CreditsSummaryControllerSpec extends TestSupport with MockCalculationServi
       }
 
       "show the Credits Summary Page and back link should be to the Payment Refund History page and the money Money in your account section should not be available when available credit is Some(0.00)" in {
-        val emptyBalanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None)
+        val emptyBalanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None, None)
         val chargesList = creditAndRefundCreditDetailListMFA.map(_.copy(balanceDetails = Some(emptyBalanceDetails)))
 
         mockSingleBusinessIncomeSource()
