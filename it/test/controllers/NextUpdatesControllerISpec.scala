@@ -16,17 +16,31 @@
 
 package controllers
 
+import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
+import auth.MtdItUser
 import helpers.ComponentSpecBase
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.nextUpdates.ObligationsModel
 import play.api.http.Status._
+import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class NextUpdatesControllerISpec extends ComponentSpecBase {
 
   "Calling the NextUpdatesController" when {
+
+    val testPropertyOnlyUser: MtdItUser[_] = MtdItUser(
+      testMtditid, testNino, None, ukPropertyOnlyResponse,
+      None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
+    )(FakeRequest())
+
+    val testBusinessOnlyUser: MtdItUser[_] = MtdItUser(
+      testMtditid, testNino, None, businessOnlyResponse,
+      None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
+    )(FakeRequest())
 
     unauthorisedTest("/next-updates")
 
@@ -39,6 +53,8 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationEOPSPropertyModel)))
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -84,9 +100,11 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyNextUpdatesCall(testNino)
@@ -111,9 +129,11 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
 
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -143,6 +163,8 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
 
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
+
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyNextUpdatesCall(testNino)
         IncomeTaxViewChangeStub.verifyGetObligations(testNino)
@@ -164,9 +186,11 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
       "the user has a eops SE income obligation only" in {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(SEIncomeSourceEOPSModel(testSelfEmploymentId))))
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyNextUpdatesCall(testNino)
@@ -190,9 +214,11 @@ class NextUpdatesControllerISpec extends ComponentSpecBase {
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsNotFound(testNino)
+        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = IncomeTaxViewChangeFrontend.getNextUpdates
+
+        AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
         verifyIncomeSourceDetailsCall(testMtditid)
         verifyNextUpdatesCall(testNino)

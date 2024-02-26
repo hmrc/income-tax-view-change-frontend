@@ -117,6 +117,8 @@ home.paymentHistory.view                                        = Hanes taliadau
 home.paymentHistoryRefund.availableCredit                       = Mae {0} yn eich cyfrif
 home.paymentHistoryRefund.heading                               = Hanes taliadau ac ad-daliadau
 home.paymentHistoryRefund.view                                  = Hanes taliadau ac ad-daliadau
+home.paymentCreditHistory.view                                  = Hanes taliadau a chredyd
+home.paymentCreditRefundHistory.view                            = Hanes taliadau, credyd ac ad-daliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
 home.agent.overdue.message.dunningLock.true                     = Mae gan eich cleient daliadau sy’n hwyr ac mae un neu fwy o’i benderfyniadau treth yn cael eu hadolygu. Mae’n bosibl y codir llog arno ar y rhain hyd nes eu bod wedi’u talu’n llawn.
@@ -129,9 +131,11 @@ home.self-assessment.description                                = Defnyddiwch y 
 home.credAndRefund.view                                         = Hawlio ad-daliad
 home.credAndRefund_howToClaim.view                              = Sut i hawlio ad-daliad
 home.incomeSources.heading                                      = Ffynonellau incwm
+home.incomeSources.newJourneyHeading                            = Eich busnesau
 home.incomeSources.addIncomeSource.view                         = Ychwanegu unig fasnachwr neu incwm o eiddo newydd
 home.incomeSources.manageIncomeSource.view                      = Bwrw golwg dros eich ffynonellau incwm a’u rheoli
 home.incomeSources.ceaseIncomeSource.view                       = Dod â ffynhonnell incwm i ben
+home.incomeSources.newJourney.view                              = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
 
 
 ## Recruitment Banner ##
@@ -1010,17 +1014,23 @@ paymentHistory.textLink1                                        = gwasanaeth Hun
 paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
-paymentHistory.paymentToHmrc                                    = Taliad a wnaed i CThEF
+paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
 paymentHistory.balancingChargeCredit                            = Credyd tâl mantoli
 paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
 paymentHistory.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
-paymentHistory.balancingChargeCredit                            = Credyd tâl mantoli
+paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
+paymentHistory.balancingChargeCredit                            = Credyd o ordaliad treth
 paymentHistory.table.header.date                                = Dyddiad
 paymentHistory.table.header.description                         = Disgrifiad
 paymentHistory.table.header.amount                              = Swm
 PaymentHistory.classicSA                                        = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 paymentHistory.paymentAndRefundHistory.heading                  = Hanes taliadau ac ad-daliadau
 paymentHistory.unknown                                          = Anhysbys
+paymentHistory.paymentAndCreditHistory                          = Hanes taliadau a chredyd
+paymentHistory.paymentCreditAndRefundHistory.heading            = Hanes taliadau, credyd ac ad-daliadau
+paymentHistory.check-refund-1                                   = Gallwch
+paymentHistory.check-refund-2                                   = wirio cynnydd cais
+paymentHistory.check-refund-3                                   = a wnaethoch am ad-daliad ar unrhyw adeg.
 
 # Agent - Enter clients details
 agent.enter_clients_utr.heading                                 = Beth yw UTR eich cleient?
@@ -1064,7 +1074,7 @@ getpagehelp.linkText                                            = Help gyda’r 
 pagehelp.opensInNewTabText                                      = (yn agor tab newydd)
 
 ## Payment Allocation ##
-paymentAllocation.heading                                       = Taliad a wnaed i CThEF
+paymentAllocation.heading                                       = Taliad roeddech wedi’i wneud i CThEF
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
@@ -1153,10 +1163,17 @@ credit-and-refund.bullet-two-prt-2                                = yn ôl. Os b
 credit-and-refund.agent.bullet-two-prt-2                          = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi’i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i’ch cleient wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
 credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
 credit-and-refund.agent.no-credit                                 = Nid oes gan eich cleient arian yn ei gyfrif.
-credit-and-refund.credit-from-balancing-charge-prt-1              = yn sgil
-credit-and-refund.credit-from-balancing-charge-prt-2              = credyd tâl mantoli
 credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
+credit-and-refund.subHeading-source                               = O ble ddaeth yr arian hwn?
+credit-and-refund.credit-from-balancing-charge-prt-1              = o ordaliad treth -
+credit-and-refund.credit-from-balancing-charge-prt-2              =
+credit-and-refund.tax-year                                        = blwyddyn dreth {0} i {1}
+credit-and-refund.credit-from-adjustment-prt-1                    =
+credit-and-refund.credit-from-adjustment-prt-2                    = o ganlyniad i addasiad gan CThEF –
+credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
+credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
+credit-and-refund.credit                                          = Credyd o
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################

@@ -319,36 +319,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
   val emptyPaymentsList: List[DocumentDetailWithDueDate] = List.empty
 
-  val currentObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(
-      identification = "ABC123456789",
-      obligations = List(
-        NextUpdateModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "EOPS",
-          dateReceived = Some(getCurrentTaxYearEnd),
-          periodKey = "EOPS"
-        ))
-    )
-  ))
-
-  val previousObligationsSuccess: ObligationsModel = ObligationsModel(Seq(
-    NextUpdatesModel(
-      identification = "ABC123456789",
-      obligations = List(
-        NextUpdateModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(getCurrentTaxYearEnd.minusDays(1)),
-          periodKey = "#004"
-        ))
-    )
-  ))
-
   val allObligations: ObligationsModel = ObligationsModel(Seq(
     NextUpdatesModel(
       identification = "ABC123456789",
@@ -408,18 +378,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
+          deadlines = allObligations
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
@@ -481,18 +445,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("all obligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
+          deadlines = allObligations
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
@@ -506,8 +464,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        allObligations.obligations.foreach {
+          obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
+        }
 
         And("The expected result is returned")
         res should have(
@@ -552,18 +511,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(financialDetailsDunningLockSuccess)
         )
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
+          deadlines = allObligations
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
@@ -577,8 +530,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        allObligations.obligations.foreach {
+          obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
+        }
 
         And("The expected result is returned")
         res should have(
@@ -603,7 +557,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(annualUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-          elementTextBySelectorList ("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
+          elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "th:nth-of-type(1)")(quarterlyUpdate),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("business"),
           elementTextBySelectorList("#updates", "div:nth-of-type(1)", "table:eq(2) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("4 Apr " + getCurrentTaxYearEnd.getYear.toString),
         )
@@ -638,18 +592,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(immediatelyRejectedByNps)
         )
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
+          deadlines = allObligations
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
@@ -696,18 +644,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(rejectedByNpsPartWay)
         )
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
+          deadlines = allObligations
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
@@ -755,18 +697,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(codingOutPartiallyCollected)
         )
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
+          deadlines = allObligations
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
@@ -790,8 +726,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $balancingPayment"),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "a")(class2Nic),
           elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "a")(cancelledPayeSA)
-
-
         )
       }
 
@@ -815,18 +749,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.obj()
         )
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
+          deadlines = allObligations
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
@@ -840,8 +768,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
           to = getCurrentTaxYearEnd.toString)
 
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        allObligations.obligations.foreach {
+          obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
+        }
 
         And("Page is displayed with no payments due")
         res should have(
@@ -891,8 +820,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino,
           "2018")(NO_CONTENT, LiabilityCalculationError(NO_CONTENT, "error"))
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(testNino,
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5),
           ObligationsModel(Seq(
@@ -904,23 +833,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
                 LocalDate.of(2018, 2, 4),
                 "Quarterly",
                 Some(LocalDate.of(2018, 2, 2)),
-                "#001"
-              ))
-            )
-          ))
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
-          ObligationsModel(Seq(
-            NextUpdatesModel(
-              "ABC123456789",
-              List(NextUpdateModel(
-                LocalDate.of(2017, 11, 28),
-                LocalDate.of(2018, 1, 3),
-                LocalDate.of(2018, 1, 4),
-                "Quarterly",
-                Some(LocalDate.of(2018, 1, 2)),
                 "#001"
               ))
             )
@@ -952,8 +864,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino,
           "2018")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(testNino,
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5),
           ObligationsModel(Seq(
@@ -965,23 +877,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
                 LocalDate.of(2018, 2, 4),
                 "Quarterly",
                 Some(LocalDate.of(2018, 2, 2)),
-                "#001"
-              ))
-            )
-          ))
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
-          ObligationsModel(Seq(
-            NextUpdatesModel(
-              "ABC123456789",
-              List(NextUpdateModel(
-                LocalDate.of(2017, 11, 28),
-                LocalDate.of(2018, 1, 3),
-                LocalDate.of(2018, 1, 4),
-                "Quarterly",
-                Some(LocalDate.of(2018, 1, 2)),
                 "#001"
               ))
             )
@@ -1001,7 +896,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         )
       }
 
-      "retrieving a previous obligations error" in {
+      "retrieving a getAllObligations error" in {
         Given("Business details returns a successful response back")
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
@@ -1015,12 +910,8 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(codingOutPartiallyCollected)
         )
 
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino,
-          ObligationsModel(Nil))
-
-        And("previous obligations call failed")
-        IncomeTaxViewChangeStub.stubGetPreviousObligationsError(testNino,
+        And("getAllObligations call failed")
+        IncomeTaxViewChangeStub.stubGetAllObligationsError(testNino,
           LocalDate.of(2017, 4, 6),
           LocalDate.of(2018, 4, 5))
 
@@ -1032,31 +923,6 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, LocalDate.of(2017, 4, 6).toString,
           LocalDate.of(2018, 4, 5).toString)
 
-
-        And("Internal server error is returned")
-        res should have(
-          httpStatus(INTERNAL_SERVER_ERROR)
-        )
-      }
-
-      "retrieving a current obligations error" in {
-        Given("Business details returns a successful response back")
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(testNino,
-          LocalDate.of(2017, 4, 6),
-          LocalDate.of(2018, 4, 5),
-          ObligationsModel(Nil))
-
-        And("current obligations call failed")
-        IncomeTaxViewChangeStub.stubGetNextUpdatesError(testNino)
-
-        When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url}")
-        val res = IncomeTaxViewChangeFrontend.getTaxYearSummary(testYear)
-
-        Then("I check all calls expected were made")
-        verifyIncomeSourceDetailsCall(testMtditid)
 
         And("Internal server error is returned")
         res should have(
@@ -1086,18 +952,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(financialDetailsSuccess)
         )
 
-        And("previous obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("getAllObligations returns a success")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
-        )
-
-        And("current obligations returns a success")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
+          deadlines = allObligations
         )
 
         When(s"I call GET ${controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(getCurrentTaxYearEnd.getYear).url}")
@@ -1111,8 +971,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           to = getCurrentTaxYearEnd.toString
         )
 
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        allObligations.obligations.foreach {
+          obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
+        }
 
         And("The expected result is returned")
         val errMessages = liabilityCalculationModelErrorMessagesFormatted.messages.get.errorMessages
@@ -1127,7 +988,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           elementTextBySelector(".forecast_table")(""),
           elementTextBySelectorList("#taxCalculation", "div h2")(messagesAPI("tax-year-summary.message.header")),
           elementTextBySelectorList("#taxCalculation", "div strong")("Warning " + messagesAPI("tax-year-summary.message.action")),
-          elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(1)")(errMessages(0).text),
+          elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(1)")(errMessages.head.text),
           elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(2)")(errMessages(1).text),
           elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(3)")(errMessages(2).text),
           elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(4)")(errMessages(3).text),
@@ -1150,18 +1011,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
         response = Json.toJson(codingOutPartiallyCollected)
       )
 
-      And("previous obligations returns a success")
-      IncomeTaxViewChangeStub.stubGetPreviousObligations(
+      And("getAllObligations returns a success")
+      IncomeTaxViewChangeStub.stubGetAllObligations(
         nino = testNino,
         fromDate = LocalDate.of(2017, 4, 6),
         toDate = LocalDate.of(2018, 4, 5),
-        deadlines = previousObligationsSuccess
-      )
-
-      And("current obligations returns a success")
-      IncomeTaxViewChangeStub.stubGetNextUpdates(
-        nino = testNino,
-        deadlines = currentObligationsSuccess
+        deadlines = allObligations
       )
 
       And("A calculation call for 2017-18 fails")
@@ -1172,8 +1027,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
 
       Then("I check all calls expected were made")
       verifyIncomeSourceDetailsCall(testMtditid)
-      IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-      IncomeTaxViewChangeStub.verifyGetPreviousObligations(testNino,
+      IncomeTaxViewChangeStub.verifyGetAllObligations(testNino,
         LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))
       IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
@@ -1230,18 +1084,12 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
           response = Json.toJson(financialDetailsMFADebits)
         )
 
-        And("A current obligations call is made")
-        IncomeTaxViewChangeStub.stubGetNextUpdates(
-          nino = testNino,
-          deadlines = currentObligationsSuccess
-        )
-
-        And("A previous obligations call is made")
-        IncomeTaxViewChangeStub.stubGetPreviousObligations(
+        And("A getAllObligations call is made")
+        IncomeTaxViewChangeStub.stubGetAllObligations(
           nino = testNino,
           fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
           toDate = getCurrentTaxYearEnd,
-          deadlines = previousObligationsSuccess
+          deadlines = allObligations
         )
       }
 
@@ -1260,8 +1108,9 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
             None, Some("1234567890"), Some("12345-credId"), Some(Individual), None
           )(FakeRequest()), auditDD,
           allObligations, messagesAPI, Some(TaxYearSummaryViewModel(liabilityCalculationModelSuccessful))))
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", previousObligationsSuccess.obligations.flatMap(_.obligations)).detail)
-        verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "ABC123456789", currentObligationsSuccess.obligations.flatMap(_.obligations)).detail)
+        allObligations.obligations.foreach {
+          obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, obligation.identification, obligation.obligations).detail)
+        }
 
         if (isEnabled(MFACreditsAndDebits)) {
           result should have(

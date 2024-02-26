@@ -22,14 +22,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError
 import play.api.mvc.Call
-import play.mvc.Http.HeaderNames.{SERVER, UPGRADE}
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.incomeSources.add.AddIncomeSourceStartDate
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isChange: Boolean = false) extends TestSupport {
+  class Setup(isAgent: Boolean, hasError: Boolean = false, incomeSourceType: IncomeSourceType, isChange: Boolean = false) {
 
     val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
 

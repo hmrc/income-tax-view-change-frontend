@@ -16,12 +16,44 @@
 
 package models.creditsandrefunds
 
-import models.financialDetails.BalanceDetails
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
+import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
+
+
+case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {
+
+
+  private val balancingChargeCredit = "BCC"
+  private val mfaCredit = "MFA"
+  private val cutOverCredit = "CutOver"
+  private val payment = "Payment"
+
+
+  def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
+    val sortedCredits = creditCharges.sortBy {
+      case (_, financialDetails) => financialDetails.taxYear
+    }
+    sortedCredits.reverse
+  }
+
+  val sortedCreditCharges = sortCreditsByYear
+
+
+  def getCreditType(credit: (DocumentDetailWithDueDate, FinancialDetail)): String = {
+
+    val creditType: Option[CreditType] = credit._2.getCreditType
+    val isPayment: Boolean = credit._1.documentDetail.paymentLot.isDefined
+
+    (creditType, isPayment) match {
+      case (Some(BalancingChargeCreditType), false) => balancingChargeCredit
+      case (Some(MfaCreditType), false) => mfaCredit
+      case (Some(CutOverCreditType), false) => cutOverCredit
+      case (None, true) => payment
+      case (_, _) => "Unknown credit"
+    }
+  }
+
+}
 
 
 
-case class CreditAndRefundViewModel(balance: BalanceDetails,
-                                    creditCharges: List[(Option[String], Option[FinancialDetailsWithDocumentDetailsModel])])
-
-case class CreditAndRefundError(status: Option[Int] = None)

@@ -28,7 +28,7 @@ import views.html.incomeSources.add.IncomeSourceReportingMethodNotSaved
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
   val incomeSourceReportingMethodNotSaved: IncomeSourceReportingMethodNotSaved = app.injector.instanceOf[IncomeSourceReportingMethodNotSaved]
 
-  class TestSetup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
+  class TestSetup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
     val id = "testId"
 
     val selfEmploymentText: String = messages("incomeSources.add.error.reportingMethodNotSaved.se")

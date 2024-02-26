@@ -29,19 +29,25 @@ import play.api.{Configuration, Environment}
 import testConstants.BaseTestConstants.{testAuthSuccessResponse, testAuthSuccessResponseOrgNoNino, testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.Future
 
 class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPredicate
   with MockIncomeSourceDetailsPredicate with MockAuditingService with FeatureSwitching {
 
+
   "The AuthenticationPredicate" when {
 
-    def setupResult(): Action[AnyContent] =
+    def setupResult(relativeParamsEnabled: Boolean = false): Action[AnyContent] = {
+      val frontendAppConfig = new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
+        override lazy val relativeIVUpliftParams: Boolean = relativeParamsEnabled
+      }
+
       new AuthenticationPredicate()(
         ec,
         mockAuthService,
-        app.injector.instanceOf[FrontendAppConfig],
+        frontendAppConfig,
         app.injector.instanceOf[Configuration],
         app.injector.instanceOf[Environment],
         app.injector.instanceOf[ItvcErrorHandler],
@@ -52,6 +58,8 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
         implicit request =>
           Future.successful(Ok(testMtditid + " " + testNino))
       }
+    }
+
 
     "called with an authenticated user" when {
 
@@ -117,6 +125,7 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
 
       "redirect to the IV Uplift Journey" when {
         val ivuplifturl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250&completionURL=http://localhost:9081/report-quarterly/income-and-expenses/view/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=http://localhost:9081/report-quarterly/income-and-expenses/view/report-quarterly/income-and-expenses/view/cannot-view-page"
+        val ivUpliftRelativeUrl = "http://localhost:9948/iv-stub/uplift?origin=ITVC&confidenceLevel=250&completionURL=/report-quarterly/income-and-expenses/view/report-quarterly/income-and-expenses/view/uplift-success?origin=PTA&failureURL=/report-quarterly/income-and-expenses/view/report-quarterly/income-and-expenses/view/cannot-view-page"
 
         "the feature switch is enabled for an individual" in {
           enable(IvUplift)
@@ -144,6 +153,17 @@ class AuthenticationPredicateSpec extends TestSupport with MockAuthenticationPre
           def result: Future[Result] = setupResult()(fakeRequestWithActiveSession)
 
           redirectLocation(result) shouldBe Some(ivuplifturl)
+        }
+
+        "relative URL is enabled" in {
+          enable(IvUplift)
+
+          setupMockAuthRetrievalSuccess(testAuthSuccessResponse(ConfidenceLevel.L200))
+
+          def result: Future[Result] = setupResult(true)(fakeRequestWithActiveSession)
+
+          redirectLocation(result) shouldBe Some(ivUpliftRelativeUrl)
+
         }
       }
 

@@ -48,12 +48,12 @@ import java.time.LocalDate
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
-trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterEach with Injecting with FeatureSwitching {
+trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
   this: Suite =>
 
   import play.twirl.api.Html
 
-  implicit val actorSystem: ActorSystem = ActorSystem()
+  implicit val actorSystem: ActorSystem = app.actorSystem
 
   implicit val htmlEq: Equality[Html] =
     new Equality[Html] {

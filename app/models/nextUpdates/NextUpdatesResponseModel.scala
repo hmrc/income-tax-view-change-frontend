@@ -34,7 +34,7 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
           deadlinesModel.obligations.map {
             deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.Foreign", deadline))
           }
-        case Some(property) if property.incomeSourceType.contains("uk-property") => //
+        case Some(property) if property.incomeSourceType.contains("uk-property") =>
           deadlinesModel.obligations.map {
             deadline => Some(NextUpdateModelWithIncomeType(s"nextUpdates.propertyIncome.UK", deadline))
           }
@@ -47,7 +47,8 @@ case class ObligationsModel(obligations: Seq[NextUpdatesModel]) extends NextUpda
             deadline =>
               Some(NextUpdateModelWithIncomeType(mtdItUser.incomeSources.businesses.find(_.incomeSourceId == deadlinesModel.identification)
                 .get.tradingName.getOrElse("nextUpdates.business"), deadline))
-          } else if (mtdItUser.mtditid == deadlinesModel.identification) deadlinesModel.obligations.map {
+          } else if (deadlinesModel.obligations.forall(ob => ob.obligationType == "Crystallised"))
+            deadlinesModel.obligations.map {
             deadline => Some(NextUpdateModelWithIncomeType("nextUpdates.crystallisedAll", deadline))
           } else None
       }

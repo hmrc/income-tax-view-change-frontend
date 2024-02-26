@@ -16,6 +16,9 @@
 
 package models.repaymentHistory
 
+import models.incomeSourceDetails.TaxYear
+import services.DateServiceInterface
+
 import java.time.LocalDate
 
 case class PaymentHistoryEntry(date: LocalDate,
@@ -23,4 +26,15 @@ case class PaymentHistoryEntry(date: LocalDate,
                                amount: Option[BigDecimal],
                                transactionId: Option[String] = None,
                                linkUrl: String,
-                               visuallyHiddenText: String)
+                               visuallyHiddenText: String)(implicit val dateService: DateServiceInterface) {
+
+  def getTaxYear: TaxYear = {
+    val endYear = dateService.getAccountingPeriodEndDate(date).getYear
+    TaxYear(endYear-1, endYear)
+  }
+
+  private val creditDescriptions = Seq("paymentHistory.mfaCredit",
+    "paymentHistory.balancingChargeCredit", "paymentHistory.paymentFromEarlierYear")
+
+  def isCredit: Boolean = creditDescriptions.contains(description)
+}

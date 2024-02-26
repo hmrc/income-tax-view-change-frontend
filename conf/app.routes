@@ -95,6 +95,7 @@ GET         /language/:lang                                               contro
 #Payment history
 GET         /payment-refund-history                                       controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
 GET         /agents/payment-refund-history                                controllers.PaymentHistoryController.showAgent
+GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus(isAgent: Boolean = false)
 
 
 #InYear Tax
@@ -129,7 +130,6 @@ GET         /agents/:taxYear/forecast-tax-calculation                     contro
 GET          /claim-refund                                                controllers.CreditAndRefundController.show(origin: Option[String] ?= None)
 GET          /agents/claim-refund                                         controllers.CreditAndRefundController.showAgent()
 GET          /start-refund                                                controllers.CreditAndRefundController.startRefund()
-GET          /refund-status                                                controllers.CreditAndRefundController.refundStatus()
 
 
 #Credits
@@ -466,3 +466,7 @@ GET          /income-sources/add/foreign-property-accounting-method             
 GET          /agents/income-sources/add/foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
 GET          /income-sources/add/change-foreign-property-accounting-method          controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
 GET          /agents/income-sources/add/change-foreign-property-accounting-method   controllers.incomeSources.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
+
+
+GET          /manage-your-businesses                                    controllers.incomeSources.NewIncomeSourcesHomePageController.show()
+GET          /agents/manage-your-businesses                             controllers.incomeSources.NewIncomeSourcesHomePageController.showAgent()

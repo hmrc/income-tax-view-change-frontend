@@ -80,36 +80,36 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", INTERNAL_SERVER_ERROR, Json.toJson(response).toString)
 
   //PreviousObligations Stubs
-  def previousObligationsUrl(nino: String): String = {
+  def fulfilledObligationsUrl(nino: String): String = {
     s"/income-tax-view-change/$nino/fulfilled-report-deadlines"
   }
 
-  def stubGetPreviousObligations(nino: String, deadlines: ObligationsModel): Unit =
-    WiremockHelper.stubGet(previousObligationsUrl(nino), Status.OK, Json.toJson(deadlines).toString())
+  def stubGetFulfilledObligations(nino: String, deadlines: ObligationsModel): Unit =
+    WiremockHelper.stubGet(fulfilledObligationsUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
-  def previousObligationsUrl(nino: String, fromDate: LocalDate, toDate: LocalDate): String = {
-    s"/income-tax-view-change/$nino/fulfilled-report-deadlines/from/$fromDate/to/$toDate"
+  def allObligationsUrl(nino: String, fromDate: LocalDate, toDate: LocalDate): String = {
+    s"/income-tax-view-change/$nino/report-deadlines/from/$fromDate/to/$toDate"
   }
 
   def obligationsUrl(nino: String): String = {
     s"/income-tax-view-change/$nino/report-deadlines"
   }
 
-  def stubGetPreviousObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): Unit =
-    WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.OK, Json.toJson(deadlines).toString())
+  def stubGetAllObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): Unit =
+    WiremockHelper.stubGet(allObligationsUrl(nino, fromDate, toDate), Status.OK, Json.toJson(deadlines).toString())
 
-  def stubGetPreviousObligationsNotFound(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
-    WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.NOT_FOUND, Json.obj().toString())
+  def stubGetAllObligationsNotFound(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
+    WiremockHelper.stubGet(allObligationsUrl(nino, fromDate, toDate), Status.NOT_FOUND, Json.obj().toString())
 
-  def stubGetPreviousObligationsError(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
-    WiremockHelper.stubGet(previousObligationsUrl(nino, fromDate, toDate), Status.INTERNAL_SERVER_ERROR, "")
+  def stubGetAllObligationsError(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
+    WiremockHelper.stubGet(allObligationsUrl(nino, fromDate, toDate), Status.INTERNAL_SERVER_ERROR, "")
 
 
-  def stubGetPreviousObligationsNotFound(nino: String): Unit =
-    WiremockHelper.stubGet(previousObligationsUrl(nino), Status.NOT_FOUND, "")
+  def stubGetFulfilledObligationsNotFound(nino: String): Unit =
+    WiremockHelper.stubGet(fulfilledObligationsUrl(nino), Status.NOT_FOUND, "")
 
-  def verifyGetPreviousObligations(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
-    WiremockHelper.verifyGet(previousObligationsUrl(nino, fromDate, toDate))
+  def verifyGetAllObligations(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
+    WiremockHelper.verifyGet(allObligationsUrl(nino, fromDate, toDate))
 
   def verifyGetObligations(nino: String): Unit =
     WiremockHelper.verifyGet(obligationsUrl(nino))

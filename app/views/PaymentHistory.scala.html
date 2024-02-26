@@ -28,6 +28,8 @@
 
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
+@import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 
 @this(
     mainTemplate: unifiedLayout,
@@ -39,7 +41,7 @@
     govukAccordion : GovukAccordion
 )
 
-@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], viewModel: PaymentCreditAndRefundHistoryViewModel, paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
@@ -66,7 +68,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @bodyContent(year: Int, yearPayments: List[PaymentHistoryEntry]) = {
-    <table class="govuk-table govuk-!-margin-bottom-3">
+    <table class="govuk-table govuk-body govuk-!-margin-bottom-8">
         <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
@@ -76,7 +78,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         </tr>
         </thead>
         <tbody>
-        @for((payment, index) <- yearPayments.zipWithIndex) {
+        @for((payment, index) <- yearPayments.sortBy(x => x.date).reverse.zipWithIndex) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@payment.date.toLongDate</td>
                 <td class="govuk-table__cell">
@@ -84,6 +86,12 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                         @messages(payment.description)
                         <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span>
                     </a>
+                    @if(payment.isCredit) {
+                    <br>
+                    <a class="govuk-text">
+                        @messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)
+                    </a>
+                    }
                 </td>
                 <td class="govuk-table__cell numeric govuk-table__cell--numeric"> @payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown"))</td>
             </tr>
@@ -103,19 +111,25 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @mainTemplate(
-    pageTitle = messages(if(paymentHistoryAndRefundsEnabled) "paymentHistory.paymentAndRefundHistory.heading" else "paymentHistory.heading"),
+    pageTitle = viewModel.title(),
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true
 ) {
 
-    @if(paymentHistoryAndRefundsEnabled){
-        @h1(msg = "paymentHistory.paymentAndRefundHistory.heading")
-    } else {
-        @h1(msg = "paymentHistory.heading")
-    }
+    @h1(msg = viewModel.title())
 
+    @if(!isAgent && paymentHistoryAndRefundsEnabled) {
+        <div id="refundstatus" class="govuk-inset-text">
+            @getMessage("check-refund-1")
+            @link(link =  s"${controllers.routes.PaymentHistoryController.refundStatus().url}",
+            messageKey = "paymentHistory.check-refund-2", classes = "govuk-link",
+            role=Some("button")
+            )
+            @getMessage("check-refund-3")
+        </div>
+    }
 
     @if(groupedPayments.nonEmpty) {
         @govukAccordion(Accordion(

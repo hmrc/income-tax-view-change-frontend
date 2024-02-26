@@ -34,7 +34,6 @@ import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDeta
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, confidenceLevel, credentials}
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.{AuthorisedFunctions, Enrolment}
-import uk.gov.hmrc.http.InternalServerException
 import views.html.agent.EnterClientsUTR
 
 import javax.inject.{Inject, Singleton}
@@ -108,7 +107,8 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
               Future.successful(Redirect(routes.UTRErrorController.show).addingToSession(sessionValue: _*))
             case Left(_)
             =>
-              throw new InternalServerException("[EnterClientsUTRController][submit] - Unexpected response received")
+              Logger("application").error(s"[Agent][EnterClientsUTRController]: Error response received from API")
+              Future.successful(itvcErrorHandler.showInternalServerError())
           }
         }
       )

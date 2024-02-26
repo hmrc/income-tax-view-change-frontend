@@ -214,8 +214,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
-  def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, Some(modelComplete(Some(false))), documentDetailsWithDueDates, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = false)
+  def estimateView(documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
+    testYear, Some(modelComplete(Some(false))), documentDetailsWithDueDates, obligations, "testBackURL", isAgent, codingOutEnabled = false)
 
   def class2NicsView(codingOutEnabled: Boolean, isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, Some(modelComplete(Some(false))), class2NicsChargesList, testObligationsModel, "testBackURL", isAgent, codingOutEnabled = codingOutEnabled)
@@ -751,14 +751,13 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
       }
 
       "display the Balancing payment on the payments table when coding out is enabled and a zero amount" in new Setup(testBalancingPaymentChargeWithZeroValueView(codingOutEnabled = false)) {
-        val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
+        val paymentTypeText: Element = layoutContent.getElementById("paymentTypeText-0")
+        val paymentTypeLinkOption: Option[Element] = Option(layoutContent.getElementById("paymentTypeLink-0"))
         val paymentTabRow: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
         paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
         paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(0).toCurrencyString
-        paymentTypeLink.text shouldBe remainingBalance
-        paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
-
+        paymentTypeText.text shouldBe remainingBalance
+        paymentTypeLinkOption.isEmpty shouldBe true
       }
 
       "display updates by due-date" in new Setup(estimateView()) {
@@ -799,6 +798,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching {
         }
 
         expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Original Amount"
+      }
+
+      "display empty updates table when no obligations are there" in new Setup(estimateView(obligations = ObligationsModel(Seq.empty))) {
+        document.getElementById("updates").text() shouldBe ""
       }
     }
     "the user is an agent" should {

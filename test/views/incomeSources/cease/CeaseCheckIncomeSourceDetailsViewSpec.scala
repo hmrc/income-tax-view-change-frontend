@@ -47,7 +47,7 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
   val testCeaseDateLong: String = "1 January 2023"
   val businessAddressAsString = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
 
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) extends TestSupport {
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 
     val messagesPrefix = incomeSourceType.ceaseCheckDetailsPrefix
 

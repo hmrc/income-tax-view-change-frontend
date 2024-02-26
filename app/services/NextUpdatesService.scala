@@ -35,7 +35,7 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     getNextUpdates().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         Right(deadlines.obligations.flatMap(_.obligations.map(_.due)))
-      case error: NextUpdatesErrorModel if error.code == 404 => Right(Seq.empty)
+      case ObligationsModel(obligations) if obligations.isEmpty => Right(Seq.empty)
       case error: NextUpdatesErrorModel => Left(new Exception(s"${error.message}"))
       case _ =>
         Left(new Exception("Unexpected Exception getting next deadline due and Overdue Obligations"))
@@ -64,39 +64,21 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
   def getNextUpdates(previous: Boolean = false)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
     if (previous) {
       Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting previous Next Updates for nino: ${mtdUser.nino}")
-      obligationsConnector.getPreviousObligations()
+      obligationsConnector.getFulfilledObligations()
     } else {
       Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting current Next Updates for nino: ${mtdUser.nino}")
       obligationsConnector.getNextUpdates()
     }
   }
 
-
-  private def obligationFilter(fromDate: LocalDate, toDate: LocalDate, obligationsModel: ObligationsModel): Seq[NextUpdatesModel] = {
-    obligationsModel.obligations map {
-      nextUpdates =>
-        nextUpdates.copy(obligations = nextUpdates.obligations.filterNot {
-          nextUpdate => nextUpdate.start.isBefore(fromDate) || nextUpdate.end.isAfter(toDate)
-        })
-    }
-  }
-
   def getNextUpdates(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[NextUpdatesResponseModel] = {
 
-    for {
-      previousObligations <- obligationsConnector.getPreviousObligations(fromDate, toDate)
-      openObligations <- obligationsConnector.getNextUpdates()
-    } yield {
-      (previousObligations, openObligations) match {
-        case (ObligationsModel(previous), open: ObligationsModel) =>
-          ObligationsModel((previous ++ obligationFilter(fromDate, toDate, open)).filter(_.obligations.nonEmpty))
-        case (error: NextUpdatesErrorModel, open: ObligationsModel) if error.code == 404 =>
-          ObligationsModel(obligationFilter(fromDate, toDate, open).filter(_.obligations.nonEmpty))
-        case (error: NextUpdatesErrorModel, _) => error
-        case (_, error: NextUpdatesErrorModel) => error
-        case (_, _) => NextUpdatesErrorModel(500, "[NextUpdatesService][getNextUpdates] Invalid response from connector")
-      }
+    obligationsConnector.getAllObligations(fromDate, toDate).map {
+      case obligationsResponse: ObligationsModel => ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
+      case error: NextUpdatesErrorModel => error
+      case _ => NextUpdatesErrorModel(500, "[NextUpdatesService][getNextUpdates] Invalid response from connector")
     }
+
   }
 
   def getObligationDates(id: String)

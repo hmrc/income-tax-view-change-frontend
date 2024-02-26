@@ -21,6 +21,7 @@ import connectors.agent.CitizenDetailsConnector
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import play.api.Logger
+import play.api.http.Status.NOT_FOUND
 import services.agent.ClientDetailsService._
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,16 +39,16 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
         businessDetailsConnector.getBusinessDetails(nino) flatMap {
           case IncomeSourceDetailsModel(_, mtdbsa, _, _, _) =>
             Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
-          case IncomeSourceDetailsError(code, _) if code == 404 => Future.successful(Left(BusinessDetailsNotFound))
+          case IncomeSourceDetailsError(NOT_FOUND, _) => Future.successful(Left(BusinessDetailsNotFound))
           case _ =>
-            Logger("application").error("[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Business Details")
-            Future.successful(Left(UnexpectedResponse))
+            Logger("application").error(s"[ClientDetailsService][checkClientDetails] - error response from Income Source Details")
+            Future.successful(Left(APIError))
         }
       case CitizenDetailsModel(_, _, None) => Future.successful(Left(CitizenDetailsNotFound))
-      case CitizenDetailsErrorModel(code, _) if code == 404 => Future.successful(Left(CitizenDetailsNotFound))
-      case err =>
-        Logger("application").error("[ClientDetailsService][checkClientDetails] - Unexpected response retrieving Citizen Details" + err)
-        Future.successful(Left(UnexpectedResponse))
+      case CitizenDetailsErrorModel(NOT_FOUND, _) => Future.successful(Left(CitizenDetailsNotFound))
+      case _=>
+        Logger("application").error("[ClientDetailsService][checkClientDetails] - error response from Citizen Details")
+        Future.successful(Left(APIError))
     }
 }
 
@@ -55,12 +56,12 @@ object ClientDetailsService {
 
   sealed trait ClientDetailsFailure
 
-  case object BusinessDetailsNotFound extends ClientDetailsFailure
+  final case object BusinessDetailsNotFound extends ClientDetailsFailure
 
-  case object CitizenDetailsNotFound extends ClientDetailsFailure
+  final case object CitizenDetailsNotFound extends ClientDetailsFailure
 
-  case object UnexpectedResponse extends ClientDetailsFailure
+  final case object APIError extends ClientDetailsFailure
 
-  case class ClientDetails(firstName: Option[String], lastName: Option[String], nino: String, mtdItId: String)
+  final case class ClientDetails(firstName: Option[String], lastName: Option[String], nino: String, mtdItId: String)
 
 }

@@ -250,7 +250,7 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = None
   )
 
-  val businessOnlyResponse: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+  val businessOnlyResponse: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     testMtdItId,
     businesses = List(

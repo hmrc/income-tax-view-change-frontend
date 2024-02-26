@@ -19,41 +19,49 @@ package controllers
 import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.{CutOverCredits, FeatureSwitching, MFACreditsAndDebits, PaymentHistoryRefunds}
+import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
+import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
+import implicits.ImplicitDateFormatter
+import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
+import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{IncomeSourceDetailsService, PaymentHistoryService}
+import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.PaymentHistory
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import uk.gov.hmrc.play.language.LanguageUtils
+import utils.AuthenticatorPredicate
+import views.html.{CreditAndRefunds, PaymentHistory}
+import views.html.errorPages.CustomNotFoundError
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import enums.GatewayPage.PaymentHistoryPage
-import models.repaymentHistory.{PaymentHistoryEntry, RepaymentHistory, RepaymentHistoryUtils}
-import uk.gov.hmrc.play.language.LanguageUtils
-import utils.AuthenticatorPredicate
-
-import java.time.LocalDate
-import javax.inject.Inject
 
 @Singleton
 class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          auditingService: AuditingService,
                                          itvcErrorHandler: ItvcErrorHandler,
-                                         implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService,
+                                         val auth: AuthenticatorPredicate,
+                                         val retrieveBtaNavBar: NavBarPredicate,
+                                         val authenticate: AuthenticationPredicate,
+                                         val checkSessionTimeout: SessionTimeoutPredicate,
+                                         val repaymentService: RepaymentService,
+                                         val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate)
+                                        (implicit val appConfig: FrontendAppConfig,
+                                         dateService: DateServiceInterface,
                                          val languageUtils: LanguageUtils,
-                                         val auth: AuthenticatorPredicate)
-                                        (implicit override val mcc: MessagesControllerComponents,
-                                         implicit val ec: ExecutionContext,
-                                         implicit val appConfig: FrontendAppConfig) extends ClientConfirmedController
+                                         mcc: MessagesControllerComponents,
+                                         val ec: ExecutionContext,
+                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                         val view: CreditAndRefunds,
+                                         val customNotFoundErrorView: CustomNotFoundError) extends ClientConfirmedController
   with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
 
   def handleRequest(backUrl: String,
@@ -67,6 +75,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
         val MFACreditsEnabled = isEnabled(MFACreditsAndDebits)
         val CutOverCreditsEnabled = isEnabled(CutOverCredits)
         val paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)
+        val viewModel = PaymentCreditAndRefundHistoryViewModel(isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
         if (paymentHistoryAndRefundsEnabled) {
           paymentHistoryService.getRepaymentHistory.map {
             case Right(repayments) =>
@@ -75,7 +84,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
                 MFACreditsEnabled = MFACreditsEnabled))
               val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, repayments, isAgent,
                 MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-              Ok(paymentHistoryView(paymentHistoryEntries, paymentHistoryAndRefundsEnabled = paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
+              Ok(paymentHistoryView(paymentHistoryEntries, viewModel, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
                 btaNavPartial = user.btaNavPartial, isAgent = isAgent)
               ).addingToSession(gatewayPage -> PaymentHistoryPage.name)
             case Left(_) => itvcErrorHandler.showInternalServerError()
@@ -86,7 +95,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
             MFACreditsEnabled = MFACreditsEnabled))
           val paymentHistoryEntries = RepaymentHistoryUtils.getGroupedPaymentHistoryData(payments, List(), isAgent,
             MFACreditsEnabled = MFACreditsEnabled, CutOverCreditsEnabled = CutOverCreditsEnabled, languageUtils)
-          Future(Ok(paymentHistoryView(paymentHistoryEntries, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
+          Future(Ok(paymentHistoryView(paymentHistoryEntries, viewModel, paymentHistoryAndRefundsEnabled, backUrl, user.saUtr,
             btaNavPartial = user.btaNavPartial, isAgent = isAgent)
           ).addingToSession(gatewayPage -> PaymentHistoryPage.name))
         }
@@ -113,4 +122,33 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
         backUrl = controllers.routes.HomeController.showAgent.url
       )
   }
+
+  private def handleStatusRefundRequest(isAgent: Boolean, itvcErrorHandler: ShowInternalServerError, backUrl: String)
+                                       (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+    repaymentService.view(user.nino).flatMap {
+      case _ if isDisabled(PaymentHistoryRefunds) =>
+        Future.successful(Ok(customNotFoundErrorView()(user, messages)))
+      case Right(nextUrl) =>
+        Future.successful(Redirect(nextUrl))
+      case Left(_) =>
+        Future.successful(itvcErrorHandler.showInternalServerError())
+    }
+
+  }
+
+  def refundStatus(isAgent: Boolean): Action[AnyContent] =
+    auth.authenticatedAction(isAgent) {
+      implicit user =>
+        user.userType match {
+          case _ if isDisabled(PaymentHistoryRefunds) =>
+            Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+          case Some(Agent) => Future.successful(itvcErrorHandlerAgent.showInternalServerError())
+          case _ =>
+            handleStatusRefundRequest(
+              backUrl = "",
+              itvcErrorHandler = itvcErrorHandler,
+              isAgent = false
+            )
+        }
+    }
 }
