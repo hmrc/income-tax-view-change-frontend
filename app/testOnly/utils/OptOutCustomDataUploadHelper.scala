@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package testOnly.utils
 
 import play.api.Logger
 import play.api.mvc.Results.Ok

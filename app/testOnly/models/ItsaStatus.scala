@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import services.DateServiceInterface
 import testOnly.services.DynamicStubService
+import testOnly.utils.OptOutCustomDataUploadHelper
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.OptOutCustomDataUploadHelper
 
 import javax.inject.Inject
 import scala.concurrent.Future
