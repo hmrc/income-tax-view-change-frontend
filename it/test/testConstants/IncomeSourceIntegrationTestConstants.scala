@@ -289,6 +289,7 @@ object IncomeSourceIntegrationTestConstants {
     testMtdItId, None,
     List(), Nil
   )
+
   val errorResponse: IncomeSourceDetailsError = IncomeSourceDetailsError(500, "ISE")
   val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("balanceDetails" -> Json.obj(
     "balanceDueWithin30Days" -> 0.00,
