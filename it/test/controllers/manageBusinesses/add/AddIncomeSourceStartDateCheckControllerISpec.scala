@@ -213,7 +213,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add/foreign-property-start-date-check", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-foreign-property/business-start-date-check", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -287,7 +287,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         When(s"I call GET $checkUKPropertyStartDateShowUrl")
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add/uk-property-start-date-check", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-uk-property/business-start-date-check", clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),

@@ -99,7 +99,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         }
 
         When(s"I call POST ${addBusinessNameSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/business-name")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/business-name")(formData)
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(addBusinessStartDateUrl)
@@ -117,7 +117,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         )
       }
 
-      val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/business-name")(formData)
+      val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/business-name")(formData)
       result should have(
         httpStatus(BAD_REQUEST),
         elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +

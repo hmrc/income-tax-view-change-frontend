@@ -41,7 +41,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val prefix: String = "add-business-start-date"
   val continueButtonText: String = messagesAPI("base.continue")
 
-  val hintTextBusiness: String = messagesAPI("add-business-start-date.hint") + " " +
+  val hintTextBusiness: String = messagesAPI("add-business-start-date.hint") + " " + messagesAPI("add-business-start-date.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val addUKPropertyStartDateCheckChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
@@ -50,7 +50,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val addUKPropertyStartDateSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
   val checkUKPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
 
-  val hintTextUkProperty: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " +
+  val hintTextUkProperty: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " + messagesAPI("incomeSources.add.UKPropertyStartDate.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val foreignPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
@@ -61,7 +61,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
   val prefixForeignProperty = "incomeSources.add.foreignProperty.startDate"
 
-  val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " +
+  val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " + messagesAPI("incomeSources.add.foreignProperty.startDate.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -138,7 +138,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/business-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/business-start-date")(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -162,7 +162,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/business-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/business-start-date")(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),
@@ -182,7 +182,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         When(s"I call GET $addUKPropertyStartDateShowUrl")
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add/uk-property-start-date")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-uk-property/business-start-date")
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -205,7 +205,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/uk-property-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-uk-property/business-start-date")(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -224,7 +224,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/uk-property-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-uk-property/business-start-date")(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),
@@ -245,7 +245,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add/foreign-property-start-date")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-foreign-property/business-start-date")
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -269,7 +269,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/foreign-property-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-foreign-property/business-start-date")(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -289,7 +289,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/foreign-property-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-foreign-property/business-start-date")(formData)
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("income-source-start-date-error")(messagesAPI("base.error-prefix") + " " +
@@ -309,7 +309,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         When(s"I call GET $addUKPropertyStartDateChangeShowUrl")
         await(sessionService.setMongoData(testUIJourneySessionDataWithStartDate(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add/change-uk-property-start-date")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-uk-property/business-start-date")
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -333,7 +333,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionDataWithStartDate(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add/change-foreign-property-start-date")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-foreign-property/business-start-date")
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -356,7 +356,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         When(s"I call GET $addBusinessStartDateChangeShowUrl")
         await(sessionService.setMongoData(testUIJourneySessionDataWithStartDate(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add/change-business-start-date")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-sole-trader/business-start-date")
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
