@@ -219,7 +219,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ComponentSpecBase {
         result should have(
           httpStatus(OK),
           pageTitleIndividual("dateForm.check.heading"),
-          elementTextByID(s"$incomeSourcePrefix-hint")(dateText),
+          elementTextByID(s"start-date-value")(dateText),
           elementTextByID("continue-button")(continueButtonText)
         )
       }
