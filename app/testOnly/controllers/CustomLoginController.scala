@@ -16,8 +16,10 @@
 
 package testOnly.controllers
 
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
+import models.incomeSourceDetails.TaxYear
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
@@ -25,7 +27,7 @@ import services.{CalculationListService, DateServiceInterface, ITSAStatusService
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
 import testOnly.models._
-import testOnly.services.DynamicStubService
+import testOnly.services.{DynamicStubService, OptOutCustomDataService}
 import testOnly.utils.UserRepository
 import testOnly.views.html.LoginPage
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,6 +47,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       userRepository: UserRepository,
                                       loginPage: LoginPage,
                                       val dynamicStubConnector: DynamicStubConnector,
+                                      val optOutCustomDataService: OptOutCustomDataService,
                                       val customAuthConnector: CustomAuthConnector,
                                       val calculationListService: CalculationListService,
                                       val dynamicStubService: DynamicStubService,
@@ -52,7 +55,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       dateService: DateServiceInterface
-                                     ) extends BaseController with AuthRedirects with I18nSupport {
+                                     ) extends BaseController with AuthRedirects with I18nSupport with FeatureSwitching {
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
@@ -81,10 +84,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                 if (testOnlyAppConfig.optOutUserPrefixes.contains(postedUser.nino.take(2))) {
                   updateTestDataForOptOut(
                     nino = user.nino,
-                    crystallisationStatus = CrystallisationStatus(appConfig)(postedUser.cyMinusOneCrystallisationStatus.get),
-                    cyMinusOneItsaStatus = ItsaStatusCyMinusOne(appConfig)(postedUser.cyMinusOneItsaStatus.get),
-                    cyItsaStatus = ItsaStatusCy(appConfig)(postedUser.cyItsaStatus.get),
-                    cyPlusOneItsaStatus = ItsaStatusCyPlusOne(appConfig)(postedUser.cyPlusOneItsaStatus.get)
+                    crystallisationStatus = postedUser.cyMinusOneCrystallisationStatus.get,
+                    cyMinusOneItsaStatus = postedUser.cyMinusOneItsaStatus.get,
+                    cyItsaStatus = postedUser.cyItsaStatus.get,
+                    cyPlusOneItsaStatus = postedUser.cyPlusOneItsaStatus.get
                   ).map {
                     _ =>
                       successRedirect(bearer, auth, homePage)
@@ -123,17 +126,22 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     )
   }
 
-  private def updateTestDataForOptOut(nino: String, crystallisationStatus: CrystallisationStatus, cyMinusOneItsaStatus: ItsaStatusCyMinusOne,
-                                      cyItsaStatus: ItsaStatusCy, cyPlusOneItsaStatus: ItsaStatusCyPlusOne)(implicit hc: HeaderCarrier)
+  private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,
+                                      cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
 
     // TODO: maybe make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
 
     val ninoObj = Nino(nino)
-    val crystallisationStatusResult: Future[Unit] = crystallisationStatus.uploadData(nino = ninoObj)
-    val itsaStatusCyMinusOneResult: Future[Unit] = cyMinusOneItsaStatus.uploadData(nino = ninoObj)
-    val itsaStatusCyResult: Future[Unit] = cyItsaStatus.uploadData(nino = ninoObj)
-    val itsaStatusCyPlusOneResult: Future[Unit] = cyPlusOneItsaStatus.uploadData(nino = ninoObj)
+    val taxYear: TaxYear = TaxYear(
+      dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabled(TimeMachineAddYear)).getYear,
+      dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabled(TimeMachineAddYear))
+    )
+
+    val crystallisationStatusResult: Future[Unit] = optOutCustomDataService.uploadCalculationListData(nino = ninoObj, taxYear = taxYear.currentTaxYearMinusOne, status = crystallisationStatus)
+    val itsaStatusCyMinusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.currentTaxYearMinusOne, status = cyMinusOneItsaStatus)
+    val itsaStatusCyResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear, status = cyItsaStatus)
+    val itsaStatusCyPlusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.currentTaxYearPlusOne, status = cyPlusOneItsaStatus)
 
     for {
       _ <- crystallisationStatusResult

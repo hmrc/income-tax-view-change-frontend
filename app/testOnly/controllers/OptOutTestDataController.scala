@@ -20,13 +20,13 @@ import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.calculationList.CalculationListResponseModel
 import models.core.Nino
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.{CalculationListService, DateServiceInterface}
-import testOnly.models.{ItsaStatusCyMinusOne, ItsaStatusCyPlusOne, ItsaStatusCy}
 import testOnly.services.DynamicStubService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -52,17 +52,22 @@ class OptOutTestDataController @Inject()(
   private def retrieveData(nino: String, isAgent: Boolean)
                           (implicit hc: HeaderCarrier, dateService: DateServiceInterface, request: Request[_]): Future[Result] = {
 
-    val result: Future[CalculationListResponseModel] = cyMinusOneCrystallisationStatusResult(nino)
-    val itsaStatusCyMinusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(ItsaStatusCyMinusOne(appConfig)(""), nino)
-    val itsaStatusCyResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(ItsaStatusCy(appConfig)(""), nino)
-    val itsaStatusCyPlusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(ItsaStatusCyPlusOne(appConfig)(""), nino)
+    val taxYear: TaxYear = TaxYear(
+      dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabled(TimeMachineAddYear)).getYear,
+      dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabled(TimeMachineAddYear))
+    )
+
+    val calculationStatusCyMinusOneResult: Future[CalculationListResponseModel] = cyMinusOneCrystallisationStatusResult(nino, taxYear.currentTaxYearMinusOne)
+    val itsaStatusCyMinusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(taxYear.currentTaxYearMinusOne, nino)
+    val itsaStatusCyResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(taxYear, nino)
+    val itsaStatusCyPlusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(taxYear.currentTaxYearPlusOne, nino)
 
     val combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel)] = for {
-      crystallisationStatusResponse <- result
+      crystallisationStatusResponseCyMinusOne <- calculationStatusCyMinusOneResult
       itsaStatusResponseCyMinusOne <- itsaStatusCyMinusOneResult
       itsaStatusResponseCy <- itsaStatusCyResult
       itsaStatusResponseCyPlusOne <- itsaStatusCyPlusOneResult
-    } yield (crystallisationStatusResponse, itsaStatusResponseCyMinusOne, itsaStatusResponseCy, itsaStatusResponseCyPlusOne)
+    } yield (crystallisationStatusResponseCyMinusOne, itsaStatusResponseCyMinusOne, itsaStatusResponseCy, itsaStatusResponseCyPlusOne)
 
     combinedResults.map { seqResult =>
       Ok(s"Crystallisation Status:    ${Json.toJson(seqResult._1)}\n" +
@@ -80,15 +85,13 @@ class OptOutTestDataController @Inject()(
 
   }
 
-  private def cyMinusOneCrystallisationStatusResult(nino: String)
+  private def cyMinusOneCrystallisationStatusResult(nino: String, taxYear: TaxYear)
                                                    (implicit hc: HeaderCarrier, dateService: DateServiceInterface): Future[CalculationListResponseModel] = {
-    val cyMinusOneTaxYearRange = dateService.getCurrentTaxYearMinusOneRange(isEnabled(TimeMachineAddYear))
-    val cyMinusOneTaxYearEnd = dateService.getCurrentTaxYearMinusOneEnd(isEnabled(TimeMachineAddYear))
 
-    if (cyMinusOneTaxYearEnd >= 2024) {
-      calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = cyMinusOneTaxYearRange)
+    if (taxYear.endYear >= 2024) {
+      calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = taxYear.formatTaxYearRange)
     } else {
-      calculationListService.getLegacyCalculationList(nino = Nino(nino), taxYearEnd = cyMinusOneTaxYearEnd.toString)
+      calculationListService.getLegacyCalculationList(nino = Nino(nino), taxYearEnd = taxYear.endYear.toString)
     }
   }
 

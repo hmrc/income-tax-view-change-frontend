@@ -19,11 +19,11 @@ package testOnly.services
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
-import services.DateServiceInterface
 import testOnly.connectors.DynamicStubConnector
-import testOnly.models.{ItsaStatus, Nino}
+import testOnly.models.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -40,12 +40,12 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     dynamicStubConnector.overwriteCalculationList(nino, taxYearRange, crystallisationStatus)
   }
 
-  def getITSAStatusDetail(itsaStatus: ItsaStatus, nino: String)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext, dateService: DateServiceInterface): Future[ITSAStatusResponseModel] = {
+  def getITSAStatusDetail(taxYear: TaxYear, nino: String)
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusResponseModel] = {
 
     itsaStatusConnector.getITSAStatusDetail(
       nino = nino,
-      taxYear = itsaStatus.taxYearRange,
+      taxYear = taxYear.formatTaxYearRange,
       futureYears = false,
       history = false
     ) map {
@@ -57,11 +57,11 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     }
   }
 
-  def overwriteItsaStatus(nino: Nino, taxYearRange: String, crystallisationStatus: String)
+  def overwriteItsaStatus(nino: Nino, taxYearRange: String, ITSAStatus: String)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     Logger("application").debug("[ITSAStatusService][overwriteItsaStatus] - " +
       s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
-    dynamicStubConnector.overwriteItsaStatus(nino, taxYearRange, crystallisationStatus)
+    dynamicStubConnector.overwriteItsaStatus(nino, taxYearRange, ITSAStatus)
   }
 
 }
