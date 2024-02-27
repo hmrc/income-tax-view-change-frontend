@@ -57,16 +57,11 @@ class OptOutTestDataController @Inject()(
       dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabled(TimeMachineAddYear))
     )
 
-    val calculationStatusCyMinusOneResult: Future[CalculationListResponseModel] = cyMinusOneCrystallisationStatusResult(nino, taxYear.currentTaxYearMinusOne)
-    val itsaStatusCyMinusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(taxYear.currentTaxYearMinusOne, nino)
-    val itsaStatusCyResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(taxYear, nino)
-    val itsaStatusCyPlusOneResult: Future[ITSAStatusResponseModel] = dynamicStubService.getITSAStatusDetail(taxYear.currentTaxYearPlusOne, nino)
-
-    val combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel)] = for {
-      crystallisationStatusResponseCyMinusOne <- calculationStatusCyMinusOneResult
-      itsaStatusResponseCyMinusOne <- itsaStatusCyMinusOneResult
-      itsaStatusResponseCy <- itsaStatusCyResult
-      itsaStatusResponseCyPlusOne <- itsaStatusCyPlusOneResult
+    def combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel)] = for {
+      crystallisationStatusResponseCyMinusOne <- cyMinusOneCrystallisationStatusResult(nino, taxYear.currentTaxYearMinusOne)
+      itsaStatusResponseCyMinusOne <- dynamicStubService.getITSAStatusDetail(taxYear.currentTaxYearMinusOne, nino)
+      itsaStatusResponseCy <- dynamicStubService.getITSAStatusDetail(taxYear, nino)
+      itsaStatusResponseCyPlusOne <- dynamicStubService.getITSAStatusDetail(taxYear.currentTaxYearPlusOne, nino)
     } yield (crystallisationStatusResponseCyMinusOne, itsaStatusResponseCyMinusOne, itsaStatusResponseCy, itsaStatusResponseCyPlusOne)
 
     combinedResults.map { seqResult =>
