@@ -59,8 +59,8 @@
             }
         }</span>
 
-        <h1 class="govuk-heading-l">@messages("radioForm.checkDate.heading")</h1>
-        <p class="govuk-body">@incomeSourceStartDate</p>
+        <h1 class="govuk-heading-l" id="start-date-heading">@messages("radioForm.checkDate.heading")</h1>
+        <p class="govuk-body" id="start-date-value">@incomeSourceStartDate</p>
 
         @govukRadios(Radios(
             items = Seq(
