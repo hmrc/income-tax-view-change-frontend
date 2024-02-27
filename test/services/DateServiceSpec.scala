@@ -40,18 +40,6 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
     }
   }
 
-  //  def fixture2(date: String) = new {
-  //    val mockedTestDateService2 = new DateService() {
-  //      override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = {
-  //        if (isTimeMachineEnabled) {
-  //          LocalDate.parse(date).plusYears(1)
-  //        } else {
-  //          LocalDate.parse(date)
-  //        }
-  //      }
-  //    }
-  //  }
-
   "The getCurrentDate method when TimeMachineAddYear FS is on" should {
     "return the next year date if the timeMachineAddYears 1" in {
       enable(TimeMachineAddYear)
