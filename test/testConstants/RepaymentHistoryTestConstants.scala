@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.repaymentHistory.{RepaymentHistory, RepaymentItem, RepaymentSupplementItem}
+import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
@@ -47,7 +47,8 @@ object RepaymentHistoryTestConstants {
           )),
           "estimatedRepaymentDate" -> LocalDate.parse("2021-08-21"),
           "creationDate" -> LocalDate.parse("2021-07-21"),
-          "repaymentRequestNumber" -> "000000003135"
+          "repaymentRequestNumber" -> "000000003135",
+          "status" -> "A"
         )
       )
   )
@@ -82,7 +83,8 @@ object RepaymentHistoryTestConstants {
           )),
           "estimatedRepaymentDate" -> LocalDate.parse("2021-08-21"),
           "creationDate" -> LocalDate.parse("2021-07-21"),
-          "repaymentRequestNumber" -> "000000003135"
+          "repaymentRequestNumber" -> "000000003135",
+          "status" -> "A"
         )
       )
   )
@@ -111,7 +113,8 @@ object RepaymentHistoryTestConstants {
           )),
           "estimatedRepaymentDate" -> Some(LocalDate.parse("2021-08-21")),
           "creationDate" -> Some(LocalDate.parse("2021-07-21")),
-          "repaymentRequestNumber" -> "000000003135"
+          "repaymentRequestNumber" -> "000000003135",
+          "status" -> "A"
         ),
         Json.obj(
           "amountApprovedforRepayment" -> Some(100.0),
@@ -133,7 +136,8 @@ object RepaymentHistoryTestConstants {
           )),
           "estimatedRepaymentDate" -> Some(LocalDate.parse("2021-08-21")),
           "creationDate" -> Some(LocalDate.parse("2021-07-21")),
-          "repaymentRequestNumber" -> "000000003135"
+          "repaymentRequestNumber" -> "000000003135",
+          "status" -> "A"
         )
       )
   )
@@ -156,7 +160,8 @@ object RepaymentHistoryTestConstants {
     )),
     estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
     creationDate = Some(LocalDate.parse("2021-07-21")),
-    repaymentRequestNumber = "000000003135"
+    repaymentRequestNumber = "000000003135",
+    status = RepaymentHistoryStatus("A")
   )
 
   val repaymentHistoryTwoRSI: RepaymentHistory = RepaymentHistory(
@@ -184,7 +189,8 @@ object RepaymentHistoryTestConstants {
         )))),
     estimatedRepaymentDate = Some(LocalDate.parse("2021-08-21")),
     creationDate = Some(LocalDate.parse("2021-07-21")),
-    repaymentRequestNumber = "000000003135"
+    repaymentRequestNumber = "000000003135",
+    status = RepaymentHistoryStatus("A")
   )
 
 }
