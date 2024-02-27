@@ -47,7 +47,8 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
             backUrl = {
               if(isChange) getBackUrlChange(isAgent, incomeSourceType)
               else getBackUrl(isAgent, incomeSourceType)
-            }
+            },
+            incomeSourceType = incomeSourceType
           )
         )
       )
@@ -57,7 +58,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: AddIncomeSourceStartDateView - $incomeSourceType" should {
       "render the heading" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
+        document.getElementsByClass("govuk-caption-l").text() shouldBe getCaption(incomeSourceType)
         document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe
           messages(s"${incomeSourceType.startDateMessagesPrefix}.heading")
       }
@@ -115,6 +116,14 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
       case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
+  }
+
+  def getCaption(incomeSourceType: IncomeSourceType): String = {
+    incomeSourceType match {
+      case SelfEmployment => messages("incomeSources.add.sole-trader")
+      case UkProperty => messages("incomeSources.add.uk-property")
+      case ForeignProperty => messages("incomeSources.add.foreign-property")
+    }
   }
 
   for {

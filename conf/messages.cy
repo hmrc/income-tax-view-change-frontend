@@ -1178,6 +1178,8 @@ credit-and-refund.credit                                          = Credyd o
 ## Income Sources - Add ##
 #######################################################################################################################
 incomeSources.add.sole-trader                                       = Welsh Sole trader
+incomeSources.add.uk-property                                       = UK property
+incomeSources.add.foreign-property                                  = Eiddo tramor
 
 ## Reusable Add Messages ##
 incomeSources.add.accountingMethod.cash                             = Cyfrifyddu ar sail arian parod

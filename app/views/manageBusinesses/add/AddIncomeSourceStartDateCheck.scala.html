@@ -15,6 +15,8 @@
  *@
 
 @import views.html.layouts.unifiedLayout
+@import enums.IncomeSourceJourney.IncomeSourceType
+@import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.helpers.injected.ErrorSummary
@@ -32,7 +34,8 @@
         postAction: Call,
         backUrl: String,
         isAgent: Boolean,
-        incomeSourceStartDate: String
+        incomeSourceStartDate: String,
+        incomeSourceType: IncomeSourceType
 )(
         implicit messages: Messages,
         user:auth.MtdItUser[_]
@@ -48,7 +51,13 @@
 
         @errorSummary(form)
 
-        <span class="govuk-caption-l">@messages("incomeSources.add.sole-trader")</span>
+        <span class="govuk-caption-l">@{
+            incomeSourceType match {
+                case SelfEmployment => messages("incomeSources.add.sole-trader")
+                case UkProperty => messages("incomeSources.add.uk-property")
+                case ForeignProperty => messages("incomeSources.add.foreign-property")
+            }
+        }</span>
 
         @govukRadios(Radios(
             fieldset = Some(Fieldset(

@@ -1161,6 +1161,8 @@ credit-and-refund.credit                                          =
 ## Income Sources - Add ##
 #######################################################################################################################
 incomeSources.add.sole-trader                                       = Sole trader
+incomeSources.add.uk-property                                       = UK property
+incomeSources.add.foreign-property                                  = Foreign property
 
 
 ## Reusable Add Messages ##
