@@ -1,0 +1,81 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import forms.models.DateFormElement
+@import views.html.helpers.injected.ErrorSummary
+
+@this(
+        mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary,
+        govukDateInput: GovukDateInput,
+        govukButton: GovukButton
+)
+
+@(
+        form: Form[DateFormElement],
+        postAction: Call,
+        backUrl: String,
+        isAgent: Boolean,
+        messagesPrefix: String
+)(
+        implicit messages: Messages,
+        user: auth.MtdItUser[_]
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"$messagesPrefix.$key", args: _*)
+}
+
+@mainTemplate(
+    pageTitle = getMessage("heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
+
+        @errorSummary(form)
+
+        @govukDateInput(DateInput(
+            hint = Some(Hint(
+                id = Some(s"$messagesPrefix-hint"),
+                content = HtmlContent(s"<div>${getMessage("hint")}</div></br><div>${messages("dateForm.hint")}</div>")
+            )),
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(getMessage("heading")),
+                    classes = "govuk-label--l",
+                    isPageHeading = true
+                ))
+            )),
+            items = Seq(
+                InputItem(attributes = Map("maxLength" -> "2")),
+                InputItem(attributes = Map("maxLength" -> "2")),
+                InputItem(attributes = Map("maxLength" -> "4"))
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+        ).withFormField(form("income-source-start-date")))
+
+        @govukButton(Button(
+            content = Text(messages("base.continue")),
+            attributes = Map("id" -> "continue-button")
+        ))
+    }
+}
