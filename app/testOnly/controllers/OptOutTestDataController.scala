@@ -50,7 +50,7 @@ class OptOutTestDataController @Inject()(
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def retrieveData(nino: String, isAgent: Boolean)
-                          (implicit hc: HeaderCarrier, dateService: DateServiceInterface, request: Request[_]): Future[Result] = {
+                          (implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
     val taxYear: TaxYear = TaxYear(
       dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabled(TimeMachineAddYear)).getYear,
@@ -71,9 +71,9 @@ class OptOutTestDataController @Inject()(
 
     combinedResults.map { seqResult =>
       Ok(s"Crystallisation Status:    ${Json.toJson(seqResult._1)}\n" +
-        s"ITSA Status CY-1:          ${Json.toJson(seqResult._2)}\n" +
-        s"ITSA Status CY:            ${Json.toJson(seqResult._3)}\n" +
-        s"ITSA Status CY+1:          ${Json.toJson(seqResult._4)}")
+        s"ITSA Status CY-1:           ${Json.toJson(seqResult._2)}\n" +
+        s"ITSA Status CY:             ${Json.toJson(seqResult._3)}\n" +
+        s"ITSA Status CY+1:           ${Json.toJson(seqResult._4)}")
 
     }.recover {
       case ex: Throwable =>
@@ -86,7 +86,7 @@ class OptOutTestDataController @Inject()(
   }
 
   private def cyMinusOneCrystallisationStatusResult(nino: String, taxYear: TaxYear)
-                                                   (implicit hc: HeaderCarrier, dateService: DateServiceInterface): Future[CalculationListResponseModel] = {
+                                                   (implicit hc: HeaderCarrier): Future[CalculationListResponseModel] = {
 
     if (taxYear.endYear >= 2024) {
       calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = taxYear.formatTaxYearRange)
