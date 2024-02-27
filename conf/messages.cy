@@ -1288,6 +1288,7 @@ notmigrated.agent.link_title                                    = cyfrif Hunanas
 
 incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreuodd eich busnes eiddo yn y DU?
 incomeSources.add.UKPropertyStartDate.hint                      = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo yn y DU ar osod yn y lle cyntaf.
+incomeSources.add.UKPropertyStartDate.hint2                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
 incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
 incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod yn ddyddiad go iawn
@@ -1334,6 +1335,7 @@ incomeSources.cease.endDate.foreignProperty.error.invalid                = Mae�
 
 incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
 incomeSources.add.foreignProperty.startDate.hint                     = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo tramor ar osod yn y lle cyntaf.
+incomeSources.add.foreignProperty.startDate.hint2                    = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 incomeSources.add.foreignProperty.startDate.hintExample              = Er enghraifft, 27 3 2020
 incomeSources.add.foreignProperty.startDate.error.empty              = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor fasnachu
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
