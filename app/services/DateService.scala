@@ -74,32 +74,6 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
     }
   }
 
-  def getCurrentTaxYearRange(isTimeMachineEnabled: Boolean): String = {
-    val currentYearShort: Int = getCurrentTaxYearEnd(isTimeMachineEnabled).toString.takeRight(2).toInt
-    val startOfTaxYearShort: Int = currentYearShort - 1
-
-    val taxYearRange: String = s"$startOfTaxYearShort-$currentYearShort"
-
-    taxYearRange
-  }
-
-  def getCurrentTaxYearMinusOneRange(isTimeMachineEnabled: Boolean): String = {
-    val currentYearMinusOneShort: Int = getCurrentTaxYearEnd(isTimeMachineEnabled).toString.takeRight(2).toInt - 1
-    val startOfTaxYearMinusOneShort: Int = currentYearMinusOneShort - 1
-
-    val taxYearRange: String = s"$startOfTaxYearMinusOneShort-$currentYearMinusOneShort"
-
-    taxYearRange
-  }
-
-  def getCurrentTaxYearPlusOneRange(isTimeMachineEnabled: Boolean): String = {
-    val currentYearPlusOneShort: Int = getCurrentTaxYearEnd(isTimeMachineEnabled).toString.takeRight(2).toInt + 1
-    val startOfTaxYearPlusOneShort: Int = currentYearPlusOneShort - 1
-
-    val taxYearRange: String = s"$startOfTaxYearPlusOneShort-$currentYearPlusOneShort"
-
-    taxYearRange
-  }
 }
 
 @ImplementedBy(classOf[DateService])
@@ -115,11 +89,5 @@ trait DateServiceInterface {
   def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean
 
   def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate
-
-  def getCurrentTaxYearRange(isTimeMachineEnabled: Boolean = false): String
-
-  def getCurrentTaxYearMinusOneRange(isTimeMachineEnabled: Boolean = false): String
-
-  def getCurrentTaxYearPlusOneRange(isTimeMachineEnabled: Boolean = false): String
 
 }
