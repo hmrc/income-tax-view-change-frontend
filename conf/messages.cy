@@ -1177,6 +1177,8 @@ credit-and-refund.credit                                          = Credyd o
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
+incomeSources.add.sole-trader                                       = Welsh Sole trader
+
 ## Reusable Add Messages ##
 incomeSources.add.accountingMethod.cash                             = Cyfrifyddu ar sail arian parod
 incomeSources.add.accountingMethod.accruals                         = Cyfrifyddu traddodiadol
@@ -1366,6 +1368,7 @@ incomeSources.ceaseUKProperty.checkDetails.change                = Newid
 # add Business start date
 add-business-start-date.heading                      = Pryd y dechreuodd eich busnes fasnachu?
 add-business-start-date.hint                         = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw’n briodol.
+add-business-start-date.hint2                        = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
 add-business-start-date.day                          = Diwrnod
 add-business-start-date.month                        = Mis
 add-business-start-date.year                         = Blwyddyn

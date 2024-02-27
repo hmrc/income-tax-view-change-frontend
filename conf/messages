@@ -1160,6 +1160,9 @@ credit-and-refund.credit                                          =
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
+incomeSources.add.sole-trader                                       = Sole trader
+
+
 ## Reusable Add Messages ##
 incomeSources.add.accountingMethod.cash                             = Cash basis accounting
 incomeSources.add.accountingMethod.accruals                         = Traditional accounting
@@ -1395,6 +1398,7 @@ add-business-address.edit.heading           = Enter your business address
 # add Business start date
 add-business-start-date.heading                      = When did your business start trading?
 add-business-start-date.hint                         = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
+add-business-start-date.hint2                        = The date your business started trading can be today, in the past or up to 7 days in the future.
 add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year

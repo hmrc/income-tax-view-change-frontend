@@ -48,6 +48,8 @@
 
         @errorSummary(form)
 
+        <span class="govuk-caption-l">@messages("incomeSources.add.sole-trader")</span>
+
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -69,9 +71,11 @@
             ),
             hint = Some(Hint(
                 id = Some("add-income-source-start-date-check-hint"),
-                content = HtmlContent(incomeSourceStartDate)
+                content = HtmlContent(incomeSourceStartDate),
+                classes = "govuk-body-m"
             )),
-            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+            classes = "govuk-radios--inline"
         ).withFormField(form("start-date-check")))
 
         @govukButton(Button(
