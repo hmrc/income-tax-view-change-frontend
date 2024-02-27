@@ -17,6 +17,7 @@
 package testOnly.connectors
 
 import connectors.RawResponseReads
+import play.api.Logger
 import play.api.http.Status.OK
 import testOnly.TestOnlyAppConfig
 import testOnly.models.{DataModel, Nino, SchemaModel}
@@ -61,7 +62,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
   }
 
   def getOverwriteItsaStatusUrl(nino: String, taxYearRange: String, itsaStatus: String): String = {
-    s"${appConfig.itvcDynamicStubUrl}/income-tax-view-change/itsa-status/$nino/$taxYearRange/overwrite/$itsaStatus"
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/itsa-status/$nino/$taxYearRange/overwrite/$itsaStatus"
   }
 
 
@@ -77,13 +78,15 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
+          Logger("application").error(s"[DynamicStubConnector][overwriteItsaStatus]" +
+            s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
   }
 
   def getOverwriteCalculationListUrl(nino: String, taxYearRange: String, crystallisationStatus: String): String = {
-    s"${appConfig.itvcDynamicStubUrl}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
   }
 
   def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
@@ -97,7 +100,10 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
       response.status match {
         case OK =>
           (): Unit
-        case _ => throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+        case _ =>
+          Logger("application").error(s"[DynamicStubConnector][overwriteItsaStatus]" +
+            s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
   }

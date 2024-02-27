@@ -33,8 +33,6 @@ object CalculationListModel {
   implicit val format: Format[CalculationListModel] = Json.format[CalculationListModel]
 }
 
-
-
 case class CalculationListErrorModel(code: Int, message: String) extends CalculationListResponseModel
 
 object CalculationListErrorModel {
