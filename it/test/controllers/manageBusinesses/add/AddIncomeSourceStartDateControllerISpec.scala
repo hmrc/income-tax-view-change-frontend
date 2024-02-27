@@ -382,7 +382,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/change-business-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/change-business-start-date")(formData)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -408,7 +408,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/change-foreign-property-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-foreign-property/change-business-start-date")(formData)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -434,7 +434,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/change-uk-property-start-date")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-uk-property/change-business-start-date")(formData)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
