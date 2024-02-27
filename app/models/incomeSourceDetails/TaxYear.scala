@@ -16,8 +16,6 @@
 
 package models.incomeSourceDetails
 
-import services.DateServiceInterface
-
 import scala.util.Try
 
 case class TaxYear(startYear: Int, endYear: Int) {
