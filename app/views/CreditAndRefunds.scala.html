@@ -74,6 +74,14 @@ balance.getOrElse(throw MissingFieldException("Balance"))
     maybeBalancesDetails.getAbsoluteAllocatedCreditAmount.getOrElse(BigDecimal(0))
 }
 
+@getWhatYouOwe(isAgent: Boolean) = @{
+    if(isAgent) {
+        controllers.routes.WhatYouOweController.showAgent.url
+    } else {
+        controllers.routes.WhatYouOweController.show().url
+    }
+}
+
 @getBalancingChargeCreditContent(credit: (DocumentDetailWithDueDate, FinancialDetail), index: Int) = {
     <li>
         <p class="govuk-heading-s">
@@ -212,7 +220,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         @p(){
             HMRC has reserved @allocatedCredit.toCurrencyString of this to cover your upcoming tax bill.
             @link(
-                link = "",
+                link = getWhatYouOwe(isAgent),
                 messageKey = "Check what you owe"
             )
             for further information.
