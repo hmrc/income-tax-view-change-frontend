@@ -23,6 +23,8 @@ import models.createIncomeSource._
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsError, JsValue, Json}
+import play.api.mvc.Result
+import play.api.mvc.Results.{InternalServerError, Ok}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
@@ -32,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CalculationListConnector @Inject()(val http: HttpClient,
                                          val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                        )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getLegacyCalculationListUrl(nino: String, taxYearEnd: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd"

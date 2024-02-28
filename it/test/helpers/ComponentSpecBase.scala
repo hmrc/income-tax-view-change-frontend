@@ -82,7 +82,6 @@ class TestDateService extends DateServiceInterface {
       accountingPeriodEndDate.plusYears(1)
     }
   }
-
 }
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers

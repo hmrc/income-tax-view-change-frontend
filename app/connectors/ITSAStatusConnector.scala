@@ -17,8 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
-import models.core.Nino
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -30,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ITSAStatusConnector @Inject()(val http: HttpClient,
                                     val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                   )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getITSAStatusDetailUrl(taxableEntityId: String, taxYear: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/status/$taxableEntityId/$taxYear"
@@ -49,16 +47,16 @@ class ITSAStatusConnector @Inject()(val http: HttpClient,
         case OK =>
           response.json.validate[List[ITSAStatusResponseModel]].fold(
             invalid => {
-              Logger("application").error(s"[IncomeTaxViewChangeConnector][getITSAStatusDetail] - Json validation error parsing repayment response, error $invalid")
+              Logger("application").error(s"[ITSAStatusConnector][getITSAStatusDetail] - Json validation error parsing repayment response, error $invalid")
               Left(ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "Json validation error parsing ITSA Status response"))
             },
             valid => Right(valid)
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"[IncomeTaxViewChangeConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"[ITSAStatusConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"[IncomeTaxViewChangeConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"[ITSAStatusConnector][getITSAStatusDetail] - Response status: ${response.status}, body: ${response.body}")
           }
           Left(ITSAStatusResponseError(response.status, response.body))
       }

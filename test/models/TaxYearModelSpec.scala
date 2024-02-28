@@ -21,6 +21,44 @@ import testUtils.UnitSpec
 
 class TaxYearModelSpec extends UnitSpec {
 
+  "currentTaxYearMinusOne method" when {
+    "invoked on a TaxYear object" should {
+      "return a new TaxYear object where the years are one year less than before" in {
+        val taxYear: TaxYear = TaxYear(2098, 2099)
+        val taxYearMinusOne = taxYear.currentTaxYearMinusOne
+
+        val desiredTaxYearObject: TaxYear = TaxYear(2097, 2098)
+
+        taxYearMinusOne shouldBe desiredTaxYearObject
+      }
+    }
+  }
+
+  "currentTaxYearPlusOne method" when {
+    "invoked on a TaxYear object" should {
+      "return a new TaxYear object where the years are one year less than before" in {
+        val taxYear: TaxYear = TaxYear(2098, 2099)
+        val taxYearMinusOne = taxYear.currentTaxYearPlusOne
+
+        val desiredTaxYearObject: TaxYear = TaxYear(2099, 2100)
+
+        taxYearMinusOne shouldBe desiredTaxYearObject
+      }
+    }
+  }
+
+  "formatTaxYearRange method" when {
+    "invoked on a TaxYear object" should {
+      "return a string with the tax year range" in {
+        val taxYear: TaxYear = TaxYear(2098, 2099)
+        val taxYearRange: String = taxYear.formatTaxYearRange
+
+        val desiredTaxYearRangeString: String = "98-99"
+
+        taxYearRange shouldBe desiredTaxYearRangeString
+      }
+    }
+  }
 
   "TaxYear.getTaxYearStartYearEndYear" when {
     "given an input of letters with the correct length" should {

@@ -75,3 +75,13 @@ sbt clean coverage test it/test coverageOff coverageReport
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
 
+### To access Opt Out Custom Data testonly page to see current data, go to:
+
+Local:
+Individual: http://localhost:9081/report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData
+Agent: http://localhost:9081/report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData
+
+Staging:
+Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData
+Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData
+
