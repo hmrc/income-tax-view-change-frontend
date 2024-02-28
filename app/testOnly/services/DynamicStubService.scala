@@ -49,11 +49,15 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
       futureYears = false,
       history = false
     ) map {
-      case Right(itsaStatus: List[ITSAStatusResponseModel]) =>
+      case Right(itsaStatus: List[ITSAStatusResponseModel]) if itsaStatus.nonEmpty =>
+        Logger("application").info(s"[DynamicStubService][getITSAStatusDetail] - Success! >! ITSA Status Response Model: $itsaStatus !<")
         itsaStatus.head
       case Left(error) =>
         Logger("application").error(s"[ITSAStatusService][getITSAStatusDetail] $error")
         throw new Exception("[ITSAStatusService][getITSAStatusDetail] - Failed to retrieve ITSAStatus")
+      case _ =>
+        Logger("application").error(s"[ITSAStatusService][getITSAStatusDetail] Unexpected error. List of ITSAStatusResponseModels was empty!")
+        throw new Exception("[ITSAStatusService][getITSAStatusDetail] - Unexpected error. List of ITSAStatusResponseModels was empty!")
     }
   }
 

@@ -52,7 +52,12 @@ case class PostedUser(nino: String,
                       cyMinusOneItsaStatus: Option[String],
                       cyItsaStatus: Option[String],
                       cyPlusOneItsaStatus: Option[String]
-                     )
+                     ) {
+
+  def isOptOutWhitelisted(optOutUserPrefixes: Seq[String]): Boolean = {
+    optOutUserPrefixes.contains(nino.take(2))
+  }
+}
 
 object PostedUser {
     val form: Form[PostedUser] =

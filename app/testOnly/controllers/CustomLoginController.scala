@@ -81,7 +81,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                if (testOnlyAppConfig.optOutUserPrefixes.contains(postedUser.nino.take(2))) {
+                if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes)) {
                   updateTestDataForOptOut(
                     nino = user.nino,
                     crystallisationStatus = postedUser.cyMinusOneCrystallisationStatus.get,
