@@ -1160,6 +1160,11 @@ credit-and-refund.credit                                          =
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
+incomeSources.add.sole-trader                                       = Sole trader
+incomeSources.add.uk-property                                       = UK property
+incomeSources.add.foreign-property                                  = Foreign property
+
+
 ## Reusable Add Messages ##
 incomeSources.add.accountingMethod.cash                             = Cash basis accounting
 incomeSources.add.accountingMethod.accruals                         = Traditional accounting
@@ -1288,6 +1293,7 @@ notmigrated.agent.link_title                                    = Self Assessmen
 
 incomeSources.add.UKPropertyStartDate.heading                   = When did your UK property business start?
 incomeSources.add.UKPropertyStartDate.hint                      = This is the date that letting or renting out any UK property first started.
+incomeSources.add.UKPropertyStartDate.hint2                     = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
 incomeSources.add.UKPropertyStartDate.error.future              = The date your UK property business started must be before {0}
 incomeSources.add.UKPropertyStartDate.error.invalid             = The date your UK property business started must be a real date
@@ -1334,6 +1340,7 @@ incomeSources.cease.endDate.foreignProperty.error.invalid                = The d
 
 incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
 incomeSources.add.foreignProperty.startDate.hint                     = This is the date that letting or renting out any foreign property first started.
+incomeSources.add.foreignProperty.startDate.hint2                     = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
 incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started trading
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = The date must include a month and a year
@@ -1395,6 +1402,7 @@ add-business-address.edit.heading           = Enter your business address
 # add Business start date
 add-business-start-date.heading                      = When did your business start trading?
 add-business-start-date.hint                         = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
+add-business-start-date.hint2                        = The date your business started trading can be today, in the past or up to 7 days in the future.
 add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year
