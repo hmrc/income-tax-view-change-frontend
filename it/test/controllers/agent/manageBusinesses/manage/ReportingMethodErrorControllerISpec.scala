@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.manage
+package controllers.agent.manageBusinesses.manage
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -31,7 +31,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
 
-  private lazy val reportingMethodChangeErrorController = controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController
+  private lazy val reportingMethodChangeErrorController = controllers.manageBusinesses.manage.routes.ReportingMethodChangeErrorController
 
   val reportingMethodChangeErrorUKPropertyUrl: String = reportingMethodChangeErrorController
     .show(incomeSourceType = UkProperty, isAgent = true).url
@@ -58,7 +58,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get("/income-sources/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
+          .get("/manage-your-businesses/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -79,7 +79,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
+          .get(s"/manage-your-businesses/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -101,7 +101,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
+          .get(s"/manage-your-businesses/manage/error-change-reporting-method-not-saved-uk-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -125,7 +125,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", clientDetailsWithStartDate)
+          .get(s"/manage-your-businesses/manage/error-change-reporting-method-not-saved-foreign-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -147,7 +147,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved-foreign-property", clientDetailsWithStartDate)
+          .get(s"/manage-your-businesses/manage/error-change-reporting-method-not-saved-foreign-property", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -174,7 +174,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved", clientDetailsWithStartDate)
+          .get(s"/manage-your-businesses/manage/error-change-reporting-method-not-saved", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -199,7 +199,7 @@ class ReportingMethodErrorControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/manage/error-change-reporting-method-not-saved", clientDetailsWithStartDate)
+          .get(s"/manage-your-businesses/manage/error-change-reporting-method-not-saved", clientDetailsWithStartDate)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import config.featureswitch.IncomeSources
 import helpers.agent.ComponentSpecBase
@@ -25,7 +25,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResp
 
 class AddIncomeSourcesControllerISpec extends ComponentSpecBase {
 
-  val showAgentAddIncomeSourceControllerUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+  val showAgentAddIncomeSourceControllerUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
   val pageTitleMsgKey = "incomeSources.add.addIncomeSources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"

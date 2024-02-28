@@ -1177,8 +1177,8 @@ credit-and-refund.credit                                          = Credyd o
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
-incomeSources.add.sole-trader                                       = Welsh Sole trader
-incomeSources.add.uk-property                                       = UK property
+incomeSources.add.sole-trader                                       = Unig fasnachwr
+incomeSources.add.uk-property                                       = Eiddo yn y DU
 incomeSources.add.foreign-property                                  = Eiddo tramor
 
 ## Reusable Add Messages ##

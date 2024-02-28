@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
@@ -77,28 +77,28 @@ class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
 
   lazy val showUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
   lazy val submitUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
   lazy val obligationsUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
-    else controllers.incomeSources.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
+    if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
+    else controllers.manageBusinesses.add.routes.IncomeSourceAddedController.show(incomeSourceType).url
   lazy val redirectUrl: IncomeSourceType => String = {
-    case UkProperty => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
-    case ForeignProperty => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
-    case SelfEmployment => controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
+    case UkProperty => controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
+    case ForeignProperty => controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
+    case SelfEmployment => controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
   }
   lazy val errorRedirectUrl: IncomeSourceType => String = {
-    case UkProperty => controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(UkProperty).url
+    case UkProperty => controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(UkProperty).url
     case ForeignProperty =>
-      controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty).url
+      controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(ForeignProperty).url
     case SelfEmployment =>
-      controllers.incomeSources.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment).url
+      controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodNotSavedController.showAgent(SelfEmployment).url
   }
   lazy val uri: IncomeSourceType => String = {
-    case UkProperty => s"/income-sources/add/uk-property-reporting-method"
-    case ForeignProperty => s"/income-sources/add/foreign-property-reporting-method"
-    case SelfEmployment => s"/income-sources/add/business-reporting-method"
+    case UkProperty => s"/manage-your-businesses/add/uk-property-reporting-method"
+    case ForeignProperty => s"/manage-your-businesses/add/foreign-property-reporting-method"
+    case SelfEmployment => s"/manage-your-businesses/add/business-reporting-method"
   }
   val quarterlyIndicator: String = "Q"
   val annuallyIndicator: String = "A"

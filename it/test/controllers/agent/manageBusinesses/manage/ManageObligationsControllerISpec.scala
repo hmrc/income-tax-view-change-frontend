@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.manage
+package controllers.agent.manageBusinesses.manage
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.UkProperty
@@ -37,14 +37,14 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
   val quarterly = "quarterly"
   val taxYear = "2023-2024"
 
-  val manageSEObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showAgentSelfEmployment(annual, taxYear).url
-  val manageUKObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showAgentUKProperty(annual, taxYear).url
-  val manageFPObligationsShowUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.showAgentForeignProperty(annual, taxYear).url
+  val manageSEObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.showAgentSelfEmployment(annual, taxYear).url
+  val manageUKObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.showAgentUKProperty(annual, taxYear).url
+  val manageFPObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.showAgentForeignProperty(annual, taxYear).url
 
-  val manageConfirmShowUrl: String = controllers.incomeSources.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, annual, incomeSourceType = UkProperty, isAgent = true).url
+  val manageConfirmShowUrl: String = controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, annual, incomeSourceType = UkProperty, isAgent = true).url
 
-  val manageObligationsSubmitUrl: String = controllers.incomeSources.manage.routes.ManageObligationsController.agentSubmit().url
-  val manageIncomeSourcesShowUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
+  val manageObligationsSubmitUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.agentSubmit().url
+  val manageIncomeSourcesShowUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(true).url
 
   val prefix: String = "incomeSources.add.manageObligations"
   val reusedPrefix: String = "business-added"
@@ -203,17 +203,17 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
         val resultSE = IncomeTaxViewChangeFrontend.postManageObligations("business", clientDetailsWithConfirmation)
         resultSE should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/manage/view-and-manage-income-sources")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/manage/view-and-manage-income-sources")
         )
         val resultUK = IncomeTaxViewChangeFrontend.postManageObligations("uk-property", clientDetailsWithConfirmation)
         resultUK should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/manage/view-and-manage-income-sources")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/manage/view-and-manage-income-sources")
         )
         val resultFP = IncomeTaxViewChangeFrontend.postManageObligations("foreign-property", clientDetailsWithConfirmation)
         resultFP should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/manage/view-and-manage-income-sources")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/manage/view-and-manage-income-sources")
         )
       }
     }

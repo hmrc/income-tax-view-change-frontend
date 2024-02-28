@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -35,10 +35,10 @@ import java.time.LocalDate
 
 class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
-  val incomeSourceAddedSelfEmploymentShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
+  val incomeSourceAddedSelfEmploymentShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(SelfEmployment).url
 
-  val incomeSourceAddedSubmitAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.agentSubmit().url
-  val addIncomeSourceAgentUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+  val incomeSourceAddedSubmitAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.agentSubmit().url
+  val addIncomeSourceAgentUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
 
   val testDate: String = "2020-11-10"
   val prefix: String = "business-added"
@@ -47,9 +47,9 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
   val day: LocalDate = LocalDate.of(2023, 1, 1)
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(NextUpdatesModel("123", List(NextUpdateModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS")))))
 
-  val incomeSourceAddedForeignPropertyShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
+  val incomeSourceAddedForeignPropertyShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(ForeignProperty).url
 
-  val incomeSourceAddedUkPropertyShowUrl: String = controllers.incomeSources.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
+  val incomeSourceAddedUkPropertyShowUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceAddedController.showAgent(UkProperty).url
   val HomeControllerShowUrl: String = controllers.routes.HomeController.showAgent.url
   val pageTitle: String = messagesAPI("htmlTitle.agent", {
     s"${messagesAPI("business-added.uk-property.h1")} " +
@@ -126,7 +126,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
         val result = IncomeTaxViewChangeFrontend.postAddedBusinessObligations(clientDetailsWithConfirmation)
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/new-income-sources")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add/new-income-sources")
         )
       }
     }
@@ -182,7 +182,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/income-sources/add/new-income-sources")
+          redirectURI(s"/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add/new-income-sources")
         )
       }
     }
@@ -204,7 +204,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         Then("user is shown UK property added page")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/manage-your-businesses/add/uk-property-added", clientDetailsWithConfirmation)
         And("Mongo storage is successfully set")
         sessionService.getMongoKey(AddIncomeSourceData.journeyIsCompleteField, JourneyType(Add, UkProperty)).futureValue shouldBe Right(Some(true))
 
@@ -228,7 +228,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))
 
         Then("user is shown a error page")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/manage-your-businesses/add/uk-property-added", clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(INTERNAL_SERVER_ERROR),
@@ -247,7 +247,7 @@ class IncomeSourceAddedControllerISpec extends ComponentSpecBase{
 
 
         Then(s"user is redirected to $HomeControllerShowUrl")
-        val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/uk-property-added", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(s"/manage-your-businesses/add/uk-property-added", clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(SEE_OTHER),

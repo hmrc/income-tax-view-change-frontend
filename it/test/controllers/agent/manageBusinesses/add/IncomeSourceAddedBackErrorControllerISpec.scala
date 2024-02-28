@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -31,7 +31,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
 
-  private lazy val backErrorController = controllers.incomeSources.add.routes.IncomeSourceAddedBackErrorController
+  private lazy val backErrorController = controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController
 
   val selfEmploymentBackErrorUrl: String = backErrorController.showAgent(SelfEmployment).url
   val ukPropertyBackErrorUrl: String = backErrorController.showAgent(UkProperty).url
@@ -61,7 +61,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
         val result = IncomeTaxViewChangeFrontend
-          .get("/income-sources/add/cannot-go-back-business-reporting-method", clientDetailsWithConfirmation)
+          .get("/manage-your-businesses/add/cannot-go-back-business-reporting-method", clientDetailsWithConfirmation)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -80,7 +80,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get("/income-sources/add/cannot-go-back-business-reporting-method", clientDetailsWithConfirmation)
+        .get("/manage-your-businesses/add/cannot-go-back-business-reporting-method", clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -103,7 +103,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
         val result = IncomeTaxViewChangeFrontend
-          .get("/income-sources/add/cannot-go-back-uk-property-reporting-method", clientDetailsWithConfirmation)
+          .get("/manage-your-businesses/add/cannot-go-back-uk-property-reporting-method", clientDetailsWithConfirmation)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -122,7 +122,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get(s"/income-sources/add/cannot-go-back-uk-property-reporting-method", clientDetailsWithConfirmation)
+        .get(s"/manage-your-businesses/add/cannot-go-back-uk-property-reporting-method", clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -145,7 +145,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
           addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some("1234"), incomeSourceAdded = Some(true), journeyIsComplete = None)))))
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/income-sources/add/cannot-go-back-foreign-property-reporting-method", clientDetailsWithConfirmation)
+          .get(s"/manage-your-businesses/add/cannot-go-back-foreign-property-reporting-method", clientDetailsWithConfirmation)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -164,7 +164,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ComponentSpecBase{
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get(s"/income-sources/add/cannot-go-back-foreign-property-reporting-method", clientDetailsWithConfirmation)
+        .get(s"/manage-your-businesses/add/cannot-go-back-foreign-property-reporting-method", clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
 
