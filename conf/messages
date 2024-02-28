@@ -1449,6 +1449,29 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Change
 
 
 # check business details
+check-details.title                                     = Check your answers
+check-details.heading                                   = Sole trader
+check-details.business-name                             = Business name
+check-details.start-date                                = Trading start date
+check-details.trade                                     = Type of trade
+check-details.address                                   = Address
+check-details.accounting-method                         = Accounting method
+check-details.cash-accounting                           = Cash basis accounting
+check-details.traditional-accounting                    = Traditional accounting
+check-details.change                                    = Change
+
+check-details-uk.title                                  = Check your answers
+check-details-uk.heading                                = UK property
+check-details-uk.start-date                             = Start date
+check-details-uk.accounting-method                      = Accounting method
+check-details-uk.change                                 = Change
+
+check-details-fp.title                                  = Check your answers
+check-details-fp.heading                                = Foreign property
+check-details-fp.start-date                             = Start date
+check-details-fp.accounting-method                      = Accounting method
+check-details-fp.change                                 = Change
+
 check-business-details.title                            = Check your details
 check-business-details.heading                          = Sole trader business you entered
 check-business-details.business-name                    = Business name
