@@ -87,7 +87,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         case (_, model: FinancialDetailsModel) => model.filterPayments()
       }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
 
-      val matchingYear = financialResponses.collect {
+      val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
         case (year, response) if year == taxYear => response
       }
 
@@ -98,8 +98,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdm, payments, isAgent, origin, isMFADebit(fdm, id))
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
-        case _ =>
-          Future.successful(onError("Invalid response from financial transactions", isAgent, showInternalServerError = true))
+        case Some(error: FinancialDetailsErrorModel) =>
+          Future.successful(onError(s"Financial details error :: $error", isAgent, showInternalServerError = true))
+        case None =>
+          Future.successful(onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true))
       }
     }
   }
