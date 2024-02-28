@@ -58,10 +58,10 @@ class OptOutTestDataController @Inject()(
     )
 
     def combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel)] = for {
-      crystallisationStatusResponseCyMinusOne <- cyMinusOneCrystallisationStatusResult(nino, taxYear.currentTaxYearMinusOne)
-      itsaStatusResponseCyMinusOne <- dynamicStubService.getITSAStatusDetail(taxYear.currentTaxYearMinusOne, nino)
+      crystallisationStatusResponseCyMinusOne <- cyMinusOneCrystallisationStatusResult(nino, taxYear.addYears(-1))
+      itsaStatusResponseCyMinusOne <- dynamicStubService.getITSAStatusDetail(taxYear.addYears(-1), nino)
       itsaStatusResponseCy <- dynamicStubService.getITSAStatusDetail(taxYear, nino)
-      itsaStatusResponseCyPlusOne <- dynamicStubService.getITSAStatusDetail(taxYear.currentTaxYearPlusOne, nino)
+      itsaStatusResponseCyPlusOne <- dynamicStubService.getITSAStatusDetail(taxYear.addYears(1), nino)
     } yield (crystallisationStatusResponseCyMinusOne, itsaStatusResponseCyMinusOne, itsaStatusResponseCy, itsaStatusResponseCyPlusOne)
 
     combinedResults.map { seqResult =>
