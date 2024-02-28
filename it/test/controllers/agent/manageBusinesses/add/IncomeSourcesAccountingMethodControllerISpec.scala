@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -33,13 +33,13 @@ import scala.concurrent.ExecutionContext
 
 class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
-  val addIncomeSourcesAccountingMethodShowUrlSoleTrader: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent = true).url
-  val addIncomeSourcesAccountingMethodShowUrlUK: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty, isAgent = true).url
-  val addIncomeSourcesAccountingMethodShowUrlForeign: String = controllers.incomeSources.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty, isAgent = true).url
+  val addIncomeSourcesAccountingMethodShowUrlSoleTrader: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent = true).url
+  val addIncomeSourcesAccountingMethodShowUrlUK: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(UkProperty, isAgent = true).url
+  val addIncomeSourcesAccountingMethodShowUrlForeign: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(ForeignProperty, isAgent = true).url
 
-  val checkBusinessDetailsShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-  val checkUKPropertyDetailsShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(UkProperty).url
-  val foreignPropertyCheckDetailsShowAgentUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty).url
+  val checkBusinessDetailsShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+  val checkUKPropertyDetailsShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(UkProperty).url
+  val foreignPropertyCheckDetailsShowAgentUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty).url
 
   val selfEmploymentAccountingMethod: String = "incomeSources.add." + SelfEmployment.key + ".AccountingMethod"
   val UKPropertyAccountingMethod: String = "incomeSources.add." + UkProperty.key + ".AccountingMethod"
@@ -116,29 +116,29 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
 
   s"calling GET $addIncomeSourcesAccountingMethodShowUrlSoleTrader" should {
     "render the Business Accounting Method page" when {
-      runGetTest(addIncomeSourcesAccountingMethodShowUrlSoleTrader, "/income-sources/add/business-accounting-method", "incomeSources.add.SE.AccountingMethod.heading")
+      runGetTest(addIncomeSourcesAccountingMethodShowUrlSoleTrader, "/manage-your-businesses/add/business-accounting-method", "incomeSources.add.SE.AccountingMethod.heading")
     }
   }
   s"calling GET $addIncomeSourcesAccountingMethodShowUrlUK" should {
     "render the Business Accounting Method page" when {
-      runGetTest(addIncomeSourcesAccountingMethodShowUrlUK, "/income-sources/add/uk-property-accounting-method", "incomeSources.add.UK.AccountingMethod.heading")
+      runGetTest(addIncomeSourcesAccountingMethodShowUrlUK, "/manage-your-businesses/add/uk-property-accounting-method", "incomeSources.add.UK.AccountingMethod.heading")
     }
   }
   s"calling GET $addIncomeSourcesAccountingMethodShowUrlForeign" should {
     "render the Business Accounting Method page" when {
-      runGetTest(addIncomeSourcesAccountingMethodShowUrlForeign, "/income-sources/add/foreign-property-business-accounting-method", "incomeSources.add.FP.AccountingMethod.heading")
+      runGetTest(addIncomeSourcesAccountingMethodShowUrlForeign, "/manage-your-businesses/add/foreign-property-business-accounting-method", "incomeSources.add.FP.AccountingMethod.heading")
     }
   }
   s"calling POST $addIncomeSourcesAccountingMethodShowUrlSoleTrader" should {
     s"redirect to $checkBusinessDetailsShowAgentUrl" when {
       "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
         val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq("cash"))
-        runPostTest(checkBusinessDetailsShowAgentUrl, "/income-sources/add/business-accounting-method", formData, SelfEmployment, Some("cash"))
+        runPostTest(checkBusinessDetailsShowAgentUrl, "/manage-your-businesses/add/business-accounting-method", formData, SelfEmployment, Some("cash"))
       }
       s"redirect to $checkBusinessDetailsShowAgentUrl" when {
         "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
           val formData: Map[String, Seq[String]] = Map(selfEmploymentAccountingMethod -> Seq("traditional"))
-          runPostTest(checkBusinessDetailsShowAgentUrl, "/income-sources/add/business-accounting-method", formData, SelfEmployment, Some("accruals"))
+          runPostTest(checkBusinessDetailsShowAgentUrl, "/manage-your-businesses/add/business-accounting-method", formData, SelfEmployment, Some("accruals"))
         }
       }
       s"return BAD_REQUEST $checkBusinessDetailsShowAgentUrl" when {
@@ -148,7 +148,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-accounting-method", clientDetailsWithConfirmation)(formData)
+          val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/business-accounting-method", clientDetailsWithConfirmation)(formData)
 
           result should have(
             httpStatus(BAD_REQUEST),
@@ -162,12 +162,12 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
     s"redirect to $checkUKPropertyDetailsShowAgentUrl" when {
       "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
         val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq("cash"))
-        runPostTest(checkUKPropertyDetailsShowAgentUrl, "/income-sources/add/uk-property-accounting-method", formData, UkProperty, Some("cash"))
+        runPostTest(checkUKPropertyDetailsShowAgentUrl, "/manage-your-businesses/add/uk-property-accounting-method", formData, UkProperty, Some("cash"))
       }
       s"redirect to $checkUKPropertyDetailsShowAgentUrl" when {
         "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
           val formData: Map[String, Seq[String]] = Map(UKPropertyAccountingMethod -> Seq("traditional"))
-          runPostTest(checkUKPropertyDetailsShowAgentUrl, "/income-sources/add/uk-property-accounting-method", formData, UkProperty, Some("accruals"))
+          runPostTest(checkUKPropertyDetailsShowAgentUrl, "/manage-your-businesses/add/uk-property-accounting-method", formData, UkProperty, Some("accruals"))
         }
       }
       s"return BAD_REQUEST $checkUKPropertyDetailsShowAgentUrl" when {
@@ -177,7 +177,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
+          val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/uk-property-accounting-method", clientDetailsWithConfirmation)(formData)
 
           result should have(
             httpStatus(BAD_REQUEST),
@@ -191,12 +191,12 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
     s"redirect to $foreignPropertyCheckDetailsShowAgentUrl" when {
       "user selects 'cash basis accounting', 'cash' should be added to session storage" in {
         val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq("cash"))
-        runPostTest(foreignPropertyCheckDetailsShowAgentUrl, "/income-sources/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("cash"))
+        runPostTest(foreignPropertyCheckDetailsShowAgentUrl, "/manage-your-businesses/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("cash"))
       }
       s"redirect to $foreignPropertyCheckDetailsShowAgentUrl" when {
         "user selects 'traditional accounting', 'accruals' should be added to session storage" in {
           val formData: Map[String, Seq[String]] = Map(foreignPropertyAccountingMethod -> Seq("traditional"))
-          runPostTest(foreignPropertyCheckDetailsShowAgentUrl, "/income-sources/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("accruals"))
+          runPostTest(foreignPropertyCheckDetailsShowAgentUrl, "/manage-your-businesses/add/foreign-property-business-accounting-method", formData, ForeignProperty, Some("accruals"))
         }
       }
       s"return BAD_REQUEST $foreignPropertyCheckDetailsShowAgentUrl" when {
@@ -206,7 +206,7 @@ class IncomeSourcesAccountingMethodControllerISpec extends ComponentSpecBase {
           enable(IncomeSources)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
-          val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-business-accounting-method", clientDetailsWithConfirmation)(formData)
+          val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/foreign-property-business-accounting-method", clientDetailsWithConfirmation)(formData)
 
           result should have(
             httpStatus(BAD_REQUEST),

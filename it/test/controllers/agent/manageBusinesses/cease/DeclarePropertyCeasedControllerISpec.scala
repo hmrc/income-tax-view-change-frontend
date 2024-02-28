@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.cease
+package controllers.agent.manageBusinesses.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
@@ -35,10 +35,10 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
   val repository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
-  val showUKPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty).url
-  val showDeclareUKPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.showAgent(UkProperty).url
-  val showForeignPropertyEndDateControllerUrl: String = controllers.incomeSources.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty).url
-  val showDeclareForeignPropertyCeasedControllerUrl: String = controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.showAgent(ForeignProperty).url
+  val showUKPropertyEndDateControllerUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showAgent(None, UkProperty).url
+  val showDeclareUKPropertyCeasedControllerUrl: String = controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.showAgent(UkProperty).url
+  val showForeignPropertyEndDateControllerUrl: String = controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.showAgent(None, ForeignProperty).url
+  val showDeclareForeignPropertyCeasedControllerUrl: String = controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.showAgent(ForeignProperty).url
   val checkboxErrorMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxError")
   val checkboxLabelMessageUK: String = messagesAPI("incomeSources.cease.UK.property.checkboxLabel")
   val checkboxErrorMessageFP: String = messagesAPI("incomeSources.cease.FP.property.checkboxError")
@@ -75,7 +75,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling POST ${controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submitAgent(UkProperty).url}" should {
+  s"calling POST ${controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submitAgent(UkProperty).url}" should {
     s"redirect to $showUKPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         enable(IncomeSources)
@@ -130,7 +130,7 @@ class DeclarePropertyCeasedControllerISpec extends ComponentSpecBase {
     }
   }
 
-  s"calling POST ${controllers.incomeSources.cease.routes.DeclarePropertyCeasedController.submitAgent(ForeignProperty).url}" should {
+  s"calling POST ${controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submitAgent(ForeignProperty).url}" should {
     "redirect to showForeignPropertyEndDateControllerUrl" when {
       "form is filled correctly" in {
         enable(IncomeSources)

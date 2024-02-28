@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
@@ -37,23 +37,23 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import java.time.LocalDate
 
 class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
-  def checkBusinessDetailsShowUrl(incomeSourceType: IncomeSourceType): String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
+  def checkBusinessDetailsShowUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
 
-  def checkBusinessDetailsSubmitUrl(incomeSourceType: IncomeSourceType): String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType).url
+  def checkBusinessDetailsSubmitUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType).url
 
   val addBusinessReportingMethodUrl: String = {
-    controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, SelfEmployment).url
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, SelfEmployment).url
   }
 
   val addForeignPropReportingMethodUrl: String = {
-    controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, ForeignProperty).url
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, ForeignProperty).url
   }
 
   val addUkPropReportingMethodUrl: String = {
-    controllers.incomeSources.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, UkProperty).url
+    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, UkProperty).url
   }
 
-  def errorPageUrl(incomeSourceType: IncomeSourceType): String = controllers.incomeSources.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
+  def errorPageUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
 
   val testBusinessId: String = testSelfEmploymentId
   val testBusinessName: String = "Test Business"
@@ -168,7 +168,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
           await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-          val result = IncomeTaxViewChangeFrontend.get(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)
+          val result = IncomeTaxViewChangeFrontend.get(s"/manage-your-businesses/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)
 
           incomeSourceType match {
             case SelfEmployment =>
@@ -221,7 +221,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
         await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)
+        val result = IncomeTaxViewChangeFrontend.post(s"/manage-your-businesses/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)
 
         incomeSourceType match {
           case SelfEmployment => AuditStub.verifyAuditContainsDetail(
@@ -253,7 +253,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
         When(s"I call ${checkBusinessDetailsSubmitUrl(incomeSourceType)}")
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)
+        val result = IncomeTaxViewChangeFrontend.post(s"/manage-your-businesses/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)
 
         incomeSourceType match {
           case SelfEmployment => AuditStub.verifyAuditContainsDetail(
@@ -283,7 +283,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(emptyUIJourneySessionData(JourneyType(Add, incomeSourceType))))
 
-        val result = IncomeTaxViewChangeFrontend.post(s"/income-sources/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)
+        val result = IncomeTaxViewChangeFrontend.post(s"/manage-your-businesses/add/${uriSegment(incomeSourceType)}-check-details", clientDetailsWithConfirmation)(Map.empty)
 
         result should have(
           httpStatus(SEE_OTHER),

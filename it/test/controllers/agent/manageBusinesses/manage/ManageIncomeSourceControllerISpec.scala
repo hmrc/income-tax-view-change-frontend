@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.manage
+package controllers.agent.manageBusinesses.manage
 
 import config.featureswitch.IncomeSources
 import helpers.agent.ComponentSpecBase
@@ -25,7 +25,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCea
 
 class ManageIncomeSourceControllerISpec extends ComponentSpecBase {
 
-  val showIndividualViewIncomeSourceControllerUrl: String = controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true).url
+  val showIndividualViewIncomeSourceControllerUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(true).url
   val pageTitleMsgKey = "view-income-sources.heading"
   val soleTraderBusinessName1: String = "business"
   val soleTraderBusinessName2: String = "secondBusiness"

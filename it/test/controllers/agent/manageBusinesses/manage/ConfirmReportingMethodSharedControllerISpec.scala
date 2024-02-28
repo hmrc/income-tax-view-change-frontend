@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.manage
+package controllers.agent.manageBusinesses.manage
 
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
@@ -63,9 +63,9 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
       latencyIndicator2 = annuallyIndicator
     )
 
-  private lazy val manageObligationsController = controllers.incomeSources.manage.routes
+  private lazy val manageObligationsController = controllers.manageBusinesses.manage.routes
     .ManageObligationsController
-  private lazy val confirmReportingMethodSharedController = controllers.incomeSources.manage.routes
+  private lazy val confirmReportingMethodSharedController = controllers.manageBusinesses.manage.routes
     .ConfirmReportingMethodSharedController
 
   val confirmReportingMethodShowUKPropertyUrl: String = confirmReportingMethodSharedController
@@ -327,7 +327,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = SelfEmployment, isAgent = true).url)
+          redirectURI(controllers.manageBusinesses.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = SelfEmployment, isAgent = true).url)
         )
       }
     }
@@ -356,7 +356,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = ForeignProperty, isAgent = true).url)
+          redirectURI(controllers.manageBusinesses.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = ForeignProperty, isAgent = true).url)
         )
       }
     }
@@ -411,7 +411,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.incomeSources.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = UkProperty, isAgent = true).url)
+          redirectURI(controllers.manageBusinesses.manage.routes.ReportingMethodChangeErrorController.show(incomeSourceType = UkProperty, isAgent = true).url)
         )
       }
     }

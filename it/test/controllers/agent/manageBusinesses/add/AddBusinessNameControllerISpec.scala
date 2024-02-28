@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
@@ -32,13 +32,13 @@ import scala.concurrent.ExecutionContext
 
 class AddBusinessNameControllerISpec extends ComponentSpecBase {
 
-  val addBusinessNameShowUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.showAgent().url
-  val addBusinessNameSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.submitAgent().url
-  val changeBusinessNameShowUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
-  val changeBusinessNameSubmitUrl: String = controllers.incomeSources.add.routes.AddBusinessNameController.submitChangeAgent().url
-  val addBusinessStartDateUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
-  val checkBusinessDetailsUrl: String = controllers.incomeSources.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
-  val addIncomeSourceUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceController.showAgent().url
+  val addBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent().url
+  val addBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent().url
+  val changeBusinessNameShowUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.changeBusinessNameAgent().url
+  val changeBusinessNameSubmitUrl: String = controllers.manageBusinesses.add.routes.AddBusinessNameController.submitChangeAgent().url
+  val addBusinessStartDateUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  val checkBusinessDetailsUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+  val addIncomeSourceUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
 
   val prefix: String = "add-business-name"
@@ -106,7 +106,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         }
 
         When(s"I call POST ${addBusinessNameSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-name", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/business-name", clientDetailsWithConfirmation)(formData)
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(addBusinessStartDateUrl)
@@ -127,7 +127,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         )
       }
 
-      val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/business-name", clientDetailsWithConfirmation)(formData)
+      val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/business-name", clientDetailsWithConfirmation)(formData)
 
       result should have(
         httpStatus(BAD_REQUEST),
@@ -191,7 +191,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         }
 
         When(s"I call POST ${changeBusinessNameSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/change-business-name", clientDetailsWithConfirmation)(formData)
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(checkBusinessDetailsUrl)
@@ -211,7 +211,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         )
       }
 
-      val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-name", clientDetailsWithConfirmation)(formData)
+      val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/change-business-name", clientDetailsWithConfirmation)(formData)
       result should have(
         httpStatus(BAD_REQUEST),
         elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +

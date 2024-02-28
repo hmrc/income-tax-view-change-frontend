@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -33,35 +33,35 @@ import java.time.LocalDate
 
 class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
-  val addBusinessStartDateChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
-  val addBusinessStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
-  val addBusinessStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
-  val addBusinessStartDateCheckShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
-  val addBusinessStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
+  val addBusinessStartDateChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
+  val addBusinessStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  val addBusinessStartDateSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  val addBusinessStartDateCheckShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = false).url
+  val addBusinessStartDateCheckChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = SelfEmployment, isAgent = true, isChange = true).url
   val prefixSoleTraderBusiness: String = "add-business-start-date"
   val continueButtonText: String = messagesAPI("base.continue")
 
-  val hintTextBusiness: String = messagesAPI("add-business-start-date.hint") + " " +
+  val hintTextBusiness: String = messagesAPI("add-business-start-date.hint") + " " + messagesAPI("add-business-start-date.hint2") + " " +
     messagesAPI("dateForm.hint")
 
-  val addUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
-  val addUKPropertyStartDateChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true).url
-  val addUKPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true).url
-  val addUKPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
-  val checkUKPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
+  val addUKPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
+  val addUKPropertyStartDateChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true).url
+  val addUKPropertyStartDateCheckChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = true).url
+  val addUKPropertyStartDateSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
+  val checkUKPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
 
-  val hintTextUKProperty: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " +
+  val hintTextUKProperty: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " + messagesAPI("add-business-start-date.hint2") + " " +
     messagesAPI("dateForm.hint")
 
-  val foreignPropertyStartDateShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
-  val foreignPropertyStartDateSubmitUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
-  val foreignPropertyStartDateCheckUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
-  val addForeignPropertyStartDateChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true).url
-  val addForeignPropertyStartDateCheckChangeShowUrl: String = controllers.incomeSources.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true).url
+  val foreignPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
+  val foreignPropertyStartDateSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
+  val foreignPropertyStartDateCheckUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
+  val addForeignPropertyStartDateChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true).url
+  val addForeignPropertyStartDateCheckChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = true).url
 
   val prefixForeignProperty = "incomeSources.add.foreignProperty.startDate"
 
-  val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " +
+  val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " + messagesAPI("add-business-start-date.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -106,7 +106,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   s"calling GET $addBusinessStartDateShowUrl" should {
     "render the Add Business Start Date Page" when {
       "User is authorised" in {
-        stubAuthorisedAgentUser(true)
+        stubAuthorisedAgentUser(authorised = true)
 
         Given("I wiremock stub a successful Income Source Details response with UK property")
         enable(IncomeSources)
@@ -143,7 +143,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend
-          .post("/income-sources/add/business-start-date", clientDetailsWithConfirmation)(formData)
+          .post("/manage-your-businesses/add-sole-trader/business-start-date", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -169,7 +169,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
         val result = IncomeTaxViewChangeFrontend
-          .post("/income-sources/add/business-start-date", clientDetailsWithConfirmation)(formData)
+          .post("/manage-your-businesses/add-sole-trader/business-start-date", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),
@@ -192,7 +192,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/uk-property-start-date", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get("/manage-your-businesses/add-uk-property/business-start-date", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -217,7 +217,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-start-date", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-uk-property/business-start-date", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -238,7 +238,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/uk-property-start-date", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-uk-property/business-start-date", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(BAD_REQUEST),
@@ -260,7 +260,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/foreign-property-start-date", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get("/manage-your-businesses/add-foreign-property/business-start-date", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -285,7 +285,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-start-date", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-foreign-property/business-start-date", clientDetailsWithConfirmation)(formData)
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -305,7 +305,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/foreign-property-start-date", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-foreign-property/business-start-date", clientDetailsWithConfirmation)(formData)
         result should have(
           httpStatus(BAD_REQUEST),
           elementTextByID("income-source-start-date-error")(messagesAPI("base.error-prefix") + " " +
@@ -327,7 +327,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionDataWithStartDate(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-uk-property-start-date", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get("/manage-your-businesses/add-uk-property/change-business-start-date", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -352,7 +352,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionDataWithStartDate(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-foreign-property-start-date", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get("/manage-your-businesses/add-foreign-property/change-business-start-date", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -376,7 +376,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
         When(s"I call GET $addBusinessStartDateChangeShowUrl")
         await(sessionService.setMongoData(testUIJourneySessionDataWithStartDate(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontend.get("/income-sources/add/change-business-start-date", clientDetailsWithConfirmation )
+        val result = IncomeTaxViewChangeFrontend.get("/manage-your-businesses/add-sole-trader/change-business-start-date", clientDetailsWithConfirmation )
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -404,7 +404,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-business-start-date", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/change-business-start-date", clientDetailsWithConfirmation)(formData)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -432,7 +432,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-foreign-property-start-date", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-foreign-property/change-business-start-date", clientDetailsWithConfirmation)(formData)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -460,7 +460,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontend.post("/income-sources/add/change-uk-property-start-date", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-uk-property/change-business-start-date", clientDetailsWithConfirmation)(formData)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(

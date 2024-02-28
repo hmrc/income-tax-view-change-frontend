@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.cease
+package controllers.agent.manageBusinesses.cease
 
 import audit.models.CeaseIncomeSourceAuditModel
 import auth.MtdItUser
@@ -52,39 +52,39 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val testBusinessName = "business"
   val timestamp = "2023-01-31T09:26:17Z"
 
-  val showCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url
-  val submitCheckCeaseBusinessDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
-  val formActionSE = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
+  val showCheckCeaseBusinessDetailsControllerUrl = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(SelfEmployment).url
+  val submitCheckCeaseBusinessDetailsControllerUrl = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
+  val formActionSE = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment).url
   val businessStopDateLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.dateStopped")
   val businessNameLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessName")
   val businessAddressLabel = messagesAPI("incomeSources.ceaseBusiness.checkDetails.businessAddress")
   val pageTitleMsgKey = messagesAPI("incomeSources.ceaseBusiness.checkDetails.heading")
   val unknown: String = messagesAPI("incomeSources.ceaseBusiness.checkDetails.unknown")
-  val redirectUriSE = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url
+  val redirectUriSE = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment).url
   val requestSE: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceID = business1.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val showCheckCeaseUKPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url
-  val submitCheckCeaseUKPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
-  val formActionUK = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
+  val showCheckCeaseUKPropertyDetailsControllerUrl = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(UkProperty).url
+  val submitCheckCeaseUKPropertyDetailsControllerUrl = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
+  val formActionUK = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty).url
   val businessStopDateLabelUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.content")
   val pageTitleMsgKeyUK = messagesAPI("incomeSources.ceaseUKProperty.checkDetails.heading")
-  val redirectUriUK = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url
+  val redirectUriUK = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty).url
   val requestUK: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceID = ukProperty.incomeSourceId,
     cessation = Some(Cessation(true, Some(LocalDate.parse(cessationDate))))
   )
 
-  val showCheckCeaseForeignPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
-  val submitCheckCeaseForeignPropertyDetailsControllerUrl = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
+  val showCheckCeaseForeignPropertyDetailsControllerUrl = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
+  val submitCheckCeaseForeignPropertyDetailsControllerUrl = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.showAgent(ForeignProperty).url
 
-  val formActionFP = controllers.incomeSources.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty).url
+  val formActionFP = controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty).url
   val pageTitleMsgKeyFP = messagesAPI("incomeSources.ceaseForeignProperty.checkDetails.heading")
-  val redirectUriFP = controllers.incomeSources.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url
+  val redirectUriFP = controllers.manageBusinesses.cease.routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty).url
   val requestFP: UpdateIncomeSourceRequestModel = UpdateIncomeSourceRequestModel(
     nino = testNino,
     incomeSourceID = foreignProperty.incomeSourceId,

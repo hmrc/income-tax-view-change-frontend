@@ -660,19 +660,19 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def getAddBusinessStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = "/manage-your-businesses/add/change-business-start-date-check", additionalCookies
+        uri = "/manage-your-businesses/add-sole-trader/change-business-start-date-check", additionalCookies
       )
     }
 
     def getAddForeignPropertyStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = "/manage-your-businesses/add/change-foreign-property-start-date-check", additionalCookies
+        uri = "/manage-your-businesses/add-foreign-property/change-business-start-date-check", additionalCookies
       )
     }
 
     def getAddUKPropertyStartDateCheckChange(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = "/manage-your-businesses/add/change-uk-property-start-date-check", additionalCookies
+        uri = "/manage-your-businesses/add-uk-property/change-business-start-date-check", additionalCookies
       )
     }
 
@@ -680,11 +680,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       post(s"/manage-your-businesses/add/foreign-property-added", additionalCookies)(Map.empty)
     }
 
-    def getAddBusinessName: WSResponse = getWithHeaders("/manage-your-businesses/add/business-name",
+    def getAddBusinessName: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/business-name",
       "X-Session-ID" -> testSessionId)
 
     def postAddBusinessName(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/business-name", additionalCookies)(Map.empty)
+      post(s"manage-your-businesses/add-sole-trader/business-name", additionalCookies)(Map.empty)
     }
 
     def getAddBusinessTrade: WSResponse = getWithHeaders("/manage-your-businesses/add/business-trade",
@@ -697,16 +697,16 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getChangeAddBusinessTrade: WSResponse = getWithHeaders("/manage-your-businesses/add/change-business-trade",
       "X-Session-ID" -> testSessionId)
 
-    def getAddBusinessStartDate: WSResponse = get("/manage-your-businesses/add/business-start-date")
+    def getAddBusinessStartDate: WSResponse = get("/manage-your-businesses/add-sole-trader/business-start-date")
 
     def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       get(
-        uri = "/manage-your-businesses/add/business-start-date-check", additionalCookies
+        uri = "/manage-your-businesses/add-sole-trader/business-start-date-check", additionalCookies
       )
     }
 
     def postAddBusinessStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/business-start-date-check",
+      post(s"/manage-your-businesses/add-sole-trader/business-start-date-check",
         additionalCookies = additionalCookies)(
         answer.fold(Map.empty[String, Seq[String]])(
           selection => AddIncomeSourceStartDateCheckForm(SelfEmployment.addStartDateCheckMessagesPrefix)
@@ -717,7 +717,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postAddForeignPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
-        uri = s"/manage-your-businesses/add/foreign-property-start-date-check",
+        uri = s"/manage-your-businesses/add-foreign-property/business-start-date-check",
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
@@ -729,7 +729,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postAddBusinessStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
-        uri = s"/manage-your-businesses/add/change-business-start-date-check",
+        uri = s"/manage-your-businesses/add-sole-trader/change-business-start-date-check",
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
@@ -741,7 +741,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postAddUKPropertyStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
-        uri = s"/manage-your-businesses/add/change-uk-property-start-date-check",
+        uri = s"/manage-your-businesses/add-uk-property/change-business-start-date-check",
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
@@ -753,7 +753,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postAddForeignPropertyStartDateCheckChange(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
-        uri = s"/manage-your-businesses/add/change-foreign-property-start-date-check",
+        uri = s"/manage-your-businesses/add-foreign-property/change-business-start-date-check",
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(
@@ -765,7 +765,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
     def postAddUKPropertyStartDateCheck(answer: Option[String])(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(
-        uri = s"/manage-your-businesses/add/uk-property-start-date-check",
+        uri = s"/manage-your-businesses/add-uk-property/business-start-date-check",
         additionalCookies = additionalCookies
       )(
         answer.fold(Map.empty[String, Seq[String]])(

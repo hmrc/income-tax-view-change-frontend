@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import config.featureswitch.IncomeSources
 import helpers.agent.ComponentSpecBase
@@ -25,8 +25,8 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class AddBusinessAddressControllerISpec extends ComponentSpecBase {
 
-  val changeBusinessAddressShowAgentUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = true).url
-  val businessAddressShowAgentUrl: String = controllers.incomeSources.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
+  val changeBusinessAddressShowAgentUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = true).url
+  val businessAddressShowAgentUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(isChange = false).url
 
   s"calling GET $businessAddressShowAgentUrl" should {
     "render the add business address page" when {

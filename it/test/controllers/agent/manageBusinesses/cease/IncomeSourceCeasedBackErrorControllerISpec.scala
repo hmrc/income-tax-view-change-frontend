@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.manage
+package controllers.agent.manageBusinesses.cease
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.JourneyType.{JourneyType, Manage}
+import enums.JourneyType.{Cease, JourneyType}
 import helpers.agent.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.scalatest.Assertion
@@ -29,33 +29,47 @@ import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData}
 
-class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
-  val title: String = messagesAPI("cannotGoBack.heading")
-  val sessionService: SessionService = app.injector.instanceOf[SessionService]
-  val url: IncomeSourceType => String = (incomeSourceType: IncomeSourceType) =>
-    controllers.incomeSources.manage.routes.CannotGoBackErrorController.show(isAgent = true, incomeSourceType).url
+class IncomeSourceCeasedBackErrorControllerISpec extends ComponentSpecBase {
 
-  override def afterEach(): Unit = {
-    super.afterEach()
-    await(sessionService.deleteSession(Manage))
+  val title = messagesAPI("cannotGoBack.heading")
+  val headingSE = messagesAPI("cannotGoBack.sole-trader-ceased")
+  val headingUk = messagesAPI("cannotGoBack.uk-property-ceased")
+  val headingFP = messagesAPI("cannotGoBack.foreign-property-ceased")
+
+  val sessionService: SessionService = app.injector.instanceOf[SessionService]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession(Cease))
   }
+
+  val url: IncomeSourceType => String = (incomeSourceType: IncomeSourceType) =>
+    controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSourceType).url
 
   def runOKTest(incomeSourceType: IncomeSourceType): Assertion = {
     stubAuthorisedAgentUser(authorised = true)
     enable(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-    await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, incomeSourceType))))
+    await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Cease, incomeSourceType))))
+
+    val specificHeading = incomeSourceType match {
+      case SelfEmployment => headingSE
+      case UkProperty => headingUk
+      case ForeignProperty => headingFP
+    }
+
+    val expectedTitle = s"$title - $specificHeading"
 
     lazy val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontend.getManageSECannotGoBack
-      case UkProperty => IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack
-      case ForeignProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
+      case SelfEmployment => IncomeTaxViewChangeFrontend.getCeaseSECannotGoBack()
+      case UkProperty => IncomeTaxViewChangeFrontend.getCeaseUKCannotGoBack()
+      case ForeignProperty => IncomeTaxViewChangeFrontend.getCeaseFPCannotGoBack()
     }
 
     result should have(
       httpStatus(OK),
-      pageTitleAgent("cannotGoBack.heading")
+      pageTitleAgent(s"$expectedTitle")
     )
   }
 
@@ -64,10 +78,10 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
     disable(IncomeSources)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-    lazy val result: WSResponse = incomeSourceType match {
-      case SelfEmployment => IncomeTaxViewChangeFrontend.getManageSECannotGoBack
-      case UkProperty => IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack
-      case ForeignProperty => IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
+    val result: WSResponse = incomeSourceType match {
+      case SelfEmployment => IncomeTaxViewChangeFrontend.getCeaseSECannotGoBack()
+      case UkProperty => IncomeTaxViewChangeFrontend.getCeaseUKCannotGoBack()
+      case ForeignProperty => IncomeTaxViewChangeFrontend.getCeaseFPCannotGoBack()
     }
 
     val expectedRedirect: String = controllers.routes.HomeController.showAgent.url
@@ -78,19 +92,11 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
     )
   }
 
+
   s"calling GET ${url(UkProperty)}" should {
     "return 200 OK" when {
       "FS enabled - UK Property" in {
-        stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-        await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, UkProperty))))
-
-        val result = IncomeTaxViewChangeFrontend.getManageUKPropertyCannotGoBack
-
-        result should have(
-          httpStatus(OK)
-        )
+        runOKTest(UkProperty)
       }
     }
     "return 303 SEE_OTHER" when {
@@ -102,16 +108,7 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
   s"calling GET ${url(ForeignProperty)}" should {
     "return 200 OK" when {
       "FS enabled - Foreign Property" in {
-        stubAuthorisedAgentUser(authorised = true)
-        enable(IncomeSources)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-        await(sessionService.setMongoData(completedUIJourneySessionData(JourneyType(Manage, ForeignProperty))))
-
-        val result = IncomeTaxViewChangeFrontend.getManageForeignPropertyCannotGoBack
-
-        result should have(
-          httpStatus(OK)
-        )
+        runOKTest(ForeignProperty)
       }
     }
     "return 303 SEE_OTHER" when {
@@ -132,4 +129,5 @@ class CannotGoBackErrorControllerISpec extends ComponentSpecBase {
       }
     }
   }
+
 }

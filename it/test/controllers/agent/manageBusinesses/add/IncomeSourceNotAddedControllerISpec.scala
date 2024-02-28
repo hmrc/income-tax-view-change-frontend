@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.add
+package controllers.agent.manageBusinesses.add
 
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
@@ -26,7 +26,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
 
-  private lazy val incomeSourceNotAddedController = controllers.incomeSources.add.routes.IncomeSourceNotAddedController
+  private lazy val incomeSourceNotAddedController = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController
 
   val selfEmploymentNotSavedErrorUrl: String = incomeSourceNotAddedController.showAgent(incomeSourceType = SelfEmployment).url
   val ukPropertyNotSavedErrorUrl: String = incomeSourceNotAddedController.showAgent(incomeSourceType = UkProperty).url
@@ -45,7 +45,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/agents/income-sources/add/error-business-not-added", clientDetailsWithConfirmation)
+          .get(s"/agents/manage-your-businesses/add/error-business-not-added", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -63,7 +63,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get(s"/agents/income-sources/add/error-business-not-added", clientDetailsWithConfirmation)
+        .get(s"/agents/manage-your-businesses/add/error-business-not-added", clientDetailsWithConfirmation)
       verifyIncomeSourceDetailsCall(testMtditid)
 
       result should have(
@@ -82,7 +82,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/agents/income-sources/add/error-uk-property-not-added", clientDetailsWithConfirmation)
+          .get(s"/agents/manage-your-businesses/add/error-uk-property-not-added", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -100,7 +100,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get(s"/agents/income-sources/add/error-uk-property-not-added", clientDetailsWithConfirmation)
+        .get(s"/agents/manage-your-businesses/add/error-uk-property-not-added", clientDetailsWithConfirmation)
       verifyIncomeSourceDetailsCall(testMtditid)
 
       result should have(
@@ -119,7 +119,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/agents/income-sources/add/error-foreign-property-not-added", clientDetailsWithConfirmation)
+          .get(s"/agents/manage-your-businesses/add/error-foreign-property-not-added", clientDetailsWithConfirmation)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -138,7 +138,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get(s"/agents/income-sources/add/error-foreign-property-not-added", clientDetailsWithConfirmation)
+        .get(s"/agents/manage-your-businesses/add/error-foreign-property-not-added", clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
 

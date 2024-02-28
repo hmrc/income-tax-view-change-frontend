@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent.incomeSources.cease
+package controllers.agent.manageBusinesses.cease
 
 
 import helpers.agent.ComponentSpecBase
@@ -31,7 +31,7 @@ class IncomeSourceNotCeasedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.get(uri = "/income-sources/cease/error-business-not-ceased", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(uri = "/manage-your-businesses/cease/error-business-not-ceased", clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
@@ -42,7 +42,7 @@ class IncomeSourceNotCeasedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.get(uri = "/income-sources/cease/error-uk-property-not-ceased", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(uri = "/manage-your-businesses/cease/error-uk-property-not-ceased", clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
@@ -53,7 +53,7 @@ class IncomeSourceNotCeasedControllerISpec extends ComponentSpecBase {
         stubAuthorisedAgentUser(authorised = true)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
-        val result = IncomeTaxViewChangeFrontend.get(uri = "/income-sources/cease/error-foreign-property-not-ceased", clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.get(uri = "/manage-your-businesses/cease/error-foreign-property-not-ceased", clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),

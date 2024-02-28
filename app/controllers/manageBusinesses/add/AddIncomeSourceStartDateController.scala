@@ -110,7 +110,8 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
             isAgent = isAgent,
             messagesPrefix = messagesPrefix,
             backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-            postAction = getPostAction(incomeSourceType, isAgent, isChange)
+            postAction = getPostAction(incomeSourceType, isAgent, isChange),
+            incomeSourceType = incomeSourceType
           )
         )
       }
@@ -139,7 +140,8 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
               form = formWithErrors,
               backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
               postAction = getPostAction(incomeSourceType, isAgent, isChange),
-              messagesPrefix = messagesPrefix
+              messagesPrefix = messagesPrefix,
+              incomeSourceType = incomeSourceType
             )
           )),
         formData => handleValidFormData(formData, incomeSourceType, isAgent, isChange)
