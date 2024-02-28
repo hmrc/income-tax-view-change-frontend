@@ -81,7 +81,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                if (testOnlyAppConfig.optOutUserPrefixes.contains(postedUser.nino.take(2))) {
+                if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes)) {
                   updateTestDataForOptOut(
                     nino = user.nino,
                     crystallisationStatus = postedUser.cyMinusOneCrystallisationStatus.get,
@@ -138,10 +138,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabled(TimeMachineAddYear))
     )
 
-    val crystallisationStatusResult: Future[Unit] = optOutCustomDataService.uploadCalculationListData(nino = ninoObj, taxYear = taxYear.currentTaxYearMinusOne, status = crystallisationStatus)
-    val itsaStatusCyMinusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.currentTaxYearMinusOne, status = cyMinusOneItsaStatus)
+    val crystallisationStatusResult: Future[Unit] = optOutCustomDataService.uploadCalculationListData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = crystallisationStatus)
+    val itsaStatusCyMinusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = cyMinusOneItsaStatus)
     val itsaStatusCyResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear, status = cyItsaStatus)
-    val itsaStatusCyPlusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.currentTaxYearPlusOne, status = cyPlusOneItsaStatus)
+    val itsaStatusCyPlusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.addYears(1), status = cyPlusOneItsaStatus)
 
     for {
       _ <- crystallisationStatusResult
