@@ -41,7 +41,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val prefix: String = "add-business-start-date"
   val continueButtonText: String = messagesAPI("base.continue")
 
-  val hintTextBusiness: String = messagesAPI("add-business-start-date.hint2") + " " + messagesAPI("add-business-start-date.hint") + " " +
+  val hintTextBusiness: String = messagesAPI("add-business-start-date.hint") + " " + messagesAPI("add-business-start-date.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val addUKPropertyStartDateCheckChangeShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = true).url
@@ -50,7 +50,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val addUKPropertyStartDateSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
   val checkUKPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = false, isChange = false).url
 
-  val hintTextUkProperty: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint2") + " " + messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " +
+  val hintTextUkProperty: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " + messagesAPI("incomeSources.add.UKPropertyStartDate.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val foreignPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = false, isChange = false).url
@@ -61,7 +61,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
   val prefixForeignProperty = "incomeSources.add.foreignProperty.startDate"
 
-  val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint2") + " " + messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " +
+  val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " + messagesAPI("incomeSources.add.foreignProperty.startDate.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
