@@ -122,7 +122,7 @@
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
 
-    @h1(msg = getMessage("heading"), id = Some("incomeSources.add.addIncomeSources-h1"))
+    @h1(msg = getMessage("heading"), id = Some("manage-your-businesses-h1"))
 
     @h2(msg = getMessage("self-employed-h2"), optId = Some("self-employed-h1"))
 
@@ -250,14 +250,14 @@
 
     @if(sources.viewCeasedBusinesses.nonEmpty) {
 
-        @h2(msg = getMessage("ceasedBusinesses.heading"), optId = Some("ceasedBusinesses.heading"))
+        @h2(msg = getMessage("ceasedBusinesses.heading"), optId = Some("ceasedBusinesses-heading"))
 
         @if(sources.viewCeasedBusinesses.length == 1) {
             <p class="govuk-body">@getMessage("ceasedBusinesses.single")</p>
         } else {
             <p class="govuk-body">@getMessage("ceasedBusinesses.multiple", sources.viewCeasedBusinesses.length.toString)</p>
         }
-        @link(link = viewAllCeasedBusinessesControllerURL, messageKey = getMessage("ceasedBusinesses.viewall"), id = Some("ceasedBusinesses.viewall"))
+        @link(link = viewAllCeasedBusinessesControllerURL, messageKey = getMessage("ceasedBusinesses.viewall"), id = Some("ceasedBusinesses-viewall"))
     }
     <br>
     <br>
