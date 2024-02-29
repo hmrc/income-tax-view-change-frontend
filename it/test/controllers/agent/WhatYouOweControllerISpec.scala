@@ -50,6 +50,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
       None,
       None,
@@ -104,6 +105,7 @@ class WhatYouOweControllerISpec extends ComponentSpecBase with FeatureSwitching 
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
               "testId",
+              incomeSource = Some(testIncomeSource),
               Some(AccountingPeriodModel(testDate, testDate.plusYears(1))),
               None,
               None,

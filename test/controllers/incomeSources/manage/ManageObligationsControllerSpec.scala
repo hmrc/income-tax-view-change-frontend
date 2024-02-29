@@ -35,6 +35,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.SessionService
 import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}
+import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import testUtils.TestSupport
@@ -114,6 +115,7 @@ class ManageObligationsControllerSpec extends TestSupport
 
     val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(BusinessDetailsModel(
       testId,
+      incomeSource = Some(testIncomeSource),
       None,
       Some("Test name"),
       None,
@@ -308,6 +310,7 @@ class ManageObligationsControllerSpec extends TestSupport
         val sources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(
           BusinessDetailsModel(
             testId,
+            incomeSource = Some(testIncomeSource),
             None,
             None,
             None,

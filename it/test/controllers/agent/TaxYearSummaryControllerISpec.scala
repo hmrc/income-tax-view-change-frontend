@@ -53,6 +53,7 @@ class TaxYearSummaryControllerISpec extends ComponentSpecBase with FeatureSwitch
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
       None,

@@ -1646,3 +1646,26 @@ incomeSources.ceased-income-sources.uk-property                 =   Eiddo yn y D
 incomeSources.ceased-income-sources.foreign-property            =   Eiddo tramor
 incomeSources.ceased-income-sources.unknown-sole-trader         =   Busnesau unig fasnachwr
 
+# manage your businesses
+manage.your.businesses.heading                                           = Eich busnesau
+manage.your.businesses.self-employed-h2                                  = Busnesau unig fasnachwr
+manage.your.businesses.self-employed-desc                                = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
+manage.your.businesses.addIncomeSources.selfEmployment.link              = Ychwanegu busnes unig fasnachwr
+manage.your.businesses.addIncomeSources.ukProperty.link                  = Ychwanegu busnes eiddo yn y DU
+manage.your.businesses.addIncomeSources.foreignProperty.link             = Ychwanegu busnes eiddo tramor
+manage.your.businesses.addIncomeSources.property.link                    = Ychwanegu busnes eiddo
+manage.your.businesses.property-h2                                       = Busnesau eiddo
+manage.your.businesses.property-desc                                     = Os ydych yn cael incwm o un eiddo neu fwy yn y DU, mae gennych fusnes eiddo yn y DU. Os yw’r eiddo dramor, mae gennych fusnes eiddo tramor. Er enghraifft: incwm o roi tai, fflatiau, neu gartrefi gwyliau ar osod a hynny naill ai ar sail tymor hir neu dymor byr.
+manage.your.businesses.unknown-field                                     = Anhysbys
+manage.your.businesses.ceasedBusinesses.heading                          = Busnesau sydd wedi dod i ben
+manage.your.businesses.ceasedBusinesses.single                           = Mae 1 busnes wedi dod i ben.
+manage.your.businesses.ceasedBusinesses.multiple                         = Mae {0} fusnes wedi dod i ben.
+manage.your.businesses.ceasedBusinesses.viewall                          = Bwrw golwg dros yr holl fusnesau sydd wedi dod i ben
+manage.your.businesses.view.manage                                       = Gweld a rheoli
+manage.your.businesses.cease                                             = Dod i ben
+manage.your.businesses.name                                              = Enw
+manage.your.businesses.datestarted                                       = Dyddiad cychwyn
+manage.your.businesses.startdate                                         = Dyddiad dechrau
+manage.your.businesses.UK                                                = Eiddo yn y DU
+manage.your.businesses.Foreign                                           = Eiddo tramor
+

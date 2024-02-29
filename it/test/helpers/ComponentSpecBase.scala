@@ -892,6 +892,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageUKPropertyCannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-uk-property-cannot-go-back")
 
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-foreign-property-cannot-go-back")
+
+    def getManageYourBusinesses: WSResponse = get("/manage-your-businesses")
   }
 
   def unauthorisedTest(uri: String): Unit = {

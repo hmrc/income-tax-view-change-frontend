@@ -1688,4 +1688,25 @@ incomeSources.ceased-income-sources.uk-property                 =   UK property
 incomeSources.ceased-income-sources.foreign-property            =   Foreign property
 incomeSources.ceased-income-sources.unknown-sole-trader         =   Sole trader business
 
-
+# manage your businesses
+manage.your.businesses.heading                                           = Your businesses
+manage.your.businesses.self-employed-h2                                  = Sole trader businesses
+manage.your.businesses.self-employed-desc                                = You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader.
+manage.your.businesses.addIncomeSources.selfEmployment.link              = Add a sole trader business
+manage.your.businesses.addIncomeSources.ukProperty.link                  = Add UK property business
+manage.your.businesses.addIncomeSources.foreignProperty.link             = Add foreign property business
+manage.your.businesses.addIncomeSources.property.link                    = Add property business
+manage.your.businesses.property-h2                                       = Property businesses
+manage.your.businesses.property-desc                                     = If you get income from one or more properties in the UK, you have a UK property business. If the property is abroad, you have a foreign property business. For example: letting houses, flats or holiday homes either on a long or short term basis.
+manage.your.businesses.unknown-field                                     = Unknown
+manage.your.businesses.ceasedBusinesses.heading                          = Businesses that have ceased
+manage.your.businesses.ceasedBusinesses.single                           = 1 business has ceased.
+manage.your.businesses.ceasedBusinesses.multiple                         = {0} Businesses have ceased.
+manage.your.businesses.ceasedBusinesses.viewall                          = View all ceased businesses
+manage.your.businesses.view.manage                                       = View and manage
+manage.your.businesses.cease                                             = Cease
+manage.your.businesses.name                                              = Name
+manage.your.businesses.datestarted                                       = Date started
+manage.your.businesses.startdate                                         = Start date
+manage.your.businesses.UK                                                = UK property
+manage.your.businesses.Foreign                                           = Foreign property

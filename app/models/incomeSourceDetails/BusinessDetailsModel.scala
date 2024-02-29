@@ -22,6 +22,7 @@ import play.api.libs.json.{Format, Json}
 import java.time.LocalDate
 
 case class BusinessDetailsModel(incomeSourceId: String,
+                                incomeSource: Option[String],
                                 accountingPeriod: Option[AccountingPeriodModel],
                                 tradingName: Option[String],
                                 firstAccountingPeriodEndDate: Option[LocalDate],
