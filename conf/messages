@@ -1294,9 +1294,9 @@ notmigrated.agent.link_title                                    = Self Assessmen
 incomeSources.add.UKPropertyStartDate.heading                   = When did your UK property business start?
 incomeSources.add.UKPropertyStartDate.hint                      = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.UKPropertyStartDate.hint2                     = This is the date you first received rental income from this UK property business, such as letting or renting out a property or land.
-incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started
 incomeSources.add.UKPropertyStartDate.error.future              = The date your UK property business started must be before {0}
-incomeSources.add.UKPropertyStartDate.error.invalid             = The date your UK property business started must be a real date
+incomeSources.add.UKPropertyStartDate.error.invalid             = The date must be a real date
 add-uk-property-start-date-check.error                          = Select yes if your UK property business start date is correct
 
 #Generic date form messages
@@ -1342,14 +1342,14 @@ incomeSources.add.foreignProperty.startDate.heading                  = When did 
 incomeSources.add.foreignProperty.startDate.hint                     = The date your business started trading can be today, in the past or up to 7 days in the future.
 incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
-incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started trading
+incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = The date must include a month and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayYear     = The date must include a day and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = The date must include a day and a month
 incomeSources.add.foreignProperty.startDate.error.missingYear        = The date must include a year
 incomeSources.add.foreignProperty.startDate.error.missingMonth       = The date must include a month
 incomeSources.add.foreignProperty.startDate.error.missingDay         = The date must include a day
-incomeSources.add.foreignProperty.startDate.error.invalid            = The date your foreign property business started must be a real date
+incomeSources.add.foreignProperty.startDate.error.invalid            = The date must be a real date
 incomeSources.add.foreignProperty.startDate.error.future             = The date your foreign property business started must be before {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = Is this date correct?
 add-foreign-property-start-date-check.error                          = Select yes if your foreign property business start date is correct
@@ -1408,7 +1408,7 @@ add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
 add-business-start-date.error.required               = Enter the date your business started trading
-add-business-start-date.error.invalid                = The date your business started trading must be a real date
+add-business-start-date.error.invalid                = The date must be a real date
 
 # add Business start date check
 add-business-start-date-check.heading                 = Is this date correct?
