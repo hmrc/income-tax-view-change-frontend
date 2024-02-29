@@ -64,7 +64,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       }
       "render the hint" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementById("income-source-start-date-hint").text() shouldBe
-          s"${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint2")} ${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint")} ${messages("dateForm.hint")}"
+          s"${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint")} ${messages(s"${incomeSourceType.startDateMessagesPrefix}.hint2")} ${messages("dateForm.hint")}"
       }
       "render the date form" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementsByClass("govuk-label govuk-date-input__label").eq(0).text() shouldBe "Day"
