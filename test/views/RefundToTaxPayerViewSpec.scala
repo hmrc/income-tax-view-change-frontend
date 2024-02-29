@@ -18,7 +18,7 @@ package views
 
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, RepaymentItem, RepaymentSupplementItem}
+import models.repaymentHistory._
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import testUtils.ViewSpec
@@ -88,7 +88,8 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
               Some(2.01))
           )
         )
-      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135")
+      )), Some(LocalDate.of(2021, 7, 23)), Some(LocalDate.of(2021, 7, 21)), "000000003135",
+      status = RepaymentHistoryStatus("A"))
     )
   )
 

@@ -21,7 +21,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.{BeforeSubmissionPage, ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, JourneyType}
 import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
@@ -98,7 +98,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                 backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
                 form = form(incomeSourceType.addStartDateCheckMessagesPrefix),
                 postAction = getPostAction(incomeSourceType, isAgent, isChange),
-                incomeSourceStartDate = longDate(startDate).toLongDate
+                incomeSourceStartDate = longDate(startDate).toLongDate,
+                incomeSourceType = incomeSourceType
               )
             )
           }
@@ -133,7 +134,8 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authorisedFunctions:
                     form = formWithErrors,
                     incomeSourceStartDate = longDate(startDate).toLongDate,
                     backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-                    postAction = getPostAction(incomeSourceType, isAgent, isChange)
+                    postAction = getPostAction(incomeSourceType, isAgent, isChange),
+                    incomeSourceType = incomeSourceType
                   )
                 )
               },

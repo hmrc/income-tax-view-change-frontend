@@ -48,7 +48,8 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
             postAction = Call("", ""),
             isAgent = isAgent,
             incomeSourceStartDate = formattedStartDate,
-            backUrl = getBackUrl(isAgent, isChange, incomeSourceType)
+            backUrl = getBackUrl(isAgent, isChange, incomeSourceType),
+            incomeSourceType = incomeSourceType
           )
         )
       )
@@ -58,10 +59,11 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: AddIncomeSourceStartDateCheckView - $incomeSourceType" should {
       "render the heading" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementsByClass("govuk-fieldset__legend--l").text() shouldBe messages("radioForm.checkDate.heading")
+        document.getElementsByClass("govuk-caption-l").text() shouldBe getCaption(incomeSourceType)
+        document.getElementById("start-date-heading").text() shouldBe messages("radioForm.checkDate.heading")
       }
       "render the date entered in Add Income Source Start Date page" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("start-date-check-hint").text shouldBe formattedStartDate
+        document.getElementById("start-date-value").text shouldBe formattedStartDate
       }
       "render the radio form" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
@@ -94,6 +96,14 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
   def getBackUrl(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): String = {
     controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController
       .show(isAgent, isChange, incomeSourceType).url
+  }
+
+  def getCaption(incomeSourceType: IncomeSourceType): String = {
+    incomeSourceType match {
+      case SelfEmployment => messages("incomeSources.add.sole-trader")
+      case UkProperty => messages("incomeSources.add.uk-property")
+      case ForeignProperty => messages("incomeSources.add.foreign-property")
+    }
   }
 
   for {

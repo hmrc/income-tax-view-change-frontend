@@ -21,7 +21,7 @@ This service is written in [Scala](http://www.scala-lang.org/) and [Play](http:/
 To start all Service Manager services from the latest RELEASE version instead of snapshot execute the following:
 
 ```
-sm --start ITVC_ALL --appendArgs '{"CITIZEN_DETAILS":["-Dmongodb.cid-sautr-cache.enabled=false"]}' -r
+sm2 --start ITVC_ALL --appendArgs '{"CITIZEN_DETAILS":["-Dmongodb.cid-sautr-cache.enabled=false"]}'
 ```
 
 
@@ -74,4 +74,14 @@ sbt clean coverage test it/test coverageOff coverageReport
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
+
+### To access Opt Out Custom Data testonly page to see current data, go to:
+
+Local:
+Individual: http://localhost:9081/report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData
+Agent: http://localhost:9081/report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData
+
+Staging:
+Individual: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/test-only/showOptOutCurrentData
+Agent: https://www.staging.tax.service.gov.uk/report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData
 
