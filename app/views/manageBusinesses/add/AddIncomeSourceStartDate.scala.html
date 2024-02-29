@@ -67,7 +67,7 @@
         @govukDateInput(DateInput(
             hint = Some(Hint(
                 id = Some(s"$messagesPrefix-hint"),
-                content = HtmlContent(s"</br><div>${getMessage("hint2")}</div><br><div>${getMessage("hint")}</div></br><div>${messages("dateForm.hint")}</div>")
+                content = HtmlContent(s"<br><div>${getMessage("hint")}</div></br><div>${getMessage("hint2")}</div></br><div>${messages("dateForm.hint")}</div>")
             )),
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
