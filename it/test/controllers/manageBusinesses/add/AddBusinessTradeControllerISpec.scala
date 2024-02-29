@@ -66,7 +66,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
           addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
 
         When(s"I call GET $addBusinessTradeControllerShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTrade
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTradeNewJourney
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -85,7 +85,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessTradeControllerShowUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTrade
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTradeNewJourney
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -112,7 +112,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
 
         And("Mongo storage is successfully set")
         When(s"I call POST ${addBusinessTradeSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/business-trade")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/business-trade")(formData)
 
         sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
@@ -135,7 +135,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         )
       }
 
-      val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/business-trade")(formData)
+      val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/business-trade")(formData)
       result should have(
         httpStatus(BAD_REQUEST),
         elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +
@@ -156,7 +156,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
           addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
 
         When(s"I call GET $changeBusinessTradeUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getChangeAddBusinessTrade
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getChangeAddBusinessTradeNewJourney
         verifyIncomeSourceDetailsCall(testMtditid)
 
         sessionService.getMongo(journeyType.toString)
@@ -178,7 +178,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${changeBusinessTradeUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add/change-business-trade")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get("/manage-your-businesses/add-sole-trader/change-business-trade")
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(incomeSourcesUrl)
@@ -204,7 +204,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         }
 
         When(s"I call POST ${submitChangeBusinessTradeUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/change-business-trade")(formData)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/change-business-trade")(formData)
 
         sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
@@ -227,7 +227,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         )
       }
 
-      val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add/change-business-trade")(formData)
+      val result = IncomeTaxViewChangeFrontendManageBusinesses.post("/manage-your-businesses/add-sole-trader/change-business-trade")(formData)
       result should have(
         httpStatus(BAD_REQUEST),
         elementTextByID("business-trade-error")(messagesAPI("base.error-prefix") + " " +

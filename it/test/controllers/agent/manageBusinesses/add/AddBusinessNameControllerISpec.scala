@@ -148,7 +148,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $changeBusinessNameShowUrl")
-        val result = IncomeTaxViewChangeFrontend.getChangeBusinessName(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getChangeBusinessNameNewJourney(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
@@ -167,7 +167,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${changeBusinessNameShowUrl}")
-        val result = IncomeTaxViewChangeFrontend.getChangeBusinessName(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getChangeBusinessNameNewJourney(clientDetailsWithConfirmation)
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(incomeSourcesUrl)
@@ -191,7 +191,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         }
 
         When(s"I call POST ${changeBusinessNameSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/change-business-name", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/change-business-name", clientDetailsWithConfirmation)(formData)
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(checkBusinessDetailsUrl)
@@ -211,7 +211,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         )
       }
 
-      val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/change-business-name", clientDetailsWithConfirmation)(formData)
+      val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/change-business-name", clientDetailsWithConfirmation)(formData)
       result should have(
         httpStatus(BAD_REQUEST),
         elementTextByID("business-name-error")(messagesAPI("base.error-prefix") + " " +

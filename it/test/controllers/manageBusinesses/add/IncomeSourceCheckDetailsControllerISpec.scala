@@ -153,9 +153,15 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         incomeSourcesAccountingMethod = None)))
 
   def uriSegment(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
-    case SelfEmployment => "business"
+    case SelfEmployment => "sole-trader"
     case UkProperty => "uk-property"
     case ForeignProperty => "foreign-property"
+  }
+
+  def uriDetailsSegment(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
+    case SelfEmployment => "business-"
+    case UkProperty => ""
+    case ForeignProperty => ""
   }
 
   def getRedirectUrl(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
@@ -177,13 +183,14 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
           await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-          val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add/${uriSegment(incomeSourceType)}-check-details")
+          val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers")
 
           incomeSourceType match {
             case SelfEmployment =>
+              Console.println(Console.GREEN + result.body + Console.WHITE)
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("check-business-details.title"),
+                pageTitleIndividual("check-details.title"),
                 elementTextBySelectorList(".govuk-summary-list__value", "dd:nth-of-type(1)")(testBusinessName),
                 elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")("1 January 2023"),
                 elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(testBusinessTrade),
@@ -195,7 +202,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
             case UkProperty =>
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.add.checkUKPropertyDetails.title"),
+                pageTitleIndividual("check-details-uk.title"),
                 elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
                 elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
                 elementTextByID("confirm-button")(continueButtonText)
@@ -204,7 +211,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
             case ForeignProperty =>
               result should have(
                 httpStatus(OK),
-                pageTitleIndividual("incomeSources.add.foreign-property-check-details.title"),
+                pageTitleIndividual("check-details-fp.title"),
                 elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
                 elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
                 elementTextByID("confirm-button")(continueButtonText)
@@ -229,7 +236,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
         IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
         await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add/${uriSegment(incomeSourceType)}-check-details")(Map.empty)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers")(Map.empty)
 
         incomeSourceType match {
           case SelfEmployment => AuditStub.verifyAuditContainsDetail(
@@ -261,7 +268,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
         await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
         When(s"I call ${checkBusinessDetailsSubmitUrl(incomeSourceType)}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add/${uriSegment(incomeSourceType)}-check-details")(Map.empty)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers")(Map.empty)
 
 
         incomeSourceType match {
@@ -291,7 +298,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(emptyUIJourneySessionData(JourneyType(Add, incomeSourceType))))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add/${uriSegment(incomeSourceType)}-check-details")(Map.empty)
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.post(s"/manage-your-businesses/add-${uriSegment(incomeSourceType)}/${uriDetailsSegment(incomeSourceType)}check-answers")(Map.empty)
 
         result should have(
           httpStatus(SEE_OTHER),

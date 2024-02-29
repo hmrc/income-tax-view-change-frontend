@@ -690,11 +690,17 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessTrade: WSResponse = getWithHeaders("/manage-your-businesses/add/business-trade",
       "X-Session-ID" -> testSessionId)
 
+    def getAddBusinessTradeNewJourney: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/business-trade",
+      "X-Session-ID" -> testSessionId)
+
     def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/manage-your-businesses/add/business-trade", additionalCookies)(Map.empty)
     }
 
     def getChangeAddBusinessTrade: WSResponse = getWithHeaders("/manage-your-businesses/add/change-business-trade",
+      "X-Session-ID" -> testSessionId)
+
+    def getChangeAddBusinessTradeNewJourney: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/change-business-trade",
       "X-Session-ID" -> testSessionId)
 
     def getAddBusinessStartDate: WSResponse = get("/manage-your-businesses/add-sole-trader/business-start-date")
@@ -870,8 +876,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddChangeBusinessAddress: WSResponse =
       get("/manage-your-businesses/add/change-business-address-lookup")
 
+    def getAddChangeBusinessAddressNewJourney: WSResponse =
+      get("/manage-your-businesses/add-sole-trader/change-business-address-lookup")
+
     def getAddBusinessAddress: WSResponse =
       get("/manage-your-businesses/add/business-address")
+
+    def getAddBusinessAddressNewJourney: WSResponse =
+      get("/manage-your-businesses/add-sole-trader/business-address")
 
     def getSEReportingMethodNotSaved(session: Map[String, String]): WSResponse = get(uri = s"/manage-your-businesses/add/error-business-reporting-method-not-saved", session)
 
