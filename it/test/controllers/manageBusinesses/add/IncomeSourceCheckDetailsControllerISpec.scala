@@ -42,11 +42,11 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
   def checkBusinessDetailsSubmitUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType).url
 
-  val addBusinessReportingMethodUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, SelfEmployment).url
+  val addBusinessReportingFrequencyUrl: String = routes.ReportingFrequencyController.show(isAgent = false, SelfEmployment).url
 
-  val addForeignPropReportingMethodUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, ForeignProperty).url
+  val addForeignPropReportingFrequencyUrl: String = routes.ReportingFrequencyController.show(isAgent = false, ForeignProperty).url
 
-  val addUkPropReportingMethodUrl: String = routes.IncomeSourceReportingMethodController.show(isAgent = false, UkProperty).url
+  val addUkPropReportingFrequencyUrl: String = routes.ReportingFrequencyController.show(isAgent = false, UkProperty).url
 
   def errorPageUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.show(incomeSourceType).url
 
@@ -165,9 +165,9 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   }
 
   def getRedirectUrl(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
-    case SelfEmployment => addBusinessReportingMethodUrl
-    case UkProperty => addUkPropReportingMethodUrl
-    case ForeignProperty => addForeignPropReportingMethodUrl
+    case SelfEmployment => addBusinessReportingFrequencyUrl
+    case UkProperty => addUkPropReportingFrequencyUrl
+    case ForeignProperty => addForeignPropReportingFrequencyUrl
   }
 
   def runShowtest(incomeSourceType: IncomeSourceType): Unit = {

@@ -41,16 +41,16 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
 
   def checkBusinessDetailsSubmitUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType).url
 
-  val addBusinessReportingMethodUrl: String = {
-    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, SelfEmployment).url
+  val addBusinessReportingFrequencyUrl: String = {
+    controllers.manageBusinesses.add.routes.ReportingFrequencyController.show(isAgent = true, SelfEmployment).url
   }
 
-  val addForeignPropReportingMethodUrl: String = {
-    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, ForeignProperty).url
+  val addForeignPropReportingFrequencyUrl: String = {
+    controllers.manageBusinesses.add.routes.ReportingFrequencyController.show(isAgent = true, ForeignProperty).url
   }
 
-  val addUkPropReportingMethodUrl: String = {
-    controllers.manageBusinesses.add.routes.IncomeSourceReportingMethodController.show(isAgent = true, UkProperty).url
+  val addUkPropReportingFrequencyUrl: String = {
+    controllers.manageBusinesses.add.routes.ReportingFrequencyController.show(isAgent = true, UkProperty).url
   }
 
   def errorPageUrl(incomeSourceType: IncomeSourceType): String = controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
@@ -154,9 +154,9 @@ class IncomeSourceCheckDetailsControllerISpec extends ComponentSpecBase {
   }
 
   def getRedirectUrl(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
-    case SelfEmployment => addBusinessReportingMethodUrl
-    case UkProperty => addUkPropReportingMethodUrl
-    case ForeignProperty => addForeignPropReportingMethodUrl
+    case SelfEmployment => addBusinessReportingFrequencyUrl
+    case UkProperty => addUkPropReportingFrequencyUrl
+    case ForeignProperty => addForeignPropReportingFrequencyUrl
   }
 
 
