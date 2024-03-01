@@ -50,9 +50,9 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
-      case (false, false) => routes.AddIncomeSourceController.show()
+      case (false, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(false)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, false) => routes.AddIncomeSourceController.showAgent()
+      case (_, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(true)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
