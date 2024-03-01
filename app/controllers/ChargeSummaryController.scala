@@ -88,8 +88,16 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
 
       val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
-        case (year, response) if year == taxYear => response
+        case (year, response) if year == taxYear =>
+          Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd3 year = $year")
+          Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd4 response = $response")
+
+          response
       }
+      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd5 taxYear = $taxYear")
+
+      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd1 financial responses = $financialResponses")
+      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd2 matching year = $matchingYear")
 
       matchingYear.headOption match {
         case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
@@ -101,6 +109,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         case Some(error: FinancialDetailsErrorModel) =>
           Future.successful(onError(s"Financial details error :: $error", isAgent, showInternalServerError = true))
         case None =>
+          // This is failure location
           Future.successful(onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true))
       }
     }
