@@ -109,7 +109,6 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
         case Some(error: FinancialDetailsErrorModel) =>
           Future.successful(onError(s"Financial details error :: $error", isAgent, showInternalServerError = true))
         case None =>
-          // This is failure location
           Future.successful(onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true))
       }
     }
