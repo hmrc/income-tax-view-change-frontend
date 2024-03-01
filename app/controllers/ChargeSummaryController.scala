@@ -88,8 +88,13 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
       }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
 
       val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
-        case (year, response) if year == taxYear => response
+        case (year, response) if year == taxYear =>
+          Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd123 < year = $year > < response = $response > < taxYear = $taxYear > < financialResponses = $financialResponses >")
+
+          response
       }
+
+      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd124 < matchingYear = $matchingYear >")
 
       matchingYear.headOption match {
         case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
