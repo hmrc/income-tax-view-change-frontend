@@ -50,7 +50,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
   val addUKPropertyStartDateSubmitUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.submit(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
   val checkUKPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(incomeSourceType = UkProperty, isAgent = true, isChange = false).url
 
-  val hintTextUKProperty: String = messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " + messagesAPI("add-business-start-date.hint2") + " " +
+  val hintTextUKProperty: String =  messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " + messagesAPI("incomeSources.add.UKPropertyStartDate.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val foreignPropertyStartDateShowUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = ForeignProperty, isAgent = true, isChange = false).url
@@ -61,7 +61,7 @@ class AddIncomeSourceStartDateControllerISpec extends ComponentSpecBase {
 
   val prefixForeignProperty = "incomeSources.add.foreignProperty.startDate"
 
-  val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " + messagesAPI("add-business-start-date.hint2") + " " +
+  val hintTextForeignProperty: String = messagesAPI("incomeSources.add.foreignProperty.startDate.hint") + " " + messagesAPI("incomeSources.add.foreignProperty.startDate.hint2") + " " +
     messagesAPI("dateForm.hint")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
