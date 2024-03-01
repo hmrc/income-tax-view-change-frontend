@@ -72,6 +72,8 @@ btaNavPartial = user.btaNavPartial) {
 
     @form(action = postAction, Symbol("id") -> "business-name-form") {
 
+        <span class="govuk-caption-l">@messages("incomeSources.add.sole-trader")</span>
+
         @govukInput(
             Input(
                 id = businessName,
