@@ -1251,6 +1251,11 @@ add-business-name.form.error.invalidNameFormat                    = Ni all enw�
 add-business-name.form.error.invalidName                          = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Add business trade page
+add-trade.heading                           = Beth yw masnach eich busnes?
+add-trade.title                             = Unig fasnachwr
+add-trade.trade-info-1                      = Masnach eich busnes yw’r nwyddau neu’r gwasanaethau mae eich busnes yn eu darparu.
+add-trade.trade-info-2                      = Er enghraifft: plymio, gwaith trydanol, ymgynghori, gwaith ffotograffiaeth, hyfforddiant personol, trin gwallt.
+
 add-business-trade.heading                  = Beth yw masnach eich busnes?
 add-business-trade.p1                       = Er enghraifft: plymio, gwaith trydanol, ymgynghori.
 add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
