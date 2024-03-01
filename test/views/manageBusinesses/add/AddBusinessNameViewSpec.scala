@@ -129,6 +129,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - ADD - Individual" when {
     "there is no error on the add page" should {
       "have the correct heading" in new TestSetup(false, false, false) {
+        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
       "render the back link with the correct URL" in new TestSetup(false, false, false) {
@@ -175,6 +176,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - CHANGE - Individual" when {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(false, false, true) {
+        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
       "render the back link with the correct URL" in new TestSetup(false, false, true) {
@@ -220,6 +222,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - ADD - Agent" when {
     "there is no error on the add page" should {
       "have the correct heading" in new TestSetup(true, false, false) {
+        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
       "render the back link with the correct URL" in new TestSetup(true, false, false) {
@@ -266,6 +269,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - CHANGE - Agent" when {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(true, false, true) {
+        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
       "render the back link with the correct URL" in new TestSetup(true, false, true) {
