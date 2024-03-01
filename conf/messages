@@ -1292,11 +1292,11 @@ notmigrated.user.link_title                                     = Self Assessmen
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
 incomeSources.add.UKPropertyStartDate.heading                   = When did your UK property business start?
-incomeSources.add.UKPropertyStartDate.hint                      = This is the date that letting or renting out any UK property first started.
-incomeSources.add.UKPropertyStartDate.hint2                     = The date your business started trading can be today, in the past or up to 7 days in the future.
-incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.hint                      = The date your business started trading can be today, in the past or up to 7 days in the future.
+incomeSources.add.UKPropertyStartDate.hint2                     = This is the date you first received rental income from this UK property business, such as letting or renting out a property or land.
+incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started
 incomeSources.add.UKPropertyStartDate.error.future              = The date your UK property business started must be before {0}
-incomeSources.add.UKPropertyStartDate.error.invalid             = The date your UK property business started must be a real date
+incomeSources.add.UKPropertyStartDate.error.invalid             = The date must be a real date
 add-uk-property-start-date-check.error                          = Select yes if your UK property business start date is correct
 
 #Generic date form messages
@@ -1339,17 +1339,17 @@ incomeSources.cease.endDate.foreignProperty.heading                      = Date 
 incomeSources.cease.endDate.foreignProperty.error.invalid                = The date your foreign property business stopped must be a real date
 
 incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
-incomeSources.add.foreignProperty.startDate.hint                     = This is the date that letting or renting out any foreign property first started.
-incomeSources.add.foreignProperty.startDate.hint2                     = The date your business started trading can be today, in the past or up to 7 days in the future.
+incomeSources.add.foreignProperty.startDate.hint                     = The date your business started trading can be today, in the past or up to 7 days in the future.
+incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
-incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started trading
+incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = The date must include a month and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayYear     = The date must include a day and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = The date must include a day and a month
 incomeSources.add.foreignProperty.startDate.error.missingYear        = The date must include a year
 incomeSources.add.foreignProperty.startDate.error.missingMonth       = The date must include a month
 incomeSources.add.foreignProperty.startDate.error.missingDay         = The date must include a day
-incomeSources.add.foreignProperty.startDate.error.invalid            = The date your foreign property business started must be a real date
+incomeSources.add.foreignProperty.startDate.error.invalid            = The date must be a real date
 incomeSources.add.foreignProperty.startDate.error.future             = The date your foreign property business started must be before {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = Is this date correct?
 add-foreign-property-start-date-check.error                          = Select yes if your foreign property business start date is correct
@@ -1401,14 +1401,14 @@ add-business-address.edit.heading           = Enter your business address
 
 # add Business start date
 add-business-start-date.heading                      = When did your business start trading?
-add-business-start-date.hint                         = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
-add-business-start-date.hint2                        = The date your business started trading can be today, in the past or up to 7 days in the future.
+add-business-start-date.hint                         = The date your business started trading can be today, in the past or up to 7 days in the future.
+add-business-start-date.hint2                        = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
 add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
 add-business-start-date.error.required               = Enter the date your business started trading
-add-business-start-date.error.invalid                = The date your business started trading must be a real date
+add-business-start-date.error.invalid                = The date must be a real date
 
 # add Business start date check
 add-business-start-date-check.heading                 = Is this date correct?
@@ -1711,4 +1711,25 @@ incomeSources.ceased-income-sources.uk-property                 =   UK property
 incomeSources.ceased-income-sources.foreign-property            =   Foreign property
 incomeSources.ceased-income-sources.unknown-sole-trader         =   Sole trader business
 
-
+# manage your businesses
+manage.your.businesses.heading                                           = Your businesses
+manage.your.businesses.self-employed-h2                                  = Sole trader businesses
+manage.your.businesses.self-employed-desc                                = You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader.
+manage.your.businesses.addIncomeSources.selfEmployment.link              = Add a sole trader business
+manage.your.businesses.addIncomeSources.ukProperty.link                  = Add UK property business
+manage.your.businesses.addIncomeSources.foreignProperty.link             = Add foreign property business
+manage.your.businesses.addIncomeSources.property.link                    = Add property business
+manage.your.businesses.property-h2                                       = Property businesses
+manage.your.businesses.property-desc                                     = If you get income from one or more properties in the UK, you have a UK property business. If the property is abroad, you have a foreign property business. For example: letting houses, flats or holiday homes either on a long or short term basis.
+manage.your.businesses.unknown-field                                     = Unknown
+manage.your.businesses.ceasedBusinesses.heading                          = Businesses that have ceased
+manage.your.businesses.ceasedBusinesses.single                           = 1 business has ceased.
+manage.your.businesses.ceasedBusinesses.multiple                         = {0} Businesses have ceased.
+manage.your.businesses.ceasedBusinesses.viewall                          = View all ceased businesses
+manage.your.businesses.view.manage                                       = View and manage
+manage.your.businesses.cease                                             = Cease
+manage.your.businesses.name                                              = Name
+manage.your.businesses.datestarted                                       = Date started
+manage.your.businesses.startdate                                         = Start date
+manage.your.businesses.UK                                                = UK property
+manage.your.businesses.Foreign                                           = Foreign property

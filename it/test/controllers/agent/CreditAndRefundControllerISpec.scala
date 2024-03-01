@@ -146,6 +146,7 @@ class CreditAndRefundControllerISpec extends ComponentSpecBase {
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
               "testId",
+              incomeSource = Some(testIncomeSource),
               Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
               None,

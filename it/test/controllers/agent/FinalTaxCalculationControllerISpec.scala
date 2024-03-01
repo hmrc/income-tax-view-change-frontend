@@ -28,7 +28,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{clientDetailsWithConfirmation, testIncomeSource, testMtditid, testNino}
 import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
@@ -147,6 +147,7 @@ class FinalTaxCalculationControllerISpec extends ComponentSpecBase with SessionC
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
       None,

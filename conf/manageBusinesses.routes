@@ -3,8 +3,12 @@
 #                                                            Manage your businesses                                                                        #
 ########################################################################################################################################################
 
-GET          /manage-your-businesses                                              controllers.incomeSources.NewIncomeSourcesHomePageController.show()
-GET          /agents/manage-your-businesses                                       controllers.incomeSources.NewIncomeSourcesHomePageController.showAgent()
+GET          /manage-your-businesses                                              controllers.manageBusinesses.ManageYourBusinessesController.show(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses                                       controllers.manageBusinesses.ManageYourBusinessesController.show(isAgent: Boolean = true)
+GET          /manage-your-businesses/add-property/property-type                   controllers.manageBusinesses.add.AddPropertyController.show()
+GET          /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.showAgent()
+GET          /manage-your-businesses/ceased-businesses                            controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show()
+GET          /agents/manage-your-businesses/ceased-businesses                     controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.showAgent()
 
 ##################################################################    Add    ###########################################################################
 
@@ -14,6 +18,8 @@ GET          /manage-your-businesses/add-sole-trader/business-name              
 GET          /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.showAgent()
 POST         /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.submit()
 POST         /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.submitAgent()
+POST         /manage-your-businesses/add-sole-trader/change-business-name                     controllers.manageBusinesses.add.AddBusinessNameController.submitChange()
+POST         /agents/manage-your-businesses/add-sole-trader/change-business-name              controllers.manageBusinesses.add.AddBusinessNameController.submitChangeAgent()
 
 GET          /manage-your-businesses/add-sole-trader/business-address                         controllers.manageBusinesses.add.AddBusinessAddressController.show(isChange: Boolean = false)
 GET          /agents/manage-your-businesses/add-sole-trader/business-address                  controllers.manageBusinesses.add.AddBusinessAddressController.showAgent(isChange: Boolean = false)
@@ -124,8 +130,12 @@ GET          /agents/manage-your-businesses/add-sole-trader/change-business-name
 POST         /manage-your-businesses/add-sole-trader/change-business-name                     controllers.manageBusinesses.add.AddBusinessNameController.submitChange()
 POST         /agents/manage-your-businesses/add-sole-trader/change-business-name              controllers.manageBusinesses.add.AddBusinessNameController.submitChangeAgent()
 
-GET          /manage-your-businesses/add-sole-trader/change-business-accounting-method         controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add-sole-trader/change-business-accounting-method   controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = true)
+GET          /manage-your-businesses/add-sole-trader/change-business-name                       controllers.manageBusinesses.add.AddBusinessNameController.changeBusinessName()
+GET          /agents/manage-your-businesses/add-sole-trader/change-business-name                controllers.manageBusinesses.add.AddBusinessNameController.changeBusinessNameAgent()
+GET          /manage-your-businesses/add/change-business-accounting-method          controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/add/change-business-accounting-method   controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = true)
+POST          /manage-your-businesses/add/business-check-details                    controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST          /agents/manage-your-businesses/add/business-check-details              controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
 
 GET          /manage-your-businesses/add-foreign-property/check-answers                   controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.show(incomeSourceType: IncomeSourceType = ForeignProperty)

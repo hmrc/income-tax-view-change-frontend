@@ -1287,11 +1287,11 @@ notmigrated.user.link_title                                     = cyfrif Hunanas
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 
 incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreuodd eich busnes eiddo yn y DU?
-incomeSources.add.UKPropertyStartDate.hint                      = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo yn y DU ar osod yn y lle cyntaf.
-incomeSources.add.UKPropertyStartDate.hint2                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
-incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.hint                      = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+incomeSources.add.UKPropertyStartDate.hint2                     = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo yn y DU hwn, megis rhoi unrhyw eiddo neu dir ar osod.
+incomeSources.add.UKPropertyStartDate.error.required            = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
 incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
-incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod yn ddyddiad go iawn
+incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 add-uk-property-start-date-check.error                          = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo yn y DU yn gywir
 
 #Generic date form messages
@@ -1334,8 +1334,8 @@ incomeSources.cease.endDate.foreignProperty.heading                      = Y dyd
 incomeSources.cease.endDate.foreignProperty.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
 
 incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
-incomeSources.add.foreignProperty.startDate.hint                     = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo tramor ar osod yn y lle cyntaf.
-incomeSources.add.foreignProperty.startDate.hint2                    = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+incomeSources.add.foreignProperty.startDate.hint                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+incomeSources.add.foreignProperty.startDate.hint2                    = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo tramor hwn, megis rhoi unrhyw eiddo neu dir ar osod.
 incomeSources.add.foreignProperty.startDate.hintExample              = Er enghraifft, 27 3 2020
 incomeSources.add.foreignProperty.startDate.error.empty              = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor fasnachu
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
@@ -1344,7 +1344,8 @@ incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = Mae’n r
 incomeSources.add.foreignProperty.startDate.error.missingYear        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
 incomeSources.add.foreignProperty.startDate.error.missingMonth       = Mae’n rhaid i’r dyddiad gynnwys mis
 incomeSources.add.foreignProperty.startDate.error.missingDay         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
-incomeSources.add.foreignProperty.startDate.error.required           = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod yn ddyddiad go iawn
+incomeSources.add.foreignProperty.startDate.error.invalid            = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
+incomeSources.add.foreignProperty.startDate.error.required           = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor
 incomeSources.add.foreignProperty.startDate.error.future             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = A yw’r dyddiad hwn yn gywir?
 add-foreign-property-start-date-check.error                          = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo tramor yn gywir
@@ -1371,15 +1372,15 @@ incomeSources.ceaseUKProperty.checkDetails.change                = Newid
 
 # add Business start date
 add-business-start-date.heading                      = Pryd y dechreuodd eich busnes fasnachu?
-add-business-start-date.hint                         = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw’n briodol.
-add-business-start-date.hint2                        = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+add-business-start-date.hint                         = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+add-business-start-date.hint2                        = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw’n briodol.
 add-business-start-date.day                          = Diwrnod
 add-business-start-date.month                        = Mis
 add-business-start-date.year                         = Blwyddyn
 add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 add-business-start-date.error.required               = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
-add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 
 # add business accounting method
 incomeSources.add.SE.AccountingMethod.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes unig fasnachwr?
@@ -1673,4 +1674,27 @@ incomeSources.ceased-income-sources.table-head.date-ended       =   Y dyddiad do
 incomeSources.ceased-income-sources.uk-property                 =   Eiddo yn y DU
 incomeSources.ceased-income-sources.foreign-property            =   Eiddo tramor
 incomeSources.ceased-income-sources.unknown-sole-trader         =   Busnesau unig fasnachwr
+
+# manage your businesses
+manage.your.businesses.heading                                           = Eich busnesau
+manage.your.businesses.self-employed-h2                                  = Busnesau unig fasnachwr
+manage.your.businesses.self-employed-desc                                = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
+manage.your.businesses.addIncomeSources.selfEmployment.link              = Ychwanegu busnes unig fasnachwr
+manage.your.businesses.addIncomeSources.ukProperty.link                  = Ychwanegu busnes eiddo yn y DU
+manage.your.businesses.addIncomeSources.foreignProperty.link             = Ychwanegu busnes eiddo tramor
+manage.your.businesses.addIncomeSources.property.link                    = Ychwanegu busnes eiddo
+manage.your.businesses.property-h2                                       = Busnesau eiddo
+manage.your.businesses.property-desc                                     = Os ydych yn cael incwm o un eiddo neu fwy yn y DU, mae gennych fusnes eiddo yn y DU. Os yw’r eiddo dramor, mae gennych fusnes eiddo tramor. Er enghraifft: incwm o roi tai, fflatiau, neu gartrefi gwyliau ar osod a hynny naill ai ar sail tymor hir neu dymor byr.
+manage.your.businesses.unknown-field                                     = Anhysbys
+manage.your.businesses.ceasedBusinesses.heading                          = Busnesau sydd wedi dod i ben
+manage.your.businesses.ceasedBusinesses.single                           = Mae 1 busnes wedi dod i ben.
+manage.your.businesses.ceasedBusinesses.multiple                         = Mae {0} fusnes wedi dod i ben.
+manage.your.businesses.ceasedBusinesses.viewall                          = Bwrw golwg dros yr holl fusnesau sydd wedi dod i ben
+manage.your.businesses.view.manage                                       = Gweld a rheoli
+manage.your.businesses.cease                                             = Dod i ben
+manage.your.businesses.name                                              = Enw
+manage.your.businesses.datestarted                                       = Dyddiad cychwyn
+manage.your.businesses.startdate                                         = Dyddiad dechrau
+manage.your.businesses.UK                                                = Eiddo yn y DU
+manage.your.businesses.Foreign                                           = Eiddo tramor
 

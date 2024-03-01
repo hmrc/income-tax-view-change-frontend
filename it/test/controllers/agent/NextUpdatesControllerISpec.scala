@@ -44,6 +44,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       None,
       None,

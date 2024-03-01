@@ -121,6 +121,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
           List(
             BusinessDetailsModel(
               incomeSourceId = "",
+              incomeSource = Some(testIncomeSource),
               accountingPeriod = None,
               tradingName = Some("nextUpdates.business"),
               firstAccountingPeriodEndDate = None,
@@ -132,6 +133,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             ),
             BusinessDetailsModel(
               incomeSourceId = "",
+              incomeSource = Some(testIncomeSource),
               accountingPeriod = None,
               tradingName = Some("nextUpdates.business"),
               tradingStartDate = Some(LocalDate.parse("2022-01-01")),

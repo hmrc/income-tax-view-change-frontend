@@ -690,9 +690,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getAddBusinessTrade: WSResponse = getWithHeaders("/manage-your-businesses/add/business-trade",
       "X-Session-ID" -> testSessionId)
 
-    def getAddBusinessTradeNewJourney: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/business-trade",
-      "X-Session-ID" -> testSessionId)
-
     def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/manage-your-businesses/add/business-trade", additionalCookies)(Map.empty)
     }
@@ -904,6 +901,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     def getManageUKPropertyCannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-uk-property-cannot-go-back")
 
     def getManageForeignPropertyCannotGoBack: WSResponse = get(s"/manage-your-businesses/manage/manage-foreign-property-cannot-go-back")
+
+    def getManageYourBusinesses: WSResponse = get("/manage-your-businesses")
   }
 
   def unauthorisedTest(uri: String): Unit = {
