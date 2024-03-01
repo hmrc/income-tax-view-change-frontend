@@ -72,7 +72,7 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
           businessName = businessName,
           incomeSourceType = incomeSourceType,
           incomeSourceId = incomeSourceIdModel,
-          showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart())
+          showPreviousTaxYears = startDate.isBefore(dateService.getCurrentTaxYearStart)
         )
       }) getOrElse {
         Logger("application").error(
