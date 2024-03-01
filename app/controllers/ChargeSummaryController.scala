@@ -89,15 +89,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
       val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
         case (year, response) if year == taxYear =>
-          Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd3 year = $year")
-          Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd4 response = $response")
+          Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd123 < year = $year > <  > < response = $response > < taxYear = $taxYear > < financialResponses = $financialResponses > < matchingYear = $matchingYear >")
 
           response
       }
-      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd5 taxYear = $taxYear")
-
-      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd1 financial responses = $financialResponses")
-      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd2 matching year = $matchingYear")
 
       matchingYear.headOption match {
         case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
