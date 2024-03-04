@@ -26,8 +26,8 @@ import views.html.manageBusinesses.add.AddBusinessTrade
 class AddBusinessTradeViewSpec extends ViewSpec {
 
   object AddBusinessTradeMessages {
-    val heading: String = messages("add-business-trade.heading")
-    val p1: String = messages("add-business-trade.p1")
+    val heading: String = messages("add-trade.heading")
+    val p1: String = messages("add-trade.p1")
     val tradeEmptyError: String = messages("add-business-trade.form.error.empty")
     val tradeShortError: String = messages("add-business-trade.form.error.short")
     val tradeLongError: String = messages("add-business-trade.form.error.long")
