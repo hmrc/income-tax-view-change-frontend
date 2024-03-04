@@ -39,7 +39,7 @@ class OptOutSpec extends UnitSpec {
       unknownFollowingVoluntaryCanBeOptedOutOf() == "V"
     }
 
-    def unknownFollowingVoluntaryCanBeOptedOutOf(): String = {
+    private def unknownFollowingVoluntaryCanBeOptedOutOf(): String = {
       if (previousTaxYear.itsaStatus == "V" && itsaStatus == " ") "V" else itsaStatus
     }
 
@@ -51,7 +51,7 @@ class OptOutSpec extends UnitSpec {
       voluntaryCannotBeOptedOutOfIfCrystallised() == "V"
     }
 
-    def voluntaryCannotBeOptedOutOfIfCrystallised(): String = {
+    private def voluntaryCannotBeOptedOutOfIfCrystallised(): String = {
       if (itsaStatus == "V" && crystallised == "Y") "VC" else itsaStatus
     }
 
