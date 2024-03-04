@@ -146,7 +146,10 @@ class OptOutSpec extends UnitSpec {
   }
 
   private def validOptOut(oop: OptOutParameters): String = {
-    val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(FutureOptOutTaxYear(oop.cyP1, SimpleOptOutTaxYear(oop.cy)))
+    val cy = SimpleOptOutTaxYear(oop.cy)
+    val cyP1 = FutureOptOutTaxYear(oop.cyP1, cy)
+
+    val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(cyP1)
 
     val cyM1 = CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised)
 
