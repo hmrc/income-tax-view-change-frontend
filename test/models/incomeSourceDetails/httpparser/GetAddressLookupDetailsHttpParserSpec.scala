@@ -34,7 +34,7 @@ class GetAddressLookupDetailsHttpParserSpec extends UnitSpec{
   val testValidJson: JsObject = Json.obj(
     "auditRef" -> "", "address" -> testAddressJson
   )
-
+  //tests
   "GetAddressLookupDetailsHttpParserSpec" when {
     "read" should {
       "return an OK status and parse the json data successfully" in {
