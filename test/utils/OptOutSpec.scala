@@ -95,22 +95,27 @@ class OptOutSpec extends UnitSpec {
       (" ", " ", "V", "A", "Can Opt out for: CY")
     )
 
-  forAll(optOuts) { (crystallised: String,
-                     cyM1: String,
-                     cy: String,
-                     cyP1: String,
-                     outcome: String) =>
+  forAll(optOuts) { (crystallised : String,
+                     cyM1         : String,
+                     cy           : String,
+                     cyP1         : String,
+                     outcome      : String) =>
     optOut(crystallised, cyM1, cy, cyP1) shouldEqual outcome
   }
 
-  private def optOut(crystallised: String, cyM1: String, cy: String, cyP1: String): String = {
+  private def optOut(crystallised : String,
+                     cyM1         : String,
+                     cy           : String,
+                     cyP1         : String): String = {
     if (invalid(cyM1, cy, cyP1))
       "Invalid"
     else
       validOptOut(crystallised, cyM1, cy, cyP1)
   }
 
-  private def invalid(cyM1: String, cy: String, cyP1: String): Boolean = {
+  private def invalid(cyM1 : String,
+                      cy   : String,
+                      cyP1 : String): Boolean = {
     // Might be good to add explanation of why various of these are invalid when known!
     (cyM1, cy, cyP1) match {
       case (  "A", "M", "V")                => true   // Pending confirmation from comment in sheet!!!
@@ -120,7 +125,10 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def validOptOut(crystallised: String, cyM1: String, cy: String, cyP1: String): String = {
+  private def validOptOut(crystallised : String,
+                          cyM1         : String,
+                          cy           : String,
+                          cyP1         : String): String = {
     val newCyM1 = voluntaryCannotBeOptedOutOfIfCrystallised(crystallised, cyM1)
     val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(cy, cyP1)
 
@@ -137,10 +145,12 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def voluntaryCannotBeOptedOutOfIfCrystallised(crystallised: String, cyM1: String): String =
+  private def voluntaryCannotBeOptedOutOfIfCrystallised(crystallised: String,
+                                                        cyM1        : String): String =
     if (cyM1 == "V" && crystallised == "Y") "VC" else cyM1
 
-  private def unknownFollowingVoluntaryCanBeOptedOutOf(cy: String, cyP1: String): String =
+  private def unknownFollowingVoluntaryCanBeOptedOutOf(cy  : String,
+                                                       cyP1: String): String =
     if (cy == "V" && cyP1 == " ") "V" else cyP1
 
 }
