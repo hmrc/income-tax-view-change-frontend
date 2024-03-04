@@ -17,7 +17,6 @@
 package utils
 
 import models.creditDetailModel.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
-import models.financialDetails.MfaCreditUtils.validMFACreditType
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 
 object CreditAndRefundUtils {
@@ -43,10 +42,10 @@ object CreditAndRefundUtils {
       def validPayment(documentDetailWithDueDate: DocumentDetailWithDueDate): Boolean = documentDetailWithDueDate.documentDetail.paymentLot.isDefined && documentDetailWithDueDate.documentDetail.paymentLotItem.isDefined
 
       (creditCharges, balanceDetails, creditCharges.size) match {
-        case (List((_, financialDetails)), Some(BalanceDetails(_, _, _, _, Some(availableCredit), _, _, Some(_))), 1)
+        case (List((_, financialDetails)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, _, Some(_))), 1)
           if availableCredit != 0 && validCredit(financialDetails) =>
           Some(UnallocatedCreditFromSingleCreditItem)
-        case (List((documentDetailWithDueDate, _)), Some(BalanceDetails(_, _, _, _, Some(availableCredit), _, _, Some(_))), 1)
+        case (List((documentDetailWithDueDate, _)), Some(BalanceDetails(_, _, _, Some(availableCredit), _, _, _, Some(_))), 1)
           if availableCredit != 0 && validPayment(documentDetailWithDueDate) =>
           Some(UnallocatedCreditFromOnePayment)
         case _ => None
