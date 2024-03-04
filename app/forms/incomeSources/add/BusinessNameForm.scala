@@ -29,7 +29,7 @@ object BusinessNameForm extends CustomConstraints {
   val businessName = "business-name"
   val MAX_LENGTH: Int = 105
 
-  val permittedChars: Regex = "^[A-Za-z0-9 ,.&'’\\\\/-]+$".r
+  val permittedChars: Regex = "^[A-Za-z0-9 ,.&'\\\\/-]+$".r
 
   val businessNameEmptyError: String = "add-business-name.form.error.required"
   val businessNameLengthIncorrect: String = "add-business-name.form.error.maxLength"
