@@ -69,6 +69,7 @@ abstract class BaseFrontendController(implicit val mcc: MessagesControllerCompon
 
     protected def asyncInternal(predicate: AuthPredicate[User], requireClientSelected: Boolean)(action: ActionBody[User]): Action[AnyContent] =
       Action.async { implicit request =>
+        println("INDIV BEEP BEEP " + request)
         val clientMtd: Option[String] = if (requireClientSelected) request.session.get(SessionKeys.clientMTDID) else None
         val authPredicate: Predicate = clientMtd match {
           case Some(mtdId) => Enrolment("HMRC-MTD-IT").withIdentifier("MTDITID", mtdId).withDelegatedAuthRule("mtd-it-auth")

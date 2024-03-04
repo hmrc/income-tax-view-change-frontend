@@ -171,7 +171,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
                 )
             }
           ) flatMap {
-            case true => Future.successful(Redirect(getRedirect(isAgent, isChange)))
+            case true => Future.successful(Redirect(getRedirect(isChange)))
             case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
           }
         }
@@ -187,7 +187,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
   def changeBusinessName(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      handleRequest(,
+      handleRequest(
         backUrl = getBackUrl(isChange = true),
         isChange = true
       )
@@ -195,7 +195,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
   def changeBusinessNameAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleRequest(,
+      handleRequest(
         backUrl = getBackUrl(isChange = true),
         isChange = true
       )

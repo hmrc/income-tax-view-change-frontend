@@ -60,6 +60,8 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
 
     implicit val req: Request[A] = request
 
+    println("BBBBB BEEP BEEP " + request.body)
+
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
       case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel => {
         if (confidenceLevel.level < requiredConfidenceLevel && isEnabled(IvUplift)) {

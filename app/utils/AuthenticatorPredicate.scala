@@ -47,6 +47,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
       Authenticated.async {
         implicit request =>
           implicit user =>
+            println("AGENT BEEP BEEP " + request.body)
             getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
               authenticatedCodeBlock(mtdItUser)
             }
