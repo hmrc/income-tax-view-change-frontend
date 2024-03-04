@@ -161,12 +161,12 @@ class OptOutSpec extends UnitSpec {
     val cy   = SimpleOptOutTaxYear(oop.cy)
     val cyP1 = FutureOptOutTaxYear(oop.cyP1, cy)
 
-    if (!cyM1.canOptOut() && !(cy.itsaStatus == "V") && !cyP1.canOptOut())
+    if (!cyM1.canOptOut() && !(canOptOut(cy)) && !cyP1.canOptOut())
       "No Opt out"
     else {
       val outcomes = Seq(
         if (cyM1.canOptOut()) Some("CY-1") else None,
-        if (cy.itsaStatus == "V") Some("CY"  ) else None,
+        if (canOptOut(cy)) Some("CY"  ) else None,
         if (cyP1.canOptOut()) Some("CY+1") else None,
       ).flatten.mkString(", ")
 
@@ -174,4 +174,7 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
+  private def canOptOut(cy: SimpleOptOutTaxYear): Boolean = {
+    cy.itsaStatus == "V"
+  }
 }
