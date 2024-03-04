@@ -388,6 +388,23 @@ class ChargeSummaryControllerISpec extends ComponentSpecBase {
     )
   }
 
+  s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND for the first year " +
+    s"and FinancialDetailsModel for the second year SD" in {
+    enable(ChargeHistory)
+    enable(PaymentAllocation)
+    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseMigration2024)
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2023-04-06", "2024-04-05")(NOT_FOUND, Json.obj("message" -> "error"))
+    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,"2024-04-06", "2025-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
+      dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
+
+    val result = IncomeTaxViewChangeFrontend.getChargeSummary("2025", "1040000123")
+
+    result should have(
+      httpStatus(OK),
+      pageTitleIndividual("chargeSummary.balancingCharge.text")
+    )
+  }
+
   s"return $OK with correct page title and ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
     enable(ChargeHistory)
     enable(PaymentAllocation)

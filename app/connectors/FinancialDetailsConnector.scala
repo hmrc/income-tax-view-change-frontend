@@ -111,13 +111,15 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
       response.status match {
         case OK =>
           Logger("application").debug(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, json: ${response.json}")
+          println("DDDDDDD")
           response.json.validate[FinancialDetailsModel].fold(
             invalid => {
               Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Json Validation Error: $invalid")
               FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
             },
-            valid =>{
+            valid => {
               Logger("application").debug(s"[FinancialDetailsConnector][getFinancialDetails] - Valid: $valid, Status: ${response.status}, json: ${response.json}")
+              println("CCCCCC" + valid)
               valid
             }
           )
@@ -127,10 +129,14 @@ class FinancialDetailsConnector @Inject()(val http: HttpClient,
           } else {
             Logger("application").warn(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Status: ${response.status}, body: ${response.body}")
           }
-          FinancialDetailsErrorModel(response.status, response.body)
+
+          val e = FinancialDetailsErrorModel(response.status, response.body)
+          println("EEEEEEE" + e)
+          e
       }
     } recover {
       case ex =>
+        println("IIIIIIIII")
         Logger("application").error(s"[IncomeTaxViewChangeConnector][getFinancialDetails] - Unexpected failure, ${ex.getMessage}", ex)
         FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
     }

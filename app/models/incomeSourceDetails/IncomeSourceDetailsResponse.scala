@@ -55,7 +55,10 @@ case class IncomeSourceDetailsModel(nino: String,
     .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
-    yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd()).toList).getOrElse(List.empty[Int])
+    println("KKKKKKKKKK")
+    val a = dateService.getCurrentTaxYearEnd()
+    println("LLLLLLLLLL" + a + " " + yearOfMigration)
+    yearOfMigration.map(year => (year.toInt to a).toList).getOrElse(List.empty[Int])
   }
 
   def getForeignProperty: Option[PropertyDetailsModel] = {

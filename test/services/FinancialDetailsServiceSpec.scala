@@ -319,6 +319,19 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         result.futureValue shouldBe expectedResult
       }
+      "successful responses are returned for multiple years where the first one is 404 SD" in {
+        val financialDetail = getFinancialDetailSuccess(fixedDate.getYear + 1)
+        val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List(
+          (fixedDate.getYear + 1, financialDetail)
+        )
+
+        setupMockGetFinancialDetails(fixedDate.getYear, testNino)(FinancialDetailsErrorModel(404, "NOT FOUND"))
+        setupMockGetFinancialDetails(fixedDate.getYear + 1, testNino)(financialDetail)
+
+        val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
+
+        result.futureValue shouldBe expectedResult
+      }
       "a successful response and a not found response are returned" in {
         val financialDetailLastYear = getFinancialDetailSuccess(getTaxEndYear(fixedDate.minusYears(1)))
         val financialDetailNotFound = FinancialDetailsErrorModel(Status.NOT_FOUND, "not found")

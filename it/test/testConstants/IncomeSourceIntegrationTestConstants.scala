@@ -206,6 +206,17 @@ object IncomeSourceIntegrationTestConstants {
     yearOfMigration = Some("2018")
   )
 
+  val multipleBusinessesAndPropertyResponseMigration2024: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
+    testNino,
+    testMtdItId,
+    businesses = List(
+      business1,
+      business2
+    ),
+    properties = List(property),
+    yearOfMigration = Some("2022")
+  )
+
   val multipleBusinessesAndUkProperty: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     testMtdItId,

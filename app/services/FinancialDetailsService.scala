@@ -70,13 +70,21 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
     Logger("application").debug(
       s"[IncomeSourceDetailsService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    println("AAAAAAAA")
 
     Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
+        println("JJJJJJJJ" + taxYear)
         financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
-          case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
-          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
-          case _ => None
+          case financialDetails: FinancialDetailsModel =>
+            println("FFFFFFFF")
+            Some((taxYear, financialDetails))
+          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND =>
+            println("GGGGGGGG")
+            Some((taxYear, error))
+          case _ =>
+            println("HHHHHHHHH")
+            None
         }
     }
     ).map(_.flatten)

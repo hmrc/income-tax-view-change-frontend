@@ -82,8 +82,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
+    financialDetailsService.getAllFinancialDetails.flatMap { financialResponses: List[(Int, FinancialDetailsResponseModel)] =>
       Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd124 < taxYear = $taxYear > < financialResponses = $financialResponses >")
+
+      println("BBBBBBBB" + financialResponses)
 
       val payments = financialResponses.collect {
         case (_, model: FinancialDetailsModel) => model.filterPayments()
