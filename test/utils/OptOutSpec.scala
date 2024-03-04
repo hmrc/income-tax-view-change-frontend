@@ -21,6 +21,8 @@ import testUtils.UnitSpec
 
 class OptOutSpec extends UnitSpec {
 
+  case class CrystallisableOptOutTaxYear(itsaStatus: String, crystallised: String)
+
   case class OptOutParameters(crystallised : String,
                               cyM1         : String,
                               cy           : String,
@@ -126,7 +128,7 @@ class OptOutSpec extends UnitSpec {
   }
 
   private def validOptOut(oop: OptOutParameters): String = {
-    val newCyM1 = voluntaryCannotBeOptedOutOfIfCrystallised(oop)
+    val newCyM1 = voluntaryCannotBeOptedOutOfIfCrystallised(CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised))
     val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(oop)
 
     if (newCyM1 != "V" && oop.cy != "V" && newCyP1 != "V")
@@ -142,8 +144,9 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def voluntaryCannotBeOptedOutOfIfCrystallised(oop: OptOutParameters): String =
-    if (oop.cyM1 == "V" && oop.crystallised == "Y") "VC" else oop.cyM1
+  private def voluntaryCannotBeOptedOutOfIfCrystallised(year: CrystallisableOptOutTaxYear): String = {
+    if (year.itsaStatus == "V" && year.crystallised == "Y") "VC" else year.itsaStatus
+  }
 
   private def unknownFollowingVoluntaryCanBeOptedOutOf(oop: OptOutParameters): String =
     if (oop.cy == "V" && oop.cyP1 == " ") "V" else oop.cyP1
