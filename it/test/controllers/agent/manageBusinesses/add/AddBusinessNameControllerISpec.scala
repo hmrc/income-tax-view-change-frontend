@@ -44,7 +44,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
   val prefix: String = "add-business-name"
   val htmlTitle = messagesAPI("htmlTitle.agent")
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
-    messagesAPI("add-business-name.p2", "'")
+    messagesAPI("add-business-name.p2")
   val continueButtonText: String = messagesAPI("base.continue")
   val testBusinessName: String = "Test Business"
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
