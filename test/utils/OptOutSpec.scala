@@ -134,10 +134,9 @@ class OptOutSpec extends UnitSpec {
   }
 
   private def validOptOut(oop: OptOutParameters): String = {
-    val newCyM1 = CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised).voluntaryCannotBeOptedOutOfIfCrystallised()
     val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(oop)
 
-    val cyM1CanOptOut = newCyM1 == "V"
+    val cyM1CanOptOut = CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised).voluntaryCannotBeOptedOutOfIfCrystallised() == "V"
 
     if (!cyM1CanOptOut && oop.cy != "V" && newCyP1 != "V")
       "No Opt out"
