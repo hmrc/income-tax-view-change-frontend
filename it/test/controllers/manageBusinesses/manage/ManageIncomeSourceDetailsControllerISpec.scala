@@ -91,7 +91,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-sole-trader/manage-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
@@ -126,7 +126,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-sole-trader/manage-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
@@ -166,7 +166,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-sole-trader/manage-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
@@ -202,7 +202,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-sole-trader/manage-details?id=$thisTestSelfEmploymentIdHashed")
 
         And("Mongo storage is successfully set")
         sessionService.getMongoKey(incomeSourceIdField, JourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
@@ -237,7 +237,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-uk-property")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-uk-property/your-details")
 
         result should have(
           httpStatus(OK),
@@ -265,7 +265,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-uk-property")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-uk-property/your-details")
 
         result should have(
           httpStatus(OK),
@@ -294,7 +294,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-uk-property")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-uk-property/your-details")
 
         result should have(
           httpStatus(OK),
@@ -319,7 +319,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-uk-property")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-uk-property/your-details")
 
         result should have(
           httpStatus(OK),
@@ -347,7 +347,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
 
         await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-foreign-property")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-foreign-property/your-details")
 
         result should have(
           httpStatus(OK),
@@ -375,7 +375,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-foreign-property")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-foreign-property/your-details")
 
         result should have(
           httpStatus(OK),
@@ -404,7 +404,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1896 getCalculationList returns a success response")
         CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-foreign-property")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-foreign-property/your-details")
 
         result should have(
           httpStatus(OK),
@@ -427,7 +427,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
         And("API 1878 getITSAStatus returns a success response with a valid status (MTD Mandated or MTD Voluntary)")
         ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual")
 
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage/your-details-foreign-property")
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.get(s"/manage-your-businesses/manage-foreign-property/your-details")
 
         result should have(
           httpStatus(OK),
