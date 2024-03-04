@@ -131,7 +131,7 @@ class OptOutSpec extends UnitSpec {
     val newCyM1 = voluntaryCannotBeOptedOutOfIfCrystallised(CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised))
     val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(oop)
 
-    if (newCyM1 != "V" && oop.cy != "V" && newCyP1 != "V")
+    if (!(newCyM1 == "V") && oop.cy != "V" && newCyP1 != "V")
       "No Opt out"
     else {
       val outcomes = Seq(
