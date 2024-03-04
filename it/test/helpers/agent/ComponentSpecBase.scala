@@ -317,7 +317,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     }
 
     def getAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      get("/income-sources/add/business-trade", additionalCookies)
+      get("/manage-your-businesses/add-sole-trader/business-trade", additionalCookies)
 
     def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
       post(s"/income-sources/add/business-trade", additionalCookies)(Map.empty)
