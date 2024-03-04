@@ -21,6 +21,10 @@ import testUtils.UnitSpec
 
 class OptOutSpec extends UnitSpec {
 
+  case class SimpleOptOutTaxYear(itsaStatus: String)
+
+  case class FutureOptOutTaxYear(itsaStatus: String)
+
   case class CrystallisableOptOutTaxYear(itsaStatus: String, crystallised: String) {
 
     def canOptOut(): Boolean = {
@@ -155,7 +159,10 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def unknownFollowingVoluntaryCanBeOptedOutOf(oop: OptOutParameters): String =
-    if (oop.cy == "V" && oop.cyP1 == " ") "V" else oop.cyP1
+  private def unknownFollowingVoluntaryCanBeOptedOutOf(oop: OptOutParameters): String = {
+    val cy   = SimpleOptOutTaxYear(oop.cy  )
+    val cyP1 = FutureOptOutTaxYear(oop.cyP1)
+    if (cy.itsaStatus == "V" && cyP1.itsaStatus == " ") "V" else cyP1.itsaStatus
+  }
 
 }
