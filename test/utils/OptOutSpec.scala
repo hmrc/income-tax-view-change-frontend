@@ -21,6 +21,11 @@ import testUtils.UnitSpec
 
 class OptOutSpec extends UnitSpec {
 
+  case class OptOutParameters(crystallised : String,
+                              cyM1         : String,
+                              cy           : String,
+                              cyP1         : String)
+
   private val optOuts =
     Table(
       ("Crystallised", "CY-1", "CY", "CY+1", "Outcome"),  // First tuple defines column names
@@ -100,24 +105,19 @@ class OptOutSpec extends UnitSpec {
                      cy           : String,
                      cyP1         : String,
                      outcome      : String) =>
-    optOut(crystallised, cyM1, cy, cyP1) shouldEqual outcome
+    optOut(OptOutParameters(crystallised, cyM1, cy, cyP1)) shouldEqual outcome
   }
 
-  private def optOut(crystallised : String,
-                     cyM1         : String,
-                     cy           : String,
-                     cyP1         : String): String = {
-    if (invalid(cyM1, cy, cyP1))
+  private def optOut(optOutParams : OptOutParameters): String = {
+    if (invalid(optOutParams))
       "Invalid"
     else
-      validOptOut(crystallised, cyM1, cy, cyP1)
+      validOptOut(optOutParams)
   }
 
-  private def invalid(cyM1 : String,
-                      cy   : String,
-                      cyP1 : String): Boolean = {
+  private def invalid(oop: OptOutParameters): Boolean = {
     // Might be good to add explanation of why various of these are invalid when known!
-    (cyM1, cy, cyP1) match {
+    (oop.cyM1, oop.cy, oop.cyP1) match {
       case (  "A", "M", "V")                => true   // Pending confirmation from comment in sheet!!!
       case (cyM1 , " ", _  ) if cyM1 != " " => true
       case (  " ", " ", " ")                => true
@@ -125,19 +125,16 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def validOptOut(crystallised : String,
-                          cyM1         : String,
-                          cy           : String,
-                          cyP1         : String): String = {
-    val newCyM1 = voluntaryCannotBeOptedOutOfIfCrystallised(crystallised, cyM1)
-    val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(cy, cyP1)
+  private def validOptOut(oop: OptOutParameters): String = {
+    val newCyM1 = voluntaryCannotBeOptedOutOfIfCrystallised(oop)
+    val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(oop)
 
-    if (newCyM1 != "V" && cy != "V" && newCyP1 != "V")
+    if (newCyM1 != "V" && oop.cy != "V" && newCyP1 != "V")
       "No Opt out"
     else {
       val outcomes = Seq(
         if (newCyM1 == "V") Some("CY-1") else None,
-        if (     cy == "V") Some("CY"  ) else None,
+        if ( oop.cy == "V") Some("CY"  ) else None,
         if (newCyP1 == "V") Some("CY+1") else None,
       ).flatten.mkString(", ")
 
@@ -145,12 +142,10 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def voluntaryCannotBeOptedOutOfIfCrystallised(crystallised: String,
-                                                        cyM1        : String): String =
-    if (cyM1 == "V" && crystallised == "Y") "VC" else cyM1
+  private def voluntaryCannotBeOptedOutOfIfCrystallised(oop: OptOutParameters): String =
+    if (oop.cyM1 == "V" && oop.crystallised == "Y") "VC" else oop.cyM1
 
-  private def unknownFollowingVoluntaryCanBeOptedOutOf(cy  : String,
-                                                       cyP1: String): String =
-    if (cy == "V" && cyP1 == " ") "V" else cyP1
+  private def unknownFollowingVoluntaryCanBeOptedOutOf(oop: OptOutParameters): String =
+    if (oop.cy == "V" && oop.cyP1 == " ") "V" else oop.cyP1
 
 }
