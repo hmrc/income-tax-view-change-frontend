@@ -101,7 +101,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       val submitAction: Call = getPostAction(isAgent, isChange)
 
       Future.successful {
-        Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
+        Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl))
       }
     }
   }.recover {
@@ -143,8 +143,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
             BadRequest(addBusinessView(formWithErrors,
               isAgent,
               getPostAction(isAgent, isChange),
-              getBackUrl(isAgent, isChange),
-              useFallbackLink = true))
+              getBackUrl(isAgent, isChange)))
           },
         formData => {
           sessionService.setMongoData(
