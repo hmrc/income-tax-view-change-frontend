@@ -27,7 +27,13 @@ class OptOutSpec extends UnitSpec {
 
   case class SimpleOptOutTaxYear(itsaStatus: String) extends OptOutTaxYear
 
-  case class FutureOptOutTaxYear(itsaStatus: String, previousTaxYear: OptOutTaxYear) extends OptOutTaxYear
+  case class FutureOptOutTaxYear(itsaStatus: String, previousTaxYear: OptOutTaxYear) extends OptOutTaxYear {
+
+    def unknownFollowingVoluntaryCanBeOptedOutOf(): String = {
+      if (previousTaxYear.itsaStatus == "V" && itsaStatus == " ") "V" else itsaStatus
+    }
+
+  }
 
   case class CrystallisableOptOutTaxYear(itsaStatus: String, crystallised: String) extends OptOutTaxYear {
 
@@ -149,7 +155,7 @@ class OptOutSpec extends UnitSpec {
     val cy = SimpleOptOutTaxYear(oop.cy)
     val cyP1 = FutureOptOutTaxYear(oop.cyP1, cy)
 
-    val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(cyP1)
+    val newCyP1 = cyP1.unknownFollowingVoluntaryCanBeOptedOutOf()
 
     val cyM1 = CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised)
 
@@ -164,10 +170,6 @@ class OptOutSpec extends UnitSpec {
 
       s"Can Opt out for: $outcomes"
     }
-  }
-
-  private def unknownFollowingVoluntaryCanBeOptedOutOf(cyP1: FutureOptOutTaxYear): String = {
-    if (cyP1.previousTaxYear.itsaStatus == "V" && cyP1.itsaStatus == " ") "V" else cyP1.itsaStatus
   }
 
 }
