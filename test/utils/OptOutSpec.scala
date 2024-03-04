@@ -36,11 +36,7 @@ class OptOutSpec extends UnitSpec {
   case class FutureOptOutTaxYear(itsaStatus: String, previousTaxYear: OptOutTaxYear) extends OptOutTaxYear {
 
     def canOptOut(): Boolean = {
-      unknownFollowingVoluntaryCanBeOptedOutOf() == "V"
-    }
-
-    private def unknownFollowingVoluntaryCanBeOptedOutOf(): String = {
-      if (previousTaxYear.itsaStatus == "V" && itsaStatus == " ") "V" else itsaStatus
+      (if (previousTaxYear.itsaStatus == "V" && itsaStatus == " ") "V" else itsaStatus) == "V"
     }
 
   }
@@ -48,11 +44,7 @@ class OptOutSpec extends UnitSpec {
   case class CrystallisableOptOutTaxYear(itsaStatus: String, crystallised: String) extends OptOutTaxYear {
 
     def canOptOut(): Boolean = {
-      voluntaryCannotBeOptedOutOfIfCrystallised() == "V"
-    }
-
-    private def voluntaryCannotBeOptedOutOfIfCrystallised(): String = {
-      if (itsaStatus == "V" && crystallised == "Y") "VC" else itsaStatus
+      (if (itsaStatus == "V" && crystallised == "Y") "VC" else itsaStatus) == "V"
     }
 
   }
