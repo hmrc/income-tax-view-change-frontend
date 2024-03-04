@@ -36,7 +36,7 @@ class OptOutSpec extends UnitSpec {
   case class FutureOptOutTaxYear(itsaStatus: String, previousTaxYear: OptOutTaxYear) extends OptOutTaxYear {
 
     def canOptOut(): Boolean = {
-      (previousTaxYear.itsaStatus == "V" && itsaStatus == " ") || itsaStatus == "V"
+      itsaStatus == "V" || (previousTaxYear.itsaStatus == "V" && itsaStatus == " ")
     }
 
   }
