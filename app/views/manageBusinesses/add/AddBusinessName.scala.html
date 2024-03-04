@@ -43,7 +43,8 @@
 @(businessNameForm: Form[BusinessNameForm],
     isAgent: Boolean,
     postAction: Call,
-    backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+    backUrl: String,
+    useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @businessName = @{
     "business-name"
@@ -61,7 +62,7 @@
 @mainTemplate(
 pageTitle = messages("add-business-name.heading"),
 isAgent = isAgent,
-useFallbackBackLink = false,
+useFallbackBackLink = useFallbackLink,
 backUrl = Some(backUrl),
 btaNavPartial = user.btaNavPartial) {
 
