@@ -58,6 +58,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
       None,
       Some(getCurrentTaxYearEnd),
@@ -711,6 +712,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
           yearOfMigration = None,
           businesses = List(BusinessDetailsModel(
             "testId",
+            incomeSource = Some(testIncomeSource),
             Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
             None,
             Some(getCurrentTaxYearEnd),

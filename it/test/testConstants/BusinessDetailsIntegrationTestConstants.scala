@@ -17,7 +17,7 @@
 package testConstants
 
 import java.time.LocalDate
-import BaseIntegrationTestConstants.{expectedAddress, getCurrentTaxYearEnd, otherTestSelfEmploymentId, testDate, testLatencyDetails3, testSelfEmploymentId, testTradeName}
+import BaseIntegrationTestConstants.{expectedAddress, getCurrentTaxYearEnd, otherTestSelfEmploymentId, testDate, testIncomeSource, testLatencyDetails3, testSelfEmploymentId, testTradeName}
 import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
 
@@ -66,6 +66,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
@@ -80,6 +81,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val business1WithAddress2 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
@@ -94,6 +96,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val business2 = BusinessDetailsModel(
     incomeSourceId = otherTestSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b2AccountingStart,
       end = b2AccountingEnd
@@ -108,6 +111,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val business3 = BusinessDetailsModel(
     incomeSourceId = otherTestSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b2AccountingStart,
       end = b2AccountingEnd
@@ -122,6 +126,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val business3WithUnknowns: BusinessDetailsModel = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
@@ -136,6 +141,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val businessWithAddressAndAccountingMethod = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
@@ -150,6 +156,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val ceasedBusiness1 = BusinessDetailsModel(
     incomeSourceId = otherTestSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b2AccountingStart,
       end = b2AccountingEnd
@@ -164,6 +171,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val businessUnknownAddressName = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd
@@ -178,6 +186,7 @@ object BusinessDetailsIntegrationTestConstants {
 
   val businessForManageYourDetailsAudit = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
     accountingPeriod = Some(AccountingPeriodModel(
       start = b1AccountingStart,
       end = b1AccountingEnd

@@ -26,9 +26,17 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
 
   object TestDateService extends DateService()
 
-  def fixture(date: String = "2018-03-29") = new {
+  def getTaxYearStartDate(year: Int): LocalDate = LocalDate.of(year, 4, 6)
+
+  def fixture(date: String) = new {
     val mockedTestDateService = new DateService() {
-      override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = LocalDate.parse(date)
+      override def getCurrentDate(isTimeMachineEnabled: Boolean = false): LocalDate = {
+        if (isTimeMachineEnabled) {
+          LocalDate.parse(date).plusYears(1)
+        } else {
+          LocalDate.parse(date)
+        }
+      }
     }
   }
 
@@ -38,9 +46,9 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
       TestDateService.getCurrentDate(true) should equal(LocalDate.now.plusYears(1))
     }
     "return the mocked current date" in {
-      val f = fixture()
+      val f = fixture("2018-03-29")
       enable(TimeMachineAddYear)
-      f.mockedTestDateService.getCurrentDate(true) should equal(LocalDate.parse("2018-03-29"))
+      f.mockedTestDateService.getCurrentDate(true) should equal(LocalDate.parse("2019-03-29"))
     }
   }
 
@@ -51,7 +59,7 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
     }
 
     "return mocked current date: 2018-03-29" in {
-      val f = fixture()
+      val f = fixture("2018-03-29")
       disable(TimeMachineAddYear)
       f.mockedTestDateService.getCurrentDate() should equal(LocalDate.parse("2018-03-29"))
       f.mockedTestDateService.isBeforeLastDayOfTaxYear(false) shouldBe true
@@ -73,34 +81,74 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
   }
 
   "The getCurrentTaxYearEnd" should {
-    "return the current tax year" in {
+    "return the current tax year when time machine is disabled and isBeforeLastDayOfTaxYear = false" in {
       disable(TimeMachineAddYear)
-      val expectedYear = if (TestDateService.isBeforeLastDayOfTaxYear(false)) LocalDate.now.getYear
-      else LocalDate.now.plusYears(1).getYear
-      TestDateService.getCurrentTaxYearEnd() shouldBe expectedYear
+      val f = fixture("2018-02-26")
+      val expectedYear = if (f.mockedTestDateService.isBeforeLastDayOfTaxYear(false)) f.mockedTestDateService.getCurrentDate(false).getYear
+      else f.mockedTestDateService.getCurrentDate(false).plusYears(1).getYear
+      f.mockedTestDateService.getCurrentTaxYearEnd() shouldBe expectedYear
+    }
+    "return the current tax year when time machine is disabled and isBeforeLastDayOfTaxYear = true" in {
+      disable(TimeMachineAddYear)
+      val f = fixture("2018-08-27")
+      val expectedYear = if (f.mockedTestDateService.isBeforeLastDayOfTaxYear(false)) f.mockedTestDateService.getCurrentDate(false).getYear
+      else f.mockedTestDateService.getCurrentDate(false).plusYears(1).getYear
+      f.mockedTestDateService.getCurrentTaxYearEnd() shouldBe expectedYear
     }
 
-    "return next tax year when time machine is enabled" in {
+    "return next tax year when time machine is enabled and isBeforeLastDayOfTaxYear = false" in {
       enable(TimeMachineAddYear)
-      val expectedYear = if (TestDateService.isBeforeLastDayOfTaxYear(true)) LocalDate.now.plusYears(1).getYear
-      else LocalDate.now.plusYears(2).getYear
-      TestDateService.getCurrentTaxYearEnd(true) shouldBe expectedYear
+      val f = fixture("2018-02-26")
+      val expectedYear = if (f.mockedTestDateService.isBeforeLastDayOfTaxYear(isEnabled(TimeMachineAddYear))) {
+        f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).getYear
+      } else f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).plusYears(1).getYear
+      f.mockedTestDateService.getCurrentTaxYearEnd(true) shouldBe expectedYear
+    }
+    "return next tax year when time machine is enabled and isBeforeLastDayOfTaxYear = true" in {
+      enable(TimeMachineAddYear)
+      val f = fixture("2018-08-27")
+      val expectedYear = if (f.mockedTestDateService.isBeforeLastDayOfTaxYear(isEnabled(TimeMachineAddYear))) {
+        f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).getYear
+      } else {
+        f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).plusYears(1).getYear
+      }
+      f.mockedTestDateService.getCurrentTaxYearEnd(true) shouldBe expectedYear
     }
   }
 
   "getCurrentTaxYearStart" should {
-    "return the start of the current tax year" in {
+    "return the start of the current tax year when time machine is disabled and isBeforeLastDayOfTaxYear = false" in {
       disable(TimeMachineAddYear)
-      val expectedDate = if (TestDateService.isBeforeLastDayOfTaxYear(false)) LocalDate.of(LocalDate.now.getYear - 1, 4,6)
-      else LocalDate.of(LocalDate.now.getYear, 4, 6)
-      TestDateService.getCurrentTaxYearStart(false) shouldBe expectedDate
+      val f = fixture("2018-02-26")
+      val expectedYear = if (f.mockedTestDateService.isBeforeLastDayOfTaxYear(false)) {
+        f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).minusYears(1).getYear
+      } else f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).getYear
+      f.mockedTestDateService.getCurrentTaxYearStart(false) shouldBe getTaxYearStartDate(expectedYear)
+    }
+    "return the start of the current tax year when time machine is disabled and isBeforeLastDayOfTaxYear = true" in {
+      disable(TimeMachineAddYear)
+      val f = fixture("2018-08-27")
+      val expectedYear = if (f.mockedTestDateService.isBeforeLastDayOfTaxYear(false)) {
+        f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).minusYears(1).getYear
+      } else f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).getYear
+      f.mockedTestDateService.getCurrentTaxYearStart(false) shouldBe getTaxYearStartDate(expectedYear)
     }
 
-    "return the start of the next tax year if time machine enabled" in {
+    "return the start of the next tax year when time machine is enabled and isBeforeLastDayOfTaxYear = false" in {
       enable(TimeMachineAddYear)
-      val expectedDate = if (TestDateService.isBeforeLastDayOfTaxYear(true)) LocalDate.of(LocalDate.now.getYear, 4, 6)
-      else LocalDate.of(LocalDate.now.getYear + 1, 4, 6)
-      TestDateService.getCurrentTaxYearStart(true) shouldBe expectedDate
+      val f = fixture("2018-02-26")
+      val expectedYear = if (f.mockedTestDateService.isBeforeLastDayOfTaxYear(false)) {
+        f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).minusYears(1).getYear
+      } else f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).getYear
+      f.mockedTestDateService.getCurrentTaxYearStart(isEnabled(TimeMachineAddYear)) shouldBe getTaxYearStartDate(expectedYear)
+    }
+    "return the start of the next tax year when time machine is enabled and isBeforeLastDayOfTaxYear = true" in {
+      enable(TimeMachineAddYear)
+      val f = fixture("2018-08-27")
+      val expectedYear = if (f.mockedTestDateService.isBeforeLastDayOfTaxYear(false)) {
+        f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).minusYears(1).getYear
+      } else f.mockedTestDateService.getCurrentDate(isEnabled(TimeMachineAddYear)).getYear
+      f.mockedTestDateService.getCurrentTaxYearStart(isEnabled(TimeMachineAddYear)) shouldBe getTaxYearStartDate(expectedYear)
     }
   }
 

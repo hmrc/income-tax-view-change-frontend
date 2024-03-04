@@ -16,24 +16,30 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
-import play.api.data.Form
+import models.incomeSourceDetails.TaxYear
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.api.{Configuration, Environment}
+import play.api.{Configuration, Environment, Logger}
+import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
+import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
-import testOnly.models.{Nino, PostedUser}
-import testOnly.utils.{UserRepository}
+import testOnly.models._
+import testOnly.services.{DynamicStubService, OptOutCustomDataService}
+import testOnly.utils.UserRepository
+import testOnly.views.html.LoginPage
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import utils.{AuthExchange, SessionBuilder}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import testOnly.views.html.LoginPage
 
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
+                                      val testOnlyAppConfig: TestOnlyAppConfig,
                                       override val config: Configuration,
                                       override val env: Environment,
                                       implicit val mcc: MessagesControllerComponents,
@@ -41,13 +47,20 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       userRepository: UserRepository,
                                       loginPage: LoginPage,
                                       val dynamicStubConnector: DynamicStubConnector,
-                                      val customAuthConnector: CustomAuthConnector
-                                     ) extends BaseController with AuthRedirects with I18nSupport {
+                                      val optOutCustomDataService: OptOutCustomDataService,
+                                      val customAuthConnector: CustomAuthConnector,
+                                      val calculationListService: CalculationListService,
+                                      val dynamicStubService: DynamicStubService,
+                                      val ITSAStatusService: ITSAStatusService,
+                                      val itvcErrorHandler: ItvcErrorHandler,
+                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                      dateService: DateServiceInterface
+                                     ) extends BaseController with AuthRedirects with I18nSupport with FeatureSwitching {
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin, userRecords))
+      Ok(loginPage(routes.CustomLoginController.postLogin, userRecords, testOnlyAppConfig.optOutUserPrefixes))
     )
   }
 
@@ -56,9 +69,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       formWithErrors =>
         Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
       (postedUser: PostedUser) => {
+
         userRepository.findUser(postedUser.nino).flatMap(
           user =>
-            customAuthConnector.login(Nino(user.nino), postedUser.isAgent).map {
+            customAuthConnector.login(Nino(user.nino), postedUser.isAgent).flatMap {
               case (authExchange, _) =>
                 val (bearer, auth) = (authExchange.bearerToken, authExchange.sessionAuthorityUri)
                 val redirectURL = if (postedUser.isAgent)
@@ -67,17 +81,40 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   "report-quarterly/income-and-expenses/view?origin=BTA"
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                Redirect(homePage)
-                  .withSession(
-                    SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
-                      sessionAuthorityUri = auth)))
+                if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes)) {
+                  updateTestDataForOptOut(
+                    nino = user.nino,
+                    crystallisationStatus = postedUser.cyMinusOneCrystallisationStatus.get,
+                    cyMinusOneItsaStatus = postedUser.cyMinusOneItsaStatus.get,
+                    cyItsaStatus = postedUser.cyItsaStatus.get,
+                    cyPlusOneItsaStatus = postedUser.cyPlusOneItsaStatus.get
+                  ).map {
+                    _ =>
+                      successRedirect(bearer, auth, homePage)
+                  }.recover {
+                    case ex =>
+                      val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                      Logger("application")
+                        .error(s"[CustomLoginController][postLogin] - Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                      errorHandler.showInternalServerError()
+                  }
+                } else {
+                  Future.successful(successRedirect(bearer, auth, homePage))
+                }
 
               case code =>
-                InternalServerError("something went wrong.." + code)
+                Future.successful(InternalServerError("something went wrong.." + code))
             }
         )
-      })
+      }
+    )
+  }
 
+  private def successRedirect(bearer: String, auth: String, homePage: String): Result = {
+    Redirect(homePage)
+      .withSession(
+        SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
+          sessionAuthorityUri = auth)))
   }
 
   val showCss: Action[AnyContent] = Action.async { implicit request =>
@@ -87,6 +124,32 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
         case _ => InternalServerError(response.body)
       }
     )
+  }
+
+  private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,
+                                      cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier)
+  : Future[Unit] = {
+
+    // TODO: maybe make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
+
+    val ninoObj = Nino(nino)
+    val taxYear: TaxYear = TaxYear(
+      dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabled(TimeMachineAddYear)).getYear,
+      dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabled(TimeMachineAddYear))
+    )
+
+    val crystallisationStatusResult: Future[Unit] = optOutCustomDataService.uploadCalculationListData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = crystallisationStatus)
+    val itsaStatusCyMinusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = cyMinusOneItsaStatus)
+    val itsaStatusCyResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear, status = cyItsaStatus)
+    val itsaStatusCyPlusOneResult: Future[Unit] = optOutCustomDataService.uploadITSAStatusData(nino = ninoObj, taxYear = taxYear.addYears(1), status = cyPlusOneItsaStatus)
+
+    for {
+      _ <- crystallisationStatusResult
+      _ <- itsaStatusCyMinusOneResult
+      _ <- itsaStatusCyResult
+      _ <- itsaStatusCyPlusOneResult
+    } yield ()
+
   }
 
 }

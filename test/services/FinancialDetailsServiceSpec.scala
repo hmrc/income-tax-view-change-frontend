@@ -29,7 +29,7 @@ import org.mockito.Mockito.{verify, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd}
+import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
 import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModel, testValidChargeHistoryModel}
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
 import testUtils.TestSupport
@@ -71,6 +71,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       businesses = (1 to numYears).toList.map { count =>
         BusinessDetailsModel(
           incomeSourceId = s"income-id-$count",
+          incomeSource = Some(testIncomeSource),
           accountingPeriod = Some(AccountingPeriodModel(
             start = LocalDate.of(getTaxEndYear(fixedDate.minusYears(count)), april, sixth),
             end = LocalDate.of(getTaxEndYear(fixedDate.minusYears(count - 1)), april, fifth)
@@ -102,6 +103,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
     businesses = List(
       BusinessDetailsModel(
         "testId",
+        incomeSource = Some(testIncomeSource),
         Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         Some(getCurrentTaxYearEnd.minusYears(1)),

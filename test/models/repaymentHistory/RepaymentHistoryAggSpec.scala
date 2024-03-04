@@ -54,7 +54,8 @@ object RepaymentHistoryAggSpec extends Properties("RepaymentHistory_aggregate") 
     repaymentItems = Some(Seq(RepaymentItem(repaymentSupplementItem = items))),
     estimatedRepaymentDate = Some(estimatedDate),
     creationDate = Some(date),
-    repaymentRequestNumber = "04005005659")
+    repaymentRequestNumber = "04005005659",
+    status = RepaymentHistoryStatus("A"))
 
   property("aggregate") = forAll(repaymentHistoryGen) { repaymentHistoryRecord =>
     val agg = repaymentHistoryRecord.aggregate

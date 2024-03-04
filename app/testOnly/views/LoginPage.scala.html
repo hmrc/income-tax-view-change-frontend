@@ -17,36 +17,78 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import testOnly.models._
 @import views.html.layouts.unifiedLayout
+@import play.api.libs.json.Json
 
 @this(
-    layout: unifiedLayout,
-    govukButton : GovukButton,
-    govukSelect : GovukSelect,
-    govukCheckboxes : GovukCheckboxes,
-    form: FormWithCSRF
+        layout: unifiedLayout,
+        govukButton: GovukButton,
+        govukSelect: GovukSelect,
+        govukCheckboxes: GovukCheckboxes,
+        form: FormWithCSRF
 )
 
-@(postAction: Call, users: Seq[UserRecord])(implicit request : Request[_], messages: Messages)
+@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String])(implicit request: Request[_], messages: Messages)
+
+@ITSAOptions = @{
+    Seq(
+        SelectItem(
+            value = Some("Default"),
+            text = "Default"
+        ),
+        SelectItem(
+            value = Some("NoStatus"),
+            text = "No Status"
+        ),
+        SelectItem(
+            value = Some("Mandated"),
+            text = "MTD Mandated"
+        ),
+        SelectItem(
+            value = Some("Voluntary"),
+            text = "MTD Voluntary"
+        ),
+        SelectItem(
+            value = Some("Annual"),
+            text = "Annual"
+        ),
+        SelectItem(
+            value = Some("NonDigital"),
+            text = "Non Digital"
+        ),
+        SelectItem(
+            value = Some("Dormant"),
+            text = "Dormant"
+        ),
+        SelectItem(
+            value = Some("Exempt"),
+            text = "MTD Exempt"
+        )
+    )
+}
 
 @layout(pageTitle = "Login - Manage your Income Tax updates - GOV.UK") {
-<link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
+    <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
+    <script src="/report-quarterly/income-and-expenses/view/assets/javascripts/optOutCustomData.js"></script>
 
     <h1 class="govuk-heading-l">Select Nino/User</h1>
 
     @form(postAction) {
 
-        @govukSelect(Select(
-            id = "nino",
-            name = "nino",
-            items = users.map{ user =>
-                SelectItem(
-                value = Some(user.nino),
-                text = s"${user.nino} - ${user.description}"
-                )
-            },
-            label = Label(
-                content = Text("NINO"))
-        ))
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="sort">
+                NINO
+            </label>
+            <select class="govuk-select" id="nino" name="nino" onchange='optOutCustomData(this, @Html(Json.toJson(optOutCustomDataUserPrefixes).toString))'>
+            @for(user <- users) {
+                <option value="@user.nino">@{
+                    user.nino
+                } - @{
+                    user.description
+                }</option>
+            }
+            </select>
+        </div>
+
 
         @govukCheckboxes(Checkboxes(
             fieldset = Some(Fieldset(
@@ -61,6 +103,53 @@
                 )
             )
         ))
+
+        <div class="display-none" id="OptOutCustomDataDropdowns">
+            @govukSelect(Select(
+                id = "cyMinusOneCrystallisationStatus",
+                name = "cyMinusOneCrystallisationStatus",
+                items =
+                    Seq(
+                        SelectItem(
+                            value = Some("Default"),
+                            text = "Default"
+                        ),
+                        SelectItem(
+                            value = Some("Crystallised"),
+                            text = "Crystallised"
+                        ),
+                        SelectItem(
+                            value = Some("NonCrystallised"),
+                            text = "Non Crystallised"
+                        )),
+                label = Label(
+                    content = Text("CY-1 Crystallisation"))
+            ))
+
+            @govukSelect(Select(
+                id = "cyMinusOneItsaStatus",
+                name = "cyMinusOneItsaStatus",
+                items = ITSAOptions,
+                label = Label(
+                    content = Text("CY-1 ITSA Status"))
+            ))
+
+            @govukSelect(Select(
+                id = "cyItsaStatus",
+                name = "cyItsaStatus",
+                items = ITSAOptions,
+                label = Label(
+                    content = Text("CY ITSA Status"))
+            ))
+
+            @govukSelect(Select(
+                id = "cyPlusOneItsaStatus",
+                name = "cyPlusOneItsaStatus",
+                items = ITSAOptions,
+                label = Label(
+                    content = Text("CY+1 ITSA Status"))
+            ))
+        </div>
 
         @govukButton(Button(
             content = Text("Login")

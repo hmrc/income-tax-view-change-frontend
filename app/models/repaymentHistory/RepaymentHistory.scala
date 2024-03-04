@@ -16,9 +16,38 @@
 
 package models.repaymentHistory
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
 import java.time.LocalDate
+
+sealed abstract class RepaymentHistoryStatus(indicator: String) {
+  override def toString: String = this.indicator
+}
+
+final case class Approved private(indicator: String) extends RepaymentHistoryStatus(indicator) {
+  def isApprovedByRisking: Boolean = indicator.equals("A")
+
+  def isApprovedManually: Boolean = indicator.equals("M")
+}
+
+final case class Rejected private(indicator: String) extends RepaymentHistoryStatus(indicator)
+
+object SentForRisking extends RepaymentHistoryStatus("I")
+
+object RepaymentHistoryStatus {
+  def apply(indicator: String): RepaymentHistoryStatus = {
+    indicator match {
+      case "A" | "M" => Approved(indicator)
+      case "I" => SentForRisking
+      case "C" => Rejected(indicator)
+      case _ => Rejected(indicator)
+    }
+  }
+
+  implicit val writes: Writes[RepaymentHistoryStatus] = (o: RepaymentHistoryStatus) => JsString(o.toString)
+  implicit val reads: Reads[RepaymentHistoryStatus] = __.read[String].map(RepaymentHistoryStatus(_))
+}
+
 
 case class TotalInterest(fromDate: LocalDate, fromRate: BigDecimal,
                          toDate: LocalDate, toRate: BigDecimal,
@@ -31,7 +60,8 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
                             repaymentItems: Option[Seq[RepaymentItem]],
                             estimatedRepaymentDate: Option[LocalDate],
                             creationDate: Option[LocalDate],
-                            repaymentRequestNumber: String
+                            repaymentRequestNumber: String,
+                            status: RepaymentHistoryStatus
                            ) {
 
   private val fromDateOpt = (repayments: Seq[RepaymentItem]) => {
@@ -93,7 +123,7 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
   private val totalOpt = (repayments: Seq[RepaymentItem]) => {
     Some(repayments
       .flatMap(_.repaymentSupplementItem.map(_.amount))
-      .collect{
+      .collect {
         case Some(amount) => amount
       }.sum
     )
@@ -119,5 +149,4 @@ case class RepaymentHistory(amountApprovedforRepayment: Option[BigDecimal],
 
 object RepaymentHistory {
   implicit val format: OFormat[RepaymentHistory] = Json.format[RepaymentHistory]
-
 }

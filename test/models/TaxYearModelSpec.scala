@@ -21,6 +21,60 @@ import testUtils.UnitSpec
 
 class TaxYearModelSpec extends UnitSpec {
 
+  "currentTaxYearMinusOne method" when {
+    "invoked on a TaxYear object" should {
+      "return a new TaxYear object where the years are one year less than before" in {
+        val taxYear: TaxYear = TaxYear(2098, 2099)
+        val taxYearMinusOne = taxYear.addYears(-1)
+
+        val desiredTaxYearObject: TaxYear = TaxYear(2097, 2098)
+
+        taxYearMinusOne shouldBe desiredTaxYearObject
+      }
+      "return a new TaxYear object where the years are 100 years less than before" in {
+        val taxYear: TaxYear = TaxYear(2098, 2099)
+        val taxYearMinusOne = taxYear.addYears(-100)
+
+        val desiredTaxYearObject: TaxYear = TaxYear(1998, 1999)
+
+        taxYearMinusOne shouldBe desiredTaxYearObject
+      }
+    }
+  }
+
+  "currentTaxYearPlusOne method" when {
+    "invoked on a TaxYear object" should {
+      "return a new TaxYear object where the years are one year more than before" in {
+        val taxYear: TaxYear = TaxYear(2098, 2099)
+        val taxYearMinusOne = taxYear.addYears(1)
+
+        val desiredTaxYearObject: TaxYear = TaxYear(2099, 2100)
+
+        taxYearMinusOne shouldBe desiredTaxYearObject
+      }
+      "return a new TaxYear object where the years are one hundred years more than before" in {
+        val taxYear: TaxYear = TaxYear(2098, 2099)
+        val taxYearMinusOne = taxYear.addYears(100)
+
+        val desiredTaxYearObject: TaxYear = TaxYear(2198, 2199)
+
+        taxYearMinusOne shouldBe desiredTaxYearObject
+      }
+    }
+  }
+
+  "formatTaxYearRange method" when {
+    "invoked on a TaxYear object" should {
+      "return a string with the tax year range" in {
+        val taxYear: TaxYear = TaxYear(2098, 2099)
+        val taxYearRange: String = taxYear.formatTaxYearRange
+
+        val desiredTaxYearRangeString: String = "98-99"
+
+        taxYearRange shouldBe desiredTaxYearRangeString
+      }
+    }
+  }
 
   "TaxYear.getTaxYearStartYearEndYear" when {
     "given an input of letters with the correct length" should {

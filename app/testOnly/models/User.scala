@@ -16,7 +16,7 @@
 
 package testOnly.models
 
-import play.api.data.Forms.{boolean, mapping, text}
+import play.api.data.Forms.{boolean, mapping, optional, text}
 import play.api.data.{Form, Mapping}
 import play.api.libs.json.{Json, OFormat}
 
@@ -46,14 +46,29 @@ object UserRecord {
   implicit val formats: OFormat[UserRecord] = Json.format[UserRecord]
 }
 
-case class PostedUser(nino: String, isAgent: Boolean)
+case class PostedUser(nino: String,
+                      isAgent: Boolean,
+                      cyMinusOneCrystallisationStatus: Option[String],
+                      cyMinusOneItsaStatus: Option[String],
+                      cyItsaStatus: Option[String],
+                      cyPlusOneItsaStatus: Option[String]
+                     ) {
+
+  def isOptOutWhitelisted(optOutUserPrefixes: Seq[String]): Boolean = {
+    optOutUserPrefixes.contains(nino.take(2))
+  }
+}
 
 object PostedUser {
     val form: Form[PostedUser] =
       Form(
         mapping(
           "nino" -> text,
-          "Agent" -> boolean
+          "Agent" -> boolean,
+          "cyMinusOneCrystallisationStatus" -> optional(text),
+          "cyMinusOneItsaStatus" -> optional(text),
+          "cyItsaStatus" -> optional(text),
+          "cyPlusOneItsaStatus" -> optional(text)
         )(PostedUser.apply)(PostedUser.unapply)
       )
 }

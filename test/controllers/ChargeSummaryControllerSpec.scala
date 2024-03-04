@@ -261,6 +261,13 @@ class ChargeSummaryControllerSpec extends MockAuthenticationPredicate
         status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
       }
+
+      "no related tax year financial details found" in new Setup(testFinancialDetailsModelWithPayeSACodingOut()) {
+        val result: Future[Result] = controller.show(2020, "CODINGOUT01")(fakeRequestWithNinoAndOrigin("PTA"))
+
+        status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+      }
     }
 
     "Displays an MFA Debit charge" when {

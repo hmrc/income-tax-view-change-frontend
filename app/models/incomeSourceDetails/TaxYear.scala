@@ -20,6 +20,15 @@ import scala.util.Try
 
 case class TaxYear(startYear: Int, endYear: Int) {
   override def toString: String = s"$startYear-$endYear"
+
+  def addYears(delta: Int): TaxYear = {
+    TaxYear(startYear = startYear + delta, endYear = endYear + delta)
+  }
+
+  def formatTaxYearRange: String = {
+    s"${startYear.toString.takeRight(2)}-${endYear.toString.takeRight(2)}"
+  }
+  
 }
 
 object TaxYear {

@@ -68,6 +68,7 @@ class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) e
       accountingPeriodEndDate.plusYears(1)
     }
   }
+
 }
 
 @ImplementedBy(classOf[DateService])
@@ -81,4 +82,5 @@ trait DateServiceInterface {
   def isBeforeLastDayOfTaxYear(isTimeMachineEnabled: Boolean): Boolean
 
   def getAccountingPeriodEndDate(startDate: LocalDate): LocalDate
+
 }

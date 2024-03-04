@@ -82,14 +82,21 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
+    financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
+      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd124 < taxYear = $taxYear > < financialResponses = $financialResponses >")
+
       val payments = financialResponses.collect {
         case (_, model: FinancialDetailsModel) => model.filterPayments()
       }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
 
-      val matchingYear = financialResponses.collect {
-        case (year, response) if year == taxYear => response
+      val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
+        case (year, response) if year == taxYear =>
+          Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd123 < year = $year > < response = $response >")
+
+          response
       }
+
+      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd124 < matchingYear = $matchingYear >")
 
       matchingYear.headOption match {
         case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
@@ -98,8 +105,10 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           doShowChargeSummary(taxYear, id, isLatePaymentCharge, fdm, payments, isAgent, origin, isMFADebit(fdm, id))
         case Some(_: FinancialDetailsModel) =>
           Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
-        case _ =>
-          Future.successful(onError("Invalid response from financial transactions", isAgent, showInternalServerError = true))
+        case Some(error: FinancialDetailsErrorModel) =>
+          Future.successful(onError(s"Financial details error :: $error", isAgent, showInternalServerError = true))
+        case None =>
+          Future.successful(onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true))
       }
     }
   }
