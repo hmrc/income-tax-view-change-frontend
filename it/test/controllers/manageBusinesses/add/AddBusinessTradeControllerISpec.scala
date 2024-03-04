@@ -66,7 +66,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
           addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
 
         When(s"I call GET $addBusinessTradeControllerShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTradeNewJourney
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTrade
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -85,7 +85,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessTradeControllerShowUrl}")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTradeNewJourney
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessTrade
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -156,7 +156,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
           addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))
 
         When(s"I call GET $changeBusinessTradeUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getChangeAddBusinessTradeNewJourney
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getChangeAddBusinessTrade
         verifyIncomeSourceDetailsCall(testMtditid)
 
         sessionService.getMongo(journeyType.toString)

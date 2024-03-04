@@ -39,7 +39,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         AddressLookupStub.stubPostInitialiseAddressLookup()
 
         When(s"I call GET $businessAddressShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessAddressNewJourney
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddBusinessAddress
 
         result should have(
           httpStatus(SEE_OTHER),
@@ -59,7 +59,7 @@ class AddBusinessAddressControllerISpec extends ComponentSpecBase {
         AddressLookupStub.stubPostInitialiseAddressLookup()
 
         When(s"I call GET $changeBusinessAddressShowUrl")
-        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddChangeBusinessAddressNewJourney
+        val result = IncomeTaxViewChangeFrontendManageBusinesses.getAddChangeBusinessAddress
 
         result should have(
           httpStatus(SEE_OTHER),

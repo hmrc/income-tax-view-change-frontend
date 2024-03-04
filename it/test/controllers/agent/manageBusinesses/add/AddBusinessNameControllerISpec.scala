@@ -148,7 +148,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET $changeBusinessNameShowUrl")
-        val result = IncomeTaxViewChangeFrontend.getChangeBusinessNameNewJourney(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getChangeBusinessName(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(OK),
@@ -167,7 +167,7 @@ class AddBusinessNameControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${changeBusinessNameShowUrl}")
-        val result = IncomeTaxViewChangeFrontend.getChangeBusinessNameNewJourney(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getChangeBusinessName(clientDetailsWithConfirmation)
         result should have(
           httpStatus(SEE_OTHER),
           redirectURI(incomeSourcesUrl)

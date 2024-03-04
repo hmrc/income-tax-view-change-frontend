@@ -85,7 +85,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         When(s"I call GET ${addBusinessTradeControllerShowUrl}")
-        val result = IncomeTaxViewChangeFrontend.getAddBusinessTradeNewJourney(clientDetailsWithConfirmation)
+        val result = IncomeTaxViewChangeFrontend.getAddBusinessTrade(clientDetailsWithConfirmation)
 
         result should have(
           httpStatus(SEE_OTHER),
