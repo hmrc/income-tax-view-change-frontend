@@ -140,15 +140,15 @@ class OptOutSpec extends UnitSpec {
   private def validOptOut(oop: OptOutParameters): String = {
     val newCyP1 = unknownFollowingVoluntaryCanBeOptedOutOf(oop)
 
-    val cyM1CanOptOut = CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised).canOptOut()
+    val cyM1 = CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised)
 
-    if (!cyM1CanOptOut && oop.cy != "V" && newCyP1 != "V")
+    if (!cyM1.canOptOut() && oop.cy != "V" && newCyP1 != "V")
       "No Opt out"
     else {
       val outcomes = Seq(
-        if ( cyM1CanOptOut) Some("CY-1") else None,
-        if ( oop.cy == "V") Some("CY"  ) else None,
-        if (newCyP1 == "V") Some("CY+1") else None,
+        if (cyM1.canOptOut()) Some("CY-1") else None,
+        if (   oop.cy == "V") Some("CY"  ) else None,
+        if (  newCyP1 == "V") Some("CY+1") else None,
       ).flatten.mkString(", ")
 
       s"Can Opt out for: $outcomes"
