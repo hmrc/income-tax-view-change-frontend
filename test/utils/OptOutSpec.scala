@@ -44,7 +44,7 @@ class OptOutSpec extends UnitSpec {
   case class CrystallisableOptOutTaxYear(itsaStatus: String, crystallised: String) extends OptOutTaxYear {
 
     def canOptOut(): Boolean = {
-      if (itsaStatus == "V" && crystallised == "Y") false else itsaStatus == "V"
+      itsaStatus == "V" && crystallised != "Y"
     }
 
   }
