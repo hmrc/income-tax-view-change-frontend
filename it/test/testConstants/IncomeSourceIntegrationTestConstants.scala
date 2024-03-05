@@ -214,7 +214,7 @@ object IncomeSourceIntegrationTestConstants {
       business2
     ),
     properties = List(property),
-    yearOfMigration = Some("2022")
+    yearOfMigration = None
   )
 
   val multipleBusinessesAndUkProperty: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
