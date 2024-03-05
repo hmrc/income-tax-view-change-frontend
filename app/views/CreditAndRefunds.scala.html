@@ -286,7 +286,7 @@ balance.getOrElse(throw MissingFieldException("Balance"))
         }
     } else {
         @p(){
-            @messages("credit-and-refund.no-credit")
+            @messages(if(isAgent) "credit-and-refund.agent.no-credit" else "credit-and-refund.no-credit")
         }
     }
 

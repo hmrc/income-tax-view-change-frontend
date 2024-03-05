@@ -1158,6 +1158,8 @@ credit-and-refund.check-refund-btn                                = Gwirio statw
 credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
 credit-and-refund.credit-from-hmrc-title-prt-2                    = credyd o ganlyniad i addasiad gan CThEF
 
+credit-and-refund.agent.no-credit                                 = Nid oes gan eich cleient arian yn ei gyfrif.
+
 credit-and-refund.subHeading-source                               = O ble ddaeth yr arian hwn?
 
 credit-and-refund.how-much-can-i-claim                            = Faint alla i hawlio’n ôl?

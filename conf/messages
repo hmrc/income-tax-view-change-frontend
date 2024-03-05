@@ -1129,6 +1129,7 @@ credit-and-refund.refundProgress-prt-1                            =
 credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
 credit-and-refund.payment                                         = from a payment made on
 credit-and-refund.no-credit                                       = You have no money in your account.
+credit-and-refund.agent.no-credit                                 = Your client has no money in their account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
 credit-and-refund.credit-from-hmrc-title                          = credit from HMRC adjustment
