@@ -113,7 +113,9 @@ balance.getOrElse(throw MissingFieldException("Balance"))
                         <span class="govuk-body" id="unallocated-payment">
                             <strong class="govuk-body govuk-!-font-weight-bold">@maybeAvailableCredit.toCurrencyString</strong>
                             @messages("credit-and-refund.payment")
-                            @maybeCreditChargesHead._1.dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDate
+                            @(maybeCreditChargesHead match {
+                                case (documentDetailWithDueDate, _) => documentDetailWithDueDate.dueDate
+                            }).getOrElse(throw MissingFieldException("Due Date")).toLongDate
                         </span>
                     </h2>
                 }
