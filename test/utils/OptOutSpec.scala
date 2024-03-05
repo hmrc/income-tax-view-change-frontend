@@ -43,11 +43,6 @@ class OptOutSpec extends UnitSpec {
     def canOptOut: Boolean = itsaStatus == Voluntary && crystallised != "Y"
   }
 
-  case class OptOutParameters(crystallised : String,
-                              cyM1         : ITSAStatus,
-                              cy           : ITSAStatus,
-                              cyP1         : ITSAStatus)
-
   private val optOuts =
     Table(
       ("Crystallised", "CY-1", "CY", "CY+1", "Outcome"),  // First tuple defines column names
@@ -127,7 +122,12 @@ class OptOutSpec extends UnitSpec {
                      cy           : String,
                      cyP1         : String,
                      outcome      : String) =>
-    optOut(OptOutParameters(crystallised, toITSAStatus(cyM1), toITSAStatus(cy), toITSAStatus(cyP1))) shouldEqual outcome
+
+    val previousYear = CrystallisableOptOutTaxYear(toITSAStatus(cyM1), crystallised)
+    val currentYear  = SimpleOptOutTaxYear(toITSAStatus(cy))
+    val nextYear     = FutureOptOutTaxYear(toITSAStatus(cyP1), currentYear)
+
+    optOut(previousYear, currentYear, nextYear) shouldEqual outcome
   }
 
   def toITSAStatus(status: String): ITSAStatus = status match {
@@ -137,10 +137,9 @@ class OptOutSpec extends UnitSpec {
     case " " => Unknown
   }
 
-  private def optOut(optOutParams : OptOutParameters): String = {
-    val cyM1 = CrystallisableOptOutTaxYear(optOutParams.cyM1, optOutParams.crystallised)
-    val cy   = SimpleOptOutTaxYear(optOutParams.cy)
-    val cyP1 = FutureOptOutTaxYear(optOutParams.cyP1, cy)
+  private def optOut(cyM1: CrystallisableOptOutTaxYear,
+                     cy  : SimpleOptOutTaxYear,
+                     cyP1: FutureOptOutTaxYear): String = {
 
     if (invalid(cyM1, cy, cyP1))
       "Invalid"
