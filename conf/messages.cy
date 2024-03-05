@@ -1131,49 +1131,56 @@ inYear-tax-overview.agent.heading                                = Trosolwg o dr
 inYear-tax-overview.agent.inset                                  = Mae’r cyfrifiad hwn yn seiliedig ar ddiweddariadau gorffenedig eich cleient ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma ei fil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
 
 ## credits and refunds
-credit-and-refund.subHeading.has-credits-1                        = Mae cyfanswm o
-credit-and-refund.subHeading.has-credits-2                        = yn eich cyfrif:
-credit-and-refund.subHeading.has-credits-3                        = yn eich cyfrif.
+
+credit-and-refund.heading                                         = Hawlio ad-daliad
+
+credit-and-refund.available-to-claim                              = Mae {0} ar gael i’w hawlio
+
 credit-and-refund.subHeading.has-no-credits-1                     = Cafwyd cais am ad-daliad o
 credit-and-refund.subHeading.has-no-credits-2                     = ac mae ar y gweill.
-credit-and-refund.agent.subHeading.has-credits-2                  = yng nghyfrif eich cleient:
-credit-and-refund.agent.subHeading.has-credits-3                  = yng nghyfrif eich cleient.
-credit-and-refund.subHeading.unallocated-credits-one-payment-1    = Mae cyfanswm o
-credit-and-refund.subHeading.unallocated-credits-one-payment-2    = yn eich cyfrif yn sgil taliad a wnaed ar
-credit-and-refund.agent.unallocated-credits-one-payment-2         = yng nghyfrif eich cleient yn sgil taliad a wnaed ar
-credit-and-refund.subHeading.unallocated-credits-single-credit-1  = Mae cyfanswm o
-credit-and-refund.subHeading.unallocated-credits-single-credit-2  = yn eich cyfrif yn sgil
-credit-and-refund.agent.unallocated-credits-single-credit-2       = yng nghyfrif eich cleient yn sgil
-credit-and-refund.heading                                         = Hawlio ad-daliad
-credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
-credit-and-refund.bullet-text-intro                               = Yr hyn y gallwch ei wneud
-credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
-credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
+
+credit-and-refund.upcoming-allocated-credit-1                     = Mae CThEF wedi cadw {0} o’r swm hwn i dalu’ch bil treth sydd i ddod.
+credit-and-refund.upcoming-allocated-credit-1-all                 = Mae CThEF wedi cadw’r cyfanswm o {0} i dalu’ch bil treth sydd i ddod.
+credit-and-refund.upcoming-allocated-credit-2                     = Gwiriwch yr hyn sydd arnoch
+credit-and-refund.upcoming-allocated-credit-3                     = i gael rhagor o wybodaeth.
+
+
 credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
 credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
+
+credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
+
+credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
+
+credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
+credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
+
 credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
 credit-and-refund.credit-from-hmrc-title-prt-2                    = credyd o ganlyniad i addasiad gan CThEF
-credit-and-refund.bullet-one-prt-1                                = Os gadewch  yr arian hwn yn eich cyfrif, caiff ei ddefnyddio i dalu’r
-credit-and-refund.agent.bullet-one-prt-1                          = Os gadewch yr arian hwn yng nghyfrif eich cleient, caiff ei ddefnyddio i dalu’r
-credit-and-refund.bullet-one-link                                 = hyn sydd arnoch
-credit-and-refund.agent.bullet-one-link                           = hyn sydd arno
-credit-and-refund.bullet-one-prt-2                                = yn awtomatig ac mewn pryd.
-credit-and-refund.bullet-two-prt-1                                = Mae gennych yr opsiwn i hawlio hyd at
-credit-and-refund.bullet-two-prt-2                                = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi’i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i chi wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
-credit-and-refund.agent.bullet-two-prt-2                          = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi’i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i’ch cleient wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
-credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
-credit-and-refund.agent.no-credit                                 = Nid oes gan eich cleient arian yn ei gyfrif.
-credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
 credit-and-refund.subHeading-source                               = O ble ddaeth yr arian hwn?
+
+credit-and-refund.how-much-can-i-claim                            = Faint alla i hawlio’n ôl?
+
+credit-and-refund.the-most-you-can-claim                          = Y swm mwyaf y gallwch ei hawlio’n ôl yw {0}.
+credit-and-refund.does-not-include-refunds                        = Nid yw’r swm hwn yn cynnwys unrhyw ad-daliadau a allai fod eisoes ar y gweill.
+credit-and-refund.if-you-claim-back-more                          = Os byddwch yn hawlio mwy na {0} yn ôl, bydd angen i chi wneud taliad arall i CThEF er mwyn talu’ch bil treth sydd i ddod.
+credit-and-refund.if-you-claim-back-any                           = Os byddwch yn hawlio unrhyw swm o’r arian hwn, bydd angen i chi ei dalu’n ôl i CThEF er mwyn talu’ch bil treth sydd i ddod.
+credit-and-refund.cover-future-bill                               = Gall yr arian na fyddwch yn ei hawlio’n ôl gael ei ddefnyddio’n awtomatig gan CThEF i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
+
 credit-and-refund.credit-from-balancing-charge-prt-1              = o ordaliad treth -
 credit-and-refund.credit-from-balancing-charge-prt-2              =
 credit-and-refund.tax-year                                        = blwyddyn dreth {0} i {1}
+
 credit-and-refund.credit-from-adjustment-prt-1                    =
 credit-and-refund.credit-from-adjustment-prt-2                    = o ganlyniad i addasiad gan CThEF –
+
+credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
+
 credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
 credit-and-refund.credit                                          = Credyd o
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
@@ -1244,13 +1251,23 @@ view-income-sources.unknown-field            = Anhysbys
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
-add-business-name.p2                                              = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, ’, \, /, - yn unig.
+add-business-name.p2                                              = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, {0}, \, /, - yn unig.
 add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
 add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
 add-business-name.form.error.invalidName                          = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Add business trade page
+add-trade.heading                               = Beth yw masnach eich busnes?
+add-trade.title                                 = Unig fasnachwr
+add-trade.trade-info-1                          = Masnach eich busnes yw’r nwyddau neu’r gwasanaethau mae eich busnes yn eu darparu.
+add-trade.trade-info-2                          = Er enghraifft: plymio, gwaith trydanol, ymgynghori, gwaith ffotograffiaeth, hyfforddiant personol, trin gwallt.
+add-trade.form.error.empty                      = Nodwch fasnach eich busnes
+add-trade.form.error.short                      = Mae’n rhaid i’r fasnach fod yn 2 o gymeriadau neu fwy
+add-trade.form.error.long                       = Mae’n rhaid i’r fasnach fod yn 35 o gymeriadau neu lai
+add-trade.form.error.invalid                    = Ni all y fasnach gynnwys !, “”,* neu ?
+add-trade.form.error.same-name                  = Ni all enw’r busnes a’r enw masnachu fod yr un peth
+
 add-business-trade.heading                  = Beth yw masnach eich busnes?
 add-business-trade.p1                       = Er enghraifft: plymio, gwaith trydanol, ymgynghori.
 add-business-trade.form.error.empty         = Nodwch fasnach eich busnes

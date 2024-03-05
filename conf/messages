@@ -1115,37 +1115,31 @@ inYear-tax-overview.agent.inset                                  = This calculat
 
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
-credit-and-refund.subHeading.has-credits-1                        = There is a total of
-credit-and-refund.subHeading.has-credits-2                        = in your account:
-credit-and-refund.subHeading.has-credits-3                        = in your account.
-credit-and-refund.agent.subHeading.has-credits-2                  = in your client’s account:
-credit-and-refund.agent.subHeading.has-credits-3                  = in your client’s account.
-credit-and-refund.subHeading.unallocated-credits-one-payment-1    = There is a total of
-credit-and-refund.subHeading.unallocated-credits-one-payment-2    = in your account from a payment made on
-credit-and-refund.agent.unallocated-credits-one-payment-2         = in your client’s account from a payment made on
-credit-and-refund.subHeading.unallocated-credits-single-credit-1  = There is a total of
-credit-and-refund.subHeading.unallocated-credits-single-credit-2  = in your account from a
-credit-and-refund.agent.unallocated-credits-single-credit-2       = in your client’s account from a
+
+credit-and-refund.available-to-claim                              = {0} available to claim
+
 credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
-credit-and-refund.bullet-text-intro                               = What you can do
-credit-and-refund.bullet-one-prt-1                                = If you leave this money in your account it will be used to automatically pay
-credit-and-refund.agent.bullet-one-prt-1                          = If you leave this money in your client’s account it will be used to automatically pay
-credit-and-refund.bullet-one-link                                 = what you owe
-credit-and-refund.agent.bullet-one-link                           = what they owe
-credit-and-refund.bullet-one-prt-2                                = on time.
-credit-and-refund.bullet-two-prt-1                                = You have the option to claim up to
-credit-and-refund.bullet-two-prt-2                                = back. If you claim back money allocated towards upcoming payments, you’ll need to make those payments by the deadline to avoid extra charges.
-credit-and-refund.agent.bullet-two-prt-2                          = back. If you claim back money allocated towards upcoming payments, your client will need to make those payments by the deadline to avoid extra charges.
+
+credit-and-refund.upcoming-allocated-credit-1                     = HMRC has reserved {0} of this to cover your upcoming tax bill.
+credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has reserved all {0} to cover your upcoming tax bill.
+credit-and-refund.upcoming-allocated-credit-2                     = Check what you owe
+credit-and-refund.upcoming-allocated-credit-3                     = for further information.
+
 credit-and-refund.refundProgress-prt-1                            =
 credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
 credit-and-refund.payment                                         = from a payment made on
 credit-and-refund.no-credit                                       = You have no money in your account.
-credit-and-refund.agent.no-credit                                 = Your client has no money in their account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
 credit-and-refund.credit-from-hmrc-title                          = credit from HMRC adjustment
 
 credit-and-refund.subHeading-source                               = Where has this money come from?
+credit-and-refund.how-much-can-i-claim                            = How much can I claim back?
+credit-and-refund.the-most-you-can-claim                          = The most you can claim back is {0}.
+credit-and-refund.does-not-include-refunds                        = This amount does not include any refunds that may already be in progress.
+credit-and-refund.if-you-claim-back-more                          = If you claim back more than {0}, you will need to make another payment to HMRC to settle your upcoming tax bill.
+credit-and-refund.if-you-claim-back-any                           = If you claim any of this money, you will need to pay it back to HMRC to settle your upcoming tax bill.
+credit-and-refund.cover-future-bill                               = Money that you do not claim back can be used automatically by HMRC to cover your future tax bills when they become due.
 credit-and-refund.credit-from-balancing-charge-prt-1              = credit from overpaid tax -
 credit-and-refund.credit-from-balancing-charge-prt-2              =
 credit-and-refund.tax-year                                        = {0} to {1} tax year
@@ -1225,16 +1219,18 @@ view-income-sources.table-head.date-ended    = Date ended
 view-income-sources.choose                   = Choose
 view-income-sources.unknown-field            = Unknown
 
-
-# add Business page
-add-business-name.heading                                         = What is the name of your business?
-add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
-add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, ’, \, /, -.
-add-business-name.form.error.required                             = Enter your name or the name of your business
-add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
-add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
-
 ## Add business trade page
+add-trade.heading                               = What is the trade of your business?
+add-trade.title                                 = Sole trader
+add-trade.trade-info-1                          = The trade of your business is the goods or services that your business provides.
+add-trade.trade-info-2                          = For example: plumbing, electrical work, consulting, hairdressing, personal training, photography work.
+add-trade.form.error.empty                      = Enter the trade of your business
+add-trade.form.error.short                      = Trade must be 2 characters or more
+add-trade.form.error.long                       = Trade must be 35 characters or fewer
+add-trade.form.error.invalid                    = Trade cannot include !, "", * or ?
+add-trade.form.error.same-name                  = Trade and business name cannot be the same
+
+
 add-business-trade.heading                  = What is the trade of your business?
 add-business-trade.p1                       = For example: plumbing, electrical work, consulting.
 add-business-trade.form.error.empty         = Enter the trade of your business
@@ -1378,7 +1374,7 @@ incomeSources.ceaseUKProperty.checkDetails.change                = Change
 # add Business page
 add-business-name.heading                                         = What is the name of your business?
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
-add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, ’, \, /, -.
+add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, {0}, \, /, -.
 add-business-name.form.error.required                             = Enter your name or the name of your business
 add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
 add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
@@ -1724,7 +1720,7 @@ manage.your.businesses.property-desc                                     = If yo
 manage.your.businesses.unknown-field                                     = Unknown
 manage.your.businesses.ceasedBusinesses.heading                          = Businesses that have ceased
 manage.your.businesses.ceasedBusinesses.single                           = 1 business has ceased.
-manage.your.businesses.ceasedBusinesses.multiple                         = {0} Businesses have ceased.
+manage.your.businesses.ceasedBusinesses.multiple                         = {0} businesses have ceased.
 manage.your.businesses.ceasedBusinesses.viewall                          = View all ceased businesses
 manage.your.businesses.view.manage                                       = View and manage
 manage.your.businesses.cease                                             = Cease

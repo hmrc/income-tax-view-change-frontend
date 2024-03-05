@@ -31,7 +31,7 @@ trait MockWhatYouOweService extends UnitSpec with BeforeAndAfterEach {
 
   val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
-  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None))
+  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None))
 
   val oneOverdueBCDPaymentInWhatYouOweChargesList: WhatYouOweChargesList =
     emptyWhatYouOweChargesList.copy(

@@ -320,14 +320,14 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       get("/manage-your-businesses/add-sole-trader/business-trade", additionalCookies)
 
     def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/income-sources/add/business-trade", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-sole-trader/business-trade", additionalCookies)(Map.empty)
     }
 
     def getAddChangeBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse =
-      get("/income-sources/add/change-business-trade", additionalCookies)
+      get("/manage-your-businesses/add-sole-trader/change-business-trade", additionalCookies)
 
     def postAddChangeBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/income-sources/add/change-business-trade", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-sole-trader/change-business-trade", additionalCookies)(Map.empty)
     }
 
     def getAddBusinessStartDateCheck(additionalCookies: Map[String, String] = Map.empty): WSResponse = {

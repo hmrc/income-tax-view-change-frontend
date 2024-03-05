@@ -43,8 +43,7 @@
 @(businessNameForm: Form[BusinessNameForm],
     isAgent: Boolean,
     postAction: Call,
-    backUrl: String,
-    useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+    backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @businessName = @{
     "business-name"
@@ -56,13 +55,13 @@
 
 @hintContent = {
         <p class="govuk-hint">@messages("add-business-name.p1")</p>
-        <p class="govuk-hint">@messages("add-business-name.p2")</p>
+        <p class="govuk-hint">@messages("add-business-name.p2", "'")</p>
 }
 
 @mainTemplate(
 pageTitle = messages("add-business-name.heading"),
 isAgent = isAgent,
-useFallbackBackLink = useFallbackLink,
+useFallbackBackLink = false,
 backUrl = Some(backUrl),
 btaNavPartial = user.btaNavPartial) {
 
