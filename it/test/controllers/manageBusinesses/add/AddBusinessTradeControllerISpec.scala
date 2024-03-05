@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import config.featureswitch.IncomeSources
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, JourneyType}
-import forms.incomeSources.add.BusinessTradeForm
+import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
@@ -41,8 +41,8 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   val incomeSourcesUrl: String = controllers.routes.HomeController.show().url
   val checkDetailsUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
-  val pageTitleMsgKey: String = messagesAPI("add-business-trade.heading")
-  val pageHint: String = messagesAPI("add-business-trade.p1")
+  val pageTitleMsgKey: String = messagesAPI("add-trade.heading")
+  val pageHint: String = messagesAPI("add-trade.trade-info-1") + " " + messagesAPI("add-trade.trade-info-2")
   val button: String = messagesAPI("base.continue")
   val testBusinessName: String = "Test Business Name"
   val testBusinessTrade: String = "Test Business Trade"

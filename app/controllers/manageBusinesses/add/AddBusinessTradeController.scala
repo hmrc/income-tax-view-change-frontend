@@ -23,7 +23,7 @@ import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, JourneyType}
-import forms.incomeSources.add.BusinessTradeForm
+import forms.manageBusinesses.add.BusinessTradeForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

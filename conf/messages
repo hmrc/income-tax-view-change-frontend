@@ -1235,10 +1235,15 @@ add-business-name.form.error.maxLength                            = Business nam
 add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
 
 ## Add business trade page
-add-trade.heading         = What is the trade of your business?
-add-trade.title           = Sole trader
-add-trade.trade-info-1    = The trade of your business is the goods or services that your business provides.
-add-trade.trade-info-2    = For example: plumbing, electrical work, consulting, hairdressing, personal training, photography work.
+add-trade.heading                               = What is the trade of your business?
+add-trade.title                                 = Sole trader
+add-trade.trade-info-1                          = The trade of your business is the goods or services that your business provides.
+add-trade.trade-info-2                          = For example: plumbing, electrical work, consulting, hairdressing, personal training, photography work.
+add-trade.form.error.empty                      = Enter the trade of your business
+add-trade.form.error.short                      = Trade must be 2 characters or more
+add-trade.form.error.long                       = Trade must be 35 characters or fewer
+add-trade.form.error.invalid                    = Trade cannot include !, "", * or ?
+add-trade.form.error.same-name                  = Trade and business name cannot be the same
 
 
 add-business-trade.heading                  = What is the trade of your business?

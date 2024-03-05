@@ -18,7 +18,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import forms.incomeSources.add.BusinessTradeForm
+@import forms.manageBusinesses.add.BusinessTradeForm
 @import helper._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.InputHelper
@@ -51,10 +51,10 @@
 }
 
 @headingContent = {
-<h1 class="govuk-heading-l">
-    <span class="govuk-caption-l">@messages("add-trade.title")</span>
-    @messages("add-trade.heading")
-</h1>
+    <h1 class="govuk-heading-l">
+        <span class="govuk-caption-l">@messages("add-trade.title")</span>
+        @messages("add-trade.heading")
+    </h1>
 }
 
 @hintContent = {
@@ -76,7 +76,7 @@ btaNavPartial = user.btaNavPartial) {
             Input(
                 id = businessTrade,
                 name = businessTrade,
-                classes = "govuk-!-width-three-quarters",
+                classes = "govuk-input--width-30",
                 label = Label(
                     isPageHeading = true,
                     classes = "govuk-label--l",
