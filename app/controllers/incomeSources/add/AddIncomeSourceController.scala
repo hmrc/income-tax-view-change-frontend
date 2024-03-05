@@ -51,7 +51,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
   lazy val homePageCall: Call = controllers.routes.HomeController.show()
   lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -61,7 +61,7 @@ class AddIncomeSourceController @Inject()(val addIncomeSources: AddIncomeSources
       )
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

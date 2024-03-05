@@ -41,7 +41,7 @@ class IncomeSourceNotCeasedController @Inject()(val authorisedFunctions: Fronten
                                                 implicit val ec: ExecutionContext)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(isAgent, incomeSourceType)
   }

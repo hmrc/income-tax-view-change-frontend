@@ -73,7 +73,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
     }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
       implicit user =>
         handleRequest(
           isAgent = false,
@@ -81,7 +81,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
         )
     }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
@@ -129,12 +129,12 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit request =>
       handleSubmitRequest(isAgent = false, incomeSourceType = incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleSubmitRequest(isAgent = true, incomeSourceType = incomeSourceType)
   }

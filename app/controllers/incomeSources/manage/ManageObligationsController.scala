@@ -52,7 +52,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       withIncomeSourcesFS {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
@@ -74,7 +74,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
       }
   }
 
-  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       withIncomeSourcesFS {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
@@ -96,7 +96,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
       }
   }
 
-  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         incomeSourceType = UkProperty,
@@ -107,7 +107,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
       )
   }
 
-  def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         incomeSourceType = UkProperty,
@@ -118,7 +118,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
       )
   }
 
-  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         incomeSourceType = ForeignProperty,
@@ -129,7 +129,7 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
       )
   }
 
-  def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         incomeSourceType = ForeignProperty,
@@ -207,12 +207,12 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
   }
 
 
-  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit: Action[AnyContent] = auth.authenticatedAction {
     implicit request =>
       Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(false)))
   }
 
-  def agentSubmit: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def agentSubmit: Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       Future.successful(Redirect(controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(true)))
   }

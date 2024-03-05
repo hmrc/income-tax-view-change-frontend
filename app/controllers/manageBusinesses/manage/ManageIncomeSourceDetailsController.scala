@@ -54,7 +54,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
   extends ClientConfirmedController with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, id: Option[String]): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       withSessionData(JourneyType(Manage, incomeSourceType), InitialPage) { _ =>
         incomeSourceType match {

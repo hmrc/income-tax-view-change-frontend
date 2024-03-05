@@ -87,7 +87,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
@@ -97,7 +97,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
       )
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent.url,

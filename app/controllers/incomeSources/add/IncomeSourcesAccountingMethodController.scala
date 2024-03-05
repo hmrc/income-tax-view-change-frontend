@@ -197,7 +197,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }).url
   }
 
-  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         isAgent,
@@ -207,7 +207,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
   }
 
   def submit(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
+    auth.authenticatedAction {
       implicit user =>
         handleSubmitRequest(
           isAgent,
@@ -216,7 +216,7 @@ class IncomeSourcesAccountingMethodController @Inject()(val authorisedFunctions:
     }
 
   def changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType, isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
+    auth.authenticatedAction {
       implicit user =>
         withSessionData(JourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
           val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)

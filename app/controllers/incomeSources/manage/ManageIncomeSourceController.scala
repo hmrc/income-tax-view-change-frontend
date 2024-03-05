@@ -47,7 +47,7 @@ class ManageIncomeSourceController @Inject()(val manageIncomeSources: ManageInco
                                              val appConfig: FrontendAppConfig) extends ClientConfirmedController
   with FeatureSwitching with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction { implicit user =>
     handleRequest(
       sources = user.incomeSources,
       isAgent = isAgent,

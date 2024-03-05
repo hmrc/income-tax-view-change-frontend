@@ -65,7 +65,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    auth.authenticatedAction {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
@@ -101,7 +101,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def showAgent(): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent = true) {
+    auth.authenticatedAction {
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent.url,
@@ -112,7 +112,7 @@ class CreditAndRefundController @Inject()(val authorisedFunctions: FrontendAutho
   }
 
   def startRefund(): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = false) {
+    auth.authenticatedAction {
       implicit user =>
         user.userType match {
           case _ if isDisabled(CreditsRefundsRepay) =>

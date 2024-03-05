@@ -78,7 +78,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     routes.IncomeSourceReportingMethodController.submit(isAgent, incomeSourceType)
 
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(isAgent = isAgent, incomeSourceType)
   }
@@ -176,7 +176,7 @@ class IncomeSourceReportingMethodController @Inject()(val authorisedFunctions: F
     }
   }
 
-  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleSubmit(isAgent, incomeSourceType)
   }

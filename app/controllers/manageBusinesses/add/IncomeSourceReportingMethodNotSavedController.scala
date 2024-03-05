@@ -54,7 +54,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunc
   }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -62,7 +62,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authorisedFunc
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

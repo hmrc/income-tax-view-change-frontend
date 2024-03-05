@@ -56,7 +56,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -64,7 +64,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
@@ -72,12 +72,12 @@ class IncomeSourceAddedBackErrorController @Inject()(val authorisedFunctions: Au
       )
   }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleSubmit(isAgent = true, incomeSourceType)
 

@@ -82,7 +82,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     }
   }
 
-  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         origin = origin,
@@ -92,7 +92,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
       )
   }
 
-  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,

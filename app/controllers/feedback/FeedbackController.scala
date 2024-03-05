@@ -55,7 +55,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
                                   ) extends ClientConfirmedController with I18nSupport {
 
 
-  def show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show: Action[AnyContent] = auth.authenticatedAction {
     implicit request =>
       val feedback = feedbackView(FeedbackForm.form, postAction = routes.FeedbackController.submit)
       request.headers.get(REFERER) match {
@@ -79,7 +79,7 @@ class FeedbackController @Inject()(implicit val config: FrontendAppConfig,
         }
   }
 
-  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit: Action[AnyContent] = auth.authenticatedAction {
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,

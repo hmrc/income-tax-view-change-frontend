@@ -62,7 +62,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
       }
   }
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandler, isAgent = false,
         backUrl = controllers.routes.HomeController.show().url)
@@ -76,7 +76,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
     Redirect("https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account")
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandlerAgent,
         isAgent = true,

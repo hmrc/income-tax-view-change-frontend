@@ -90,7 +90,7 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
     }
   }
 
-  def show(origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String]): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
       handleRequest(
@@ -101,7 +101,7 @@ class InYearTaxCalculationController @Inject()(val executionContext: ExecutionCo
       )
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
       handleRequest(

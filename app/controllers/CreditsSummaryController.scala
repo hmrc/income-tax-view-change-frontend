@@ -121,7 +121,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   }
 
   def showCreditsSummary(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent = false) {
+    auth.authenticatedAction {
       implicit user =>
         handleRequest(
           calendarYear = calendarYear,
@@ -132,7 +132,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   }
 
   def showAgentCreditsSummary(calendarYear: Int): Action[AnyContent] = {
-    auth.authenticatedAction(isAgent = true) { implicit mtdItUser =>
+    auth.authenticatedAction { implicit mtdItUser =>
       handleRequest(
         calendarYear = calendarYear,
         isAgent = true

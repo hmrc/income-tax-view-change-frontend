@@ -60,7 +60,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       origin = origin)))
   }
 
-  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
@@ -69,7 +69,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
       )
   }
 
-  def showAgentTaxYears: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgentTaxYears: Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent.url,

@@ -55,7 +55,7 @@ class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: A
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -63,7 +63,7 @@ class ReportingMethodSetBackErrorController @Inject()(val authorisedFunctions: A
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

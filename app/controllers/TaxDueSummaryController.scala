@@ -80,7 +80,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
   }
 
 
-  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction {
       implicit user =>
         handleRequest(
           origin = origin,
@@ -90,7 +90,7 @@ class TaxDueSummaryController @Inject()(val authorisedFunctions: AuthorisedFunct
         )
   }
 
-  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,

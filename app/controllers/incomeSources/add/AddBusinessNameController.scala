@@ -78,7 +78,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
     }
   }
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         backUrl = getBackUrl(isChange = false),
@@ -87,7 +87,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
   }
 
   def showAgent(): Action[AnyContent] =
-    auth.authenticatedAction(isAgent = true) {
+    auth.authenticatedAction {
       implicit mtdItUser =>
         handleRequest(
           backUrl = getBackUrl(isChange = false),
@@ -113,22 +113,22 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       errorHandler.showInternalServerError()
   }
 
-  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit: Action[AnyContent] = auth.authenticatedAction {
     implicit request =>
       handleSubmitRequest(isChange = false)
   }
 
-  def submitAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitAgent: Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleSubmitRequest(isChange = false)
   }
 
-  def submitChange: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submitChange: Action[AnyContent] = auth.authenticatedAction {
     implicit request =>
       handleSubmitRequest(isChange = true)
   }
 
-  def submitChangeAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def submitChangeAgent: Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleSubmitRequest(isChange = true)
 
@@ -185,7 +185,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       errorHandler.showInternalServerError()
   }
 
-  def changeBusinessName(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def changeBusinessName(): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         backUrl = getBackUrl(isChange = true),
@@ -193,7 +193,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       )
   }
 
-  def changeBusinessNameAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def changeBusinessNameAgent(): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         backUrl = getBackUrl(isChange = true),

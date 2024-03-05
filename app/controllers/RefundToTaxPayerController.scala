@@ -85,7 +85,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
     }
   }
 
-  def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(repaymentRequestNumber: String, origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.PaymentHistoryController.show(origin).url,
@@ -96,7 +96,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
       )
   }
 
-  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.PaymentHistoryController.showAgent.url,

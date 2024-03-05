@@ -18,13 +18,14 @@ package utils
 
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.predicates.{BaseAgentController, ClientConfirmedController}
+import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, ActionFunction, AnyContent, BodyParser, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException, AuthorisedFunctions, ConfidenceLevel}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -36,26 +37,56 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val authorisedFunctions: AuthorisedFunctions,
                                        val retrieveBtaNavBar: NavBarPredicate,
                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                       val incomeSourceDetailsService: IncomeSourceDetailsService)
+                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
+                                       config: FrontendAppConfig)
                                       (implicit mcc: MessagesControllerComponents,
                                        val appConfig: FrontendAppConfig,
                                        val itvcErrorHandler: AgentItvcErrorHandler,
-                                       val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport {
+                                       val ec: ExecutionContext,
+                                       val hc: HeaderCarrier) extends ClientConfirmedController with I18nSupport {
 
-  def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
-      Authenticated.async {
-        implicit request =>
-          implicit user =>
-            println("AGENT BEEP BEEP " + request.body)
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
-            }
-      }
-    else
-      (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
-        authenticatedCodeBlock(user)
-      }
+  def agentAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]) = {
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
+            authenticatedCodeBlock(mtdItUser)
+          }
+    }
   }
+
+  def individualAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]) = {
+    (checkSessionTimeout andThen authenticate
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+      authenticatedCodeBlock(user)
+    }
+  }
+
+  def authenticatedAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = Action.async {
+    authorisedFunctions.authorised().retrieve(Retrievals.affinityGroup) {
+      case Some(affinityGroup) => if (affinityGroup == Agent) {
+        return agentAction(authenticatedCodeBlock)
+      }
+      else {
+        return individualAction(authenticatedCodeBlock)
+      }
+      case _ => Future.successful(Redirect(config.signInUrl))
+    }
+  }
+
+
+  //    if (isAgent)
+  //      Authenticated.async {
+  //        implicit request =>
+  //          implicit user =>
+  //            println("AGENT BEEP BEEP " + request.body)
+  //            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
+  //              authenticatedCodeBlock(mtdItUser)
+  //            }
+  //      }
+  //    else
+  //      (checkSessionTimeout andThen authenticate
+  //        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+  //        authenticatedCodeBlock(user)
+  //      }
 }

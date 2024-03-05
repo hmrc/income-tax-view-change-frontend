@@ -51,12 +51,12 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(isAgent = false, incomeSourceType)
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(isAgent = true, incomeSourceType)
   }
@@ -124,12 +124,12 @@ class IncomeSourceAddedController @Inject()(val authorisedFunctions: AuthorisedF
     Future.successful(Redirect(redirectUrl))
   }
 
-  def submit: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit: Action[AnyContent] = auth.authenticatedAction {
     implicit request =>
       handleSubmitRequest(isAgent = false)
   }
 
-  def agentSubmit: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def agentSubmit: Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleSubmitRequest(isAgent = true)
   }

@@ -66,7 +66,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
     }).url
   }
 
-  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(isAgent, isChange)
   }
@@ -90,7 +90,7 @@ class AddBusinessTradeController @Inject()(val authorisedFunctions: AuthorisedFu
       errorHandler.showInternalServerError()
   }
 
-  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def submit(isAgent: Boolean, isChange: Boolean): Action[AnyContent] = auth.authenticatedAction {
     implicit request =>
       handleSubmitRequest(isAgent, isChange)
   }

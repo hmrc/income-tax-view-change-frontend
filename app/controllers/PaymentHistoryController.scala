@@ -104,7 +104,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -114,7 +114,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
       )
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(
         itvcErrorHandler = itvcErrorHandlerAgent,
@@ -137,7 +137,7 @@ class PaymentHistoryController @Inject()(val paymentHistoryView: PaymentHistory,
   }
 
   def refundStatus(isAgent: Boolean): Action[AnyContent] =
-    auth.authenticatedAction(isAgent) {
+    auth.authenticatedAction {
       implicit user =>
         user.userType match {
           case _ if isDisabled(PaymentHistoryRefunds) =>

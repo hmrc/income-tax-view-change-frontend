@@ -52,12 +52,12 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
                                             )
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleRequest(isAgent = false, isChange = isChange)
   }
 
-  def showAgent(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(isChange: Boolean): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleRequest(isAgent = true, isChange = isChange)
   }
@@ -126,13 +126,13 @@ class AddBusinessAddressController @Inject()(val authorisedFunctions: Authorised
       errorHandler.showInternalServerError()
   }
 
-  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def submit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
       handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, isChange = isChange)
   }
 
-  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def agentSubmit(id: Option[String], isChange: Boolean): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
       handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, isChange = isChange)

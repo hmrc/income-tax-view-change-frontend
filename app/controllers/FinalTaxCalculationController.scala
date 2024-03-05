@@ -78,7 +78,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
   }
 
 
-  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -88,7 +88,7 @@ class FinalTaxCalculationController @Inject()(implicit val cc: MessagesControlle
       )
   }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(taxYear: Int): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandlerAgent,

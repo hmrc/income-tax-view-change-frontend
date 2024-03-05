@@ -155,12 +155,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       handleShowRequest(isAgent = false, origin)
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       handleShowRequest(isAgent = true)
   }

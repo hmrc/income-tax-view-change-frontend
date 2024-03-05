@@ -90,7 +90,7 @@ class OptOutTestDataController @Inject()(
     }
   }
 
-  val show: Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  val show: Action[AnyContent] = auth.authenticatedAction {
     implicit user =>
       retrieveData(
         nino = user.nino,
@@ -98,7 +98,7 @@ class OptOutTestDataController @Inject()(
       )
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = auth.authenticatedAction {
     implicit mtdItUser =>
       retrieveData(
         nino = mtdItUser.nino,
