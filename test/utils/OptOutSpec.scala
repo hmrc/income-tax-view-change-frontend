@@ -32,15 +32,15 @@ class OptOutSpec extends UnitSpec {
   }
 
   case class SimpleOptOutTaxYear(itsaStatus: ITSAStatus) extends OptOutTaxYear {
-    def canOptOut(): Boolean = itsaStatus == Voluntary
+    def canOptOut: Boolean = itsaStatus == Voluntary
   }
 
   case class FutureOptOutTaxYear(itsaStatus: ITSAStatus, previousTaxYear: OptOutTaxYear) extends OptOutTaxYear {
-    def canOptOut(): Boolean = itsaStatus == Voluntary || (previousTaxYear.itsaStatus == Voluntary && itsaStatus == Unknown)
+    def canOptOut: Boolean = itsaStatus == Voluntary || (previousTaxYear.itsaStatus == Voluntary && itsaStatus == Unknown)
   }
 
   case class CrystallisableOptOutTaxYear(itsaStatus: ITSAStatus, crystallised: String) extends OptOutTaxYear {
-    def canOptOut(): Boolean = itsaStatus == Voluntary && crystallised != "Y"
+    def canOptOut: Boolean = itsaStatus == Voluntary && crystallised != "Y"
   }
 
   case class OptOutParameters(crystallised : String,
@@ -160,13 +160,13 @@ class OptOutSpec extends UnitSpec {
     val cy   = SimpleOptOutTaxYear(oop.cy)
     val cyP1 = FutureOptOutTaxYear(oop.cyP1, cy)
 
-    if (!cyM1.canOptOut() && !cy.canOptOut() && !cyP1.canOptOut())
+    if (!cyM1.canOptOut && !cy.canOptOut && !cyP1.canOptOut)
       "No Opt out"
     else {
       val outcomes = Seq(
-        if (cyM1.canOptOut()) Some("CY-1") else None,
-        if (cy  .canOptOut()) Some("CY"  ) else None,
-        if (cyP1.canOptOut()) Some("CY+1") else None,
+        if (cyM1.canOptOut) Some("CY-1") else None,
+        if (cy  .canOptOut) Some("CY"  ) else None,
+        if (cyP1.canOptOut) Some("CY+1") else None,
       ).flatten.mkString(", ")
 
       s"Can Opt out for: $outcomes"
