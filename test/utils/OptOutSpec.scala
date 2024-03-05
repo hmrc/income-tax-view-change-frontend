@@ -160,7 +160,7 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-private def validOptOut(cyM1: PastOptOutTaxYear,
+  private def validOptOut(cyM1: PastOptOutTaxYear,
                           cy  : CurrentOptOutTaxYear,
                           cyP1: FutureOptOutTaxYear): String = {
     if (!cyM1.canOptOut && !cy.canOptOut && !cyP1.canOptOut)
