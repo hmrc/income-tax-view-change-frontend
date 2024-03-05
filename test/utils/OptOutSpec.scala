@@ -138,19 +138,22 @@ class OptOutSpec extends UnitSpec {
   }
 
   private def optOut(optOutParams : OptOutParameters): String = {
-    if (invalid(optOutParams))
+    val cyM1 = CrystallisableOptOutTaxYear(optOutParams.cyM1, optOutParams.crystallised)
+    val cy   = SimpleOptOutTaxYear(optOutParams.cy)
+    val cyP1 = FutureOptOutTaxYear(optOutParams.cyP1, cy)
+
+    if (invalid(cyM1, cy, cyP1))
       "Invalid"
     else {
-      val cyM1 = CrystallisableOptOutTaxYear(optOutParams.cyM1, optOutParams.crystallised)
-      val cy   = SimpleOptOutTaxYear(optOutParams.cy)
-      val cyP1 = FutureOptOutTaxYear(optOutParams.cyP1, cy)
       validOptOut(cyM1, cy, cyP1)
     }
   }
 
-  private def invalid(oop: OptOutParameters): Boolean = {
+  private def invalid(cyM1: CrystallisableOptOutTaxYear,
+                      cy  : SimpleOptOutTaxYear,
+                      cyP1: FutureOptOutTaxYear): Boolean = {
     // Might be good to add explanation of why various of these are invalid when known!
-    (oop.cyM1, oop.cy, oop.cyP1) match {
+    (cyM1.itsaStatus, cy.itsaStatus, cyP1.itsaStatus) match {
       case (Annual , Mandated, Voluntary)                    => true   // Pending confirmation from comment in sheet!!!
       case (  cyM1 , Unknown ,        _ ) if cyM1 != Unknown => true
       case (Unknown, Unknown , Unknown  )                    => true
