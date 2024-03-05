@@ -1251,6 +1251,16 @@ add-business-name.form.error.invalidNameFormat                    = Ni all enw�
 add-business-name.form.error.invalidName                          = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Add business trade page
+add-trade.heading                               = Beth yw masnach eich busnes?
+add-trade.title                                 = Unig fasnachwr
+add-trade.trade-info-1                          = Masnach eich busnes yw’r nwyddau neu’r gwasanaethau mae eich busnes yn eu darparu.
+add-trade.trade-info-2                          = Er enghraifft: plymio, gwaith trydanol, ymgynghori, gwaith ffotograffiaeth, hyfforddiant personol, trin gwallt.
+add-trade.form.error.empty                      = Nodwch fasnach eich busnes
+add-trade.form.error.short                      = Mae’n rhaid i’r fasnach fod yn 2 o gymeriadau neu fwy
+add-trade.form.error.long                       = Mae’n rhaid i’r fasnach fod yn 35 o gymeriadau neu lai
+add-trade.form.error.invalid                    = Ni all y fasnach gynnwys !, “”,* neu ?
+add-trade.form.error.same-name                  = Ni all enw’r busnes a’r enw masnachu fod yr un peth
+
 add-business-trade.heading                  = Beth yw masnach eich busnes?
 add-business-trade.p1                       = Er enghraifft: plymio, gwaith trydanol, ymgynghori.
 add-business-trade.form.error.empty         = Nodwch fasnach eich busnes

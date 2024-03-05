@@ -691,7 +691,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       "X-Session-ID" -> testSessionId)
 
     def postAddBusinessTrade(additionalCookies: Map[String, String] = Map.empty): WSResponse = {
-      post(s"/manage-your-businesses/add/business-trade", additionalCookies)(Map.empty)
+      post(s"/manage-your-businesses/add-sole-trader/business-trade", additionalCookies)(Map.empty)
     }
 
     def getChangeAddBusinessTrade: WSResponse = getWithHeaders("/manage-your-businesses/add-sole-trader/change-business-trade",
