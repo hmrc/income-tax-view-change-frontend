@@ -62,15 +62,21 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
     }
   }
 
-  def authenticatedAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = Action.async {
+  def isAgent: Future[Boolean] = {
     authorisedFunctions.authorised().retrieve(Retrievals.affinityGroup) {
       case Some(affinityGroup) => if (affinityGroup == Agent) {
-        return agentAction(authenticatedCodeBlock)
+        Future.successful(true)
       }
       else {
-        return individualAction(authenticatedCodeBlock)
+        Future.successful(false)
       }
-      case _ => Future.successful(Redirect(config.signInUrl))
+    }
+  }
+
+  def authenticatedAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = Action.async {
+    isAgent map {
+      case true => agentAction(authenticatedCodeBlock)
+      case false =>individualAction(authenticatedCodeBlock)
     }
   }
 
