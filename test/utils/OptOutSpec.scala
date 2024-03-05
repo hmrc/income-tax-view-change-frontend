@@ -140,8 +140,12 @@ class OptOutSpec extends UnitSpec {
   private def optOut(optOutParams : OptOutParameters): String = {
     if (invalid(optOutParams))
       "Invalid"
-    else
-      validOptOut(optOutParams)
+    else {
+      val cyM1 = CrystallisableOptOutTaxYear(optOutParams.cyM1, optOutParams.crystallised)
+      val cy   = SimpleOptOutTaxYear(optOutParams.cy)
+      val cyP1 = FutureOptOutTaxYear(optOutParams.cyP1, cy)
+      validOptOut(cyM1, cy, cyP1)
+    }
   }
 
   private def invalid(oop: OptOutParameters): Boolean = {
@@ -154,12 +158,9 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def validOptOut(oop: OptOutParameters): String = {
-
-    val cyM1 = CrystallisableOptOutTaxYear(oop.cyM1, oop.crystallised)
-    val cy   = SimpleOptOutTaxYear(oop.cy)
-    val cyP1 = FutureOptOutTaxYear(oop.cyP1, cy)
-
+  private def validOptOut(cyM1: CrystallisableOptOutTaxYear,
+                          cy  : SimpleOptOutTaxYear,
+                          cyP1: FutureOptOutTaxYear): String = {
     if (!cyM1.canOptOut && !cy.canOptOut && !cyP1.canOptOut)
       "No Opt out"
     else {
