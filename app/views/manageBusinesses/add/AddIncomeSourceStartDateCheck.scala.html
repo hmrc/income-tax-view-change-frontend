@@ -85,13 +85,13 @@
             classes = "govuk-radios--inline"
         ).withFormField(form("start-date-check")))
 
+        @if(pageHasErrors){
+        </div>
+        }
+
         @govukButton(Button(
             content = Text(messages("base.continue")),
             attributes = Map("id" -> "continue-button")
         ))
-
-        @if(pageHasErrors){
-            </div>
-        }
     }
 }
