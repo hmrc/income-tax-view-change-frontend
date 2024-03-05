@@ -69,6 +69,7 @@ object BaseIntegrationTestConstants {
   val testYear2024 = 2024
 
   val testSelfEmploymentId = "ABC123456789"
+  val testIncomeSource = "Fruit Ltd"
   val testSelfEmploymentIdHashed: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
   val otherTestSelfEmploymentId = "ABC123456780"
   val testPropertyIncomeId = "1234"

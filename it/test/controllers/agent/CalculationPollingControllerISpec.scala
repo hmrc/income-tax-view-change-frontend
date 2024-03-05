@@ -64,6 +64,7 @@ class CalculationPollingControllerISpec extends ComponentSpecBase {
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       Some("Test Trading Name"),
       Some(LocalDate.of(2018,1,1)),

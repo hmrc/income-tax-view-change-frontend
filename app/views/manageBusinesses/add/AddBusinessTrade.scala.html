@@ -18,7 +18,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import forms.incomeSources.add.BusinessTradeForm
+@import forms.manageBusinesses.add.BusinessTradeForm
 @import helper._
 @import views.html.helpers.injected.ErrorSummary
 @import views.html.helpers.injected.InputHelper
@@ -50,6 +50,18 @@
     businessTradeForm("business-trade")
 }
 
+@headingContent = {
+    <h1 class="govuk-heading-l">
+        <span class="govuk-caption-l">@messages("add-trade.title")</span>
+        @messages("add-trade.heading")
+    </h1>
+}
+
+@hintContent = {
+    <p class="govuk-hint">@messages("add-trade.trade-info-1")</p>
+    <p class="govuk-hint">@messages("add-trade.trade-info-2")</p>
+}
+
 @mainTemplate(pageTitle = messages("add-business-trade.heading"),
 form = Some(businessTradeForm),
 backUrl = Some(backURL),
@@ -64,13 +76,17 @@ btaNavPartial = user.btaNavPartial) {
             Input(
                 id = businessTrade,
                 name = businessTrade,
-                classes = "govuk-!-width-three-quarters",
+                classes = "govuk-input--width-30",
                 label = Label(
                     isPageHeading = true,
                     classes = "govuk-label--l",
-                    content = Text(messages("add-business-trade.heading"))
+                    content = HtmlContent(
+                        headingContent
+                    )
                 ),
-                hint = Some(Hint(content = Text(messages("add-business-trade.p1"))))
+                hint = Some(Hint(content = HtmlContent(
+                    hintContent
+                )))
             ).withFormField(field)
         )
 

@@ -111,26 +111,26 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
 
   def getHeading(sourceType: IncomeSourceType): String = {
     sourceType match {
-      case SelfEmployment => messages("check-business-details.title")
-      case UkProperty => messages("incomeSources.add.checkUKPropertyDetails.title")
-      case ForeignProperty => messages("incomeSources.add.foreign-property-check-details.title")
+      case SelfEmployment => messages("check-details.title")
+      case UkProperty => messages("check-details-uk.title")
+      case ForeignProperty => messages("check-details-fp.title")
     }
   }
 
   def getTitle(sourceType: IncomeSourceType, isAgent: Boolean): String = {
     val prefix: String = if (isAgent) "htmlTitle.agent" else "htmlTitle"
     sourceType match {
-      case SelfEmployment => s"${messages(prefix, messages("check-business-details.title"))}"
-      case UkProperty => messages(prefix, messages("incomeSources.add.checkUKPropertyDetails.title"))
-      case ForeignProperty => messages(prefix, messages("incomeSources.add.foreign-property-check-details.title"))
+      case SelfEmployment => s"${messages(prefix, messages("check-details.title"))}"
+      case UkProperty => messages(prefix, messages("check-details-uk.title"))
+      case ForeignProperty => messages(prefix, messages("check-details-fp.title"))
     }
   }
 
   def getLink(sourceType: IncomeSourceType): String = {
     sourceType match {
-      case SelfEmployment => s"${messages("check-business-details.change")}"
-      case UkProperty => s"${messages("check-business-details.change")}"
-      case ForeignProperty => s"${messages("incomeSources.add.foreign-property-check-details.change")}"
+      case SelfEmployment => s"${messages("check-details.change")}"
+      case UkProperty => s"${messages("check-details-uk.change")}"
+      case ForeignProperty => s"${messages("check-details-fp.change")}"
     }
   }
 
@@ -409,7 +409,7 @@ class IncomeSourceCheckDetailsControllerSpec extends TestSupport with MockAuthen
             else TestCheckDetailsController.submit(incomeSourceType)(fakeRequestWithActiveSession)
 
             val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
-              routes.IncomeSourceReportingMethodController.show(isAgent, incomeSourceType).url
+              routes.ReportingFrequencyController.show(isAgent, incomeSourceType).url
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl(isAgent, incomeSourceType, testSelfEmploymentId))

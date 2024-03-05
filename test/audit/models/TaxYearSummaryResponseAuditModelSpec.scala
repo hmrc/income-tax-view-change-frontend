@@ -28,7 +28,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.taxYear
-import testConstants.BusinessDetailsTestConstants.address
+import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -120,6 +120,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
 
   val business = List(BusinessDetailsModel(
     "testId",
+    incomeSource = Some(testIncomeSource),
     Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
     Some("Test Trading Name"),
     None,

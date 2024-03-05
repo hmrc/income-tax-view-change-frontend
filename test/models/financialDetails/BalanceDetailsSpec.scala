@@ -35,12 +35,14 @@ class BalanceDetailsSpec extends UnitSpec {
   def balanceDetailsModel(availableCredit: Option[BigDecimal] = None,
                           firstPendingAmountRequested: Option[BigDecimal] = None,
                           secondPendingAmountRequested: Option[BigDecimal] = None,
+                          allocatedCredit: Option[BigDecimal] = None,
                           unallocatedCredit: Option[BigDecimal] = None
                          ): BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
     totalBalance = 3.00,
     availableCredit,
+    allocatedCredit,
     firstPendingAmountRequested,
     secondPendingAmountRequested,
     unallocatedCredit

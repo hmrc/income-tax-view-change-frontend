@@ -336,7 +336,7 @@
         @if(incomeSourcesNewJourneyEnabled) {
             @home_tile("income-sources-tile", messages("home.incomeSources.newJourneyHeading")) {
                 @p(classes = "govuk-!-margin-bottom-4") {
-                    @link(link = newIncomeSourceControllerURL, messageKey = "home.incomeSources.newJourney.view")
+                    @link(link = manageYourBusinessesControllerURL, messageKey = "home.incomeSources.newJourney.view")
                 }
             }
         }else{
@@ -377,12 +377,8 @@
     controllers.incomeSources.manage.routes.ManageIncomeSourceController.show(isAgent).url
 }
 
-@newIncomeSourceControllerURL = @{
-    if(isAgent) {
-        controllers.incomeSources.routes.NewIncomeSourcesHomePageController.showAgent().url
-    } else {
-        controllers.incomeSources.routes.NewIncomeSourcesHomePageController.show().url
-    }
+@manageYourBusinessesControllerURL = @{
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
 }
 
 @layout(

@@ -17,7 +17,7 @@
 package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.SelfEmployment
-import forms.incomeSources.add.BusinessTradeForm
+import forms.manageBusinesses.add.BusinessTradeForm
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
@@ -26,13 +26,15 @@ import views.html.manageBusinesses.add.AddBusinessTrade
 class AddBusinessTradeViewSpec extends ViewSpec {
 
   object AddBusinessTradeMessages {
-    val heading: String = messages("add-business-trade.heading")
-    val p1: String = messages("add-business-trade.p1")
-    val tradeEmptyError: String = messages("add-business-trade.form.error.empty")
-    val tradeShortError: String = messages("add-business-trade.form.error.short")
-    val tradeLongError: String = messages("add-business-trade.form.error.long")
-    val tradeInvalidCharError: String = messages("add-business-trade.form.error.invalid")
-    val tradeSameNameError: String = messages("add-business-trade.form.error.same-name")
+    val title: String = messages("add-trade.title")
+    val heading: String = messages("add-trade.heading")
+    val p1: String = messages("add-trade.trade-info-1")
+    val p2: String = messages("add-trade.trade-info-2")
+    val tradeEmptyError: String = messages("add-trade.form.error.empty")
+    val tradeShortError: String = messages("add-trade.form.error.short")
+    val tradeLongError: String = messages("add-trade.form.error.long")
+    val tradeInvalidCharError: String = messages("add-trade.form.error.invalid")
+    val tradeSameNameError: String = messages("add-trade.form.error.same-name")
     val continue: String = messages("base.continue")
     val errorPrefix: String = messages("base.error-prefix")
   }
@@ -59,7 +61,7 @@ class AddBusinessTradeViewSpec extends ViewSpec {
   "The add business trade page" when {
     "There are no errors to display" should {
       "Display the correct heading" in new Setup(pageWithoutError) {
-        layoutContent hasPageHeading AddBusinessTradeMessages.heading
+        layoutContent hasPageHeading (AddBusinessTradeMessages.title + " " + AddBusinessTradeMessages.heading)
       }
       "have a form with the correct attributes" in new Setup(pageWithoutError) {
         layoutContent.hasFormWith(testCall.method, testCall.url)
@@ -69,7 +71,7 @@ class AddBusinessTradeViewSpec extends ViewSpec {
         val label: Element = form.selectHead("label")
         val input: Element = form.selectHead("input")
 
-        label.text shouldBe AddBusinessTradeMessages.heading
+        label.text shouldBe (AddBusinessTradeMessages.title + " " + AddBusinessTradeMessages.heading)
         label.attr("for") shouldBe input.attr("id")
         input.attr("id") shouldBe BusinessTradeForm.businessTrade
         input.attr("name") shouldBe BusinessTradeForm.businessTrade

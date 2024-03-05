@@ -72,7 +72,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
             sources = user.incomeSources,
             isAgent = isAgent,
             incomeSourceIdHashMaybe = None,
-            backUrl = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url,
+            backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
             incomeSourceType = incomeSourceType
           )
         }
@@ -96,7 +96,7 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
                   case Right(_) => handleRequest(
                     sources = user.incomeSources,
                     isAgent = isAgent,
-                    backUrl = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent).url,
+                    backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url,
                     incomeSourceIdHashMaybe = Some(incomeSourceIdHash),
                     incomeSourceType = SelfEmployment
                   )

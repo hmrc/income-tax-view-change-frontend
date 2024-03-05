@@ -26,6 +26,7 @@ case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusines
                                       viewCeasedBusinesses: List[CeasedBusinessDetailsViewModel])
 
 case class ViewBusinessDetailsViewModel(incomeSourceId: IncomeSourceId,
+                                        incomeSource: Option[String],
                                         tradingName: Option[String],
                                         tradingStartDate: Option[LocalDate]
                                        )

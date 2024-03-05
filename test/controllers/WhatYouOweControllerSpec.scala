@@ -65,7 +65,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     List(documentDetailWithDueDateModel(2019))
       ++ List(documentDetailWithDueDateModel(2020))
       ++ List(documentDetailWithDueDateModel(2021)),
@@ -74,7 +74,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None), List.empty)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List.empty)
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
@@ -148,7 +148,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
 
       }
 
-      def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None), List.empty)
+      def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
 
       "show money in your account if the user has available credit in his account" in new Setup {
         enable(CreditsRefundsRepay)
@@ -179,7 +179,7 @@ class WhatYouOweControllerSpec extends MockAuthenticationPredicate with MockInco
         docAgent.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount-agent")
       }
 
-      def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None), List.empty)
+      def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
 
       "hide money in your account if the credit and refund feature switch is disabled" in new Setup {
         disable(CreditsRefundsRepay)

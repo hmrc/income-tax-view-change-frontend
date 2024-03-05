@@ -58,6 +58,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
       None,
       Some(getCurrentTaxYearEnd),
@@ -160,7 +161,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )(
                 status = OK,
                 response = Json.toJson(FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(
                     DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear,
@@ -231,7 +232,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )(
                 status = OK,
                 response = Json.toJson(FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(
                     DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear,
@@ -299,7 +300,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 )(
                   status = OK,
                   response = Json.toJson(FinancialDetailsModel(
-                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
                         taxYear = getCurrentTaxYearEnd.getYear,
@@ -368,7 +369,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
                 )(
                   status = OK,
                   response = Json.toJson(FinancialDetailsModel(
-                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                     documentDetails = List(
                       DocumentDetail(
                         taxYear = getCurrentTaxYearEnd.getYear,
@@ -441,7 +442,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )(
                 status = OK,
                 response = Json.toJson(FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(
                     DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear,
@@ -529,7 +530,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
               )(
                 status = OK,
                 response = Json.toJson(FinancialDetailsModel(
-                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                  balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                   documentDetails = List(
                     DocumentDetail(
                       taxYear = getCurrentTaxYearEnd.getYear,
@@ -600,7 +601,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,
@@ -711,6 +712,7 @@ class HomeControllerISpec extends ComponentSpecBase with FeatureSwitching {
           yearOfMigration = None,
           businesses = List(BusinessDetailsModel(
             "testId",
+            incomeSource = Some(testIncomeSource),
             Some(AccountingPeriodModel(currentDate, currentDate.plusYears(1))),
             None,
             Some(getCurrentTaxYearEnd),

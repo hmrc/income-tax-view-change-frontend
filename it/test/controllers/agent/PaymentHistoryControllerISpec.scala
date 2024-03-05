@@ -73,6 +73,7 @@ class PaymentHistoryControllerISpec extends ComponentSpecBase {
     yearOfMigration = Some(getCurrentTaxYearEnd.getYear.toString),
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       None,
       None,

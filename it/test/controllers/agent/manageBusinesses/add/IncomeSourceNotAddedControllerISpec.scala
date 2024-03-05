@@ -45,7 +45,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/agents/manage-your-businesses/add/error-business-not-added", clientDetailsWithConfirmation)
+          .get(s"/agents/manage-your-businesses/add-sole-trader/error-business-not-added", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -63,7 +63,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get(s"/agents/manage-your-businesses/add/error-business-not-added", clientDetailsWithConfirmation)
+        .get(s"/agents/manage-your-businesses/add-sole-trader/error-business-not-added", clientDetailsWithConfirmation)
       verifyIncomeSourceDetailsCall(testMtditid)
 
       result should have(
@@ -82,7 +82,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/agents/manage-your-businesses/add/error-uk-property-not-added", clientDetailsWithConfirmation)
+          .get(s"/agents/manage-your-businesses/add-uk-property/error-uk-property-not-added", clientDetailsWithConfirmation)
         verifyIncomeSourceDetailsCall(testMtditid)
 
         result should have(
@@ -100,7 +100,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get(s"/agents/manage-your-businesses/add/error-uk-property-not-added", clientDetailsWithConfirmation)
+        .get(s"/agents/manage-your-businesses/add-uk-property/error-uk-property-not-added", clientDetailsWithConfirmation)
       verifyIncomeSourceDetailsCall(testMtditid)
 
       result should have(
@@ -119,7 +119,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
         val result = IncomeTaxViewChangeFrontend
-          .get(s"/agents/manage-your-businesses/add/error-foreign-property-not-added", clientDetailsWithConfirmation)
+          .get(s"/agents/manage-your-businesses/add-foreign-property/error-foreign-property-not-added", clientDetailsWithConfirmation)
 
         verifyIncomeSourceDetailsCall(testMtditid)
 
@@ -138,7 +138,7 @@ class IncomeSourceNotAddedControllerISpec extends ComponentSpecBase {
       IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
       val result = IncomeTaxViewChangeFrontend
-        .get(s"/agents/manage-your-businesses/add/error-foreign-property-not-added", clientDetailsWithConfirmation)
+        .get(s"/agents/manage-your-businesses/add-foreign-property/error-foreign-property-not-added", clientDetailsWithConfirmation)
 
       verifyIncomeSourceDetailsCall(testMtditid)
 

@@ -87,6 +87,7 @@ class IncomeSourceDetailsService @Inject()(val businessDetailsConnector: Busines
           maybeSoleTraderBusinesses.map { business =>
             ViewBusinessDetailsViewModel(
               mkIncomeSourceId(business.incomeSourceId),
+              business.incomeSource,
               business.tradingName,
               business.tradingStartDate
             )

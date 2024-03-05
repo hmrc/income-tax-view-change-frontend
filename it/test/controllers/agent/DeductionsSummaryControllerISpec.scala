@@ -48,6 +48,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
     yearOfMigration = None,
     businesses = List(BusinessDetailsModel(
       "testId",
+      incomeSource = Some(testIncomeSource),
       Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
       None,
       None,

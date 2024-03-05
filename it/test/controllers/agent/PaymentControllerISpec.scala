@@ -58,6 +58,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
               "testId",
+              incomeSource = Some(testIncomeSource),
               Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
               None,
@@ -93,6 +94,7 @@ class PaymentControllerISpec extends ComponentSpecBase {
             yearOfMigration = None,
             businesses = List(BusinessDetailsModel(
               "testId",
+              incomeSource = Some(testIncomeSource),
               Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
               None,
               None,

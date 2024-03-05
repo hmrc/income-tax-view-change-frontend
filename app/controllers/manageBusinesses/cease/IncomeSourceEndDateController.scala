@@ -51,13 +51,8 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
-  private def getBackCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
-    (isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) => routes.CeaseIncomeSourceController.show()
-      case (_, SelfEmployment) => routes.CeaseIncomeSourceController.showAgent()
-      case (false, _) => routes.DeclarePropertyCeasedController.show(incomeSourceType)
-      case (_, _) => routes.DeclarePropertyCeasedController.showAgent(incomeSourceType)
-    }
+  private def getBackCall(isAgent: Boolean): Call = {
+    controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent)
   }
 
   private def getPostAction(isAgent: Boolean, isChange: Boolean, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType
@@ -151,7 +146,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
                   incomeSourceEndDateForm = form,
                   postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
                   isAgent = isAgent,
-                  backUrl = getBackCall(isAgent, incomeSourceType).url,
+                  backUrl = getBackCall(isAgent).url,
                   incomeSourceType = incomeSourceType
                 )
               ))
@@ -262,7 +257,7 @@ class IncomeSourceEndDateController @Inject()(val authorisedFunctions: FrontendA
                 Future.successful(BadRequest(incomeSourceEndDate(
                   incomeSourceEndDateForm = hasErrors,
                   postAction = getPostAction(isAgent, isChange, incomeSourceIdMaybe, incomeSourceType),
-                  backUrl = getBackCall(isAgent, incomeSourceType).url,
+                  backUrl = getBackCall(isAgent).url,
                   isAgent = isAgent,
                   incomeSourceType = incomeSourceType
                 )))

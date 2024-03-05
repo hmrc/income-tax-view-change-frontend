@@ -193,7 +193,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
                 ))
 
               status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Business trade cannot include !, &quot;&quot;, * or ?")
+              contentAsString(result) must include("Trade cannot include !, &quot;&quot;, * or ?")
             }
 
             "trade name is empty" in {
@@ -235,7 +235,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
                 ))
 
               status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Business trade must have at least two letters")
+              contentAsString(result) must include("Trade must be 2 characters or more")
             }
 
             "trade name is too long" in {
@@ -256,7 +256,7 @@ class AddBusinessTradeControllerSpec extends TestSupport
                 ))
 
               status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Business trade must be 35 characters or fewer")
+              contentAsString(result) must include("Trade must be 35 characters or fewer")
             }
           }
         }

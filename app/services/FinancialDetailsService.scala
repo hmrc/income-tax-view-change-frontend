@@ -71,15 +71,25 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
     Logger("application").debug(
       s"[IncomeSourceDetailsService][getAllFinancialDetails] - Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
+    val sequence = Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
+        Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - TaxYear: ${taxYear}")
         financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
-          case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
-          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
-          case _ => None
+          case financialDetails: FinancialDetailsModel =>
+            Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Financial Details Model: $financialDetails, TaxYear: ${taxYear}")
+            Some((taxYear, financialDetails))
+          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND =>
+            Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Financial Details Model Error: $error, TaxYear: ${taxYear}")
+            Some((taxYear, error))
+          case other =>
+            Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Response: $other, TaxYear: ${taxYear}")
+            None
         }
     }
-    ).map(_.flatten)
+    )
+    Logger("application").debug(s"[IncomeSourceDetailsService][getAllFinancialDetails] - Response sequence: $sequence")
+
+    sequence.map(_.flatten)
   }
 
   def getAllCreditFinancialDetails(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[FinancialDetailsResponseModel]] = {

@@ -51,9 +51,9 @@
 
 @getMessage(key: String, args: String*) = @{
     viewModel.incomeSourceType match {
-        case SelfEmployment => messages(s"check-business-details.$key", args: _*)
-        case UkProperty => messages(s"incomeSources.add.checkUKPropertyDetails.$key", args: _*)
-        case ForeignProperty => messages(s"incomeSources.add.foreign-property-check-details.$key", args: _*)
+        case SelfEmployment => messages(s"check-details.$key", args: _*)
+        case UkProperty => messages(s"check-details-uk.$key", args: _*)
+        case ForeignProperty => messages(s"check-details-fp.$key", args: _*)
     }
 }
 
@@ -100,9 +100,9 @@
     controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, isChange = true, viewModel.incomeSourceType).url
 }
 
-    @changeAccountingMethodURL = @{
-            controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType, isAgent).url
-    }
+@changeAccountingMethodURL = @{
+        controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType, isAgent).url
+}
 
 @extractName = @{
     viewModel match {
@@ -190,7 +190,7 @@
         Seq(
             SummaryListRow(
                 key = Key(
-                    content = Text(getMessage("business-description"))
+                    content = Text(getMessage("trade"))
                 ),
                 value = Value(
                     content = Text(extractTrade)
@@ -214,7 +214,7 @@
         Seq(
             SummaryListRow(
                 key = Key(
-                    content = Text(getMessage("business-address"))
+                    content = Text(getMessage("address"))
                 ),
                 value = Value(
                     content = extractAddress

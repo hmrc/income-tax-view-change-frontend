@@ -76,7 +76,6 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     ) map { response =>
       response.status match {
         case OK =>
-          Logger("application").info(s"[DynamicStubConnector][overwriteItsaStatus] - RESPONSE status: ${response.status}, json: ${response.json}")
           (): Unit
         case _ =>
           Logger("application").error(s"[DynamicStubConnector][overwriteItsaStatus]" +
@@ -100,10 +99,9 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     ) map { response =>
       response.status match {
         case OK =>
-          Logger("application").info(s"[DynamicStubConnector][overwriteCalculationList] - RESPONSE status: ${response.status}, json: ${response.json}")
           (): Unit
         case _ =>
-          Logger("application").error(s"[DynamicStubConnector][overwriteItsaStatus]" +
+          Logger("application").error(s"[DynamicStubConnector][overwriteCalculationList]" +
             s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }

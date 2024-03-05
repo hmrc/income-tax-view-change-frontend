@@ -51,8 +51,7 @@ class DeclarePropertyCeasedController @Inject()(val authorisedFunctions: Fronten
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
     withSessionData(JourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
 
-      val backUrl: String = if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url else
-        controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
+      val backUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
       val postAction: Call = if (isAgent) controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submitAgent(incomeSourceType) else
         controllers.manageBusinesses.cease.routes.DeclarePropertyCeasedController.submit(incomeSourceType)
 
