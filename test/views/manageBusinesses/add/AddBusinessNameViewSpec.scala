@@ -68,8 +68,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
         addBusinessNameForm,
         isAgent,
         postAction,
-        backUrl,
-        useFallbackLink = false)(messages, implicitly)
+        backUrl)(messages, implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = {
@@ -78,8 +77,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
           "add-business-name.form.error.required")),
         isAgent,
         postAction,
-        backUrl,
-        useFallbackLink = false)(messages, implicitly)
+        backUrl)(messages, implicitly)
     }
 
     lazy val changeView: HtmlFormat.Appendable = {
@@ -87,8 +85,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
         changeBusinessNameForm,
         isAgent,
         postAction,
-        backUrl,
-        useFallbackLink = true)(messages, implicitly)
+        backUrl)(messages, implicitly)
     }
 
     lazy val changeViewWithError: HtmlFormat.Appendable = {
@@ -97,8 +94,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
           "add-business-name.form.error.required")),
         isAgent,
         postAction,
-        backUrl,
-        useFallbackLink = true)(messages, implicitly)
+        backUrl)(messages, implicitly)
     }
 
     lazy val document: Document = {

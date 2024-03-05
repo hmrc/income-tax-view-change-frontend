@@ -84,9 +84,9 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
   def getMessage(incomeSourceType: IncomeSourceType, key:String): String = {
     incomeSourceType match {
-      case SelfEmployment => messages(s"check-business-details.$key")
-      case UkProperty => messages(s"incomeSources.add.checkUKPropertyDetails.$key")
-      case ForeignProperty => messages(s"incomeSources.add.foreign-property-check-details.$key")
+      case SelfEmployment => messages(s"check-details.$key")
+      case UkProperty => messages(s"check-details-uk.$key")
+      case ForeignProperty => messages(s"check-details-fp.$key")
     }
   }
 
@@ -94,17 +94,17 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     "render the page correctly" when {
       def runPageContenttest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
         "render the heading" in new Setup(false, incomeSourceType) {
-          document.getElementsByClass("govuk-heading-l").text() shouldBe messages("check-business-details.title")
+          document.getElementsByClass("govuk-heading-l").text() shouldBe messages("check-details.title")
         }
 
         if (incomeSourceType == SelfEmployment) {
 
           "render the summary list" in new Setup(isAgent, incomeSourceType) {
-            document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("check-business-details.business-name")
-            document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe messages("check-business-details.start-date")
-            document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe messages("check-business-details.business-description")
-            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe messages("check-business-details.business-address")
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe messages("check-business-details.accounting-method")
+            document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe messages("check-details.business-name")
+            document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe messages("check-details.start-date")
+            document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe messages("check-details.trade")
+            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe messages("check-details.address")
+            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe messages("check-details.accounting-method")
 
             document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe businessName
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe businessStartDate

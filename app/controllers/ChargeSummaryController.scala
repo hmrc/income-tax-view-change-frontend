@@ -82,7 +82,9 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
 
   def handleRequest(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, isAgent: Boolean, origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    financialDetailsService.getAllFinancialDetails(user, implicitly, implicitly).flatMap { financialResponses =>
+    financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
+      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd124 < taxYear = $taxYear > < financialResponses = $financialResponses >")
+
       val payments = financialResponses.collect {
         case (_, model: FinancialDetailsModel) => model.filterPayments()
       }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None), List(), List()))((merged, next) => merged.mergeLists(next))
@@ -94,7 +96,7 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
           response
       }
 
-      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd124 < matchingYear = $matchingYear > < taxYear = $taxYear > < financialResponses = $financialResponses >")
+      Logger("application").debug(s"[ChargeSummaryController][handleRequest] - ID:abcd124 < matchingYear = $matchingYear >")
 
       matchingYear.headOption match {
         case Some(fdm: FinancialDetailsModel) if (isDisabled(MFACreditsAndDebits) && isMFADebit(fdm, id)) =>
