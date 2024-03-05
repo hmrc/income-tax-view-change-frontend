@@ -41,6 +41,8 @@
         user:auth.MtdItUser[_]
 )
 
+@pageHasErrors = @{form.hasErrors}
+
 @mainTemplate(
     pageTitle = messages("dateForm.check.heading"),
     backUrl = Some(backUrl),
@@ -58,6 +60,10 @@
                 case ForeignProperty => messages("incomeSources.add.foreign-property")
             }
         }</span>
+
+        @if(pageHasErrors){
+        <div class="govuk-form-group govuk-form-group--error">
+        }
 
         <h1 class="govuk-heading-l" id="start-date-heading">@messages("radioForm.checkDate.heading")</h1>
         <p class="govuk-body" id="start-date-value">@incomeSourceStartDate</p>
@@ -83,5 +89,9 @@
             content = Text(messages("base.continue")),
             attributes = Map("id" -> "continue-button")
         ))
+
+        @if(pageHasErrors){
+            </div>
+        }
     }
 }
