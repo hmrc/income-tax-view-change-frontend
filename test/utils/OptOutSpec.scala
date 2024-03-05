@@ -31,7 +31,7 @@ class OptOutSpec extends UnitSpec {
     val itsaStatus: ITSAStatus
   }
 
-  case class SimpleOptOutTaxYear(itsaStatus: ITSAStatus) extends OptOutTaxYear {
+  case class CurrentOptOutTaxYear(itsaStatus: ITSAStatus) extends OptOutTaxYear {
     def canOptOut: Boolean = itsaStatus == Voluntary
   }
 
@@ -39,7 +39,7 @@ class OptOutSpec extends UnitSpec {
     def canOptOut: Boolean = itsaStatus == Voluntary || (previousTaxYear.itsaStatus == Voluntary && itsaStatus == Unknown)
   }
 
-  case class CrystallisableOptOutTaxYear(itsaStatus: ITSAStatus, crystallised: String) extends OptOutTaxYear {
+  case class PastOptOutTaxYear(itsaStatus: ITSAStatus, crystallised: String) extends OptOutTaxYear {
     def canOptOut: Boolean = itsaStatus == Voluntary && crystallised != "Y"
   }
 
@@ -123,8 +123,8 @@ class OptOutSpec extends UnitSpec {
                      cyP1         : String,
                      outcome      : String) =>
 
-    val previousYear = CrystallisableOptOutTaxYear(toITSAStatus(cyM1), crystallised)
-    val currentYear  = SimpleOptOutTaxYear(toITSAStatus(cy))
+    val previousYear = PastOptOutTaxYear(toITSAStatus(cyM1), crystallised)
+    val currentYear  = CurrentOptOutTaxYear(toITSAStatus(cy))
     val nextYear     = FutureOptOutTaxYear(toITSAStatus(cyP1), currentYear)
 
     optOut(previousYear, currentYear, nextYear) shouldEqual outcome
@@ -137,8 +137,8 @@ class OptOutSpec extends UnitSpec {
     case " " => Unknown
   }
 
-  private def optOut(cyM1: CrystallisableOptOutTaxYear,
-                     cy  : SimpleOptOutTaxYear,
+  private def optOut(cyM1: PastOptOutTaxYear,
+                     cy  : CurrentOptOutTaxYear,
                      cyP1: FutureOptOutTaxYear): String = {
 
     if (invalid(cyM1, cy, cyP1))
@@ -148,8 +148,8 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def invalid(cyM1: CrystallisableOptOutTaxYear,
-                      cy  : SimpleOptOutTaxYear,
+  private def invalid(cyM1: PastOptOutTaxYear,
+                      cy  : CurrentOptOutTaxYear,
                       cyP1: FutureOptOutTaxYear): Boolean = {
     // Might be good to add explanation of why various of these are invalid when known!
     (cyM1.itsaStatus, cy.itsaStatus, cyP1.itsaStatus) match {
@@ -160,8 +160,8 @@ class OptOutSpec extends UnitSpec {
     }
   }
 
-  private def validOptOut(cyM1: CrystallisableOptOutTaxYear,
-                          cy  : SimpleOptOutTaxYear,
+private def validOptOut(cyM1: PastOptOutTaxYear,
+                          cy  : CurrentOptOutTaxYear,
                           cyP1: FutureOptOutTaxYear): String = {
     if (!cyM1.canOptOut && !cy.canOptOut && !cyP1.canOptOut)
       "No Opt out"
