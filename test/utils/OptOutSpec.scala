@@ -21,26 +21,32 @@ import testUtils.UnitSpec
 
 class OptOutSpec extends UnitSpec {
 
+  object ITSAStatus extends Enumeration {
+    type ITSAStatus = Value
+    val Mandated, Voluntary, Annual, Unknown, NotGenerated = Value
+  }
+  import ITSAStatus._
+
   trait OptOutTaxYear {
-    val itsaStatus: String
+    val itsaStatus: ITSAStatus
   }
 
-  case class SimpleOptOutTaxYear(itsaStatus: String) extends OptOutTaxYear {
-    def canOptOut(): Boolean = itsaStatus == "V"
+  case class SimpleOptOutTaxYear(itsaStatus: ITSAStatus) extends OptOutTaxYear {
+    def canOptOut(): Boolean = itsaStatus == Voluntary
   }
 
-  case class FutureOptOutTaxYear(itsaStatus: String, previousTaxYear: OptOutTaxYear) extends OptOutTaxYear {
-    def canOptOut(): Boolean = itsaStatus == "V" || (previousTaxYear.itsaStatus == "V" && itsaStatus == " ")
+  case class FutureOptOutTaxYear(itsaStatus: ITSAStatus, previousTaxYear: OptOutTaxYear) extends OptOutTaxYear {
+    def canOptOut(): Boolean = itsaStatus == Voluntary || (previousTaxYear.itsaStatus == Voluntary && itsaStatus == Unknown)
   }
 
-  case class CrystallisableOptOutTaxYear(itsaStatus: String, crystallised: String) extends OptOutTaxYear {
-    def canOptOut(): Boolean = itsaStatus == "V" && crystallised != "Y"
+  case class CrystallisableOptOutTaxYear(itsaStatus: ITSAStatus, crystallised: String) extends OptOutTaxYear {
+    def canOptOut(): Boolean = itsaStatus == Voluntary && crystallised != "Y"
   }
 
   case class OptOutParameters(crystallised : String,
-                              cyM1         : String,
-                              cy           : String,
-                              cyP1         : String)
+                              cyM1         : ITSAStatus,
+                              cy           : ITSAStatus,
+                              cyP1         : ITSAStatus)
 
   private val optOuts =
     Table(
@@ -121,7 +127,14 @@ class OptOutSpec extends UnitSpec {
                      cy           : String,
                      cyP1         : String,
                      outcome      : String) =>
-    optOut(OptOutParameters(crystallised, cyM1, cy, cyP1)) shouldEqual outcome
+    optOut(OptOutParameters(crystallised, toITSAStatus(cyM1), toITSAStatus(cy), toITSAStatus(cyP1))) shouldEqual outcome
+  }
+
+  def toITSAStatus(status: String): ITSAStatus = status match {
+    case "M" => Mandated
+    case "V" => Voluntary
+    case "A" => Annual
+    case " " => Unknown
   }
 
   private def optOut(optOutParams : OptOutParameters): String = {
@@ -134,10 +147,10 @@ class OptOutSpec extends UnitSpec {
   private def invalid(oop: OptOutParameters): Boolean = {
     // Might be good to add explanation of why various of these are invalid when known!
     (oop.cyM1, oop.cy, oop.cyP1) match {
-      case (  "A", "M", "V")                => true   // Pending confirmation from comment in sheet!!!
-      case (cyM1 , " ", _  ) if cyM1 != " " => true
-      case (  " ", " ", " ")                => true
-      case (   _ ,  _ ,  _ )                => false
+      case (Annual , Mandated, Voluntary)                    => true   // Pending confirmation from comment in sheet!!!
+      case (  cyM1 , Unknown ,        _ ) if cyM1 != Unknown => true
+      case (Unknown, Unknown , Unknown  )                    => true
+      case (     _ ,       _ ,        _ )                    => false
     }
   }
 
