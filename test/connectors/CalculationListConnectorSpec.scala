@@ -39,6 +39,7 @@ import models.calculationList.{CalculationListErrorModel, CalculationListRespons
 import models.core.Nino
 import play.api.Configuration
 import play.api.http.Status._
+import play.api.libs.json.Json
 import testConstants.BaseTestConstants._
 import testConstants.CalculationListTestConstants
 import testUtils.TestSupport
@@ -58,6 +59,18 @@ class CalculationListConnectorSpec extends TestSupport with MockHttp with MockAu
     val connector = new CalculationListConnector(mockHttpGet, getAppConfig())
   }
 
+  "getLegacyCalculationListUrl" should {
+    "return the correct url" in new Setup {
+      connector.getLegacyCalculationListUrl(testNino, testTaxYear.toString) shouldBe s"http://localhost:9999/income-tax-view-change/list-of-calculation-results/$testNino/$testTaxYear"
+    }
+  }
+
+  "getCalculationListUrl" should {
+    "return the correct url" in new Setup {
+      connector.getCalculationListUrl(testNino, testTaxYear.toString) shouldBe s"http://localhost:9999/income-tax-view-change/calculation-list/$testNino/$testTaxYear"
+    }
+  }
+
   ".getLegacyCalculationList (API 1404)" should {
     "return a valid CalculationListResponseModel" in new Setup {
       val itvc1404Url: String = connector.getLegacyCalculationListUrl(testNino, testTaxYear.toString)
@@ -66,6 +79,16 @@ class CalculationListConnectorSpec extends TestSupport with MockHttp with MockAu
 
       val result: Future[CalculationListResponseModel] = connector.getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
       result.futureValue shouldBe CalculationListTestConstants.calculationListFull
+    }
+    "return an error" when {
+      "json is invalid" in new Setup {
+        val itvc1404Url: String = connector.getLegacyCalculationListUrl(testNino, testTaxYear.toString)
+        val successResponse: HttpResponse = HttpResponse(status = OK, json = Json.obj(), headers = Map.empty)
+        setupMockHttpGet(itvc1404Url)(successResponse)
+
+        val result: Future[CalculationListResponseModel] = connector.getLegacyCalculationList(Nino(testNino), testTaxYear.toString)
+        result.futureValue shouldBe CalculationListErrorModel(500, "Json validation error parsing legacy calculation list response")
+      }
     }
     "return an error" when {
       "receiving a 400-499 response" in new Setup {
@@ -103,6 +126,16 @@ class CalculationListConnectorSpec extends TestSupport with MockHttp with MockAu
 
       val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
       result.futureValue shouldBe CalculationListTestConstants.calculationListFull
+    }
+    "return an error" when {
+      "json is invalid" in new Setup {
+        val itvc1896Url: String = connector.getCalculationListUrl(testNino, testTaxYearRange)
+        val successResponse: HttpResponse = HttpResponse(status = OK, json = Json.obj(), headers = Map.empty)
+        setupMockHttpGet(itvc1896Url)(successResponse)
+
+        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
+        result.futureValue shouldBe CalculationListErrorModel(500, "Json validation error parsing calculation list response")
+      }
     }
     "return an error" when {
       "receiving a 400-499 response" in new Setup {

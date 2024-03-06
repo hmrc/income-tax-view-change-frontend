@@ -34,10 +34,11 @@ class GetAddressLookupDetailsHttpParserSpec extends UnitSpec{
   val testValidJson: JsObject = Json.obj(
     "auditRef" -> "", "address" -> testAddressJson
   )
-  //test
+
   "GetAddressLookupDetailsHttpParserSpec" when {
     "read" should {
-      "return an OK status and parse the json data successfully" in {
+      "parse OK status and valid json data" when {
+        "json is valid" in {
         val httpResponse = HttpResponse(OK, json = testValidJson, headers = Map.empty)
 
         lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
@@ -45,26 +46,34 @@ class GetAddressLookupDetailsHttpParserSpec extends UnitSpec{
           Address(lines = Seq("address line 1", "address line 2", "address line 3"), postcode = Some("SE1 9DG"))
         )))
       }
-      "return an OK status but parse invalid json data as a response" in {
-        val httpResponse = HttpResponse(OK, json = Json.obj(), headers = Map.empty)
 
-        lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
+      "parse OK status and invalid json data" when {
+        "json is invalid" in {
+          val httpResponse = HttpResponse(OK, json = Json.obj(), headers = Map.empty)
 
-        result shouldBe Left(InvalidJson)
+          lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+          result shouldBe Left(InvalidJson)
+        }
       }
-      "return a NOT FOUND status as None" in {
+
+      "parse NOT FOUND status as None" when {
+        "empty json" in {
         val httpResponse = HttpResponse(NOT_FOUND, body = "")
 
         lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
 
         result shouldBe Right(None)
-      }
-      "return UnexpectedGetStatusFailure for any other http status return and not handled above" in {
-        val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, body = "")
+      }}
 
-        lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
+      "return UnexpectedGetStatusFailure" when {
+        "internal server error" in {
+          val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, body = "")
 
-        result shouldBe Left(UnexpectedGetStatusFailure(INTERNAL_SERVER_ERROR))
+          lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
+
+          result shouldBe Left(UnexpectedGetStatusFailure(INTERNAL_SERVER_ERROR))
+        }}
       }
     }
   }
