@@ -37,11 +37,11 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return Tax Year Summary link" in {
         val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), Some(testTaxYear), None, isAgent = false)
-        url shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2018#payments"
+        url shouldBe s"/report-quarterly/income-and-expenses/view/tax-year-summary/$testTaxYear#payments"
       }
       "return Agent Tax Year Summary link" in {
         val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), Some(testTaxYear), None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2018#payments"
+        url shouldBe s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/$testTaxYear#payments"
       }
 
       "return homepage link when no tax year available" in {
@@ -93,11 +93,11 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return Tax Year Summary link" in {
         val url = getChargeSummaryBackUrl(Some(TaxYearSummaryPage), testTaxYear, None, isAgent = false)
-        url shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2018#payments"
+        url shouldBe s"/report-quarterly/income-and-expenses/view/tax-year-summary/$testTaxYear#payments"
       }
       "return Agent Tax Year Summary link" in {
         val url = getChargeSummaryBackUrl(Some(TaxYearSummaryPage), testTaxYear, None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2018#payments"
+        url shouldBe s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/$testTaxYear#payments"
       }
 
       "return What You Owe link" in {
