@@ -157,7 +157,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      handleShowRequest(isAgent = false, origin)
+      println("@@@@@@@@@@@@@@@@")
+      println(
+        s"\n${routes.PaymentHistoryController.showAgent.withFragment("#payments").url}\n"
+      )
+
+    handleShowRequest(isAgent = false, origin)
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
