@@ -24,7 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException, AuthorisedFunctions, ConfidenceLevel}
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -37,15 +37,14 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val authorisedFunctions: AuthorisedFunctions,
                                        val retrieveBtaNavBar: NavBarPredicate,
                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
-                                       val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                       config: FrontendAppConfig)
+                                       val incomeSourceDetailsService: IncomeSourceDetailsService)
                                       (implicit mcc: MessagesControllerComponents,
                                        val appConfig: FrontendAppConfig,
                                        val itvcErrorHandler: AgentItvcErrorHandler,
                                        val ec: ExecutionContext,
                                        val hc: HeaderCarrier) extends ClientConfirmedController with I18nSupport {
 
-  def agentAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]) = {
+  def agentAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     Authenticated.async {
       implicit request =>
         implicit user =>
@@ -55,7 +54,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
     }
   }
 
-  def individualAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]) = {
+  def individualAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate
       andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
       authenticatedCodeBlock(user)
@@ -73,10 +72,10 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
     }
   }
 
-  def authenticatedAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = Action.async {
+  def authenticatedAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     isAgent map {
       case true => agentAction(authenticatedCodeBlock)
-      case false =>individualAction(authenticatedCodeBlock)
+      case false => individualAction(authenticatedCodeBlock)
     }
   }
 
@@ -85,7 +84,6 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
   //      Authenticated.async {
   //        implicit request =>
   //          implicit user =>
-  //            println("AGENT BEEP BEEP " + request.body)
   //            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
   //              authenticatedCodeBlock(mtdItUser)
   //            }
