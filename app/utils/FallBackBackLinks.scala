@@ -22,8 +22,8 @@ import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, W
 trait FallBackBackLinks {
 
   def getPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String], isAgent: Boolean): String =
-    if (isAgent) getIndividualPaymentAllocationBackUrl(gatewayPageOpt, taxYearOpt, origin)
-    else         getAgentPaymentAllocationBackUrl(gatewayPageOpt, taxYearOpt)
+    if (isAgent) getAgentPaymentAllocationBackUrl(gatewayPageOpt, taxYearOpt)
+    else         getIndividualPaymentAllocationBackUrl(gatewayPageOpt, taxYearOpt, origin)
 
   def getIndividualPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String]): String =
     (gatewayPageOpt, taxYearOpt) match {
