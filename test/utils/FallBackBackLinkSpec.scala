@@ -59,7 +59,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent What You Owe link" in {
         val url = getPaymentAllocationBackUrl(Some(WhatYouOwePage), None, None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
       }
 
       "return homepage link if NoMatchPage" in {
@@ -106,7 +106,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent What You Owe link" in {
         val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), testTaxYear, None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-you-owe"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
       }
 
       "return homepage link if NoMatchPage" in {
