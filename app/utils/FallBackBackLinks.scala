@@ -16,32 +16,32 @@
 
 package utils
 
-import controllers.routes
+import controllers.routes.{TaxYearSummaryController, PaymentHistoryController, WhatYouOweController, HomeController}
 import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 
 trait FallBackBackLinks {
 
   def getPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String], isAgent: Boolean): String =
     ((gatewayPageOpt, taxYearOpt, isAgent) match {
-      case (Some(TaxYearSummaryPage), Some(taxYear), true) => routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
-      case (Some(TaxYearSummaryPage), Some(taxYear),    _) => routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
-      case (Some(PaymentHistoryPage), _,             true) => routes.PaymentHistoryController.showAgent
-      case (Some(PaymentHistoryPage), _,                _) => routes.PaymentHistoryController.show(origin)
-      case (Some(WhatYouOwePage),     _,             true) => routes.WhatYouOweController.showAgent
-      case (Some(WhatYouOwePage),     _,                _) => routes.WhatYouOweController.show(origin)
-      case (_,                        _,             true) => routes.HomeController.showAgent
-      case (_,                        _,                _) => routes.HomeController.show(origin)
+      case (Some(TaxYearSummaryPage), Some(taxYear), true) => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
+      case (Some(TaxYearSummaryPage), Some(taxYear),    _) => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
+      case (Some(PaymentHistoryPage), _,             true) => PaymentHistoryController.showAgent
+      case (Some(PaymentHistoryPage), _,                _) => PaymentHistoryController.show(origin)
+      case (Some(WhatYouOwePage),     _,             true) => WhatYouOweController.showAgent
+      case (Some(WhatYouOwePage),     _,                _) => WhatYouOweController.show(origin)
+      case (_,                        _,             true) => HomeController.showAgent
+      case (_,                        _,                _) => HomeController.show(origin)
     }).path
 
   def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String =
     ((gatewayPageOpt, isAgent) match {
-      case (Some(TaxYearSummaryPage), true) => routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
-      case (Some(TaxYearSummaryPage),    _) => routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
-      case (Some(PaymentHistoryPage), true) => routes.PaymentHistoryController.showAgent
-      case (Some(PaymentHistoryPage),    _) => routes.PaymentHistoryController.show(origin)
-      case (Some(WhatYouOwePage),     true) => routes.WhatYouOweController.showAgent
-      case (Some(WhatYouOwePage),        _) => routes.WhatYouOweController.show(origin)
-      case (_,                        true) => routes.HomeController.showAgent
-      case (_,                           _) => routes.HomeController.show(origin)
+      case (Some(TaxYearSummaryPage), true) => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
+      case (Some(TaxYearSummaryPage),    _) => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
+      case (Some(PaymentHistoryPage), true) => PaymentHistoryController.showAgent
+      case (Some(PaymentHistoryPage),    _) => PaymentHistoryController.show(origin)
+      case (Some(WhatYouOwePage),     true) => WhatYouOweController.showAgent
+      case (Some(WhatYouOwePage),        _) => WhatYouOweController.show(origin)
+      case (_,                        true) => HomeController.showAgent
+      case (_,                           _) => HomeController.show(origin)
     }).path
 }
