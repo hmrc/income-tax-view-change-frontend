@@ -54,5 +54,4 @@ trait FallBackBackLinks {
       case (_,                        true) => routes.HomeController.showAgent.url
       case (_,                           _) => routes.HomeController.show(origin).url
     }
-
 }
