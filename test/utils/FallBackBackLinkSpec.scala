@@ -52,7 +52,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent homepage link when no tax year available" in {
         val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), None, None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
       }
 
       "return What You Owe link" in {
@@ -70,7 +70,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent homepage link if NoMatchPage" in {
         val url = getPaymentAllocationBackUrl(Some(NoMatch), None, None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
       }
 
       "return homepage link if no gateway page found" in {
@@ -79,7 +79,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent homepage link if no gateway page found" in {
         val url = getPaymentAllocationBackUrl(None, None, None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view/agents"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
       }
     }
 
@@ -117,7 +117,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent homepage link if NoMatchPage" in {
         val url = getChargeSummaryBackUrl(Some(NoMatch), testTaxYear, None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
       }
 
       "return homepage link if no page found" in {
@@ -126,7 +126,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent homepage link if no page found" in {
         val url = getChargeSummaryBackUrl(None, testTaxYear, None, isAgent = true)
-        url shouldBe "/report-quarterly/income-and-expenses/view"
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
       }
     }
   }
