@@ -31,7 +31,7 @@ trait FallBackBackLinks {
       case (Some(WhatYouOwePage),     _,                _) => routes.WhatYouOweController.show(origin)
       case (_,                        _,             true) => routes.HomeController.showAgent
       case (_,                        _,                _) => routes.HomeController.show(origin)
-    }).path()
+    }).path
 
   def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String =
     ((gatewayPageOpt, isAgent) match {
@@ -43,5 +43,5 @@ trait FallBackBackLinks {
       case (Some(WhatYouOwePage),        _) => routes.WhatYouOweController.show(origin)
       case (_,                        true) => routes.HomeController.showAgent
       case (_,                           _) => routes.HomeController.show(origin)
-    }).path()
+    }).path
 }
