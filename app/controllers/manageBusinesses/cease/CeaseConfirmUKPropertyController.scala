@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.incomeSources
+package controllers.manageBusinesses.cease
 
 import auth.FrontendAuthorisedFunctions
 import config.featureswitch.FeatureSwitching
@@ -30,10 +30,10 @@ import scala.concurrent.ExecutionContext
 
 
 //THIS CONTROLLER IS A PLACEHOLDER FOR THE PAGE TO BE BUILT IN MISUV-7077 (new income sources landing page)
-class NewIncomeSourcesHomePageController @Inject()(auth: AuthenticatorPredicate,
-                                             val authorisedFunctions: FrontendAuthorisedFunctions,
-                                             val checkSessionTimeout: SessionTimeoutPredicate)
-                                            (implicit val appConfig: FrontendAppConfig,
+class CeaseConfirmUKPropertyController @Inject()(auth: AuthenticatorPredicate,
+                                                 val authorisedFunctions: FrontendAuthorisedFunctions,
+                                                 val checkSessionTimeout: SessionTimeoutPredicate)
+                                                (implicit val appConfig: FrontendAppConfig,
                                              mcc: MessagesControllerComponents,
                                              val ec: ExecutionContext,
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)

@@ -736,8 +736,8 @@ credits.table.status-fully-allocated                                    = Wedi e
 credits.table.status-not-yet-allocated                                  = Heb ei ddyrannu eto
 credits.table.status-partially-allocated                                = Wedi ei ddyrannu’n rhannol
 credits.drop-down-list.name                                             = Beth yw’r mathau o gredyd?
-credits.drop-down-list.balancing-charge-credit                          = Credyd tâl mantoli
-credits.drop-down-list.balancing-charge-credit.value                    = Caiff credyd ei wneud pan fydd swm y dreth y mae angen i chi ei dalu yn llai na’r taliadau ar gyfrif yr ydych eisoes wedi’u gwneud.
+credits.drop-down-list.balancing-charge-credit                          = Credyd o ordaliad treth
+credits.drop-down-list.balancing-charge-credit.value                    = Mae’r credyd hwn wedi’i greu gan eich bod chi wedi talu gormod o dreth mewn blwyddyn dreth.
 credits.drop-down-list.credit-from-hmrc-adjustment                      = Credyd o ganlyniad i addasiad gan CThEF
 credits.drop-down-list.credit-from-hmrc-adjustment.value                = Mae’r credyd hwn wedi’i greu o ganlyniad i ryddhad a roddwyd ar waith gan CThEF.
 credits.drop-down-list.credit-from-an-earlier-tax-year                  = Credyd o flwyddyn dreth gynharach
@@ -1131,49 +1131,56 @@ inYear-tax-overview.agent.heading                                = Trosolwg o dr
 inYear-tax-overview.agent.inset                                  = Mae’r cyfrifiad hwn yn seiliedig ar ddiweddariadau gorffenedig eich cleient ar gyfer y flwyddyn dreth hon hyd at {0} yn unig. Nid dyma ei fil treth terfynol ar gyfer y flwyddyn. Cyfrifiad o’r flwyddyn hyd yma yw hwn ar sail yr wybodaeth sydd wedi cael ei nodi hyd yma.
 
 ## credits and refunds
-credit-and-refund.subHeading.has-credits-1                        = Mae cyfanswm o
-credit-and-refund.subHeading.has-credits-2                        = yn eich cyfrif:
-credit-and-refund.subHeading.has-credits-3                        = yn eich cyfrif.
+
+credit-and-refund.heading                                         = Hawlio ad-daliad
+
+credit-and-refund.available-to-claim                              = Mae {0} ar gael i’w hawlio
+
 credit-and-refund.subHeading.has-no-credits-1                     = Cafwyd cais am ad-daliad o
 credit-and-refund.subHeading.has-no-credits-2                     = ac mae ar y gweill.
-credit-and-refund.agent.subHeading.has-credits-2                  = yng nghyfrif eich cleient:
-credit-and-refund.agent.subHeading.has-credits-3                  = yng nghyfrif eich cleient.
-credit-and-refund.subHeading.unallocated-credits-one-payment-1    = Mae cyfanswm o
-credit-and-refund.subHeading.unallocated-credits-one-payment-2    = yn eich cyfrif yn sgil taliad a wnaed ar
-credit-and-refund.agent.unallocated-credits-one-payment-2         = yng nghyfrif eich cleient yn sgil taliad a wnaed ar
-credit-and-refund.subHeading.unallocated-credits-single-credit-1  = Mae cyfanswm o
-credit-and-refund.subHeading.unallocated-credits-single-credit-2  = yn eich cyfrif yn sgil
-credit-and-refund.agent.unallocated-credits-single-credit-2       = yng nghyfrif eich cleient yn sgil
-credit-and-refund.heading                                         = Hawlio ad-daliad
-credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
-credit-and-refund.bullet-text-intro                               = Yr hyn y gallwch ei wneud
-credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
-credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
+
+credit-and-refund.upcoming-allocated-credit-1                     = Mae CThEF wedi cadw {0} o’r swm hwn i dalu’ch bil treth sydd i ddod.
+credit-and-refund.upcoming-allocated-credit-1-all                 = Mae CThEF wedi cadw’r cyfanswm o {0} i dalu’ch bil treth sydd i ddod.
+credit-and-refund.upcoming-allocated-credit-2                     = Gwiriwch yr hyn sydd arnoch
+credit-and-refund.upcoming-allocated-credit-3                     = i gael rhagor o wybodaeth.
+
+
 credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
 credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
+
+credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
+
+credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
+
+credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
+credit-and-refund.check-refund-btn                                = Gwirio statws ad-daliad
+
 credit-and-refund.credit-from-hmrc-title-prt-1                    = yn sgil
 credit-and-refund.credit-from-hmrc-title-prt-2                    = credyd o ganlyniad i addasiad gan CThEF
-credit-and-refund.bullet-one-prt-1                                = Os gadewch  yr arian hwn yn eich cyfrif, caiff ei ddefnyddio i dalu’r
-credit-and-refund.agent.bullet-one-prt-1                          = Os gadewch yr arian hwn yng nghyfrif eich cleient, caiff ei ddefnyddio i dalu’r
-credit-and-refund.bullet-one-link                                 = hyn sydd arnoch
-credit-and-refund.agent.bullet-one-link                           = hyn sydd arno
-credit-and-refund.bullet-one-prt-2                                = yn awtomatig ac mewn pryd.
-credit-and-refund.bullet-two-prt-1                                = Mae gennych yr opsiwn i hawlio hyd at
-credit-and-refund.bullet-two-prt-2                                = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi’i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i chi wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
-credit-and-refund.agent.bullet-two-prt-2                          = yn ôl. Os byddwch yn hawlio arian yn ôl sydd wedi’i neilltuo ar gyfer taliadau sydd i ddod, bydd angen i’ch cleient wneud y taliadau hynny erbyn y dyddiad cau i osgoi costau ychwanegol.
-credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
-credit-and-refund.agent.no-credit                                 = Nid oes gan eich cleient arian yn ei gyfrif.
-credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 
 credit-and-refund.subHeading-source                               = O ble ddaeth yr arian hwn?
+
+credit-and-refund.how-much-can-i-claim                            = Faint alla i hawlio’n ôl?
+
+credit-and-refund.the-most-you-can-claim                          = Y swm mwyaf y gallwch ei hawlio’n ôl yw {0}.
+credit-and-refund.does-not-include-refunds                        = Nid yw’r swm hwn yn cynnwys unrhyw ad-daliadau a allai fod eisoes ar y gweill.
+credit-and-refund.if-you-claim-back-more                          = Os byddwch yn hawlio mwy na {0} yn ôl, bydd angen i chi wneud taliad arall i CThEF er mwyn talu’ch bil treth sydd i ddod.
+credit-and-refund.if-you-claim-back-any                           = Os byddwch yn hawlio unrhyw swm o’r arian hwn, bydd angen i chi ei dalu’n ôl i CThEF er mwyn talu’ch bil treth sydd i ddod.
+credit-and-refund.cover-future-bill                               = Gall yr arian na fyddwch yn ei hawlio’n ôl gael ei ddefnyddio’n awtomatig gan CThEF i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
+
 credit-and-refund.credit-from-balancing-charge-prt-1              = o ordaliad treth -
 credit-and-refund.credit-from-balancing-charge-prt-2              =
 credit-and-refund.tax-year                                        = blwyddyn dreth {0} i {1}
+
 credit-and-refund.credit-from-adjustment-prt-1                    =
 credit-and-refund.credit-from-adjustment-prt-2                    = o ganlyniad i addasiad gan CThEF –
+
+credit-and-refund.credit-from-earlier-tax-year                    = credyd o flwyddyn dreth gynharach
 credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
+
 credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
 credit-and-refund.credit                                          = Credyd o
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
@@ -1244,13 +1251,23 @@ view-income-sources.unknown-field            = Anhysbys
 # add Business page
 add-business-name.heading                                         = Beth yw enw’ch busnes?
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
-add-business-name.p2                                              = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, ’, \, /, - yn unig.
+add-business-name.p2                                              = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, {0}, \, /, - yn unig.
 add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
 add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
 add-business-name.form.error.invalidName                          = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Add business trade page
+add-trade.heading                               = Beth yw masnach eich busnes?
+add-trade.title                                 = Unig fasnachwr
+add-trade.trade-info-1                          = Masnach eich busnes yw’r nwyddau neu’r gwasanaethau mae eich busnes yn eu darparu.
+add-trade.trade-info-2                          = Er enghraifft: plymio, gwaith trydanol, ymgynghori, gwaith ffotograffiaeth, hyfforddiant personol, trin gwallt.
+add-trade.form.error.empty                      = Nodwch fasnach eich busnes
+add-trade.form.error.short                      = Mae’n rhaid i’r fasnach fod yn 2 o gymeriadau neu fwy
+add-trade.form.error.long                       = Mae’n rhaid i’r fasnach fod yn 35 o gymeriadau neu lai
+add-trade.form.error.invalid                    = Ni all y fasnach gynnwys !, “”,* neu ?
+add-trade.form.error.same-name                  = Ni all enw’r busnes a’r enw masnachu fod yr un peth
+
 add-business-trade.heading                  = Beth yw masnach eich busnes?
 add-business-trade.p1                       = Er enghraifft: plymio, gwaith trydanol, ymgynghori.
 add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
@@ -1287,11 +1304,11 @@ notmigrated.user.link_title                                     = cyfrif Hunanas
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 
 incomeSources.add.UKPropertyStartDate.heading                   = Pryd y dechreuodd eich busnes eiddo yn y DU?
-incomeSources.add.UKPropertyStartDate.hint                      = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo yn y DU ar osod yn y lle cyntaf.
-incomeSources.add.UKPropertyStartDate.hint2                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
-incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.hint                      = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+incomeSources.add.UKPropertyStartDate.hint2                     = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo yn y DU hwn, megis rhoi unrhyw eiddo neu dir ar osod.
+incomeSources.add.UKPropertyStartDate.error.required            = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
 incomeSources.add.UKPropertyStartDate.error.future              = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod cyn {0}
-incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo yn y DU fod yn ddyddiad go iawn
+incomeSources.add.UKPropertyStartDate.error.invalid             = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 add-uk-property-start-date-check.error                          = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo yn y DU yn gywir
 
 #Generic date form messages
@@ -1334,8 +1351,8 @@ incomeSources.cease.endDate.foreignProperty.heading                      = Y dyd
 incomeSources.cease.endDate.foreignProperty.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
 
 incomeSources.add.foreignProperty.startDate.heading                  = Pryd y dechreuodd eich busnes eiddo tramor?
-incomeSources.add.foreignProperty.startDate.hint                     = Dyma’r dyddiad y dechreuodd y gweithgarwch o roi unrhyw eiddo tramor ar osod yn y lle cyntaf.
-incomeSources.add.foreignProperty.startDate.hint2                    = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+incomeSources.add.foreignProperty.startDate.hint                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+incomeSources.add.foreignProperty.startDate.hint2                    = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo tramor hwn, megis rhoi unrhyw eiddo neu dir ar osod.
 incomeSources.add.foreignProperty.startDate.hintExample              = Er enghraifft, 27 3 2020
 incomeSources.add.foreignProperty.startDate.error.empty              = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor fasnachu
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = Mae’n rhaid i’r dyddiad gynnwys mis a blwyddyn
@@ -1344,7 +1361,8 @@ incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = Mae’n r
 incomeSources.add.foreignProperty.startDate.error.missingYear        = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
 incomeSources.add.foreignProperty.startDate.error.missingMonth       = Mae’n rhaid i’r dyddiad gynnwys mis
 incomeSources.add.foreignProperty.startDate.error.missingDay         = Mae’n rhaid i’r dyddiad gynnwys diwrnod
-incomeSources.add.foreignProperty.startDate.error.required           = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod yn ddyddiad go iawn
+incomeSources.add.foreignProperty.startDate.error.invalid            = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
+incomeSources.add.foreignProperty.startDate.error.required           = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor
 incomeSources.add.foreignProperty.startDate.error.future             = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = A yw’r dyddiad hwn yn gywir?
 add-foreign-property-start-date-check.error                          = Dewiswch ‘Iawn’ os yw dyddiad dechrau’r busnes eiddo tramor yn gywir
@@ -1371,15 +1389,15 @@ incomeSources.ceaseUKProperty.checkDetails.change                = Newid
 
 # add Business start date
 add-business-start-date.heading                      = Pryd y dechreuodd eich busnes fasnachu?
-add-business-start-date.hint                         = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw’n briodol.
-add-business-start-date.hint2                        = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+add-business-start-date.hint                         = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
+add-business-start-date.hint2                        = Byddwn yn defnyddio hwn i gyfrifo eich ffi Yswiriant Gwladol Dosbarth 2, os yw’n briodol.
 add-business-start-date.day                          = Diwrnod
 add-business-start-date.month                        = Mis
 add-business-start-date.year                         = Blwyddyn
 add-business-start-date.form.error.emptyDateField    = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
 add-business-start-date.error.future                 = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes eiddo tramor fod cyn {0}
 add-business-start-date.error.required               = Nodwch y dyddiad y dechreuodd eich busnes fasnachu
-add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad y dechreuodd eich busnes fasnachu fod yn ddyddiad go iawn
+add-business-start-date.error.invalid                = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 
 # add business accounting method
 incomeSources.add.SE.AccountingMethod.heading                 = Pa ddull cyfrifyddu yr ydych yn ei ddefnyddio ar gyfer eich busnes unig fasnachwr?
@@ -1417,6 +1435,34 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Newid
 
 
 # check business details
+check-details.title                                     = Gwirio’ch atebion
+check-details.heading                                   = Unig fasnachwr
+check-details.business-name                             = Enw’r busnes
+check-details.start-date                                = Dyddiad dechrau masnachu
+check-details.trade                                     = Math o fasnach
+check-details.address                                   = Cyfeiriad
+check-details.accounting-method                         = Dull cyfrifydd
+check-details.cash-accounting                           = Cyfrifyddu ar sail arian parod
+check-details.traditional-accounting                    = Cyfrifyddu traddodiadol
+check-details.change                                    = Newid
+
+check-details-uk.title                                  = Gwirio’ch atebion
+check-details-uk.heading                                = Eiddo yn y DU
+check-details-uk.start-date                             = Dyddiad dechrau
+check-details-uk.accounting-method                      = Dull cyfrifyddu
+check-details-uk.cash-accounting                        = Cyfrifyddu ar sail arian parod
+check-details-uk.traditional-accounting                 = Cyfrifyddu traddodiadol
+check-details-uk.change                                 = Newid
+
+check-details-fp.title                                  = Gwirio’ch atebion
+check-details-fp.heading                                = Eiddo tramor
+check-details-fp.start-date                             = Dyddiad dechrau
+check-details-fp.accounting-method                      = Dull cyfrifyddu
+check-details-fp.cash-accounting                        = Cyfrifyddu ar sail arian parod
+check-details-fp.traditional-accounting                 = Cyfrifyddu traddodiadol
+check-details-fp.change                                 = Newid
+
+
 check-business-details.title                            = Gwirio’ch manylion
 check-business-details.heading                          = Y busnes unig fasnachwr a nodwyd gennych
 check-business-details.business-name                    = Enw’r busnes

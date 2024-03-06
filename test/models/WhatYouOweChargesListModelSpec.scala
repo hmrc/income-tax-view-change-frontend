@@ -34,7 +34,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
   val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusMonths(13))
 
   def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates()
       ++ financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates()
       ++ financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates(),
@@ -42,7 +42,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers {
   )
 
   def whatYouOweFinancialDataWithoutOutstandingCharges(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsDueIn30Days(dunningLock).getAllDocumentDetailsWithDueDates()
       ++ financialDetailsDueInMoreThan30Days(dunningLock).getAllDocumentDetailsWithDueDates()
       ++ financialDetailsOverdueData(dunningLock).getAllDocumentDetailsWithDueDates()

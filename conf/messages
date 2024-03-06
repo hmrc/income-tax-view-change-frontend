@@ -638,8 +638,8 @@ credits.table.status-fully-allocated                                    = Fully 
 credits.table.status-not-yet-allocated                                  = Not yet allocated
 credits.table.status-partially-allocated                                = Partially allocated
 credits.drop-down-list.name                                             = What are the credit types?
-credits.drop-down-list.balancing-charge-credit                          = Balancing charge credit
-credits.drop-down-list.balancing-charge-credit.value                    = A credit is made when the amount of tax you need to pay is less than the payments you have already made on account.
+credits.drop-down-list.balancing-charge-credit                          = Credit from overpaid tax
+credits.drop-down-list.balancing-charge-credit.value                    = This credit has been created as a result of you paying too much tax for a given tax year.
 credits.drop-down-list.credit-from-hmrc-adjustment                      = Credit from HMRC adjustment
 credits.drop-down-list.credit-from-hmrc-adjustment.value                = This credit has been created as a result of a relief applied by HMRC.
 credits.drop-down-list.credit-from-an-earlier-tax-year                  = Credit from an earlier tax year
@@ -1115,37 +1115,31 @@ inYear-tax-overview.agent.inset                                  = This calculat
 
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
-credit-and-refund.subHeading.has-credits-1                        = There is a total of
-credit-and-refund.subHeading.has-credits-2                        = in your account:
-credit-and-refund.subHeading.has-credits-3                        = in your account.
-credit-and-refund.agent.subHeading.has-credits-2                  = in your client’s account:
-credit-and-refund.agent.subHeading.has-credits-3                  = in your client’s account.
-credit-and-refund.subHeading.unallocated-credits-one-payment-1    = There is a total of
-credit-and-refund.subHeading.unallocated-credits-one-payment-2    = in your account from a payment made on
-credit-and-refund.agent.unallocated-credits-one-payment-2         = in your client’s account from a payment made on
-credit-and-refund.subHeading.unallocated-credits-single-credit-1  = There is a total of
-credit-and-refund.subHeading.unallocated-credits-single-credit-2  = in your account from a
-credit-and-refund.agent.unallocated-credits-single-credit-2       = in your client’s account from a
+
+credit-and-refund.available-to-claim                              = {0} available to claim
+
 credit-and-refund.subHeading.has-no-credits                       = has been requested as a refund and is in progress.
-credit-and-refund.bullet-text-intro                               = What you can do
-credit-and-refund.bullet-one-prt-1                                = If you leave this money in your account it will be used to automatically pay
-credit-and-refund.agent.bullet-one-prt-1                          = If you leave this money in your client’s account it will be used to automatically pay
-credit-and-refund.bullet-one-link                                 = what you owe
-credit-and-refund.agent.bullet-one-link                           = what they owe
-credit-and-refund.bullet-one-prt-2                                = on time.
-credit-and-refund.bullet-two-prt-1                                = You have the option to claim up to
-credit-and-refund.bullet-two-prt-2                                = back. If you claim back money allocated towards upcoming payments, you’ll need to make those payments by the deadline to avoid extra charges.
-credit-and-refund.agent.bullet-two-prt-2                          = back. If you claim back money allocated towards upcoming payments, your client will need to make those payments by the deadline to avoid extra charges.
+
+credit-and-refund.upcoming-allocated-credit-1                     = HMRC has reserved {0} of this to cover your upcoming tax bill.
+credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has reserved all {0} to cover your upcoming tax bill.
+credit-and-refund.upcoming-allocated-credit-2                     = Check what you owe
+credit-and-refund.upcoming-allocated-credit-3                     = for further information.
+
 credit-and-refund.refundProgress-prt-1                            =
 credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
 credit-and-refund.payment                                         = from a payment made on
 credit-and-refund.no-credit                                       = You have no money in your account.
-credit-and-refund.agent.no-credit                                 = Your client has no money in their account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
 credit-and-refund.credit-from-hmrc-title                          = credit from HMRC adjustment
 
 credit-and-refund.subHeading-source                               = Where has this money come from?
+credit-and-refund.how-much-can-i-claim                            = How much can I claim back?
+credit-and-refund.the-most-you-can-claim                          = The most you can claim back is {0}.
+credit-and-refund.does-not-include-refunds                        = This amount does not include any refunds that may already be in progress.
+credit-and-refund.if-you-claim-back-more                          = If you claim back more than {0}, you will need to make another payment to HMRC to settle your upcoming tax bill.
+credit-and-refund.if-you-claim-back-any                           = If you claim any of this money, you will need to pay it back to HMRC to settle your upcoming tax bill.
+credit-and-refund.cover-future-bill                               = Money that you do not claim back can be used automatically by HMRC to cover your future tax bills when they become due.
 credit-and-refund.credit-from-balancing-charge-prt-1              = credit from overpaid tax -
 credit-and-refund.credit-from-balancing-charge-prt-2              =
 credit-and-refund.tax-year                                        = {0} to {1} tax year
@@ -1225,16 +1219,18 @@ view-income-sources.table-head.date-ended    = Date ended
 view-income-sources.choose                   = Choose
 view-income-sources.unknown-field            = Unknown
 
-
-# add Business page
-add-business-name.heading                                         = What is the name of your business?
-add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
-add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, ’, \, /, -.
-add-business-name.form.error.required                             = Enter your name or the name of your business
-add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
-add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
-
 ## Add business trade page
+add-trade.heading                               = What is the trade of your business?
+add-trade.title                                 = Sole trader
+add-trade.trade-info-1                          = The trade of your business is the goods or services that your business provides.
+add-trade.trade-info-2                          = For example: plumbing, electrical work, consulting, hairdressing, personal training, photography work.
+add-trade.form.error.empty                      = Enter the trade of your business
+add-trade.form.error.short                      = Trade must be 2 characters or more
+add-trade.form.error.long                       = Trade must be 35 characters or fewer
+add-trade.form.error.invalid                    = Trade cannot include !, "", * or ?
+add-trade.form.error.same-name                  = Trade and business name cannot be the same
+
+
 add-business-trade.heading                  = What is the trade of your business?
 add-business-trade.p1                       = For example: plumbing, electrical work, consulting.
 add-business-trade.form.error.empty         = Enter the trade of your business
@@ -1292,11 +1288,11 @@ notmigrated.user.link_title                                     = Self Assessmen
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 
 incomeSources.add.UKPropertyStartDate.heading                   = When did your UK property business start?
-incomeSources.add.UKPropertyStartDate.hint                      = This is the date that letting or renting out any UK property first started.
-incomeSources.add.UKPropertyStartDate.hint2                     = The date your business started trading can be today, in the past or up to 7 days in the future.
-incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started trading
+incomeSources.add.UKPropertyStartDate.hint                      = The date your business started trading can be today, in the past or up to 7 days in the future.
+incomeSources.add.UKPropertyStartDate.hint2                     = This is the date you first received rental income from this UK property business, such as letting or renting out a property or land.
+incomeSources.add.UKPropertyStartDate.error.required            = Enter the date your UK property business started
 incomeSources.add.UKPropertyStartDate.error.future              = The date your UK property business started must be before {0}
-incomeSources.add.UKPropertyStartDate.error.invalid             = The date your UK property business started must be a real date
+incomeSources.add.UKPropertyStartDate.error.invalid             = The date must be a real date
 add-uk-property-start-date-check.error                          = Select yes if your UK property business start date is correct
 
 #Generic date form messages
@@ -1339,17 +1335,17 @@ incomeSources.cease.endDate.foreignProperty.heading                      = Date 
 incomeSources.cease.endDate.foreignProperty.error.invalid                = The date your foreign property business stopped must be a real date
 
 incomeSources.add.foreignProperty.startDate.heading                  = When did your foreign property business start?
-incomeSources.add.foreignProperty.startDate.hint                     = This is the date that letting or renting out any foreign property first started.
-incomeSources.add.foreignProperty.startDate.hint2                     = The date your business started trading can be today, in the past or up to 7 days in the future.
+incomeSources.add.foreignProperty.startDate.hint                     = The date your business started trading can be today, in the past or up to 7 days in the future.
+incomeSources.add.foreignProperty.startDate.hint2                    = This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land.
 incomeSources.add.foreignProperty.startDate.hintExample              = For example, 27 3 2020
-incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started trading
+incomeSources.add.foreignProperty.startDate.error.required           = Enter the date your foreign property business started
 incomeSources.add.foreignProperty.startDate.error.missingMonthYear   = The date must include a month and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayYear     = The date must include a day and a year
 incomeSources.add.foreignProperty.startDate.error.missingDayMonth    = The date must include a day and a month
 incomeSources.add.foreignProperty.startDate.error.missingYear        = The date must include a year
 incomeSources.add.foreignProperty.startDate.error.missingMonth       = The date must include a month
 incomeSources.add.foreignProperty.startDate.error.missingDay         = The date must include a day
-incomeSources.add.foreignProperty.startDate.error.invalid            = The date your foreign property business started must be a real date
+incomeSources.add.foreignProperty.startDate.error.invalid            = The date must be a real date
 incomeSources.add.foreignProperty.startDate.error.future             = The date your foreign property business started must be before {0}
 incomeSources.add.foreignProperty.startDate.check.heading            = Is this date correct?
 add-foreign-property-start-date-check.error                          = Select yes if your foreign property business start date is correct
@@ -1378,7 +1374,7 @@ incomeSources.ceaseUKProperty.checkDetails.change                = Change
 # add Business page
 add-business-name.heading                                         = What is the name of your business?
 add-business-name.p1                                              = This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name.
-add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, ’, \, /, -.
+add-business-name.p2                                              = The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, {0}, \, /, -.
 add-business-name.form.error.required                             = Enter your name or the name of your business
 add-business-name.form.error.maxLength                            = Business name must be 105 characters or fewer
 add-business-name.form.error.invalidNameFormat                    = Business name cannot include !, "", * or ?
@@ -1401,14 +1397,14 @@ add-business-address.edit.heading           = Enter your business address
 
 # add Business start date
 add-business-start-date.heading                      = When did your business start trading?
-add-business-start-date.hint                         = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
-add-business-start-date.hint2                        = The date your business started trading can be today, in the past or up to 7 days in the future.
+add-business-start-date.hint                         = The date your business started trading can be today, in the past or up to 7 days in the future.
+add-business-start-date.hint2                        = This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate.
 add-business-start-date.day                          = Day
 add-business-start-date.form.month                   = Month
 add-business-start-date.form.year                    = Year
 add-business-start-date.error.future                 = The date your business started trading must be before {0}
 add-business-start-date.error.required               = Enter the date your business started trading
-add-business-start-date.error.invalid                = The date your business started trading must be a real date
+add-business-start-date.error.invalid                = The date must be a real date
 
 # add Business start date check
 add-business-start-date-check.heading                 = Is this date correct?
@@ -1449,6 +1445,29 @@ incomeSources.ceaseForeignProperty.checkDetails.change                = Change
 
 
 # check business details
+check-details.title                                     = Check your answers
+check-details.heading                                   = Sole trader
+check-details.business-name                             = Business name
+check-details.start-date                                = Trading start date
+check-details.trade                                     = Type of trade
+check-details.address                                   = Address
+check-details.accounting-method                         = Accounting method
+check-details.cash-accounting                           = Cash basis accounting
+check-details.traditional-accounting                    = Traditional accounting
+check-details.change                                    = Change
+
+check-details-uk.title                                  = Check your answers
+check-details-uk.heading                                = UK property
+check-details-uk.start-date                             = Start date
+check-details-uk.accounting-method                      = Accounting method
+check-details-uk.change                                 = Change
+
+check-details-fp.title                                  = Check your answers
+check-details-fp.heading                                = Foreign property
+check-details-fp.start-date                             = Start date
+check-details-fp.accounting-method                      = Accounting method
+check-details-fp.change                                 = Change
+
 check-business-details.title                            = Check your details
 check-business-details.heading                          = Sole trader business you entered
 check-business-details.business-name                    = Business name
@@ -1701,7 +1720,7 @@ manage.your.businesses.property-desc                                     = If yo
 manage.your.businesses.unknown-field                                     = Unknown
 manage.your.businesses.ceasedBusinesses.heading                          = Businesses that have ceased
 manage.your.businesses.ceasedBusinesses.single                           = 1 business has ceased.
-manage.your.businesses.ceasedBusinesses.multiple                         = {0} Businesses have ceased.
+manage.your.businesses.ceasedBusinesses.multiple                         = {0} businesses have ceased.
 manage.your.businesses.ceasedBusinesses.viewall                          = View all ceased businesses
 manage.your.businesses.view.manage                                       = View and manage
 manage.your.businesses.cease                                             = Cease

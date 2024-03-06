@@ -50,9 +50,9 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
 
   private def getBackUrl(isAgent: Boolean, isChange: Boolean): String = {
     ((isAgent, isChange) match {
-      case (false, false) => routes.AddIncomeSourceController.show()
+      case (false, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(false)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, false) => routes.AddIncomeSourceController.showAgent()
+      case (_, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show(true)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
@@ -101,7 +101,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
       val submitAction: Call = getPostAction(isAgent, isChange)
 
       Future.successful {
-        Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl, useFallbackLink = true))
+        Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl))
       }
     }
   }.recover {
@@ -143,8 +143,7 @@ class AddBusinessNameController @Inject()(val authorisedFunctions: AuthorisedFun
             BadRequest(addBusinessView(formWithErrors,
               isAgent,
               getPostAction(isAgent, isChange),
-              getBackUrl(isAgent, isChange),
-              useFallbackLink = true))
+              getBackUrl(isAgent, isChange)))
           },
         formData => {
           sessionService.setMongoData(

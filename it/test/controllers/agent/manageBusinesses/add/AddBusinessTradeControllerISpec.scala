@@ -41,8 +41,8 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
   val incomeSourcesUrl: String = controllers.routes.HomeController.showAgent.url
   val checkDetailsUrl: String = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
 
-  val pageTitleMsgKey: String = messagesAPI("add-business-trade.heading")
-  val pageHint: String = messagesAPI("add-business-trade.p1")
+  val pageTitleMsgKey: String = messagesAPI("add-trade.heading")
+  val pageHint: String = messagesAPI("add-trade.trade-info-1") + " " + messagesAPI("add-trade.trade-info-2")
   val button: String = messagesAPI("base.continue")
   val testBusinessName: String = "Test Business Name"
   val testBusinessTrade: String = "Test Business Trade"
@@ -113,7 +113,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
 
         And("Mongo storage is successfully set")
         When(s"I call POST ${addBusinessTradeSubmitUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/business-trade", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/business-trade", clientDetailsWithConfirmation)(formData)
 
         sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
@@ -137,7 +137,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         )
       }
 
-      val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/business-trade", clientDetailsWithConfirmation)(formData)
+      val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/business-trade", clientDetailsWithConfirmation)(formData)
 
       result should have(
         httpStatus(BAD_REQUEST),
@@ -211,7 +211,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
 
         And("Mongo storage is successfully set")
         When(s"I call POST ${changeBusinessTradeUrl}")
-        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/change-business-trade", clientDetailsWithConfirmation)(formData)
+        val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/change-business-trade", clientDetailsWithConfirmation)(formData)
 
         sessionService.getMongoKeyTyped[String](businessTradeField, JourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
@@ -235,7 +235,7 @@ class AddBusinessTradeControllerISpec extends ComponentSpecBase {
         )
       }
 
-      val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add/change-business-trade", clientDetailsWithConfirmation)(formData)
+      val result = IncomeTaxViewChangeFrontend.post("/manage-your-businesses/add-sole-trader/change-business-trade", clientDetailsWithConfirmation)(formData)
 
       result should have(
         httpStatus(BAD_REQUEST),

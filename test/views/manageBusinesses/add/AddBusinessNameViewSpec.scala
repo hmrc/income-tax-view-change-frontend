@@ -68,8 +68,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
         addBusinessNameForm,
         isAgent,
         postAction,
-        backUrl,
-        useFallbackLink = false)(messages, implicitly)
+        backUrl)(messages, implicitly)
     }
 
     lazy val viewWithInputErrors: HtmlFormat.Appendable = {
@@ -78,8 +77,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
           "add-business-name.form.error.required")),
         isAgent,
         postAction,
-        backUrl,
-        useFallbackLink = false)(messages, implicitly)
+        backUrl)(messages, implicitly)
     }
 
     lazy val changeView: HtmlFormat.Appendable = {
@@ -87,8 +85,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
         changeBusinessNameForm,
         isAgent,
         postAction,
-        backUrl,
-        useFallbackLink = true)(messages, implicitly)
+        backUrl)(messages, implicitly)
     }
 
     lazy val changeViewWithError: HtmlFormat.Appendable = {
@@ -97,8 +94,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
           "add-business-name.form.error.required")),
         isAgent,
         postAction,
-        backUrl,
-        useFallbackLink = true)(messages, implicitly)
+        backUrl)(messages, implicitly)
     }
 
     lazy val document: Document = {
@@ -129,6 +125,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - ADD - Individual" when {
     "there is no error on the add page" should {
       "have the correct heading" in new TestSetup(false, false, false) {
+        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
       "render the back link with the correct URL" in new TestSetup(false, false, false) {
@@ -175,6 +172,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - CHANGE - Individual" when {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(false, false, true) {
+        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
       "render the back link with the correct URL" in new TestSetup(false, false, true) {
@@ -220,6 +218,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - ADD - Agent" when {
     "there is no error on the add page" should {
       "have the correct heading" in new TestSetup(true, false, false) {
+        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
       "render the back link with the correct URL" in new TestSetup(true, false, false) {
@@ -266,6 +265,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - CHANGE - Agent" when {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(true, false, true) {
+        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
         document hasPageHeading AddBusinessNameMessages.heading
       }
       "render the back link with the correct URL" in new TestSetup(true, false, true) {
