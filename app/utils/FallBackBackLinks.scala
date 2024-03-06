@@ -23,14 +23,14 @@ trait FallBackBackLinks {
 
   def getPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage], taxYearOpt: Option[Int], origin: Option[String], isAgent: Boolean): String =
     (gatewayPageOpt, taxYearOpt, isAgent) match {
-      case (Some(TaxYearSummaryPage), Some(taxYear), true)  => routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
-      case (Some(TaxYearSummaryPage), Some(taxYear),    _)  => routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-      case (Some(WhatYouOwePage),     _,             true)  => routes.WhatYouOweController.showAgent.url
-      case (Some(WhatYouOwePage),     _,                _)  => routes.WhatYouOweController.show(origin).url
-      case (Some(PaymentHistoryPage), _,             true)  => routes.PaymentHistoryController.showAgent.url
-      case (Some(PaymentHistoryPage), _,                _)  => routes.PaymentHistoryController.show(origin).url
-      case (_,                        _,             true)  => routes.HomeController.showAgent.url
-      case (_,                        _,                _)  => routes.HomeController.show(origin).url
+      case (Some(TaxYearSummaryPage), Some(taxYear), true) => routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
+      case (Some(TaxYearSummaryPage), Some(taxYear),    _) => routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
+      case (Some(PaymentHistoryPage), _,             true) => routes.PaymentHistoryController.showAgent.url
+      case (Some(PaymentHistoryPage), _,                _) => routes.PaymentHistoryController.show(origin).url
+      case (Some(WhatYouOwePage),     _,             true) => routes.WhatYouOweController.showAgent.url
+      case (Some(WhatYouOwePage),     _,                _) => routes.WhatYouOweController.show(origin).url
+      case (_,                        _,             true) => routes.HomeController.showAgent.url
+      case (_,                        _,                _) => routes.HomeController.show(origin).url
     }
 
   def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String =
