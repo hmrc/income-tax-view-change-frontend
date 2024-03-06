@@ -21,94 +21,111 @@ import testUtils.TestSupport
 
 class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
-  val whatYouOweUrl = controllers.routes.WhatYouOweController.show(None).url
-  val whatYouOweAgentUrl = controllers.routes.WhatYouOweController.showAgent.url
+  private val whatYouOweUrl: String = controllers.routes.WhatYouOweController.show(None).url
+  private val whatYouOweAgentUrl: String = controllers.routes.WhatYouOweController.showAgent.url
+  private val testTaxYear = 2018
 
   "FallBackBacklinks trait" when {
 
     "getPaymentAllocationBackUrl method" should {
       "return PaymentHistory link" in {
-        val url = getPaymentAllocationBackUrl(Some(PaymentHistoryPage), None, None, false)
+        val url = getPaymentAllocationBackUrl(Some(PaymentHistoryPage), None, None, isAgent = false)
         url shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
       }
       "return Agent PaymentHistory link" in {
-        val url = getPaymentAllocationBackUrl(Some(PaymentHistoryPage), None, None, true)
+        val url = getPaymentAllocationBackUrl(Some(PaymentHistoryPage), None, None, isAgent = true)
         url shouldBe "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
       }
 
       "return Tax Year Summary link" in {
-        val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), Some(2018), None, false)
+        val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), Some(testTaxYear), None, isAgent = false)
         url shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2018#payments"
       }
-
-      "return homepage link when no tax year available" in {
-        val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), None, None, false)
-        url shouldBe "/report-quarterly/income-and-expenses/view"
-      }
-
       "return Agent Tax Year Summary link" in {
-        val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), Some(2018), None, true)
+        val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), Some(testTaxYear), None, isAgent = true)
         url shouldBe "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2018#payments"
       }
 
-      "return What You Owe link" in {
-        val url = getPaymentAllocationBackUrl(Some(WhatYouOwePage), None, None, false)
-        url shouldBe whatYouOweUrl
+      "return homepage link when no tax year available" in {
+        val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), None, None, isAgent = false)
+        url shouldBe "/report-quarterly/income-and-expenses/view"
+      }
+      "return Agent homepage link when no tax year available" in {
+        val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), None, None, isAgent = true)
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents"
       }
 
+      "return What You Owe link" in {
+        val url = getPaymentAllocationBackUrl(Some(WhatYouOwePage), None, None, isAgent = false)
+        url shouldBe whatYouOweUrl
+      }
       "return Agent What You Owe link" in {
-        val url = getPaymentAllocationBackUrl(Some(WhatYouOwePage), None, None, true)
+        val url = getPaymentAllocationBackUrl(Some(WhatYouOwePage), None, None, isAgent = true)
         url shouldBe whatYouOweAgentUrl
       }
 
       "return homepage link if NoMatchPage" in {
-        val url = getPaymentAllocationBackUrl(Some(NoMatch), None, None, false)
+        val url = getPaymentAllocationBackUrl(Some(NoMatch), None, None, isAgent = false)
         url shouldBe "/report-quarterly/income-and-expenses/view"
+      }
+      "return Agent homepage link if NoMatchPage" in {
+        val url = getPaymentAllocationBackUrl(Some(NoMatch), None, None, isAgent = true)
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents"
       }
 
       "return homepage link if no gateway page found" in {
-        val url = getPaymentAllocationBackUrl(None, None, None, false)
+        val url = getPaymentAllocationBackUrl(None, None, None, isAgent = false)
         url shouldBe "/report-quarterly/income-and-expenses/view"
+      }
+      "return Agent homepage link if no gateway page found" in {
+        val url = getPaymentAllocationBackUrl(None, None, None, isAgent = true)
+        url shouldBe "/report-quarterly/income-and-expenses/view/agents"
       }
     }
 
     "getChargeSummaryBackUrl method" should {
       "return PaymentHistory link" in {
-        val url = getChargeSummaryBackUrl(Some(PaymentHistoryPage), 2018, None, false)
+        val url = getChargeSummaryBackUrl(Some(PaymentHistoryPage), testTaxYear, None, isAgent = false)
         url shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
       }
       "return Agent PaymentHistory link" in {
-        val url = getChargeSummaryBackUrl(Some(PaymentHistoryPage), 2018, None, true)
+        val url = getChargeSummaryBackUrl(Some(PaymentHistoryPage), testTaxYear, None, isAgent = true)
         url shouldBe "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
       }
 
       "return Tax Year Summary link" in {
-        val url = getChargeSummaryBackUrl(Some(TaxYearSummaryPage), 2018, None, false)
+        val url = getChargeSummaryBackUrl(Some(TaxYearSummaryPage), testTaxYear, None, isAgent = false)
         url shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2018#payments"
       }
-
       "return Agent Tax Year Summary link" in {
-        val url = getChargeSummaryBackUrl(Some(TaxYearSummaryPage), 2018, None, true)
+        val url = getChargeSummaryBackUrl(Some(TaxYearSummaryPage), testTaxYear, None, isAgent = true)
         url shouldBe "/report-quarterly/income-and-expenses/view/agents/tax-year-summary/2018#payments"
       }
 
       "return What You Owe link" in {
-        val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), 2018, None, false)
+        val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), testTaxYear, None, isAgent = false)
         url shouldBe whatYouOweUrl
       }
-
       "return Agent What You Owe link" in {
-        val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), 2018, None, true)
+        val url = getChargeSummaryBackUrl(Some(WhatYouOwePage), testTaxYear, None, isAgent = true)
         url shouldBe whatYouOweAgentUrl
       }
 
       "return homepage link if NoMatchPage" in {
-        val url = getChargeSummaryBackUrl(Some(NoMatch), 2018, None, false)
+        val url = getChargeSummaryBackUrl(Some(NoMatch), testTaxYear, None, isAgent = false)
+        url shouldBe "/report-quarterly/income-and-expenses/view"
+      }
+      "return Agent homepage link if NoMatchPage" in {
+        val url = getChargeSummaryBackUrl(Some(NoMatch), testTaxYear, None, isAgent = true)
         url shouldBe "/report-quarterly/income-and-expenses/view"
       }
 
       "return homepage link if no page found" in {
-        val url = getChargeSummaryBackUrl(None, 2018, None, false)
+        val url = getChargeSummaryBackUrl(None, testTaxYear, None, isAgent = false)
+        url shouldBe "/report-quarterly/income-and-expenses/view"
+      }
+      "return Agent homepage link if no page found" in {
+        val url = getChargeSummaryBackUrl(None, testTaxYear, None, isAgent = true)
         url shouldBe "/report-quarterly/income-and-expenses/view"
       }
     }
