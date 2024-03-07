@@ -43,4 +43,6 @@ trait FeatureSwitching {
       else ifDisabled
     }
   }
+
+  def isOn(in: List[FeatureSwitch], featureSwitch: FeatureSwitch): Boolean = in.contains(featureSwitch)
 }

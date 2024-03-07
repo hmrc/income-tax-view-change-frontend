@@ -17,9 +17,10 @@
 package utils
 
 import auth.MtdItUser
+import config.featureswitch.{FeatureSwitch, FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.{BaseAgentController, ClientConfirmedController}
-import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
+import controllers.predicates.{AuthenticationPredicate, FeatureSwitchPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, ActionFunction, AnyContent, BodyParser, MessagesControllerComponents, Request, Result}
 import services.IncomeSourceDetailsService
@@ -35,25 +36,48 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val authenticate: AuthenticationPredicate,
                                        val authorisedFunctions: AuthorisedFunctions,
                                        val retrieveBtaNavBar: NavBarPredicate,
+                                       val featureSwitchPredicate: FeatureSwitchPredicate,
                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                        val incomeSourceDetailsService: IncomeSourceDetailsService)
                                       (implicit mcc: MessagesControllerComponents,
                                        val appConfig: FrontendAppConfig,
                                        val itvcErrorHandler: AgentItvcErrorHandler,
-                                       val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport {
+                                       val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport with FeatureSwitching{
 
   def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    if (isAgent)
+    if (isAgent) {
       Authenticated.async {
         implicit request =>
           implicit user =>
             getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-              authenticatedCodeBlock(mtdItUser)
+
+              // TODO: move this into ~Predicate in the same way as for Individual
+              val fss = FeatureSwitch.switches.foldLeft( List[FeatureSwitch]() ){ (acc, curr) =>
+                if (isEnabled(curr)){
+                  acc :+ curr
+                } else {
+                  acc
+                }
+              }
+              val newRequest : MtdItUser[AnyContent] = MtdItUser[AnyContent](
+                mtditid = mtdItUser.mtditid,
+                nino = mtdItUser.nino,
+                userName = mtdItUser.userName,
+                incomeSources = mtdItUser.incomeSources,
+                btaNavPartial = mtdItUser.btaNavPartial,
+                saUtr = mtdItUser.saUtr,
+                credId = mtdItUser.credId,
+                userType = mtdItUser.userType,
+                arn = mtdItUser.arn,
+                featureSwitches = Some(fss))(request)
+
+              authenticatedCodeBlock(newRequest)
             }
       }
-    else
+
+    } else
       (checkSessionTimeout andThen authenticate
-        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+        andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar andThen featureSwitchPredicate).async { implicit user =>
         authenticatedCodeBlock(user)
       }
   }

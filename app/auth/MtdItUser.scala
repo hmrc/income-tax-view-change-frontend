@@ -16,6 +16,7 @@
 
 package auth
 
+import config.featureswitch.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html
@@ -65,4 +66,6 @@ case class MtdItUser[A](mtditid: String,
                         saUtr: Option[String],
                         credId: Option[String],
                         userType: Option[AffinityGroup],
-                        arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]
+                        arn: Option[String],
+                        featureSwitches: Option[List[FeatureSwitch]] = None // TODO: remove default None
+                       )(implicit request: Request[A]) extends MtdItUserBase[A]
