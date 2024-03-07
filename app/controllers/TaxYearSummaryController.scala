@@ -59,6 +59,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                                          val languageUtils: LanguageUtils,
                                          val authorisedFunctions: AuthorisedFunctions,
                                          val retrieveBtaNavBar: NavBarPredicate,
+                                         val featureSwitchPredicate: FeatureSwitchPredicate,
                                          val auditingService: AuditingService)
                                         (implicit val appConfig: FrontendAppConfig,
                                          dateService: DateServiceInterface,
@@ -68,7 +69,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   extends ClientConfirmedController with FeatureSwitching with I18nSupport with ImplicitDateFormatter {
 
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
-    retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar
+    retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar andThen featureSwitchPredicate
 
   private def showForecast(modelOpt: Option[TaxYearSummaryViewModel])
                           (implicit user: MtdItUser[_]): Boolean = {

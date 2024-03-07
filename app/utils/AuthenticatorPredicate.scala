@@ -52,26 +52,32 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
             getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
 
               // TODO: move this into ~Predicate in the same way as for Individual
-              val fss = FeatureSwitch.switches.foldLeft( List[FeatureSwitch]() ){ (acc, curr) =>
-                if (isEnabled(curr)){
-                  acc :+ curr
-                } else {
-                  acc
+              val fssFuture: Future[List[FeatureSwitch]] = Future.successful(
+                FeatureSwitch.switches.foldLeft(List[FeatureSwitch]()) { (acc, curr) =>
+                  if (isEnabled(curr)) {
+                    acc :+ curr
+                  } else {
+                    acc
+                  }
                 }
+              )
+              val res = for {
+                fss <- fssFuture
+              } yield {
+                val newRequest = MtdItUser[AnyContent](
+                  mtditid = mtdItUser.mtditid,
+                  nino = mtdItUser.nino,
+                  userName = mtdItUser.userName,
+                  incomeSources = mtdItUser.incomeSources,
+                  btaNavPartial = mtdItUser.btaNavPartial,
+                  saUtr = mtdItUser.saUtr,
+                  credId = mtdItUser.credId,
+                  userType = mtdItUser.userType,
+                  arn = mtdItUser.arn,
+                  featureSwitches = fss)(request)
+                authenticatedCodeBlock(newRequest)
               }
-              val newRequest : MtdItUser[AnyContent] = MtdItUser[AnyContent](
-                mtditid = mtdItUser.mtditid,
-                nino = mtdItUser.nino,
-                userName = mtdItUser.userName,
-                incomeSources = mtdItUser.incomeSources,
-                btaNavPartial = mtdItUser.btaNavPartial,
-                saUtr = mtdItUser.saUtr,
-                credId = mtdItUser.credId,
-                userType = mtdItUser.userType,
-                arn = mtdItUser.arn,
-                featureSwitches = fss)(request)
-
-              authenticatedCodeBlock(newRequest)
+              res.flatten
             }
       }
 
