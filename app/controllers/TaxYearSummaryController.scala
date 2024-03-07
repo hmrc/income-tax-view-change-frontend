@@ -70,10 +70,11 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
   val action: ActionBuilder[MtdItUser, AnyContent] = checkSessionTimeout andThen authenticate andThen
     retrieveNinoWithIncomeSourcesNoCache andThen retrieveBtaNavBar
 
-  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel]): Boolean = {
+  private def showForecast(modelOpt: Option[TaxYearSummaryViewModel])
+                          (implicit user: MtdItUser[_]): Boolean = {
     val isCrystalised = modelOpt.flatMap(_.crystallised).contains(true)
     val forecastDataPresent = modelOpt.flatMap(_.forecastIncome).isDefined
-    isEnabled(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && forecastDataPresent
+    isOn(ForecastCalculation) && modelOpt.isDefined && !isCrystalised && forecastDataPresent
   }
 
   private def view(liabilityCalc: LiabilityCalculationResponseModel,
@@ -122,7 +123,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          showForecastData = isEnabled(ForecastCalculation),
+          showForecastData = isOn(ForecastCalculation), //isEnabled(ForecastCalculation),
           origin = origin,
           isAgent = isAgent
         ))
@@ -143,16 +144,16 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, documentDetails, _) =>
         val docDetailsNoPayments = documentDetails.filter(_.paymentLot.isEmpty)
-        val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isEnabled(CodingOut)))
+        val docDetailsCodingOut = docDetailsNoPayments.filter(_.isCodingOutDocumentDetail(isOn(CodingOut)))
         val documentDetailsWithDueDates: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments
             .filter(_.isNotCodingOutDocumentDetail)
             .filter(_.originalAmountIsNotNegative)
             .map(
               documentDetail => DocumentDetailWithDueDate(documentDetail, financialDetails.findDueDateByDocumentDetails(documentDetail),
-                dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isEnabled(CodingOut),
+                dunningLock = financialDetails.dunningLockExists(documentDetail.transactionId), codingOutEnabled = isOn(CodingOut),
                 isMFADebit = financialDetails.isMFADebit(documentDetail.transactionId)))
-        }.filter(documentDetailWithDueDate => filterMFADebits(isEnabled(MFACreditsAndDebits), documentDetailWithDueDate))
+        }.filter(documentDetailWithDueDate => filterMFADebits(isOn(MFACreditsAndDebits), documentDetailWithDueDate))
         val documentDetailsWithDueDatesForLpi: List[DocumentDetailWithDueDate] = {
           docDetailsNoPayments.filter(_.isLatePaymentInterest).map(
             documentDetail => DocumentDetailWithDueDate(documentDetail, documentDetail.interestEndDate, isLatePaymentInterest = true,
@@ -219,7 +220,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
                             ec: ExecutionContext, messages: Messages): Future[Result] = {
     withTaxYearFinancials(taxYear, isAgent) { charges =>
       withObligationsModel(taxYear, isAgent) { obligationsModel =>
-        val codingOutEnabled: Boolean = isEnabled(CodingOut)
+        val codingOutEnabled: Boolean = isOn(CodingOut)
         val mtdItId: String = if (isAgent) getClientMtditid else user.mtditid
         val nino: String = if (isAgent) getClientNino else user.nino
         calculationService.getLiabilityCalculationDetail(mtdItId, nino, taxYear).map { liabilityCalcResponse =>
