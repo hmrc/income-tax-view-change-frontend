@@ -29,7 +29,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
@@ -38,13 +38,12 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                        val retrieveBtaNavBar: NavBarPredicate,
                                        val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                        val incomeSourceDetailsService: IncomeSourceDetailsService)
-                                      (implicit mcc: MessagesControllerComponents,
-                                       val appConfig: FrontendAppConfig,
+                                      (implicit val appConfig: FrontendAppConfig,
                                        val itvcErrorHandler: AgentItvcErrorHandler,
                                        val ec: ExecutionContext,
                                        val hc: HeaderCarrier) extends ClientConfirmedController with I18nSupport {
 
-  def agentAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+  private def agentAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     Authenticated.async {
       implicit request =>
         implicit user =>
@@ -54,7 +53,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
     }
   }
 
-  def individualAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+  private def individualAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     (checkSessionTimeout andThen authenticate
       andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
       authenticatedCodeBlock(user)
@@ -62,6 +61,11 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
   }
 
   def isAgent: Future[Boolean] = {
+    //     Await.result(authorisedFunctions.authorised().retrieve(Retrievals.affinityGroup).apply {
+    //       case Some(value) => if (value == Agent) Future(true) else Future(false)
+    //       case None => Future(false)
+    //     }, Duration(100, TimeUnit.MILLISECONDS))
+
     authorisedFunctions.authorised().retrieve(Retrievals.affinityGroup) {
       case Some(affinityGroup) => if (affinityGroup == Agent) {
         Future.successful(true)
@@ -72,7 +76,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
     }
   }
 
-  def authenticatedAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+  def authenticatedAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = Action.async {
     isAgent map {
       case true => agentAction(authenticatedCodeBlock)
       case false => individualAction(authenticatedCodeBlock)

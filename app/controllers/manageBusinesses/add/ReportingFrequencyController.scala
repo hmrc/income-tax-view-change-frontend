@@ -37,7 +37,7 @@ class ReportingFrequencyController @Inject()(val authorisedFunctions: Authorised
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                             ) {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = auth.authenticatedAction{
     implicit user =>
       handleRequest(
         isAgent = isAgent,
