@@ -18,13 +18,14 @@ package utils
 
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.predicates.{BaseAgentController, ClientConfirmedController}
+import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.{AuthenticationPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, ActionFunction, AnyContent, BodyParser, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, ActionRefiner, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -40,7 +41,43 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                       (implicit mcc: MessagesControllerComponents,
                                        val appConfig: FrontendAppConfig,
                                        val itvcErrorHandler: AgentItvcErrorHandler,
-                                       val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport {
+                                       val ec: ExecutionContext,
+                                       val hc: HeaderCarrier) extends ClientConfirmedController with I18nSupport {
+
+  def agentAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+    Authenticated.async {
+      implicit request =>
+        implicit user =>
+          getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
+            authenticatedCodeBlock(mtdItUser)
+          }
+    }
+  }
+
+  def individualAction(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+    (checkSessionTimeout andThen authenticate
+      andThen retrieveNinoWithIncomeSources andThen retrieveBtaNavBar).async { implicit user =>
+      authenticatedCodeBlock(user)
+    }
+  }
+
+  def isAgent: Future[Boolean] = {
+    authorisedFunctions.authorised().retrieve(Retrievals.affinityGroup) {
+      case Some(affinityGroup) => if (affinityGroup == Agent) {
+        Future.successful(true)
+      }
+      else {
+        Future.successful(false)
+      }
+    }
+  }
+
+  def authenticatedActionv2(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Future[Action[AnyContent]] = {
+    isAgent map {
+      case true => agentAction(authenticatedCodeBlock)
+      case false => individualAction(authenticatedCodeBlock)
+    }
+  }
 
   def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     if (isAgent)

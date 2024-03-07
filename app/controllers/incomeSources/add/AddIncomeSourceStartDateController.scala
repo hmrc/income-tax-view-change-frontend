@@ -54,32 +54,26 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
   extends ClientConfirmedController with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyChecker {
 
 
-  def show(isAgent: Boolean,
-           isChange: Boolean,
+  def show(isChange: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
+          ): Future[Action[AnyContent]] = auth.authenticatedActionv2 { implicit user =>
+      handleShowRequest(
+        incomeSourceType = incomeSourceType,
+        isChange = isChange
+      )
+    }
 
-    handleShowRequest(
-      incomeSourceType = incomeSourceType,
-      isAgent = isAgent,
-      isChange = isChange
-    )
-  }
 
-  def submit(isAgent: Boolean,
-             isChange: Boolean,
+  def submit(isChange: Boolean,
              incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-
+            ): Future[Action[AnyContent]] = auth.authenticatedActionv2 { implicit user =>
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
-      isAgent = isAgent,
       isChange = isChange
     )
   }
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,
-                                isAgent: Boolean,
                                 isChange: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -107,16 +101,16 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         Ok(
           addIncomeSourceStartDate(
             form = filledForm,
-            isAgent = isAgent,
+            isAgent = user.isAgent,
             messagesPrefix = messagesPrefix,
-            backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-            postAction = getPostAction(incomeSourceType, isAgent, isChange)
+            backUrl = getBackUrl(incomeSourceType, user.isAgent, isChange),
+            postAction = getPostAction(incomeSourceType, user.isAgent, isChange)
           )
         )
       }
     }.recover {
       case ex =>
-        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        val errorHandler = if (user.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Logger("application").error(s"[AddIncomeSourceStartDateController][handleRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
@@ -124,7 +118,6 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
 
 
   private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
-                                  isAgent: Boolean,
                                   isChange: Boolean)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -135,21 +128,21 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
         formWithErrors =>
           Future.successful(BadRequest(
             addIncomeSourceStartDate(
-              isAgent = isAgent,
+              isAgent = user.isAgent,
               form = formWithErrors,
-              backUrl = getBackUrl(incomeSourceType, isAgent, isChange),
-              postAction = getPostAction(incomeSourceType, isAgent, isChange),
+              backUrl = getBackUrl(incomeSourceType, user.isAgent, isChange),
+              postAction = getPostAction(incomeSourceType, user.isAgent, isChange),
               messagesPrefix = messagesPrefix
             )
           )),
-        formData => handleValidFormData(formData, incomeSourceType, isAgent, isChange)
+        formData => handleValidFormData(formData, incomeSourceType, user.isAgent, isChange)
       )
     }
   }.recover {
     case ex =>
       Logger("application")
         .error(s"[AddIncomeSourceStartDateController][handleSubmitRequest][${incomeSourceType.key}] ${ex.getMessage} - ${ex.getCause}")
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      val errorHandler = if (user.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
 
@@ -190,11 +183,11 @@ class AddIncomeSourceStartDateController @Inject()(val authorisedFunctions: Auth
   }
 
   private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddIncomeSourceStartDateController.submit(isAgent, isChange, incomeSourceType)
+    routes.AddIncomeSourceStartDateController.submit(isChange, incomeSourceType)
   }
 
   private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, isChange: Boolean): Call = {
-    routes.AddIncomeSourceStartDateCheckController.show(isAgent, isChange, incomeSourceType)
+    routes.AddIncomeSourceStartDateCheckController.show(isChange, incomeSourceType)
   }
 
   private def getBackUrl(incomeSourceType: IncomeSourceType,
