@@ -67,5 +67,5 @@ case class MtdItUser[A](mtditid: String,
                         credId: Option[String],
                         userType: Option[AffinityGroup],
                         arn: Option[String],
-                        featureSwitches: Option[List[FeatureSwitch]] = None // TODO: remove default None
+                        featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
                        )(implicit request: Request[A]) extends MtdItUserBase[A]

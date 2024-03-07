@@ -69,7 +69,7 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                 credId = mtdItUser.credId,
                 userType = mtdItUser.userType,
                 arn = mtdItUser.arn,
-                featureSwitches = Some(fss))(request)
+                featureSwitches = fss)(request)
 
               authenticatedCodeBlock(newRequest)
             }

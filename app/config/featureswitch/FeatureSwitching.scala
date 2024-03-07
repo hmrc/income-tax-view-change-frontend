@@ -16,6 +16,7 @@
 
 package config.featureswitch
 
+import auth.MtdItUser
 import config.FrontendAppConfig
 
 trait FeatureSwitching {
@@ -44,5 +45,5 @@ trait FeatureSwitching {
     }
   }
 
-  def isOn(in: List[FeatureSwitch], featureSwitch: FeatureSwitch): Boolean = in.contains(featureSwitch)
+  def isOn(featureSwitch: FeatureSwitch)(implicit user: MtdItUser[_]): Boolean = user.featureSwitches.contains(featureSwitch)
 }

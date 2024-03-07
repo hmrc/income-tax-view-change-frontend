@@ -73,10 +73,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
       displayCeaseAnIncome = displayCeaseAnIncome,
       isAgent = isAgent,
       origin = origin,
-      creditAndRefundEnabled = user.featureSwitches.exists(in => isOn(in, CreditsRefundsRepay)),  //isEnabled(CreditsRefundsRepay),
-      paymentHistoryEnabled = user.featureSwitches.exists(in => isOn(in, PaymentHistoryRefunds)), //isEnabled(PaymentHistoryRefunds),
-      incomeSourcesEnabled = user.featureSwitches.exists(in => isOn(in, IncomeSources)), //isEnabled(IncomeSources),
-      incomeSourcesNewJourneyEnabled = user.featureSwitches.exists(in => isOn(in, IncomeSourcesNewJourney)), // isEnabled(IncomeSourcesNewJourney),
+      creditAndRefundEnabled = isOn(CreditsRefundsRepay),  //isEnabled(CreditsRefundsRepay),
+      paymentHistoryEnabled = isOn( PaymentHistoryRefunds), //isEnabled(PaymentHistoryRefunds),
+      incomeSourcesEnabled = isOn(IncomeSources), //isEnabled(IncomeSources),
+      incomeSourcesNewJourneyEnabled = isOn(IncomeSourcesNewJourney), // isEnabled(IncomeSourcesNewJourney),
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }

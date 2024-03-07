@@ -54,7 +54,7 @@ class FeatureSwitchPredicate @Inject()
       credId = request.credId,
       userType = request.userType,
       arn = request.arn,
-      featureSwitches = Some(fss))(request)
+      featureSwitches = fss)(request)
 
     Future.successful{
       Right(newRequest)
