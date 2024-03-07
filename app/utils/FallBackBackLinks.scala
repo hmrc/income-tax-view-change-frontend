@@ -43,17 +43,28 @@ trait FallBackBackLinks {
       case _                                         => routes.HomeController.showAgent.url
     }
 
+  def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String = {
+    if (isAgent)
+      getChargeSummaryBackUrlAgent(gatewayPageOpt, taxYear)
+    else
+      getChargeSummaryBackUrlIndividual(gatewayPageOpt, taxYear, origin)
+  }
 
-
-  def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String =
-    (gatewayPageOpt, isAgent) match {
-      case (Some(TaxYearSummaryPage), true) => routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
-      case (Some(TaxYearSummaryPage),    _) => routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
-      case (Some(WhatYouOwePage),     true) => routes.WhatYouOweController.showAgent.url
-      case (Some(WhatYouOwePage),        _) => routes.WhatYouOweController.show(origin).url
-      case (Some(PaymentHistoryPage), true) => routes.PaymentHistoryController.showAgent.url
-      case (Some(PaymentHistoryPage),    _) => routes.PaymentHistoryController.show(origin).url
-      case (_,                        true) => routes.HomeController.showAgent.url
-      case (_,                           _) => routes.HomeController.show(origin).url
+  private def getChargeSummaryBackUrlAgent(gatewayPageOpt: Option[GatewayPage], taxYear: Int) = {
+    gatewayPageOpt match {
+      case Some(TaxYearSummaryPage)   => routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url + "#payments"
+      case Some(WhatYouOwePage)       => routes.WhatYouOweController.showAgent.url
+      case Some(PaymentHistoryPage)   => routes.PaymentHistoryController.showAgent.url
+      case _                          => routes.HomeController.showAgent.url
     }
+  }
+
+  private def getChargeSummaryBackUrlIndividual(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String]) = {
+    gatewayPageOpt match {
+      case Some(TaxYearSummaryPage)   => routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).url + "#payments"
+      case Some(WhatYouOwePage)       => routes.WhatYouOweController.show(origin).url
+      case Some(PaymentHistoryPage)   => routes.PaymentHistoryController.show(origin).url
+      case _                          => routes.HomeController.show(origin).url
+    }
+  }
 }
