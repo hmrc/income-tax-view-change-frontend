@@ -43,26 +43,23 @@ trait FallBackBackLinks {
       case _                                         => HomeController.showAgent
     }).path
 
-  def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String = {
+  def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String =
     if (isAgent) getChargeSummaryBackUrlAgent(gatewayPageOpt, taxYear)
     else         getChargeSummaryBackUrlIndividual(gatewayPageOpt, taxYear, origin)
-  }
 
-  private def getChargeSummaryBackUrlAgent(gatewayPageOpt: Option[GatewayPage], taxYear: Int) = {
+  private def getChargeSummaryBackUrlAgent(gatewayPageOpt: Option[GatewayPage], taxYear: Int) =
     (gatewayPageOpt match {
       case Some(TaxYearSummaryPage)   => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
       case Some(WhatYouOwePage)       => WhatYouOweController.showAgent
       case Some(PaymentHistoryPage)   => PaymentHistoryController.showAgent
       case _                          => HomeController.showAgent
     }).path
-  }
 
-  private def getChargeSummaryBackUrlIndividual(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String]) = {
+  private def getChargeSummaryBackUrlIndividual(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String]) =
     (gatewayPageOpt match {
       case Some(TaxYearSummaryPage)   => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
       case Some(WhatYouOwePage)       => WhatYouOweController.show(origin)
       case Some(PaymentHistoryPage)   => PaymentHistoryController.show(origin)
       case _                          => HomeController.show(origin)
     }).path
-  }
 }
