@@ -19,7 +19,6 @@ package forms.manageBusinesses.add
 import play.api.data.Form
 import play.api.data.Forms._
 
-
 object AddProprertyForm {
 
   val responseUK: String = "uk-property"

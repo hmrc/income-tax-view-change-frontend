@@ -17,11 +17,9 @@
 package controllers.manageBusinesses.add
 
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
-import controllers.predicates.SessionTimeoutPredicate
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
+import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import forms.manageBusinesses.add.{AddProprertyForm => form}
 import play.api.Logger
 import play.api.i18n.I18nSupport

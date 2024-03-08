@@ -16,15 +16,12 @@
 
 package views.manageBusinesses.add
 
-import enums.IncomeSourceJourney.IncomeSourceType
 import forms.manageBusinesses.add.AddProprertyForm
-import forms.manageBusinesses.add.AddProprertyForm._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.helper.form
 import views.html.manageBusinesses.add.AddProperty
 
 class AddPropertyViewSpec extends TestSupport{
