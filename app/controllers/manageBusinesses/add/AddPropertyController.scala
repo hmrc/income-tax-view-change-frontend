@@ -16,34 +16,38 @@
 
 package controllers.manageBusinesses.add
 
-import auth.FrontendAuthorisedFunctions
+import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates.SessionTimeoutPredicate
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import utils.AuthenticatorPredicate
+import views.html.manageBusinesses.add.AddProperty
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 
-//THIS CONTROLLER IS A PLACEHOLDER FOR THE PAGE TO BE BUILT IN MISUV-7077 (new income sources landing page)
 class AddPropertyController @Inject()(auth: AuthenticatorPredicate,
+                                      val addProperty: AddProperty,
                                       val authorisedFunctions: FrontendAuthorisedFunctions,
                                       val checkSessionTimeout: SessionTimeoutPredicate)
                                      (implicit val appConfig: FrontendAppConfig,
-                                             mcc: MessagesControllerComponents,
-                                             val ec: ExecutionContext,
-                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                      mcc: MessagesControllerComponents,
+                                      val ec: ExecutionContext,
+                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends ClientConfirmedController with FeatureSwitching with I18nSupport {
 
-  def show(): Action[AnyContent] = Action {
-    Ok("")
+  def show(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) {
+    implicit user =>
+      handleRequest(isAgent)
   }
 
-  def showAgent(): Action[AnyContent] = Action {
-    Ok("")
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val backUrl = Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url)
+    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent)
+    Future.successful(Ok(addProperty(isAgent, backUrl, postAction)))
   }
 }

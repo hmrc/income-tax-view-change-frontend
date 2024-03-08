@@ -1729,3 +1729,13 @@ manage.your.businesses.datestarted                                       = Date 
 manage.your.businesses.startdate                                         = Start date
 manage.your.businesses.UK                                                = UK property
 manage.your.businesses.Foreign                                           = Foreign property
+
+# type of property business
+manageBusinesses.type-of-property.heading                                = Type of property business
+manageBusinesses.type-of-property.text1                                  = Select the type of property business you'd like to add. If you have both, you can start with one and add the other later.
+manageBusinesses.type-of-property.text2                                  = If you get income from one or more properties in the UK, you have a UK property business.
+manageBusinesses.type-of-property.text3                                  = If you get income from one or more properties outside the UK, you have a foreign property business. For example: letting houses, flats or holiday homes either on a long or short term basis.
+manageBusinesses.type-of-property.h2                                     = What type of property business do you have?
+manageBusinesses.type-of-property.uk                                     = UK property business
+manageBusinesses.type-of-property.foreign                                = Foreign property business
+manageBusinesses.type-of-property.error                                  = Select an option

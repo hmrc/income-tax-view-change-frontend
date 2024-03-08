@@ -5,8 +5,8 @@
 
 GET          /manage-your-businesses                                              controllers.manageBusinesses.ManageYourBusinessesController.show(isAgent: Boolean = false)
 GET          /agents/manage-your-businesses                                       controllers.manageBusinesses.ManageYourBusinessesController.show(isAgent: Boolean = true)
-GET          /manage-your-businesses/add-property/property-type                   controllers.manageBusinesses.add.AddPropertyController.show()
-GET          /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.showAgent()
+GET          /manage-your-businesses/add-property/property-type                   controllers.manageBusinesses.add.AddPropertyController.show(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.show(isAgent: Boolean = true)
 GET          /manage-your-businesses/ceased-businesses                            controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show()
 GET          /agents/manage-your-businesses/ceased-businesses                     controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.showAgent()
 
