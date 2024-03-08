@@ -108,7 +108,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
               taxYearEndYear = taxYearModel.endYear.toString,
               taxYearStartYear = taxYearModel.startYear.toString,
               postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-              isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+              isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
             ))
                 }
                 else {
@@ -152,7 +152,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
                     postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
               )

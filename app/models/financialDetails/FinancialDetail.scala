@@ -71,7 +71,7 @@ case class FinancialDetail(taxYear: String,
     case Some(subItems) => subItems.map { subItem =>
       Payment(reference = subItem.paymentReference, amount = subItem.paymentAmount, outstandingAmount = None,
         method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-        dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate(), transactionId = subItem.transactionId)
+        dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId)
     }.filter(_.reference.isDefined)
     case None => Seq.empty[Payment]
   }
@@ -82,7 +82,7 @@ case class FinancialDetail(taxYear: String,
         case subItem if subItem.paymentLot.isDefined && subItem.paymentLotItem.isDefined =>
           Payment(reference = subItem.paymentReference, amount = subItem.amount, outstandingAmount = None,
             method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
-            dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate(), transactionId = subItem.transactionId)
+            dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId)
       }
     }
     .collect {

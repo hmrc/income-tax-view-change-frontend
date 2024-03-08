@@ -84,9 +84,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
-    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-    val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
+    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd
+    val currentDate = dateService.getCurrentDate
 
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
@@ -104,7 +103,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
           unpaidCharges <- unpaidChargesFuture
           dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
-          outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(TimeMachineAddYear)).map(_.outstandingChargesModel match {
+          outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
             case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
             case _ => Nil
           })
@@ -112,7 +111,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
             case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
             case _ => Nil
           }
-          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
+          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
           paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
           displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
         } yield {
