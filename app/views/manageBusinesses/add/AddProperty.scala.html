@@ -78,7 +78,7 @@
                 )
             ),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
-        ))
+        ).withFormField(form("type-of-property"))))
 
         @continueButton()
     }
