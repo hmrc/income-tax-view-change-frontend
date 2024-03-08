@@ -17,6 +17,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.helpers.injected.ErrorSummary
 
 @this(
         mainTemplate: unifiedLayout,
@@ -25,10 +26,11 @@
         link: link,
         p: p,
         formWithCSRF: FormWithCSRF,
+        errorSummary: ErrorSummary,
         continueButton: ContinueButton,
         govukRadios : GovukRadios)
 
-@(isAgent: Boolean = false, backUrl: Option[String], postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(form: Form[_], isAgent: Boolean = false, backUrl: Option[String], postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"manageBusinesses.type-of-property.$key", args: _*)
@@ -40,7 +42,9 @@
     backUrl = backUrl,
     btaNavPartial = user.btaNavPartial) {
 
-    @formWithCSRF(action = postAction, Symbol("id") -> "add-property-type") {
+    @formWithCSRF(action = postAction, Symbol("id") -> "type-of-business") {
+
+        @errorSummary(form)
 
         @h1(msg = getMessage("heading"), classes = "govuk-heading-l", id = Some("heading"))
 
@@ -72,7 +76,8 @@
                     content = Text(getMessage("foreign")),
                     value = Some("foreign-property")
                 )
-            )
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
         ))
 
         @continueButton()
