@@ -98,16 +98,13 @@
 
 @beforeContentBlock = {
     @phaseBanner("beta", isAgent)
-    @hmrcBanner(Banner(CurrentLanguage()))
     @{btaNavPartial.getOrElse(())}
-    <div class="nav-bar-wrapper">
         @languageSelection()
         @if(useFallbackBackLink) {
             @backUrl.map(backLinkFallback(_, gatewayPage))
         } else {
             @backUrl.map(backLink(_))
         }
-    </div>
     }
 
     @content = {

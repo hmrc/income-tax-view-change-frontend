@@ -762,7 +762,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = None, originalAmount = Some(BigDecimal(0)), documentDate = LocalDate.of(2018, 3, 29))
         "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
           document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
-          document.select("p").get(2).text shouldBe "View what you owe to check if you have any other payments due."
+          document.select("p").get(1).text shouldBe "View what you owe to check if you have any other payments due."
           document.select("#payment-history-table").isEmpty shouldBe true
           document.select("#heading-payment-breakdown").isEmpty shouldBe true
           document.select(s"#payment-link-${documentDetailModel().taxYear}").isEmpty shouldBe true
