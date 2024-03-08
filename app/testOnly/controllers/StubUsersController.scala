@@ -64,28 +64,20 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
     withJsonBody[UserRecord](
       userRecord => {
         Logger("application").info("userRecord:" + userRecord)
-        val um = UserModel.toUserModel(userRecord)
-        desSimulatorConnector.stubUser(um).flatMap(
-          desResponse => {
-            userRepository.addUser(userRecord).flatMap(
-              _ => {
-                desResponse.status match {
-                  case CREATED =>
-                    Future.successful(Ok(s"The following USER was added to the stub: \n\n${Json.toJson(um)}"))
-                  case _ =>
-                    Logger("application").error(desResponse.body)
-                    Future.successful(InternalServerError(desResponse.body))
-                }
-              }
-            )
+        userRepository.addUser(userRecord).map { result =>
+          if (result.wasAcknowledged()) {
+            Ok("User upload success")
+          } else {
+            InternalServerError("Unable to upload user to database")
           }
-        )
+        }
       }
     )
   }
 
+
   val deleteUsers: Action[AnyContent] = Action.async { implicit request =>
-    userRepository.removeAll().flatMap( _ =>
+    userRepository.removeAll().flatMap(_ =>
       Future.successful(Ok("\nDeleted all mongo data from FE user collection"))
     )
   }
