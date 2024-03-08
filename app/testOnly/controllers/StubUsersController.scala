@@ -26,7 +26,6 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.api.{Configuration, Environment}
 import play.twirl.api.HtmlFormat
-import testOnly.connectors.DesSimulatorConnector
 import testOnly.forms.UserModelForm
 import testOnly.models.{UserModel, UserRecord}
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
@@ -36,29 +35,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import play.api.Logger
 import testOnly.utils.UserRepository
 
-class StubUsersController @Inject()(stubUsersView: StubUsersView)
-                                   (implicit val appConfig: FrontendAppConfig,
+class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
                                     override val config: Configuration,
                                     override val env: Environment,
                                     implicit val mcc: MessagesControllerComponents,
                                     implicit val executionContext: ExecutionContext,
-                                    val desSimulatorConnector: DesSimulatorConnector,
                                     userRepository: UserRepository
                                    ) extends BaseController with AuthRedirects with I18nSupport {
-
-  def show: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(view(UserModelForm.userModelForm)))
-  }
-
-  def submit: Action[AnyContent] = Action.async { implicit request =>
-    UserModelForm.userModelForm.bindFromRequest().fold(
-      errors => Future.successful(BadRequest(view(errors))),
-      success => desSimulatorConnector.stubUser(success) map {
-        case r if r.status == CREATED => Created(view(UserModelForm.userModelForm, Some("User created")))
-        case _ => Conflict(view(UserModelForm.userModelForm, Some("User not created")))
-      }
-    )
-  }
 
   def stubUsers: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[UserRecord](
@@ -75,14 +58,10 @@ class StubUsersController @Inject()(stubUsersView: StubUsersView)
     )
   }
 
-
   val deleteUsers: Action[AnyContent] = Action.async { implicit request =>
     userRepository.removeAll().flatMap(_ =>
       Future.successful(Ok("\nDeleted all mongo data from FE user collection"))
     )
   }
 
-  def view(form: Form[UserModel], result: Option[String] = None)(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
-    stubUsersView(form, testOnly.controllers.routes.StubUsersController.submit, result)
-  }
 }
