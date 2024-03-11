@@ -18,22 +18,16 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import controllers.BaseController
+import play.api.i18n.I18nSupport
+import play.api.libs.json.JsValue
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.{Configuration, Environment, Logger}
+import testOnly.models.UserRecord
+import testOnly.utils.UserRepository
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import javax.inject.Inject
-import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
-import play.api.{Configuration, Environment}
-import play.twirl.api.HtmlFormat
-import testOnly.forms.UserModelForm
-import testOnly.models.{UserModel, UserRecord}
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
-import testOnly.views.html.StubUsersView
-
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.Logger
-import testOnly.utils.UserRepository
 
 class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
                                     override val config: Configuration,
