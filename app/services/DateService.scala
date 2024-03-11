@@ -18,18 +18,25 @@ package services
 
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
+import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
 
 import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface {
+class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with FeatureSwitching{
+  val appConfig: FrontendAppConfig = frontendAppConfig
+  val timeMachineIsOn: Boolean = frontendAppConfig.timeMachineAddYears.nonEmpty
 
   def getCurrentDate: LocalDate = {
-    frontendAppConfig.timeMachineAddYears.map(years =>
-      LocalDate.now().plusYears(years)
-    ).getOrElse(LocalDate.now())
+    if (isEnabled(TimeMachineAddYear)) {
+      frontendAppConfig.timeMachineAddYears.map(years =>
+        LocalDate.now().plusYears(years)
+      ).getOrElse(LocalDate.now())
+    } else {
+      LocalDate.now()
+    }
   }
 
   def getCurrentTaxYearEnd: Int = {
