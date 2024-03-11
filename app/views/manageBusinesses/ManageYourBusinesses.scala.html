@@ -102,9 +102,9 @@
 
 @addPropertyBusinessURL = @{
     if(isAgent)
-        controllers.manageBusinesses.add.routes.AddPropertyController.showAgent().url
+        controllers.manageBusinesses.add.routes.AddPropertyController.show(true).url
     else
-        controllers.manageBusinesses.add.routes.AddPropertyController.show().url
+        controllers.manageBusinesses.add.routes.AddPropertyController.show(false).url
 }
 
 @addPropertyLink(IsUKPropertyAvailable: Boolean, IsForeignPropertyAvailable: Boolean) = @{

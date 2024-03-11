@@ -1716,3 +1716,12 @@ manage.your.businesses.startdate                                         = Dyddi
 manage.your.businesses.UK                                                = Eiddo yn y DU
 manage.your.businesses.Foreign                                           = Eiddo tramor
 
+# type of property business
+manageBusinesses.type-of-property.heading                                = Y math o fusnes eiddo
+manageBusinesses.type-of-property.text1                                  = Dewiswch y math o fusnes eiddo yr hoffech ei ychwanegu. Os oes gennych y ddau, gallwch ddechrau gydag un ac ychwanegu’r llall yn nes ymlaen.
+manageBusinesses.type-of-property.text2                                  = Os ydych yn cael incwm o un eiddo neu fwy yn y DU, mae gennych fusnes eiddo yn y DU.
+manageBusinesses.type-of-property.text3                                  = Os ydych yn cael incwm o un eiddo neu fwy y tu allan i’r DU, mae gennych fusnes eiddo tramor. Er enghraifft: incwm o roi tai, fflatiau, neu gartrefi gwyliau ar osod a hynny naill ai ar sail tymor hir neu dymor byr.
+manageBusinesses.type-of-property.h2                                     = Pa fath o fusnes eiddo sydd gennych?
+manageBusinesses.type-of-property.uk                                     = Busnes eiddo yn y DU
+manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
+manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
