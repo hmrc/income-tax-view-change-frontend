@@ -32,6 +32,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.{DateServiceInterface, FinancialDetailsService, IncomeSourceDetailsService}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.FallBackBackLinks
@@ -41,7 +42,7 @@ import views.html.errorPages.CustomNotFoundError
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicate,
+class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicateV2,
                                         val checkSessionTimeout: SessionTimeoutPredicate,
                                         val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
                                         val financialDetailsService: FinancialDetailsService,
@@ -116,18 +117,26 @@ class ChargeSummaryController @Inject()(val authenticate: AuthenticationPredicat
   def show(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false, origin: Option[String] = None): Action[AnyContent] =
     action.async {
       implicit user =>
-        handleRequest(taxYear, id, isLatePaymentCharge, isAgent = false, origin)
+        val agentFlag = user.userType.contains(Agent)
+        Logger("application").info(s"[ChargeSummaryController][async] - isAgent: ${agentFlag}")
+        handleRequest(taxYear, id, isLatePaymentCharge, isAgent = agentFlag, origin)
     }
 
   def showAgent(taxYear: Int, id: String, isLatePaymentCharge: Boolean = false): Action[AnyContent] =
-    Authenticated.async {
-      implicit request =>
-        implicit user =>
-          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
-            implicit mtdItUser =>
-              handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true)
-          }
+    action.async {
+      implicit user =>
+        val agentFlag = user.userType.contains(Agent)
+        Logger("application").info(s"[ChargeSummaryController][async] - isAgent: ${agentFlag}")
+        handleRequest(taxYear, id, isLatePaymentCharge, isAgent = agentFlag, None)
     }
+//    Authenticated.async {
+//      implicit request =>
+//        implicit user =>
+//          getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap {
+//            implicit mtdItUser =>
+//              handleRequest(taxYear, id, isLatePaymentCharge, isAgent = true)
+//          }
+//    }
 
 
   private def doShowChargeSummary(taxYear: Int, id: String, isLatePaymentCharge: Boolean,

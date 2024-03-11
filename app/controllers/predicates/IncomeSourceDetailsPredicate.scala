@@ -43,10 +43,14 @@ class IncomeSourceDetailsPredicate @Inject()(val incomeSourceDetailsService: Inc
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: MtdItUserOptionNino[A] = request
 
+
+
     // no caching for now
     incomeSourceDetailsService.getIncomeSourceDetails() map {
       case response: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, None))
+        val u = MtdItUser(request.mtditid, response.nino, request.userName, response, None, request.saUtr, request.credId, request.userType, None)
+        Logger("application").info(s"[IncomeSourceDetailsPredicate][async] - IncomeSourceDetailsPredicate - ${u}")
+        Right(u)
       case _ => Left(itvcErrorHandler.showInternalServerError())
     }
   }
