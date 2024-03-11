@@ -22,12 +22,14 @@ import auth.{FrontendAuthorisedFunctions, MtdItUser}
 import config._
 import config.featureswitch._
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates.{AuthenticationPredicateV2, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, WhatYouOweService}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
 import views.html.WhatYouOwe
@@ -36,6 +38,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
+                                     val checkSessionTimeout: SessionTimeoutPredicate,
+                                     val authenticate: AuthenticationPredicateV2,
+                                     val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                                     val retrievebtaNavPartial: NavBarPredicate,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      val authorisedFunctions: FrontendAuthorisedFunctions,
@@ -47,6 +53,9 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                                      whatYouOwe: WhatYouOwe,
                                      val auth: AuthenticatorPredicate
                                     ) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
+
+  val action: ActionBuilder[MtdItUser, AnyContent] =
+    checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrievebtaNavPartial
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
@@ -87,22 +96,22 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
         itvcErrorHandler = itvcErrorHandler,
-        isAgent = false,
+        isAgent = user.userType.contains(Agent),
         origin = origin
       )
   }
 
-  def showAgent: Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent: Action[AnyContent] = action.async {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent.url,
         itvcErrorHandler = itvcErrorHandlerAgent,
-        isAgent = true
+        isAgent = mtdItUser.userType.contains(Agent)
       )
   }
 }
