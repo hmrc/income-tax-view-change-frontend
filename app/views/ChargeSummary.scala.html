@@ -39,7 +39,7 @@
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
     chargeSummaryCodingOut: ChargeSummaryCodingOut,
-    chargeSummaryHasDunningLocksOrLpiWithDunnigBlock: ChargeSummaryHasDunningLocksOrLpiWithDunnigBlock,
+    chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     govukInsetText : GovukInsetText
 )
@@ -165,7 +165,7 @@
     useFallbackBackLink = true, gatewayPage = gatewayPage) {
 
     @if(hasDunningLocks || documentDetail.hasLpiWithDunningLock) {
-        @chargeSummaryHasDunningLocksOrLpiWithDunnigBlock(documentDetail, dueDate, latePaymentInterestCharge, appConfig)
+        @chargeSummaryHasDunningLocksOrLpiWithDunningLock(documentDetail, dueDate, latePaymentInterestCharge, appConfig)
     }
 
     <h1 class="govuk-heading-xl">
