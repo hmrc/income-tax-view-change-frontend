@@ -164,7 +164,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
   val action: ActionBuilder[MtdItUser, AnyContent] =
     checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrievebtaNavPartial
 
-
   def show(origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
       handleShowRequest(isAgent = user.userType.contains(Agent), origin)
