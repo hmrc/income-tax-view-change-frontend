@@ -22,6 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates.{AuthenticationPredicateV2, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.nextUpdates.NextUpdatesTileViewModel
@@ -31,6 +32,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import play.twirl.api.Html
 import services._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.AuthenticatorPredicate
@@ -42,6 +44,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class HomeController @Inject()(val homeView: views.html.Home,
                                val authorisedFunctions: AuthorisedFunctions,
+                               val checkSessionTimeout: SessionTimeoutPredicate,
+                               val authenticate: AuthenticationPredicateV2,
+                               val retrieveNinoWithIncomeSources: IncomeSourceDetailsPredicate,
+                               val retrievebtaNavPartial: NavBarPredicate,
                                val nextUpdatesService: NextUpdatesService,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
@@ -155,13 +161,17 @@ class HomeController @Inject()(val homeView: views.html.Home,
     }
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  val action: ActionBuilder[MtdItUser, AnyContent] =
+    checkSessionTimeout andThen authenticate andThen retrieveNinoWithIncomeSources andThen retrievebtaNavPartial
+
+
+  def show(origin: Option[String] = None): Action[AnyContent] = action.async {
     implicit user =>
-      handleShowRequest(isAgent = false, origin)
+      handleShowRequest(isAgent = user.userType.contains(Agent), origin)
   }
 
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+  def showAgent(): Action[AnyContent] = action.async {
     implicit mtdItUser =>
-      handleShowRequest(isAgent = true)
+      handleShowRequest(isAgent = mtdItUser.userType.contains(Agent))
   }
 }
