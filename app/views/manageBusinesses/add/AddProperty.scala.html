@@ -36,6 +36,8 @@
     messages(s"manageBusinesses.type-of-property.$key", args: _*)
 }
 
+@pageHasErrors = @{form.hasErrors}
+
 @mainTemplate(
     pageTitle = getMessage("heading"),
     isAgent = isAgent,
@@ -45,6 +47,10 @@
     @formWithCSRF(action = postAction, Symbol("id") -> "type-of-business") {
 
         @errorSummary(form)
+
+        @if(pageHasErrors){
+            <div class="govuk-form-group govuk-form-group--error">
+        }
 
         @h1(msg = getMessage("heading"), classes = "govuk-heading-l", id = Some("heading"))
 
@@ -78,7 +84,11 @@
                 )
             ),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
-        ).withFormField(form("type-of-property"))))
+        ).withFormField(form("type-of-property")))
+
+        @if(pageHasErrors){
+        </div>
+        }
 
         @continueButton()
     }
