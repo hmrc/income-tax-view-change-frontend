@@ -30,23 +30,14 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
 
   def fixture(date: String) = new {
     val mockedTestDateService = new DateService() {
-
-      override val timeMachineIsOn: Boolean = isEnabled(TimeMachineAddYear)
-      override lazy val clock: Clock = {
-
-        val modifiedDate = s"$date" + "T00:00:00Z"
-        val timeZone: ZoneId = ZoneId.of("GMT")
+      override def getCurrentDate: LocalDate = {
+        val timeMachineIsOn: Boolean = isEnabled(TimeMachineAddYear)
 
         if (timeMachineIsOn) {
-          val instant = Instant.parse(modifiedDate)
-          Clock.offset(Clock.fixed(instant, timeZone), Duration.ofDays(365))
+          LocalDate.parse(date).plusYears(1)
         } else {
-          val instant = Instant.parse(modifiedDate)
-          Clock.fixed(instant, timeZone)
+          LocalDate.parse(date)
         }
-      }
-      override def getCurrentDate: LocalDate = {
-        LocalDate.now(clock)
       }
     }
   }

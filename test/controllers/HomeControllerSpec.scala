@@ -81,7 +81,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
       app.injector.instanceOf[MessagesControllerComponents],
       app.injector.instanceOf[FrontendAppConfig]
     )
-    when(mockDateService.getCurrentDate) thenReturn LocalDate.now()
+    when(mockDateService.getCurrentDate) thenReturn fixedDate
 
     val overdueWarningMessageDunningLockTrue: String = messages("home.overdue.message.dunningLock.true")
     val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
@@ -116,7 +116,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
     app.injector.instanceOf[FrontendAppConfig]
   )
 
-  when(mockDateService.getCurrentDate) thenReturn LocalDate.now()
+  when(mockDateService.getCurrentDate) thenReturn fixedDate
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -552,7 +552,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
         "return an internal server exception" in new Setup {
 
           setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-          when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
+          when(mockDateService.getCurrentDate).thenReturn(fixedDate)
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Left(new Exception("obligation test exception")))
           setupMockGetWhatYouOweChargesList(emptyWhatYouOweChargesList)
@@ -568,7 +568,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "return an internal server exception" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any())) thenReturn Future.failed(new InternalServerException("obligation test exception"))
@@ -584,7 +584,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             mockSingleBusinessIncomeSource()
-            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
             mockGetDueDates(Right(futureDueDates))
 
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -604,7 +604,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
             mockSingleBusinessIncomeSource()
-            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
               .thenReturn(Future.successful(List(financialDetailsModel(testTaxYear, dueDateValue = None))))
@@ -621,7 +621,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "display the home page with right details and with dunning lock warning and two overdue payments" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -640,7 +640,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "display the home page with right details and with dunning lock warning and two overdue payments from FinancialDetailsService and one from CESA" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -660,7 +660,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "display the home page with right details and with dunning lock warning and one overdue payments from CESA" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))
@@ -679,7 +679,7 @@ class HomeControllerSpec extends TestSupport with MockIncomeSourceDetailsService
           "display the home page with right details and without dunning lock warning and one overdue payments from CESA" in {
 
             setupMockAgentAuthRetrievalSuccess(testAgentAuthRetrievalSuccess)
-            when(mockDateService.getCurrentDate).thenReturn(LocalDate.now())
+            when(mockDateService.getCurrentDate).thenReturn(fixedDate)
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails(any())(any(), any(), any()))

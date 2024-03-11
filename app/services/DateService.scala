@@ -19,23 +19,17 @@ package services
 import com.google.inject.ImplementedBy
 import config.FrontendAppConfig
 
-import java.time.{LocalDate, Clock, Duration, ZoneOffset}
+import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface {
 
-  val timeMachineIsOn: Boolean = frontendAppConfig.timeMachineAddYears.nonEmpty
-
-  lazy val clock: Clock = if (timeMachineIsOn) {
-    Clock.offset(Clock.systemDefaultZone.withZone(ZoneOffset.UTC), Duration.ofDays(365))
-  } else {
-    Clock.systemDefaultZone.withZone(ZoneOffset.UTC)
-  }
-
   def getCurrentDate: LocalDate = {
-    LocalDate.now(clock)
+    frontendAppConfig.timeMachineAddYears.map(years =>
+      LocalDate.now().plusYears(years)
+    ).getOrElse(LocalDate.now())
   }
 
   def getCurrentTaxYearEnd: Int = {
