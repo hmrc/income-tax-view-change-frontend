@@ -68,7 +68,9 @@ class AuthenticationPredicateV2 @Inject()(implicit val ec: ExecutionContext,
 
     implicit val req: Request[A] = request
 
+    // TODO: read this from Session otherwise we need to pass parameter in someway
     val requireClientSelected : Boolean = true
+
     val clientMtd: Option[String] = if (requireClientSelected) request.session.get(SessionKeys.clientMTDID) else None
     val authPredicate: Predicate = clientMtd match {
       case Some(mtdId) => Enrolment("HMRC-MTD-IT")
