@@ -35,7 +35,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.NextUpdatesService
 import testConstants.BaseTestConstants
-import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment}
+import testConstants.BaseTestConstants.{testAgentAuthRetrievalSuccess, testAgentAuthRetrievalSuccessNoEnrolment, testIndividualAuthSuccessWithSaUtrResponse}
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.{NextUpdates, NoNextUpdates}
 
@@ -110,6 +110,11 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
       .thenReturn(Future.successful(ObligationsModel(Seq())))
   }
 
+  def mockViewModel: OngoingStubbing[NextUpdatesViewModel] = {
+    when(NextUpdatesService.getViewModel(any())(any()))
+      .thenReturn(nextUpdatesViewModel)
+  }
+
   /* INDIVIDUAL **/
   "The NextUpdatesController.getNextUpdates function" when {
 
@@ -123,9 +128,12 @@ class NextUpdatesControllerSpec extends MockAuthenticationPredicate with MockInc
         "successfully retrieves a set of Business NextUpdates and Previous Obligations from the NextUpdates service" should {
 
           "return Status OK (200)" in {
+            setupMockAuthRetrievalSuccess(testIndividualAuthSuccessWithSaUtrResponse())
             mockSingleBusinessIncomeSource()
             mockSingleBusinessIncomeSourceWithDeadlines()
             mockObligations
+            mockViewModel
+            redirectLocation(result) shouldBe ""
             status(result) shouldBe Status.OK
           }
 

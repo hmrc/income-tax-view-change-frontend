@@ -19,6 +19,7 @@ package services
 import auth.MtdItUser
 import connectors._
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import models.incomeSourceDetails.viewmodels._
 import models.nextUpdates._
 import play.api.Logger
@@ -68,6 +69,16 @@ class NextUpdatesService @Inject()(val obligationsConnector: ObligationsConnecto
     } else {
       Logger("application").debug(s"[NextUpdatesService][getNextUpdates] - Requesting current Next Updates for nino: ${mtdUser.nino}")
       obligationsConnector.getNextUpdates()
+    }
+  }
+
+  def getViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel{
+    obligationsModel.obligationsByDate map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
+      if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
+        val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
+        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
+      }
+      else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
     }
   }
 
