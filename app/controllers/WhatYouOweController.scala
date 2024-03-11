@@ -59,7 +59,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
-                    isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
@@ -81,7 +80,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
               dunningLock = whatYouOweChargesList.hasDunningLock,
               codingOutEnabled = codingOutEnabled,
               MFADebitsEnabled = isEnabled(MFACreditsAndDebits),
-              isAgent = isAgent,
+              isAgent = user.userType.contains(Agent),
               whatYouOweCreditAmountEnabled = isEnabled(WhatYouOweCreditAmount),
               isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
               creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
@@ -90,7 +89,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
         }
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        Logger("application").error(s"${if (user.userType.contains(Agent)) "[Agent]"}" +
           s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
         itvcErrorHandler.showInternalServerError()
     }
@@ -101,7 +100,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
         itvcErrorHandler = itvcErrorHandler,
-        isAgent = user.userType.contains(Agent),
         origin = origin
       )
   }
@@ -111,7 +109,6 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent.url,
         itvcErrorHandler = itvcErrorHandlerAgent,
-        isAgent = mtdItUser.userType.contains(Agent)
       )
   }
 }
