@@ -55,7 +55,9 @@ case class TaxDueSummaryViewModel(
                                    taxDeductedAtSource: TaxDeductedAtSourceViewModel = TaxDeductedAtSourceViewModel(),
                                    totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
                                    totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
-                                   giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None
+                                   giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
+                                   incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None,
+                                   totalTaxableTransitionProfit: Option[BigDecimal] = None
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -122,7 +124,9 @@ object TaxDueSummaryViewModel {
         taxDeductedAtSource = TaxDeductedAtSourceViewModel(calc.taxDeductedAtSource),
         totalAnnuityPaymentsTaxCharged = calc.taxCalculation.flatMap(tc => tc.totalAnnuityPaymentsTaxCharged),
         totalRoyaltyPaymentsTaxCharged = calc.taxCalculation.flatMap(tc => tc.totalRoyaltyPaymentsTaxCharged),
-        giftAidTaxChargeWhereBasicRateDiffers = calc.taxCalculation.flatMap(tc => tc.incomeTax.giftAidTaxChargeWhereBasicRateDiffers)
+        giftAidTaxChargeWhereBasicRateDiffers = calc.taxCalculation.flatMap(tc => tc.incomeTax.giftAidTaxChargeWhereBasicRateDiffers),
+        totalTaxableTransitionProfit = calc.transitionProfit.flatMap(_.totalTaxableTransitionProfit),
+        incomeTaxChargedOnTransitionProfits = calc.taxCalculation.flatMap(_.incomeTax.incomeTaxChargedOnTransitionProfits)
       )
       case None => TaxDueSummaryViewModel()
     }

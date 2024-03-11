@@ -112,7 +112,9 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
             taxTakenOffTradingIncome = Some(563.12)
           ),
-          giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99)
+          giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
+          incomeTaxChargedOnTransitionProfits = Some(700.00),
+          totalTaxableTransitionProfit = Some(3000.00)
         )
 
         TaxDueSummaryViewModel(liabilityCalculationModelSuccessful) shouldBe expectedTaxDueSummaryViewModel
@@ -181,7 +183,9 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             inYearAdjustmentCodedInLaterTaxYear = Some(5000.99),
             taxTakenOffTradingIncome = Some(563.12)
           ),
-          giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99)
+          giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
+          totalTaxableTransitionProfit = Some(3000.00),
+          incomeTaxChargedOnTransitionProfits = Some(700.00)
         )
 
         val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(

@@ -164,7 +164,9 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
-        payPensionsProfitBands = Some(taxBands)
+        payPensionsProfitBands = Some(taxBands),
+        totalTaxableTransitionProfit = Some(BigDecimal(3500.00)),
+        incomeTaxChargedOnTransitionProfits = Some(BigDecimal(700.00))
       )
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
@@ -180,7 +182,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
             (2, messages("taxCal_breakdown.table.BRT", "£20,000.00", "20.0"), "£4,000.00"),
             (3, messages("taxCal_breakdown.table.IRT", "£20,000.00", "25.0"), "£45,000.00"),
             (4, messages("taxCal_breakdown.table.HRT", "£100,000.00", "40.0"), "£40,000.00"),
-            (5, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00")
+            (5, messages("taxCal_breakdown.table.ART_scottish", "£500,000.00", "45.0"), "£22,500.00"),
+            (6, messages("taxCal_breakdown.table.transitional_profit", "£3,500.00"), "£700.00")
           )
         )
 

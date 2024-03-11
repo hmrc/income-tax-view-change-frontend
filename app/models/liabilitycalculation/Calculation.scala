@@ -38,7 +38,8 @@ case class Calculation(
                         incomeSummaryTotals: Option[IncomeSummaryTotals] = None,
                         taxCalculation: Option[TaxCalculation] = None,
                         endOfYearEstimate: Option[EndOfYearEstimate] = None,
-                        pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges] = None
+                        pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges] = None,
+                        transitionProfit: Option[TransitionProfit] = None
                       )
 
 object Calculation {
@@ -163,5 +164,11 @@ case class PensionSavingsTaxCharges(totalPensionCharges: Option[BigDecimal] = No
 
 object PensionSavingsTaxCharges {
   implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
+}
+
+case class TransitionProfit(totalTaxableTransitionProfit: Option[BigDecimal] = None)
+
+object TransitionProfit {
+  implicit val format: OFormat[TransitionProfit] = Json.format[TransitionProfit]
 }
 
