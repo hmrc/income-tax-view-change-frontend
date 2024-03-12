@@ -23,7 +23,7 @@ import controllers.predicates.{NavBarPredicate, NinoPredicate, SessionTimeoutPre
 import mocks.MockItvcErrorHandler
 import mocks.controllers.predicates.{MockAuthenticationPredicate, MockIncomeSourceDetailsPredicate, MockIncomeSourceDetailsPredicateNoCache}
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService, MockNextUpdatesService}
-import models.creditDetailModel.{CutOverCreditType, MfaCreditType}
+import models.financialDetails.{CutOverCreditType, MfaCreditType}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
 import play.api.http.Status
 import play.api.i18n.MessagesApi

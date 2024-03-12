@@ -20,12 +20,10 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
-import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
-import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails._
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 
-import java.time
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

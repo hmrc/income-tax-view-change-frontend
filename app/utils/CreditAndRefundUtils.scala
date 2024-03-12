@@ -16,8 +16,7 @@
 
 package utils
 
-import models.creditDetailModel.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
-import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails.{BalanceDetails, BalancingChargeCreditType, CutOverCreditType, DocumentDetailWithDueDate, FinancialDetail, MfaCreditType}
 
 object CreditAndRefundUtils {
   sealed trait UnallocatedCreditType

@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import enums.ChargeType._
-import models.creditDetailModel.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
+import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.FinancialDetail.{getMessageKeyByTypes, getMessageKeyForChargeType, getMessageKeyForMainType}
 import testConstants.FinancialDetailsTestConstants.financialDetail
 import testUtils.UnitSpec

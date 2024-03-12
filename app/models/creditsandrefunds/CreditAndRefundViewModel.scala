@@ -16,8 +16,7 @@
 
 package models.creditsandrefunds
 
-import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
-import models.financialDetails.{DocumentDetailWithDueDate, FinancialDetail}
+import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, DocumentDetailWithDueDate, FinancialDetail, MfaCreditType}
 
 
 case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {

@@ -18,7 +18,8 @@ package testConstants
 
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
-import models.creditDetailModel.{BalancingChargeCreditType, CreditDetailModel, CutOverCreditType, MfaCreditType}
+import models.creditDetailModel.CreditDetailModel
+import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}

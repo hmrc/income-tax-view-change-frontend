@@ -1028,6 +1028,7 @@ paymentHistory.paymentFromEarlierYear                           = Credit from an
 paymentHistory.mfaCredit                                        = Credit from HMRC adjustment
 paymentHistory.taxYear                                          = {0} to {1} tax year
 paymentHistory.balancingChargeCredit                            = Credit from overpaid tax
+
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
 paymentHistory.refund                                           = Refund issued
 paymentHistory.table.header.date                                = Date
@@ -1740,3 +1741,11 @@ manageBusinesses.type-of-property.h2                                     = What 
 manageBusinesses.type-of-property.uk                                     = UK property business
 manageBusinesses.type-of-property.foreign                                = Foreign property business
 manageBusinesses.type-of-property.error                                  = Select an option
+
+# credits
+
+credit.description.balancingChargeCredit                            = Credit from overpaid tax
+credit.description.paymentFromEarlierYear                           = Credit from an earlier tax year
+credit.description.mfaCredit                                        = Credit from HMRC adjustment
+credit.description.setOffCharge                                     = Credyd o dâl sydd wedi’i osod yn erbyn treth
+credit.description.setOffChargeInterest                             = Llog ar gredyd o dâl sydd wedi’i osod yn erbyn treth

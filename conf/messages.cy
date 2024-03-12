@@ -1016,7 +1016,6 @@ paymentHistory.button                                           = Taliadau {0}
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
 paymentHistory.paymentToHmrc                                    = Taliad roeddech wedi’i wneud i CThEF
-paymentHistory.balancingChargeCredit                            = Credyd tâl mantoli
 paymentHistory.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
 paymentHistory.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
 paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
@@ -1725,3 +1724,10 @@ manageBusinesses.type-of-property.h2                                     = Pa fa
 manageBusinesses.type-of-property.uk                                     = Busnes eiddo yn y DU
 manageBusinesses.type-of-property.foreign                                = Busnes eiddo tramor
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
+
+
+credit.description.balancingChargeCredit                            = Credyd o ordaliad treth
+credit.description.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
+credit.description.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
+credit.description.setOffCharge                                     = Credit from a set-off charge
+credit.description.setOffChargeInterest                             = credit interest from a set-off charge

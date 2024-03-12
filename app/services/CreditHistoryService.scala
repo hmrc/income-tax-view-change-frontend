@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.creditDetailModel._
-import models.financialDetails.{DocumentDetail, FinancialDetail, FinancialDetailsModel}
+import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, DocumentDetail, FinancialDetail, FinancialDetailsModel, MfaCreditType}
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
