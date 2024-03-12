@@ -101,7 +101,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       dunningLockExists          = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
-      overDuePaymentsCount       = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
+      overDuePaymentsCount       = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       paymentsDueMerged          = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
     } yield {
 
@@ -142,6 +142,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
       case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(locm)), _) => locm.filter(_.hasRelevantDueDateWithBCDChargeName)
       case _ => Nil
     }
+
+  private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
+    lazy val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
+    lazy val overdueChargesCount = outstandingChargesModel.length
+    overduePaymentsCountFromDate + overdueChargesCount
+  }
 
   private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
