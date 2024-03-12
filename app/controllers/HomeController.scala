@@ -87,7 +87,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val currentDate = dateService.getCurrentDate
 
     nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent, currentDate, incomeSourceCurrentTaxYear)
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates)
       case Left(ex)                                   => handleErrorGettingDueDates(ex)
     } recover {
       case ex =>
@@ -96,11 +96,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
     }
   }
 
-  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate],
-                            isAgent: Boolean,
-                            currentDate: LocalDate,
-                            incomeSourceCurrentTaxYear: Int)
+  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate])
                            (implicit user: MtdItUser[_]): Future[Result] = {
+
+    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd
+    val currentDate = dateService.getCurrentDate
     val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
     val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
