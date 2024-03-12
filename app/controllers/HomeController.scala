@@ -99,10 +99,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd
     val currentDate = dateService.getCurrentDate
     val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
-    val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
     for {
-      unpaidCharges             <- unpaidChargesFuture
+      unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
       paymentsDue                = getDueDates(unpaidCharges)
       dunningLockExists          = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
@@ -110,17 +109,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount       = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
       paymentsDueMerged          = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
     } yield {
-      auditingService.extendedAudit(HomeAudit(
-        mtdItUser = user,
-        paymentsDueMerged,
-        overDuePaymentsCount,
-        nextUpdatesTileViewModel))
 
-      val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
-        unpaidCharges,
-        creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay),
-        paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds)
-      )
+      auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
+
+      lazy val paymentCreditAndRefundHistoryTileViewModel =
+        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
 
       Ok(view(
         isAgent = user.isAgent,
