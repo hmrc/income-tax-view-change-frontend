@@ -45,6 +45,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
 
   val transactionName: String = "charge-summary"
   val auditType: String = "ChargeSummary"
+  lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
 
   val docDetail: DocumentDetail = DocumentDetail(
     taxYear = taxYear,
@@ -107,19 +108,19 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers {
     financialDetail(originalAmount = 9876.54, chargeType = CGT))
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithCodingOutAccepted: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithCodingOutAccepted,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithCodingOutRejected: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithCodingOutRejected,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val docDateDetailWithInterest: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetailWithInterest,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
   val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
     mtdItUser = MtdItUser(

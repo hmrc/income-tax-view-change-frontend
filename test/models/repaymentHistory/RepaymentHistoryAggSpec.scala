@@ -25,7 +25,8 @@ object RepaymentHistoryAggSpec extends Properties("RepaymentHistory_aggregate") 
   import org.scalacheck.Prop.forAll
 
   def dateGen: Gen[LocalDate] = {
-    val currentYear = LocalDate.now().getYear
+    lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
+    val currentYear = fixedDate.getYear
     val rangeFrom = LocalDate.of(currentYear - 60, 1, 1).toEpochDay
     val rangeEnd = LocalDate.of(currentYear, 1, 1).toEpochDay
     Gen.choose(rangeFrom, rangeEnd).map(i => LocalDate.ofEpochDay(i))
