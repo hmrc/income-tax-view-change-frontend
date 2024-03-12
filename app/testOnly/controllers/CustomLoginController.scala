@@ -134,8 +134,8 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
     val ninoObj = Nino(nino)
     val taxYear: TaxYear = TaxYear(
-      dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabled(TimeMachineAddYear)).getYear,
-      dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabled(TimeMachineAddYear))
+      dateService.getCurrentTaxYearStart.getYear,
+      dateService.getCurrentTaxYearEnd
     )
 
     val crystallisationStatusResult: Future[Unit] = optOutCustomDataService.uploadCalculationListData(nino = ninoObj, taxYear = taxYear.addYears(-1), status = crystallisationStatus)

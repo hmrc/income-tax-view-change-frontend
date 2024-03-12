@@ -108,8 +108,8 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
   import Scenario._
 
   def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[Int] = scenario match {
-    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => when(mockDateService.getCurrentTaxYearEnd(any[Boolean])).thenReturn(TAX_YEAR_2024)
-    case _ => when(mockDateService.getCurrentTaxYearEnd(any[Boolean])).thenReturn(TAX_YEAR_2023)
+    case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2024)
+    case _ => when(mockDateService.getCurrentTaxYearEnd).thenReturn(TAX_YEAR_2023)
   }
 
   def setupMockIncomeSourceDetailsCall(scenario: Scenario, incomeSourceType: IncomeSourceType): Unit = (scenario, incomeSourceType) match {
@@ -138,13 +138,13 @@ class IncomeSourceReportingMethodControllerSpec extends TestSupport with MockAut
 
   def setupMockIsTaxYearCrystallisedCall(scenario: Scenario): OngoingStubbing[Future[Option[Boolean]]] = scenario match {
     case FIRST_YEAR_CRYSTALLISED =>
-      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022), any)(any, any, any)).thenReturn(Future(Some(true)))
+      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(Some(true)))
     case CURRENT_TAX_YEAR_IN_LATENCY_YEARS =>
-      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022), any)(any, any, any)).thenReturn(Future(Some(false)))
+      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2022))(any, any)).thenReturn(Future(Some(false)))
     case CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS =>
-      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023), any)(any, any, any)).thenReturn(Future(Some(false)))
+      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(Some(false)))
     case _ =>
-      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023), any)(any, any, any)).thenReturn(Future(Some(false)))
+      when(mockCalculationListService.isTaxYearCrystallised(ArgumentMatchers.eq(TAX_YEAR_2023))(any, any)).thenReturn(Future(Some(false)))
   }
 
   def setupMockUpdateIncomeSourceCall(numberOfSuccessResponses: Int): Unit = {

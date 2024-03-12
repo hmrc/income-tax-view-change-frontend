@@ -39,7 +39,7 @@ class ManageIncomeSourceDetailsControllerISpec extends ComponentSpecBase {
   val manageSelfEmploymentShowUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(testSelfEmploymentId)).url
   val manageUKPropertyShowUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None).url
   val manageForeignPropertyShowUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None).url
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
+  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
   val lastDayOfCurrentTaxYear: LocalDate = LocalDate.of(currentTaxYear, APRIL, 5)
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = (currentTaxYear + 1)

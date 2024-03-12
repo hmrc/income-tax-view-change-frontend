@@ -63,7 +63,7 @@ class AddIncomeSourceStartDateControllerSpec extends TestSupport with MockSessio
 
   val testStartDate: LocalDate = LocalDate.of(2022, 1, 1)
 
-  val currentDate = dateService.getCurrentDate()
+  val currentDate = dateService.getCurrentDate
 
   val maximumAllowableDatePlusOneDay = mockImplicitDateFormatter
     .longDate(currentDate.plusWeeks(1).plusDays(1))
