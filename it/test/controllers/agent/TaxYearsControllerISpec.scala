@@ -40,6 +40,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
   }
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+  lazy val fixedDate : LocalDate = LocalDate.of(2024, 6, 5)
 
   val incomeSourceDetailsSuccess: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
@@ -48,7 +49,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       Some(getCurrentTaxYearEnd),
       None,
@@ -59,7 +60,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         None,
         Some(getCurrentTaxYearEnd),
@@ -76,7 +77,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       None,
       None,
@@ -87,7 +88,7 @@ class TaxYearsControllerISpec extends ComponentSpecBase with FeatureSwitching {
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         None,
         None,
