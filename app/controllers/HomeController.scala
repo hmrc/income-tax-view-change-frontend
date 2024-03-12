@@ -111,7 +111,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     for {
       unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
       paymentsDue                = getDueDates(unpaidCharges).sortBy(_.toEpochDay())
-      dunningLockExistsValue     = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+      dunningLockExists          = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
       overDuePaymentsCount       = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
@@ -126,7 +126,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       Ok(view(
         isAgent = isAgent,
         nextPaymentDueDate = paymentsDueMerged,
-        dunningLockExists = dunningLockExistsValue,
+        dunningLockExists = dunningLockExists,
         overDuePaymentsCount = Some(overDuePaymentsCount),
         nextUpdatesTileViewModel = nextUpdatesTileViewModel,
         displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome,
