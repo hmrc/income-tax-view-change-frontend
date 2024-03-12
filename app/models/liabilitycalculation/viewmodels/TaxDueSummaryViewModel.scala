@@ -61,9 +61,10 @@ case class TaxDueSummaryViewModel(
                                  ) {
 
   def getRateHeaderKey: String = {
-    taxRegime.contains("Scotland") match {
-      case true => ".scotland"
-      case false => ".uk"
+    if (taxRegime.contains("Scotland")) {
+      ".scotland"
+    } else {
+      ".uk"
     }
   }
 
