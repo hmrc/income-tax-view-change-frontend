@@ -104,12 +104,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
     for {
       unpaidCharges             <- unpaidChargesFuture
       paymentsDue                = getDueDates(unpaidCharges)
-      dunningLockExistsValue     = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+      dunningLockExists          = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
       overDuePaymentsCount       = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
       paymentsDueMerged          = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-      displayCeaseAnIncome       = user.incomeSources.hasOngoingBusinessOrPropertyIncome
     } yield {
       auditingService.extendedAudit(HomeAudit(
         mtdItUser = user,
@@ -123,18 +122,16 @@ class HomeController @Inject()(val homeView: views.html.Home,
         paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds)
       )
 
-      Ok(
-        view(
-          paymentsDueMerged,
-          Some(overDuePaymentsCount),
-          nextUpdatesTileViewModel,
-          paymentCreditAndRefundHistoryTileViewModel,
-          dunningLockExistsValue,
-          incomeSourceCurrentTaxYear,
-          displayCeaseAnIncome,
-          isAgent = user.isAgent
-        )
-      )
+      Ok(view(
+        isAgent = user.isAgent,
+        dunningLockExists = dunningLockExists,
+        nextPaymentDueDate = paymentsDueMerged,
+        currentTaxYear = dateService.getCurrentTaxYearEnd,
+        overDuePaymentsCount = Some(overDuePaymentsCount),
+        nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+        displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome,
+        paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
+      ))
     }
   }
 
