@@ -112,11 +112,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
 
-      val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
-        unpaidCharges,
-        creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay),
-        paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds)
-      )
+      val paymentCreditAndRefundHistoryTileViewModel =
+        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
 
       Ok(view(
         isAgent = user.isAgent,
