@@ -22,7 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -83,9 +83,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd
-    val currentDate = dateService.getCurrentDate
-
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates)
       case Left(ex)                                   => handleErrorGettingDueDates(ex)
@@ -104,28 +101,18 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
     val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
-    val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
-      _.flatMap {
-        case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-        case _ => List.empty[LocalDate]
-      }.sortWith(_ isBefore _)
-    }
-
     for {
-      paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
-      unpaidCharges <- unpaidChargesFuture
-      dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
-      outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
-        case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
-        case _ => Nil
-      })
+      unpaidCharges           <- unpaidChargesFuture
+      paymentsDue              = getDueDates(unpaidCharges)
+      dunningLockExistsValue   = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+      outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate = outstandingChargesModel.flatMap {
         case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
         case _ => Nil
       }
-      overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
-      paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-      displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
+      overDuePaymentsCount        = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
+      paymentsDueMerged           = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+      displayCeaseAnIncome        = user.incomeSources.hasOngoingBusinessOrPropertyIncome
     } yield {
       auditingService.extendedAudit(HomeAudit(
         mtdItUser = user,
@@ -148,11 +135,30 @@ class HomeController @Inject()(val homeView: views.html.Home,
           dunningLockExistsValue,
           incomeSourceCurrentTaxYear,
           displayCeaseAnIncome,
-          isAgent = isAgent
+          isAgent = user.isAgent
         )
       )
     }
   }
+
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
+    (unpaidCharges collect {
+      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+    })
+      .flatten
+      .sortWith(_ isBefore _)
+      .sortBy(_.toEpochDay())
+
+  private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
+                                        (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
+    whatYouOweService.getWhatYouOweChargesList(
+      unpaidCharges,
+      isEnabled(CodingOut),
+      isEnabled(MFACreditsAndDebits)
+    ) map {
+      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(locm)), _) => locm.filter(_.hasRelevantDueDateWithBCDChargeName)
+      case _ => Nil
+    }
 
   private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
