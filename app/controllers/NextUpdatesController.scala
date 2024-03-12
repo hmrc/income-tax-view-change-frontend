@@ -86,7 +86,7 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
   private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     auditNextUpdates(user, isAgent, origin)
-    val viewModel = nextUpdatesService.getViewModel(obligationsModel)
+    val viewModel = nextUpdatesService.getNextUpdatesViewModel(obligationsModel)
     nextUpdatesView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
   }
 
