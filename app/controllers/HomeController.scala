@@ -99,9 +99,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
             case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
             case _ => List.empty[LocalDate]
           }.sortWith(_ isBefore _)
-        } map { dueDates =>
+        } flatMap { dueDates =>
 
-          financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut)) map { unpaidCharges =>
+          financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut)) flatMap { unpaidCharges =>
 
             val dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
 
@@ -154,18 +154,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
             }
           }
         }
-
       case Left(ex) =>
         Logger("application")
           .error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
-    }.recover {
-      case ex =>
-        Logger("application")
-          .error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
     }
   }
 
