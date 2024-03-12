@@ -94,12 +94,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   }
 
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate])
-                           (implicit user: MtdItUser[_]): Future[Result] = {
-
-    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd
-    val currentDate = dateService.getCurrentDate
-    val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
-
+                           (implicit user: MtdItUser[_]): Future[Result] =
     for {
       unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
       paymentsDue                = getDueDates(unpaidCharges)
@@ -109,6 +104,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount       = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
       paymentsDueMerged          = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
     } yield {
+
+      lazy val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate)
 
       auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
 
@@ -126,7 +123,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
         paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
       ))
     }
-  }
 
   private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
     (unpaidCharges collect {
