@@ -60,26 +60,25 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private def view(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
                    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
-                  (implicit user: MtdItUser[_]): Html = {
+                  (implicit user: MtdItUser[_]): Html =
     homeView(
+      origin = origin,
+      utr = user.saUtr,
+      isAgent = isAgent,
+      currentTaxYear = currentTaxYear,
+      dunningLockExists = dunningLockExists,
       nextPaymentDueDate = nextPaymentDueDate,
       overDuePaymentsCount = overDuePaymentsCount,
-      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
-      user.saUtr,
-      ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-      dunningLockExists = dunningLockExists,
-      currentTaxYear = currentTaxYear,
       displayCeaseAnIncome = displayCeaseAnIncome,
-      isAgent = isAgent,
-      origin = origin,
+      incomeSourcesEnabled = isEnabled(IncomeSources),
+      nextUpdatesTileViewModel = nextUpdatesTileViewModel,
       creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
       paymentHistoryEnabled = isEnabled(PaymentHistoryRefunds),
-      incomeSourcesEnabled = isEnabled(IncomeSources),
+      isUserMigrated = user.incomeSources.yearOfMigration.isDefined,
       incomeSourcesNewJourneyEnabled = isEnabled(IncomeSourcesNewJourney),
-      isUserMigrated = user.incomeSources.yearOfMigration.isDefined
+      ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+      paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
     )
-  }
 
   def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
