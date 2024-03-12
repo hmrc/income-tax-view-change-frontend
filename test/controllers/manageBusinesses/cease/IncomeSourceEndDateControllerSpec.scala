@@ -164,7 +164,7 @@ class IncomeSourceEndDateControllerSpec extends TestSupport with MockAuthenticat
         status(result) shouldBe OK
         document.title shouldBe TestIncomeSourceEndDateController.title(incomeSourceType, isAgent = isAgent)
         document.select("h1").text shouldBe TestIncomeSourceEndDateController.heading(incomeSourceType)
-        document.getElementById("back").attr("href") shouldBe backAction.url
+        document.getElementById("back-fallback").attr("href") shouldBe backAction.url
         document.getElementById("income-source-end-date-form").attr("action") shouldBe postAction.url
 
         if (isChange) {

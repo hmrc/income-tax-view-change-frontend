@@ -71,13 +71,13 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
         document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
       }
       "render the back link which with correct redirect for normal journey" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe getBackUrl(isAgent, incomeSourceType)
+        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, incomeSourceType)
       }
       "render the back link which with correct redirect for change journey" in new Setup(
         isAgent, hasError = false, incomeSourceType, isChange = true) {
-        document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe getBackUrlChange(isAgent, incomeSourceType)
+        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").attr("href") shouldBe getBackUrlChange(isAgent, incomeSourceType)
       }
       "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")

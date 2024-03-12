@@ -260,8 +260,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new Setup(false) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(false)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new Setup(false) {
 
@@ -312,8 +312,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new Setup(true) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(true)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new Setup(true) {
 
@@ -352,8 +352,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new ukSetup(false) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(false)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new ukSetup(false) {
 
@@ -395,8 +395,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new ukSetup(true) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(true)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new ukSetup(true) {
 
@@ -439,8 +439,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new foreignSetup(false) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(false)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
     }
     "render the whole page" in new foreignSetup(false) {
 
@@ -482,8 +482,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").text shouldBe heading
     }
     "render the back correct back Url" in new foreignSetup(true) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe backUrl(true)
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
     }
     "render the whole page" in new foreignSetup(true) {
 
