@@ -38,6 +38,8 @@ import java.time.LocalDate
 
 class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
+  lazy val fixedDate : LocalDate = LocalDate.of(2024, 6, 5)
+
   val incomeSourceDetails: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = testNino,
     mtdbsa = testMtditid,
@@ -45,7 +47,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       None,
       None,
       Some(getCurrentTaxYearEnd),
@@ -101,7 +103,7 @@ class NextUpdatesControllerISpec extends ComponentSpecBase with FeatureSwitching
         NextUpdatesModel(
           identification = "testId",
           obligations = List(
-            NextUpdateModel(LocalDate.now, LocalDate.now.plusDays(1), LocalDate.now.minusDays(1), "Quarterly", None, "testPeriodKey")
+            NextUpdateModel(fixedDate, fixedDate.plusDays(1), fixedDate.minusDays(1), "Quarterly", None, "testPeriodKey")
           ))
       ))
 

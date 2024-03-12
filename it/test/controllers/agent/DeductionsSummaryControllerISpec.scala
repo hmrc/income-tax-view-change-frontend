@@ -41,6 +41,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
     testMtditid, testNino, Some(Name(Some("Test"), Some("User"))), incomeSource,
     None, Some("1234567890"), credId = None, Some(testUserTypeAgent), arn = Some("1")
   )(FakeRequest())
+  lazy val fixedDate : LocalDate = LocalDate.of(2024, 6, 5)
 
   lazy val incomeSource: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
@@ -49,7 +50,7 @@ class DeductionsSummaryControllerISpec extends ComponentSpecBase with FeatureSwi
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       None,
       None,
       Some(getCurrentTaxYearEnd),
