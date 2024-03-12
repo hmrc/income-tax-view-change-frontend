@@ -73,7 +73,7 @@ case object API1878 extends APIErrorScenario
 case object API1896 extends APIErrorScenario
 
 
-class IncomeSourceReportingMethodControllerISpec123 extends ComponentSpecBase {
+class IncomeSourceReportingMethodControllerISpec extends ComponentSpecBase {
   override val dateService: DateService = app.injector.instanceOf[DateService] //overridden for TYS as implemented with 2023 elsewhere
 
   lazy val showUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>

@@ -25,9 +25,8 @@ import java.time.Month.APRIL
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with FeatureSwitching{
+class DateService @Inject()(implicit val frontendAppConfig: FrontendAppConfig) extends DateServiceInterface with FeatureSwitching {
   val appConfig: FrontendAppConfig = frontendAppConfig
-  val timeMachineIsOn: Boolean = appConfig.timeMachineAddYears.nonEmpty
 
   def getCurrentDate: LocalDate = {
     if (isEnabled(TimeMachineAddYear)) {
