@@ -99,10 +99,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd
     val currentDate = dateService.getCurrentDate
     val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
-    val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
     for {
-      unpaidCharges             <- unpaidChargesFuture
+      unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
       paymentsDue                = getDueDates(unpaidCharges)
       dunningLockExists          = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
