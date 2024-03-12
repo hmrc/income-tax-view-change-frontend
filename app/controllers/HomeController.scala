@@ -80,7 +80,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
     )
 
-  def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
+  def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     nextUpdatesService.getDueDates().flatMap {
@@ -89,7 +89,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     } recover {
       case ex =>
         Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
+        errorHandler(user.isAgent).showInternalServerError()
     }
   }
 
@@ -164,11 +164,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      handleShowRequest(isAgent = false, origin)
+      handleShowRequest(origin)
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleShowRequest(isAgent = true)
+      handleShowRequest()
   }
 }
