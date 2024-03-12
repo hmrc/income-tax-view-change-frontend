@@ -102,7 +102,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
       overDuePaymentsCount       = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
-      paymentsDueMerged          = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+      paymentsDueMerged          = mergePaymentsDue(paymentsDue, outstandingChargesDueDate)
     } yield {
 
       lazy val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate)
@@ -147,6 +147,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
     lazy val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
     lazy val overdueChargesCount = outstandingChargesModel.length
     overduePaymentsCountFromDate + overdueChargesCount
+  }
+
+  private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] = {
+    (paymentsDue ::: outstandingChargesDueDate)
+      .sortWith(_ isBefore _)
+      .headOption
   }
 
   private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
