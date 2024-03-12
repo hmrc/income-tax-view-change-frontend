@@ -109,11 +109,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount       = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
       paymentsDueMerged          = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
     } yield {
-      auditingService.extendedAudit(HomeAudit(
-        mtdItUser = user,
-        paymentsDueMerged,
-        overDuePaymentsCount,
-        nextUpdatesTileViewModel))
+
+      auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
 
       val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
         unpaidCharges,
