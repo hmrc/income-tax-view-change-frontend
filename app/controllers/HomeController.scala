@@ -83,9 +83,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
   def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd
-    val currentDate = dateService.getCurrentDate
-
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates)
       case Left(ex)                                   => handleErrorGettingDueDates(ex)
