@@ -102,7 +102,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                    (implicit user: MtdItUser[_]): Future[Result] =
     for {
       unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
-      paymentsDue                = getDueDates(unpaidCharges).sortBy(_.toEpochDay())
+      paymentsDue                = getDueDates(unpaidCharges)
       dunningLockExists          = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
@@ -131,10 +131,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
     }
 
   private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
-    unpaidCharges flatMap {
+    (unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-      case _ => List.empty[LocalDate]
-    } sortWith(_ isBefore _)
+    })
+      .flatten
+      .sortWith(_ isBefore _)
+      .sortBy(_.toEpochDay())
 
   private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
                                         (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
