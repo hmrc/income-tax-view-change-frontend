@@ -28,6 +28,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.navBar.PtaPartial
@@ -62,8 +63,21 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
   }
 
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
-    request.session.get(SessionKeys.origin)
-    Some("PTA") match {
+    // request.session.get(SessionKeys.origin)
+    // TODO: clarify origin extraction for Agent
+    val origin : Option[String] = {
+      if (request.userType.contains(Agent)) {
+        if (request.session.get(SessionKeys.origin).nonEmpty) {
+          request.session.get(SessionKeys.origin)
+        }
+        else {
+          Some("PTA") // default value
+        }
+      } else {
+        request.session.get(SessionKeys.origin)
+      }
+    }
+    origin match {
       case Some(origin) if OriginEnum(origin) == Some(PTA) =>
         Logger("application").info(s"[IncomeSourceDetailsPredicate][async] - NavBarPredicate - A1")
 
