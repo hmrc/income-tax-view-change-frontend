@@ -92,14 +92,17 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   def handleShowRequest(origin: Option[String] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates) => handleRightCase(nextUpdatesDueDates, user.isAgent)
-      case Left(ex)                   => handleLeftCase(ex) } recover {
-      case ex                         => handleRecoverCase(ex)
+      case Right(nextUpdatesDueDates) => buildHomePage(nextUpdatesDueDates, user.isAgent)
+      case Left(ex)                   => handleErrorGettingDueDates(ex)
+    } recover {
+      case ex                         =>
+        Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
+        errorHandler(user.isAgent).showInternalServerError()
     }
 
-  private def handleRightCase(nextUpdatesDueDates: Seq[LocalDate],
-                                    isAgent: Boolean)
-                                   (implicit user: MtdItUser[_]): Future[Result] =
+  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate],
+                            isAgent: Boolean)
+                           (implicit user: MtdItUser[_]): Future[Result] =
     for {
       unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
       paymentsDue                = getDueDates(unpaidCharges)
@@ -120,8 +123,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       Ok(view(
         isAgent = isAgent,
-        nextPaymentDueDate = paymentsDueMerged,
         dunningLockExists = dunningLockExists,
+        nextPaymentDueDate = paymentsDueMerged,
         overDuePaymentsCount = Some(overDuePaymentsCount),
         nextUpdatesTileViewModel = nextUpdatesTileViewModel,
         displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome,
@@ -161,13 +164,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
     mergedDueDates.headOption
   }
 
-  private def handleLeftCase(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
     Future.successful { errorHandler(user.isAgent).showInternalServerError() }
-  }
-
-  private def handleRecoverCase(ex: Throwable)(implicit user: MtdItUser[_]): Result = {
-    Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
-    errorHandler(user.isAgent).showInternalServerError()
   }
 }
