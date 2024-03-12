@@ -157,9 +157,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-    Future.successful {
-      errorHandler(user.isAgent).showInternalServerError()
-    }
+    Future.successful { errorHandler(user.isAgent).showInternalServerError() }
   }
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
