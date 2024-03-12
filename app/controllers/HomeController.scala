@@ -22,7 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -60,7 +60,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private def view(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Option[Int], nextUpdatesTileViewModel: NextUpdatesTileViewModel,
                    paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel, dunningLockExists: Boolean, currentTaxYear: Int,
                    displayCeaseAnIncome: Boolean, isAgent: Boolean, origin: Option[String] = None)
-                  (implicit user: MtdItUser[_]): Html = {
+                  (implicit user: MtdItUser[_]): Html =
     homeView(
       origin = origin,
       utr = user.saUtr,
@@ -79,7 +79,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
       ITSASubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
     )
-  }
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
@@ -91,23 +90,16 @@ class HomeController @Inject()(val homeView: views.html.Home,
       handleShowRequest()
   }
 
-  def handleShowRequest(origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
+  def handleShowRequest(origin: Option[String] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates) => handleRightCase(nextUpdatesDueDates, user.isAgent)
       case Left(ex)                   => handleLeftCase(ex) } recover {
       case ex                         => handleRecoverCase(ex)
     }
-  }
 
   private def handleRightCase(nextUpdatesDueDates: Seq[LocalDate],
                                     isAgent: Boolean)
-                                   (implicit user: MtdItUser[_]): Future[Result] = {
-
-    lazy val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
-    lazy val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
-
+                                   (implicit user: MtdItUser[_]): Future[Result] =
     for {
       unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
       paymentsDue                = getDueDates(unpaidCharges).sortBy(_.toEpochDay())
@@ -117,6 +109,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
       overDuePaymentsCount       = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       paymentsDueMerged          = mergePaymentsDue(paymentsDue, outstandingChargesDueDate)
     } yield {
+
+      lazy val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+      lazy val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
 
       auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
 
@@ -134,7 +129,6 @@ class HomeController @Inject()(val homeView: views.html.Home,
         paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
       ))
     }
-  }
 
   private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
     unpaidCharges flatMap {
@@ -149,11 +143,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
       isEnabled(CodingOut),
       isEnabled(MFACreditsAndDebits),
       isEnabled(TimeMachineAddYear)
-    ) map(
-      _.outstandingChargesModel match {
-        case Some(OutstandingChargesModel(locm)) => locm.filter(_.hasRelevantDueDateWithBCDChargeName)
-        case _ => Nil
-      })
+    ) map {
+      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(locm)), _) => locm.filter(_.hasRelevantDueDateWithBCDChargeName)
+      case _ => Nil
+    }
 
   private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
     lazy val overduePaymentsCountFromDates = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isEnabled(TimeMachineAddYear))))
