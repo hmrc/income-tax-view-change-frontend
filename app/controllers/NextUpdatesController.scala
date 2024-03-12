@@ -83,20 +83,10 @@ class NextUpdatesController @Inject()(NoNextUpdatesView: NoNextUpdates,
       }
   }
 
-  private def getViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = NextUpdatesViewModel{
-    obligationsModel.obligationsByDate map { case (date: LocalDate, obligations: Seq[NextUpdateModelWithIncomeType]) =>
-      if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
-        val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
-        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
-      }
-      else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-    }
-  }
-
   private def view(obligationsModel: ObligationsModel, backUrl: String, isAgent: Boolean, origin: Option[String] = None)
                   (implicit user: MtdItUser[_]): Html = {
     auditNextUpdates(user, isAgent, origin)
-    val viewModel = getViewModel(obligationsModel)
+    val viewModel = nextUpdatesService.getNextUpdatesViewModel(obligationsModel)
     nextUpdatesView(currentObligations = viewModel, backUrl = backUrl, isAgent = isAgent, origin = origin)
   }
 

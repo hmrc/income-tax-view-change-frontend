@@ -54,7 +54,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
                   codingOutEnabled: Boolean = false,
                   isAgent: Boolean = false,
                   isMFADebit: Boolean = false) {
-    val view: Html = chargeSummary(dateService.getCurrentDate(isEnabled(TimeMachineAddYear)), DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
+    val view: Html = chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetail, dueDate), "testBackURL",
       paymentBreakdown, chargeHistory, paymentAllocations, payments, chargeHistoryEnabled, paymentAllocationEnabled,
       latePaymentInterestCharge, codingOutEnabled, isAgent, isMFADebit = isMFADebit)
     val document: Document = Jsoup.parse(view.toString())
@@ -762,7 +762,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
         val balancingDetailZero = DocumentDetail(taxYear = 2018, transactionId = "", documentDescription = Some("TRM Amend Charge"), documentText = Some(""), outstandingAmount = None, originalAmount = Some(BigDecimal(0)), documentDate = LocalDate.of(2018, 3, 29))
         "balancing charge is 0" in new TestSetup(balancingDetailZero, codingOutEnabled = true) {
           document.select(".govuk-summary-list").text() shouldBe "Due date N/A Full payment amount £0.00 Remaining to pay £0.00"
-          document.select("p").get(2).text shouldBe "View what you owe to check if you have any other payments due."
+          document.select("p").get(1).text shouldBe "View what you owe to check if you have any other payments due."
           document.select("#payment-history-table").isEmpty shouldBe true
           document.select("#heading-payment-breakdown").isEmpty shouldBe true
           document.select(s"#payment-link-${documentDetailModel().taxYear}").isEmpty shouldBe true
@@ -775,7 +775,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching {
   "The charge summary view when missing mandatory expected fields" should {
     "throw a MissingFieldException" in {
       val thrownException = intercept[MissingFieldException] {
-        chargeSummary(dateService.getCurrentDate(isEnabled(TimeMachineAddYear)), DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
+        chargeSummary(dateService.getCurrentDate, DocumentDetailWithDueDate(documentDetailModel(), None), "testBackURL",
           paymentBreakdown, List(), List(), payments, true, false, false, false, false, isMFADebit = false)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
