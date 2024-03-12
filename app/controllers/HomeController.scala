@@ -145,7 +145,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
           dunningLockExistsValue,
           incomeSourceCurrentTaxYear,
           displayCeaseAnIncome,
-          isAgent = isAgent
+          isAgent = user.isAgent
         )
       )
     }
