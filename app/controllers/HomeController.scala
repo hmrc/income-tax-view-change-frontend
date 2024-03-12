@@ -102,14 +102,14 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
     for {
-      unpaidCharges           <- unpaidChargesFuture
-      paymentsDue              = getDueDates(unpaidCharges)
-      dunningLockExistsValue   = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
-      outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
+      unpaidCharges             <- unpaidChargesFuture
+      paymentsDue                = getDueDates(unpaidCharges)
+      dunningLockExistsValue     = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+      outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
-      overDuePaymentsCount        = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
-      paymentsDueMerged           = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-      displayCeaseAnIncome        = user.incomeSources.hasOngoingBusinessOrPropertyIncome
+      overDuePaymentsCount       = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
+      paymentsDueMerged          = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+      displayCeaseAnIncome       = user.incomeSources.hasOngoingBusinessOrPropertyIncome
     } yield {
       auditingService.extendedAudit(HomeAudit(
         mtdItUser = user,
