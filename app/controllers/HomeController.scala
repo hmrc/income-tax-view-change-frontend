@@ -106,10 +106,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDue              = getDueDates(unpaidCharges)
       dunningLockExistsValue   = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
-      outstandingChargesDueDate = outstandingChargesModel.flatMap {
-        case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
-        case _ => Nil
-      }
+      outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
       overDuePaymentsCount        = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
       paymentsDueMerged           = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
       displayCeaseAnIncome        = user.incomeSources.hasOngoingBusinessOrPropertyIncome
