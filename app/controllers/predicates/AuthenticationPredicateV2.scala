@@ -96,7 +96,7 @@ class AuthenticationPredicateV2 @Inject()(implicit val ec: ExecutionContext,
         } else {
           affinityGroup match {
             case Some(Agent) =>
-              Logger("application").info("[AuthenticationPredicate][async] - IAM AN AGENT")
+              Logger("application").info("[AuthenticationPredicateV2][async] - as agent")
               implicit val user: IncomeTaxAgentUser = userApply(enrolments, affinityGroup, confidenceLevel, credentials)
               val agentPredicate = AgentAuthenticationPredicate.defaultPredicates
               // TODO: make sure next conversion is worable
@@ -104,14 +104,12 @@ class AuthenticationPredicateV2 @Inject()(implicit val ec: ExecutionContext,
                 case Right(AuthPredicateSuccess) if requireClientSelected && clientMtd.isEmpty =>
                   Future.successful(Redirect(controllers.agent.routes.EnterClientsUTRController.show))
                 case Right(AuthPredicateSuccess) =>
-                  Logger("application").info(s"[AuthenticationPredicate][async] - IAM AN AGENT - BBBB - ${enrolments} -${userName} - ${affinityGroup}")
                   // TODO: Execut default agent action
                   //action(request.withHeaders(updatedHeaders))(user)
                   val us: MtdItUserOptionNino[A] = buildMtdUserOptionNino(enrolments, userName, credentials, affinityGroup)
-                  Logger("application").info(s"[AuthenticationPredicate][async] - EEE =${us.userType}=")
                   f(us)
                 case Left(failureResult) =>
-                  Logger("application").info("[AuthenticationPredicate][async] - IAM AN AGENT - CCC")
+                  Logger("application").error(s"[AuthenticationPredicate][async] - ${failureResult}")
                   failureResult
               }
             case _ =>
