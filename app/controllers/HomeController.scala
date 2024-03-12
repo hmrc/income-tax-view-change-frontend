@@ -81,87 +81,104 @@ class HomeController @Inject()(val homeView: views.html.Home,
     )
   }
 
-  def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
-                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
-    val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
-    val incomeSourceCurrentTaxYear: Int = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear))
-    val currentDate = dateService.getCurrentDate(isTimeMachineEnabled)
-
-    nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
-        val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
-        val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
-
-        val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
-          _.flatMap {
-            case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-            case _ => List.empty[LocalDate]
-          }.sortWith(_ isBefore _)
-        }
-
-        for {
-          paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
-          unpaidCharges <- unpaidChargesFuture
-          dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
-          outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isEnabled(TimeMachineAddYear)).map(_.outstandingChargesModel match {
-            case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
-            case _ => Nil
-          })
-          outstandingChargesDueDate = outstandingChargesModel.flatMap {
-            case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
-            case _ => Nil
-          }
-          overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isTimeMachineEnabled))) + outstandingChargesModel.length
-          paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-          displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
-        } yield {
-          auditingService.extendedAudit(HomeAudit(
-            mtdItUser = user,
-            paymentsDueMerged,
-            overDuePaymentsCount,
-            nextUpdatesTileViewModel))
-
-          val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
-            unpaidCharges,
-            creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay),
-            paymentHistoryRefundsEnabled = isEnabled(PaymentHistoryRefunds)
-          )
-
-          Ok(
-            view(
-              paymentsDueMerged,
-              Some(overDuePaymentsCount),
-              nextUpdatesTileViewModel,
-              paymentCreditAndRefundHistoryTileViewModel,
-              dunningLockExistsValue,
-              incomeSourceCurrentTaxYear,
-              displayCeaseAnIncome,
-              isAgent = isAgent
-            )
-          )
-        }
-      case Left(ex) =>
-        Logger("application")
-          .error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
-    }.recover {
-      case ex =>
-        Logger("application")
-          .error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        errorHandler(isAgent).showInternalServerError()
-    }
-  }
-
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      handleShowRequest(isAgent = false, origin)
+      handleShowRequest(origin)
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleShowRequest(isAgent = true)
+      handleShowRequest()
+  }
+
+  def handleShowRequest(origin: Option[String] = None)
+                       (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+
+    nextUpdatesService.getDueDates().flatMap {
+      case Right(nextUpdatesDueDates) => handleRightCase(nextUpdatesDueDates, user.isAgent)
+      case Left(ex)                   => handleLeftCase(ex) } recover {
+      case ex                         => handleRecoverCase(ex)
+    }
+  }
+
+  private def handleRightCase(nextUpdatesDueDates: Seq[LocalDate],
+                                    isAgent: Boolean)
+                                   (implicit user: MtdItUser[_]): Future[Result] = {
+
+    val currentDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+    val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
+
+    for {
+      unpaidCharges            <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
+      paymentsDue               = getDueDates(unpaidCharges).sortBy(_.toEpochDay())
+      dunningLockExistsValue    = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+      outstandingChargesModel  <- getOutstandingChargesModel(unpaidCharges)
+      outstandingChargesDueDate = outstandingChargesModel.collect { case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)}.flatten
+      overDuePaymentsCount      = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
+      paymentsDueMerged         = mergePaymentsDue(paymentsDue, outstandingChargesDueDate)
+      displayCeaseAnIncome      = user.incomeSources.hasOngoingBusinessOrPropertyIncome
+    } yield {
+
+      auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
+
+      lazy val paymentCreditAndRefundHistoryTileViewModel =
+        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
+
+      Ok(view(
+        isAgent = isAgent,
+        nextPaymentDueDate = paymentsDueMerged,
+        dunningLockExists = dunningLockExistsValue,
+        displayCeaseAnIncome = displayCeaseAnIncome,
+        overDuePaymentsCount = Some(overDuePaymentsCount),
+        nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+        currentTaxYear = dateService.getCurrentTaxYearEnd(isEnabled(TimeMachineAddYear)),
+        paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
+      ))
+    }
+  }
+
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
+    unpaidCharges flatMap {
+      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+      case _ => List.empty[LocalDate]
+    } sortWith(_ isBefore _)
+
+  private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
+                                        (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] = {
+    whatYouOweService.getWhatYouOweChargesList(
+      unpaidCharges,
+      isEnabled(CodingOut),
+      isEnabled(MFACreditsAndDebits),
+      isEnabled(TimeMachineAddYear)
+    ) map(
+      _.outstandingChargesModel match {
+        case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
+        case _ => Nil
+      })
+  }
+
+  private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
+    val overduePaymentsCountFromDates = paymentsDue.count(_.isBefore(dateService.getCurrentDate(isEnabled(TimeMachineAddYear))))
+    val overdueChargesCount = outstandingChargesModel.length
+    overduePaymentsCountFromDates + overdueChargesCount
+  }
+
+  private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] = {
+    val mergedDueDates = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _)
+    mergedDueDates.headOption
+  }
+
+  private def handleLeftCase(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
+    Logger("application")
+      .error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+    Future.successful {
+      errorHandler(user.isAgent).showInternalServerError()
+    }
+  }
+
+  private def handleRecoverCase(ex: Throwable)(implicit user: MtdItUser[_]): Result = {
+    Logger("application")
+      .error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
+      errorHandler(user.isAgent).showInternalServerError()
   }
 }
