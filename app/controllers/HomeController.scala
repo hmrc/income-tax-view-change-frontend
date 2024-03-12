@@ -80,6 +80,16 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel
     )
 
+  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+    implicit user =>
+      handleShowRequest(origin)
+  }
+
+  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
+    implicit mtdItUser =>
+      handleShowRequest()
+  }
+
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
@@ -158,15 +168,5 @@ class HomeController @Inject()(val homeView: views.html.Home,
   private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
     Future.successful { errorHandler(user.isAgent).showInternalServerError() }
-  }
-
-  def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleShowRequest(origin)
-  }
-
-  def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleShowRequest()
   }
 }
