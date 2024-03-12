@@ -18,7 +18,7 @@ package views
 
 import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.TaxBands
-import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
+import models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, TransitionProfitRow}
 import models.liabilitycalculation.{Message, Messages}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -165,8 +165,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val taxDueSummaryViewModel = TaxDueSummaryViewModel(
         taxRegime = "Scotland",
         payPensionsProfitBands = Some(taxBands),
-        totalTaxableTransitionProfit = Some(BigDecimal(3500.00)),
-        incomeTaxChargedOnTransitionProfits = Some(BigDecimal(700.00))
+        transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3500.00))
       )
       lazy val view = taxCalcBreakdown(taxDueSummaryViewModel, taxYear2017, backUrl)
 
