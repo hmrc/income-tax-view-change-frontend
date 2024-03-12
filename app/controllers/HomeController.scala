@@ -87,18 +87,11 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val currentDate = dateService.getCurrentDate
 
     nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
-        buildHomePage(nextUpdatesDueDates, isAgent, currentDate, incomeSourceCurrentTaxYear)
-      case Left(ex) =>
-        Logger("application")
-          .error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
-    }.recover {
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent, currentDate, incomeSourceCurrentTaxYear)
+      case Left(ex)                                   => handleErrorGettingDueDates(ex)
+    } recover {
       case ex =>
-        Logger("application")
-          .error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
         errorHandler(isAgent).showInternalServerError()
     }
   }
@@ -158,6 +151,13 @@ class HomeController @Inject()(val homeView: views.html.Home,
           isAgent = isAgent
         )
       )
+    }
+  }
+
+  private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
+    Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+    Future.successful {
+      errorHandler(user.isAgent).showInternalServerError()
     }
   }
 
