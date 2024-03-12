@@ -101,17 +101,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
     val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, currentDate)
     val unpaidChargesFuture: Future[List[FinancialDetailsResponseModel]] = financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
 
-    val dueDates: Future[List[LocalDate]] = unpaidChargesFuture.map {
-      _.flatMap {
-        case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
-        case _ => List.empty[LocalDate]
-      }.sortWith(_ isBefore _)
-    }
-
     for {
-      paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
-      unpaidCharges <- unpaidChargesFuture
-      dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+      unpaidCharges           <- unpaidChargesFuture
+      paymentsDue              = getDueDates(unpaidCharges)
+      dunningLockExistsValue   = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate = outstandingChargesModel.flatMap {
         case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
@@ -147,6 +140,14 @@ class HomeController @Inject()(val homeView: views.html.Home,
       )
     }
   }
+
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel]): List[LocalDate] =
+    (unpaidCharges collect {
+      case fdm: FinancialDetailsModel => fdm.validChargesWithRemainingToPay.getAllDueDates
+    })
+      .flatten
+      .sortWith(_ isBefore _)
+      .sortBy(_.toEpochDay())
 
   private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
                                         (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
