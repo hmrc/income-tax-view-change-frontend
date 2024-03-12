@@ -120,9 +120,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
         case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
         case _ => Nil
       }
-      overDuePaymentsCount = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
-      paymentsDueMerged = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
-      displayCeaseAnIncome = user.incomeSources.hasOngoingBusinessOrPropertyIncome
+      overDuePaymentsCount        = paymentsDue.count(_.isBefore(dateService.getCurrentDate)) + outstandingChargesModel.length
+      paymentsDueMerged           = (paymentsDue ::: outstandingChargesDueDate).sortWith(_ isBefore _).headOption
+      displayCeaseAnIncome        = user.incomeSources.hasOngoingBusinessOrPropertyIncome
     } yield {
       auditingService.extendedAudit(HomeAudit(
         mtdItUser = user,
