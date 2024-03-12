@@ -22,7 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.nextUpdates.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -112,10 +112,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDue <- dueDates.map(_.sortBy(_.toEpochDay()))
       unpaidCharges <- unpaidChargesFuture
       dunningLockExistsValue = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
-      outstandingChargesModel <- whatYouOweService.getWhatYouOweChargesList(unpaidCharges, isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).map(_.outstandingChargesModel match {
-        case Some(OutstandingChargesModel(locm)) => locm.filter(ocm => ocm.relevantDueDate.isDefined && ocm.chargeName == "BCD")
-        case _ => Nil
-      })
+      outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate = outstandingChargesModel.flatMap {
         case OutstandingChargeModel(_, Some(relevantDate), _, _) => List(relevantDate)
         case _ => Nil
@@ -150,6 +147,17 @@ class HomeController @Inject()(val homeView: views.html.Home,
       )
     }
   }
+
+  private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
+                                        (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
+    whatYouOweService.getWhatYouOweChargesList(
+      unpaidCharges,
+      isEnabled(CodingOut),
+      isEnabled(MFACreditsAndDebits)
+    ) map {
+      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(locm)), _) => locm.filter(_.hasRelevantDueDateWithBCDChargeName)
+      case _ => Nil
+    }
 
   private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
