@@ -137,12 +137,13 @@ object TaxDueSummaryViewModel {
 
 object TransitionProfitRow {
   def apply(incomeTaxCharged: Option[BigDecimal], totalTaxableProfit: Option[BigDecimal]): Option[TransitionProfitRow] = {
+
     (incomeTaxCharged, totalTaxableProfit) match {
       case (Some(tax), Some(profit)) => Some(TransitionProfitRow(incomeTaxCharged = tax, totalTaxableProfit = profit))
-      case (None, _) =>
+      case (None, Some(_)) =>
         Logger("application").warn(s"[TaxDueSummaryViewModel][TransitionProfitRow] missing incomeTaxChargedOnTransitionProfits")
         None
-      case (_, None) =>
+      case (Some(_), None) =>
         Logger("application").warn(s"[TaxDueSummaryViewModel][TransitionProfitRow] missing totalTaxableTransitionProfit")
         None
       case _ => None
