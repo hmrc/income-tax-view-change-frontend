@@ -25,7 +25,7 @@ case class OutstandingChargeModel(chargeName: String,
                                   tieBreaker: Int
                                  ) {
 
-  def hasRelevantDueDateWithBCDChargeName: Boolean = relevantDueDate.isDefined && chargeName == "BCD"
+  def hasDueDateForBCDCharge: Boolean = relevantDueDate.isDefined && chargeName == "BCD"
 }
 
 object OutstandingChargeModel {
