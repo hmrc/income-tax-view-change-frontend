@@ -82,26 +82,26 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
   def show(origin: Option[String] = None): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
     implicit user =>
-      handleShowRequest(origin)
+      handleShowRequest(isAgent = false, origin)
   }
 
   def showAgent(): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
     implicit mtdItUser =>
-      handleShowRequest()
+      handleShowRequest(isAgent = true)
   }
 
-  def handleShowRequest(origin: Option[String] = None)
+  def handleShowRequest(isAgent: Boolean, origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates)
-      case Left(ex)                                   => handleErrorGettingDueDates(ex)
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, isAgent)
+      case Left(ex)                                   => handleErrorGettingDueDates(ex, isAgent)
     } recover {
       case ex =>
         Logger("application").error(s"[HomeController][handleShowRequest] Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        errorHandler(user.isAgent).showInternalServerError()
+        errorHandler(isAgent).showInternalServerError()
     }
 
-  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate])
+  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], isAgent: Boolean)
                            (implicit user: MtdItUser[_]): Future[Result] =
     for {
       unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
@@ -121,7 +121,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))
 
       Ok(view(
-        isAgent = user.isAgent,
+        isAgent = isAgent,
         dunningLockExists = dunningLockExists,
         nextPaymentDueDate = paymentsDueMerged,
         currentTaxYear = dateService.getCurrentTaxYearEnd,
@@ -172,8 +172,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       .collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate }
       .flatten
 
-  private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleErrorGettingDueDates(ex: Throwable, isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-    Future.successful { errorHandler(user.isAgent).showInternalServerError() }
+    Future.successful { errorHandler(isAgent).showInternalServerError() }
   }
 }
