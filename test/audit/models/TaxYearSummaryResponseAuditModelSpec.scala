@@ -93,7 +93,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
 
   val docDateDetail: DocumentDetailWithDueDate = DocumentDetailWithDueDate(
     documentDetail = docDetail,
-    dueDate = Some(LocalDate.now())
+    dueDate = Some(fixedDate)
   )
 
   val getCurrentTaxYearEnd: LocalDate = {
