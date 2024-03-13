@@ -163,7 +163,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
       .headOption
 
   private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
-    financialDetails.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+    financialDetails
+      .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
+      .getOrElse(false)
 
   private def getRelevantDates(outstandingCharges: List[OutstandingChargeModel]): List[LocalDate] =
     outstandingCharges
