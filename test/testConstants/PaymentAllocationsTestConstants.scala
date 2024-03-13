@@ -110,6 +110,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+    mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("1"),
@@ -152,6 +153,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("1"),
@@ -189,6 +191,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+    mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("1"),
@@ -226,6 +229,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+    mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("2"),
@@ -254,6 +258,7 @@ object PaymentAllocationsTestConstants {
     clearedAmount = Some(BigDecimal(300.00)),
     chargeType = Some("Test"),
     mainType = Some("ITSA Misc Charge"),
+    mainTransaction = Some("4003"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("001"),
@@ -283,6 +288,7 @@ object PaymentAllocationsTestConstants {
         "to" -> "2019-08-27",
         "chargeType" -> NIC4_WALES,
         "mainType" -> "SA Payment on Account 1",
+//        "mainTransaction" -> "4920",
         "amount" -> 10.10,
         "clearedAmount" -> 5.50,
         "chargeReference" -> "chargeReference1"
@@ -293,6 +299,7 @@ object PaymentAllocationsTestConstants {
         "to" -> "2019-09-28",
         "chargeType" -> NIC4_WALES,
         "mainType" -> "SA Payment on Account 1",
+//        "mainTransaction" -> "4920",
         "amount" -> 10.90,
         "clearedAmount" -> 5.90,
         "chargeReference" -> "chargeReference2"
@@ -494,6 +501,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+			|            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -552,6 +560,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -609,6 +618,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -636,6 +646,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -706,6 +717,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 500.00,
 			|            "taxYear": "2018",
@@ -732,6 +744,7 @@ object PaymentAllocationsTestConstants {
 			|                }
 			|            ],
 			|            "mainType": "SA Payment on Account 1",
+      |            "mainTransaction": "4920",
 			|            "originalAmount": 500.0,
 			|            "outstandingAmount": 200.00,
 			|            "taxYear": "2019",

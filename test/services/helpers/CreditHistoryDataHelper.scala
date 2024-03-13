@@ -75,15 +75,15 @@ trait CreditHistoryDataHelper {
       DocumentDetail(2022, "testTransactionId3", None, None, None, None, LocalDate.of(taxYear, 3, 31))
     ),
     financialDetails = List(
-      FinancialDetail(taxYear = "2022", mainType = Some("ITSA Cutover Credits"), transactionId = Some("testTransactionId1"),
+      FinancialDetail(taxYear = "2022", mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110"), transactionId = Some("testTransactionId1"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
         items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),
-      FinancialDetail(taxYear = "2022", mainType = None, transactionId = Some("testTransactionId2"),
+      FinancialDetail(taxYear = "2022", mainType = None, mainTransaction = None, transactionId = Some("testTransactionId2"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
         items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25")))))),
-      FinancialDetail(taxYear = "2022", mainType = None, transactionId = Some("testTransactionId3"),
+      FinancialDetail(taxYear = "2022", mainType = None, mainTransaction = None, transactionId = Some("testTransactionId3"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None,
         items = Some(Seq(SubItem(Some(LocalDate.parse("2022-08-25"))))))
@@ -120,13 +120,13 @@ trait CreditHistoryDataHelper {
       documentDetailsWhichIsBCCredit
     ),
     financialDetails = List(
-      FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"), transactionId = Some("testTransactionId1"),
+      FinancialDetail(taxYear = "2022", mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), transactionId = Some("testTransactionId1"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(LocalDate.now.plusDays(3)))))),
-      FinancialDetail(taxYear = "2022", mainType = None, transactionId = Some("testTransactionId2"),
+      FinancialDetail(taxYear = "2022", mainType = None, mainTransaction = None, transactionId = Some("testTransactionId2"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(LocalDate.now.plusDays(5)))))),
-      FinancialDetail(taxYear = "2022", mainType = Some("SA Balancing Charge Credit"), transactionId = Some("testTransactionId3"),
+      FinancialDetail(taxYear = "2022", mainType = Some("SA Balancing Charge Credit"), mainTransaction = Some("4905"), transactionId = Some("testTransactionId3"),
         transactionDate = None, `type` = None, totalAmount = None, originalAmount = None, outstandingAmount = None,
         clearedAmount = None, chargeType = None, accruedInterest = None, items = Some(Seq(SubItem(Some(LocalDate.now.plusDays(5))))))
     )
@@ -143,6 +143,7 @@ trait CreditHistoryDataHelper {
     clearedAmount = Some(BigDecimal(500.00)),
     chargeType = Some(NIC4_WALES),
     mainType = Some("SA Payment on Account 1"),
+    mainTransaction = Some("4920"),
     items = Some(Seq(
       SubItem(
         subItemId = Some("1"),

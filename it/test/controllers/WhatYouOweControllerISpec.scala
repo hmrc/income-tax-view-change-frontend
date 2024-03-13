@@ -238,8 +238,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
             ),
             "financialDetails" -> Json.arr(
               financialDetailJson((testTaxYear - 1).toString, transactionId = "transId1"),
-              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 1", testDate.plusDays(1).toString, "transId2"),
-              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 2", testDate.minusDays(1).toString, "transId3")
+              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 1", "4920", testDate.plusDays(1).toString, "transId2"),
+              financialDetailJson((testTaxYear - 1).toString, "SA Payment on Account 2", "4930", testDate.minusDays(1).toString, "transId3")
             )
           )
 
@@ -905,8 +905,8 @@ class WhatYouOweControllerISpec extends ComponentSpecBase {
         ),
         "financialDetails" -> Json.arr(
           financialDetailJson(testTaxYear.toString, transactionId = "transId1"),
-          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", testDate.plusDays(1).toString, "transId2"),
-          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", testDate.minusDays(1).toString, "transId3")
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 1", "4920", testDate.plusDays(1).toString, "transId2"),
+          financialDetailJson(testTaxYear.toString, "SA Payment on Account 2", "4930", testDate.minusDays(1).toString, "transId3")
         )
       )
 

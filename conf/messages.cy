@@ -1729,5 +1729,5 @@ manageBusinesses.type-of-property.error                                  = Dewis
 credit.description.balancingChargeCredit                            = Credyd o ordaliad treth
 credit.description.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
 credit.description.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
-credit.description.setOffCharge                                     = Credit from a set-off charge
-credit.description.setOffChargeInterest                             = credit interest from a set-off charge
+credit.description.setOffCharge                                     = Credyd o dâl sydd wedi’i osod yn erbyn treth
+credit.description.setOffChargeInterest                             = Llog ar gredyd o dâl sydd wedi’i osod yn erbyn treth

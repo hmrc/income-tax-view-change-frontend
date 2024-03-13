@@ -1747,5 +1747,6 @@ manageBusinesses.type-of-property.error                                  = Selec
 credit.description.balancingChargeCredit                            = Credit from overpaid tax
 credit.description.paymentFromEarlierYear                           = Credit from an earlier tax year
 credit.description.mfaCredit                                        = Credit from HMRC adjustment
-credit.description.setOffCharge                                     = Credyd o dâl sydd wedi’i osod yn erbyn treth
-credit.description.setOffChargeInterest                             = Llog ar gredyd o dâl sydd wedi’i osod yn erbyn treth
+credit.description.setOffCharge                                     = Credit from a set-off charge
+credit.description.setOffChargeInterest                             = Credit interest from a set-off charge
+
