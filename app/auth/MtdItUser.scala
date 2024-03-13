@@ -65,7 +65,4 @@ case class MtdItUser[A](mtditid: String,
                         saUtr: Option[String],
                         credId: Option[String],
                         userType: Option[AffinityGroup],
-                        arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A] {
-
-  def isAgent: Boolean = userType contains Agent
-}
+                        arn: Option[String])(implicit request: Request[A]) extends MtdItUserBase[A]
