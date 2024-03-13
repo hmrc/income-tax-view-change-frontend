@@ -3,9 +3,11 @@
 
 # Play frontend hmrc route for Assets
 GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file)
+GET         /production/assets/*file                                      controllers.ProductionAssetsController.versioned(path = "/public/production", file)
 
 # Assets
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
+GET         /production/assets/*file                                      controllers.ProductionAssetsController.at(path="/public/production", file)
 
 #Home Controller
 GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
