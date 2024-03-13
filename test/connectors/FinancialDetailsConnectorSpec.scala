@@ -248,7 +248,7 @@ class FinancialDetailsConnectorSpec extends TestSupport with MockHttp with MockA
 
     val payments: Seq[Payment] = Seq(Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
       method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
-      dueDate = Some(LocalDate.now), documentDate = LocalDate.now, Some("DOCID01")))
+      dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01")))
 
     val successResponse: HttpResponse = HttpResponse(
       status = OK,

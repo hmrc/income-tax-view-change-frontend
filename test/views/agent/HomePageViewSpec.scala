@@ -45,7 +45,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val currentTaxYear: Int = {
-    val currentDate = LocalDate.now
+    val currentDate = fixedDate
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, Month.APRIL, 6))) currentDate.getYear
     else currentDate.getYear + 1
   }

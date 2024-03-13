@@ -45,8 +45,8 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
   "The getCurrentDate method when TimeMachineAddYear FS is on" should {
     "return the next year date if the timeMachineAddYears 1" in {
       enable(TimeMachineAddYear)
-
-      TestDateService.getCurrentDate should equal(LocalDate.now.plusYears(1))
+      val f = fixture(fixedDate.toString)
+      f.mockedTestDateService.getCurrentDate should equal(fixedDate.plusYears(1))
     }
     "return the mocked current date" in {
       val f = fixture("2018-03-29")
@@ -58,8 +58,8 @@ class DateServiceSpec extends TestSupport with FeatureSwitching {
   "The getCurrentDate method when TimeMachineAddYear FS is off" should {
     "return the current date" in {
       disable(TimeMachineAddYear)
-      val f = fixture(LocalDate.now.toString)
-      f.mockedTestDateService.getCurrentDate should equal(LocalDate.now)
+      val f = fixture(fixedDate.toString)
+      f.mockedTestDateService.getCurrentDate should equal(fixedDate)
     }
 
     "return mocked current date: 2018-03-29" in {
