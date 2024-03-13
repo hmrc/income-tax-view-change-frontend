@@ -113,7 +113,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDueMerged          = mergePaymentsDue(paymentsDue, outstandingChargesDueDate)
     } yield {
 
-      lazy val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate)
+      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate)
 
       auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
 
@@ -152,8 +152,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
     }
 
   private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
-    lazy val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
-    lazy val overdueChargesCount = outstandingChargesModel.length
+    val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
+    val overdueChargesCount = outstandingChargesModel.length
     overduePaymentsCountFromDate + overdueChargesCount
   }
 
