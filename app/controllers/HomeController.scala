@@ -108,9 +108,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDue                = getDueDates(unpaidCharges)
       dunningLockExists          = hasDunningLock(unpaidCharges)
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
-      outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
+      outstandingChargeDueDates  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
       overDuePaymentsCount       = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
-      paymentsDueMerged          = mergePaymentsDue(paymentsDue, outstandingChargesDueDate)
+      paymentsDueMerged          = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
     } yield {
 
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates, dateService.getCurrentDate)
