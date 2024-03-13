@@ -147,9 +147,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
       isEnabled(CodingOut),
       isEnabled(MFACreditsAndDebits)
     ) map {
-      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(locm)), _) =>
-        locm.filter(_.isBalancingChargeDebit)
-            .filter(_.relevantDueDate.isDefined)
+      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
+        outstandingCharges.filter(_.isBalancingChargeDebit)
+                          .filter(_.relevantDueDate.isDefined)
       case _ => Nil
     }
 
