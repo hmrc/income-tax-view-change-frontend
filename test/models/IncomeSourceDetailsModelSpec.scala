@@ -40,7 +40,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
   val testSelfEmploymentIdHashValueMaybe: Option[String] = Option(testQueryString)
   val emptyIncomeSourceIdHash: IncomeSourceIdHash = mkIncomeSourceId("").toHash
 
-  lazy val fixedDate : LocalDate = LocalDate.of(2024, 12, 4)
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 4)
 
   "The IncomeSourceDetailsModel" when {
 

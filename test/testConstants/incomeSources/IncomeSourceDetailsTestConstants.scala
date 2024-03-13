@@ -38,7 +38,7 @@ object IncomeSourceDetailsTestConstants {
   val singleBusinessIncome2023WithUnknowns = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2023"), List(businessWithLatencyAndUnknowns), Nil)
   val singleBusinessIncome2024 = IncomeSourceDetailsModel(testNino, testMtdItId, Some("2024"), List(businessWithLatency4), Nil)
   val singleBusinessIncomeNotMigrated = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(business1), Nil)
-  val singleBusinessIncomeWithCurrentYear = IncomeSourceDetailsModel(testNino, testMtdItId, Some(LocalDate.now().getYear.toString), List(business1), Nil)
+  val singleBusinessIncomeWithCurrentYear = IncomeSourceDetailsModel(testNino, testMtdItId, Some(fixedDate.getYear.toString), List(business1), Nil)
   val businessIncome2018and2019 = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(business2018, business2019), Nil)
   val propertyIncomeOnly = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(), List(propertyDetails))
   val businessAndPropertyAligned = IncomeSourceDetailsModel(testNino, testMtdItId, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
@@ -49,7 +49,7 @@ object IncomeSourceDetailsTestConstants {
   val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testNino, testMtdItId, None, List(business2018, business2019), List(propertyDetails))
   val oldUserDetails = IncomeSourceDetailsModel(testNino, testMtdItId, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(oldUseralignedBusiness), List(propertyDetails))
-  val preSanitised = IncomeSourceDetailsModel(testNino, testMtdItId, Some((LocalDate.now.getYear - 1).toString), List(business2018, alignedBusiness), List(propertyDetails))
+  val preSanitised = IncomeSourceDetailsModel(testNino, testMtdItId, Some((fixedDate.getYear - 1).toString), List(business2018, alignedBusiness), List(propertyDetails))
 
   val businessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(soleTraderBusiness), List())
   val businessIncome2 = IncomeSourceDetailsModel(testNino, testMtditid2, Some("2018"), List(soleTraderBusiness2), List())
