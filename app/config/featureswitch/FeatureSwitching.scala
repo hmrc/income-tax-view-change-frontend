@@ -16,6 +16,7 @@
 
 package config.featureswitch
 
+import auth.MtdItUser
 import config.FrontendAppConfig
 
 trait FeatureSwitching {
@@ -27,6 +28,9 @@ trait FeatureSwitching {
 
   def isEnabled(featureSwitch: FeatureSwitch): Boolean =
     (sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name)) contains FEATURE_SWITCH_ON
+
+  def isOn(featureSwitch: FeatureSwitch)(implicit user: MtdItUser[_]): Boolean = user.featureSwitches.contains(featureSwitch)
+
 
   def isDisabled(featureSwitch: FeatureSwitch): Boolean =
     (sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name)) contains FEATURE_SWITCH_OFF
@@ -43,4 +47,5 @@ trait FeatureSwitching {
       else ifDisabled
     }
   }
+
 }
