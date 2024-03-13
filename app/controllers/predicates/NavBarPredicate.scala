@@ -23,10 +23,12 @@ import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
 import models.OriginEnum
 import models.OriginEnum.{BTA, PTA}
+import play.api.Logger
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import play.twirl.api.Html
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.navBar.PtaPartial
@@ -45,11 +47,15 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
 
+
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
     if (isDisabled(NavBarFs)) {
+
       Future.successful(Right(request))
     } else {
+      Logger("application").info(s"[IncomeSourceDetailsPredicate][async] - NavBarPredicate - B")
+
       request.getQueryString(SessionKeys.origin).fold[Future[Either[Result, MtdItUser[A]]]](ifEmpty = retrieveCacheAndHandleNavBar(request))(_ => {
         saveOriginAndReturnToHomeWithoutQueryParams(request, isDisabled(NavBarFs)).map(Left(_))
       })
@@ -57,12 +63,32 @@ class NavBarPredicate @Inject()(val btaNavBarController: BtaNavBarController,
   }
 
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Either[Result, MtdItUser[A]]] = {
-    request.session.get(SessionKeys.origin) match {
+    // request.session.get(SessionKeys.origin)
+    // TODO: clarify origin extraction for Agent
+    val origin : Option[String] = {
+      if (request.userType.contains(Agent)) {
+        if (request.session.get(SessionKeys.origin).nonEmpty) {
+          request.session.get(SessionKeys.origin)
+        }
+        else {
+          Some("PTA") // default value
+        }
+      } else {
+        request.session.get(SessionKeys.origin)
+      }
+    }
+    origin match {
       case Some(origin) if OriginEnum(origin) == Some(PTA) =>
+        Logger("application").info(s"[IncomeSourceDetailsPredicate][async] - NavBarPredicate - A1")
+
         Future.successful(Right(returnMtdItUserWithNavbar(request, ptaPartial()(request, request.messages, appConfig))))
       case Some(origin) if OriginEnum(origin) == Some(BTA) =>
+        Logger("application").info(s"[IncomeSourceDetailsPredicate][async] - NavBarPredicate - A2")
+
         handleBtaNavBar(request)
       case _ =>
+        Logger("application").info(s"[IncomeSourceDetailsPredicate][async] - NavBarPredicate - A3")
+
         Future.successful(Left(Redirect(appConfig.taxAccountRouterUrl)))
     }
   }
