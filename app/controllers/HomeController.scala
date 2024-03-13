@@ -106,7 +106,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
     for {
       unpaidCharges             <- financialDetailsService.getAllUnpaidFinancialDetails(isEnabled(CodingOut))
       paymentsDue                = getDueDates(unpaidCharges)
-      dunningLockExists          = unpaidCharges.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
+      dunningLockExists          = hasDunningLock(unpaidCharges)
       outstandingChargesModel   <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargesDueDate  = outstandingChargesModel.collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate}.flatten
       overDuePaymentsCount       = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
@@ -161,6 +161,9 @@ class HomeController @Inject()(val homeView: views.html.Home,
     (paymentsDue ::: outstandingChargesDueDate)
       .sortWith(_ isBefore _)
       .headOption
+
+  private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
+    financialDetails.collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }.getOrElse(false)
 
   private def handleErrorGettingDueDates(ex: Throwable)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(s"[HomeController][handleShowRequest]: Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
