@@ -1399,6 +1399,22 @@ object CreditAndRefundConstants {
       financialDetail(mainType = mainType, mainTransaction = mainTransaction))
   }
 
+  def documentAndFinancialDetailWithCreditType(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0)), mainType: String, mainTransaction: String):
+  (DocumentDetailWithDueDate, FinancialDetail) = {
+    (documentDetailWithDueDateModel(
+      taxYear = taxYear,
+      paymentLot = None,
+      paymentLotItem = None,
+      documentDescription = Some("TRM New Charge"),
+      outstandingAmount = outstandingAmount,
+      originalAmount = Some(BigDecimal(-2400.0))),
+      financialDetail(
+        taxYear = taxYear,
+        mainType = mainType,
+        mainTransaction = mainTransaction)
+    )
+  }
+
   def documentDetailWithDueDateFinancialDetailListModelMFA(taxYear: Int = 2018, outstandingAmount: Option[BigDecimal] = Some(BigDecimal(-1400.0))):
   (DocumentDetailWithDueDate, FinancialDetail) = {
     (documentDetailWithDueDateModel(

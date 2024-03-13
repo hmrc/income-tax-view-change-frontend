@@ -19,6 +19,8 @@ package models.creditsandrefunds
 import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, DocumentDetailWithDueDate, FinancialDetail, MfaCreditType}
 
 
+case class CreditViewRow(amount: BigDecimal, messageKey: String, taxYear: Int)
+
 case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {
 
 
@@ -27,6 +29,16 @@ case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDa
   private val cutOverCredit = "CutOver"
   private val payment = "Payment"
 
+  def getCreditViewRows(): List[CreditViewRow] = {
+    val x: Seq[Option[CreditViewRow]] = creditCharges.map(cc => {
+      for {
+        creditType <- cc._2.getCreditType
+        amount <- cc._1.documentDetail.paymentOrChargeCredit
+      } yield {
+        CreditViewRow(amount = amount, messageKey = creditType.key, taxYear = cc._2.taxYear.toInt)
+    }})
+    x.flatten.toList
+  }
 
   def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
     val sortedCredits = creditCharges.sortBy {
