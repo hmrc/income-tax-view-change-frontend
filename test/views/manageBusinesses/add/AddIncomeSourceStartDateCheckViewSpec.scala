@@ -71,12 +71,12 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         document.getElementsByClass("govuk-radios").size() shouldBe 1
       }
       "render the back link with the correct URL for Normal journey" in new Setup(isAgent, hasError = false, incomeSourceType, isChange = false) {
-        document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe getBackUrl(isAgent, isChange = false, incomeSourceType)
+        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, isChange = false, incomeSourceType)
       }
       "render the back link with the correct URL for Change journey" in new Setup(isAgent, hasError = false, incomeSourceType, isChange = true) {
-        document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe getBackUrl(isAgent, isChange = true, incomeSourceType)
+        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, isChange = true, incomeSourceType)
       }
       "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")

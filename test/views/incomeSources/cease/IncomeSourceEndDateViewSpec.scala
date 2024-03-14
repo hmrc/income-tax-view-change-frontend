@@ -98,8 +98,8 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe testBackUrl
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe testBackUrl
     }
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -134,8 +134,8 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementsByClass("govuk-date-input__item").size() shouldBe 3
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe testBackUrl
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe testBackUrl
     }
     "render the continue button" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")

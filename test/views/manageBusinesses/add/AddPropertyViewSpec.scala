@@ -61,8 +61,8 @@ class AddPropertyViewSpec extends TestSupport{
         document.getElementsByClass("govuk-radios").size() shouldBe 1
       }
       "render the back link with the correct URL" in new Setup(isAgent, hasError = false) {
-        document.getElementById("back").text() shouldBe messages("base.back")
-        document.getElementById("back").attr("href") shouldBe controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
+        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
       }
       "render the continue button" in new Setup(isAgent, hasError = false) {
         document.getElementById("continue-button").text() shouldBe messages("base.continue")
