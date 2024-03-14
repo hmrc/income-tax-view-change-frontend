@@ -1144,12 +1144,6 @@ credit-and-refund.upcoming-allocated-credit-1-all                 = Mae CThEF we
 credit-and-refund.upcoming-allocated-credit-2                     = Gwiriwch yr hyn sydd arnoch
 credit-and-refund.upcoming-allocated-credit-3                     = i gael rhagor o wybodaeth.
 
-
-credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
-credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
-
-credit-and-refund.payment                                         = yn sgil taliad a wnaed ar
-
 credit-and-refund.no-credit                                       = Nid oes gennych arian yn eich cyfrif.
 
 credit-and-refund.claim-refund-btn                                = Hawlio ad-daliad
@@ -1179,7 +1173,25 @@ credit-and-refund.credit-from-earlier-tax-year                    = credyd o flw
 credit-and-refund.credit-from-earlier-tax-year                    = o flwyddyn dreth gynharach -
 
 credit-and-refund.payment                                         = o daliad roeddech wedi’i wneud i CThEF ar
-credit-and-refund.credit                                          = Credyd o
+
+credit-and-refund.refundProgress-prt-1                            = mae ad-daliad o
+credit-and-refund.refundProgress-prt-2                            = wrthi’n cael ei brosesu
+
+credit-and-refund.row.mfa-1                                       = Credyd o
+credit-and-refund.row.mfa-2                                       = o ganlyniad i addasiad gan CThEF -
+
+credit-and-refund.row.cutOver-1                                   = Credyd o
+credit-and-refund.row.cutOver-2                                   = o flwyddyn dreth gynharach -
+
+credit-and-refund.row.balancingCharge-1                           = Credyd o
+credit-and-refund.row.balancingCharge-2                           = o ordaliad treth -
+
+credit-and-refund.row.setOffCharge-1                              = Credyd o
+credit-and-refund.row.setOffCharge-2                              = o dâl sydd wedi’i osod yn erbyn treth -
+
+credit-and-refund.row.setOffChargeInterest-1                      = Llog ar gredyd o
+credit-and-refund.row.setOffChargeInterest-2                      = o dâl sydd wedi’i osod yn erbyn treth -
+
 
 #######################################################################################################################
 ## Income Sources - Add ##
@@ -1726,8 +1738,9 @@ manageBusinesses.type-of-property.foreign                                = Busne
 manageBusinesses.type-of-property.error                                  = Dewiswch opsiwn
 
 
-credit.description.balancingChargeCredit                            = Credyd o ordaliad treth
-credit.description.paymentFromEarlierYear                           = Credyd o flwyddyn dreth gynharach
-credit.description.mfaCredit                                        = Credyd o ganlyniad i addasiad gan CThEF
-credit.description.setOffCharge                                     = Credyd o dâl sydd wedi’i osod yn erbyn treth
-credit.description.setOffChargeInterest                             = Llog ar gredyd o dâl sydd wedi’i osod yn erbyn treth
+credit.description.balancingCharge                                      = Credyd o ordaliad treth
+credit.description.cutOver                                              = Credyd o flwyddyn dreth gynharach
+credit.description.mfa                                                  = Credyd o ganlyniad i addasiad gan CThEF
+credit.description.setOffCharge                                         = Credyd o dâl sydd wedi’i osod yn erbyn treth
+credit.description.setOffChargeInterest                                 = Llog ar gredyd o dâl sydd wedi’i osod yn erbyn treth
+

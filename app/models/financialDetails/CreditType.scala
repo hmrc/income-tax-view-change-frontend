@@ -21,23 +21,27 @@ sealed trait CreditType {
 }
 
 case object MfaCreditType extends CreditType {
-  override val key = "credit.description.mfaCredit"
+  override val key = "mfa"
 }
 
 case object CutOverCreditType extends CreditType {
-  override val key = "credit.description.paymentFromEarlierYear"
+  override val key = "cutOver"
 }
 
 case object BalancingChargeCreditType extends CreditType {
-  override val key = "credit.description.balancingChargeCredit"
+  override val key = "balancingCharge"
 }
 
 case object SetOffCharge extends CreditType {
-  override val key = "credit.description.setOffCharge"
+  override val key = "setOffCharge"
 }
 
 case object SetOffChargeInterest extends CreditType {
-  override val key = "credit.description.setOffChargeInterest"
+  override val key = "setOffChargeInterest"
+}
+
+case object PaymentType extends CreditType {
+  override val key = "payment"
 }
 
 object CreditType {
@@ -50,6 +54,7 @@ object CreditType {
   private val mfaCredit = Range.inclusive(4004, 4025)
     .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
     .toList
+  private val payment = List("4920", "4930")
 
   def apply(mainTransaction: String): Option[CreditType] = {
     mainTransaction match {
@@ -63,6 +68,8 @@ object CreditType {
         Some(SetOffChargeInterest)
       case x if mfaCredit.contains(x) =>
         Some(MfaCreditType)
+      case x if payment.contains(x) =>
+        Some(PaymentType)
       case _ => None
     }
   }

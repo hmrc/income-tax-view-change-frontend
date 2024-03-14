@@ -23,6 +23,8 @@ import models.creditsandrefunds.CreditAndRefundViewModel
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
+import play.api.http.HeaderNames
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
@@ -65,7 +67,13 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               isAgent: Boolean = false,
               backUrl: String = "testString",
               isMFACreditsAndDebitsEnabled: Boolean = false,
-              isCutOverCreditsEnabled: Boolean = false) {
+              isCutOverCreditsEnabled: Boolean = false,
+              welshLang: Boolean  = false) {
+
+    val testMessages: Messages = if(welshLang) {
+      app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
+    } else { messages }
+
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(
         CreditAndRefundViewModel(creditCharges),
@@ -75,7 +83,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         backUrl,
         isMFACreditsAndDebitsEnabled = isMFACreditsAndDebitsEnabled,
         isCutOverCreditsEnabled = isCutOverCreditsEnabled
-      )(FakeRequest(), implicitly, implicitly)
+      )(FakeRequest(), implicitly, testMessages)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
@@ -354,7 +362,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           layoutContent.select("p").get(2).text shouldBe
             "HMRC has reserved £100.00 of this to cover your upcoming tax bill. Check what you owe for further information."
           layoutContent.selectFirst(".govuk-inset-text").text shouldBe
-           "If you claim back more than £400.00, you will need to make another payment to HMRC to settle your upcoming tax bill."
+            "If you claim back more than £400.00, you will need to make another payment to HMRC to settle your upcoming tax bill."
           document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
         }
 
@@ -379,33 +387,59 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       }
     }
 
-    "display correct credit labels" in
-      new TestSetup(creditCharges = List(
-        documentAndFinancialDetailWithCreditType(taxYear = 2023, outstandingAmount = Some(BigDecimal(-100)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
-        documentAndFinancialDetailWithCreditType(taxYear = 2022, outstandingAmount = Some(BigDecimal(-200)), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
-        documentAndFinancialDetailWithCreditType(taxYear = 2021, outstandingAmount = Some(BigDecimal(-300)), mainType = "", mainTransaction = "0060"),
-        documentAndFinancialDetailWithCreditType(taxYear = 2020, outstandingAmount = Some(BigDecimal(-400)), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
-        documentAndFinancialDetailWithCreditType(taxYear = 2019, outstandingAmount = Some(BigDecimal(-500)), mainType = "ITSA Overpayment Relief", mainTransaction = "4004"),
-      ),
-        isMFACreditsAndDebitsEnabled = true,
-        isCutOverCreditsEnabled = true,
+    "display correct credit labels" when {
 
-      ) {
+      "language is English" in
+        new TestSetup(creditCharges = List(
+          documentAndFinancialDetailWithCreditType(taxYear = 2023, outstandingAmount = Some(BigDecimal(-100)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2022, outstandingAmount = Some(BigDecimal(-200)), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2021, outstandingAmount = Some(BigDecimal(-300)), mainType = "", mainTransaction = "0060"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2020, outstandingAmount = Some(BigDecimal(-400)), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2019, outstandingAmount = Some(BigDecimal(-500)), mainType = "ITSA Overpayment Relief", mainTransaction = "4004"),
+        ),
+          isMFACreditsAndDebitsEnabled = true,
+          isCutOverCreditsEnabled = true,
+        ) {
+          document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
+          layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
+          document.select("ul#credits-list li:nth-child(1)").text() shouldBe
+            "£100.00 credit from an earlier tax year - 2022 to 2023 tax year"
+          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
+            "£200.00 credit from overpaid tax - 2021 to 2022 tax year"
+          document.select("ul#credits-list li:nth-child(3)").text() shouldBe
+            "£300.00 credit from a set-off charge - 2020 to 2021 tax year"
+          document.select("ul#credits-list li:nth-child(4)").text() shouldBe
+            "£400.00 credit interest from a set-off charge - 2019 to 2020 tax year"
+          document.select("ul#credits-list li:nth-child(5)").text() shouldBe
+            "£500.00 credit from HMRC adjustment - 2018 to 2019 tax year"
+        }
 
-        document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-        layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-//        document.select("ul#credits-list li").forEach(x => println(x.text()))
-        document.select("ul#credits-list li:nth-child(1)").text() shouldBe
-          "£100.00 credit from an earlier tax year - 2022 to 2023 tax year"
-        document.select("ul#credits-list li:nth-child(2)").text() shouldBe
-          "£200.00 credit from overpaid tax - 2021 to 2022 tax year"
-        document.select("ul#credits-list li:nth-child(3)").text() shouldBe
-          "£300.00 credit from a set-off charge - 2020 to 2021 tax year"
-        document.select("ul#credits-list li:nth-child(4)").text() shouldBe
-          "£500.00 credit interest from a set-off charge - 2019 to 2020 tax year"
-        document.select("ul#credits-list li:nth-child(5)").text() shouldBe
-          "£400.00 credit from HMRC adjustment - 2018 to 2019 tax year"
-      }
+      "language is Welsh" in
+        new TestSetup(creditCharges = List(
+          documentAndFinancialDetailWithCreditType(taxYear = 2023, outstandingAmount = Some(BigDecimal(-100)), mainType = "ITSA Cutover Credits", mainTransaction = "6110"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2022, outstandingAmount = Some(BigDecimal(-200)), mainType = "SA Balancing Charge Credit", mainTransaction = "4905"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2021, outstandingAmount = Some(BigDecimal(-300)), mainType = "", mainTransaction = "0060"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2020, outstandingAmount = Some(BigDecimal(-400)), mainType = "SA Repayment Supplement Credit", mainTransaction = "6020"),
+          documentAndFinancialDetailWithCreditType(taxYear = 2019, outstandingAmount = Some(BigDecimal(-500)), mainType = "ITSA Overpayment Relief", mainTransaction = "4004"),
+        ),
+          isMFACreditsAndDebitsEnabled = true,
+          isCutOverCreditsEnabled = true,
+          welshLang = true
+        ) {
+          document.title() shouldBe "Hawlio ad-daliad - Rheoli’ch diweddariadau Treth Incwm - GOV.UK"
+          layoutContent.selectHead("h1").text shouldBe "Hawlio ad-daliad"
+          document.select("ul#credits-list li:nth-child(1)").text() shouldBe
+            "Credyd o £100.00 o flwyddyn dreth gynharach - blwyddyn dreth 2022 i 2023"
+          document.select("ul#credits-list li:nth-child(2)").text() shouldBe
+            "Credyd o £200.00 o ordaliad treth - blwyddyn dreth 2021 i 2022"
+          document.select("ul#credits-list li:nth-child(3)").text() shouldBe
+            "Credyd o £300.00 o dâl sydd wedi’i osod yn erbyn treth - blwyddyn dreth 2020 i 2021"
+          document.select("ul#credits-list li:nth-child(4)").text() shouldBe
+            "Llog ar gredyd o £400.00 o dâl sydd wedi’i osod yn erbyn treth - blwyddyn dreth 2019 i 2020"
+          document.select("ul#credits-list li:nth-child(5)").text() shouldBe
+            "Credyd o £500.00 o ganlyniad i addasiad gan CThEF - blwyddyn dreth 2018 i 2019"
+        }
+    }
   }
 
   "displaying agent credit and refund page" should {

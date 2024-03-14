@@ -34,7 +34,7 @@ object CreditSummaryAuditing {
   }
 
   private def toDescription(creditType: CreditType)
-                           (implicit messages: MessagesApi): String = messages(creditType.key)(Lang("en"))
+                           (implicit messages: MessagesApi): String = messages(s"credit.description.${creditType.key}")(Lang("en"))
 
   implicit def creditDetailModelToCreditSummaryDetails(charge: CreditDetailModel)
                                                       (implicit messages: MessagesApi): CreditSummaryDetails = {

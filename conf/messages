@@ -1127,9 +1127,6 @@ credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has res
 credit-and-refund.upcoming-allocated-credit-2                     = Check what you owe
 credit-and-refund.upcoming-allocated-credit-3                     = for further information.
 
-credit-and-refund.refundProgress-prt-1                            =
-credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
-credit-and-refund.payment                                         = from a payment made on
 credit-and-refund.no-credit                                       = You have no money in your account.
 credit-and-refund.claim-refund-btn                                = Claim a refund
 credit-and-refund.check-refund-btn                                = Check refund status
@@ -1151,7 +1148,26 @@ credit-and-refund.credit-from-earlier-tax-year                    = credit from 
 credit-and-refund.credit-from-earlier-tax-year-2                  = credit from an earlier tax year
 
 credit-and-refund.payment                                         = from a payment you made to HMRC on
-credit-and-refund.credit                                          =
+
+credit-and-refund.refundProgress-prt-1                            =
+credit-and-refund.refundProgress-prt-2                            = is a refund currently in progress
+
+credit-and-refund.row.mfa-1                                       =
+credit-and-refund.row.mfa-2                                       = credit from HMRC adjustment -
+
+credit-and-refund.row.cutOver-1                                   =
+credit-and-refund.row.cutOver-2                                   = credit from an earlier tax year -
+
+credit-and-refund.row.balancingCharge-1                           =
+credit-and-refund.row.balancingCharge-2                           = credit from overpaid tax -
+
+credit-and-refund.row.setOffCharge-1                              =
+credit-and-refund.row.setOffCharge-2                              = credit from a set-off charge -
+
+credit-and-refund.row.setOffChargeInterest-1                      =
+credit-and-refund.row.setOffChargeInterest-2                      = credit interest from a set-off charge -
+
+
 
 #######################################################################################################################
 ## Income Sources - Add ##
@@ -1744,9 +1760,8 @@ manageBusinesses.type-of-property.error                                  = Selec
 
 # credits
 
-credit.description.balancingChargeCredit                            = Credit from overpaid tax
-credit.description.paymentFromEarlierYear                           = Credit from an earlier tax year
-credit.description.mfaCredit                                        = Credit from HMRC adjustment
-credit.description.setOffCharge                                     = Credit from a set-off charge
-credit.description.setOffChargeInterest                             = Credit interest from a set-off charge
-
+credit.description.balancingCharge                                    = Credit from overpaid tax
+credit.description.cutOver                                            = Credit from an earlier tax year
+credit.description.mfa                                                = Credit from HMRC adjustment
+credit.description.setOffCharge                                       = Credit from a set-off charge
+credit.description.setOffChargeInterest                               = Credit interest from a set-off charge

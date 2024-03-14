@@ -16,10 +16,17 @@
 
 package models.creditsandrefunds
 
-import models.financialDetails.{BalancingChargeCreditType, CreditType, CutOverCreditType, DocumentDetailWithDueDate, FinancialDetail, MfaCreditType}
+import models.financialDetails._
+import play.api.i18n.Messages
 
+import java.time.LocalDate
 
-case class CreditViewRow(amount: BigDecimal, messageKey: String, taxYear: Int)
+sealed trait CreditRow {
+  val amount: BigDecimal
+  val creditType: CreditType
+}
+case class CreditViewRow(amount: BigDecimal, creditType: CreditType, taxYear: String) extends CreditRow
+case class PaymentCreditRow(amount: BigDecimal, creditType: CreditType, date: LocalDate) extends CreditRow
 
 case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDate, FinancialDetail)]) {
 
@@ -29,15 +36,20 @@ case class CreditAndRefundViewModel(creditCharges: List[(DocumentDetailWithDueDa
   private val cutOverCredit = "CutOver"
   private val payment = "Payment"
 
-  def getCreditViewRows(): List[CreditViewRow] = {
-    val x: Seq[Option[CreditViewRow]] = creditCharges.map(cc => {
-      for {
+  def creditViewRows()(implicit messages: Messages): List[CreditRow] = {
+    val sortedCreditRows: Seq[Option[CreditRow]] = sortCreditsByYear.map(cc => {
+      val maybeCreditRow = for {
         creditType <- cc._2.getCreditType
         amount <- cc._1.documentDetail.paymentOrChargeCredit
       } yield {
-        CreditViewRow(amount = amount, messageKey = creditType.key, taxYear = cc._2.taxYear.toInt)
-    }})
-    x.flatten.toList
+        creditType match {
+          case PaymentType => PaymentCreditRow(amount = amount, creditType = creditType, date = cc._1.dueDate.get)
+          case _ =>  CreditViewRow(amount = amount, creditType = creditType, taxYear = cc._2.taxYear)
+        }
+      }
+      maybeCreditRow
+    })
+    sortedCreditRows.flatten.toList
   }
 
   def sortCreditsByYear: List[(DocumentDetailWithDueDate, FinancialDetail)] = {
