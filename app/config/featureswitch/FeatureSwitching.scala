@@ -16,6 +16,7 @@
 
 package config.featureswitch
 
+import auth.MtdItUser
 import config.FrontendAppConfig
 import models.admin.FeatureSwitchName
 import services.admin.FeatureSwitchService
@@ -31,6 +32,12 @@ trait FeatureSwitching {
 
   def isEnabled(featureSwitch: FeatureSwitchName): Boolean = {
     sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_ON
+  }
+
+  def isEnabledV2(featureSwitch: FeatureSwitchName)
+                 (implicit user: MtdItUser[_]): Boolean = {
+    user.featureSwitches.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
+    //sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_ON
   }
 
   def isEnabledWithMongo(featureSwitch: FeatureSwitchName, featureSwitchService: FeatureSwitchService)

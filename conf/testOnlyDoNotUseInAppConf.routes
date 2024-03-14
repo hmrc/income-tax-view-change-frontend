@@ -73,3 +73,13 @@ GET         /report-quarterly/income-and-expenses/view/test-only/showOptOutCurre
 
 GET         /report-quarterly/income-and-expenses/view/agents/test-only/showOptOutCurrentData        testOnly.controllers.OptOutTestDataController.showAgent
 
+
++nocsrf
+PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches/:featureSwitchName                             controllers.admin.FeatureSwitchesAdminController.put(featureSwitchName: FeatureSwitchName)
+GET        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.get
++nocsrf
+PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitches                                                controllers.admin.FeatureSwitchesAdminController.putAll
+
++nocsrf
+PUT        /report-quarterly/income-and-expenses/view/test-only/featureSwitch/:featureSwitchName/:isEnabled                    testOnly.controllers.FeatureSwitchController.setSwitch(featureSwitchName: FeatureSwitchName, isEnabled: Boolean)
+
