@@ -44,6 +44,7 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
       backUrl = backAction.url
     )(individualUser, implicitly)
 
+
     val formWithError = DeclarePropertyCeasedForm.form(incomeSourceType)
       .withError(
         DeclarePropertyCeasedForm.declaration,
@@ -73,8 +74,8 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.UK.property.checkboxLabel")
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     }
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = UkProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -92,8 +93,8 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.UK.property.checkboxLabel")
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
     }
     "render the error summary" in new Setup(isAgent = true, incomeSourceType = UkProperty, error = true) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
@@ -112,8 +113,8 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.FP.property.checkboxLabel")
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.show().url
     }
     "render the continue button" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
       document.getElementById("continue-button").text() shouldBe messages("base.continue")
@@ -131,8 +132,8 @@ class DeclarePropertyCeasedViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").first().text() shouldBe messages("incomeSources.cease.FP.property.checkboxLabel")
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.cease.routes.CeaseIncomeSourceController.showAgent().url
     }
     "render the error summary" in new Setup(isAgent = true, incomeSourceType = ForeignProperty, error = true) {
       document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
