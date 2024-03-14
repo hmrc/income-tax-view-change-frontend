@@ -91,7 +91,7 @@ class AddPropertyControllerSpec extends TestSupport with MockAuthenticationPredi
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title should include(messages("manageBusinesses.type-of-property.heading"))
           val backUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show(isAgent).url
-          document.getElementById("back").attr("href") shouldBe backUrl
+          document.getElementById("back-fallback").attr("href") shouldBe backUrl
           status(result) shouldBe OK
         }
       }
