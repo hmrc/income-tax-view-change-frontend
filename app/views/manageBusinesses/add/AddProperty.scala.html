@@ -36,20 +36,6 @@
     messages(s"manageBusinesses.type-of-property.$key", args: _*)
 }
 
-@pageHasErrors = @{
-    form.hasErrors
-}
-
-@applyErrors(page: Html) = {
-    @if(pageHasErrors) {
-        <div class="govuk-form-group govuk-form-group--error">
-        @page
-        </div>
-    } else {
-        @page
-    }
-}
-
 @mainTemplate(
     pageTitle = getMessage("heading"),
     isAgent = isAgent,
@@ -60,43 +46,39 @@
 
         @errorSummary(form)
 
-        @applyErrors {
+        @h1(msg = getMessage("heading"), classes = "govuk-heading-l", id = Some("heading"))
 
-            @h1(msg = getMessage("heading"), classes = "govuk-heading-l", id = Some("heading"))
-
-            @p(classes = "govuk-body", id = Some("text1")) {
-                @getMessage("text1")
-            }
-            @p(classes = "govuk-body", id = Some("text2")) {
-                @getMessage("text2")
-            }
-            @p(classes = "govuk-body", id = Some("text3")) {
-                @getMessage("text3")
-            }
-
-            @govukRadios(Radios(
-                fieldset = Some(Fieldset(
-                    legend = Some(Legend(
-                        content = Text(getMessage("h2")),
-                        classes = "govuk-fieldset__legend--m",
-                        isPageHeading = false
-                    ))
-                )),
-                name = "type-of-business",
-                items = Seq(
-                    RadioItem(
-                        content = Text(getMessage("uk")),
-                        value = Some("uk-property")
-                    ),
-                    RadioItem(
-                        content = Text(getMessage("foreign")),
-                        value = Some("foreign-property")
-                    )
-                ),
-                errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
-            ).withFormField(form("type-of-property")))
-
+        @p(classes = "govuk-body", id = Some("text1")) {
+            @getMessage("text1")
         }
+        @p(classes = "govuk-body", id = Some("text2")) {
+            @getMessage("text2")
+        }
+        @p(classes = "govuk-body", id = Some("text3")) {
+            @getMessage("text3")
+        }
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(getMessage("h2")),
+                    classes = "govuk-fieldset__legend--m",
+                    isPageHeading = false
+                ))
+            )),
+            name = "type-of-business",
+            items = Seq(
+                RadioItem(
+                    content = Text(getMessage("uk")),
+                    value = Some("uk-property")
+                ),
+                RadioItem(
+                    content = Text(getMessage("foreign")),
+                    value = Some("foreign-property")
+                )
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
+        ).withFormField(form("type-of-property")))
 
         @continueButton()
     }
