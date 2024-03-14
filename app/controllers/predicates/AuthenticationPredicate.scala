@@ -19,10 +19,11 @@ package controllers.predicates
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
 import auth._
-import config.featureswitch.{FeatureSwitching, IvUplift}
+import config.featureswitch.{FeatureSwitching}
 import config.{FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
 import models.OriginEnum
+import models.admin.IvUplift
 import play.api.mvc._
 import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}

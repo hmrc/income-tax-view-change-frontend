@@ -16,9 +16,10 @@
 
 package testOnly.controllers
 
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.BaseController
+import models.admin.TimeMachineAddYear
 import models.incomeSourceDetails.TaxYear
 import play.api.i18n.I18nSupport
 import play.api.mvc._

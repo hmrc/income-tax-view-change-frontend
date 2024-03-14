@@ -16,8 +16,11 @@
 
 package config.featureswitch
 
-import auth.MtdItUser
 import config.FrontendAppConfig
+import models.admin.FeatureSwitchName
+import services.admin.FeatureSwitchService
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait FeatureSwitching {
 
@@ -26,26 +29,23 @@ trait FeatureSwitching {
   val FEATURE_SWITCH_ON = "true"
   val FEATURE_SWITCH_OFF = "false"
 
-  def isEnabled(featureSwitch: FeatureSwitch): Boolean =
-    (sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name)) contains FEATURE_SWITCH_ON
+  def isEnabled(featureSwitch: FeatureSwitchName): Boolean = {
+    sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_ON
+  }
 
-  def isOn(featureSwitch: FeatureSwitch)(implicit user: MtdItUser[_]): Boolean = user.featureSwitches.contains(featureSwitch)
+  def isEnabledWithMongo(featureSwitch: FeatureSwitchName, featureSwitchService: FeatureSwitchService)
+                        (implicit ec: ExecutionContext): Future[Boolean] = {
+    featureSwitchService.get(featureSwitch).map(switch => switch.isEnabled)
+  }
 
+  def isDisabled(featureSwitch: FeatureSwitchName): Boolean = {
+    sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_OFF
+  }
 
-  def isDisabled(featureSwitch: FeatureSwitch): Boolean =
-    (sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name)) contains FEATURE_SWITCH_OFF
-
-  def enable(featureSwitch: FeatureSwitch): Unit =
+  def enable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
 
-  def disable(featureSwitch: FeatureSwitch): Unit =
+  def disable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
-
-  protected implicit class FeatureOps(feature: FeatureSwitch) {
-    def fold[T](ifEnabled: => T, ifDisabled: => T): T = {
-      if (isEnabled(feature)) ifEnabled
-      else ifDisabled
-    }
-  }
 
 }

@@ -16,7 +16,7 @@
 
 package auth
 
-import config.featureswitch.FeatureSwitch
+import models.admin.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html

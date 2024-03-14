@@ -19,12 +19,13 @@ package controllers
 import audit.AuditingService
 import audit.models.{ViewInYearTaxEstimateAuditBody, ViewInYearTaxEstimateAuditModel}
 import auth.{FrontendAuthorisedFunctions, MtdItUser}
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import controllers.predicates._
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
+import models.admin.TimeMachineAddYear
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger

@@ -18,8 +18,9 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.{FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
+import models.admin.TimeMachineAddYear
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier

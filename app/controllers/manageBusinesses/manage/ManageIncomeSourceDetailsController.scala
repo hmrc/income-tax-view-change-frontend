@@ -17,11 +17,12 @@
 package controllers.manageBusinesses.manage
 
 import auth.MtdItUser
-import config.featureswitch.{CalendarQuarterTypes, FeatureSwitching, TimeMachineAddYear}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{JourneyType, Manage}
+import models.admin.{CalendarQuarterTypes, TimeMachineAddYear}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}

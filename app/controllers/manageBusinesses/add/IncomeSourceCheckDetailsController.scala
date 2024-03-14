@@ -19,7 +19,7 @@ package controllers.manageBusinesses.add
 import audit.AuditingService
 import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching, IncomeSourcesNewJourney}
+import config.featureswitch.{FeatureSwitching}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}

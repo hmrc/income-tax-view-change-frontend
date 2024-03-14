@@ -19,47 +19,60 @@ package controllers.predicates
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitch
+import models.admin
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
+import services.admin.FeatureSwitchService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeatureSwitchPredicate @Inject()
-                               (implicit val appConfig: FrontendAppConfig,
-                                val executionContext: ExecutionContext,
-                                val messagesApi: MessagesApi
-                               ) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
+(val featureSwitchService: FeatureSwitchService)
+(implicit val appConfig: FrontendAppConfig,
+ val executionContext: ExecutionContext,
+ val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
-    // Read fss: either from config like below Or from the storage
-    val fss = FeatureSwitch.switches.foldLeft( List[FeatureSwitch]() ){ (acc, curr) =>
-      if (isEnabled(curr)){
-        acc :+ curr
+
+    val readFromStorage: Boolean = true
+
+    val fss: Future[List[FeatureSwitch]] = {
+      if (readFromStorage) {
+        featureSwitchService.getAll
       } else {
-        acc
+        Future.successful(
+          FeatureSwitchName.allFeatureSwitches.foldLeft(List[FeatureSwitch]()) { (acc, curr) =>
+
+            if (isEnabled(curr)) {
+              acc :+ FeatureSwitch(curr, true)
+            } else {
+              acc :+ FeatureSwitch(curr, false)
+            }
+          }
+        )
       }
     }
 
-    // construct new request with a list of FS
-    val newRequest : MtdItUser[A] = MtdItUser[A](
-      mtditid = request.mtditid,
-      nino = request.nino,
-      userName = request.userName,
-      incomeSources = request.incomeSources,
-      btaNavPartial = request.btaNavPartial,
-      saUtr = request.saUtr,
-      credId = request.credId,
-      userType = request.userType,
-      arn = request.arn,
-      featureSwitches = fss)(request)
+    fss.flatMap(fs => {
+      val newRequest: MtdItUser[A] = MtdItUser[A](
+        mtditid = request.mtditid,
+        nino = request.nino,
+        userName = request.userName,
+        incomeSources = request.incomeSources,
+        btaNavPartial = request.btaNavPartial,
+        saUtr = request.saUtr,
+        credId = request.credId,
+        userType = request.userType,
+        arn = request.arn,
+        featureSwitches = fs)(request)
+        Future.successful(Right(newRequest))
+      }
+    )
 
-    Future.successful{
-      Right(newRequest)
-    }
+
   }
-
 }
 

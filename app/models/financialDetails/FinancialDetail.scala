@@ -16,7 +16,6 @@
 
 package models.financialDetails
 
-import config.featureswitch.TimeMachineAddYear
 import models.creditDetailModel.{BalancingChargeCreditType, CreditType, CutOverCreditType, MfaCreditType}
 import models.financialDetails.FinancialDetail.Types._
 import play.api.libs.json.{Format, Json}

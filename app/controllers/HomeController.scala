@@ -22,6 +22,7 @@ import auth.MtdItUser
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import controllers.agent.predicates.ClientConfirmedController
+import models.admin.{CodingOut, CreditsRefundsRepay, ITSASubmissionIntegration, IncomeSources, IncomeSourcesNewJourney, MFACreditsAndDebits, PaymentHistoryRefunds, TimeMachineAddYear}
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.homePage.PaymentCreditAndRefundHistoryTileViewModel
 import models.nextUpdates.NextUpdatesTileViewModel
@@ -73,10 +74,10 @@ class HomeController @Inject()(val homeView: views.html.Home,
       displayCeaseAnIncome = displayCeaseAnIncome,
       isAgent = isAgent,
       origin = origin,
-      creditAndRefundEnabled = isOn(CreditsRefundsRepay),  //isEnabled(CreditsRefundsRepay),
-      paymentHistoryEnabled = isOn( PaymentHistoryRefunds), //isEnabled(PaymentHistoryRefunds),
-      incomeSourcesEnabled = isOn(IncomeSources), //isEnabled(IncomeSources),
-      incomeSourcesNewJourneyEnabled = isOn(IncomeSourcesNewJourney), // isEnabled(IncomeSourcesNewJourney),
+      creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),  //isEnabled(CreditsRefundsRepay),
+      paymentHistoryEnabled = isEnabled( PaymentHistoryRefunds), //isEnabled(PaymentHistoryRefunds),
+      incomeSourcesEnabled = isEnabled(IncomeSources), //isEnabled(IncomeSources),
+      incomeSourcesNewJourneyEnabled = isEnabled(IncomeSourcesNewJourney), // isEnabled(IncomeSourcesNewJourney),
       isUserMigrated = user.incomeSources.yearOfMigration.isDefined
     )
   }
