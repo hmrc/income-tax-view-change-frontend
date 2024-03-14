@@ -17,12 +17,14 @@
 package services.admin
 
 import models.admin.{FeatureSwitch, FeatureSwitchName}
+import play.api.Logger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.{Duration, FiniteDuration, SECONDS => Seconds}
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.cache.AsyncCacheApi
 import repositories.admin.FeatureSwitchRepository
+import play.api.Logger
 
 
 @Singleton
@@ -39,7 +41,10 @@ class FeatureSwitchService @Inject()(featureSwitchRepository: FeatureSwitchRepos
         .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
     }
 
-  def getAll: Future[List[FeatureSwitch]] =
+  def getAll: Future[List[FeatureSwitch]] = {
+
+    Logger("application").info("[FeatureSwitchService][getAll] - reading FSS ..")
+
     cache.getOrElseUpdate(allFeatureSwitchesCacheKey, cacheValidFor) {
       featureSwitchRepository.getFeatureSwitches.map { mongoSwitches =>
         FeatureSwitchName.allFeatureSwitches
@@ -52,6 +57,7 @@ class FeatureSwitchService @Inject()(featureSwitchRepository: FeatureSwitchRepos
           .reverse
       }
     }
+  }
 
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] =
     for {

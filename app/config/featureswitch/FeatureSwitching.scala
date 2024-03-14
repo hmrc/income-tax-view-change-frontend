@@ -30,11 +30,11 @@ trait FeatureSwitching {
   val FEATURE_SWITCH_ON = "true"
   val FEATURE_SWITCH_OFF = "false"
 
-  def isEnabled(featureSwitch: FeatureSwitchName): Boolean = {
+  def isEnabledV3(featureSwitch: FeatureSwitchName): Boolean = {
     sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_ON
   }
 
-  def isEnabledV2(featureSwitch: FeatureSwitchName)
+  def isEnabled(featureSwitch: FeatureSwitchName)
                  (implicit user: MtdItUser[_]): Boolean = {
     user.featureSwitches.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
     //sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_ON

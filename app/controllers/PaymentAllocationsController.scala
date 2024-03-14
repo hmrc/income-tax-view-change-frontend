@@ -110,7 +110,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
     Authenticated.async { implicit request =>
       implicit agent =>
-        if (isEnabled(PaymentAllocation)) {
+        if (isEnabledV3(PaymentAllocation)) {
           getMtdItUserWithIncomeSources(incomeSourceDetailsService) flatMap { implicit mtdItUser =>
             handleRequest(
               itvcErrorHandler = itvcErrorHandlerAgent,

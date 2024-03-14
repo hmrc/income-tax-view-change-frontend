@@ -16,6 +16,7 @@
 
 package testOnly.controllers
 
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.admin.TimeMachineAddYear
@@ -51,7 +52,7 @@ class OptOutTestDataController @Inject()(
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   private def retrieveData(nino: String, isAgent: Boolean)
-                          (implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+                          (implicit hc: HeaderCarrier, request: MtdItUser[_]): Future[Result] = {
 
     val taxYear: TaxYear = TaxYear(
       dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabled(TimeMachineAddYear)).getYear,

@@ -17,13 +17,15 @@
 package utils
 
 import auth.MtdItUser
-import config.featureswitch.{FeatureSwitching}
+import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.predicates.{BaseAgentController, ClientConfirmedController}
 import controllers.predicates.{AuthenticationPredicate, FeatureSwitchPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, ActionBuilder, ActionFunction, AnyContent, BodyParser, MessagesControllerComponents, Request, Result}
 import services.IncomeSourceDetailsService
+import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPredicate,
                                        val authenticate: AuthenticationPredicate,
+                                       val featureSwitchService: FeatureSwitchService,
                                        val authorisedFunctions: AuthorisedFunctions,
                                        val retrieveBtaNavBar: NavBarPredicate,
                                        val featureSwitchPredicate: FeatureSwitchPredicate,
@@ -52,32 +55,44 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
             getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
 
 //              // TODO: move this into ~Predicate in the same way as for Individual
-//              val fssFuture: Future[List[FeatureSwitch]] = Future.successful(
-//                FeatureSwitch.switches.foldLeft(List[FeatureSwitch]()) { (acc, curr) =>
-//                  if (isEnabled(curr)) {
-//                    acc :+ curr
-//                  } else {
-//                    acc
-//                  }
-//                }
-//              )
-//              val res = for {
-//                fss <- fssFuture
-//              } yield {
-//                val newRequest = MtdItUser[AnyContent](
-//                  mtditid = mtdItUser.mtditid,
-//                  nino = mtdItUser.nino,
-//                  userName = mtdItUser.userName,
-//                  incomeSources = mtdItUser.incomeSources,
-//                  btaNavPartial = mtdItUser.btaNavPartial,
-//                  saUtr = mtdItUser.saUtr,
-//                  credId = mtdItUser.credId,
-//                  userType = mtdItUser.userType,
-//                  arn = mtdItUser.arn,
-//                  featureSwitches = fss)(request)
-               authenticatedCodeBlock(mtdItUser)
-//              }
-//              res.flatten
+
+              val readFromStorage: Boolean = true
+
+              // TODO: we are duplicating code here in order to read FS's
+              val fss: Future[List[FeatureSwitch]] = {
+                if (readFromStorage) {
+                  featureSwitchService.getAll
+                } else {
+                  Future.successful(
+                    FeatureSwitchName.allFeatureSwitches.foldLeft(List[FeatureSwitch]()) { (acc, curr) =>
+
+                      if (isEnabled(curr)) {
+                        acc :+ FeatureSwitch(curr, true)
+                      } else {
+                        acc :+ FeatureSwitch(curr, false)
+                      }
+                    }
+                  )
+                }
+              }
+
+              val res = for {
+                fss <- fss
+              } yield {
+                val newRequest = MtdItUser[AnyContent](
+                  mtditid = mtdItUser.mtditid,
+                  nino = mtdItUser.nino,
+                  userName = mtdItUser.userName,
+                  incomeSources = mtdItUser.incomeSources,
+                  btaNavPartial = mtdItUser.btaNavPartial,
+                  saUtr = mtdItUser.saUtr,
+                  credId = mtdItUser.credId,
+                  userType = mtdItUser.userType,
+                  arn = mtdItUser.arn,
+                  featureSwitches = fss)(request)
+                authenticatedCodeBlock(newRequest)
+              }
+              res.flatten
             }
       }
 

@@ -45,8 +45,7 @@ class FeatureSwitchPredicate @Inject()
       } else {
         Future.successful(
           FeatureSwitchName.allFeatureSwitches.foldLeft(List[FeatureSwitch]()) { (acc, curr) =>
-
-            if (isEnabled(curr)) {
+            if (isEnabledV3(curr)) {
               acc :+ FeatureSwitch(curr, true)
             } else {
               acc :+ FeatureSwitch(curr, false)
