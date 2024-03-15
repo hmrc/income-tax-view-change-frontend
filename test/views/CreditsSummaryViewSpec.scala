@@ -26,6 +26,7 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
@@ -34,7 +35,7 @@ import views.html.CreditsSummary
 import java.net.URL
 
 
-class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
+class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with CreditHistoryDataHelper {
 
   val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
@@ -93,7 +94,13 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
   }
 
   "display the Credits Summary page" when {
-    "a user have multiple credits" in new TestSetup(creditCharges = creditAndRefundCreditDetailListMultipleChargesMFA, maybeAvailableCredit = testMaybeBalanceDetails) {
+    "a user have multiple credits" in new TestSetup(creditCharges = List(
+      creditDetailModelasCutOver,
+      creditDetailModelasMfa,
+      creditDetailModelasBCC,
+      creditDetailModelasSetOff,
+      creditDetailModelasSetInterest
+    ), maybeAvailableCredit = testMaybeBalanceDetails) {
       enable(MFACreditsAndDebits)
 
       document.title() shouldBe creditsSummaryTitle
@@ -103,15 +110,31 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching with Impl
       document.select("th:nth-child(3)").text() shouldBe creditsTableHeadStatusText
       document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
 
-      document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe "16 Apr 2018"
-      document.selectById("balancing-charge-type-0").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-      document.selectById("balancing-charge-type-0").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
-      document.selectById("balancing-charge-type-0").select("td:nth-child(4)").first().text() shouldBe "£800.00"
 
-      document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe "30 Jul 2018"
-      document.selectById("balancing-charge-type-1").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-      document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
-      document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
+      document.select("td:nth-child(1)").get(0).text() shouldBe "25 Aug 2022"
+      document.select("td:nth-child(2)").get(0).text() shouldBe "Credit from an earlier tax year"
+      document.select("td:nth-child(3)").get(0).text() shouldBe creditsTableStatusPartiallyAllocatedValue
+      document.select("td:nth-child(4)").get(0).text() shouldBe "£120.00"
+
+      document.select("td:nth-child(1)").get(1).text() shouldBe "29 Mar 2022"
+      document.select("td:nth-child(2)").get(1).text() shouldBe "Credit from HMRC adjustment"
+      document.select("td:nth-child(3)").get(1).text() shouldBe creditsTableStatusNotYetAllocatedValue
+      document.select("td:nth-child(4)").get(1).text() shouldBe "£150.00"
+
+      document.select("td:nth-child(1)").get(2).text() shouldBe "29 Mar 2022"
+      document.select("td:nth-child(2)").get(2).text() shouldBe "Credit from overpaid tax"
+      document.select("td:nth-child(3)").get(2).text() shouldBe creditsTableStatusPartiallyAllocatedValue
+      document.select("td:nth-child(4)").get(2).text() shouldBe "£150.00"
+
+      document.select("td:nth-child(1)").get(3).text() shouldBe "29 Mar 2022"
+      document.select("td:nth-child(2)").get(3).text() shouldBe "Credit from a set-off charge"
+      document.select("td:nth-child(3)").get(3).text() shouldBe creditsTableStatusFullyAllocatedValue
+      document.select("td:nth-child(4)").get(3).text() shouldBe "£200.00"
+
+      document.select("td:nth-child(1)").get(4).text() shouldBe "29 Mar 2022"
+      document.select("td:nth-child(2)").get(4).text() shouldBe "Credit interest from a set-off charge"
+      document.select("td:nth-child(3)").get(4).text() shouldBe creditsTableStatusNotYetAllocatedValue
+      document.select("td:nth-child(4)").get(4).text() shouldBe "£250.00"
 
       document.selectById("h2-credit-from-hmrc-adjustment").text() shouldBe creditsDropDownListCreditFomHmrcAdjustment
       document.selectById("h2-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue

@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.creditDetailModel._
-import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, DocumentDetail, FinancialDetail, FinancialDetailsModel, MfaCreditType}
+import models.financialDetails._
 import services.CreditHistoryService.CreditHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -42,14 +42,12 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
         val fdRes = financialDetailsModel.getPairedDocumentDetails().flatMap {
           case (document: DocumentDetail, financialDetail: FinancialDetail) =>
             (financialDetail.getCreditType, document.credit.isDefined) match {
-              case (Some(MfaCreditType), true) =>
-                Some(CreditDetailModel(date = document.documentDate, document, MfaCreditType, Some(financialDetailsModel.balanceDetails)))
-              case (Some(BalancingChargeCreditType), true) =>
-                Some(CreditDetailModel(date = document.documentDate, document, BalancingChargeCreditType, Some(financialDetailsModel.balanceDetails)))
               case (Some(CutOverCreditType), true) =>
                 // if we didn't find CutOverCredit dueDate then we "lost" this document
                 financialDetailsModel.getDueDateForFinancialDetail(financialDetail)
                   .map(dueDate => CreditDetailModel(date = dueDate, document, CutOverCreditType, Some(financialDetailsModel.balanceDetails)))
+              case (Some(creditType), true) =>
+                Some(CreditDetailModel(date = document.documentDate, document, creditType, Some(financialDetailsModel.balanceDetails)))
               case (_, _) => None
             }
         }
