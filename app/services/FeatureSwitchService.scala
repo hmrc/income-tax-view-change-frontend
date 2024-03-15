@@ -51,6 +51,7 @@ class FeatureSwitchService @Inject()(
 
     Logger("application").info(s"[FeatureSwitchService][getAll] - reading FSS - ${appConfig.readFeatureSwitchesFromMongo}")
     if (appConfig.readFeatureSwitchesFromMongo) {
+      // TODO: do we need to apply fallback in case can not connect to mongoDb?
       featureSwitchRepository.getFeatureSwitches.map { mongoSwitches =>
         Logger("application").info(s"[FeatureSwitchService][getAll] - reading FSS: ${mongoSwitches}")
         FeatureSwitchName.allFeatureSwitches
@@ -68,14 +69,7 @@ class FeatureSwitchService @Inject()(
   }
 
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] =
-    for {
-      //_ <- cache.remove(featureSwitchName.name)
-//      _ <- cache.remove(allFeatureSwitchesCacheKey)
-      result <- featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
-      //blocking thread to allow other containers to update their cache
-      //_ <- Future.successful(Thread.sleep(5000))
-    } yield result
-
+    featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
 
   def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] =
     featureSwitchRepository.setFeatureSwitches(featureSwitches)

@@ -50,9 +50,7 @@ class FeatureSwitchPredicate @Inject()
         arn = request.arn,
         featureSwitches = fs)(request)
       Future.successful(Right(newRequest))
-    }
-    )
-
+    })
 
   }
 }
