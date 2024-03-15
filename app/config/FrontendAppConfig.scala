@@ -172,4 +172,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val cacheTtl: Int = config.get[Int]("mongodb.timeToLiveInSeconds")
 
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
+
+  lazy val readFeatureSwitchesFromMongo = servicesConfig.getBoolean("feature-switches.read-from-mongo")
+
 }

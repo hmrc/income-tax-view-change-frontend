@@ -54,30 +54,8 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
           implicit user =>
             getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
 
-//              // TODO: move this into ~Predicate in the same way as for Individual
-
-              val readFromStorage: Boolean = true
-
-              // TODO: we are duplicating code here in order to read FS's
-              val fss: Future[List[FeatureSwitch]] = {
-                if (readFromStorage) {
-                  featureSwitchService.getAll
-                } else {
-                  Future.successful(
-                    FeatureSwitchName.allFeatureSwitches.foldLeft(List[FeatureSwitch]()) { (acc, curr) =>
-
-                      if (isEnabled(curr)) {
-                        acc :+ FeatureSwitch(curr, true)
-                      } else {
-                        acc :+ FeatureSwitch(curr, false)
-                      }
-                    }
-                  )
-                }
-              }
-
               val res = for {
-                fss <- fss
+                fss <- featureSwitchService.getAll
               } yield {
                 val newRequest = MtdItUser[AnyContent](
                   mtditid = mtdItUser.mtditid,

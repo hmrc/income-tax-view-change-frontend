@@ -19,9 +19,6 @@ package config.featureswitch
 import auth.MtdItUser
 import config.FrontendAppConfig
 import models.admin.FeatureSwitchName
-import services.admin.FeatureSwitchService
-
-import scala.concurrent.{ExecutionContext, Future}
 
 trait FeatureSwitching {
 
@@ -30,19 +27,17 @@ trait FeatureSwitching {
   val FEATURE_SWITCH_ON = "true"
   val FEATURE_SWITCH_OFF = "false"
 
-  def isEnabledV3(featureSwitch: FeatureSwitchName): Boolean = {
-    sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_ON
+  def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean = {
+    sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](s"feature-switch.${featureSwitch.name}") contains FEATURE_SWITCH_ON
   }
 
   def isEnabled(featureSwitch: FeatureSwitchName)
                  (implicit user: MtdItUser[_]): Boolean = {
-    user.featureSwitches.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
-    //sys.props.get(featureSwitch.name) orElse appConfig.config.getOptional[String](featureSwitch.name) contains FEATURE_SWITCH_ON
-  }
-
-  def isEnabledWithMongo(featureSwitch: FeatureSwitchName, featureSwitchService: FeatureSwitchService)
-                        (implicit ec: ExecutionContext): Future[Boolean] = {
-    featureSwitchService.get(featureSwitch).map(switch => switch.isEnabled)
+    if (appConfig.readFeatureSwitchesFromMongo) {
+      user.featureSwitches.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
+    } else {
+      isEnabledFromConfig(featureSwitch)
+    }
   }
 
   def isDisabled(featureSwitch: FeatureSwitchName): Boolean = {

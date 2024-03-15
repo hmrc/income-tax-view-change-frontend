@@ -37,25 +37,7 @@ class FeatureSwitchPredicate @Inject()
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
 
-    val readFromStorage: Boolean = true
-
-    val fss: Future[List[FeatureSwitch]] = {
-      if (readFromStorage) {
-        featureSwitchService.getAll
-      } else {
-        Future.successful(
-          FeatureSwitchName.allFeatureSwitches.foldLeft(List[FeatureSwitch]()) { (acc, curr) =>
-            if (isEnabledV3(curr)) {
-              acc :+ FeatureSwitch(curr, true)
-            } else {
-              acc :+ FeatureSwitch(curr, false)
-            }
-          }
-        )
-      }
-    }
-
-    fss.flatMap(fs => {
+    featureSwitchService.getAll.flatMap(fs => {
       val newRequest: MtdItUser[A] = MtdItUser[A](
         mtditid = request.mtditid,
         nino = request.nino,
@@ -67,8 +49,8 @@ class FeatureSwitchPredicate @Inject()
         userType = request.userType,
         arn = request.arn,
         featureSwitches = fs)(request)
-        Future.successful(Right(newRequest))
-      }
+      Future.successful(Right(newRequest))
+    }
     )
 
 

@@ -63,7 +63,7 @@ class AuthenticationPredicate @Inject()(implicit val ec: ExecutionContext,
 
     authorisedFunctions.authorised(Enrolment(appConfig.mtdItEnrolmentKey)).retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
       case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel => {
-        if (confidenceLevel.level < requiredConfidenceLevel && isEnabledV3(IvUplift)) {
+        if (confidenceLevel.level < requiredConfidenceLevel && isEnabledFromConfig(IvUplift)) {
           affinityGroup match {
             case Some(Organisation) => {
               auditingService.audit(IvUpliftRequiredAuditModel("organisation", confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
