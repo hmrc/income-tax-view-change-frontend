@@ -20,23 +20,19 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.twirl.api.Html
 import services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.AuthenticatorPredicate
 
-import scala.collection.immutable.ListMap
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
-                                        auth: AuthenticatorPredicate,
                                         featureSwitchService: FeatureSwitchService)
                                        (implicit mcc: MessagesControllerComponents,
                                         val appConfig: FrontendAppConfig)
@@ -46,7 +42,6 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
 
 
-
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { request =>
     featureSwitchService.set(featureFlagName, isEnabled).map {
       case true => Ok(s"Flag $featureFlagName set to $isEnabled")
@@ -54,11 +49,14 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
   }
 
-  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) { implicit user =>
-    val featureSwitches = ListMap(allFeatureSwitches.toSeq
-      .sortBy(_.name)
-      .map(switch => switch -> isEnabled(switch)): _*)
-    Future.successful(Ok(view(featureSwitches)))
+  def show(): Action[AnyContent] = Action.async { implicit user =>
+    featureSwitchService.getAll.flatMap { featureSwitches =>
+      val fss = featureSwitches.map(x => {
+        (FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
+      }).toMap
+      Future.successful(Ok(view(fss)))
+    }
+
   }
 
   // TODO: refactor next method
@@ -70,25 +68,30 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
 
     def disableAll(): Boolean = submittedData.contains(DISABLE_ALL_FEATURES)
+
     def enableAll(): Boolean = submittedData.contains(ENABLE_ALL_FEATURES)
 
-    val disabledFeatureSwitchers : Map[FeatureSwitchName, Boolean]= getDisabledFeatureSwitches(submittedData, disableAll())
-    val enabledFeatureSwitchers : Map[FeatureSwitchName, Boolean]= if (disableAll()) {
+    val disabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = getDisabledFeatureSwitches(submittedData, disableAll())
+    val enabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = if (disableAll()) {
       Map.empty
     } else {
       getEnabledFeatureSwitches(submittedData, enableAll())
     }
 
     for {
-      (fs, enableState) <- disabledFeatureSwitchers ++ enabledFeatureSwitchers
-    } yield featureSwitchService.set(fs, enableState)
+      _ <- Future.sequence(
+        for {
+          (fs, enableState) <- (disabledFeatureSwitchers ++ enabledFeatureSwitchers)
+        } yield featureSwitchService.set(fs, enableState)
+      )
+    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
 
-    Future.successful( Redirect(testOnly.controllers.routes.FeatureSwitchController.show()) )
   }
 
   private def getEnabledFeatureSwitches(submittedData: Set[String], enableAll: Boolean): Map[FeatureSwitchName, Boolean] = {
     val enabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = {
-      if (enableAll) allFeatureSwitches.map(_.name) else submittedData }
+      if (enableAll) allFeatureSwitches.map(_.name) else submittedData
+    }
       .map(x => allFeatureSwitches.find(e => e.name == x)).collect {
         case Some(fs) => fs
       }.map(x => (x -> true)).toMap
@@ -103,8 +106,8 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
         allFeatureSwitches.map(_.name) diff submittedData
       }
     }.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
-        case Some(fs) => fs
-      }.map(x => (x -> false)).toMap
+      case Some(fs) => fs
+    }.map(x => (x -> false)).toMap
     disabledFeatureSwitchers
   }
 
