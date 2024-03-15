@@ -17,7 +17,7 @@
 package controllers.manageBusinesses.manage
 
 import config.featureswitch.IncomeSources
-import enums.IncomeSourceJourney.UkProperty
+import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
@@ -37,13 +37,13 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
   val quarterly = "quarterly"
   val taxYear = "2023-2024"
 
-  val manageSEObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.showSelfEmployment(annual, taxYear).url
-  val manageUKObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.showUKProperty(annual, taxYear).url
-  val manageFPObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.showForeignProperty(annual, taxYear).url
+  val manageSEObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = false, SelfEmployment, annual, taxYear).url
+  val manageUKObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = false, UkProperty, annual, taxYear).url
+  val manageFPObligationsShowUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent = false, ForeignProperty, annual, taxYear).url
 
   val manageConfirmShowUrl: String = controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, quarterly, incomeSourceType = UkProperty, isAgent = false).url
 
-  val manageObligationsSubmitUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.submit().url
+  val manageObligationsSubmitUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.submit(false).url
   val manageIncomeSourcesShowUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(false).url
 
   val prefix: String = "incomeSources.add.manageObligations"

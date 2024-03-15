@@ -83,11 +83,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = false).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
-    .showUKProperty(changeTo = annual, taxYear = taxYear).url
+    .show(isAgent = false, UkProperty, changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowForeignPropertyUrl: String = manageObligationsController
-    .showForeignProperty(changeTo = annual, taxYear = taxYear).url
+    .show(isAgent = false, ForeignProperty, changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowSelfEmploymentUrl: String = manageObligationsController
-    .showSelfEmployment(changeTo = annual, taxYear = taxYear).url
+    .show(isAgent = false, SelfEmployment, changeTo = annual, taxYear = taxYear).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
