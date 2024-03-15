@@ -16,7 +16,8 @@
 
 package services.admin
 
-import config.FrontendAppConfig
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.agent.predicates.ClientConfirmedController
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
 
@@ -26,13 +27,19 @@ import scala.concurrent.{ExecutionContext, Future}
 import play.api.cache.AsyncCacheApi
 import repositories.admin.FeatureSwitchRepository
 import play.api.Logger
+import play.api.mvc.MessagesControllerComponents
+import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 
 @Singleton
 class FeatureSwitchService @Inject()(
                                       val featureSwitchRepository: FeatureSwitchRepository,
+                                      val authorisedFunctions: AuthorisedFunctions,
                                       val appConfig: FrontendAppConfig)
-                                    (implicit ec: ExecutionContext) {
+                                    (implicit val ec: ExecutionContext,
+                                     mcc: MessagesControllerComponents,
+                                     implicit val itvcErrorHandler: ItvcErrorHandler,
+                                     implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends ClientConfirmedController {
 
   def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
       featureSwitchRepository

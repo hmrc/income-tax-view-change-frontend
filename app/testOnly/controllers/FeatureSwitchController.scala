@@ -18,20 +18,25 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.{ FeatureSwitchName}
+import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
 
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.twirl.api.Html
 import services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.AuthenticatorPredicate
 
+import scala.collection.immutable.ListMap
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
+                                        auth: AuthenticatorPredicate,
                                         featureSwitchService: FeatureSwitchService)
                                        (implicit mcc: MessagesControllerComponents,
                                         val appConfig: FrontendAppConfig)
@@ -40,12 +45,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
 
-//  private def view(switchNames: Map[FeatureSwitchName, Boolean])(implicit request: Request[_]): Html = {
-//    featureSwitchView(
-//      switchNames = switchNames,
-//      testOnly.controllers.routes.FeatureSwitchController.submit
-//    )
-//  }
+
 
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { request =>
     featureSwitchService.set(featureFlagName, isEnabled).map {
@@ -54,33 +54,64 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
   }
 
-//  lazy val show: Action[AnyContent] = Action { implicit req =>
-//    val featureSwitches = ListMap(allFeatureSwitches.toSeq sortBy (_.name) map (switch => switch -> isEnabled(switch)): _*)
-//    Ok(view(featureSwitches))
-//  }
+  def show(): Action[AnyContent] = auth.authenticatedAction(isAgent = false) { implicit user =>
+    val featureSwitches = ListMap(allFeatureSwitches.toSeq
+      .sortBy(_.name)
+      .map(switch => switch -> isEnabled(switch)): _*)
+    Future.successful(Ok(view(featureSwitches)))
+  }
 
-  lazy val submit: Action[AnyContent] = Action { implicit req =>
+  // TODO: refactor next method
+  def submit(): Action[AnyContent] = Action.async { implicit request =>
 
-    val submittedData: Set[String] = req.body.asFormUrlEncoded match {
+    val submittedData: Set[String] = request.body.asFormUrlEncoded match {
       case None => Set.empty
       case Some(data) => data.keySet
     }
 
-    val featureSwitches = submittedData flatMap FeatureSwitchName.get
+    def disableAll(): Boolean = submittedData.contains(DISABLE_ALL_FEATURES)
+    def enableAll(): Boolean = submittedData.contains(ENABLE_ALL_FEATURES)
 
-    allFeatureSwitches.foreach(fs =>
-      if (submittedData.contains(ENABLE_ALL_FEATURES))
-        enable(fs)
-      else if (submittedData.contains(DISABLE_ALL_FEATURES))
-        disable(fs)
-      else if (featureSwitches.contains(fs))
-        enable(fs)
-      else
-        disable(fs)
-    )
+    val disabledFeatureSwitchers : Map[FeatureSwitchName, Boolean]= getDisabledFeatureSwitches(submittedData, disableAll())
+    val enabledFeatureSwitchers : Map[FeatureSwitchName, Boolean]= if (disableAll()) {
+      Map.empty
+    } else {
+      getEnabledFeatureSwitches(submittedData, enableAll())
+    }
 
-    Ok("OK...")
-    //Redirect(testOnly.controllers.routes.FeatureSwitchController.show)
+    for {
+      (fs, enableState) <- disabledFeatureSwitchers ++ enabledFeatureSwitchers
+    } yield featureSwitchService.set(fs, enableState)
+
+    Future.successful( Redirect(testOnly.controllers.routes.FeatureSwitchController.show()) )
   }
 
+  private def getEnabledFeatureSwitches(submittedData: Set[String], enableAll: Boolean): Map[FeatureSwitchName, Boolean] = {
+    val enabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = {
+      if (enableAll) allFeatureSwitches.map(_.name) else submittedData }
+      .map(x => allFeatureSwitches.find(e => e.name == x)).collect {
+        case Some(fs) => fs
+      }.map(x => (x -> true)).toMap
+    enabledFeatureSwitchers
+  }
+
+  private def getDisabledFeatureSwitches(submittedData: Set[String], disableAll: Boolean): Map[FeatureSwitchName, Boolean] = {
+    val disabledFeatureSwitchers: Map[FeatureSwitchName, Boolean] = {
+      if (disableAll) {
+        allFeatureSwitches.map(_.name)
+      } else {
+        allFeatureSwitches.map(_.name) diff submittedData
+      }
+    }.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
+        case Some(fs) => fs
+      }.map(x => (x -> false)).toMap
+    disabledFeatureSwitchers
+  }
+
+  private def view(switchNames: Map[FeatureSwitchName, Boolean])(implicit request: Request[_]): Html = {
+    featureSwitchView(
+      switchNames = switchNames,
+      testOnly.controllers.routes.FeatureSwitchController.submit()
+    )
+  }
 }
