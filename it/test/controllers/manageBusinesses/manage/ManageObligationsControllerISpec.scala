@@ -43,7 +43,7 @@ class ManageObligationsControllerISpec extends ComponentSpecBase {
 
   val manageConfirmShowUrl: String = controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(taxYear, quarterly, incomeSourceType = UkProperty, isAgent = false).url
 
-  val manageObligationsSubmitUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.submit().url
+  val manageObligationsSubmitUrl: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.submit(false).url
   val manageIncomeSourcesShowUrl: String = controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(false).url
 
   val prefix: String = "incomeSources.add.manageObligations"

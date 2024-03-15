@@ -222,7 +222,7 @@ class ManageObligationsControllerSpec extends TestSupport
         "redirect to the session timeout page" in {
           setupMockAuthorisationException()
 
-          val result = TestManageObligationsController.submit()(fakeRequestWithTimeoutSession)
+          val result = TestManageObligationsController.submit(false)(fakeRequestWithTimeoutSession)
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout.url)
@@ -449,7 +449,7 @@ class ManageObligationsControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(false)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestManageObligationsController.submit(fakeRequestWithActiveSession)
+        val result: Future[Result] = TestManageObligationsController.submit(false)(fakeRequestWithActiveSession)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(false).url)
       }
@@ -457,7 +457,7 @@ class ManageObligationsControllerSpec extends TestSupport
         setupMockAuthorisationSuccess(true)
         setupMockGetIncomeSourceDetails()(businessesAndPropertyIncome)
 
-        val result: Future[Result] = TestManageObligationsController.agentSubmit(fakeRequestConfirmedClient())
+        val result: Future[Result] = TestManageObligationsController.submit(true)(fakeRequestConfirmedClient())
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(true).url)
       }
