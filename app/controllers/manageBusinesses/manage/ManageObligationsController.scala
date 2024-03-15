@@ -52,92 +52,36 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def showSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent) {
     implicit user =>
       withIncomeSourcesFS {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(incomeSourceIdMaybe) =>
-            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
-            handleRequest(
-              incomeSourceType = SelfEmployment,
-              isAgent = false,
-              taxYear,
-              changeTo,
-              incomeSourceIdOption
-            )
-          case Left(ex) =>
-            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage}")
-            Future.successful {
-              errorHandler(false).showInternalServerError()
+        incomeSourceType match {
+          case SelfEmployment =>
+            sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
+              case Right(incomeSourceIdOption) =>
+                val incomeSourceId: Option[IncomeSourceId] = incomeSourceIdOption.map(id => IncomeSourceId(id))
+                handleRequest(
+                  incomeSourceType,
+                  isAgent,
+                  taxYear,
+                  changeTo,
+                  incomeSourceId
+                )
+              case Left(ex) =>
+                Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage}")
+                Future.successful {
+                  errorHandler(isAgent).showInternalServerError()
+                }
             }
+          case _ => handleRequest(
+            incomeSourceType,
+            isAgent,
+            taxYear,
+            changeTo,
+            None
+          )
         }
       }
-  }
-
-  def showAgentSelfEmployment(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit user =>
-      withIncomeSourcesFS {
-        sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, JourneyType(Manage, SelfEmployment)).flatMap {
-          case Right(incomeSourceIdMaybe) =>
-            val incomeSourceIdOption: Option[IncomeSourceId] = incomeSourceIdMaybe.map(id => IncomeSourceId(id))
-            handleRequest(
-              incomeSourceType = SelfEmployment,
-              isAgent = true,
-              taxYear,
-              changeTo,
-              incomeSourceIdOption
-            )
-          case Left(ex) =>
-            Logger("application").error(s"[ManageObligationsController][showSelfEmployment]: ${ex.getMessage} - ${ex.getCause}")
-            Future.successful {
-              errorHandler(true).showInternalServerError()
-            }
-        }
-      }
-  }
-
-  def showUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        incomeSourceType = UkProperty,
-        isAgent = false,
-        taxYear,
-        changeTo,
-        None
-      )
-  }
-
-  def showAgentUKProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        incomeSourceType = UkProperty,
-        isAgent = true,
-        taxYear,
-        changeTo,
-        None
-      )
-  }
-
-  def showForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = false) {
-    implicit user =>
-      handleRequest(
-        incomeSourceType = ForeignProperty,
-        isAgent = false,
-        taxYear,
-        changeTo,
-        None
-      )
-  }
-
-  def showAgentForeignProperty(changeTo: String, taxYear: String): Action[AnyContent] = auth.authenticatedAction(isAgent = true) {
-    implicit mtdItUser =>
-      handleRequest(
-        incomeSourceType = ForeignProperty,
-        isAgent = true,
-        taxYear,
-        changeTo,
-        None
-      )
   }
 
   private lazy val successPostUrl = (isAgent: Boolean) => {
