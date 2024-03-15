@@ -151,6 +151,6 @@ class ManageObligationsController @Inject()(val authorisedFunctions: AuthorisedF
 
 
   def submit(isAgent: Boolean): Action[AnyContent] = auth.authenticatedAction(isAgent) { implicit user =>
-      Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent)))
+    Future.successful(Redirect(controllers.manageBusinesses.manage.routes.ManageIncomeSourceController.show(isAgent)))
   }
 }
