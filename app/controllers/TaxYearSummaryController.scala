@@ -128,7 +128,7 @@ class TaxYearSummaryController @Inject()(taxYearSummaryView: TaxYearSummary,
           obligations = obligations,
           codingOutEnabled = codingOutEnabled,
           backUrl = backUrl,
-          showForecastData = isEnabled(ForecastCalculation), //isEnabled(ForecastCalculation),
+          showForecastData = isEnabled(ForecastCalculation),
           origin = origin,
           isAgent = isAgent
         ))
