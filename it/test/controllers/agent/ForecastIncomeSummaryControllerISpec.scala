@@ -95,8 +95,10 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
     SessionKeys.confirmedClient -> "true"
   )
 
+  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
+
   val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.now
+    val currentDate: LocalDate = fixedDate
     if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
     else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
@@ -111,7 +113,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
     businesses = List(BusinessDetailsModel(
       "testId",
       incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
       Some("Test Trading Name"),
       None,
       Some(getCurrentTaxYearEnd),
@@ -122,7 +124,7 @@ class ForecastIncomeSummaryControllerISpec extends ComponentSpecBase with Featur
     properties = List(
       PropertyDetailsModel(
         "testId2",
-        Some(AccountingPeriodModel(LocalDate.now, LocalDate.now.plusYears(1))),
+        Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
         None,
         None,
         Some(getCurrentTaxYearEnd),

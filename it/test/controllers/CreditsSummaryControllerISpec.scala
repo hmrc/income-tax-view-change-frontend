@@ -29,8 +29,6 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelCreditAndRefundsJsonV2}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-import java.time.LocalDate
-
 class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummaryDataHelper {
 
   val calendarYear = "2018"
@@ -68,7 +66,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
             -1400,
             -1400,
             testTaxYear.toString,
-            LocalDate.now().plusYears(1).toString)
+            fixedDate.plusYears(1).toString)
         )
 
         val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
@@ -125,7 +123,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
             -1400,
             -1400,
             testTaxYear.toString,
-            LocalDate.now().plusYears(1).toString)
+            fixedDate.plusYears(1).toString)
         )
 
         val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)
@@ -171,7 +169,7 @@ class CreditsSummaryControllerISpec extends ComponentSpecBase with CreditsSummar
             -1400,
             -1400,
             testTaxYear.toString,
-            LocalDate.now().plusYears(1).toString)
+            fixedDate.plusYears(1).toString)
         )
 
         val res = IncomeTaxViewChangeFrontend.getCreditsSummary(calendarYear)

@@ -108,7 +108,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
               taxYearEndYear = taxYearModel.endYear.toString,
               taxYearStartYear = taxYearModel.startYear.toString,
               postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-              isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+              isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
             ))
                 }
                 else {
@@ -152,7 +152,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                     taxYearEndYear = taxYearModel.endYear.toString,
                     taxYearStartYear = taxYearModel.startYear.toString,
                     postAction = getPostAction(taxYear, changeTo, isAgent, incomeSourceType),
-                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd().equals(taxYearModel.endYear)
+                    isCurrentTaxYear = dateService.getCurrentTaxYearEnd.equals(taxYearModel.endYear)
                   )
                 )
               )
@@ -251,20 +251,7 @@ user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
                                incomeSourceType: IncomeSourceType
                               ): (Call, Call) = {
 
-    val successCall = (isAgent, incomeSourceType) match {
-      case (false, SelfEmployment) =>
-        routes.ManageObligationsController.showSelfEmployment(changeTo, taxYear)
-      case (_, SelfEmployment) =>
-        routes.ManageObligationsController.showAgentSelfEmployment(changeTo, taxYear)
-      case (false, UkProperty) =>
-        routes.ManageObligationsController.showUKProperty(changeTo, taxYear)
-      case (_, UkProperty) =>
-        routes.ManageObligationsController.showAgentUKProperty(changeTo, taxYear)
-      case (false, _) =>
-        routes.ManageObligationsController.showForeignProperty(changeTo, taxYear)
-      case (_, _) =>
-        routes.ManageObligationsController.showAgentForeignProperty(changeTo, taxYear)
-    }
+    val successCall = routes.ManageObligationsController.show(isAgent, incomeSourceType, changeTo, taxYear)
 
     val backCallId = if (incomeSourceType == SelfEmployment) incomeSourceId.map(v => v.value) else None
     val backCall = routes.ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, backCallId)

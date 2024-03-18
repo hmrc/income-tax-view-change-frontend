@@ -53,8 +53,8 @@ class OptOutTestDataController @Inject()(
                           (implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
     val taxYear: TaxYear = TaxYear(
-      dateService.getCurrentTaxYearStart(isTimeMachineEnabled = isEnabled(TimeMachineAddYear)).getYear,
-      dateService.getCurrentTaxYearEnd(isTimeMachineEnabled = isEnabled(TimeMachineAddYear))
+      dateService.getCurrentTaxYearStart.getYear,
+      dateService.getCurrentTaxYearEnd
     )
 
     def combinedResults: Future[(CalculationListResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel, ITSAStatusResponseModel)] = for {

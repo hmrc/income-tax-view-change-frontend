@@ -53,8 +53,7 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    val isTimeMachineEnabled: Boolean = isEnabled(TimeMachineAddYear)
-    whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits), isTimeMachineEnabled).flatMap {
+    whatYouOweService.getWhatYouOweChargesList(isEnabled(CodingOut), isEnabled(MFACreditsAndDebits)).flatMap {
       whatYouOweChargesList =>
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
@@ -64,11 +63,10 @@ class WhatYouOweController @Inject()(val whatYouOweService: WhatYouOweService,
           creditCharges =>
 
             Ok(whatYouOwe(
-              currentDate = dateService.getCurrentDate(isTimeMachineEnabled),
+              currentDate = dateService.getCurrentDate,
               creditCharges,
-              whatYouOweChargesList = whatYouOweChargesList,
-              hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-              currentTaxYear = dateService.getCurrentTaxYearEnd(isTimeMachineEnabled), backUrl = backUrl, utr = user.saUtr,
+              whatYouOweChargesList = whatYouOweChargesList, hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+              currentTaxYear = dateService.getCurrentTaxYearEnd, backUrl = backUrl, utr = user.saUtr,
               btaNavPartial = user.btaNavPartial,
               dunningLock = whatYouOweChargesList.hasDunningLock,
               codingOutEnabled = codingOutEnabled,

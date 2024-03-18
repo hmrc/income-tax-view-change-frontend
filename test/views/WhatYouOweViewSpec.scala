@@ -117,7 +117,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     )(FakeRequest())
 
     val html: HtmlFormat.Appendable = whatYouOweView(
-      dateService.getCurrentDate(isEnabled(TimeMachineAddYear)),
+      dateService.getCurrentDate,
       creditCharges, charges, hasLpiWithDunningLock, currentTaxYear, "testBackURL",
       Some("1234567890"), None, dunningLock, codingOutEnabled, MFADebitsEnabled, whatYouOweCreditAmountEnabled, creditAndRefundEnabled = true)(FakeRequest(), individualUser, implicitly)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
@@ -162,7 +162,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
 
-    private val currentDateIs: LocalDate = dateService.getCurrentDate(isEnabled(TimeMachineAddYear))
+    private val currentDateIs: LocalDate = dateService.getCurrentDate
     val html: HtmlFormat.Appendable = whatYouOweView(
       currentDateIs,
       creditCharges = creditCharges,

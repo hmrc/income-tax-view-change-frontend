@@ -116,8 +116,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").text() shouldBe messages(yesIWantToSwitchToAnnualMessage)
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, error = false, incomeSourceType = UkProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None).url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, UkProperty, None).url
     }
     "render the continue button" in new Setup(isAgent = false, error = false, incomeSourceType = UkProperty) {
       document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
@@ -157,8 +157,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").text() shouldBe messages(yesIWantToSwitchToAnnualMessage)
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None).url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, ForeignProperty, None).url
     }
     "render the continue button" in new Setup(isAgent = false, error = false, incomeSourceType = ForeignProperty) {
       document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
@@ -198,8 +198,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").text() shouldBe messages(yesIWantToSwitchToAnnualMessage)
     }
     "render the back link with the correct URL" in new Setup(isAgent = false, error = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(testSelfEmploymentId)).url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = false, SelfEmployment, Some(testSelfEmploymentId)).url
     }
     "render the continue button" in new Setup(isAgent = false, error = false, incomeSourceType = SelfEmployment) {
       document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
@@ -239,8 +239,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").text() shouldBe messages(yesIWantToSwitchToAnnualMessage)
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, error = false, incomeSourceType = UkProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None).url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, UkProperty, None).url
     }
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = UkProperty) {
       document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
@@ -280,8 +280,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").text() shouldBe messages(yesIWantToSwitchToAnnualMessage)
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None).url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, ForeignProperty, None).url
     }
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = ForeignProperty) {
       document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")
@@ -321,8 +321,8 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
       document.getElementsByClass("govuk-label govuk-checkboxes__label").text() shouldBe messages(yesIWantToSwitchToAnnualMessage)
     }
     "render the back link with the correct URL" in new Setup(isAgent = true, error = false, incomeSourceType = SelfEmployment) {
-      document.getElementById("back").text() shouldBe messages("base.back")
-      document.getElementById("back").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(testSelfEmploymentId)).url
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe controllers.incomeSources.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = true, SelfEmployment, Some(testSelfEmploymentId)).url
     }
     "render the continue button" in new Setup(isAgent = true, error = false, incomeSourceType = SelfEmployment) {
       document.getElementById("confirm-button").text() shouldBe messages("base.confirm-this-change")

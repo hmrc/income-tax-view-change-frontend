@@ -47,7 +47,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
   val annuallyIndicator: String = "A"
   val taxYear = "2023-2024"
   val timestamp = "2023-01-31T09:26:17Z"
-  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd()
+  val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
   val taxYear1: Int = currentTaxYear
   val taxYear2: Int = currentTaxYear + 1
   val taxYear1YYtoYY: String = s"${(taxYear1 - 1).toString.takeRight(2)}-${taxYear1.toString.takeRight(2)}"
@@ -83,11 +83,11 @@ class ConfirmReportingMethodSharedControllerISpec extends ComponentSpecBase {
     .submit(taxYear = taxYear, changeTo = annual, incomeSourceType = SelfEmployment, isAgent = false).url
 
   val manageObligationsShowUKPropertyUrl: String = manageObligationsController
-    .showUKProperty(changeTo = annual, taxYear = taxYear).url
+    .show(isAgent = false, UkProperty, changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowForeignPropertyUrl: String = manageObligationsController
-    .showForeignProperty(changeTo = annual, taxYear = taxYear).url
+    .show(isAgent = false, ForeignProperty, changeTo = annual, taxYear = taxYear).url
   val manageObligationsShowSelfEmploymentUrl: String = manageObligationsController
-    .showSelfEmployment(changeTo = annual, taxYear = taxYear).url
+    .show(isAgent = false, SelfEmployment, changeTo = annual, taxYear = taxYear).url
 
   val prefix: String = "incomeSources.manage.propertyReportingMethod"
 
