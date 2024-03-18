@@ -36,19 +36,9 @@ class FeatureSwitchPredicate @Inject()
  val messagesApi: MessagesApi) extends ActionRefiner[MtdItUser, MtdItUser] with SaveOriginAndRedirect {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
-
     featureSwitchService.getAll.flatMap(fs => {
-      val newRequest: MtdItUser[A] = MtdItUser[A](
-        mtditid = request.mtditid,
-        nino = request.nino,
-        userName = request.userName,
-        incomeSources = request.incomeSources,
-        btaNavPartial = request.btaNavPartial,
-        saUtr = request.saUtr,
-        credId = request.credId,
-        userType = request.userType,
-        arn = request.arn,
-        featureSwitches = fs)(request)
+      val newRequest = request
+        .copy(featureSwitches = fs)(request)
       Future.successful(Right(newRequest))
     })
 

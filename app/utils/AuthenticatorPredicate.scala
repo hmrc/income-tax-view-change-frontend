@@ -19,16 +19,13 @@ package utils
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.predicates.{BaseAgentController, ClientConfirmedController}
-import controllers.predicates.{AuthenticationPredicate, FeatureSwitchPredicate, IncomeSourceDetailsPredicate, NavBarPredicate, SessionTimeoutPredicate}
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import controllers.agent.predicates.ClientConfirmedController
+import controllers.predicates._
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, ActionBuilder, ActionFunction, AnyContent, BodyParser, MessagesControllerComponents, Request, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
 import services.admin.FeatureSwitchService
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,33 +42,22 @@ class AuthenticatorPredicate @Inject()(val checkSessionTimeout: SessionTimeoutPr
                                       (implicit mcc: MessagesControllerComponents,
                                        val appConfig: FrontendAppConfig,
                                        val itvcErrorHandler: AgentItvcErrorHandler,
-                                       val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport with FeatureSwitching{
+                                       val ec: ExecutionContext) extends ClientConfirmedController with I18nSupport with FeatureSwitching {
 
-  def authenticatedAction(isAgent: Boolean)(authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
+  def authenticatedAction(isAgent: Boolean)
+                         (authenticatedCodeBlock: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
     if (isAgent) {
       Authenticated.async {
         implicit request =>
           implicit user =>
-            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser =>
-
-              val res = for {
+            getMtdItUserWithIncomeSources(incomeSourceDetailsService).flatMap { implicit mtdItUser => {
+              for {
                 fss <- featureSwitchService.getAll
               } yield {
-                val newRequest = MtdItUser[AnyContent](
-                  mtditid = mtdItUser.mtditid,
-                  nino = mtdItUser.nino,
-                  userName = mtdItUser.userName,
-                  incomeSources = mtdItUser.incomeSources,
-                  btaNavPartial = mtdItUser.btaNavPartial,
-                  saUtr = mtdItUser.saUtr,
-                  credId = mtdItUser.credId,
-                  userType = mtdItUser.userType,
-                  arn = mtdItUser.arn,
-                  featureSwitches = fss)(request)
-                authenticatedCodeBlock(newRequest)
+                authenticatedCodeBlock(mtdItUser
+                  .copy(featureSwitches = fss)(mtdItUser))
               }
-              res.flatten
-            }
+            }.flatten }
       }
 
     } else
