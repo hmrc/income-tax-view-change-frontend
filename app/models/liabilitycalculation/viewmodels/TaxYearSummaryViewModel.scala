@@ -28,8 +28,8 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
 
 
   calculationSummary.filter(_ => showForecastData).foreach(calculationSummaryValue => {
-    require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due");
-    require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp");
+    require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due")
+    require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
   })
 
   require(charges.forall(_.documentDetail.originalAmount.isDefined), "missing originalAmount on charges")
