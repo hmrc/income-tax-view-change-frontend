@@ -19,6 +19,7 @@ package views
 import config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter._
 import implicits.ImplicitDateFormatter
+import models.financialDetails.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType, PaymentType, Repayment, SetOffCharge, SetOffChargeInterest}
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
@@ -82,33 +83,66 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val saLink: String = s"${messages("whatYouOwe.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
   }
 
+  val allEntryTypes = List(
+    (2020, List(
+      PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2020-12-24", creditType = CutOverCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2020-12-23", creditType = BalancingChargeCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2020-12-22", creditType = SetOffCharge, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2020-12-21", creditType = SetOffChargeInterest, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2020-12-20", creditType = PaymentType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2020-12-19", creditType = Repayment, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
+    (2021, List(
+      PaymentHistoryEntry(date = "2019-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2018-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
+    (2022, List(
+      PaymentHistoryEntry(date = "2019-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2019-09-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
+  )
+
   val paymentEntriesMFA = List(
-    (2020, List(PaymentHistoryEntry(date = "2020-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2020-04-13", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    (2020, List(
+      PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2020-04-13", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2020-04-13", creditType = SetOffCharge, amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
-    (2021, List(PaymentHistoryEntry(date = "2019-04-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2018-04-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    (2021, List(
+      PaymentHistoryEntry(date = "2019-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2018-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
-    (2022, List(PaymentHistoryEntry(date = "2019-12-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
-      PaymentHistoryEntry(date = "2019-09-25", description = "desc1", amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    (2022, List(
+      PaymentHistoryEntry(date = "2019-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+      PaymentHistoryEntry(date = "2019-09-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
   )
 
   val repaymentRequestNumber = "000000003135"
 
   val groupedRepayments = List(
-    (2021, List(PaymentHistoryEntry("2021-08-22", "paymentHistory.refund", None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
-      PaymentHistoryEntry("2021-08-21", "paymentHistory.refund", Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
-      PaymentHistoryEntry("2021-08-20", "paymentHistory.refund", Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface)))
+    (2021, List(PaymentHistoryEntry("2021-08-22", Repayment, None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-21", Repayment, Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-20", Repayment, Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface)))
   )
 
   val expectedDatesOrder = List("25 December 2020", "13 April 2020", "25 December 2019", "25 September 2019", "25 April 2019", "25 April 2018")
 
   val emptyPayments = List(
-    (2021, List(PaymentHistoryEntry(date = "2019-09-25", description = "desc1", amount = None, transactionId = Some("TRANS123"),
+    (2021, List(PaymentHistoryEntry(date = "2019-09-25", creditType = PaymentType, amount = None, transactionId = Some("TRANS123"),
       linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
   )
 
@@ -128,68 +162,87 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
-  "The payments history view with payment response model" should {
-    "when the user has payment history for a single Year" should {
-      "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
-        new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, true)) {
-          document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentAndRefundHistory.heading"))
-          layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentAndRefundHistory.heading")
-        }
-      "has payment and credit history title when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in
-        new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(true, false)) {
-          document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentAndCreditHistory"))
-          layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentAndCreditHistory")
-        }
-      "has payment, credit and refund history title when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in
-        new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(true, true)) {
-          document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentCreditAndRefundHistory.heading"))
-          layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentCreditAndRefundHistory.heading")
-        }
-      "has payment history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in
-        new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, false)) {
-          document.title() shouldBe messages("htmlTitle", messages("paymentHistory.heading"))
-          layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.heading")
-        }
+  "The payments history view" when {
 
+    "logged in as a user" when {
 
-      s"has a table of payment history" which {
-        s"has the table caption" in new PaymentHistorySetup(paymentEntriesMFA) {
+      "the user has payment history for a single Year" should {
+
+//          s"display correct content" in new PaymentHistorySetup(paymentEntriesMFA) {
+//            val sectionContent: Element = layoutContent.selectHead(s"#accordion-default-content-1")
+//            val tbody = sectionContent.selectHead("table > tbody")
+//            payments.zipWithIndex.foreach {
+//              case (payment, index) =>
+//                val row = tbody.selectNth("tr", index + 1)
+//                row.selectNth("td", 1).text shouldBe payment.date.toLongDate
+//                row.selectNth("td", 2).text shouldBe s"Credit from HMRC adjustment hidden-text1 Item " +
+//                  s"${index + 1} ${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear} tax year"
+//                row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
+//                row.selectNth("td", 3).text shouldBe payment.amount.get.abs.toCurrencyString
+//            }
+//        }
+
+        "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
+          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, true)) {
+            document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentAndRefundHistory.heading"))
+            layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentAndRefundHistory.heading")
+          }
+        "has payment and credit history title when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in
+          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(true, false)) {
+            document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentAndCreditHistory"))
+            layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentAndCreditHistory")
+          }
+        "has payment, credit and refund history title when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in
+          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(true, true)) {
+            document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentCreditAndRefundHistory.heading"))
+            layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentCreditAndRefundHistory.heading")
+          }
+        "has payment history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in
+          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, false)) {
+            document.title() shouldBe messages("htmlTitle", messages("paymentHistory.heading"))
+            layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.heading")
+          }
+      }
+
+      s"the user has has a payment history for multiple years" should {
+        s"have the table caption" in new PaymentHistorySetup(paymentEntriesMFA) {
           layoutContent.selectHead("div").selectNth("div", 2).selectHead("table")
             .selectHead("caption").text.contains(PaymentHistoryMessages.partialH2Heading)
         }
-        s"has table headings for each table column" in new PaymentHistorySetup(paymentEntriesMFA) {
+        s"have table headings for each table column" in new PaymentHistorySetup(paymentEntriesMFA) {
           val row: Element = layoutContent.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
           row.selectNth("th", 1).text shouldBe PaymentHistoryMessages.paymentHeadingDate
           row.selectNth("th", 2).text shouldBe PaymentHistoryMessages.paymentHeadingDescription
           row.selectNth("th", 3).text shouldBe PaymentHistoryMessages.paymentHeadingAmount
         }
-        s"has table headings for amount column right aligned" in new PaymentHistorySetup(paymentEntriesMFA) {
+        s"have table headings for amount column right aligned" in new PaymentHistorySetup(paymentEntriesMFA) {
           val row: Element = layoutContent.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
           row.selectNth("th", 3).hasClass("govuk-table__header--numeric")
         }
-      }
 
-      s"have the information  ${PaymentHistoryMessages.info}" in new PaymentHistorySetup(paymentEntriesMFA) {
-        layoutContent.select(Selectors.p).text shouldBe PaymentHistoryMessages.info
-        layoutContent.selectFirst(Selectors.p).hasCorrectLink(PaymentHistoryMessages.saLink, "http://localhost:8930/self-assessment/ind/1234567890/account")
-      }
+        s"have the information  ${PaymentHistoryMessages.info}" in new PaymentHistorySetup(paymentEntriesMFA) {
+          layoutContent.select(Selectors.p).text shouldBe PaymentHistoryMessages.info
+          layoutContent.selectFirst(Selectors.p).hasCorrectLink(PaymentHistoryMessages.saLink, "http://localhost:8930/self-assessment/ind/1234567890/account")
+        }
 
-      s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, saUtr = None) {
-        layoutContent.select("#payment-history-info").text should not be PaymentHistoryMessages.info
-      }
+        s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, saUtr = None) {
+          layoutContent.select("#payment-history-info").text should not be PaymentHistoryMessages.info
+        }
 
-      "display payment history by year" in new PaymentHistorySetup(paymentEntriesMFA) {
-        for (((year, payments), index) <- paymentEntriesMFA.zipWithIndex) {
-          layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe year.toString
-          val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
-          val tbody = sectionContent.selectHead("table > tbody")
-          payments.zipWithIndex.foreach {
-            case (payment, index) =>
-              val row = tbody.selectNth("tr", index + 1)
-              row.selectNth("td", 1).text shouldBe payment.date.toLongDate
-              row.selectNth("td", 2).text shouldBe s"desc1 hidden-text1 Item ${index + 1}"
-              row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
-              row.selectNth("td", 3).text shouldBe payment.amount.get.abs.toCurrencyString
+        "display payment history by year" in new PaymentHistorySetup(paymentEntriesMFA) {
+          for (((year, payments), index) <- paymentEntriesMFA.zipWithIndex) {
+            layoutContent.selectHead(s"#accordion-with-summary-sections-heading-$year").text shouldBe year.toString
+            val sectionContent = layoutContent.selectHead(s"#accordion-default-content-${index + 1}")
+            val tbody = sectionContent.selectHead("table > tbody")
+            payments.zipWithIndex.foreach {
+              case (payment, index) =>
+                val row = tbody.selectNth("tr", index + 1)
+                row.selectNth("td", 1).text shouldBe payment.date.toLongDate
+                row.selectNth("td", 2).text shouldBe s"Credit from HMRC adjustment hidden-text1 Item " +
+                  s"${index + 1} ${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear} tax year"
+                row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
+                row.selectNth("td", 3).text shouldBe payment.amount.get.abs.toCurrencyString
+            }
           }
         }
       }
@@ -213,6 +266,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 3).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "£301.00"
       }
+
       s"should have a amount column right aligned" in new PaymentHistorySetup(groupedRepayments) {
         val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
         val tbody = sectionContent.selectHead("table > tbody")
@@ -222,30 +276,35 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 3).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
       }
     }
-  }
 
-  "The payments history view with payment response model when logged as an Agent" should {
-    s"have the information ${messages("paymentHistory.info")}" in new PaymentHistorySetup(paymentEntriesMFA, isAgent = true) {
-      layoutContent.select(Selectors.p).text shouldBe paymentHistoryMessageInfo
-      layoutContent.selectFirst(Selectors.p).hasCorrectLink(s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}", saForAgents)
-    }
+    "logged as an Agent" should {
 
-    s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, saUtr = None, isAgent = true) {
-      layoutContent.select("#payment-history-info").text should not be paymentHistoryMessageInfo
-    }
+      s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
+        document.title() shouldBe PaymentHistoryMessages.agentTitle
+      }
 
-    s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments, saUtr = None, isAgent = true) {
-      val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
-      val tbody = sectionContent.selectHead("table > tbody")
+      s"have the information ${messages("paymentHistory.info")}" in new PaymentHistorySetup(paymentEntriesMFA, isAgent = true) {
+        layoutContent.select(Selectors.p).text shouldBe paymentHistoryMessageInfo
+        layoutContent.selectFirst(Selectors.p).hasCorrectLink(s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}", saForAgents)
+      }
 
-      tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 August 2021"
-      tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
-      tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
+      s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, saUtr = None, isAgent = true) {
+        layoutContent.select("#payment-history-info").text should not be paymentHistoryMessageInfo
+      }
 
-      tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
-      tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
-      tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-      tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
+      s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments, saUtr = None, isAgent = true) {
+        val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
+        val tbody = sectionContent.selectHead("table > tbody")
+
+        tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 August 2021"
+        tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
+        tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
+
+        tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
+        tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
+        tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
+        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
+      }
     }
   }
 
@@ -253,11 +312,4 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     paymentHistoryView(paymentEntriesMFA, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false), paymentHistoryAndRefundsEnabled = false, "testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
   )
 
-  "The payments history view with payment response model" should {
-    "when the user has payment history for a single Year" should {
-      s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
-        document.title() shouldBe PaymentHistoryMessages.agentTitle
-      }
-    }
-  }
 }

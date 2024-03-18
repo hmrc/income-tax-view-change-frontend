@@ -44,6 +44,10 @@ case object PaymentType extends CreditType {
   override val key = "payment"
 }
 
+case object Repayment extends CreditType {
+  override val key = "refund"
+}
+
 object CreditType {
 
   // values come from EPID #1138
